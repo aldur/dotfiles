@@ -271,6 +271,8 @@ set laststatus=2
 " Format the status line
 " set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
 
+" Hide status under status line
+set noshowmode
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
