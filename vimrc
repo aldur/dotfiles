@@ -271,7 +271,8 @@ set laststatus=2
 " Format the status line
 " set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
 
-" Hide status under status line
+" Useful settings with vim-airline
+let g:bufferline_echo = 0
 set noshowmode
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -330,6 +331,7 @@ vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
 "   <leader>cc
 "
 " To go to the next search result do:
+"   B
 "   <leader>n
 "
 " To go to the previous search results do:
@@ -353,6 +355,8 @@ map <leader>sp [s
 map <leader>sa zg
 map <leader>s? z=
 
+" Quickly enable spell checking (alternate method)
+map <F6> :setlocal spell! spelllang=en_us<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Misc
@@ -426,4 +430,13 @@ function! <SID>BufcloseCloseIt()
    endif
 endfunction
 
+" Normal copy and paste
+vmap <C-c> y<Esc>i
+vmap <C-x> d<Esc>i
+imap <C-v> <Esc>pi
+imap <C-y> <Esc>ddi
+map <C-z> <Esc>
+imap <C-z> <Esc>ui
 
+" Disable autocommenting
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
