@@ -1,0 +1,41 @@
+{
+    "percent": 0.5,
+    "layout": "splitv",
+    "type": "con",
+    "nodes": [
+        {
+            "type": "con",
+            "swallows": [
+                {
+                    "class": "^Terminator$"
+                }
+            ]
+        }
+    ]
+}
+{
+    "layout": "splitv",
+    "percent": 0.5,
+    "type": "con",
+    "nodes": [
+        {
+            "percent": 0.5,
+            "type": "con",
+            "swallows": [
+                {
+                    "class": "^Terminator$"
+                }
+            ]
+        },
+        {
+            "percent": 0.5,
+            "type": "con",
+            "swallows": [
+                {
+                    "class": "^Terminator$"
+                }
+            ]
+        }
+   ]
+}
+
