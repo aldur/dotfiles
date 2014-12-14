@@ -11,17 +11,17 @@
 
 set $mod Mod4
 
+# Colors
+client.focused          #3F8AC2 #096BAA #ffffff #00DA8E
+client.focused_inactive #333333 #5F676A #ffffff #484e50
+client.unfocused        #333333 #424242 #888888 #292d2e
+client.urgent           #C10004 #900000 #ffffff #900000
+
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
 font pango:DejaVu Sans Mono 8
-# Before i3 v4.8, we used to recommend this one as the default:
-# font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
-# The font above is very space-efficient, that is, it looks good, sharp and
-# clear in small sizes. However, its unicode glyph coverage is limited, the old
-# X core fonts rendering does not support right-to-left and this being a bitmap
-# font, it doesn’t scale on retina/hidpi displays.
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -165,6 +165,7 @@ assign [class="Subl3"] $WS4
 
 # custom borders
 for_window [class="Google-chrome-stable"] border none
+for_window [class="Spotify"] border none
 
 # and movements...
 # make the currently focused window a scratchpad
@@ -232,9 +233,15 @@ bindsym $mod+Pause mode "$mode_system"
 # Start i3bar to display a $WSbar (plus the system information i3status
 # finds out, if available)
 bar {
+        # Need fontAwesome and Icons
+        font pango:DejaVu Sans Mono, FontAwesome, Icons 8
         status_command $HOME/.bin/conkyi3bar
         #status_command i3status
         strip_workspace_numbers yes
+        colors{
+            background #232323
+            statusline #DCDCDC
+        }
 }
 
 # Automatic application startup:
@@ -261,6 +268,8 @@ exec_always --no-startup-id unclutter -idle 5
 exec_always --no-startup-id dropboxd
 # Caffeine (disable screensaver / suspend)
 exec_always --no-startup-id caffeine
+# Compton
+exec_always --no-startup-id compton
 
 # Custom application bindings
 bindsym XF86Search exec google-chrome-stable
