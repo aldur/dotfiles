@@ -48,6 +48,7 @@ Plugin 'scrooloose/nerdcommenter' " Useful commenter plugin
 Plugin 'nathanaelkane/vim-indent-guides' " Indent guides
 Plugin 'jmcantrell/vim-virtualenv' " Virtualenv
 Plugin 'bling/vim-airline' " Better statusbar
+Plugin 'nesC' " nesC syntax highlighting
 
 " All ofc: your Plugins must be added before the following line
 call vundle#end()            " required
@@ -440,3 +441,12 @@ imap <C-z> <Esc>ui
 
 " Disable autocommenting
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+" TheNerdCommenter settings
+let NERDSpaceDelims=1           " place spaces after comment chars
+let NERDDefaultNesting=0        " don't recomment commented lines
+
+" NesC syntax load
+augroup filetypedetect
+      au! BufRead,BufNewFile *nc setfiletype nc
+augroup END
