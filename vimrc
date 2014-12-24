@@ -1,33 +1,4 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Maintainer: 
-"       Aldur Gosh
-" Originally based on the works of:
-"       Amir Salihefendic
-"
-" Version: 
-"       5.1 - 6/9/2014 
-"
-" Blog_post: 
-"       http://amix.dk/blog/post/19691#The-ultimate-Vim-configuration-on-Github
-"
-" Sections:
-"    -> General
-"    -> VIM user interface
-"    -> Colors and Fonts
-"    -> Files and backups
-"    -> Text, tab and indent related
-"    -> Visual mode related
-"    -> Moving around, tabs and buffers
-"    -> Status line
-"    -> Editing mappings
-"    -> vimgrep searching and cope displaying
-"    -> Spell checking
-"    -> Misc
-"    -> Helper functions
-"
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vundle requirements
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set nocompatible              " be iMproved, required
@@ -49,6 +20,13 @@ Plugin 'nathanaelkane/vim-indent-guides' " Indent guides
 Plugin 'jmcantrell/vim-virtualenv' " Virtualenv
 Plugin 'bling/vim-airline' " Better statusbar
 Plugin 'nesC' " nesC syntax highlighting
+Plugin 'kien/ctrlp.vim'  " Fuzzy file, buffer, mru, tag finder
+Plugin 'mileszs/ack.vim'  " Ack plugin
+Plugin 'tomasr/molokai'  " Molokai colorscheme
+Plugin 'fmoralesc/molokayo'  " Molokai improved
+Plugin 'SirVer/ultisnips'  " Snippets engine
+Plugin 'honza/vim-snippets'  " Snippets
+Plugin 'tpope/vim-fugitive'  " Git management inside VIM
 
 " All ofc: your Plugins must be added before the following line
 call vundle#end()            " required
@@ -58,7 +36,7 @@ filetype plugin indent on    " required
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Sets how many lines of history VIM has to remember
-set history=700
+set history=500
 
 " Set to auto read when a file is changed from the outside
 set autoread
@@ -82,9 +60,13 @@ set mouse=a
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 if has("vms")
-  set nobackup		" do not keep a backup file, use versions instead
+    set nobackup		" do not keep a backup file, use versions instead
+    set nowb
+    set noswapfile
 else
-  set backup		" keep a backup file
+    set backup		    " keep a backup file
+    set wb
+    set swapfile
 endif
 
 " Set 7 lines to the cursor - when moving vertically using j/k
@@ -143,14 +125,16 @@ set number          " Show line numbers.
 
 set showcmd		" display incomplete commands
 
+" Timeout after insert mode to command mode
+set ttimeoutlen=50
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enable syntax highlighting
 syntax enable
 
-colorscheme desert
 set background=dark
+colorscheme molokai
 
 " Set extra options when running in GUI mode
 if has("gui_running")
@@ -165,15 +149,6 @@ set encoding=utf8
 
 " Use Unix as the standard file type
 set ffs=unix,dos,mac
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Files, backups and undo
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Turn backup off, since most stuff is in SVN, git et.c anyway...
-set nobackup
-set nowb
-set noswapfile
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -249,8 +224,8 @@ map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Specify the behavior when switching between buffers 
 try
-  set switchbuf=useopen,usetab,newtab
-  set stal=2
+    set switchbuf=useopen,usetab,newtab
+    set stal=2
 catch
 endtry
 
@@ -263,26 +238,9 @@ autocmd BufReadPost *
 set viminfo^=%
 
 
-""""""""""""""""""""""""""""""
-" => Status line
-""""""""""""""""""""""""""""""
-" Always show the status line
-set laststatus=2
-
-" Format the status line
-" set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
-
-" Useful settings with vim-airline
-let g:bufferline_echo = 0
-set noshowmode
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" Enter and Shit + Enter insert new line below or above 
-" nmap <S-Enter> O<Esc>
-" nmap <CR> o<Esc>
 
 " Remap VIM 0 to first non-blank character
 "
@@ -295,17 +253,17 @@ vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
 vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
 
 if has("mac") || has("macunix")
-  nmap <D-j> <M-j>
-  nmap <D-k> <M-k>
-  vmap <D-j> <M-j>
-  vmap <D-k> <M-k>
+    nmap <D-j> <M-j>
+    nmap <D-k> <M-k>
+    vmap <D-j> <M-j>
+    vmap <D-k> <M-k>
 endif
 
 " Delete trailing white space on save, useful for Python and CoffeeScript ;)
 func! DeleteTrailingWS()
-  exe "normal mz"
-  %s/\s\+$//ge
-  exe "normal `z"
+    exe "normal mz"
+    %s/\s\+$//ge
+    exe "normal `z"
 endfunc
 autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.coffee :call DeleteTrailingWS()
@@ -413,22 +371,22 @@ endfunction
 " Don't close window, when deleting a buffer
 command! Bclose call <SID>BufcloseCloseIt()
 function! <SID>BufcloseCloseIt()
-   let l:currentBufNum = bufnr("%")
-   let l:alternateBufNum = bufnr("#")
+    let l:currentBufNum = bufnr("%")
+    let l:alternateBufNum = bufnr("#")
 
-   if buflisted(l:alternateBufNum)
-     buffer #
-   else
-     bnext
-   endif
+    if buflisted(l:alternateBufNum)
+        buffer #
+    else
+        bnext
+    endif
 
-   if bufnr("%") == l:currentBufNum
-     new
-   endif
+    if bufnr("%") == l:currentBufNum
+        new
+    endif
 
-   if buflisted(l:currentBufNum)
-     execute("bdelete! ".l:currentBufNum)
-   endif
+    if buflisted(l:currentBufNum)
+        execute("bdelete! ".l:currentBufNum)
+    endif
 endfunction
 
 " Normal copy and paste
@@ -448,5 +406,32 @@ let NERDDefaultNesting=0        " don't recomment commented lines
 
 " NesC syntax load
 augroup filetypedetect
-      au! BufRead,BufNewFile *nc setfiletype nc
+    au! BufRead,BufNewFile *nc setfiletype nc
 augroup END
+
+" ctrlp settings
+" first of all, the mappings
+let g:ctrlp_map = '<c-p>' 
+let g:ctrlp_cmd = 'CtrlP'
+" set the local working directory
+let g:ctrlp_working_path_mode = 'ra'
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
+
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+
+" Vim Airline configuration
+let g:airline#extensions#tabline#enabled = 1  " smarter tab view
+let g:airline_powerline_fonts = 1  " powerline fonts
+let g:airline_theme = "dark"  " dark theme
+" let g:airline#extensions#whitespace#enabled = 0
+
+" Statusbar goodies
+let g:bufferline_echo = 0
+set noshowmode  " show statusbar by default
+set laststatus=2  " always show the statusbar
+
+" Ultra snips config
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
