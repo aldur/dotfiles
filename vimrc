@@ -12,7 +12,7 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 
 Plugin 'scrooloose/nerdtree' " File explorer
-Plugin 'scrooloose/syntastic' " Syntax Checker 
+Plugin 'scrooloose/syntastic' " Syntax Checker (use it with pyflake8)
 Plugin 'ervandew/supertab' " Insert mode tab completion
 Plugin 'SearchComplete' " Tab completion inside search
 Plugin 'scrooloose/nerdcommenter' " Useful commenter plugin
@@ -27,6 +27,9 @@ Plugin 'fmoralesc/molokayo'  " Molokai improved
 Plugin 'SirVer/ultisnips'  " Snippets engine
 Plugin 'honza/vim-snippets'  " Snippets
 Plugin 'tpope/vim-fugitive'  " Git management inside VIM
+Plugin 'tell-k/vim-autopep8'  " Automatic PEP8 - requires autopep8
+Plugin 'luochen1990/rainbow'  " Rainbow parenthesis (no more messes!)
+" Plugin 'auto-pairs-gentle'  " Auto pair parenthesis (gently)
 
 " All ofc: your Plugins must be added before the following line
 call vundle#end()            " required
@@ -55,19 +58,19 @@ inoremap jk <ESC>
 " Mouse
 set mouse=a
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 if has("vms")
     set nobackup		" do not keep a backup file, use versions instead
     set nowb
-    set noswapfile
 else
     set backup		    " keep a backup file
     set wb
-    set swapfile
 endif
+
+set noswapfile
 
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=7
@@ -121,7 +124,8 @@ set t_vb=
 set tm=500
 
 " Line numbers
-set number          " Show line numbers.
+set number
+set relativenumber          
 
 set showcmd		" display incomplete commands
 
@@ -231,9 +235,9 @@ endtry
 
 " Return to last edit position when opening files (You want this!)
 autocmd BufReadPost *
-     \ if line("'\"") > 0 && line("'\"") <= line("$") |
-     \   exe "normal! g`\"" |
-     \ endif
+            \ if line("'\"") > 0 && line("'\"") <= line("$") |
+            \   exe "normal! g`\"" |
+            \ endif
 " Remember info about open buffers on close
 set viminfo^=%
 
@@ -435,3 +439,32 @@ set laststatus=2  " always show the statusbar
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+if has("autocmd")
+  " Highlight TODO, FIXME, NOTE, etc.
+  if v:version > 701
+    autocmd Syntax * call matchadd('Todo',  '\W\zs\(TODO\|FIXME\|CHANGED\|XXX\|BUG\|HACK\)')
+    autocmd Syntax * call matchadd('Debug', '\W\zs\(NOTE\|INFO\|IDEA\)')
+  endif
+endif
+
+" Syntastic settings
+let g:syntastic_check_on_open = 1  " Check on open
+let g:syntastic_error_symbol = "✗"  " Better error and warning icons
+let g:syntastic_warning_symbol = "⚠"
+
+" Rainbow parenthesis settings
+let g:rainbow_active = 1  " Activate rainbows
+
+" Auto-pairs-gentle settings
+" let g:AutoPairsUseInsertedCount = 1  " Make it gentle
+
+if filereadable(".vimrc.local")
+    so .vimrc.local
+endif
+
+" Habits breaking!
+noremap <Up> <NOP>
+noremap <Down> <NOP>
+noremap <Left> <NOP>
+noremap <Right> <NOP>
