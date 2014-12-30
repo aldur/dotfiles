@@ -24,12 +24,138 @@ Plugin 'kien/ctrlp.vim'  " Fuzzy file, buffer, mru, tag finder
 Plugin 'mileszs/ack.vim'  " Ack plugin
 Plugin 'tomasr/molokai'  " Molokai colorscheme
 Plugin 'fmoralesc/molokayo'  " Molokai improved
-Plugin 'SirVer/ultisnips'  " Snippets engine
-Plugin 'honza/vim-snippets'  " Snippets
 Plugin 'tpope/vim-fugitive'  " Git management inside VIM
 Plugin 'tell-k/vim-autopep8'  " Automatic PEP8 - requires autopep8
 Plugin 'luochen1990/rainbow'  " Rainbow parenthesis (no more messes!)
+Plugin 'bogado/file-line'  " Open vim file:line
+Plugin 'terryma/vim-multiple-cursors'  " Sublime Text like multiple cursors
 " Plugin 'auto-pairs-gentle'  " Auto pair parenthesis (gently)
+
+if has('lua') && (v:version > 703 || (v:version == 703 && has('patch885')))
+    " Use NeoComplete
+    " ---------------
+    let g:neocomplete#enable_at_startup              = 1
+    let g:neocomplete#enable_smart_case = 1
+
+    " let g:neocomplete#force_overwrite_completefunc   = 1
+    let g:neocomplete#data_directory                 = '~/.vim/neocomplcache'
+
+    let g:neocomplete#auto_completion_start_length   = 3
+    let g:neocomplete#manual_completion_start_length = 0
+    let g:neocomplete#min_keyword_length             = 3
+    let g:neocomplete#enable_auto_close_preview      = 1
+
+    let g:neocomplete#keyword_patterns      = {}
+    let g:neocomplete#keyword_patterns._    = '\h\w*'
+    let g:neocomplete#keyword_patterns.perl = '\h\w*->\h\w*\|\h\w*::\w*'
+
+    let g:neocomplete#sources#omni#input_patterns      = {}
+    let g:neocomplete#sources#omni#input_patterns.php  = '[^. \t]->\h\w*\|\h\w*::'
+    let g:neocomplete#sources#omni#input_patterns.c    = '[^.[:digit:] *\t]\%(\.\|->\)'
+    let g:neocomplete#sources#omni#input_patterns.cpp  = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+    let g:neocomplete#force_omni_input_patterns      = {}
+    let g:neocomplete#force_omni_input_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::\w*'
+
+    " let g:neocomplete#enable_omni_fallback = 0
+
+    let g:neocomplete#same_filetypes           = {}
+    let g:neocomplete#same_filetypes.gitconfig = '_'
+    let g:neocomplete#same_filetypes._         = '_'
+
+    function! s:my_cr_function()
+        return neocomplete#close_popup() . "\<CR>"
+    endfunction
+
+    Plugin 'Shougo/neocomplete'
+
+elseif v:version > 702
+    " Use NeoComplCache
+
+    let g:neocomplcache_enable_at_startup = 1
+    let g:neocomplcache_force_overwrite_completefunc = 1
+
+    " Store temporary files in standard location.
+    let g:neocomplcache_temporary_dir='~/.vim/neocomplcache'
+
+    " Define keyword.
+    let g:neocomplcache_keyword_patterns = {}
+    let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+
+    " Enable heavy omni completion.
+    let g:neocomplcache_omni_patterns = {}
+    "let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+    let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+    let g:neocomplcache_omni_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+    let g:neocomplcache_omni_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+    " For perlomni.vim setting.
+    " https://github.com/c9s/perlomni.vim
+    "let g:neocomplcache_omni_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+
+    if !exists('g:neocomplcache_force_omni_patterns')
+        let g:neocomplcache_force_omni_patterns = {}
+    endif
+    let g:neocomplcache_force_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+
+    " Completes from all buffers.
+    if !exists('g:neocomplcache_same_filetype_lists')
+        let g:neocomplcache_same_filetype_lists = {}
+    endif
+    let g:neocomplcache_same_filetype_lists.gitconfig = '_'
+    let g:neocomplcache_same_filetype_lists._ = '_'
+
+    " Disable NeoComplCache for certain filetypes
+    if has('autocmd')
+        augroup NeoComplCache
+            autocmd!
+            autocmd FileType pandoc,markdown nested NeoComplCacheLock
+        augroup END
+    endif
+
+    Plugin 'Shougo/neocomplcache'
+
+    inoremap <expr> <C-g> neocomplcache#undo_completion()
+    inoremap <expr> <C-l> neocomplcache#complete_common_string()
+    inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+    function! s:my_cr_function()
+        return neocomplcache#smart_close_popup() . "\<CR>"
+    endfunction
+    inoremap <expr> <TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+    inoremap <expr> <C-h> neocomplcache#smart_close_popup()."\<C-h>"
+    inoremap <expr> <BS> neocomplcache#smart_close_popup()."\<C-h>"
+    inoremap <expr> <C-y>  neocomplcache#close_popup()
+    inoremap <expr> <C-e>  neocomplcache#cancel_popup()
+
+endif
+
+" Use NeoSnippet
+
+Plugin 'honza/vim-snippets'
+" Tell NeoSnippet about these snippets
+let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets'
+Plugin 'Shougo/neosnippet'
+Plugin 'Shougo/neosnippet-snippets'
+
+" Plugin key-mappings.
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+
+" SuperTab like snippets behavior.
+imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+            \ "\<Plug>(neosnippet_expand_or_jump)"
+            \: pumvisible() ? "\<C-n>" : "\<TAB>"
+smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+            \ "\<Plug>(neosnippet_expand_or_jump)"
+            \: "\<TAB>"
+
+
+" For snippet_complete marker.
+if has('conceal')
+    set conceallevel=2 concealcursor=i
+endif
+
 
 " All ofc: your Plugins must be added before the following line
 call vundle#end()            " required
@@ -61,16 +187,45 @@ set mouse=a
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-if has("vms")
-    set nobackup		" do not keep a backup file, use versions instead
-    set nowb
-else
-    set backup		    " keep a backup file
-    set wb
+" Save your backups to a less annoying place than the current directory.
+" If you have .vim-backup in the current directory, it'll use that.
+" Otherwise it saves it to ~/.vim/backup or . if all else fails.
+if isdirectory($HOME . '/.vim/backup') == 0
+    :silent !mkdir -p ~/.vim/backup >/dev/null 2>&1
 endif
+set backupdir-=.
+set backupdir+=.
+set backupdir-=~/
+set backupdir^=~/.vim/backup/
+set backupdir^=./.vim-backup/
+set backup
 
-set noswapfile
+" Save your swp files to a less annoying place than the current directory.
+" If you have .vim-swap in the current directory, it'll use that.
+" Otherwise it saves it to ~/.vim/swap, ~/tmp or .
+if isdirectory($HOME . '/.vim/swap') == 0
+    :silent !mkdir -p ~/.vim/swap >/dev/null 2>&1
+endif
+set directory=./.vim-swap//
+set directory+=~/.vim/swap//
+set directory+=~/tmp//
+set directory+=.
+
+" viminfo stores the the state of your previous editing session
+set viminfo+=n~/.vim/viminfo
+
+if exists("+undofile")
+    " undofile - This allows you to use undos after exiting and restarting
+    " This, like swap and backups, uses .vim-undo first, then ~/.vim/undo
+    " :help undo-persistence
+    " This is only present in 7.3+
+    if isdirectory($HOME . '/.vim/undo') == 0
+        :silent !mkdir -p ~/.vim/undo > /dev/null 2>&1
+    endif
+    set undodir=./.vim-undo//
+    set undodir+=~/.vim/undo//
+    set undofile
+endif
 
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=7
@@ -78,10 +233,35 @@ set so=7
 " Turn on the WiLd menu
 set wildmenu
 
-" Ignore compiled files
+set wildmode=longest,full   " Completion for wildchar (see help)
+
+" Ignore compiled files and images
 set wildignore=*.o,*~,*.pyc
+set wildignore+=*.png,*.gif,*.jpg,*.ico
+set wildignore+=.git,.svn,.hg
+
+set completeopt=menu,longest
+set omnifunc=syntaxcomplete#Complete " This is overriden by syntax plugins.
+
+
+if has('autocmd')
+    augroup OmniCompleteModes
+        autocmd!
+        autocmd FileType python        nested setlocal omnifunc=pythoncomplete#Complete
+        autocmd FileType ruby,eruby    nested setlocal omnifunc=rubycomplete#Complete
+        autocmd FileType css           nested setlocal omnifunc=csscomplete#CompleteCSS
+        autocmd FileType html,markdown nested setlocal omnifunc=htmlcomplete#CompleteTags
+        autocmd FileType javascript    nested setlocal omnifunc=javascriptcomplete#CompleteJS
+        autocmd FileType xml           nested setlocal omnifunc=xmlcomplete#CompleteTags
+    augroup END
+endif
+
+" Open new split panes to right and bottom, which feels more natural
+set splitbelow
+set splitright
 
 "Always show current position
+set cursorline                   " highlights the current line
 set ruler
 
 " Height of the command bar
@@ -121,6 +301,7 @@ set mat=2
 set noerrorbells
 set novisualbell
 set t_vb=
+set visualbell t_vb=
 set tm=500
 
 " Line numbers
@@ -139,6 +320,9 @@ syntax enable
 
 set background=dark
 colorscheme molokai
+
+set scrolloff=5       " don't scroll any closer to top/bottom
+set sidescrolloff=5   " don't scroll any closer to left/right
 
 " Set extra options when running in GUI mode
 if has("gui_running")
@@ -177,6 +361,9 @@ set si "Smart indent
 set wrap "Wrap lines
 
 set formatoptions=c,q,r,t 
+
+" Indent whole file
+nmap <silent> <Leader>g :call Preserve("normal gg=G")<CR>
 
 """""""""""""""""""""""""""""
 " => Visual mode related
@@ -280,7 +467,7 @@ autocmd BufWrite *.coffee :call DeleteTrailingWS()
 vnoremap <silent> gv :call VisualSelection('gv')<CR>
 
 " Open vimgrep and put the cursor in the right position
-map <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>
+" map <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>
 
 " Vimgreps in the current file
 map <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>
@@ -294,7 +481,6 @@ vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
 "   <leader>cc
 "
 " To go to the next search result do:
-"   B
 "   <leader>n
 "
 " To go to the previous search results do:
@@ -326,9 +512,6 @@ map <F6> :setlocal spell! spelllang=en_us<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Remove the Windows ^M - when the encodings gets messed up
 noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
-
-" Quickly open a buffer for scripbble
-map <leader>q :e ~/buffer<cr>
 
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<cr>
@@ -364,6 +547,30 @@ function! VisualSelection(direction) range
 endfunction
 
 
+" A wrapper function to restore the cursor position, window position,
+" and last search after running a command.
+function! Preserve(command)
+    " Save the last search
+    let last_search=@/
+    " Save the current cursor position
+    let save_cursor = getpos('.')
+    " Save the window position
+    normal H
+    let save_window = getpos('.')
+    call setpos('.', save_cursor)
+
+    " Do the business:
+    execute a:command
+
+    " Restore the last_search
+    let @/=last_search
+    " Restore the window position
+    call setpos('.', save_window)
+    normal zt
+    " Restore the cursor position
+    call setpos('.', save_cursor)
+endfunction
+
 " Returns true if paste mode is enabled
 function! HasPaste()
     if &paste
@@ -393,6 +600,17 @@ function! <SID>BufcloseCloseIt()
     endif
 endfunction
 
+" Misc. Commands
+"-----------------------------------------------------------------------------
+" Convenient command to see the difference between the current buffer and the
+" file it was loaded from, thus the changes you made.
+" Only define it when not defined already.
+" -----------------
+if !exists(':DiffOrig')
+    command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+                \ | wincmd p | diffthis
+endif
+
 " Normal copy and paste
 vmap <C-c> y<Esc>i
 vmap <C-x> d<Esc>i
@@ -404,9 +622,36 @@ imap <C-z> <Esc>ui
 " Disable autocommenting
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
-" TheNerdCommenter settings
+" NerdCommenter settings
 let NERDSpaceDelims=1           " place spaces after comment chars
 let NERDDefaultNesting=0        " don't recomment commented lines
+let g:NERDRemoveExtraSpaces=1
+let g:NERDCommentWholeLinesInVMode=2
+
+" NerdTree settings
+nnoremap <silent> <leader>kb :call NERDTreeFindOrClose()<CR>
+function! NERDTreeFindOrClose()
+    if exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1
+        NERDTreeClose
+    else
+        if bufname('%') == ''
+            NERDTree
+        else
+            NERDTreeFind
+        endif
+    endif
+endfunction
+let NERDTreeBookmarksFile = expand('~/.vim/NERDTreeBookmarks')
+let NERDTreeShowBookmarks=1
+let NERDTreeQuitOnOpen=1
+let NERDTreeMouseMode=2
+let NERDTreeShowHidden=1
+let g:nerdtree_tabs_open_on_gui_startup=0
+let NERDTreeIgnore=['\.o$', '\.so$', '\.bmp$', '\.class$', '^core.*',
+            \ '\.vim$', '\~$', '\.pyc$', '\.pyo$', '\.jpg$', '\.gif$',
+            \ '\.png$', '\.ico$', '\.exe$', '\.cod$', '\.obj$', '\.mac$',
+            \ '\.1st', '\.dll$', '\.pyd$', '\.zip$', '\.modules$',
+            \ '\.git', '\.hg', '\.svn', '\.bzr' ]
 
 " NesC syntax load
 augroup filetypedetect
@@ -437,15 +682,15 @@ set laststatus=2  " always show the statusbar
 " Ultra snips config
 " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
 let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 if has("autocmd")
-  " Highlight TODO, FIXME, NOTE, etc.
-  if v:version > 701
-    autocmd Syntax * call matchadd('Todo',  '\W\zs\(TODO\|FIXME\|CHANGED\|XXX\|BUG\|HACK\)')
-    autocmd Syntax * call matchadd('Debug', '\W\zs\(NOTE\|INFO\|IDEA\)')
-  endif
+    " Highlight TODO, FIXME, NOTE, etc.
+    if v:version > 701
+        autocmd Syntax * call matchadd('Todo',  '\W\zs\(TODO\|FIXME\|CHANGED\|XXX\|BUG\|HACK\)')
+        autocmd Syntax * call matchadd('Debug', '\W\zs\(NOTE\|INFO\|IDEA\)')
+    endif
 endif
 
 " Syntastic settings
@@ -459,9 +704,15 @@ let g:rainbow_active = 1  " Activate rainbows
 " Auto-pairs-gentle settings
 " let g:AutoPairsUseInsertedCount = 1  " Make it gentle
 
-if filereadable(".vimrc.local")
-    so .vimrc.local
+" Vim multiple cursors settings
+let g:multi_cursor_exit_from_visual_mode = 1  " Keep cursors when exiting from V mode
+let g:multi_cursor_exit_from_insert_mode = 1  " Keep cursors when exiting from I mode
+
+if filereadable(expand("~/.vimrc.local"))
+    source ~/.vimrc.local
 endif
+
+set secure
 
 " Habits breaking!
 noremap <Up> <NOP>
