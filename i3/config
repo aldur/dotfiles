@@ -151,7 +151,7 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+# bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 # custom window workspace assignments
 assign [class="Spotify"] → $WS3
@@ -160,6 +160,7 @@ assign [class="Thunderbird"] $WS5
 assign [class="Vlc"] $WS3
 assign [class="Popcorntime"] $WS3
 assign [class="Subl3"] $WS4
+assign [class="Gvim"] $WS4
 # Hangouts app will launch in a the scratchpad
 # for_window [instance="crx_knipolnnllmklapflnccelgolnpehhpl"] move scratchpad
 
@@ -179,10 +180,10 @@ bindsym $mod+z workspace back_and_forth
 bindsym $mod+Shift+z move container to workspace back_and_forth
 
 # media keys
-# pulse audio volume control
-bindsym XF86AudioLowerVolume exec /usr/bin/pactl set-sink-volume 1 -- '-5%'
-bindsym XF86AudioRaiseVolume exec /usr/bin/pactl set-sink-volume 1 -- '+5%'
-bindsym XF86AudioMute exec pactl set-sink-mute 1 toggle 
+# pulseaudio volume control
+bindsym XF86AudioLowerVolume exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'
+bindsym XF86AudioRaiseVolume exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle 
 
 # Media player controls
 bindsym XF86AudioPlay exec playerctl play-pause
@@ -251,15 +252,12 @@ exec --no-startup-id /home/aldur/.fehbg
 exec --no-startup-id numlockx 
 # Network manager applet
 exec --no-startup-id nm-applet
-# Suspend after ten minutes idle
-exec_always --no-startup-id xset dpms 600
-# Spotify and blockify
+# Spotify and blockify (modify the spotify launcher in /usr/local/bin/spotify)
 exec --no-startup-id spotify
-# exec --no-startup-id blockify
 # Parcellite clipboard manager
 exec_always --no-startup-id parcellite
 # Autoscreen lock
-exec_always --no-startup-id ~/.i3/locker.sh
+# exec_always --no-startup-id ~/.i3/locker.sh
 # Notify Daemon
 #exec_always --no-startup-id dunst 
 # Unclutter (hide mouse idle)
@@ -270,6 +268,10 @@ exec_always --no-startup-id dropboxd
 exec_always --no-startup-id caffeine
 # Compton
 exec_always --no-startup-id compton
+# XScreensaver
+exec --no-startup-id /usr/bin/xscreensaver -no-splash &
+# And better the screensaver
+exec --no-startup-id xss-lock -- i3lock-wrapper -d &
 
 # Custom application bindings
 bindsym XF86Search exec google-chrome-stable
