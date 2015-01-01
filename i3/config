@@ -167,6 +167,7 @@ assign [class="Gvim"] $WS4
 # custom borders
 for_window [class="Google-chrome-stable"] border none
 for_window [class="Spotify"] border none
+for_window [class="Terminator"] border none  # Needed to avoid ugly graphic artifacts
 
 # and movements...
 # make the currently focused window a scratchpad
