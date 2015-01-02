@@ -32,6 +32,7 @@ Plugin 'terryma/vim-multiple-cursors'    " Sublime Text like multiple cursors
 Plugin 'godlygeek/tabular'               " Align text
 Plugin 'auto-pairs-gentle'               " Auto pair parenthesis (gently)
 Plugin 'majutsushi/tagbar'               " Show a cool tagbar (requires ctags)
+Plugin 'django.vim'                      " Django syntax highlighting
 
 if has('lua') && (v:version > 703 || (v:version == 703 && has('patch885')))
     " Use NeoComplete
