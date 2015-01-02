@@ -11,92 +11,112 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
 
-Plugin 'scrooloose/nerdtree' " File explorer
-Plugin 'scrooloose/syntastic' " Syntax Checker (use it with pyflake8)
-Plugin 'ervandew/supertab' " Insert mode tab completion
-Plugin 'SearchComplete' " Tab completion inside search
-Plugin 'scrooloose/nerdcommenter' " Useful commenter plugin
+Plugin 'scrooloose/nerdtree'             " File explorer
+Plugin 'scrooloose/syntastic'            " Syntax Checker (use it with pyflake8)
+Plugin 'ervandew/supertab'               " Insert mode tab completion
+Plugin 'SearchComplete'                  " Tab completion inside search
+Plugin 'scrooloose/nerdcommenter'        " Useful commenter plugin
 Plugin 'nathanaelkane/vim-indent-guides' " Indent guides
-Plugin 'jmcantrell/vim-virtualenv' " Virtualenv
-Plugin 'bling/vim-airline' " Better statusbar
-Plugin 'nesC' " nesC syntax highlighting
-Plugin 'kien/ctrlp.vim'  " Fuzzy file, buffer, mru, tag finder
-Plugin 'mileszs/ack.vim'  " Ack plugin
-Plugin 'tomasr/molokai'  " Molokai colorscheme
-Plugin 'fmoralesc/molokayo'  " Molokai improved
-Plugin 'tpope/vim-fugitive'  " Git management inside VIM
-Plugin 'tell-k/vim-autopep8'  " Automatic PEP8 - requires autopep8
-Plugin 'luochen1990/rainbow'  " Rainbow parenthesis (no more messes!)
-Plugin 'bogado/file-line'  " Open vim file:line
-Plugin 'terryma/vim-multiple-cursors'  " Sublime Text like multiple cursors
-" Plugin 'auto-pairs-gentle'  " Auto pair parenthesis (gently)
+Plugin 'jmcantrell/vim-virtualenv'       " Virtualenv
+Plugin 'bling/vim-airline'               " Better statusbar
+Plugin 'nesC'                            " nesC syntax highlighting
+Plugin 'kien/ctrlp.vim'                  " Fuzzy file, buffer, mru, tag finder
+Plugin 'mileszs/ack.vim'                 " Ack plugin
+Plugin 'tomasr/molokai'                  " Molokai colorscheme
+Plugin 'fmoralesc/molokayo'              " Molokai improved
+Plugin 'tpope/vim-fugitive'              " Git management inside VIM
+Plugin 'tell-k/vim-autopep8'             " Automatic PEP8 - requires autopep8
+Plugin 'luochen1990/rainbow'             " Rainbow parenthesis (no more messes!)
+Plugin 'bogado/file-line'                " Open vim file:line
+Plugin 'terryma/vim-multiple-cursors'    " Sublime Text like multiple cursors
+Plugin 'godlygeek/tabular'               " Align text
+Plugin 'auto-pairs-gentle'               " Auto pair parenthesis (gently)
+Plugin 'majutsushi/tagbar'               " Show a cool tagbar (requires ctags)
 
 if has('lua') && (v:version > 703 || (v:version == 703 && has('patch885')))
     " Use NeoComplete
-    " ---------------
-    let g:neocomplete#enable_at_startup              = 1
-    let g:neocomplete#enable_smart_case = 1
+    let g:neocomplete#enable_at_startup                 = 1
+    let g:neocomplete#enable_smart_case                 = 1
 
-    " let g:neocomplete#force_overwrite_completefunc   = 1
-    let g:neocomplete#data_directory                 = '~/.vim/neocomplcache'
+    let g:neocomplete#data_directory                    = '~/.vim/neocomplcache'
 
-    let g:neocomplete#auto_completion_start_length   = 3
-    let g:neocomplete#manual_completion_start_length = 0
-    let g:neocomplete#min_keyword_length             = 3
-    let g:neocomplete#enable_auto_close_preview      = 1
+    let g:neocomplete#sources#syntax#min_keyword_length = 3
+    let g:neocomplete#lock_buffer_name_pattern          = '\*ku\*'
 
-    let g:neocomplete#keyword_patterns      = {}
-    let g:neocomplete#keyword_patterns._    = '\h\w*'
-    let g:neocomplete#keyword_patterns.perl = '\h\w*->\h\w*\|\h\w*::\w*'
+    " Define keyword.
+    if !exists('g:neocomplete#keyword_patterns')
+        let g:neocomplete#keyword_patterns              = {}
+    endif
+    let g:neocomplete#keyword_patterns['default']       = '\h\w*'
+    let g:neocomplete#keyword_patterns._                = '\h\w*'
+    let g:neocomplete#keyword_patterns.perl             = '\h\w*->\h\w*\|\h\w*::\w*'
 
-    let g:neocomplete#sources#omni#input_patterns      = {}
-    let g:neocomplete#sources#omni#input_patterns.php  = '[^. \t]->\h\w*\|\h\w*::'
-    let g:neocomplete#sources#omni#input_patterns.c    = '[^.[:digit:] *\t]\%(\.\|->\)'
-    let g:neocomplete#sources#omni#input_patterns.cpp  = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+    " Enable heavy omni completion.
+    if !exists('g:neocomplete#sources#omni#input_patterns')
+        let g:neocomplete#sources#omni#input_patterns = {}
+    endif
 
-    let g:neocomplete#force_omni_input_patterns      = {}
-    let g:neocomplete#force_omni_input_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::\w*'
+    " let g:neocomplete#sources#omni#input_patterns     = {}
+    " let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+    " let g:neocomplete#sources#omni#input_patterns.c   = '[^.[:digit:] *\t]\%(\.\|->\)'
+    " let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
 
-    " let g:neocomplete#enable_omni_fallback = 0
+    " let g:neocomplete#force_omni_input_patterns       = {}
+    " let g:neocomplete#force_omni_input_patterns.ruby  = '[^. *\t]\.\w*\|\h\w*::\w*'
 
-    let g:neocomplete#same_filetypes           = {}
-    let g:neocomplete#same_filetypes.gitconfig = '_'
-    let g:neocomplete#same_filetypes._         = '_'
+    " let g:neocomplete#same_filetypes                  = {}
+    " let g:neocomplete#same_filetypes.gitconfig        = '_'
+    " let g:neocomplete#same_filetypes._                = '_'
 
+    " Plugin key-mappings.
+    inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
     function! s:my_cr_function()
-        return neocomplete#close_popup() . "\<CR>"
-    endfunction
+        return pumvisible() ? neocomplete#close_popup() : "\<CR>"
+    endfunction    
+    " <TAB>: completion.
+    inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+
+    " <C-h>, <BS>: close popup and delete backword char.
+    inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+    inoremap <expr><BS>  neocomplete#smart_close_popup()."\<C-h>"
+    inoremap <expr><C-y> neocomplete#close_popup()
+    inoremap <expr><C-e> neocomplete#cancel_popup()
+
+    " Close popup by <Space>.
+    inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() : "\<Space>"
+
+    inoremap <expr><C-g>     neocomplete#undo_completion()
+    inoremap <expr><C-l>     neocomplete#complete_common_string()
 
     Plugin 'Shougo/neocomplete'
 
 elseif v:version > 702
     " Use NeoComplCache
-
-    let g:neocomplcache_enable_at_startup = 1
-    let g:neocomplcache_force_overwrite_completefunc = 1
+    let g:neocomplcache_enable_at_startup             = 1
+    let g:neocomplcache_force_overwrite_completefunc  = 1
 
     " Store temporary files in standard location.
-    let g:neocomplcache_temporary_dir='~/.vim/neocomplcache'
+    let g:neocomplcache_temporary_dir                 = '~/.vim/neocomplcache'
 
     " Define keyword.
-    let g:neocomplcache_keyword_patterns = {}
-    let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+    let g:neocomplcache_keyword_patterns              = {}
+    let g:neocomplcache_keyword_patterns['default']   = '\h\w*'
 
     " Enable heavy omni completion.
-    let g:neocomplcache_omni_patterns = {}
-    "let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
-    let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-    let g:neocomplcache_omni_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-    let g:neocomplcache_omni_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+    let g:neocomplcache_omni_patterns                 = {}
+    "let g:neocomplcache_omni_patterns.ruby           = '[^. *\t]\.\w*\|\h\w*::'
+    let g:neocomplcache_omni_patterns.php             = '[^. \t]->\h\w*\|\h\w*::'
+    let g:neocomplcache_omni_patterns.c               = '[^.[:digit:] *\t]\%(\.\|->\)'
+    let g:neocomplcache_omni_patterns.cpp             = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
 
     " For perlomni.vim setting.
     " https://github.com/c9s/perlomni.vim
-    "let g:neocomplcache_omni_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+    "let g:neocomplcache_omni_patterns.perl           = '\h\w*->\h\w*\|\h\w*::'
 
     if !exists('g:neocomplcache_force_omni_patterns')
-        let g:neocomplcache_force_omni_patterns = {}
+        let g:neocomplcache_force_omni_patterns       = {}
     endif
-    let g:neocomplcache_force_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+    let g:neocomplcache_force_omni_patterns.ruby      = '[^. *\t]\.\w*\|\h\w*::'
 
     " Completes from all buffers.
     if !exists('g:neocomplcache_same_filetype_lists')
@@ -130,12 +150,17 @@ elseif v:version > 702
 endif
 
 " Use NeoSnippet
-
 Plugin 'honza/vim-snippets'
+
 " Tell NeoSnippet about these snippets
 let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets'
 Plugin 'Shougo/neosnippet'
-Plugin 'Shougo/neosnippet-snippets'
+
+" And disable the default ones
+" Plugin 'Shougo/neosnippet-snippets'
+let g:neosnippet#disable_runtime_snippets = {
+    \ '_' : 1,
+\ }
 
 " Plugin key-mappings.
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
@@ -143,21 +168,19 @@ smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 xmap <C-k>     <Plug>(neosnippet_expand_target)
 
 " SuperTab like snippets behavior.
-imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-            \ "\<Plug>(neosnippet_expand_or_jump)"
-            \: pumvisible() ? "\<C-n>" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-            \ "\<Plug>(neosnippet_expand_or_jump)"
-            \: "\<TAB>"
-
+" imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+"             \ "\<Plug>(neosnippet_expand_or_jump)"
+"             \: pumvisible() ? "\<C-n>" : "\<TAB>"
+" smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+"             \ "\<Plug>(neosnippet_expand_or_jump)"
+"             \: "\<TAB>"
 
 " For snippet_complete marker.
 if has('conceal')
     set conceallevel=2 concealcursor=i
 endif
 
-
-" All ofc: your Plugins must be added before the following line
+" All your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
 
@@ -172,7 +195,7 @@ set autoread
 
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
-let mapleader = ","
+let mapleader   = ","
 let g:mapleader = ","
 
 " Fast saving
@@ -243,7 +266,6 @@ set wildignore+=.git,.svn,.hg
 set completeopt=menu,longest
 set omnifunc=syntaxcomplete#Complete " This is overriden by syntax plugins.
 
-
 if has('autocmd')
     augroup OmniCompleteModes
         autocmd!
@@ -298,20 +320,22 @@ set showmatch
 set mat=2
 
 " No annoying sound on errors
-set noerrorbells
-set novisualbell
-set t_vb=
-set visualbell t_vb=
+set noerrorbells visualbell t_vb=
+if has('autocmd')
+  autocmd GUIEnter * set visualbell t_vb=
+endif
+
 set tm=500
 
 " Line numbers
 set number
-set relativenumber          
+set relativenumber
 
 set showcmd		" display incomplete commands
 
 " Timeout after insert mode to command mode
 set ttimeoutlen=50
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -348,17 +372,19 @@ set expandtab
 " Be smart when using tabs ;)
 set smarttab
 
-" 1 tab == 4 spaces
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=4  " operation >> indents 4 columns; << unindents 4 columns
+set tabstop=4     " a hard TAB displays as 4 columns
+set expandtab     " insert spaces when hitting TABs
+set softtabstop=4 " insert/delete 4 spaces when hitting a TAB/BACKSPACE
+set shiftround    " round indent to multiple of 'shiftwidth'
+set autoindent    " align the new line indent with the previous line
+
+set si            " Smart indent
+set wrap          " Wrap lines
 
 " Linebreak on 500 characters
 set lbr
 set tw=500
-
-set ai "Auto indent
-set si "Smart indent
-set wrap "Wrap lines
 
 set formatoptions=c,q,r,t 
 
@@ -372,7 +398,6 @@ nmap <silent> <Leader>g :call Preserve("normal gg=G")<CR>
 " Super useful! From an idea by Michael Naumann
 vnoremap <silent> * :call VisualSelection('f')<CR>
 vnoremap <silent> # :call VisualSelection('b')<CR>
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Moving around, tabs, windows and buffers
@@ -459,53 +484,19 @@ endfunc
 autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.coffee :call DeleteTrailingWS()
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => vimgrep searching and cope displaying
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" When you press gv you vimgrep after the selected text
-vnoremap <silent> gv :call VisualSelection('gv')<CR>
-
-" Open vimgrep and put the cursor in the right position
-" map <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>
-
-" Vimgreps in the current file
-map <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>
-
-" When you press <leader>r you can search and replace the selected text
-vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
-
-" Do :help cope if you are unsure what cope is. It's super useful!
-"
-" When you search with vimgrep, display your results in cope by doing:
-"   <leader>cc
-"
-" To go to the next search result do:
-"   <leader>n
-"
-" To go to the previous search results do:
-"   <leader>p
-"
-map <leader>cc :botright cope<cr>
-map <leader>co ggVGy:tabnew<cr>:set syntax=qf<cr>pgg
-map <leader>n :cn<cr>
-map <leader>p :cp<cr>
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Spell checking
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Pressing ,ss will toggle and untoggle spell checking
 map <leader>ss :setlocal spell!<cr>
+" Quickly enable spell checking (alternate method)
+map <F6> :setlocal spell! spelllang=en_us<CR>
 
 " Shortcuts using <leader>
 map <leader>sn ]s
 map <leader>sp [s
 map <leader>sa zg
 map <leader>s? z=
-
-" Quickly enable spell checking (alternate method)
-map <F6> :setlocal spell! spelllang=en_us<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Misc
@@ -545,7 +536,6 @@ function! VisualSelection(direction) range
     let @/ = l:pattern
     let @" = l:saved_reg
 endfunction
-
 
 " A wrapper function to restore the cursor position, window position,
 " and last search after running a command.
@@ -600,31 +590,24 @@ function! <SID>BufcloseCloseIt()
     endif
 endfunction
 
-" Misc. Commands
-"-----------------------------------------------------------------------------
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
 " Only define it when not defined already.
-" -----------------
 if !exists(':DiffOrig')
     command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
                 \ | wincmd p | diffthis
 endif
 
-" Normal copy and paste
-vmap <C-c> y<Esc>i
-vmap <C-x> d<Esc>i
-imap <C-v> <Esc>pi
-imap <C-y> <Esc>ddi
-map <C-z> <Esc>
-imap <C-z> <Esc>ui
-
+" Misc. Commands
+"-----------------------------------------------------------------------------
 " Disable autocommenting
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
+" Tagbar
+nnoremap <silent> <leader>tb :TagbarToggle<CR>
+
 " NerdCommenter settings
 let NERDSpaceDelims=1           " place spaces after comment chars
-let NERDDefaultNesting=0        " don't recomment commented lines
 let g:NERDRemoveExtraSpaces=1
 let g:NERDCommentWholeLinesInVMode=2
 
@@ -669,21 +652,18 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
 let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
 
 " Vim Airline configuration
-let g:airline#extensions#tabline#enabled = 1  " smarter tab view
-let g:airline_powerline_fonts = 1  " powerline fonts
-let g:airline_theme = "dark"  " dark theme
+let g:airline#extensions#tabline#enabled = 1 "  smarter tab view
+let g:airline_powerline_fonts = 1            "  powerline fonts
+let g:airline_theme = "dark"                 "  dark theme
 " let g:airline#extensions#whitespace#enabled = 0
+
+" Autopep8 settings
+let g:autopep8_disable_show_diff=1 " Do not show diff after autopep8 
 
 " Statusbar goodies
 let g:bufferline_echo = 0
-set noshowmode  " show statusbar by default
-set laststatus=2  " always show the statusbar
-
-" Ultra snips config
-" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+set noshowmode   " show statusbar by default
+set laststatus=2 " always show the statusbar
 
 if has("autocmd")
     " Highlight TODO, FIXME, NOTE, etc.
@@ -694,19 +674,21 @@ if has("autocmd")
 endif
 
 " Syntastic settings
-let g:syntastic_check_on_open = 1  " Check on open
-let g:syntastic_error_symbol = "✗"  " Better error and warning icons
-let g:syntastic_warning_symbol = "⚠"
+let g:syntastic_check_on_open        = 1
+let g:syntastic_error_symbol         = "✗"  " Better error and warning icons
+let g:syntastic_warning_symbol       = "⚠"
+let g:syntastic_style_error_symbol   = '⚡'
+let g:syntastic_style_warning_symbol = '⚡'
 
 " Rainbow parenthesis settings
 let g:rainbow_active = 1  " Activate rainbows
 
 " Auto-pairs-gentle settings
-" let g:AutoPairsUseInsertedCount = 1  " Make it gentle
+let g:AutoPairsUseInsertedCount = 1  " Make it gentle
 
 " Vim multiple cursors settings
 let g:multi_cursor_exit_from_visual_mode = 1  " Keep cursors when exiting from V mode
-let g:multi_cursor_exit_from_insert_mode = 1  " Keep cursors when exiting from I mode
+" let g:multi_cursor_exit_from_insert_mode = 1  " Keep cursors when exiting from I mode
 
 if filereadable(expand("~/.vimrc.local"))
     source ~/.vimrc.local
