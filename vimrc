@@ -13,7 +13,6 @@ Plugin 'gmarik/Vundle.vim'
 
 Plugin 'scrooloose/nerdtree'             " File explorer
 Plugin 'scrooloose/syntastic'            " Syntax Checker (use it with pyflake8)
-Plugin 'ervandew/supertab'               " Insert mode tab completion
 Plugin 'SearchComplete'                  " Tab completion inside search
 Plugin 'scrooloose/nerdcommenter'        " Useful commenter plugin
 Plugin 'nathanaelkane/vim-indent-guides' " Indent guides
@@ -33,6 +32,7 @@ Plugin 'godlygeek/tabular'               " Align text
 Plugin 'auto-pairs-gentle'               " Auto pair parenthesis (gently)
 Plugin 'majutsushi/tagbar'               " Show a cool tagbar (requires ctags)
 Plugin 'django.vim'                      " Django syntax highlighting
+Plugin 'tpope/vim-surround'              " All about surrounding
 
 if has('lua') && (v:version > 703 || (v:version == 703 && has('patch885')))
     " Use NeoComplete
@@ -211,6 +211,8 @@ set mouse=a
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set noswapfile  " Stop annoying swap files
+
 " Save your backups to a less annoying place than the current directory.
 " If you have .vim-backup in the current directory, it'll use that.
 " Otherwise it saves it to ~/.vim/backup or . if all else fails.
@@ -686,6 +688,7 @@ let g:rainbow_active = 1  " Activate rainbows
 
 " Auto-pairs-gentle settings
 let g:AutoPairsUseInsertedCount = 1  " Make it gentle
+let g:AutoPairsFlyMode = 1  " And enable fly mode
 
 " Vim multiple cursors settings
 let g:multi_cursor_exit_from_visual_mode = 1  " Keep cursors when exiting from V mode
