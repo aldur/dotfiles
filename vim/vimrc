@@ -2,65 +2,81 @@
 " vim: set sw=4 ts=4 sts=4 et tw=78 foldmarker={,} foldlevel=0 foldmethod=marker spell:
 " }
 
-" Vundle {
-    set nocompatible                        " be VIMproved, required
-    filetype off
-
-    " set the runtime path to include Vundle and initialize
-    set rtp+=~/.vim/bundle/Vundle.vim
-    call vundle#begin()
-
-    " let Vundle manage Vundle
-    Plugin 'gmarik/Vundle.vim'
+" Vim-plug {
+    " Auto-install Vim-plug (if needed)
+    if empty(glob('~/.vim/autoload/plug.vim'))
+        silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+                    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        autocmd VimEnter * PlugInstall
+    endif
+    call plug#begin('~/.vim/plugged')
 
     " the list of installed plugins
-    Plugin 'mattn/webapi-vim'                " Gist require it
-    Plugin 'scrooloose/nerdtree'             " File explorer
-    Plugin 'scrooloose/syntastic'            " Syntax Checker (install pyflake to enable python checking)
-    Plugin 'scrooloose/nerdcommenter'        " Useful commenter plugin
-    Plugin 'bling/vim-airline'               " Better statusbar
-    Plugin 'ctrlpvim/ctrlp.vim'              " Fuzzy file, buffer, mru, tag finder
-    Plugin 'mileszs/ack.vim'                 " Ack plugin
-    Plugin 'tpope/vim-fugitive'              " Git management inside VIM
-    Plugin 'bogado/file-line'                " Open vim file:line
-    Plugin 'terryma/vim-multiple-cursors'    " Sublime Text like multiple cursors
-    Plugin 'auto-pairs-gentle'               " Auto pair parenthesis (gently)
-    Plugin 'majutsushi/tagbar'               " Show a cool tagbar (requires ctags)
-    Plugin 'tpope/vim-surround'              " All about surrounding
-    Plugin 'honza/vim-snippets'              " Vim snippets
-    Plugin 'mattn/gist-vim'                  " Gists!
-    Plugin 'SirVer/ultisnips'                " Snippets engine
-    Plugin 'Valloric/YouCompleteMe'          " Completion handling
-    Plugin 'rizzatti/dash.vim'               " Dash lookup (OSX only)
+    Plug 'mattn/webapi-vim'                " Gist requires it
+    Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }             " File explorer
+    Plug 'scrooloose/syntastic'            " Syntax Checker (install pyflake to enable python checking)
+    Plug 'scrooloose/nerdcommenter'        " Useful commenter plugin
+    Plug 'bling/vim-airline'               " Better statusbar
+    Plug 'ctrlpvim/ctrlp.vim'              " Fuzzy file, buffer, mru, tag finder
+    Plug 'mileszs/ack.vim'                 " Ack plugin
+    Plug 'tpope/vim-fugitive'              " Git management inside VIM
+    Plug 'bogado/file-line'                " Open vim file:line
+    Plug 'terryma/vim-multiple-cursors'    " Sublime Text like multiple cursors
+    Plug 'auto-pairs-gentle'               " Auto pair parenthesis (gently)
+    Plug 'majutsushi/tagbar'               " Show a cool tagbar (requires ctags)
+    Plug 'tpope/vim-surround'              " All about surrounding
+    Plug 'honza/vim-snippets'              " Vim snippets
+    Plug 'mattn/gist-vim'                  " Gists!
+    Plug 'SirVer/ultisnips'                " Snippets engine
+    Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }          " Completion handling
+    Plug 'rizzatti/dash.vim'               " Dash lookup (OSX only)
+    Plug 'Konfekt/FastFold'                " Better fold refresh
+    Plug 'junegunn/vim-peekaboo'           " See content of registers
 
     " Appearance
-    Plugin 'luochen1990/rainbow'             " Rainbow parenthesis (no more messes!)
-    Plugin 'tomasr/molokai'                  " Molokai colorscheme
-    Plugin 'fmoralesc/molokayo'              " Molokai improved
-    Plugin 'godlygeek/tabular'               " Align text
+    Plug 'luochen1990/rainbow'             " Rainbow parenthesis (no more messes!)
+    Plug 'tomasr/molokai'                  " Molokai color scheme
+    Plug 'fmoralesc/molokayo'              " Molokai improved
+    Plug 'junegunn/vim-easy-align'         " Auto-align text
 
-    " Python specific plugins
-    Plugin 'klen/python-mode'                " Vim as a Python IDE
-    Plugin 'django.vim'                      " Django syntax highlighting
-    Plugin '5long/pytest-vim-compiler'       " Pytest compiler
-    Plugin 'lambdalisue/nose.vim'            " Nosetest compiler (needs nose and nose-machineout)
+    " Language specific plugins {
+        " Python
+        Plug 'klen/python-mode', { 'for': 'python' }                " VIM as a powerful Python IDE
+        Plug 'tell-k/vim-autopep8', { 'for': 'python'}              " Autopep8
+        Plug 'django.vim', { 'for': 'python'}                       " Django syntax highlighting
+        Plug '5long/pytest-vim-compiler', { 'for': 'python'}       " Pytest compiler
+        Plug 'lambdalisue/nose.vim', { 'for': 'python'}             " Nosetest compiler (needs nose and nose-machineout)
 
-    " Language specific plugins
-    Plugin 'nesC'                            " nesC syntax highlighting
-    Plugin 'jtratner/vim-flavored-markdown'  " GitHub flavored markdown
+        " nesC
+        Plug 'nesC'                            " nesC syntax highlighting
+
+        " Markdown
+        Plug 'jtratner/vim-flavored-markdown'  " GitHub flavored markdown
+        " Plug 'suan/vim-instant-markdown'       " Instant markdown preview in browser (requirements on GH)
+
+        " Javascript
+        Plug 'jelera/vim-javascript-syntax'    " Better JS syntax highlighting
+        Plug 'pangloss/vim-javascript'         " JS indent and folding
+        Plug 'marijnh/tern_for_vim', { 'for': 'javascript' }            " JS code completion (YCM)
+
+        " Latex
+        Plug 'git://vim-latex.git.sourceforge.net/gitroot/vim-latex/vim-latex', { 'for': 'latex' }  " Latex suite
+
+        " Go
+        Plug 'fatih/vim-go'                    " Go suite
+    " }
 
     " Test
-    Plugin 'tpope/vim-dispatch'              " Async unit test / dispatch
-    Plugin 'reinh/vim-makegreen'             " Cool statusbar at the bottom after make
+    Plug 'tpope/vim-dispatch'              " Async unit test / dispatch
+    Plug 'reinh/vim-makegreen'             " Cool statusbar at the bottom after make
 
-    " Plugin 'suan/vim-instant-markdown'       " Instant markdown preview in browser (requirements on GH)
-
-    " ...Vundle is done
-    call vundle#end()
-    filetype plugin indent on
+    " ...Vim-plug is done
+    call plug#end()
 " }
 
 " General {
+    set nocompatible                        " Disable useless backward compatibility
+
     " Sets how many lines of history VIM has to remember
     set history=1000
 
@@ -74,6 +90,8 @@
     " With a map leader it's possible to do extra key combinations
     let mapleader   = ","
     let g:mapleader = ","
+    let maplocalleader = ","
+    let g:maplocalleader = ","
 " }
 
 " Backup, swap, info and ignore files {
@@ -92,7 +110,7 @@
     set backupdir^=./.vim-backup/
     set backup
 
-    " Save your swp files to a less annoying place than the current directory.
+    " Save your swap files to a less annoying place than the current directory.
     " If you have .vim-swap in the current directory, it'll use that.
     " Otherwise it saves it to ~/.vim/swap, ~/tmp or .
     if isdirectory($HOME . '/.vim/swap') == 0
@@ -104,7 +122,15 @@
     set directory+=.
 
     " viminfo stores the state of your previous editing session
-    set viminfo+=n~/.vim/viminfo
+    " set viminfo+=n~/.vim/viminfo
+
+    " Tell vim to remember certain things when we exit
+    "  '10  :  marks will be remembered for up to 10 previously edited files
+    "  "100 :  will save up to 100 lines for each register
+    "  :20  :  up to 20 lines of command-line history will be remembered
+    "  %    :  saves and restores the buffer list
+    "  n... :  where to save the viminfo files
+    set viminfo='10,\"100,:20,%,n~/.vim/viminfo
 
     if exists("+undofile")
         " undofile - This allows you to use undos after exiting and restarting
@@ -186,7 +212,7 @@
 " }
 
 " Text, lines, tab, indent and folding {
-    " Set utf8 as standard encoding
+    " Set utf-8 as standard encoding
     set encoding=utf-8  " The encoding displayed.
     set fileencoding=utf-8  " The encoding written to file.
 
@@ -215,20 +241,20 @@
     set foldlevelstart=1
 
     " Remember to create ~/.vim/view
-    set viewoptions-=options
+    " set viewoptions-=options
 
-    if has("autocmd")
-        augroup vimrc
-            autocmd BufWritePost *
-                        \   if expand('%') != '' && &buftype !~ 'nofile'
-                        \|      mkview
-                        \|  endif
-            autocmd BufRead *
-                        \   if expand('%') != '' && &buftype !~ 'nofile'
-                        \|      silent loadview
-                        \|  endif
-        augroup END
-    endif
+    " if has("autocmd")
+        " augroup vimrc
+            " autocmd BufWritePost *
+                        " \   if expand('%') != '' && &buftype !~ 'nofile'
+                        " \|      mkview
+                        " \|  endif
+            " autocmd BufRead *
+                        " \   if expand('%') != '' && &buftype !~ 'nofile'
+                        " \|      silent loadview
+                        " \|  endif
+        " augroup END
+    " endif
 " }
 
 " Tabs, windows and buffers {
@@ -272,8 +298,6 @@
         set showtabline=2
     catch
     endtry
-
-    set viminfo^=%
 
     " Code folding mappings
     nmap <leader>f0 :set foldlevel=0<CR>
@@ -378,11 +402,11 @@
     noremap <Left> <NOP>
     noremap <Right> <NOP>
 
-    if has("mac")
-        set clipboard+=unnamed
-    else
-        set clipboard=unnamedplus
-    endif
+    " if has("mac")
+        " set clipboard+=unnamed
+    " else
+        " set clipboard=unnamedplus
+    " endif
 " }
 
 " Helper functions {
@@ -426,17 +450,17 @@
                     \ | wincmd p | diffthis
     endif
 
-    function! NERDTreeFindOrClose()
-        if exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1
-            NERDTreeClose
-        else
-            if bufname('%') == ''
-                NERDTree
-            else
-                NERDTreeFind
-            endif
-        endif
-    endfunction
+    " function! NERDTreeFindOrClose()
+        " if exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1
+            " NERDTreeClose
+        " else
+            " if bufname('%') == ''
+                " NERDTree
+            " else
+                " NERDTreeFind
+            " endif
+        " endif
+    " endfunction
 
     " Strip whitespace {
     function! StripTrailingWhitespace()
@@ -455,22 +479,46 @@
     " Before saving, delete trailing withspaces and ^M
     augroup delete_trailing
         autocmd!
-        autocmd FileType c,cpp,java,go,php,javascript,python,twig,xml,yml,vim autocmd BufWritePre <buffer> call StripTrailingWhitespace()
+        autocmd FileType c,cpp,java,php,javascript,python,twig,xml,yml,vim autocmd BufWritePre <buffer> call StripTrailingWhitespace()
     augroup END
 
     " http://vim.wikia.com/wiki/Restore_cursor_to_file_position_in_previous_editing_session
     " Restore cursor to file position in previous editing session
-    " function! ResCur()
-    "     if line("'\"") <= line("$")
-    "         normal! g`"
-    "         return 1
-    "     endif
-    " endfunction
+    function! ResCur()
+        if line("'\"") <= line("$")
+            normal! g`"
+            return 1
+        endif
+    endfunction
 
-    " augroup resCur
-    "     autocmd!
-    "     autocmd BufWinEnter * call ResCur()
-    " augroup END
+    " And restore folding too
+    if has("folding")
+        function! UnfoldCur()
+            if !&foldenable
+                return
+            endif
+            let cl = line(".")
+            if cl <= 1
+                return
+            endif
+            let cf  = foldlevel(cl)
+            let uf  = foldlevel(cl - 1)
+            let min = (cf > uf ? uf : cf)
+            if min
+                execute "normal!" min . "zo"
+                return 1
+            endif
+        endfunction
+    endif
+
+    augroup resCur
+        autocmd!
+        if has("folding")
+            autocmd BufWinEnter * if ResCur() | call UnfoldCur() | endif
+        else
+            autocmd BufWinEnter * call ResCur()
+        endif
+    augroup END
 
     " Don't close window, when deleting a buffer
     command! Bclose call <SID>BufcloseCloseIt()
@@ -506,7 +554,8 @@
     " }
 
     " NerdTree {
-        nnoremap <silent> <leader>kb :call NERDTreeFindOrClose()<CR>
+        " nnoremap <silent> <leader>kb :call NERDTreeFindOrClose()<CR>
+        nnoremap <silent> <leader>kb :NERDTreeToggle<CR>
         let NERDTreeShowBookmarks=1
         let NERDTreeQuitOnOpen=1
         let NERDTreeMouseMode=2
@@ -536,9 +585,11 @@
         let g:ctrlp_cmd = 'CtrlP'
         let g:ctrlp_working_path_mode = 'ra'
 
+        nnoremap <c-p> :CtrlPBufTag<cr>
+
         let g:ctrlp_custom_ignore = {
         \ 'dir':  '\.git$\|\.yardoc\|public$|log\|tmp$|backup',
-        \ 'file': '\.so$\|\.dat$|\.DS_Store$'
+        \ 'file': '\.so$\|\.dat$|\.DS_Store$|\.po$'
         \ }
 
         let g:ctrlp_cache_dir = $HOME.'/.vim/.cache/ctrlp'
@@ -570,6 +621,10 @@
 
         let g:syntastic_always_populate_loc_list = 2
         let g:syntastic_auto_loc_list = 2
+
+        " Enable again perl checker
+        let g:syntastic_enable_perl_checker = 1
+        let g:syntastic_perl_checkers = ['perl']
     " }
 
     " Rainbow parenthesis {
@@ -584,17 +639,6 @@
         let g:multi_cursor_exit_from_visual_mode = 1  " Keep cursors when exiting from V mode
         " let g:multi_cursor_exit_from_insert_mode = 1  " Keep cursors when exiting from I mode
     " }
-
-    " " Normal Vim omni-completion {
-    "     " Enable omni-completion.
-    "     autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-    "     autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-    "     autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-    "     autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-    "     autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-    "     autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
-    "     autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
-    " " }
 
     " YouCompleteMe / Ultisnips {
         let g:acp_enableAtStartup                           = 0
@@ -654,19 +698,22 @@
 
     " Py-Mode {
         let g:pymode = 1
+        let g:pymode_warnings = 0
+
         let g:pymode_trim_whitespaces = 1
         let g:pymode_options_colorcolumn = 0
         let g:pymode_indent = 1
         let g:pymode_folding = 1
         let g:pymode_motion = 1
 
-        let g:pymode_doc = 1
-        let g:pymode_doc_bind = 'K'
+        let g:pymode_doc = 0
+        let g:pymode_doc_bind = ''
 
+        let g:pymode_breakpoint = 0
         let g:pymode_virtualenv = 1
 
-        " Disble linting except for autolinting
-        let g:pymode_lint = 1
+        " Disable linting at all
+        let g:pymode_lint = 0
         let g:pymode_lint_on_write = 0
         let g:pymode_lint_unmodified = 0
         let g:pymode_lint_on_fly = 0
@@ -678,7 +725,68 @@
         let g:pymode_syntax_slow_sync = 1
 
         let g:pymode_rope = 1
-        let g:pymode_rope_completion = 0
+        let g:pymode_rope_completion = 1
+        let g:pymode_rope_complete_on_dot = 1
+        let g:pymode_rope_lookup_project = 0
+        let g:pymode_rope_autoimport = 1
+    " }
+
+    " { Autopep8
+        let g:autopep8_disable_show_diff=1
+    " }
+
+    " { Dash
+        nmap <silent> <leader>K <Plug>DashSearch
+    " }
+
+    " { Javascript
+        let g:syntastic_javascript_jshint_args = "--extract=auto"
+        let javascript_enable_domhtmlcss = 1
+    " }
+
+    " { Vim Latex
+        " let g:latex_build_dir = 'output'
+
+        " let g:latex_view_method = 'general'
+        " let g:latex_view_general_viewer = '/Applications/Skim.app/Contents/SharedSupport/displayline'
+        " function! SyncTexForward()
+            " call latex#view#view("-g " . line(".") . " " . g:latex#data[b:latex.id].out() . " " . expand('%:p'))
+        " endfunction
+        " map <leader>ls :call SyncTexForward()<CR>
+
+        " if has("autocmd")
+            " augroup ForwardTexCommand,
+                " autocmd!
+                " au BufWriteCmd *.tex :call SyncTexForward()<CR>
+            " augroup END
+        " endif
+
+        " let g:latex_fold_enabled = 0
+    " }
+
+    " Latex Suite {
+        let g:tex_flavor='latex'
+
+        let g:Tex_DefaultTargetFormat = 'pdf'
+        let g:Tex_TreatMacViewerAsUNIX = 1
+        " let g:Tex_ExecuteUNIXViewerInForeground = 1
+        let g:Tex_CompileRule_pdf = 'latexmk -pdf -f -synctex=1 $*'
+
+        let g:Tex_ViewRule_ps = 'Preview'
+        let g:Tex_ViewRule_pdf = 'Skim'
+        let g:Tex_ViewRuleComplete_pdf = 'open -ag Skim'
+
+        " let g:Tex_FormatDependency_ps  = 'dvi,ps'
+        " let g:Tex_FormatDependency_pspdf = 'dvi,ps,pspdf'
+        " let g:Tex_FormatDependency_dvipdf = 'dvi,dvipdf'
+    " }
+
+    " Vim-easy-align {
+        " Start interactive EasyAlign in visual mode (e.g. vip<Enter>)
+        vmap <Enter> <Plug>(EasyAlign)
+
+        " Start interactive EasyAlign for a motion/text object (e.g. gaip)
+        nmap ga <Plug>(EasyAlign)
     " }
 " }
 
