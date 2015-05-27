@@ -1,14 +1,12 @@
-# This file will be always automatically sourced by ZSH
+# .zprofile
 # We'll set the environemnt variables here
-
 # Ensure user-installed binaries take precedence (homebrew, specifically)
-export PATH=/usr/local/bin:$PATH
-export PATH=/usr/local/sbin:$PATH
+PATH="/usr/local/bin:/usr/local/sbin/:$PATH"
 
 # Gnu coreutils take precedence
-export PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH
+PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 # And Gnu coreutils manuals
-export MANPATH=$(brew --prefix coreutils)/libexec/gnuman:$MANPATH
+export MANPATH="$(brew --prefix coreutils)/libexec/gnuman:$MANPATH"
 
 # Virtualenvwrapper
 export WORKON_HOME=$HOME/Programmazione/VirtualEnvs
@@ -16,11 +14,11 @@ export PROJECT_HOME=$HOME/Programmazione
 source /usr/local/bin/virtualenvwrapper.sh
 
 # Android SDK
-export PATH="/opt/adt-bundle-mac-x86_64/sdk/tools:/opt/adt-bundle-mac-x86_64/sdk/platform-tools:$PATH"
+PATH="/opt/adt-bundle-mac-x86_64/sdk/tools:/opt/adt-bundle-mac-x86_64/sdk/platform-tools:$PATH"
 
 # Go
 export GOPATH=$HOME/Programmazione/Go
-export PATH=$PATH:/usr/local/opt/go/libexec/bin:$GOPATH/bin
+PATH="/usr/local/opt/go/libexec/bin:$GOPATH/bin:$PATH"
 
 # Java
 export LANG=en_US.UTF-8
@@ -28,5 +26,7 @@ export JAVA_HOME=$(/usr/libexec/java_home)
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/.bin" ]; then
-    export PATH="$HOME/.bin:$PATH"
+    PATH="$HOME/.bin:$PATH"
 fi
+
+export PATH=$PATH
