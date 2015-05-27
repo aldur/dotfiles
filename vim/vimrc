@@ -590,11 +590,6 @@
 
         nnoremap <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
-        " augroup go_to_definition_go
-            " autocmd!
-            " autocmd FileType go nunmap <leader>g
-        " augroup END
-
         " For snippet_complete marker.
         if has('conceal')
             set conceallevel=2 concealcursor=i
