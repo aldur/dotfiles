@@ -40,6 +40,7 @@ Thumbs.db
 ################
 __pycache__/
 *.pyc
+*.egg-info/
 
 # TEX build files #
 ###################
@@ -54,6 +55,8 @@ build/
 *.iml
 *.iws
 *.ipr
+*.ids
+aldur.xcuserdatad
 
 # Various #
 ###########
