@@ -8,3 +8,10 @@ export TERM="xterm-256color"
 # Open new MacVim buffers in the same MacVim window
 alias gvim='open -a MacVim '
 
+function vim () {
+    if hash nvim 2>/dev/null; then
+        nvim "$@"
+    else
+        vim "$@"
+    fi
+}
