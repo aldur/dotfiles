@@ -11,7 +11,7 @@ export MANPATH="$(brew --prefix coreutils)/libexec/gnuman:$MANPATH"
 # Virtualenvwrapper
 export WORKON_HOME=$HOME/Programmazione/VirtualEnvs
 export PROJECT_HOME=$HOME/Programmazione
-source /usr/local/bin/virtualenvwrapper.sh
+source /usr/local/bin/virtualenvwrapper_lazy.sh
 
 # Android SDK
 PATH="/opt/adt-bundle-mac-x86_64/sdk/tools:/opt/adt-bundle-mac-x86_64/sdk/platform-tools:$PATH"
@@ -24,9 +24,22 @@ PATH="/usr/local/opt/go/libexec/bin:$GOPATH/bin:$PATH"
 export LANG=en_US.UTF-8
 export JAVA_HOME=$(/usr/libexec/java_home)
 
+# Perl
+PATH="$HOME/perl5/bin:$PATH"
+
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/.bin" ]; then
     PATH="$HOME/.bin:$PATH"
 fi
 
 export PATH=$PATH
+
+PERL_MB_OPT="--install_base \"/Users/aldur/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/Users/aldur/perl5"; export PERL_MM_OPT;
+export PERL5LIB=/Users/aldur/perl5/lib/perl5
+
+# OPAM configuration
+. /Users/aldur/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
+
+export NVM_DIR=~/.nvm
+source $(brew --prefix nvm)/nvm.sh
