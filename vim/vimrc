@@ -34,10 +34,11 @@
     Plug 'junegunn/vim-peekaboo'           " See content of registers
     Plug 'xolox/vim-misc'                  " Required by vim-session
     Plug 'xolox/vim-session'               " Save and restore vim sessions
+    Plug 'ConradIrwin/vim-bracketed-paste'             " No more set past mode
 
     " Completion handling
     Plug 'Valloric/YouCompleteMe',
-                \ { 'do': './install.sh --clang-completer --gocode-completer'}
+                \ { 'do': './install.py --clang-completer --gocode-completer'}
 
     " Appearance
     Plug 'luochen1990/rainbow'             " Rainbow parenthesis (no more messes!)
@@ -50,6 +51,8 @@
         Plug 'klen/python-mode', { 'for': 'python' }                " VIM as a powerful Python IDE
         Plug 'tell-k/vim-autopep8', { 'for': 'python'}              " Autopep8
         Plug 'django.vim', { 'for': 'python'}                       " Django syntax highlighting
+        Plug 'alfredodeza/pytest.vim', { 'for': 'python'}           " Python tests
+        Plug 'hdima/python-syntax'                                  " Python 3.5 syntax
 
         " Markdown
         Plug 'jtratner/vim-flavored-markdown'  " GitHub flavored markdown
@@ -57,9 +60,9 @@
                     \ { 'for' : 'markdown' }       " Instant markdown preview in browser (requirements on GH)
 
         " Javascript
-        Plug 'jelera/vim-javascript-syntax'    " Better JS syntax highlighting
-        Plug 'pangloss/vim-javascript'         " JS indent and folding
-        Plug 'marijnh/tern_for_vim', { 'for': 'javascript' }            " JS code completion (YCM)
+        " Plug 'jelera/vim-javascript-syntax'    " Better JS syntax highlighting
+        " Plug 'pangloss/vim-javascript'         " JS indent and folding
+        " Plug 'marijnh/tern_for_vim', { 'for': 'javascript' }            " JS code completion (YCM)
 
         " Latex
         Plug 'LaTeX-Box-Team/LaTeX-Box', { 'for': 'tex' }  " LatexBox
@@ -69,7 +72,17 @@
                     \, { 'for': 'go' }                    " Go suite
 
         " Common LISP
-        Plug 'kovisoft/slimv', { 'for': 'lisp' }
+        " Plug 'kovisoft/slimv', { 'for': 'lisp' }
+
+        " Prose
+        Plug 'reedes/vim-wordy'
+
+        " Perl
+        " Plug 'vim-perl/vim-perl',
+                    " \ { 'for': 'perl',
+                    " \ 'do': 'make clean carp dancer highlight-all-pragmas moose test-more try-tiny'
+                    " \ }
+
     " }
 
     " ...Vim-plug is done
@@ -262,10 +275,10 @@
     set splitright
 
     " Smart way to move between windows
-    map <C-j> <C-W>j
-    map <C-k> <C-W>k
-    map <C-h> <C-W>h
-    map <C-l> <C-W>l
+    nnoremap <C-h> <C-w>h
+    nnoremap <C-j> <C-w>j
+    nnoremap <C-k> <C-w>k
+    nnoremap <C-l> <C-w>l
 
     " Close the current buffer
     nnoremap <leader>bc :bd<cr>
@@ -361,6 +374,14 @@
         command! -bang QA qa<bang>
         command! -bang Qa qa<bang>
     endif
+
+    if &term =~ '^screen'
+        " tmux will send xterm-style keys when xterm-keys is on
+        execute "set <xUp>=\e[1;*A"
+        execute "set <xDown>=\e[1;*B"
+        execute "set <xRight>=\e[1;*C"
+        execute "set <xLeft>=\e[1;*D"
+    endif
 " }
 
 " Spell checking {
@@ -385,6 +406,13 @@
             autocmd!
             autocmd Syntax * call matchadd('Todo',  '\W\zs\(TODO\|FIXME\|CHANGED\|XXX\|BUG\|HACK\)')
             autocmd Syntax * call matchadd('Debug', '\W\zs\(NOTE\|INFO\|IDEA\)')
+        augroup END
+    endif
+
+    if has("autocmd")
+        augroup XMLLINT
+            autocmd!
+            autocmd FileType xml setlocal equalprg=xmllint\ --format\ --recover\ -\ 2>/dev/null
         augroup END
     endif
 " }
@@ -447,7 +475,7 @@
     " Before saving, delete trailing white-spaces and ^M
     augroup delete_trailing
         autocmd!
-        autocmd FileType c,cpp,java,php,javascript,python,twig,xml,yml,vim,java,tex autocmd BufWritePre <buffer> call StripTrailingWhitespace()
+        autocmd FileType c,cpp,java,php,javascript,python,twig,xml,yml,vim,tex autocmd BufWritePre <buffer> call StripTrailingWhitespace()
     augroup END
 
     " http://vim.wikia.com/wiki/Restore_cursor_to_file_position_in_previous_editing_session
@@ -544,6 +572,11 @@
         " Enable check C headers file
         let g:syntastic_c_check_header = 1
         let g:syntastic_c_compiler_options = '-Wall'
+
+        " Enable C++11 standard
+        let g:syntastic_cpp_compiler_options="-std=c++11 -stdlib=libc++ -Wall"
+
+        let g:syntastic_java_checkers = []
     " }
 
     " Rainbow parenthesis {
