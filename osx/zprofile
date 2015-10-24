@@ -1,7 +1,8 @@
 # .zprofile
 # We'll set the environemnt variables here
+
 # Ensure user-installed binaries take precedence (homebrew, specifically)
-PATH="/usr/local/bin:/usr/local/sbin/:$PATH"
+PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 
 # Gnu coreutils take precedence
 PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
@@ -24,22 +25,22 @@ PATH="/usr/local/opt/go/libexec/bin:$GOPATH/bin:$PATH"
 export LANG=en_US.UTF-8
 export JAVA_HOME=$(/usr/libexec/java_home)
 
-# Perl
-PATH="$HOME/perl5/bin:$PATH"
-
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/.bin" ]; then
-    PATH="$HOME/.bin:$PATH"
-fi
-
-export PATH=$PATH
-
-PERL_MB_OPT="--install_base \"/Users/aldur/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=/Users/aldur/perl5"; export PERL_MM_OPT;
-export PERL5LIB=/Users/aldur/perl5/lib/perl5
-
 # OPAM configuration
 . /Users/aldur/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 
-export NVM_DIR=~/.nvm
-source $(brew --prefix nvm)/nvm.sh
+# RubyGems environment.
+export GEM_HOME=$HOME/.gem
+export PATH=$GEM_HOME/ruby/2.0.0/bin:$PATH
+
+# NodeJS / NVM
+export NVM_DIR="/Users/aldur/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+NODE_PATH=/usr/local/lib/node_modules/"$NODE_PATH"
+PATH=$NPM_PACKAGES/bin:$PATH
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.bin" ]; then
+    PATH="$HOME/.bin":$PATH
+fi
+
+export PATH=$PATH
