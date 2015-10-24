@@ -52,7 +52,6 @@
         Plug 'tell-k/vim-autopep8', { 'for': 'python'}              " Autopep8
         Plug 'django.vim', { 'for': 'python'}                       " Django syntax highlighting
         Plug 'alfredodeza/pytest.vim', { 'for': 'python'}           " Python tests
-        Plug 'hdima/python-syntax'                                  " Python 3.5 syntax
 
         " Markdown
         Plug 'jtratner/vim-flavored-markdown'  " GitHub flavored markdown
