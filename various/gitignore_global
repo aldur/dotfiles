@@ -42,9 +42,9 @@ __pycache__/
 *.pyc
 *.egg-info/
 
-# TEX build files #
+# Build files #
 ###################
-build/
+build*/
 
 # IDE files #
 #############
@@ -61,3 +61,5 @@ aldur.xcuserdatad
 # Various #
 ###########
 .uwsgi_plugins_builder/
+.ycm_extra_conf.py
+.qmake.*
