@@ -29,10 +29,11 @@ alias sudo='sudo '
 # Global environment
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
-    export EDITOR='vim'
+    export EDITOR=vim
 else
-    export EDITOR='vim'
+    export EDITOR=vim
 fi
+export VISUAL="$EDITOR"
 
 # Compilation flags
 export ARCHFLAGS="-arch x86_64"
@@ -49,20 +50,6 @@ setopt interactivecomments
 # and reloads the history whenever you use it
 setopt inc_append_history
 setopt share_history
-
-# Virtualenv / Pip
-# pip should only run if there is a virtualenv currently activated
-export PIP_REQUIRE_VIRTUALENV=true
-
-# System wide pip
-syspip(){
-   PIP_REQUIRE_VIRTUALENV="" pip "$@"
-}
-
-# And system wide pip3
-syspip3(){
-   PIP_REQUIRE_VIRTUALENV="" pip3 "$@"
-}
 
 # Load local configuration files
 if [[ -f $HOME/.zshrc.local ]]; then
