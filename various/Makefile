@@ -1,9 +1,13 @@
-DOTFILES = gitignore_global psqlrc
+DOTFILES = psqlrc
 CONFIG_FILES = flake8 pep8
 
-.PHONY: all $(DOTFILES) $(CONFIG_FILES)
+.PHONY: all gitignore $(DOTFILES) $(CONFIG_FILES)
 
-all: $(DOTFILES)
+all: $(DOTFILES) gitignore
+
+gitignore: gitignore_global
+	$(LN) $(shell readlink -f $gitignore_global) ${HOME}/.$gitignore_global
+	git config --global core.excludesfile ~/.gitignore_global
 
 $(DOTFILES):
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
