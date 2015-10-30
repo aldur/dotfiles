@@ -57,6 +57,7 @@ build*/
 *.ipr
 *.ids
 aldur.xcuserdatad
+*.pro.user
 
 # Various #
 ###########
