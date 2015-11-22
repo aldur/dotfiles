@@ -1,0 +1,30 @@
+# encoding: utf-8
+# vim:ft=python
+
+import sys
+import os.path
+import readline
+import atexit
+import rlcompleter as _  # side effects
+
+history_path = os.path.expanduser("~/.python_history")  # same as default for Python 3
+
+
+def save_history(history_path=history_path):
+    readline.write_history_file(history_path)
+
+if os.path.exists(history_path):
+    readline.read_history_file(history_path)
+
+atexit.register(save_history)
+
+
+def TAB_COMPLETION():
+    try:
+        readline.parse_and_bind("tab: complete")
+        print('(Tab completion loaded)')
+    except:
+        print("(Tab completion not loaded)")
+
+
+sys.ps1 = '\033[34;1m>\033[0m '

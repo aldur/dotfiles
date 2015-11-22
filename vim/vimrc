@@ -75,6 +75,7 @@
 
         " Prose
         Plug 'reedes/vim-wordy'
+        Plug 'reedes/vim-pencil'
 
         " Perl
         " Plug 'vim-perl/vim-perl',
@@ -82,6 +83,8 @@
                     " \ 'do': 'make clean carp dancer highlight-all-pragmas moose test-more try-tiny'
                     " \ }
 
+        " CMake
+        Plug 'cmake'
     " }
 
     " ...Vim-plug is done
@@ -96,6 +99,10 @@
 
     " Set to auto read when a file is changed from the outside
     set autoread
+
+    " Modeline in the first five lines
+    set modeline
+    set modelines=5
 
     " Mouse
     set mouse=a
@@ -262,6 +269,13 @@
         augroup LATEX
             autocmd!
             autocmd Filetype tex setlocal spell conceallevel=0
+        augroup end
+    endif
+
+    if has("autocmd")
+        augroup MDOWN
+            autocmd!
+            autocmd Filetype ghmarkdown,markdown,md setlocal spell
         augroup end
     endif
 " }
@@ -529,8 +543,8 @@
         nnoremap <c-p> :CtrlPBufTag<cr>
 
         let g:ctrlp_custom_ignore = {
-                    \ 'dir':  '\.git$\|\.yardoc\|public$|log\|tmp$|backup',
-                    \ 'file': '\.so$\|\.dat$|\.DS_Store$|\.po$'
+                    \ 'dir':  '\.git$\|\.yardoc\|public\|log\|tmp$\|backup\|_site$',
+                    \ 'file': '\.so$\|\.dat$|\.DS_Store\|\.po$'
                     \ }
 
         let g:ctrlp_cache_dir = $HOME.'/.vim/.cache/ctrlp'
@@ -776,6 +790,15 @@
                 au FileType go nmap <Leader>s <Plug>(go-implements)
             augroup END
         endif
+    " }
+
+    " Pencil {
+    if has('autocmd')
+        augroup pencil
+            autocmd!
+            autocmd FileType ghmarkdown,markdown,mkd call pencil#init({'wrap': 'soft', 'textwidth': 80})
+        augroup END
+    endif
     " }
 " }
 

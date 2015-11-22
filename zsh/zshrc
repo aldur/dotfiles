@@ -17,7 +17,16 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # yyyy-mm-dd
 HIST_STAMPS="dd/mm/yyyy"
 
-plugins=(git brew z colored-man rsync vagrant virtualenv zsh-syntax-highlighting mvn django history-substring-search)
+plugins=( \
+    git \ 
+    virtualenv \  # Auto-completion
+    brew \ 
+    # rsync vagrant \
+    # mvn django \
+    colored-man \  # Colors
+    zsh-syntax-highlighting \  # Spellchecking
+    history-substring-search z \  # Utilities
+)
 
 source $ZSH/oh-my-zsh.sh
 # ----------- Personal configuration -------------

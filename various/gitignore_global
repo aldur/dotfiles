@@ -41,6 +41,7 @@ Thumbs.db
 __pycache__/
 *.pyc
 *.egg-info/
+dist/
 
 # Build files #
 ###################

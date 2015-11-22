@@ -30,7 +30,7 @@ export JAVA_HOME=$(/usr/libexec/java_home)
 
 # RubyGems environment.
 export GEM_HOME=$HOME/.gem
-export PATH=$GEM_HOME/ruby/2.0.0/bin:$PATH
+export PATH=$GEM_HOME/bin:$PATH
 
 # NodeJS / NVM
 export NVM_DIR="/Users/aldur/.nvm"
@@ -42,5 +42,8 @@ PATH=$NPM_PACKAGES/bin:$PATH
 if [ -d "$HOME/.bin" ]; then
     PATH="$HOME/.bin":$PATH
 fi
+
+# Load Python RC file
+export PYTHONSTARTUP="$HOME/.pythonrc"
 
 export PATH=$PATH
