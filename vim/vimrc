@@ -85,6 +85,9 @@
 
         " CMake
         Plug 'cmake'
+
+        " Doxygen
+        Plug 'mrtazz/DoxygenToolkit.vim'
     " }
 
     " ...Vim-plug is done
@@ -142,13 +145,17 @@
     set directory+=~/tmp//
     set directory+=.
 
-    " Tell vim to remember certain things when we exit
+    " Tell (n)vim to remember certain things when we exit
     "  '10  :  marks will be remembered for up to 10 previously edited files
     "  "100 :  will save up to 100 lines for each register
     "  :1000  :  up to 1000 lines of command-line history will be remembered
     "  %    :  saves and restores the buffer list
     "  n... :  where to save the viminfo files
-    set viminfo='10,\"100,:1000,%,n~/.vim/viminfo
+    if has('nvim')
+    set shada='20,<100,:1000,%,n~/.nvim/nviminfo
+    else
+    set viminfo='20,\"100,:100,%,n~/.vim/viminfo
+    endif
 
     if exists("+undofile")
         " undofile - This allows you to use undos after exiting and restarting
@@ -589,7 +596,14 @@
         " Enable C++11 standard
         let g:syntastic_cpp_compiler_options="-std=c++11 -stdlib=libc++ -Wall"
 
+        " Aggregate checkers
+        let g:syntastic_aggregate_errors = 1
+
         let g:syntastic_java_checkers = []
+
+        " Following requires https://github.com/myint/language-check, https://github.com/lpenz/atdtool
+        " let g:syntastic_text_checkers = ['language_check', 'atdtool']
+        " let g:syntastic_text_language_check_args = '--language=en-US'
     " }
 
     " Rainbow parenthesis {
