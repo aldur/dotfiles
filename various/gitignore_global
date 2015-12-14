@@ -42,6 +42,7 @@ __pycache__/
 *.pyc
 *.egg-info/
 dist/
+.coverage
 
 # Build files #
 ###################
