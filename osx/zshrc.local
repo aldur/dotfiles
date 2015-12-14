@@ -8,5 +8,21 @@ export TERM="screen-256color"
 # Open new MacVim buffers in the same MacVim window
 alias gvim='open -a MacVim '
 
+# Preferred editor for local and remote sessions
+_EDITOR=vim
+
+if hash nvim 2>/dev/null; then
+    _EDITOR=nvim
+else
+    _EDITOR=vim
+fi
+
+export EDITOR="$_EDITOR"
+export VISUAL="$EDITOR"
+
+function vim () {
+    "$_EDITOR" "$@"
+}
+
 # Source iTerm2 integration tools.
 source ~/.iterm2_shell_integration.`basename $SHELL`
