@@ -37,9 +37,7 @@ export PATH=$GEM_HOME/bin:$PATH
 
 # NodeJS / NVM
 export NVM_DIR="/Users/aldur/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-NODE_PATH=/usr/local/lib/node_modules/"$NODE_PATH"
-PATH=$NPM_PACKAGES/bin:$PATH
+. $(brew --prefix nvm)/nvm.sh
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/.bin" ]; then
