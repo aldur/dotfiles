@@ -66,3 +66,7 @@ aldur.xcuserdatad
 .uwsgi_plugins_builder/
 .ycm_extra_conf.py
 .qmake.*
+
+# Latex #
+#########
+*-eps-converted-to.pdf
