@@ -8,6 +8,9 @@ export TERM="screen-256color"
 # Open new MacVim buffers in the same MacVim window
 alias gvim='open -a MacVim '
 
+# Automatically use tmux in Control Center mode
+alias tc='tmux -CC'
+
 # Preferred editor for local and remote sessions
 _EDITOR=vim
 
@@ -24,5 +27,8 @@ function vim () {
     "$_EDITOR" "$@"
 }
 
+# Change NVIM cursor shape.
+export NVIM_TUI_ENABLE_CURSOR_SHAPE=1
+
 # Source iTerm2 integration tools.
-source ~/.iterm2_shell_integration.`basename $SHELL`
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
