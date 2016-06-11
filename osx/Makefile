@@ -1,4 +1,4 @@
-DOTFILES = latexmkrc tmux.conf zprofile zshrc.local
+DOTFILES = latexmkrc tmux.conf zprofile zshrc.local tmux-osx.conf
 
 .PHONY: all $(DOTFILES)
 
