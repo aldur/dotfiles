@@ -1,8 +1,8 @@
-" Modeline and Notes {
-" vim: set sw=4 ts=4 sts=4 et tw=78 foldmarker={,} foldlevel=0 foldmethod=marker spell:
-" }
+" Modeline and Notes {{{
+" vim: set sw=4 ts=4 sts=4 et tw=78 foldmarker={{{,}}} foldlevel=0 foldmethod=marker spell:
+" }}}
 
-" Vim-plug {
+" Vim-plug {{{
     " Auto-install Vim-plug (if needed)
     if empty(glob('~/.vim/autoload/plug.vim'))
         silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -11,90 +11,59 @@
     endif
     call plug#begin('~/.vim/plugged')
 
-    " the list of installed plugins
-    Plug 'mattn/webapi-vim'                " Gist requires it
-    Plug 'scrooloose/nerdtree',
-                \ { 'on':  'NERDTreeToggle' }             " File explorer
-    Plug 'scrooloose/syntastic'            " Syntax Checker (install pyflake to enable python checking)
-    Plug 'scrooloose/nerdcommenter'        " Useful commenter plugin
-    Plug 'bling/vim-airline'               " Better statusbar
-    Plug 'ctrlpvim/ctrlp.vim'              " Fuzzy file, buffer, mru, tag finder
-    Plug 'tpope/vim-repeat'                " Enable supported plugin actions to be repeated with '.'
-    Plug 'mileszs/ack.vim'                 " Ack plugin
-    Plug 'bogado/file-line'                " Open vim file:line
-    Plug 'terryma/vim-multiple-cursors'    " Sublime Text like multiple cursors
-    Plug 'auto-pairs-gentle'               " Auto pair parenthesis (gently)
-    Plug 'majutsushi/tagbar'               " Show a cool tagbar (requires ctags)
-    Plug 'tpope/vim-surround'              " All about surrounding
-    Plug 'honza/vim-snippets'              " Vim snippets
-    Plug 'mattn/gist-vim'                  " Gists!
-    Plug 'SirVer/ultisnips'                " Snippets engine
-    Plug 'rizzatti/dash.vim'               " Dash lookup (OSX only)
-    Plug 'Konfekt/FastFold'                " Better fold refresh
-    Plug 'junegunn/vim-peekaboo'           " See content of registers
-    Plug 'xolox/vim-misc'                  " Required by vim-session
-    Plug 'xolox/vim-session'               " Save and restore vim sessions
-    Plug 'ConradIrwin/vim-bracketed-paste'             " No more set past mode
+    " The list of installed plugins
+    Plug 'Konfekt/FastFold'             " Better fold refresh
+    Plug 'SirVer/ultisnips'             " Snippets engine
+    Plug 'bogado/file-line'             " Open vim file:line
+    Plug 'christoomey/vim-sort-motion'  " Add sort motion
+    Plug 'cohama/lexima.vim'            " Wonderful auto-pair
+    Plug 'ctrlpvim/ctrlp.vim'           " Fuzzy file, buffer, MRU, tag finder
+    Plug 'honza/vim-snippets'           " Vim snippets
+    Plug 'junegunn/vim-easy-align'      " Auto-align text
+    Plug 'junegunn/vim-peekaboo'        " See content of registers
+    Plug 'majutsushi/tagbar'            " Show a cool tagbar (requires ctags)
+    Plug 'mileszs/ack.vim'              " ack/ag plugin (requires ack/ag)
+    Plug 'scrooloose/syntastic'         " Syntax Checkers
+    Plug 'terryma/vim-multiple-cursors' " Multiple cursors in vim
+    Plug 'tpope/vim-commentary'         " Toggle comments
+    Plug 'tpope/vim-repeat'             " Enable supported plugin actions to be repeated with '.'
+    Plug 'tpope/vim-surround'           " All about surrounding
+    Plug 'tpope/vim-vinegar'            " Lightweight file manager
+    Plug 'vim-airline/vim-airline'      " Better statusbar
 
     " Completion handling
     Plug 'Valloric/YouCompleteMe',
                 \ { 'do': './install.py --clang-completer --gocode-completer'}
 
     " Appearance
-    Plug 'luochen1990/rainbow'             " Rainbow parenthesis (no more messes!)
-    Plug 'fatih/molokai'                  " Molokai color scheme
-    Plug 'fmoralesc/molokayo'              " Molokai improved
-    Plug 'junegunn/vim-easy-align'         " Auto-align text
+    Plug 'luochen1990/rainbow'          " Rainbow parenthesis (no more messes!)
+    Plug 'fatih/molokai'                " Molokai color scheme
+    Plug 'fmoralesc/molokayo'           " Molokai improved
 
-    " Language specific plugins {
+    " Language specific plugins {{{
         " Python
         Plug 'klen/python-mode', { 'for': 'python' }                " VIM as a powerful Python IDE
-        Plug 'tell-k/vim-autopep8', { 'for': 'python'}              " Autopep8
-        Plug 'django.vim', { 'for': 'python'}                       " Django syntax highlighting
-        Plug 'alfredodeza/pytest.vim', { 'for': 'python'}           " Python tests
 
         " Markdown
         Plug 'jtratner/vim-flavored-markdown'  " GitHub flavored markdown
         Plug 'suan/vim-instant-markdown',
-                    \ { 'for' : 'markdown' }       " Instant markdown preview in browser (requirements on GH)
-
-        " Javascript
-        " Plug 'jelera/vim-javascript-syntax'    " Better JS syntax highlighting
-        " Plug 'pangloss/vim-javascript'         " JS indent and folding
-        " Plug 'marijnh/tern_for_vim', { 'for': 'javascript' }            " JS code completion (YCM)
+                    \ { 'for' : 'markdown' }       " Instant markdown preview in browser (requirements on GitHub)
 
         " Latex
         Plug 'lervag/vimtex'
 
         " Go
-        Plug 'fatih/vim-go'
-                    \, { 'for': 'go' }                    " Go suite
+        Plug 'fatih/vim-go', { 'for': 'go' }                    " Go suite
+    " }}}
 
-        " Common LISP
-        " Plug 'kovisoft/slimv', { 'for': 'lisp' }
-
-        " Prose
-        Plug 'reedes/vim-wordy'
-        Plug 'reedes/vim-pencil'
-
-        " Perl
-        " Plug 'vim-perl/vim-perl',
-                    " \ { 'for': 'perl',
-                    " \ 'do': 'make clean carp dancer highlight-all-pragmas moose test-more try-tiny'
-                    " \ }
-
-        " CMake
-        Plug 'cmake'
-
-        " Doxygen
-        Plug 'mrtazz/DoxygenToolkit.vim'
-    " }
+    " Enable Vim-stay after all the other plugins
+    Plug 'kopischke/vim-stay'                 " Save and restore cursor position, folds and so on
 
     " ...Vim-plug is done
     call plug#end()
-" }
+" }}}
 
-" General {
+" General {{{
     set nocompatible                        " Disable useless backward compatibility
 
     " Sets how many lines of history VIM has to remember
@@ -111,14 +80,15 @@
     set mouse=a
     set mousehide               " Hide the mouse cursor while typing
 
-    " With a map leader it's possible to do extra key combinations
-    let mapleader   = ","
-    let g:mapleader = ","
-    let maplocalleader = ","
-    let g:maplocalleader = ","
-" }
+    " End of line (unix EOL is preferred over the dos one and before the mac one).
+    set fileformats=unix,dos,mac
 
-" Backup, swap, info and ignore files {
+    " With a map leader it's possible to do extra key combinations
+    let g:mapleader = "\<Space>"
+    let g:maplocalleader = "\<Space>"
+" }}}
+
+" Backup, swap, info and ignore files {{{
     set noswapfile  " Stop annoying swap files
 
     " Save your backups to a less annoying place than the current directory.
@@ -146,13 +116,14 @@
     set directory+=.
 
     " Tell (n)vim to remember certain things when we exit
-    "  '10  :  marks will be remembered for up to 10 previously edited files
+    "  '20  :  marks will be remembered for up to 10 previously edited files
     "  "100 :  will save up to 100 lines for each register
     "  :1000  :  up to 1000 lines of command-line history will be remembered
     "  %    :  saves and restores the buffer list
     "  n... :  where to save the viminfo files
     if has('nvim')
     set shada='20,<100,:1000,%,n~/.nvim/nviminfo
+    set viewdir=~/.vim/view
     else
     set viminfo='20,\"100,:100,%,n~/.vim/viminfo
     endif
@@ -175,9 +146,12 @@
     set wildignore+=*.png,*.gif,*.jpg,*.ico
     set wildignore+=.git,.svn,.hg
     set wildignore+=*/tmp/*,*.so,*.swp,*.zip
-" }
 
-" Appearance {
+    " Save cursor position, folds, and so on.
+    set viewoptions=cursor,folds,slash,unix
+" }}}
+
+" Appearance {{{
     syntax on
 
     "Always show current position
@@ -208,62 +182,65 @@
     set showmatch                   " Show matching brackets/parenthesis
     set matchtime=2                 " How many tenths of seconds to blink matching bracket/parenthesis
 
-    set linespace=0                 " No extra spaces between rows
+    set linespace=0                 " No extra spaces between rows in GUI
 
     " How to show completion informations in insert mode
     set completeopt=menu,longest
 
     " Allow the cursor to be one more the last char.
     set virtualedit=onemore
-" }
 
-" Search and commands {
-    set showcmd               " display incomplete commands
+    " Disable split separators
+    set fillchars=""
+" }}}
+
+" Search and commands {{{
+    set showcmd               " Display incomplete commands
+
+    " Magic pattern matching
+    set magic
 
     set incsearch             " Find as you type search
     set hlsearch              " Highlight search terms
     set ignorecase            " Case insensitive search
     set smartcase             " Case sensitive when upper case is present
-    set wildmenu              " Show list instead of just completing
-    set wildmode=longest,full " Command <Tab> completion, list matches, then longest common part, then all.
     set gdefault
 
-    " Magic pattern matching
-    set magic
+    set wildmenu              " Show list instead of just completing
+    set wildmode=longest,full " Command <Tab> completion, list matches, then longest common part, then all.
 
-    " Use sane regexes
+    " Use sane magic regexes
     nnoremap / /\v
     vnoremap / /\v
-" }
+" }}}
 
-" Text, lines, tab, indent and folding {
+" Text, lines, tab, indent and folding {{{
     " Set utf-8 as standard encoding
-    set encoding=utf-8  " The encoding displayed.
-    set fileencoding=utf-8  " The encoding written to file.
+    set encoding=utf-8                             " The encoding displayed.
+    set fileencoding=utf-8                         " The encoding written to file.
 
-    set backspace=indent,eol,start  " Backspace for dummies
-    set winminheight=0              " Windows can be 0 line high
-    set whichwrap=b,s,h,l,<,>,[,]   " Backspace and cursor keys wrap too
-    set list                        " Display whites
+    set backspace=indent,eol,start                 " Backspace for dummies
+    set whichwrap=b,s,h,l,<,>,[,]                  " Backspace and cursor keys wrap too
+    set list                                       " Display whites
     set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
 
-    set expandtab     " In insert mode, insert the appropriate number of spaces to insert a Tab
-    set smarttab      " Insert tabs in front of lines according to shiftwidth
-    set shiftwidth=4  " operation >> indents 4 columns; << unindents 4 columns
-    set tabstop=4     " a hard TAB displays as 4 columns
-    set expandtab     " insert spaces when hitting TABs
-    set softtabstop=4 " insert/delete 4 spaces when hitting a TAB/BACKSPACE
-    set shiftround    " round indent to multiple of 'shiftwidth'
-    set autoindent    " align the new line indent with the previous line
-    set cindent       " automatic C programming indenting
+    set expandtab                                  " In insert mode, insert the appropriate number of spaces to insert a Tab
+    set smarttab                                   " Insert tabs in front of lines according to shiftwidth
+    set shiftwidth=4                               " operation >> indents 4 columns; << unindents 4 columns
+    set tabstop=4                                  " a hard TAB displays as 4 columns
+    set expandtab                                  " insert spaces when hitting TABs
+    set softtabstop=4                              " insert/delete 4 spaces when hitting a TAB/BACKSPACE
+    set shiftround                                 " round indent to multiple of 'shiftwidth'
+    set autoindent                                 " align the new line indent with the previous line
+    set cindent                                    " automatic C programming indenting
 
     " Visually wrap lines too long
     set wrap
-    " turns off physical line wrapping
+    " Turn off physical line wrapping
     set textwidth=0 wrapmargin=0
 
-    set foldenable                  " Auto fold code
-    set foldlevelstart=1
+    " Do not insert comment leader on 'o'
+    set formatoptions-=o
 
     if has("autocmd")
         augroup GIT_COMMIT
@@ -275,7 +252,7 @@
     if has("autocmd")
         augroup LATEX
             autocmd!
-            autocmd Filetype tex setlocal spell conceallevel=0
+            autocmd Filetype tex setlocal spell conceallevel=0 synmaxcol=200 foldmethod=manual ttyfast lazyredraw
         augroup end
     endif
 
@@ -285,14 +262,20 @@
             autocmd Filetype ghmarkdown,markdown,md setlocal spell
         augroup end
     endif
-" }
+" }}}
 
-" Tabs, windows and buffers {
+" Tabs, windows and buffers {{{
     set hidden  " Allows to change buffer without saving
 
     " Open new split panes to right and bottom, which feels more natural
     set splitbelow
     set splitright
+
+    " Switch CWD to the directory of the open buffer
+    set autochdir
+
+    " Auto save on :next, :edit, :quit, etc.
+    set autowriteall
 
     " Smart way to move between windows
     nnoremap <C-h> <C-w>h
@@ -300,8 +283,15 @@
     nnoremap <C-k> <C-w>k
     nnoremap <C-l> <C-w>l
 
+    " Same smart ways with nvim terminal buffers
+    if has('nvim')
+        tnoremap <C-h> <C-\><C-n><C-w>h
+        tnoremap <C-j> <C-\><C-n><C-w>j
+        tnoremap <C-k> <C-\><C-n><C-w>k
+        tnoremap <C-l> <C-\><C-n><C-w>l
+    endif
+
     " Close the current buffer
-    nnoremap <leader>bc :bd<cr>
     nnoremap <leader>bd :bd<cr>
 
     " Close all the buffers
@@ -320,9 +310,6 @@
     " Opens a new tab with the current buffer's path
     " Super useful when editing files in the same directory
     nnoremap <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
-
-    " Switch CWD to the directory of the open buffer
-    nnoremap <leader>cd :cd %:p:h<cr>:pwd<cr>
 
     " Specify the behavior when switching between buffers
     try
@@ -343,6 +330,14 @@
     nmap <leader>f8 :set foldlevel=8<CR>
     nmap <leader>f9 :set foldlevel=9<CR>
 
+    " Exclude quickfix windows from buflist
+    if has("autocmd")
+        augroup qf
+            autocmd!
+            autocmd FileType qf set nobuflisted
+        augroup END
+    endif
+
     if has("autocmd")
         augroup buffers_windows_more
             autocmd!
@@ -354,12 +349,9 @@
             au VimResized * :wincmd =
         augroup END
     endif
-" }
+" }}}
 
-" Misc mappings {
-    " Fast saving
-    nmap <leader>w :w!<cr>
-
+" Misc mappings {{{
     " Remap VIM 0 to first non-blank character
     map 0 ^
 
@@ -375,25 +367,12 @@
     " Toggle paste mode on and off
     nnoremap <leader>pp :setlocal paste!<cr>
 
-    " Indent whole file
-    nnoremap <silent> <Leader>= :call Preserve("normal gg=G")<CR>
+    " Make Y yank everything from the cursor to the end of the line.
+    noremap Y y$
 
     " Visual shifting (does not exit Visual mode)
-    vnoremap < <gv
-    vnoremap > >gv
-
-    " Fix some usual typos with capitals
-    if has("user_commands")
-        command! -bang -nargs=* -complete=file E e<bang> <args>
-        command! -bang -nargs=* -complete=file W w<bang> <args>
-        command! -bang -nargs=* -complete=file Wq wq<bang> <args>
-        command! -bang -nargs=* -complete=file WQ wq<bang> <args>
-        command! -bang Wa wa<bang>
-        command! -bang WA wa<bang>
-        command! -bang Q q<bang>
-        command! -bang QA qa<bang>
-        command! -bang Qa qa<bang>
-    endif
+    " vnoremap < <gv
+    " vnoremap > >gv
 
     if &term =~ '^screen'
         " tmux will send xterm-style keys when xterm-keys is on
@@ -402,9 +381,9 @@
         execute "set <xRight>=\e[1;*C"
         execute "set <xLeft>=\e[1;*D"
     endif
-" }
+" }}}
 
-" Spell checking {
+" Spell checking {{{
     " Pressing ,ss will toggle and untoggle spell checking
     map <leader>ss :setlocal spell!<cr>
 
@@ -413,9 +392,9 @@
     nnoremap <leader>sp [s
     nnoremap <leader>sa zg
     nnoremap <leader>s? z=
-" }
+" }}}
 
-" Misc {
+" Misc {{{
     set iskeyword-=.                    " '.' is an end of word designator
     set iskeyword-=#                    " '#' is an end of word designator
     set iskeyword-=-                    " '-' is an end of word designator
@@ -425,50 +404,19 @@
         augroup annotations
             autocmd!
             autocmd Syntax * call matchadd('Todo',  '\W\zs\(TODO\|FIXME\|CHANGED\|XXX\|BUG\|HACK\)')
-            autocmd Syntax * call matchadd('Debug', '\W\zs\(NOTE\|INFO\|IDEA\)')
+            autocmd Syntax * call matchadd('Debug', '\W\zs\(NOTE\|INFO\|IDEA\|DEBUG\)')
         augroup END
     endif
+" }}}
 
-    if has("autocmd")
-        augroup XMLLINT
-            autocmd!
-            autocmd FileType xml setlocal equalprg=xmllint\ --format\ --recover\ -\ 2>/dev/null
-        augroup END
-    endif
-" }
-
-" Helper functions {
+" Helper functions {{{
     " Automatically switch to the current file directory when a new buffer is opened
-    if has("autocmd")
-        augroup autocd
-            autocmd!
-            autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" && bufname("") !~"^gist" | lcd %:p:h | endif
-        augroup END
-    endif
-
-    " A wrapper function to restore the cursor position, window position,
-    " and last search after running a command.
-    function! Preserve(command)
-        " Save the last search
-        let last_search=@/
-        " Save the current cursor position
-        let save_cursor = getpos('.')
-        " Save the window position
-        normal H
-        let save_window = getpos('.')
-        call setpos('.', save_cursor)
-
-        " Do the business:
-        execute a:command
-
-        " Restore the last_search
-        let @/=last_search
-        " Restore the window position
-        call setpos('.', save_window)
-        normal zt
-        " Restore the cursor position
-        call setpos('.', save_cursor)
-    endfunction
+    " if has("autocmd")
+    "     augroup autocd
+    "         autocmd!
+    "         autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" && bufname("") !~"^gist" | lcd %:p:h | endif
+    "     augroup END
+    " endif
 
     " Convenient command to see the difference between the current buffer and the
     " file it was loaded from, thus the changes you made.
@@ -478,7 +426,7 @@
                     \ | wincmd p | diffthis
     endif
 
-    " Strip whitespace {
+    " Strip whitespace {{{
     function! StripTrailingWhitespace()
         " Preparation: save last search, and cursor position.
         let _s=@/
@@ -490,80 +438,39 @@
         let @/=_s
         call cursor(l, c)
     endfunction
-    " }
+    " }}}
 
     " Before saving, delete trailing white-spaces and ^M
     augroup delete_trailing
         autocmd!
         autocmd FileType c,cpp,java,php,javascript,python,twig,xml,yml,vim,tex autocmd BufWritePre <buffer> call StripTrailingWhitespace()
     augroup END
+" }}}
 
-    " http://vim.wikia.com/wiki/Restore_cursor_to_file_position_in_previous_editing_session
-    " Restore cursor to file position in previous editing session
-    function! ResCur()
-        if line("'\"") <= line("$")
-            normal! g`"
-            return 1
-        endif
-    endfunction
-" }
-
-" Plugin settings {
-    " Tagbar {
+" Plugin settings {{{
+    " Tagbar {{{
         nnoremap <silent> <leader>tb :TagbarToggle<CR>
-    " }
+    " }}}
 
-    " NerdCommenter {
-        let NERDSpaceDelims=1
-        let g:NERDRemoveExtraSpaces=1
-        let g:NERDCommentWholeLinesInVMode=2
-    " }
-
-    " NerdTree {
-        nnoremap <silent> <leader>kb :NERDTreeToggle<CR>
-        let NERDTreeShowBookmarks=1
-        let NERDTreeQuitOnOpen=1
-        let NERDTreeMouseMode=2
-        let g:nerdtree_tabs_open_on_gui_startup=0
-        let g:nerdtree_tabs_open_on_console_startup=0
-        let NERDTreeShowHidden=0
-        let g:NERDTreeMapOpenInTabSilent = 't'
-        let g:NERDTreeMapOpenInTabSilent = 'f'
-        let NERDTreeAutoDeleteBuffer=1
-        let NERDTreeChDirMode=2
-        let NERDTreeIgnore=['\.o$', '\.so$', '\.bmp$', '\.class$', '^core.*',
-                    \ '\.vim$', '\~$', '\.pyc$', '\.pyo$', '\.jpg$', '\.gif$',
-                    \ '\.png$', '\.ico$', '\.exe$', '\.cod$', '\.obj$', '\.mac$',
-                    \ '\.1st', '\.dll$', '\.pyd$', '\.zip$', '\.modules$',
-                    \ '\.git', '\.hg', '\.svn', '\.bzr' ]
-    " }
-
-    " CtrlP {
+    " CtrlP {{{
         let g:ctrlp_map = '<c-p>'
         let g:ctrlp_cmd = 'CtrlP'
 
         " Use the nearest .git directory as the cwd
-        " " This makes a lot of sense if you are working on a project that is
+        " This makes a lot of sense if you are working on a project that is
         " in version control. It also supports works with .svn, .hg, .bzr.
         let g:ctrlp_working_path_mode = 'ra'
-
-        nnoremap <c-p> :CtrlPBufTag<cr>
-
-        let g:ctrlp_custom_ignore = {
-                    \ 'dir':  '\.git$\|\.yardoc\|public\|log\|tmp$\|backup\|_site$',
-                    \ 'file': '\.so$\|\.dat$|\.DS_Store\|\.po$'
-                    \ }
 
         let g:ctrlp_cache_dir = $HOME.'/.vim/.cache/ctrlp'
         let g:ctrlp_match_window_reversed = 1
         let g:ctrlp_clear_cache_on_exit = 0
-    " }
 
-    " Autopep8 {
-        let g:autopep8_disable_show_diff = 1 " Do not show diff after autopep8
-    " }
+        " Automatically enable CtrlP extensions.
+        let g:ctrlp_extensions = ['buffertag', 'quickfix', 'undo', 'line', 'changes', 'mixed']
 
-    " Vim Airline / Statusbar {
+    " }}}
+
+    " Vim Airline / Statusbar {{{
         let g:bufferline_echo = 0
         set noshowmode   " show statusbar by default
         set laststatus=2 " always show the statusbar
@@ -573,9 +480,9 @@
         let g:airline_powerline_fonts = 1            "  powerline fonts
         let g:airline_theme = "dark"                 "  dark theme
         let g:airline#extensions#whitespace#enabled = 0
-    " }
+    " }}}
 
-    " Syntastic {
+    " Syntastic {{{
         let g:syntastic_check_on_open        = 1
         let g:syntastic_error_symbol         = "✗"
         let g:syntastic_warning_symbol       = "⚠"
@@ -585,32 +492,37 @@
         let g:syntastic_always_populate_loc_list = 2
         let g:syntastic_auto_loc_list = 2
 
-        " Enable again perl checker
-        let g:syntastic_enable_perl_checker = 1
-        let g:syntastic_perl_checkers = ['perl']
-
-        " Enable check C headers file
-        let g:syntastic_c_check_header = 1
-        let g:syntastic_c_compiler_options = '-Wall'
-
-        " Enable C++11 standard
-        let g:syntastic_cpp_compiler_options="-std=c++11 -stdlib=libc++ -Wall"
-
         " Aggregate checkers
         let g:syntastic_aggregate_errors = 1
 
-        let g:syntastic_java_checkers = []
+        " Language specific checkers {{{
+            " Java
+            let g:syntastic_java_checkers = []
 
-        " Following requires https://github.com/myint/language-check, https://github.com/lpenz/atdtool
-        " let g:syntastic_text_checkers = ['language_check', 'atdtool']
-        " let g:syntastic_text_language_check_args = '--language=en-US'
-    " }
+            " Go
+            let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
 
-    " Rainbow parenthesis {
+            " Enable again perl checker
+            let g:syntastic_enable_perl_checker = 1
+            let g:syntastic_perl_checkers = ['perl']
+
+            " Enable check C headers file
+            let g:syntastic_c_check_header = 1
+            let g:syntastic_c_compiler_options = '-Wall'
+
+            " Enable C++11 standard
+            let g:syntastic_cpp_compiler_options="-std=c++11 -stdlib=libc++ -Wall"
+
+            " Javascript
+            let g:syntastic_javascript_jshint_args = "--extract=auto"
+        " }}}
+    " }}}
+
+    " Rainbow parenthesis {{{
         let g:rainbow_active = 1  " Activate rainbows
-    " }
+    " }}}
 
-    " Auto-pairs-gentle {
+    " Auto-pairs-gentle {{{
         let g:AutoPairsUseInsertedCount = 1  " Make it gentle
 
         if has('autocmd')
@@ -619,14 +531,13 @@
                 autocmd Filetype lisp let b:AutoPairs = {}
             augroup END
         endif
-    " }
+    " }}}
 
-    " Multi Cursors {
+    " Multi Cursors {{{
         let g:multi_cursor_exit_from_visual_mode = 1  " Keep cursors when exiting from V mode
-        " let g:multi_cursor_exit_from_insert_mode = 1  " Keep cursors when exiting from I mode
-    " }
+    " }}}
 
-    " YouCompleteMe / Ultisnips {
+    " YouCompleteMe / Ultisnips {{{
         let g:ycm_autoclose_preview_window_after_completion = 1
 
         " enable completion from tags
@@ -662,34 +573,28 @@
         let g:snips_email=g:email
         let g:github='https://github.com/aldur'
         let g:snips_github=g:github
-    " }
+    " }}}
 
-    " GitHub Flavored Markdown "{
+    " GitHub Flavored Markdown "{{{
         augroup markdown
             au!
             au BufNewFile,BufRead *.md,*.markdown setlocal filetype=ghmarkdown
         augroup END
-    " }
+    " }}}
 
-    " Vim Instant Markdown {
+    " Vim Instant Markdown {{{
         let g:instant_markdown_slow = 1
-    " }
+    " }}}
 
-    " Gist {
-        let g:gist_detect_filetype = 1
-        let g:gist_open_browser_after_post = 1
-        let g:gist_post_private = 1
-        let g:gist_show_privates = 1
-    " }
-
-    " Py-Mode {
+    " Py-Mode {{{
         let g:pymode = 1
         let g:pymode_warnings = 0
 
-        let g:pymode_trim_whitespaces = 1
+        let g:pymode_trim_whitespaces = 1  " We already do that
+        let g:pymode_options = 0
         let g:pymode_options_colorcolumn = 0
         let g:pymode_indent = 1
-        let g:pymode_folding = 1
+        let g:pymode_folding = 0
         let g:pymode_motion = 1
 
         let g:pymode_doc = 1
@@ -698,8 +603,8 @@
         let g:pymode_breakpoint = 0
         let g:pymode_virtualenv = 1
 
-        " Disable linting at all
-        let g:pymode_lint = 0
+        " Enable manual linting only
+        let g:pymode_lint = 1
         let g:pymode_lint_on_write = 0
         let g:pymode_lint_unmodified = 0
         let g:pymode_lint_on_fly = 0
@@ -715,64 +620,95 @@
         let g:pymode_rope_complete_on_dot = 0
         let g:pymode_rope_lookup_project = 0
         let g:pymode_rope_autoimport = 0
-    " }
 
-    " { Autopep8
-        let g:autopep8_disable_show_diff=1
-    " }
+        " Automatically fix PEP8 errors in the current buffer:
+        if has('autocmd')
+            augroup autopep8
+                autocmd!
+                autocmd Filetype python noremap <F8> :PymodeLintAuto<CR>
+            augroup END
+        endif
+    "}}}
 
-    " { Dash
-        nmap <silent> <leader>K <Plug>DashSearch
-    " }
-
-    " { Javascript
-        let g:syntastic_javascript_jshint_args = "--extract=auto"
-        let javascript_enable_domhtmlcss = 1
-    " }
-
-    " Vimtex settings {
+    " Vimtex settings {{{
         let g:vimtex_enabled = 1
+        let g:tex_flavor = "latex"  " Open '.tex' files as 'tex' and not 'plaintex'.
 
         let g:vimtex_quickfix_mode = 2  " Auto-open with no focus.
         let g:vimtex_latexmk_build_dir = "build"
 
-        let g:vimtex_view_general_viewer
-            \ = '/Applications/Skim.app/Contents/SharedSupport/displayline'
-        let g:vimtex_view_general_options = '@line @pdf @tex'
+        " Skim as a PDF viewer
+        let g:vimtex_view_general_viewer = '/Applications/Skim.app/Contents/SharedSupport/displayline'
+        let g:vimtex_view_general_options = '-r @line @pdf @tex'
 
+        " This adds a callback hook that updates Skim after compilation
+        let g:vimtex_latexmk_callback_hooks = ['UpdateSkim']
+        function! UpdateSkim(status)
+            if !a:status | return | endif
+
+            let l:out = b:vimtex.out()
+            let l:cmd = [g:vimtex_view_general_viewer, '-r']
+            if !empty(system('pgrep Skim'))
+                call extend(l:cmd, ['-g'])
+            endif
+            if has('nvim')
+                call jobstart(l:cmd + [line('.'), l:out])
+            elseif has('job')
+                call job_start(l:cmd + [line('.'), l:out])
+            else
+                call system(join(l:cmd + [line('.'), shellescape(l:out)], ' '))
+            endif
+        endfunction
+
+        " YCM semantic completion
         if !exists('g:ycm_semantic_triggers')
             let g:ycm_semantic_triggers = {}
         endif
         let g:ycm_semantic_triggers.tex = [
-                \ 're!\\[A-Za-z]*(ref|cite)[A-Za-z]*([^]]*])?{([^}]*,?)*',
-                \ 're!\\includegraphics([^]]*])?{[^}]*',
-                \ 're!\\(include|input){[^}]*'
-                \ ]
-    " }
-    " Vim-easy-align {
+                    \ 're!\\[A-Za-z]*cite[A-Za-z]*(\[[^]]*\]){0,2}{[^}]*',
+                    \ 're!\\[A-Za-z]*ref({[^}]*|range{([^,{}]*(}{)?))',
+                    \ 're!\\hyperref\[[^]]*',
+                    \ 're!\\includegraphics\*?(\[[^]]*\]){0,2}{[^}]*',
+                    \ 're!\\(include(only)?|input){[^}]*',
+                    \ 're!\\\a*(gls|Gls|GLS)(pl)?\a*(\s*\[[^]]*\]){0,2}\s*\{[^}]*',
+                    \ 're!\\includepdf(\s*\[[^]]*\])?\s*\{[^}]*',
+                    \ 're!\\includestandalone(\s*\[[^]]*\])?\s*\{[^}]*',
+                    \ ]
+
+        " Disable insert mode mappings
+        let g:vimtex_imaps_enabled = 0
+
+        augroup latexSurround
+            autocmd!
+            autocmd FileType tex call s:latexSurround()
+        augroup END
+
+        function! s:latexSurround()
+            let b:surround_{char2nr("e")}
+                        \ = "\\begin{\1environment: \1}\n\t\r\n\\end{\1\1}"
+            let b:surround_{char2nr("c")} = "\\\1command: \1{\r}"
+        endfunction
+    " }}}
+
+    " Vim-easy-align {{{
         " Start interactive EasyAlign in visual mode (e.g. vip<Enter>)
         vmap <Enter> <Plug>(EasyAlign)
 
         " Start interactive EasyAlign for a motion/text object (e.g. gaip)
         nmap ga <Plug>(EasyAlign)
-    " }
+    " }}}
 
-    " Vim-session {
-        " Disable all session locking - I know what I'm doing :-).
-        let g:session_lock_enabled = 0
-
-        set sessionoptions+=folds
-    " }
-
-    " Molokai {
+    " Molokai {{{
         let g:molokai_original = 1
-    " }
+    " }}}
 
-    " Vim-Go {
+    " Vim-Go {{{
         " Enable better syntax highlighting
         let g:go_highlight_functions = 1
         let g:go_highlight_methods = 1
+        let g:go_highlight_fields = 1
         let g:go_highlight_structs = 1
+        let g:go_highlight_interfaces = 1
         let g:go_highlight_operators = 1
         let g:go_highlight_build_constraints = 1
 
@@ -780,7 +716,7 @@
         let g:go_fmt_experimental = 1
 
         " Show info for word under cursor
-        let g:go_auto_type_info = 0
+        let g:go_auto_type_info = 1
 
         if has('autocmd')
             augroup vim_go_mappings
@@ -798,26 +734,30 @@
                 au FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
 
                 au FileType go nmap <Leader>e <Plug>(go-rename)
-                au FileType go nmap <Leader>i <Plug>(go-info)
+                au FileType go nmap <Leader>i <Plug>(go-imports)
                 au FileType go nmap <Leader>s <Plug>(go-implements)
             augroup END
         endif
-    " }
 
-    " Pencil {
-    if has('autocmd')
-        augroup pencil
-            autocmd!
-            autocmd FileType ghmarkdown,markdown,mkd call pencil#init({'wrap': 'soft', 'textwidth': 80})
-        augroup END
-    endif
-    " }
-" }
+        " Syntastic integration
+        let g:go_list_type = "quickfix"
+    " }}}
 
-" Ending settings {
+    " ack.vim {{{
+        if executable('ag')
+            let g:ackprg = 'ag --vimgrep'
+            cnoreabbrev ag Ack
+            cnoreabbrev aG Ack
+            cnoreabbrev Ag Ack
+            cnoreabbrev AG Ack
+        endif
+    " }}}
+" }}}
+
+" Ending settings {{{
     if filereadable(expand("~/.vimrc.local"))
         source ~/.vimrc.local
     endif
 
     set secure
-" }
+" }}}
