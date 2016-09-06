@@ -28,9 +28,6 @@ PATH="/usr/local/opt/go/libexec/bin:$GOPATH/bin:$PATH"
 export LANG=en_US.UTF-8
 export JAVA_HOME=$(/usr/libexec/java_home)
 
-# OPAM configuration
-. /Users/aldur/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
-
 # RubyGems environment.
 export GEM_HOME=$HOME/.gem
 export PATH=$GEM_HOME/bin:$PATH
@@ -59,3 +56,5 @@ fi
 
 # Ask homebrew to disable analytics
 export HOMEBREW_NO_ANALYTICS=1
+# Do not automatically update brew
+export HOMEBREW_NO_AUTO_UPDATE=1
