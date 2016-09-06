@@ -14,15 +14,14 @@
     " The list of installed plugins
     Plug 'Konfekt/FastFold'             " Better fold refresh
     Plug 'SirVer/ultisnips'             " Snippets engine
+    Plug 'honza/vim-snippets'           " Vim snippets
     Plug 'bogado/file-line'             " Open vim file:line
     Plug 'christoomey/vim-sort-motion'  " Add sort motion
     Plug 'cohama/lexima.vim'            " Wonderful auto-pair
     Plug 'ctrlpvim/ctrlp.vim'           " Fuzzy file, buffer, MRU, tag finder
-    Plug 'honza/vim-snippets'           " Vim snippets
     Plug 'junegunn/vim-easy-align'      " Auto-align text
     Plug 'junegunn/vim-peekaboo'        " See content of registers
     Plug 'majutsushi/tagbar'            " Show a cool tagbar (requires ctags)
-    Plug 'mileszs/ack.vim'              " ack/ag plugin (requires ack/ag)
     Plug 'scrooloose/syntastic'         " Syntax Checkers
     Plug 'terryma/vim-multiple-cursors' " Multiple cursors in vim
     Plug 'tpope/vim-commentary'         " Toggle comments
@@ -42,18 +41,18 @@
 
     " Language specific plugins {{{
         " Python
-        Plug 'klen/python-mode', { 'for': 'python' }                " VIM as a powerful Python IDE
+        Plug 'klen/python-mode', { 'for': 'python' } " VIM as a powerful Python IDE
 
         " Markdown
-        Plug 'jtratner/vim-flavored-markdown'  " GitHub flavored markdown
+        Plug 'jtratner/vim-flavored-markdown'        " GitHub flavored markdown
         Plug 'suan/vim-instant-markdown',
-                    \ { 'for' : 'markdown' }       " Instant markdown preview in browser (requirements on GitHub)
+                    \ { 'for' : 'markdown' }         " Instant markdown preview in browser (requirements on GitHub)
 
         " Latex
-        Plug 'lervag/vimtex'
+        Plug 'lervag/vimtex', {'for': 'tex' }
 
         " Go
-        Plug 'fatih/vim-go', { 'for': 'go' }                    " Go suite
+        Plug 'fatih/vim-go', { 'for': 'go' }         " Go suite
     " }}}
 
     " Enable Vim-stay after all the other plugins
@@ -370,10 +369,6 @@
     " Make Y yank everything from the cursor to the end of the line.
     noremap Y y$
 
-    " Visual shifting (does not exit Visual mode)
-    " vnoremap < <gv
-    " vnoremap > >gv
-
     if &term =~ '^screen'
         " tmux will send xterm-style keys when xterm-keys is on
         execute "set <xUp>=\e[1;*A"
@@ -407,17 +402,16 @@
             autocmd Syntax * call matchadd('Debug', '\W\zs\(NOTE\|INFO\|IDEA\|DEBUG\)')
         augroup END
     endif
+
+    if executable("ag")
+        set grepprg=ag\ --vimgrep\ $*
+        set grepformat=%f:%l:%c:%m
+    elseif executable("ack")
+        set grepprg=ack\ -k
+    endif
 " }}}
 
 " Helper functions {{{
-    " Automatically switch to the current file directory when a new buffer is opened
-    " if has("autocmd")
-    "     augroup autocd
-    "         autocmd!
-    "         autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" && bufname("") !~"^gist" | lcd %:p:h | endif
-    "     augroup END
-    " endif
-
     " Convenient command to see the difference between the current buffer and the
     " file it was loaded from, thus the changes you made.
     " Only define it when not defined already.
@@ -443,7 +437,7 @@
     " Before saving, delete trailing white-spaces and ^M
     augroup delete_trailing
         autocmd!
-        autocmd FileType c,cpp,java,php,javascript,python,twig,xml,yml,vim,tex autocmd BufWritePre <buffer> call StripTrailingWhitespace()
+        autocmd FileType c,cpp,java,php,javascript,python,twig,xml,yml,vim,tex,lua autocmd BufWritePre <buffer> call StripTrailingWhitespace()
     augroup END
 " }}}
 
@@ -472,28 +466,55 @@
 
     " Vim Airline / Statusbar {{{
         let g:bufferline_echo = 0
-        set noshowmode   " show statusbar by default
+        set noshowmode   " do not show default mode indicator
         set laststatus=2 " always show the statusbar
 
-        let g:airline#extensions#tabline#enabled = 1 "  smarter tab view
-        let g:airline#extensions#tabline#fnamemod = ':t'  "  only show filename
-        let g:airline_powerline_fonts = 1            "  powerline fonts
-        let g:airline_theme = "dark"                 "  dark theme
-        let g:airline#extensions#whitespace#enabled = 0
+        " general configuration
+        let g:airline#extensions#disable_rtp_load = 1 " do not find extensions in run time path
+        let g:airline_powerline_fonts             = 1 " powerline fonts
+
+        " custom symbols
+        if !exists('g:airline_symbols')
+            let g:airline_symbols = {}
+        endif
+
+        let g:airline_symbols.linenr    = ''
+        let g:airline_symbols.maxlinenr = ''
+        let g:airline_symbols.spell     = 'S'
+        let g:airline_symbols.paste     = 'P'
+
+        " extensions
+        " only load what you want
+        let g:airline_extensions = [ 'syntastic', 'tagbar', 'ctrlp', 'virtualenv', 'tabline' ]
+
+        let g:airline#extensions#tabline#fnamemod   = ':t' " only show filename in tab
+        let g:airline#extensions#quickfix#quickfix_text = 'Quickfix'
+        let g:airline#extensions#quickfix#location_text = 'Location'
+
     " }}}
 
     " Syntastic {{{
-        let g:syntastic_check_on_open        = 1
-        let g:syntastic_error_symbol         = "✗"
-        let g:syntastic_warning_symbol       = "⚠"
-        let g:syntastic_style_error_symbol   = '⚡'
-        let g:syntastic_style_warning_symbol = '⚡'
+        let g:syntastic_check_on_open            = 1 " Automatically check on file open
+        let g:syntastic_always_populate_loc_list = 1 " Fill location list
+        let g:syntastic_auto_loc_list            = 2 " Close it when no errors are detected
 
-        let g:syntastic_always_populate_loc_list = 2
-        let g:syntastic_auto_loc_list = 2
+        let g:syntastic_error_symbol         = "\u2718"
+        highlight SyntasticErrorSign ctermbg=235 ctermfg=red guifg=red
+
+        let g:syntastic_warning_symbol       = "\u2718"
+        highlight SyntasticWarningSign ctermbg=235 ctermfg=208 guifg=orange
+
+        let g:syntastic_style_error_symbol   = "\u26A0"
+        highlight link SyntasticStyleErrorSign SyntasticErrorSign
+
+        let g:syntastic_style_warning_symbol   = "\u26A0"
+        highlight link SyntasticStyleWarningSign SyntasticWarningSign
 
         " Aggregate checkers
         let g:syntastic_aggregate_errors = 1
+
+        " Syntastic status line for airline
+        let g:syntastic_stl_format = "%E{#%e Errs: %fe}%B{, }%W{#%w Warns: %fw}"
 
         " Language specific checkers {{{
             " Java
@@ -515,6 +536,9 @@
 
             " Javascript
             let g:syntastic_javascript_jshint_args = "--extract=auto"
+
+            " Lua
+            let g:syntastic_lua_checkers = ['luac', 'luacheck']
         " }}}
     " }}}
 
@@ -741,16 +765,6 @@
 
         " Syntastic integration
         let g:go_list_type = "quickfix"
-    " }}}
-
-    " ack.vim {{{
-        if executable('ag')
-            let g:ackprg = 'ag --vimgrep'
-            cnoreabbrev ag Ack
-            cnoreabbrev aG Ack
-            cnoreabbrev Ag Ack
-            cnoreabbrev AG Ack
-        endif
     " }}}
 " }}}
 
