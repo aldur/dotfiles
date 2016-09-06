@@ -1,6 +1,8 @@
 # .zprofile
 # We'll set the environemnt variables here
 
+skip_global_compinit=1
+
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
@@ -8,11 +10,11 @@ export LANG=en_US.UTF-8
 PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 
 # Gnu coreutils take precedence
-PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
 # And Gnu coreutils manuals
-export MANPATH="$(brew --prefix coreutils)/libexec/gnuman:$MANPATH"
+export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
 
-# Virtualenvwrapper
+# Virtualenv / Virtualenvwrapper
 export WORKON_HOME=$HOME/Programmazione/VirtualEnvs
 export PROJECT_HOME=$HOME/Programmazione
 source /usr/local/bin/virtualenvwrapper_lazy.sh
@@ -25,25 +27,16 @@ export GOPATH=$HOME/Programmazione/Go
 PATH="/usr/local/opt/go/libexec/bin:$GOPATH/bin:$PATH"
 
 # Java
-export LANG=en_US.UTF-8
 export JAVA_HOME=$(/usr/libexec/java_home)
 
 # RubyGems environment.
 export GEM_HOME=$HOME/.gem
 export PATH=$GEM_HOME/bin:$PATH
 
-# NodeJS / NVM
-export NVM_DIR="/Users/aldur/.nvm"
-. $(brew --prefix nvm)/nvm.sh
-
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/.bin" ]; then
-    PATH="$HOME/.bin":$PATH
-fi
-
 # Load Python RC file
 export PYTHONSTARTUP="$HOME/.pythonrc"
 
+# Export $PATH
 export PATH=$PATH
 
 # GPG agent
