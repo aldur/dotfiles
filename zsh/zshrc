@@ -21,8 +21,6 @@ plugins=( \
     git \ 
     virtualenv \  # Auto-completion
     brew \ 
-    # rsync vagrant \
-    # mvn django \
     colored-man \  # Colors
     zsh-syntax-highlighting \  # Spellchecking
     history-substring-search z \  # Utilities
