@@ -1,5 +1,5 @@
 " Modeline and Notes {{{
-" vim: set sw=4 ts=4 sts=4 et tw=78 foldmarker={{{,}}} foldlevel=0 foldmethod=marker spell:
+" vim: set sw=4 ts=4 sts=4 et tw=78 foldmarker={{{,}}} foldlevel=0 foldmethod=marker spell formatoptions=jcrql :
 " }}}
 
 " Vim-plug {{{
@@ -13,46 +13,62 @@
 
     " The list of installed plugins
     Plug 'Konfekt/FastFold'             " Better fold refresh
-    Plug 'SirVer/ultisnips'             " Snippets engine
-    Plug 'honza/vim-snippets'           " Vim snippets
     Plug 'bogado/file-line'             " Open vim file:line
-    Plug 'christoomey/vim-sort-motion'  " Add sort motion
+    Plug 'christoomey/vim-sort-motion'  " Add gl sort motion
     Plug 'cohama/lexima.vim'            " Wonderful auto-pair
     Plug 'ctrlpvim/ctrlp.vim'           " Fuzzy file, buffer, MRU, tag finder
-    Plug 'junegunn/vim-easy-align'      " Auto-align text
+    Plug 'honza/vim-snippets'           " Vim snippets
     Plug 'junegunn/vim-peekaboo'        " See content of registers
-    Plug 'majutsushi/tagbar'            " Show a cool tagbar (requires ctags)
+    Plug 'justinmk/vim-sneak'           " Sneak motion
+    Plug 'ludovicchabant/vim-gutentags' " Automatic tag management
     Plug 'scrooloose/syntastic'         " Syntax Checkers
-    Plug 'terryma/vim-multiple-cursors' " Multiple cursors in vim
+    Plug 'tommcdo/vim-lion'             " Add gl/gL to align text
     Plug 'tpope/vim-commentary'         " Toggle comments
     Plug 'tpope/vim-repeat'             " Enable supported plugin actions to be repeated with '.'
     Plug 'tpope/vim-surround'           " All about surrounding
     Plug 'tpope/vim-vinegar'            " Lightweight file manager
     Plug 'vim-airline/vim-airline'      " Better statusbar
+    Plug 'wellle/targets.vim'           " Additional text objects
 
-    " Completion handling
+    " Lazy loaded plugins / platform specific plugins
     Plug 'Valloric/YouCompleteMe',
-                \ { 'do': './install.py --clang-completer --gocode-completer'}
+                \ { 'do': './install.py --clang-completer --gocode-completer',
+                \ 'on': [] } " Completion engine
+    Plug 'SirVer/ultisnips',
+                \ { 'on': [] } " Snippets engine
+
+    Plug 'Shougo/deoplete.nvim',
+                \ has('nvim') ? {'do': ':UpdateRemotePlugins'}
+                \ : { 'on': [] } " Completion engine - only works with NeoVim
 
     " Appearance
-    Plug 'luochen1990/rainbow'          " Rainbow parenthesis (no more messes!)
-    Plug 'fatih/molokai'                " Molokai color scheme
-    Plug 'fmoralesc/molokayo'           " Molokai improved
+    Plug 'junegunn/rainbow_parentheses.vim' " Rainbow parentheses
+    Plug 'fatih/molokai'                    " Molokai color scheme
 
     " Language specific plugins {{{
         " Python
         Plug 'klen/python-mode', { 'for': 'python' } " VIM as a powerful Python IDE
 
         " Markdown
-        Plug 'jtratner/vim-flavored-markdown'        " GitHub flavored markdown
+        Plug 'jtratner/vim-flavored-markdown',
+                    \ { 'for' : 'markdown' }         " GitHub flavored markdown
         Plug 'suan/vim-instant-markdown',
                     \ { 'for' : 'markdown' }         " Instant markdown preview in browser (requirements on GitHub)
 
         " Latex
-        Plug 'lervag/vimtex', {'for': 'tex' }
+        Plug 'lervag/vimtex', { 'for': 'tex' }
 
         " Go
-        Plug 'fatih/vim-go', { 'for': 'go' }         " Go suite
+        Plug 'fatih/vim-go', { 'for': 'go' }
+    " }}}
+
+    " Deoplete specific plugins {{{
+        Plug 'zchee/deoplete-jedi',
+                    \ has('nvim') ? {  } : { 'on': [] } " Python completion
+        Plug 'zchee/deoplete-go',
+                    \ has('nvim') ? { 'do': 'make' } : { 'on': [] }  " Go completion
+        Plug 'zchee/deoplete-clang',
+                    \ has('nvim') ? {  } : { 'on': [] }  " Clang completion
     " }}}
 
     " Enable Vim-stay after all the other plugins
@@ -63,10 +79,12 @@
 " }}}
 
 " General {{{
-    set nocompatible                        " Disable useless backward compatibility
+    if !has('nvim')
+        set nocompatible                        " Disable useless backward compatibility
+    end
 
     " Sets how many lines of history VIM has to remember
-    set history=1000
+    set history=10000 " Maximum value for history
 
     " Set to auto read when a file is changed from the outside
     set autoread
@@ -121,10 +139,10 @@
     "  %    :  saves and restores the buffer list
     "  n... :  where to save the viminfo files
     if has('nvim')
-    set shada='20,<100,:1000,%,n~/.nvim/nviminfo
-    set viewdir=~/.vim/view
+        set shada='20,<100,:1000,%,n~/.nvim/nviminfo
+        set viewdir=~/.vim/view
     else
-    set viminfo='20,\"100,:100,%,n~/.vim/viminfo
+        set viminfo='20,\"100,:100,%,n~/.vim/viminfo
     endif
 
     if exists("+undofile")
@@ -151,8 +169,6 @@
 " }}}
 
 " Appearance {{{
-    syntax on
-
     "Always show current position
     set cursorline                   " highlights the current line
 
@@ -183,14 +199,30 @@
 
     set linespace=0                 " No extra spaces between rows in GUI
 
-    " How to show completion informations in insert mode
-    set completeopt=menu,longest
-
     " Allow the cursor to be one more the last char.
     set virtualedit=onemore
 
-    " Disable split separators
+    " Disable split separator characters
     set fillchars=""
+" }}}
+
+" Auto completion {{{
+    " How to show completion informations in insert mode
+    set completeopt=menuone,longest
+
+    " Clever tab to cycle the completion popup menu
+    function! CleverTab()
+        if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
+            return "\<Tab>"
+        else
+            return "\<C-N>"
+        endif
+    endfunction
+    inoremap <Tab> <C-R>=CleverTab()<CR>
+
+    if has("patch-7.4.314")
+        set shortmess+=c " Quiet completions
+    endif
 " }}}
 
 " Search and commands {{{
@@ -215,7 +247,9 @@
 
 " Text, lines, tab, indent and folding {{{
     " Set utf-8 as standard encoding
-    set encoding=utf-8                             " The encoding displayed.
+    if !has('nvim') " NeoVim defaults to this
+        set encoding=utf-8                             " The encoding displayed.
+    end
     set fileencoding=utf-8                         " The encoding written to file.
 
     set backspace=indent,eol,start                 " Backspace for dummies
@@ -239,7 +273,10 @@
     set textwidth=0 wrapmargin=0
 
     " Do not insert comment leader on 'o'
-    set formatoptions-=o
+    augroup FORMAT_OPTIONS
+        autocmd!
+        autocmd FileType * setlocal formatoptions-=o
+    augroup end
 
     if has("autocmd")
         augroup GIT_COMMIT
@@ -306,10 +343,6 @@
     nnoremap <leader>tc :tabclose<cr>
     nnoremap <leader>tm :tabmove
 
-    " Opens a new tab with the current buffer's path
-    " Super useful when editing files in the same directory
-    nnoremap <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
-
     " Specify the behavior when switching between buffers
     try
         set switchbuf=useopen,usetab,newtab
@@ -322,12 +355,6 @@
     nmap <leader>f1 :set foldlevel=1<CR>
     nmap <leader>f2 :set foldlevel=2<CR>
     nmap <leader>f3 :set foldlevel=3<CR>
-    nmap <leader>f4 :set foldlevel=4<CR>
-    nmap <leader>f5 :set foldlevel=5<CR>
-    nmap <leader>f6 :set foldlevel=6<CR>
-    nmap <leader>f7 :set foldlevel=7<CR>
-    nmap <leader>f8 :set foldlevel=8<CR>
-    nmap <leader>f9 :set foldlevel=9<CR>
 
     " Exclude quickfix windows from buflist
     if has("autocmd")
@@ -376,6 +403,12 @@
         execute "set <xRight>=\e[1;*C"
         execute "set <xLeft>=\e[1;*D"
     endif
+
+    nnoremap <leader>m :make<cr>
+
+    if has('nvim')
+        tnoremap <Esc> <C-\><C-n>
+    end
 " }}}
 
 " Spell checking {{{
@@ -409,17 +442,13 @@
     elseif executable("ack")
         set grepprg=ack\ -k
     endif
+
+    if has("nvim")
+        set termguicolors
+    endif
 " }}}
 
 " Helper functions {{{
-    " Convenient command to see the difference between the current buffer and the
-    " file it was loaded from, thus the changes you made.
-    " Only define it when not defined already.
-    if !exists(':DiffOrig')
-        command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
-                    \ | wincmd p | diffthis
-    endif
-
     " Strip whitespace {{{
     function! StripTrailingWhitespace()
         " Preparation: save last search, and cursor position.
@@ -437,18 +466,23 @@
     " Before saving, delete trailing white-spaces and ^M
     augroup delete_trailing
         autocmd!
-        autocmd FileType c,cpp,java,php,javascript,python,twig,xml,yml,vim,tex,lua autocmd BufWritePre <buffer> call StripTrailingWhitespace()
+        autocmd FileType c,cpp,java,php,javascript,python,twig,xml,yaml,vim,tex,lua autocmd BufWritePre <buffer> call StripTrailingWhitespace()
     augroup END
 " }}}
 
 " Plugin settings {{{
-    " Tagbar {{{
-        nnoremap <silent> <leader>tb :TagbarToggle<CR>
-    " }}}
+    " Lazy plugin loading
+    augroup insert_mode_lazy_load
+        autocmd!
+        if !has('nvim')
+            autocmd InsertEnter * call plug#load('YouCompleteMe')
+                        \| autocmd! insert_mode_lazy_load
+        endif
+    augroup END
 
     " CtrlP {{{
         let g:ctrlp_map = '<c-p>'
-        let g:ctrlp_cmd = 'CtrlP'
+        let g:ctrlp_cmd = 'CtrlPMixed'
 
         " Use the nearest .git directory as the cwd
         " This makes a lot of sense if you are working on a project that is
@@ -459,9 +493,13 @@
         let g:ctrlp_match_window_reversed = 1
         let g:ctrlp_clear_cache_on_exit = 0
 
-        " Automatically enable CtrlP extensions.
+        " Exclude ZSH scratches
+        let g:ctrlp_mruf_exclude = '/tmp/zsh.*\|/private/tmp/zsh.*'
+
+        " Manually enable CtrlP extensions.
         let g:ctrlp_extensions = ['buffertag', 'quickfix', 'undo', 'line', 'changes', 'mixed']
 
+        nnoremap <leader><space> :CtrlPBufTag<cr>
     " }}}
 
     " Vim Airline / Statusbar {{{
@@ -478,14 +516,14 @@
             let g:airline_symbols = {}
         endif
 
-        let g:airline_symbols.linenr    = ''
+        let g:airline_symbols.linenr    = '#'
         let g:airline_symbols.maxlinenr = ''
         let g:airline_symbols.spell     = 'S'
         let g:airline_symbols.paste     = 'P'
 
         " extensions
         " only load what you want
-        let g:airline_extensions = [ 'syntastic', 'tagbar', 'ctrlp', 'virtualenv', 'tabline' ]
+        let g:airline_extensions = [ 'syntastic', 'ctrlp', 'virtualenv', 'tabline' ]
 
         let g:airline#extensions#tabline#fnamemod   = ':t' " only show filename in tab
         let g:airline#extensions#quickfix#quickfix_text = 'Quickfix'
@@ -542,48 +580,97 @@
         " }}}
     " }}}
 
-    " Rainbow parenthesis {{{
-        let g:rainbow_active = 1  " Activate rainbows
+    " Rainbow parentheses {{{
+        " List of colors that you do not want. ANSI code or #RRGGBB
+        let g:rainbow#blacklist = [225, 245, 241, 244, 193]
+
+        let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
+        let g:rainbow#max_level = 16
+
+        augroup rainbow_parentheses
+            autocmd!
+            autocmd BufReadPre,FileReadPre * :RainbowParentheses
+        augroup END
     " }}}
 
-    " Auto-pairs-gentle {{{
-        let g:AutoPairsUseInsertedCount = 1  " Make it gentle
-
-        if has('autocmd')
-            augroup no_lisp_autopair
-                autocmd!
-                autocmd Filetype lisp let b:AutoPairs = {}
-            augroup END
-        endif
-    " }}}
-
-    " Multi Cursors {{{
-        let g:multi_cursor_exit_from_visual_mode = 1  " Keep cursors when exiting from V mode
-    " }}}
-
-    " YouCompleteMe / Ultisnips {{{
+    " YouCompleteMe {{{
         let g:ycm_autoclose_preview_window_after_completion = 1
 
-        " enable completion from tags
-        let g:ycm_collect_identifiers_from_tags_files       = 1
+        let g:ycm_collect_identifiers_from_tags_files       = 1 " enable completion from tags
         let g:ycm_use_ultisnips_completer                   = 1 " Default 1, just ensure
         let g:ycm_seed_identifiers_with_syntax              = 1 " Completion for programming language's keyword
         let g:ycm_complete_in_comments                      = 1 " Completion in comments
         let g:ycm_complete_in_strings                       = 1 " Completion in string
         let g:ycm_add_preview_to_completeopt                = 0 " Add preview to completeopt
 
-        " Disable YCM syntax checker in favour of syntastic
-        let g:ycm_show_diagnostics_ui                       = 0  " Use syntastic checker
-        " Disable YCM detailed diagnostic
-        let g:ycm_key_detailed_diagnostics = ''
+        let g:ycm_show_diagnostics_ui                       = 0 " Disable YCM syntax checker in favour of syntastic
+        let g:ycm_key_detailed_diagnostics                  = '' " Disable YCM detailed diagnostic
 
-        " remap Ultisnips for compatibility for YCM
+        nnoremap <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
+    " }}}
+
+    " Deoplete {{{
+        let g:deoplete#enable_at_startup = 1 " Enable Deoplete
+        let g:deoplete#auto_complete_delay = 20 " ms delay to trigger autocomplete
+        let g:deoplete#auto_refresh_delay = 20 " ms delay to refresh autocomplete
+
+        let g:deoplete#sources = {}
+        let g:deoplete#sources._ = ['buffer', 'member', 'tag', 'file', 'omni', 'ultisnips']
+        let g:deoplete#sources.tex = ['buffer', 'member', 'dictionary', 'file', 'omni', 'ultisnips']
+        let g:deoplete#sources.python = ['buffer', 'member', 'jedi', 'file', 'omni', 'ultisnips']
+        let g:deoplete#sources.go = ['buffer', 'member', 'go', 'file', 'omni', 'ultisnips']
+        let g:deoplete#sources.c = ['buffer', 'member', 'clang', 'file', 'omni', 'ultisnips']
+        let g:deoplete#sources.cpp = ['buffer', 'member', 'clang', 'file', 'omni', 'ultisnips']
+        let g:deoplete#sources.objc = ['buffer', 'member', 'clang', 'file', 'omni', 'ultisnips']
+
+        let g:deoplete#max_list = 20 " Show 10 entries at most
+        let g:deoplete#max_menu_width = 20 " Matches the list length
+
+        if has('nvim')
+            call deoplete#custom#set('ultisnips', 'rank', 1000) " Keep snippets on top
+        endif
+
+        " Go completion settings
+        let g:deoplete#sources#go#gocode_binary = $GOPATH.'/bin/gocode'
+        let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
+        let g:deoplete#sources#go#use_cache = 0
+
+        " vim-tex integration
+        if !exists('g:deoplete#omni#input_patterns')
+            let g:deoplete#omni#input_patterns = {}
+        endif
+        let g:deoplete#omni#input_patterns.tex = '\\(?:'
+                    \ .  '\w*cite\w*(?:\s*\[[^]]*\]){0,2}\s*{[^}]*'
+                    \ . '|\w*ref(?:\s*\{[^}]*|range\s*\{[^,}]*(?:}{)?)'
+                    \ . '|hyperref\s*\[[^]]*'
+                    \ . '|includegraphics\*?(?:\s*\[[^]]*\]){0,2}\s*\{[^}]*'
+                    \ . '|(?:include(?:only)?|input)\s*\{[^}]*'
+                    \ . '|\w*(gls|Gls|GLS)(pl)?\w*(\s*\[[^]]*\]){0,2}\s*\{[^}]*'
+                    \ . '|includepdf(\s*\[[^]]*\])?\s*\{[^}]*'
+                    \ . '|includestandalone(\s*\[[^]]*\])?\s*\{[^}]*'
+                    \ .')'
+    " }}}
+
+    " Ultisnips {{{
+        " Remap Ultisnips for compatibility with completion handlers
         let g:UltiSnipsExpandTrigger                        = '<C-j>'
         let g:UltiSnipsJumpForwardTrigger                   = '<C-j>'
         let g:UltiSnipsJumpBackwardTrigger                  = '<C-b>'
         let g:UltiSnipsListSnippets                         = "<C-k>"
 
-        nnoremap <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
+        inoremap <silent> <C-j> <C-r>=LoadUltiSnips()<cr>
+
+        " This function only runs when UltiSnips is not loaded (credits github/saaguero)
+        function! LoadUltiSnips()
+            let l:curpos = getcurpos()
+            execute plug#load('ultisnips')
+            call cursor(l:curpos[1], l:curpos[2])
+            call UltiSnips#ExpandSnippet()
+            return ""
+        endfunction
+
+        " Static location of configuration files for improved startup times
+        let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/plugged/UltiSnips']
 
         " For snippet_complete marker.
         if has('conceal')
@@ -599,7 +686,7 @@
         let g:snips_github=g:github
     " }}}
 
-    " GitHub Flavored Markdown "{{{
+    " GitHub Flavored Markdown {{{
         augroup markdown
             au!
             au BufNewFile,BufRead *.md,*.markdown setlocal filetype=ghmarkdown
@@ -614,7 +701,7 @@
         let g:pymode = 1
         let g:pymode_warnings = 0
 
-        let g:pymode_trim_whitespaces = 1  " We already do that
+        let g:pymode_trim_whitespaces = 0  " We already do that
         let g:pymode_options = 0
         let g:pymode_options_colorcolumn = 0
         let g:pymode_indent = 1
@@ -628,7 +715,7 @@
         let g:pymode_virtualenv = 1
 
         " Enable manual linting only
-        let g:pymode_lint = 1
+        let g:pymode_lint = 0
         let g:pymode_lint_on_write = 0
         let g:pymode_lint_unmodified = 0
         let g:pymode_lint_on_fly = 0
@@ -644,6 +731,9 @@
         let g:pymode_rope_complete_on_dot = 0
         let g:pymode_rope_lookup_project = 0
         let g:pymode_rope_autoimport = 0
+
+        let g:pymode_quickfix_minheight = 3
+        let g:pymode_quickfix_maxheight = 3
 
         " Automatically fix PEP8 errors in the current buffer:
         if has('autocmd')
@@ -661,47 +751,52 @@
         let g:vimtex_quickfix_mode = 2  " Auto-open with no focus.
         let g:vimtex_latexmk_build_dir = "build"
 
-        " Skim as a PDF viewer
-        let g:vimtex_view_general_viewer = '/Applications/Skim.app/Contents/SharedSupport/displayline'
-        let g:vimtex_view_general_options = '-r @line @pdf @tex'
+        if has('mac')
+            " Skim as a PDF viewer
+            let g:vimtex_view_general_viewer = '/Applications/Skim.app/Contents/SharedSupport/displayline'
+            let g:vimtex_view_general_options = '-r @line @pdf @tex'
 
-        " This adds a callback hook that updates Skim after compilation
-        let g:vimtex_latexmk_callback_hooks = ['UpdateSkim']
-        function! UpdateSkim(status)
-            if !a:status | return | endif
+            " This adds a callback hook that updates Skim after compilation
+            let g:vimtex_latexmk_callback_hooks = ['UpdateSkim']
+            function! UpdateSkim(status)
+                if !a:status | return | endif
 
-            let l:out = b:vimtex.out()
-            let l:cmd = [g:vimtex_view_general_viewer, '-r']
-            if !empty(system('pgrep Skim'))
-                call extend(l:cmd, ['-g'])
+                let l:out = b:vimtex.out()
+                let l:cmd = [g:vimtex_view_general_viewer, '-r']
+                if !empty(system('pgrep Skim'))
+                    call extend(l:cmd, ['-g'])
+                endif
+                if has('nvim')
+                    call jobstart(l:cmd + [line('.'), l:out])
+                elseif has('job')
+                    call job_start(l:cmd + [line('.'), l:out])
+                else
+                    call system(join(l:cmd + [line('.'), shellescape(l:out)], ' '))
+                endif
+            endfunction
+        end
+
+        if !has('nvim')
+            " YCM semantic completion
+            if !exists('g:ycm_semantic_triggers')
+                let g:ycm_semantic_triggers = {}
             endif
-            if has('nvim')
-                call jobstart(l:cmd + [line('.'), l:out])
-            elseif has('job')
-                call job_start(l:cmd + [line('.'), l:out])
-            else
-                call system(join(l:cmd + [line('.'), shellescape(l:out)], ' '))
-            endif
-        endfunction
-
-        " YCM semantic completion
-        if !exists('g:ycm_semantic_triggers')
-            let g:ycm_semantic_triggers = {}
-        endif
-        let g:ycm_semantic_triggers.tex = [
-                    \ 're!\\[A-Za-z]*cite[A-Za-z]*(\[[^]]*\]){0,2}{[^}]*',
-                    \ 're!\\[A-Za-z]*ref({[^}]*|range{([^,{}]*(}{)?))',
-                    \ 're!\\hyperref\[[^]]*',
-                    \ 're!\\includegraphics\*?(\[[^]]*\]){0,2}{[^}]*',
-                    \ 're!\\(include(only)?|input){[^}]*',
-                    \ 're!\\\a*(gls|Gls|GLS)(pl)?\a*(\s*\[[^]]*\]){0,2}\s*\{[^}]*',
-                    \ 're!\\includepdf(\s*\[[^]]*\])?\s*\{[^}]*',
-                    \ 're!\\includestandalone(\s*\[[^]]*\])?\s*\{[^}]*',
-                    \ ]
+            let g:ycm_semantic_triggers.tex = [
+                        \ 're!\\[A-Za-z]*cite[A-Za-z]*(\[[^]]*\]){0,2}{[^}]*',
+                        \ 're!\\[A-Za-z]*ref({[^}]*|range{([^,{}]*(}{)?))',
+                        \ 're!\\hyperref\[[^]]*',
+                        \ 're!\\includegraphics\*?(\[[^]]*\]){0,2}{[^}]*',
+                        \ 're!\\(include(only)?|input){[^}]*',
+                        \ 're!\\\a*(gls|Gls|GLS)(pl)?\a*(\s*\[[^]]*\]){0,2}\s*\{[^}]*',
+                        \ 're!\\includepdf(\s*\[[^]]*\])?\s*\{[^}]*',
+                        \ 're!\\includestandalone(\s*\[[^]]*\])?\s*\{[^}]*',
+                        \ ]
+        end
 
         " Disable insert mode mappings
         let g:vimtex_imaps_enabled = 0
 
+        " Integration with vim-surround
         augroup latexSurround
             autocmd!
             autocmd FileType tex call s:latexSurround()
@@ -765,6 +860,13 @@
 
         " Syntastic integration
         let g:go_list_type = "quickfix"
+    " }}}
+
+    " vim-gutentags {{{
+        if isdirectory($HOME . '/.vim/tags/') == 0
+            :silent !mkdir -p ~/.vim/tags >/dev/null 2>&1
+        endif
+        let g:gutentags_cache_dir = $HOME . '/.vim/tags/'
     " }}}
 " }}}
 
