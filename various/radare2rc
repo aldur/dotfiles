@@ -1,8 +1,11 @@
+# Enable colors
+e scr.color=true
+
 # Show comments at right of disassembly if they fit in screen
 e asm.cmtright=true
 
 # Shows pseudocode in disassembly. Eg mov eax, str.ok = > eax = str.ok
-e asm.pseudo = true
+# e asm.pseudo = true
 
 # Display stack and register values on top of disasembly view (visual mode)
 e cmd.stack = true
@@ -12,3 +15,6 @@ eco solarized
 
 # Use UTF-8 to show cool arrows that do not look like crap :)
 e scr.utf8 = true
+
+# Set asm syntax
+e asm.syntax=att
