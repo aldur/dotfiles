@@ -9,6 +9,7 @@ import pprint as pprint
 
 # Exec file helper
 # If ~/.pdbrc.py is missing, you get an error message (which doesn't hurt).
-execfile(os.path.expanduser("~/.pdbrc.py"))
+f = os.path.expanduser("~/.pdbrc.py")
+exec(compile(open(f, "rb").read(), f, 'exec'), globals(), locals())
 
 pdb.Pdb.complete = rlcompleter.Completer(locals()).complete
