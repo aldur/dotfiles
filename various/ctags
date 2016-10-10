@@ -1,0 +1,12 @@
+--recurse=yes
+
+--python-kinds=-i
+
+--exclude=.git
+--exclude=vendor/*
+--exclude=node_modules/*
+--exclude=db/*
+--exclude=log/*
+
+--langdef=markdown
+--langmap=markdown:.md .markdown .mkd
