@@ -1,4 +1,4 @@
-DOTFILES = latexmkrc hammerspoon tmux.conf zprofile zshrc.local tmux-osx.conf
+DOTFILES = latexmkrc hammerspoon tmux.conf zprofile zshrc.local tmux-osx.conf karabiner.d
 
 .PHONY: all $(DOTFILES)
 
