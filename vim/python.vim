@@ -10,4 +10,4 @@ else
     let b:syntastic_python_python_exec = 'python'
 endif
 
-nnoremap <F8> :call Preserve("PymodeLintAuto")<cr>
+set makeprg=python3\ %
