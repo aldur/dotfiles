@@ -1,6 +1,13 @@
 # TODO: check for requirements. 
 
-SUBDIRS = zsh osx vim various
+SUBDIRS = zsh vim various
+
+OS := $(shell uname)
+ifeq ($(OS), Darwin)
+	SUBDIRS += osx
+else
+	SUBDIRS += arch
+endif
 
 export LN = ln -sf
 
