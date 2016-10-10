@@ -22,8 +22,8 @@ plugins=( \
     virtualenv \  # Auto-completion
     brew \ 
     colored-man \  # Colors
-    zsh-syntax-highlighting \  # Spellchecking
     history-substring-search z \  # Utilities
+    zsh-syntax-highlighting \  # Spellchecking (load it last)
 )
 
 source $ZSH/oh-my-zsh.sh
