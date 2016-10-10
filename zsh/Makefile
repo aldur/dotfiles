@@ -1,7 +1,11 @@
-.PHONY: all zsh theme
+.PHONY: all zsh theme colors
+DOTFILES = colors dir_colors
 
-all: zsh theme
-	
+all: zsh theme $(DOTFILES)
+
+$(DOTFILES):
+	$(LN) $(shell readlink -f $@) ${HOME}/.$@
+
 zsh: zshrc
 	$(LN) $(shell readlink -f zshrc) ${HOME}/.zshrc
 
