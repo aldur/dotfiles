@@ -6,7 +6,7 @@ CONFIG_FILES = flake8 pep8
 all: $(DOTFILES) gitignore
 
 gitignore: gitignore_global
-	$(LN) $(shell readlink -f $gitignore_global) ${HOME}/.$gitignore_global
+	$(LN) $(shell readlink -f gitignore_global) ${HOME}/.gitignore_global
 	git config --global core.excludesfile ~/.gitignore_global
 
 $(DOTFILES):
