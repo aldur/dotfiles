@@ -1,4 +1,4 @@
-DOTFILES = psqlrc pdbrc radare2rc pythonrc pdbrc.py
+DOTFILES = psqlrc pdbrc radare2rc pythonrc pdbrc.py curlrc
 CONFIG_FILES = flake8 pep8 
 
 .PHONY: all gitignore $(DOTFILES) $(CONFIG_FILES)
