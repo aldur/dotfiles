@@ -1,13 +1,20 @@
 " Modeline and Notes {{{
-" vim: set sw=4 ts=4 sts=4 et tw=78 foldmarker={{{,}}} foldlevel=0 foldmethod=marker spell formatoptions=jcrql :
+" vim: set foldlevel=0 foldmethod=marker spell formatoptions=jcrql:
+" }}}
+
+" Initialization {{{
+    " Define a global autogroup used through the entire vimrc
+    augroup vimrc
+        autocmd!
+    augroup end
 " }}}
 
 " Vim-plug {{{
     " Auto-install Vim-plug (if needed)
-    if empty(glob('~/.vim/autoload/plug.vim'))
+    if empty(glob('~/.vim/autoload/plug.vim')) && executable('curl')
         silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
                     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-        autocmd VimEnter * PlugInstall
+        autocmd vimrc VimEnter * PlugInstall
     endif
     call plug#begin('~/.vim/plugged')
 
@@ -64,11 +71,11 @@
 
     " Deoplete specific plugins {{{
         Plug 'zchee/deoplete-jedi',
-                    \ has('nvim') ? {  } : { 'on': [] } " Python completion
+                    \ has('nvim') ? {  } : { 'on': [] }              " Python completion
         Plug 'zchee/deoplete-go',
                     \ has('nvim') ? { 'do': 'make' } : { 'on': [] }  " Go completion
         Plug 'zchee/deoplete-clang',
-                    \ has('nvim') ? {  } : { 'on': [] }  " Clang completion
+                    \ has('nvim') ? {  } : { 'on': [] }              " Clang completion
     " }}}
 
     " Enable Vim-stay after all the other plugins
@@ -79,19 +86,12 @@
 " }}}
 
 " General {{{
-    if !has('nvim')
-        set nocompatible                        " Disable useless backward compatibility
-    end
-
     " Sets how many lines of history VIM has to remember
     set history=10000 " Maximum value for history
 
-    " Set to auto read when a file is changed from the outside
-    set autoread
-
     " Modeline in the first five lines
     set modeline
-    set modelines=5
+    set modelines=3
 
     " Mouse
     set mouse=a
@@ -145,7 +145,7 @@
         set viminfo='20,\"100,:100,%,n~/.vim/viminfo
     endif
 
-    if exists("+undofile")
+    if exists('+undofile')
         " undofile - This allows you to use undos after exiting and restarting
         " This, like swap and backups, uses .vim-undo first, then ~/.vim/undo
         " :help undo-persistence
@@ -183,12 +183,7 @@
 
     " No annoying sound on errors
     set noerrorbells visualbell t_vb=
-    if has('autocmd')
-        augroup no_visual_bell
-            autocmd!
-            autocmd GUIEnter * set visualbell t_vb=
-        augroup END
-    endif
+    autocmd vimrc GUIEnter * set visualbell t_vb=
 
     " Line and relative numbers
     set number
@@ -204,6 +199,11 @@
 
     " Disable split separator characters
     set fillchars=""
+
+    " Show snippet_complete marker (if any)
+    if has('conceal')
+        set conceallevel=2 concealcursor=i
+    endif
 " }}}
 
 " Auto completion {{{
@@ -211,8 +211,9 @@
     set completeopt=menuone,longest
 
     " Clever tab to cycle the completion popup menu
+    " If you even need to insert a literal tab, press <CTRL-V><Tab>
     function! CleverTab()
-        if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
+        if strpart(getline('.'), 0, col('.') -1) =~# '^\s*$'
             return "\<Tab>"
         else
             return "\<C-N>"
@@ -220,7 +221,7 @@
     endfunction
     inoremap <Tab> <C-R>=CleverTab()<CR>
 
-    if has("patch-7.4.314")
+    if has('patch-7.4.314')
         set shortmess+=c " Quiet completions
     endif
 " }}}
@@ -250,68 +251,67 @@
     if !has('nvim') " NeoVim defaults to this
         set encoding=utf-8                             " The encoding displayed.
     end
-    set fileencoding=utf-8                         " The encoding written to file.
+    scriptencoding utf-8                               " Specify the encoding of this file
+    set fileencoding=utf-8                             " The encoding written to file.
 
-    set backspace=indent,eol,start                 " Backspace for dummies
-    set whichwrap=b,s,h,l,<,>,[,]                  " Backspace and cursor keys wrap too
-    set list                                       " Display whites
-    set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
+    set backspace=indent,eol,start                     " Backspace for dummies
+    set whichwrap=b,s,h,l,<,>,[,]                      " Backspace and cursor keys wrap too
 
-    set expandtab                                  " In insert mode, insert the appropriate number of spaces to insert a Tab
-    set smarttab                                   " Insert tabs in front of lines according to shiftwidth
-    set shiftwidth=4                               " operation >> indents 4 columns; << unindents 4 columns
-    set tabstop=4                                  " a hard TAB displays as 4 columns
-    set expandtab                                  " insert spaces when hitting TABs
-    set softtabstop=4                              " insert/delete 4 spaces when hitting a TAB/BACKSPACE
-    set shiftround                                 " round indent to multiple of 'shiftwidth'
-    set autoindent                                 " align the new line indent with the previous line
-    set cindent                                    " automatic C programming indenting
+    " White spaces
+    set list                                           " Display white spaces
+    set listchars=tab:→\ ,trail:•,                     " Custom characters highlights
+    set listchars+=extends:⟩,precedes:⟨,
+    set listchars+=\nbsp:␣,conceal:*,
+    let &showbreak = '↪'                               " Show whether lines have been wrapped
 
-    " Visually wrap lines too long
-    set wrap
-    " Turn off physical line wrapping
-    set textwidth=0 wrapmargin=0
+    " Tabs
+    set expandtab                                      " In insert mode, insert the appropriate number of spaces to insert a Tab
+    set smarttab                                       " Insert tabs in front of lines according to shiftwidth
+    set shiftwidth=4                                   " Operation >> indents 4 columns; << un-indents 4 columns
+    set tabstop=4                                      " A hard TAB displays as 4 columns
+    set expandtab                                      " Insert spaces when hitting TABs
+    set softtabstop=4                                  " Insert/delete 4 spaces when hitting a TAB/BACKSPACE
+    set shiftround                                     " Round indent to multiple of 'shiftwidth'
+    set autoindent                                     " Align the new line indent with the previous line
+    set cindent                                        " Automatic C programming indenting
+
+    " Line wrapping
+    set wrap                                           " Visually wrap lines too long
+    set textwidth=0 wrapmargin=0                       " Turn off physical line wrapping
 
     " Do not insert comment leader on 'o'
-    augroup FORMAT_OPTIONS
-        autocmd!
-        autocmd FileType * setlocal formatoptions-=o
-    augroup end
+    " Needs an autocmd because different filetypes override this option
+    autocmd vimrc FileType * setlocal formatoptions-=o
 
-    if has("autocmd")
-        augroup GIT_COMMIT
-            autocmd!
-            autocmd Filetype gitcommit setlocal spell textwidth=72
-        augroup end
-    endif
+    " Filetype specific settings {{{
+        " Git commit
+        autocmd vimrc Filetype gitcommit setlocal spell textwidth=72
 
-    if has("autocmd")
-        augroup LATEX
-            autocmd!
-            autocmd Filetype tex setlocal spell conceallevel=0 synmaxcol=200 foldmethod=manual ttyfast lazyredraw
-        augroup end
-    endif
+        " Latex
+        autocmd vimrc Filetype tex setlocal spell conceallevel=0 synmaxcol=200 ttyfast lazyredraw
 
-    if has("autocmd")
-        augroup MDOWN
-            autocmd!
-            autocmd Filetype ghmarkdown,markdown,md setlocal spell
-        augroup end
-    endif
+        " Markdown
+        autocmd vimrc Filetype ghmarkdown,markdown,md setlocal spell
+    " }}}
 " }}}
 
 " Tabs, windows and buffers {{{
     set hidden  " Allows to change buffer without saving
 
     " Open new split panes to right and bottom, which feels more natural
-    set splitbelow
-    set splitright
+    set splitbelow splitright
+
+    " Set to auto read when a file is changed from the outside
+    set autoread
 
     " Switch CWD to the directory of the open buffer
     set autochdir
 
     " Auto save on :next, :edit, :quit, etc.
     set autowriteall
+
+    " ... and on focus lost
+    autocmd vimrc FocusLost * :silent! wall
 
     " Smart way to move between windows
     nnoremap <C-h> <C-w>h
@@ -321,6 +321,7 @@
 
     " Same smart ways with nvim terminal buffers
     if has('nvim')
+        tnoremap <Esc> <C-\><C-n>
         tnoremap <C-h> <C-\><C-n><C-w>h
         tnoremap <C-j> <C-\><C-n><C-w>j
         tnoremap <C-k> <C-\><C-n><C-w>k
@@ -357,24 +358,10 @@
     nmap <leader>f3 :set foldlevel=3<CR>
 
     " Exclude quickfix windows from buflist
-    if has("autocmd")
-        augroup qf
-            autocmd!
-            autocmd FileType qf set nobuflisted
-        augroup END
-    endif
+    autocmd vimrc FileType qf set nobuflisted
 
-    if has("autocmd")
-        augroup buffers_windows_more
-            autocmd!
-
-            " Save when losing focus
-            au FocusLost * :silent! wall
-
-            " Resize splits when the window is resized
-            au VimResized * :wincmd =
-        augroup END
-    endif
+    " Resize splits when the window is resized
+    autocmd vimrc VimResized * :wincmd =
 " }}}
 
 " Misc mappings {{{
@@ -396,26 +383,29 @@
     " Make Y yank everything from the cursor to the end of the line.
     noremap Y y$
 
-    if &term =~ '^screen'
+    " Quickly call 'make'
+    nnoremap <leader>m :make<cr>
+
+    " loclist mappings
+    nnoremap <leader>lo :lopen<cr>
+    nnoremap <leader>ln :lnext<cr>
+    nnoremap <leader>lp :lprev<cr>
+
+    " Use 'c*' to change the word under the cursor, repeat with '.'
+    nnoremap c* *<C-o>cgn
+
+    if &term =~? '^screen'
         " tmux will send xterm-style keys when xterm-keys is on
         execute "set <xUp>=\e[1;*A"
         execute "set <xDown>=\e[1;*B"
         execute "set <xRight>=\e[1;*C"
         execute "set <xLeft>=\e[1;*D"
     endif
-
-    nnoremap <leader>m :make<cr>
-
-    if has('nvim')
-        tnoremap <Esc> <C-\><C-n>
-    end
 " }}}
 
 " Spell checking {{{
-    " Pressing ,ss will toggle and untoggle spell checking
-    map <leader>ss :setlocal spell!<cr>
-
-    " Shortcuts using <leader>
+    " Shortcuts
+    nnoremap <leader>ss :setlocal spell!<cr>
     nnoremap <leader>sn ]s
     nnoremap <leader>sp [s
     nnoremap <leader>sa zg
@@ -427,23 +417,18 @@
     set iskeyword-=#                    " '#' is an end of word designator
     set iskeyword-=-                    " '-' is an end of word designator
 
-    if has("autocmd")
-        " Highlight TODO, FIXME, NOTE, etc.
-        augroup annotations
-            autocmd!
-            autocmd Syntax * call matchadd('Todo',  '\W\zs\(TODO\|FIXME\|CHANGED\|XXX\|BUG\|HACK\)')
-            autocmd Syntax * call matchadd('Debug', '\W\zs\(NOTE\|INFO\|IDEA\|DEBUG\)')
-        augroup END
-    endif
+    " Highlight TODO, FIXME, NOTE, etc.
+    autocmd vimrc Syntax * call matchadd('Todo',  '\W\zs\(TODO\|FIXME\|CHANGED\|XXX\|BUG\|HACK\)')
+    autocmd vimrc Syntax * call matchadd('Debug', '\W\zs\(NOTE\|INFO\|IDEA\|DEBUG\)')
 
-    if executable("ag")
+    if executable('ag')
         set grepprg=ag\ --vimgrep\ $*
         set grepformat=%f:%l:%c:%m
-    elseif executable("ack")
+    elseif executable('ack')
         set grepprg=ack\ -k
     endif
 
-    if has("nvim")
+    if has('nvim')
         set termguicolors
     endif
 " }}}
@@ -451,34 +436,26 @@
 " Helper functions {{{
     " Strip whitespace {{{
     function! StripTrailingWhitespace()
-        " Preparation: save last search, and cursor position.
-        let _s=@/
-        let l = line(".")
-        let c = col(".")
-        " do the business:
+        " Preparation: save cursor position
+        " (last search is automatically saved because inside a function)
+        let l:save = winsaveview()
+        " Do the business.
         %s/\s\+$//e
-        " clean up: restore previous search history, and cursor position
-        let @/=_s
-        call cursor(l, c)
+        " Clean up: restore cursor position.
+        call winrestview(l:save)
     endfunction
     " }}}
 
     " Before saving, delete trailing white-spaces and ^M
-    augroup delete_trailing
-        autocmd!
-        autocmd FileType c,cpp,java,php,javascript,python,twig,xml,yaml,vim,tex,lua autocmd BufWritePre <buffer> call StripTrailingWhitespace()
-    augroup END
+    autocmd vimrc FileType c,cpp,java,php,javascript,python,twig,xml,yaml,vim,tex,lua
+                \ autocmd vimrc BufWritePre <buffer> call StripTrailingWhitespace()
 " }}}
 
 " Plugin settings {{{
     " Lazy plugin loading
-    augroup insert_mode_lazy_load
-        autocmd!
-        if !has('nvim')
-            autocmd InsertEnter * call plug#load('YouCompleteMe')
-                        \| autocmd! insert_mode_lazy_load
-        endif
-    augroup END
+    if !has('nvim')
+        autocmd vimrc InsertEnter * call plug#load('YouCompleteMe')
+    endif
 
     " CtrlP {{{
         let g:ctrlp_map = '<c-p>'
@@ -492,6 +469,10 @@
         let g:ctrlp_cache_dir = $HOME.'/.vim/.cache/ctrlp'
         let g:ctrlp_match_window_reversed = 1
         let g:ctrlp_clear_cache_on_exit = 0
+
+        " Allow a maximum depth of 5 sub-folders and a total of 1000 files.
+        let g:ctrlp_max_depth = 10
+        let g:ctrlp_max_files = 10000
 
         " Exclude ZSH scratches
         let g:ctrlp_mruf_exclude = '/tmp/zsh.*\|/private/tmp/zsh.*'
@@ -537,10 +518,10 @@
         let g:syntastic_auto_loc_list            = 2 " Close it when no errors are detected
 
         let g:syntastic_error_symbol         = "\u2718"
-        highlight SyntasticErrorSign ctermbg=235 ctermfg=red guifg=red
+        highlight SyntasticErrorSign ctermbg=235 ctermfg=161 guifg=#F92672 guibg=#232526
 
         let g:syntastic_warning_symbol       = "\u2718"
-        highlight SyntasticWarningSign ctermbg=235 ctermfg=208 guifg=orange
+        highlight SyntasticWarningSign ctermbg=235 ctermfg=144 guifg=#E6DB74 guibg=#232526
 
         let g:syntastic_style_error_symbol   = "\u26A0"
         highlight link SyntasticStyleErrorSign SyntasticErrorSign
@@ -552,7 +533,7 @@
         let g:syntastic_aggregate_errors = 1
 
         " Syntastic status line for airline
-        let g:syntastic_stl_format = "%E{#%e Errs: %fe}%B{, }%W{#%w Warns: %fw}"
+        let g:syntastic_stl_format = '%E{#%e Errs: %fe}%B{, }%W{#%w Warns: %fw}'
 
         " Language specific checkers {{{
             " Java
@@ -570,13 +551,16 @@
             let g:syntastic_c_compiler_options = '-Wall'
 
             " Enable C++11 standard
-            let g:syntastic_cpp_compiler_options="-std=c++11 -stdlib=libc++ -Wall"
+            let g:syntastic_cpp_compiler_options='-std=c++11 -stdlib=libc++ -Wall'
 
             " Javascript
-            let g:syntastic_javascript_jshint_args = "--extract=auto"
+            let g:syntastic_javascript_jshint_args = '--extract=auto'
 
             " Lua
             let g:syntastic_lua_checkers = ['luac', 'luacheck']
+
+            " VimL
+            " let g:syntastic_vim_checkers = ['vint']
         " }}}
     " }}}
 
@@ -587,10 +571,7 @@
         let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
         let g:rainbow#max_level = 16
 
-        augroup rainbow_parentheses
-            autocmd!
-            autocmd BufReadPre,FileReadPre * :RainbowParentheses
-        augroup END
+        autocmd vimrc BufReadPre,FileReadPre * :RainbowParentheses
     " }}}
 
     " YouCompleteMe {{{
@@ -651,14 +632,11 @@
                     \ .')'
     " }}}
 
-    " Ultisnips {{{
-        " Remap Ultisnips for compatibility with completion handlers
+    " UltiSnips {{{
+        " Remap UltiSnips for compatibility with completion handlers
         let g:UltiSnipsExpandTrigger                        = '<C-j>'
         let g:UltiSnipsJumpForwardTrigger                   = '<C-j>'
-        let g:UltiSnipsJumpBackwardTrigger                  = '<C-b>'
-        let g:UltiSnipsListSnippets                         = "<C-k>"
-
-        inoremap <silent> <C-j> <C-r>=LoadUltiSnips()<cr>
+        let g:UltiSnipsJumpBackwardTrigger                  = '<C-k>'
 
         " This function only runs when UltiSnips is not loaded (credits github/saaguero)
         function! LoadUltiSnips()
@@ -666,16 +644,15 @@
             execute plug#load('ultisnips')
             call cursor(l:curpos[1], l:curpos[2])
             call UltiSnips#ExpandSnippet()
-            return ""
+            " Add command to manually list snippets
+            command UltiSnipsListSnippets call UltiSnips#ListSnippets()
+            return ''
         endfunction
+        inoremap <silent> <C-j> <C-r>=LoadUltiSnips()<cr>
 
-        " Static location of configuration files for improved startup times
-        let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/plugged/UltiSnips']
-
-        " For snippet_complete marker.
-        if has('conceal')
-            set conceallevel=2 concealcursor=i
-        endif
+        " Give higher priority to UltiSnips specific snippets over SnipMate ones
+        let g:UltiSnipsSnippetDirectories=[$HOME . '/.vim/plugged/vim-snippets/UltiSnips']
+        let g:UltiSnipsEnableSnipMate=1
 
         " Snippets variables
         let g:author='Adriano Di Luzio'
@@ -687,10 +664,8 @@
     " }}}
 
     " GitHub Flavored Markdown {{{
-        augroup markdown
-            au!
-            au BufNewFile,BufRead *.md,*.markdown setlocal filetype=ghmarkdown
-        augroup END
+        " Set GitHub flavour for all markdown files
+        autocmd vimrc BufNewFile,BufRead *.md,*.markdown setlocal filetype=ghmarkdown
     " }}}
 
     " Vim Instant Markdown {{{
@@ -715,7 +690,7 @@
         let g:pymode_virtualenv = 1
 
         " Enable manual linting only
-        let g:pymode_lint = 0
+        let g:pymode_lint = 1
         let g:pymode_lint_on_write = 0
         let g:pymode_lint_unmodified = 0
         let g:pymode_lint_on_fly = 0
@@ -736,20 +711,15 @@
         let g:pymode_quickfix_maxheight = 3
 
         " Automatically fix PEP8 errors in the current buffer:
-        if has('autocmd')
-            augroup autopep8
-                autocmd!
-                autocmd Filetype python noremap <F8> :PymodeLintAuto<CR>
-            augroup END
-        endif
+        autocmd vimrc Filetype python noremap <F8> :PymodeLintAuto<CR>
     "}}}
 
     " Vimtex settings {{{
         let g:vimtex_enabled = 1
-        let g:tex_flavor = "latex"  " Open '.tex' files as 'tex' and not 'plaintex'.
+        let g:tex_flavor = 'latex'  " Open '.tex' files as 'tex' and not 'plaintex'.
 
         let g:vimtex_quickfix_mode = 2  " Auto-open with no focus.
-        let g:vimtex_latexmk_build_dir = "build"
+        let g:vimtex_latexmk_build_dir = 'build'
 
         if has('mac')
             " Skim as a PDF viewer
@@ -791,16 +761,16 @@
                         \ 're!\\includepdf(\s*\[[^]]*\])?\s*\{[^}]*',
                         \ 're!\\includestandalone(\s*\[[^]]*\])?\s*\{[^}]*',
                         \ ]
-        end
+        endif
 
         " Disable insert mode mappings
         let g:vimtex_imaps_enabled = 0
 
         " Integration with vim-surround
-        augroup latexSurround
-            autocmd!
-            autocmd FileType tex call s:latexSurround()
-        augroup END
+        autocmd vimrc FileType tex call s:latexSurround()
+
+        " Better formatting with gq
+        let g:vimtex_format_enabled = 1
 
         function! s:latexSurround()
             let b:surround_{char2nr("e")}
@@ -818,7 +788,8 @@
     " }}}
 
     " Molokai {{{
-        let g:molokai_original = 1
+        let g:molokai_original = 0 " Prefer gray background color
+        let g:rehash256 = 1        " Enable experimental 256 colors support
     " }}}
 
     " Vim-Go {{{
@@ -837,29 +808,25 @@
         " Show info for word under cursor
         let g:go_auto_type_info = 1
 
-        if has('autocmd')
-            augroup vim_go_mappings
-                autocmd!
-                au FileType go nmap <leader>r <Plug>(go-run)
-                au FileType go nmap <leader>b <Plug>(go-build)
-                au FileType go nmap <leader>t <Plug>(go-test)
-                au FileType go nmap <leader>c <Plug>(go-coverage)
+        " Mappings
+        autocmd vimrc FileType go nmap <leader>r <Plug>(go-run)
+        autocmd vimrc FileType go nmap <leader>b <Plug>(go-build)
+        autocmd vimrc FileType go nmap <leader>t <Plug>(go-test)
+        autocmd vimrc FileType go nmap <leader>c <Plug>(go-coverage)
 
-                au FileType go nmap <Leader>ds <Plug>(go-def-split)
-                au FileType go nmap <Leader>dv <Plug>(go-def-vertical)
-                au FileType go nmap <Leader>dt <Plug>(go-def-tab)
+        autocmd vimrc FileType go nmap <Leader>ds <Plug>(go-def-split)
+        autocmd vimrc FileType go nmap <Leader>dv <Plug>(go-def-vertical)
+        autocmd vimrc FileType go nmap <Leader>dt <Plug>(go-def-tab)
 
-                au FileType go nmap <Leader>gd <Plug>(go-doc)
-                au FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
+        autocmd vimrc FileType go nmap <Leader>gd <Plug>(go-doc)
+        autocmd vimrc FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
 
-                au FileType go nmap <Leader>e <Plug>(go-rename)
-                au FileType go nmap <Leader>i <Plug>(go-imports)
-                au FileType go nmap <Leader>s <Plug>(go-implements)
-            augroup END
-        endif
+        autocmd vimrc FileType go nmap <Leader>e <Plug>(go-rename)
+        autocmd vimrc FileType go nmap <Leader>i <Plug>(go-imports)
+        autocmd vimrc FileType go nmap <Leader>s <Plug>(go-implements)
 
         " Syntastic integration
-        let g:go_list_type = "quickfix"
+        let g:go_list_type = 'quickfix'
     " }}}
 
     " vim-gutentags {{{
@@ -871,7 +838,7 @@
 " }}}
 
 " Ending settings {{{
-    if filereadable(expand("~/.vimrc.local"))
+    if filereadable(expand('~/.vimrc.local'))
         source ~/.vimrc.local
     endif
 
