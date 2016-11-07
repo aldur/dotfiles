@@ -20,7 +20,6 @@ HIST_STAMPS="dd/mm/yyyy"
 plugins=( \
     git \ 
     virtualenv \  # Auto-completion
-    brew \ 
     colored-man \  # Colors
     history-substring-search z \  # Utilities
     zsh-syntax-highlighting \  # Spellchecking (load it last)
