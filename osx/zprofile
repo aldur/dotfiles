@@ -31,7 +31,10 @@ export JAVA_HOME=$(/usr/libexec/java_home)
 
 # RubyGems environment.
 export GEM_HOME=$HOME/.gem
-export PATH=$GEM_HOME/bin:$PATH
+PATH=$GEM_HOME/bin:$PATH
+
+# Stack (Haskell) environemnt.
+PATH=$PATH:$HOME/.local/bin
 
 # Load Python RC file
 export PYTHONSTARTUP="$HOME/.pythonrc"
