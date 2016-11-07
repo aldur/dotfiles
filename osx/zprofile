@@ -42,12 +42,12 @@ export PYTHONSTARTUP="$HOME/.pythonrc"
 # Export $PATH
 export PATH=$PATH
 
-# GPG agent
-[ -f ~/.gpg-agent-info ] && source ~/.gpg-agent-info
-if [ -S "${GPG_AGENT_INFO%%:*}" ]; then
+# Automatically setup gpg-agent for every shell
+if [ -f ~/.gnupg/.gpg-agent-info ] && [ -n "$(pgrep gpg-agent)" ]; then
+    source ~/.gnupg/.gpg-agent-info
     export GPG_AGENT_INFO
 else
-    eval $(gpg-agent --daemon)
+    eval $(gpg-agent --daemon --write-env-file ~/.gnupg/.gpg-agent-info)
 fi
 
 # Ask homebrew to disable analytics
