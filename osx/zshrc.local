@@ -24,4 +24,4 @@ export NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 zstyle ':bracketed-paste-magic' active-widgets '.self-*'
 
 # Source iTerm2 integration tools.
-source "${HOME}/.iterm2_shell_integration.zsh"
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
