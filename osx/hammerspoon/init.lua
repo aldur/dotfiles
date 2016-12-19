@@ -1,5 +1,5 @@
 -- Modeline {{{
--- vim: set foldmarker={{{,}}} foldlevel=1 foldmethod=marker
+-- vim: set foldmarker={{{,}}} foldlevel=0 foldmethod=marker
 -- luacheck: globals hs ignore globals
 -- }}}
 
@@ -12,8 +12,6 @@ local secrets = require("secrets")
 
 -- Constants / Definitions {{{
 
-local mash = {"cmd", "alt", "ctrl"}
-local mash_shift = {"cmd", "alt", "ctrl", "shift"}
 local animationDuration = 0
 local shadows = false
 
@@ -24,6 +22,7 @@ globals["WiFi"] = {}
 globals["watcher"] = {}
 globals["windows"] = {}
 globals["hotkey"] = {}
+globals["mhotkey"] = {}
 globals["geeklets"] = {}
 globals["wfilters"] = {}
 globals["cycle"] = {}
@@ -40,7 +39,13 @@ local snapped = {
 
 hs.window.animationDuration = animationDuration  -- Disable window animation
 hs.window.setShadows(shadows)  -- No windows shadow
-hs.window.filter.setLogLevel('nothing')  -- Disable window filter logging
+wf.setLogLevel('nothing')  -- Disable window filter logging
+hs.hotkey.setLogLevel('warning')  -- Less verbose hotkey logging
+hs.hints.style = 'vimperator'
+
+-- Reject iTerm2 in default window filters.
+-- wf.default:rejectApp("iTerm2")
+-- wf.defaultCurrentSpace:rejectApp("iTerm2")
 
 -- }}}
 
@@ -58,6 +63,7 @@ hs.window.filter.setLogLevel('nothing')  -- Disable window filter logging
 local function cleanup()
     -- Cleanup here.
     hs.fnutils.each(globals["hotkey"], function(h) h:disable() end)
+    hs.fnutils.each(globals["mhotkey"], function(h) h.k:disable() end)
     hs.fnutils.each(globals["watcher"], function(w) w:stop() end)
     hs.fnutils.each(globals["geeklets"]["timers"], function(t) t:stop() end)
     hs.fnutils.each(globals["geeklets"]["geeklets"], function(g) g:delete() end)
@@ -73,14 +79,20 @@ end
 
 -- WiFi management {{{
 
-globals["WiFi"]["SSIDs"] = {
-    HackedStationWiFi='Casa TiPPi',
-    colossus='University', sapienza='University',
-    TNCAP448DE3='Casa Carpineto',
-}
-globals["WiFi"]["callbacks"] = {}
-globals["WiFi"]["lastSSID"] = hs.wifi.currentNetwork()
+-- secrets.SSIDS is a table of the form:
+-- secrets.SSIDS = {
+--     ['SSID']='Network location name',
+-- }
 
+-- secrets.SSID_CALLBACKS is a table of the form:
+-- secrets.SSID_CALLBACKS = {
+--     ['Network location name']={
+--         function() assert(hs.audiodevice.findDeviceByName("Built-in Output"):setMuted(true)) end,  -- IN callback
+--         function() assert(hs.audiodevice.findDeviceByName("Built-in Output"):setMuted(false)) end,  -- OUT callback
+--     },
+-- }
+
+globals["WiFi"]["lastSSID"] = hs.wifi.currentNetwork()
 local function ssidChangedCallback()
     local newSSID = hs.wifi.currentNetwork()
 
@@ -96,9 +108,9 @@ local function ssidChangedCallback()
 
     if globals["WiFi"]["lastSSID"] == newSSID then return end
 
-    local networkLocation = globals["WiFi"]["SSIDs"][newSSID]
+    local networkLocation = secrets.SSIDS[newSSID]
     if networkLocation then
-        if hs.applescript('do shell script "scselect \'' .. networkLocation .. '\'"') then
+        if hs.network.configuration.open():setLocation(networkLocation) then
             hs.notify.new({
                 title="Hammerspoon",
                 contentImage=hs.image.imageFromPath("icons/internet.ico"),
@@ -108,18 +120,20 @@ local function ssidChangedCallback()
         else
             hs.notify.new({
                 title="Hammerspoon",
-                informativeText="Unknown error while managing network locations.",
+                informativeText="An error occurred while managing network locations.",
                 autoWithdraw=true
             }):send()
         end
     end
 
-    local callback = globals["WiFi"]["callbacks"][networkLocation]
+    -- Execute IN callback for new network location.
+    local callback = secrets.SSID_CALLBACKS[networkLocation]
     if callback then assert(#callback == 2); callback[1]() end
 
+    -- Execute OUT callback for last network location.
     local lastSSID = globals["WiFi"]["lastSSID"]
-    local lastNetworkLocation = globals["WiFi"]["SSIDs"][lastSSID]
-    callback = globals["WiFi"]["callbacks"][lastNetworkLocation]
+    local lastNetworkLocation = secrets.SSIDS[lastSSID]
+    callback = secrets.SSID_CALLBACKS[lastNetworkLocation]
     if callback then assert(#callback == 2); callback[2]() end
 
     globals["WiFi"]["lastSSID"] = newSSID
@@ -161,15 +175,6 @@ local function adjacentSpace(left)
     return layout[adjacent], adjacent
 end
 
-local function toNextSpace(left)
-    local space, index = adjacentSpace(left)
-    hs.alert.closeAll()
-    hs.alert.show("Desktop " .. index, 0.5)
-    -- spaces.changeToSpace(space, false)  -- Do not reset dock
-    spaces.changeToSpace(space, true)  -- Do not reset dock
-    hs.window.frontmostWindow():focus()
-end
-
 local function moveToNextSpace(window, left)
     local newSpaceID = adjacentSpace(left)
     window:spacesMoveTo(newSpaceID)
@@ -180,7 +185,25 @@ end
 
 -- Windows {{{
 
+local function focusLastFocused()
+    local lastFocused = wf.defaultCurrentSpace:getWindows(wf.sortByFocusedLast)
+    if #lastFocused > 0 then lastFocused[1]:focus() end
+end
+
+local function focusSecondToLastFocused()
+    local lastFocused = wf.default:getWindows(wf.sortByFocusedLast)
+    if #lastFocused > 1 then lastFocused[2]:focus() end
+end
+
 globals["windows"]["savedFrames"] = {}
+local function saveFrame(w)
+    assert(w)
+    local savedFrame = globals["windows"]["savedFrames"][w:id()]
+    if savedFrame == nil then
+        globals["windows"]["savedFrames"][w:id()] = w:frame()
+    end
+end
+
 local function setFrame(window, frame)
     assert(window)
     local windowID = window:id()
@@ -200,10 +223,7 @@ local function setFrame(window, frame)
         return
     end
 
-    if savedFrame == nil then
-        -- Save the current frame.
-        globals["windows"]["savedFrames"][windowID] = window:frame()
-    end
+    saveFrame(window)  -- Save the current frame.
 
     if frame and frame.x <= 1 and frame.y <= 1
         and frame.w <= 1 and frame.h <= 1 then
@@ -249,55 +269,125 @@ end
 
 -- }}}
 
+-- Grid {{{
+
+hs.grid.setGrid('11x7')
+
+-- }}}
+
 -- Window filters {{{
 
-globals["wfilters"]["finder"] = wf.copy(wf.defaultCurrentSpace):setAppFilter('Finder')
-globals["wfilters"]["finder"]:subscribe(
-    wf.windowDestroyed,
-    function(_, _, _)
-        -- Focus last focused window as soon as a window is destroyed
-        local lastFocused = wf.defaultCurrentSpace:getWindows(wf.sortByFocusedLast)
-        if #lastFocused > 0 then lastFocused[1]:focus() end
-    end
-)
+globals["wfilters"]["finder"] = wf.copy(
+    wf.defaultCurrentSpace):setDefaultFilter(false):setAppFilter('Finder')
+globals["wfilters"]["finder"]:subscribe(wf.windowDestroyed, function(_, _, _)
+    -- Focus last focused window as soon as a window is destroyed.
+    focusLastFocused()
+end)
+
+globals["wfilters"]["redshift"] = wf.new({
+    VLC={visible=true}, Photos={focused=true}, Kodi={visible=true},
+    loginwindow={visible=true, allowRoles='*'},
+    default={fullscreen=true}
+})
+
+-- }}}
+
+-- Redshift {{{
+
+-- hs.redshift.start(3000, '21:00', '7:00', '4h', false, globals["wfilters"]["redshift"])
+
+-- }}}
+
+-- Chooser {{{
+
+local choices = {}
+for _, emoji in ipairs(hs.json.decode(io.open("emojis/emojis.json"):read())) do
+    table.insert(choices,
+        {text=emoji['name'],
+            subText=table.concat(emoji['kwds'], ", "),
+            image=hs.image.imageFromPath("emojis/" .. emoji['id'] .. ".png"),
+            chars=emoji['chars']
+        })
+end
+
+local chooser = hs.chooser.new(function(choice)
+    if not choice then focusLastFocused(); return end
+    hs.pasteboard.setContents(choice["chars"])
+    focusLastFocused()
+    hs.applescript('tell application "System Events" to keystroke "v" using command down')
+end)
+
+chooser:rows(5)
+chooser:searchSubText(true)
+chooser:choices(choices)
+chooser:bgDark(true)
 
 -- }}}
 
 -- Bindings {{{
 
-hs.hotkey.bind(mash, "r", function()
+-- Inspired by https://github.com/lodestone/hyper-hacks
+-- Create a modal binding that will be activated once CapsLock is pressed...
+globals["mhotkey"]["hyper"] = hs.hotkey.modal.new({}, "F17")
+local hyper = globals["mhotkey"]["hyper"]
+
+-- ...and connect it to CapsLock presses (remapped through Karabiner-Elements).
+hs.hotkey.bind({}, 'F18',
+    function() hyper.triggered = false; hyper:enter() end,
+    function() hyper:exit(); if not hyper.triggered then hs.eventtap.keyStroke({}, 'ESCAPE') end end
+)
+
+-- Configuration reload
+hyper:bind({}, "r", function()
     cleanup()
     hs.reload()
-    hs.notify.new({
-        title="Hammerspoon",
-        informativeText="Configuration reloaded",
-        autoWithdraw=true
-    }):send()
+    hs.notify.new({title="Hammerspoon", informativeText="Configuration reloaded",
+        autoWithdraw=true}):send()
 end)
 
-hs.hotkey.bind(mash, "c", function()
+-- Toggle console
+hyper:bind({}, "c", function()
     hs.toggleConsole()
     hs.window.frontmostWindow():focus()
+    hyper.triggered = true
+end)
+
+-- Move through the grid
+hs.fnutils.each({
+    {"pad8", "Up"}, {"pad2", "Down"}, {"pad4", "Left"}, {"pad6", "Right"},
+    {"8", "Up"}, {"7", "Down"}, {"6", "Left"}, {"9", "Right"},
+}, function(k)
+    hyper:bind({}, k[1], function()
+        saveFrame(hs.window.focusedWindow());
+        hs.grid["pushWindow" .. k[2]]()
+        hyper.triggered = true
+    end)
+end)
+
+-- Shrink/enlarge within the grid
+hs.fnutils.each({
+    {"pad8", "Shorter"}, {"pad2", "Taller"}, {"pad4", "Thinner"}, {"pad6", "Wider"},
+    {"8", "Shorter"}, {"7", "Taller"}, {"6", "Thinner"}, {"9", "Wider"},
+}, function(k)
+    hyper:bind({"shift"}, k[1], function()
+        saveFrame(hs.window.focusedWindow());
+        hs.grid["resizeWindow" .. k[2]]()
+        hyper.triggered = true
+    end)
 end)
 
 -- Quick open Downloads/Desktop
 hs.fnutils.each({{"d", "Downloads"}, {"s", "Desktop"}}, function(k)
-    hs.hotkey.bind(mash, k[1], function()
+    hyper:bind({}, k[1], function()
         hs.applescript('tell application "Finder"\n'
         .. 'open folder "' .. k[2] .. '" of home\nactivate\nend tell')
-    end)
-end)
-
--- Switch to space on left/right
-hs.fnutils.each({{"right", false}, {"left", true}}, function(k)
-    hs.hotkey.bind(mash, k[1], function()
-        toNextSpace(k[2])
+        hyper.triggered = true
     end)
 end)
 
 -- Move window to space on left/right
 hs.fnutils.each({{"right", false}, {"left", true}}, function(k)
-    hs.hotkey.bind(mash_shift, k[1], function()
+    hs.hotkey.bind({"ctrl", "shift"}, k[1], function()
         local focused = hs.window.focusedWindow()
         if focused then moveToNextSpace(focused, k[2]) end
     end)
@@ -305,25 +395,32 @@ end)
 
 -- Fullscreen / revert to original
 hs.fnutils.each({{"delete", nil}, {"return", hs.geometry(0,0,1,1)}}, function(k)
-    hs.hotkey.bind(mash, k[1], function()
+    hyper:bind({}, k[1], function()
         local focused = hs.window.focusedWindow()
         if focused then setFrame(focused, k[2]) end
+        hyper.triggered = true
     end)
 end)
 
 -- Snap west, south, north, east
 hs.fnutils.each({"h", "j", "k", "l"}, function(k)
-    hs.hotkey.bind(mash_shift, k, function()
+    hyper:bind({"shift"}, k, function()
         local focused = hs.window.focusedWindow()
         if focused then setFrame(focused, snapped[cardinals[k]]) end
+        hyper.triggered = true
     end)
 end)
 
 -- Focus window on west, south, north, east
 hs.fnutils.each({"h", "j", "k", "l"}, function(k)
-    hs.hotkey.bind(mash, k, function()
+    hyper:bind({}, k, function()
+        hyper.triggered = true
+
         local snappedID = globals["windows"][cardinals[k]]
-        if snappedID then hs.window.get(snappedID):focus(); return end
+        if snappedID and hs.window.get(snappedID) then
+            hs.window.get(snappedID):focus()
+            return
+        end
 
         local f = "focusWindow" .. cardinals[k]:gsub("^%l", string.upper)
         wf.defaultCurrentSpace[f](wf.defaultCurrentSpace,
@@ -332,23 +429,55 @@ hs.fnutils.each({"h", "j", "k", "l"}, function(k)
     end)
 end)
 
--- Focus second-last window
-hs.hotkey.bind(mash, "space", function()
-    local lastFocused = wf.defaultCurrentSpace:getWindows(wf.sortByFocusedLast)
-    if #lastFocused > 1 then lastFocused[2]:focus() end
+-- Focus second-last focused window
+hyper:bind({}, ',', function()
+    focusSecondToLastFocused()
+    hyper.triggered = true
 end)
 
 -- Center on screen
-hs.hotkey.bind(mash, ".", function()
+hyper:bind({}, ".", function()
     local focused = hs.window.focusedWindow()
     if focused then focused:centerOnScreen() end
+    hyper.triggered = true
 end)
 
 -- Enlarge / shrink window
 hs.fnutils.each({{"-", false}, {"+", true}}, function(k)
-    hs.hotkey.bind(mash, k[1], function()
+    hyper:bind({}, k[1], function()
         resize(hs.window.focusedWindow(), k[2])
+        hyper.triggered = true
     end)
+end)
+
+-- Focus/launch most commonly used applications.
+hs.fnutils.each({{"M", 'com.deezer.Deezer'}, {"B", 'com.google.Chrome'}}, function(k)
+    hyper:bind({}, k[1], function()
+        local window = hs.window.focusedWindow()
+        if window and window:application():bundleID() == k[2] then
+            focusSecondToLastFocused()
+        else
+            assert(hs.application.launchOrFocusByBundleID(k[2]))
+        end
+        hyper.triggered = true
+    end)
+end)
+
+-- Redshift manual toggle
+hyper:bind({}, 'I', function()
+    hs.redshift.toggle()
+    hyper.triggered = true
+end)
+
+-- Toggle window hints
+hyper:bind({}, 'space', function()
+    hs.hints.windowHints()
+    hyper.triggered = true
+end)
+
+hyper:bind({}, 'e', function()
+    chooser:show()
+    hyper.triggered = true
 end)
 
 -- }}}
@@ -405,31 +534,39 @@ local function drawTimeGeeklet(r)
     end
 end
 
-local function drawSpotifyInfoGeeklet(r)
+local function drawMusicGeeklet(r)
     local geeklets = globals["geeklets"]["geeklets"]
     local empty = hs.styledtext.new("", geekletsTextStyle)
-    local spotify = geeklets['spotify']
-    if spotify == nil then
-        spotify = hs.drawing.text(hs.geometry.rect(r), empty)
-        geeklets['spotify'] = spotify
-        spotify:show()
-    end
-    assert(spotify)
 
-    if hs.spotify.isRunning() then
-        local track = hs.spotify.getCurrentTrack()
-        local album = hs.spotify.getCurrentAlbum()
-        local artist = hs.spotify.getCurrentArtist()
+    local music = geeklets['music']
+    if music == nil then
+        music = hs.drawing.text(hs.geometry.rect(r), empty)
+        geeklets['music'] = music
+        music:show()
+    end
+    assert(music)
+
+    local musicApp = nil
+    if hs.deezer.isRunning() then
+        musicApp = hs.deezer
+    elseif hs.spotify.isRunning() then
+        musicApp = hs.spotify
+    end
+
+    if musicApp then
+        local track = musicApp.getCurrentTrack()
+        local album = musicApp.getCurrentAlbum()
+        local artist = musicApp.getCurrentArtist()
 
         if not track or not album or not artist then
             return
         end
 
-        spotify:setStyledText(hs.styledtext.new(
+        music:setStyledText(hs.styledtext.new(
             track .. " | " .. album .. " | " .. artist, geekletsTextStyle
         ))
     else
-        spotify:setStyledText(empty)
+        music:setStyledText(empty)
     end
 end
 
@@ -462,8 +599,8 @@ local function drawTopGeeklets()
 
     local timeRect = hs.geometry.rect(0, textVOffset, frame.w / 4, height / 3 * 2)
     drawTimeGeeklet(timeRect)
-    local spotifyRect = hs.geometry.rect(frame.w / 4, textVOffset, frame.w / 2, height / 3 * 2)
-    drawSpotifyInfoGeeklet(spotifyRect)
+    local musicRect = hs.geometry.rect(frame.w / 4, textVOffset, frame.w / 2, height / 3 * 2)
+    drawMusicGeeklet(musicRect)
     local batteryRect = hs.geometry.rect(frame.w * 3 / 4, textVOffset, frame.w / 4, height / 3 * 2)
     drawBatteryGeeklet(batteryRect)
 
@@ -474,7 +611,7 @@ local function drawTopGeeklets()
 
     local timers = globals["geeklets"]["timers"]
     timers['time'] = hs.timer.doEvery(10, function() drawTimeGeeklet(timeRect) end)
-    timers['spotify'] = hs.timer.doEvery(5, function() drawSpotifyInfoGeeklet(spotifyRect) end)
+    timers['spotify'] = hs.timer.doEvery(5, function() drawMusicGeeklet(musicRect) end)
     timers['battery'] = hs.timer.doEvery(120, function() drawBatteryGeeklet(batteryRect) end)
 end
 drawTopGeeklets()
@@ -527,30 +664,31 @@ hs.notify.register('pb', function()
 end)
 
 local function pushbullet()
-    return hs.http.websocket('wss://stream.pushbullet.com/websocket/' .. pb_api_key,
-    function(ws_body)
-        local alert = hs.json.decode(ws_body)
-        if alert['type'] == 'nop' then return end
-        hs.http.asyncGet('https://api.pushbullet.com/v2/pushes?limit=1',
-        {["Access-Token"]=pb_api_key},
-        function(status, body, _)
-            if not status or status > 200 then
-                print("Error (" .. status .. ") while getting pushes.")
-                return
-            end
+    return hs.http.websocket(
+        'wss://stream.pushbullet.com/websocket/' .. pb_api_key,
+        function(ws_body)
+            local alert = hs.json.decode(ws_body)
+            if alert['type'] == 'nop' then return end
+            hs.http.asyncGet('https://api.pushbullet.com/v2/pushes?limit=1',
+            {["Access-Token"]=pb_api_key},
+            function(status, body, _)
+                if not status or status > 200 then
+                    print("Error (" .. status .. ") while getting pushes.")
+                    return
+                end
 
-            local pushes = hs.json.decode(body)
-            local push = pushes.pushes[1]
-            if not push or not push.dismissed or push.body then return end
+                local pushes = hs.json.decode(body)
+                local push = pushes.pushes[1]
+                if not push or push.dismissed or not push.body then return end
 
-            hs.pasteboard.setContents(push.body)
-            hs.notify.new('pb', {
-                title=push.title or "Pushbullet",
-                informativeText=push.body, autoWithdraw=true,
-                contentImage=hs.image.imageFromPath('icons/pushbullet.ico')
-            }):send()
+                hs.pasteboard.setContents(push.body)
+                hs.notify.new('pb', {
+                    title=push.title or "Pushbullet",
+                    informativeText=push.body, autoWithdraw=true,
+                    contentImage=hs.image.imageFromPath('icons/pushbullet.ico')
+                }):send()
+            end)
         end)
-    end)
 end
 globals["pushbullet"] = pushbullet()
 
@@ -559,17 +697,57 @@ globals["pushbullet"] = pushbullet()
 -- Reachability {{{
 
 globals["watcher"]["internet"] = hs.network.reachability.internet():setCallback(
-function(_, flags)
-    if flags == hs.network.reachability.flags.reachable then
-        -- A default route exists, so an active internet connection is present
-        print("Active internet connection found.")
-        globals["pushbullet"]:close()
-        globals["pushbullet"] = pushbullet()
-    else
-        -- No default route exists, so no active internet connection is present
-        print("Internet connectivity lost.")
-        globals["pushbullet"]:close()
-    end
+    function(_, flags)
+        if flags == hs.network.reachability.flags.reachable then
+            -- A default route exists, so an active internet connection is present
+            print("Active internet connection found.")
+            globals["pushbullet"]:close()
+            globals["pushbullet"] = pushbullet()
+        else
+            -- No default route exists, so no active internet connection is present
+            print("Internet connectivity lost.")
+            globals["pushbullet"]:close()
+        end
 end):start()
+
+-- }}}
+
+-- Instapaper {{{
+
+local instapaper_auth = hs.base64.encode(
+    secrets.INSTAPAPER_USERNAME .. ":" .. secrets.INSTAPAPER_PASSWORD
+)
+
+local function toInstapaper(url)
+    if not url then url = hs.pasteboard.getContents() end
+    assert(url)
+
+    if not (string.match(url, "www") or
+        string.match(url, "http://") or
+        string.match(url, "https://"))
+        then
+            print("Invalid url: " .. url .. ".")
+            return
+        end
+
+    hs.http.asyncPost(
+        'https://www.instapaper.com/api/add',
+        "url=" .. url, {Authorization="Basic " .. instapaper_auth},
+        function(status, _, _)
+            if not status or status ~= 201 then
+                print("Error (" .. status .. ") while adding url (" .. url .. ") to Instapaper.")
+            else
+                hs.notify.new({
+                    title="Hammerspoon",
+                    informativeText=url .. " added to Instapaper",
+                    autoWithdraw=true
+                }):send()
+            end
+            hs.window.frontmostWindow():focus()  -- Always focus frontmost window before returning
+        end
+    )
+end
+
+hs.urlevent.bind("instapaper", function(_, _) toInstapaper(nil) end)
 
 -- }}}
