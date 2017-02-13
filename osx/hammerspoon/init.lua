@@ -22,7 +22,6 @@ globals["WiFi"] = {}
 globals["watcher"] = {}
 globals["windows"] = {}
 globals["hotkey"] = {}
-globals["mhotkey"] = {}
 globals["geeklets"] = {}
 globals["wfilters"] = {}
 globals["cycle"] = {}
@@ -33,6 +32,9 @@ local snapped = {
     north=hs.geometry(0,0,1,0.5), south=hs.geometry(0,0.5,1,0.5),
 }
 
+local hyper = {"cmd", "alt", "ctrl"}
+local hyper_shift = {"cmd", "alt", "ctrl", "shift"}
+
 -- }}}
 
 -- Settings {{{
@@ -41,7 +43,8 @@ hs.window.animationDuration = animationDuration  -- Disable window animation
 hs.window.setShadows(shadows)  -- No windows shadow
 wf.setLogLevel('nothing')  -- Disable window filter logging
 hs.hotkey.setLogLevel('warning')  -- Less verbose hotkey logging
-hs.hints.style = 'vimperator'
+hs.hints.style = 'vimperator'  -- Hint names start with application's first letter
+hs.application.enableSpotlightForNameSearches(true)  -- Enable alternate application names
 
 -- Reject iTerm2 in default window filters.
 -- wf.default:rejectApp("iTerm2")
@@ -63,7 +66,6 @@ hs.hints.style = 'vimperator'
 local function cleanup()
     -- Cleanup here.
     hs.fnutils.each(globals["hotkey"], function(h) h:disable() end)
-    hs.fnutils.each(globals["mhotkey"], function(h) h.k:disable() end)
     hs.fnutils.each(globals["watcher"], function(w) w:stop() end)
     hs.fnutils.each(globals["geeklets"]["timers"], function(t) t:stop() end)
     hs.fnutils.each(globals["geeklets"]["geeklets"], function(g) g:delete() end)
@@ -314,7 +316,7 @@ local chooser = hs.chooser.new(function(choice)
     if not choice then focusLastFocused(); return end
     hs.pasteboard.setContents(choice["chars"])
     focusLastFocused()
-    hs.applescript('tell application "System Events" to keystroke "v" using command down')
+    hs.eventtap.keyStrokes(hs.pasteboard.getContents())
 end)
 
 chooser:rows(5)
@@ -326,19 +328,8 @@ chooser:bgDark(true)
 
 -- Bindings {{{
 
--- Inspired by https://github.com/lodestone/hyper-hacks
--- Create a modal binding that will be activated once CapsLock is pressed...
-globals["mhotkey"]["hyper"] = hs.hotkey.modal.new({}, "F17")
-local hyper = globals["mhotkey"]["hyper"]
-
--- ...and connect it to CapsLock presses (remapped through Karabiner-Elements).
-hs.hotkey.bind({}, 'F18',
-    function() hyper.triggered = false; hyper:enter() end,
-    function() hyper:exit(); if not hyper.triggered then hs.eventtap.keyStroke({}, 'ESCAPE') end end
-)
-
 -- Configuration reload
-hyper:bind({}, "r", function()
+hs.hotkey.bind(hyper, "r", function()
     cleanup()
     hs.reload()
     hs.notify.new({title="Hammerspoon", informativeText="Configuration reloaded",
@@ -346,10 +337,9 @@ hyper:bind({}, "r", function()
 end)
 
 -- Toggle console
-hyper:bind({}, "c", function()
+hs.hotkey.bind(hyper, "c", function()
     hs.toggleConsole()
     hs.window.frontmostWindow():focus()
-    hyper.triggered = true
 end)
 
 -- Move through the grid
@@ -357,10 +347,9 @@ hs.fnutils.each({
     {"pad8", "Up"}, {"pad2", "Down"}, {"pad4", "Left"}, {"pad6", "Right"},
     {"8", "Up"}, {"7", "Down"}, {"6", "Left"}, {"9", "Right"},
 }, function(k)
-    hyper:bind({}, k[1], function()
+    hs.hotkey.bind(hyper, k[1], function()
         saveFrame(hs.window.focusedWindow());
         hs.grid["pushWindow" .. k[2]]()
-        hyper.triggered = true
     end)
 end)
 
@@ -369,19 +358,17 @@ hs.fnutils.each({
     {"pad8", "Shorter"}, {"pad2", "Taller"}, {"pad4", "Thinner"}, {"pad6", "Wider"},
     {"8", "Shorter"}, {"7", "Taller"}, {"6", "Thinner"}, {"9", "Wider"},
 }, function(k)
-    hyper:bind({"shift"}, k[1], function()
+    hs.hotkey.bind(hyper_shift, k[1], function()
         saveFrame(hs.window.focusedWindow());
         hs.grid["resizeWindow" .. k[2]]()
-        hyper.triggered = true
     end)
 end)
 
 -- Quick open Downloads/Desktop
 hs.fnutils.each({{"d", "Downloads"}, {"s", "Desktop"}}, function(k)
-    hyper:bind({}, k[1], function()
+    hs.hotkey.bind(hyper, k[1], function()
         hs.applescript('tell application "Finder"\n'
         .. 'open folder "' .. k[2] .. '" of home\nactivate\nend tell')
-        hyper.triggered = true
     end)
 end)
 
@@ -395,27 +382,23 @@ end)
 
 -- Fullscreen / revert to original
 hs.fnutils.each({{"delete", nil}, {"return", hs.geometry(0,0,1,1)}}, function(k)
-    hyper:bind({}, k[1], function()
+    hs.hotkey.bind(hyper, k[1], function()
         local focused = hs.window.focusedWindow()
         if focused then setFrame(focused, k[2]) end
-        hyper.triggered = true
     end)
 end)
 
 -- Snap west, south, north, east
 hs.fnutils.each({"h", "j", "k", "l"}, function(k)
-    hyper:bind({"shift"}, k, function()
+    hs.hotkey.bind(hyper_shift, k, function()
         local focused = hs.window.focusedWindow()
         if focused then setFrame(focused, snapped[cardinals[k]]) end
-        hyper.triggered = true
     end)
 end)
 
 -- Focus window on west, south, north, east
 hs.fnutils.each({"h", "j", "k", "l"}, function(k)
-    hyper:bind({}, k, function()
-        hyper.triggered = true
-
+    hs.hotkey.bind(hyper, k, function()
         local snappedID = globals["windows"][cardinals[k]]
         if snappedID and hs.window.get(snappedID) then
             hs.window.get(snappedID):focus()
@@ -430,54 +413,51 @@ hs.fnutils.each({"h", "j", "k", "l"}, function(k)
 end)
 
 -- Focus second-last focused window
-hyper:bind({}, ',', function()
+hs.hotkey.bind(hyper, ',', function()
     focusSecondToLastFocused()
-    hyper.triggered = true
 end)
 
 -- Center on screen
-hyper:bind({}, ".", function()
+hs.hotkey.bind(hyper, ".", function()
     local focused = hs.window.focusedWindow()
     if focused then focused:centerOnScreen() end
-    hyper.triggered = true
 end)
 
 -- Enlarge / shrink window
 hs.fnutils.each({{"-", false}, {"+", true}}, function(k)
-    hyper:bind({}, k[1], function()
+    hs.hotkey.bind(hyper, k[1], function()
         resize(hs.window.focusedWindow(), k[2])
-        hyper.triggered = true
     end)
 end)
 
 -- Focus/launch most commonly used applications.
 hs.fnutils.each({{"M", 'com.deezer.Deezer'}, {"B", 'com.google.Chrome'}}, function(k)
-    hyper:bind({}, k[1], function()
+    hs.hotkey.bind(hyper, k[1], function()
         local window = hs.window.focusedWindow()
         if window and window:application():bundleID() == k[2] then
             focusSecondToLastFocused()
         else
             assert(hs.application.launchOrFocusByBundleID(k[2]))
         end
-        hyper.triggered = true
     end)
 end)
 
 -- Redshift manual toggle
-hyper:bind({}, 'I', function()
+hs.hotkey.bind(hyper, 'I', function()
     hs.redshift.toggle()
-    hyper.triggered = true
 end)
 
 -- Toggle window hints
-hyper:bind({}, 'space', function()
+hs.hotkey.bind(hyper, 'space', function()
     hs.hints.windowHints()
-    hyper.triggered = true
 end)
 
-hyper:bind({}, 'e', function()
-    chooser:show()
-    hyper.triggered = true
+hs.hotkey.bind(hyper, 'e', function()
+    if chooser:isVisible() then
+        chooser:hide()
+    else
+        chooser:show()
+    end
 end)
 
 -- }}}
@@ -611,7 +591,7 @@ local function drawTopGeeklets()
 
     local timers = globals["geeklets"]["timers"]
     timers['time'] = hs.timer.doEvery(10, function() drawTimeGeeklet(timeRect) end)
-    timers['spotify'] = hs.timer.doEvery(5, function() drawMusicGeeklet(musicRect) end)
+    timers['music'] = hs.timer.doEvery(5, function() drawMusicGeeklet(musicRect) end)
     timers['battery'] = hs.timer.doEvery(120, function() drawBatteryGeeklet(batteryRect) end)
 end
 drawTopGeeklets()
