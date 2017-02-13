@@ -1,6 +1,8 @@
 " Place this file in {VIMHOME}/after/ftplugin/python.vim
 " Must have syntastic >= 3.5.0-29
 
+let python_highlight_all = 1  " Enable all Python syntax highlights
+
 " Use Python 3 when the shebang calls for it.
 if syntastic#util#parseShebang()['exe'] =~# '\m\<python3'
     let b:syntastic_python_python_exec = 'python3'
