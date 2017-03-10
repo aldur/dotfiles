@@ -6,11 +6,11 @@ SEGMENT_SEPARATOR=' '
 # Begin a segment
 # Takes two arguments, foreground (a colour) and bold (bold or not bold).
 prompt_segment() {
-  [[ $1 != "none " ]] && echo -n "%F{$1}"
+  [[ $1 != "none" ]] && echo -n "%F{$1}"
   [[ $2 == "bold" ]] && echo -n "%B"
   echo -n "$3$SEGMENT_SEPARATOR"
-  echo -n "%f"
-  echo -n "%b"
+  [[ $1 != "none" ]] && echo -n "%f"
+  [[ $2 == "bold" ]] && echo -n "%b"
 }
 
 # Prompt the user name
@@ -28,33 +28,25 @@ prompt_hostname() {
   prompt_segment green bold "%m"
 }
 
-# Prompt colon:
-prompt_colon() {
-  prompt_segment none false ":"
-}
-
 # Build the context (user@hostname:)
 prompt_context() {
   OLD_SEPARATOR=$SEGMENT_SEPARATOR
   SEGMENT_SEPARATOR=''
   prompt_user
   prompt_at
-  prompt_hostname
   SEGMENT_SEPARATOR=$OLD_SEPARATOR
-  prompt_colon
+  prompt_hostname
 }
 
 # Prompt cwd:
 prompt_cwd() {
-  prompt_segment blue no "%~"
+  prompt_segment blue false "%~"
 }
 
 # Virtualenv: current working virtualenv
 prompt_virtualenv() {
-  local virtualenv_path="$VIRTUAL_ENV"
-  if [[ -n $virtualenv_path && -n $VIRTUAL_ENV_DISABLE_PROMPT ]]; then
-    prompt_segment yellow no "#`basename $virtualenv_path`"
-  fi
+  [[ -n ${VIRTUAL_ENV} && -n ${VIRTUAL_ENV_DISABLE_PROMPT} ]] || return
+  prompt_segment yellow false "#${VIRTUAL_ENV:t}"
 }
 
 # Git: branch/detached head, dirty status
@@ -86,37 +78,47 @@ prompt_git() {
     zstyle ':vcs_info:*' get-revision true
     zstyle ':vcs_info:*' check-for-changes true
     zstyle ':vcs_info:*' stagedstr '✚'
-    zstyle ':vcs_info:git:*' unstagedstr '●'
+    zstyle ':vcs_info:git:*' unstagedstr '•'
     zstyle ':vcs_info:*' formats ' %u%c'
     zstyle ':vcs_info:*' actionformats ' %u%c'
     vcs_info
 
-    prompt_segment $color no "${ref/refs\/heads\// }${vcs_info_msg_0_%% }${mode}"
+    prompt_segment $color false "${ref/refs\/heads\//⎇ }${vcs_info_msg_0_%% }${mode}"
   fi
 }
 
-
 # Prompt a symbol indicating the status:
-# - was there an error
 prompt_status() {
-  [[ $RETVAL -ne 0 ]] && prompt_segment magenta bold "✘"
+  [[ $RETVAL -ne 0 ]] && prompt_segment red bold "✖"
 }
 
 # Prompt the newline and the actual prompt:
 prompt_newline() {
   prompt_segment blue bold "
-      »"
+    »"
 }
 
 # Prompt the time
 prompt_time() {
-  prompt_segment 105 no "[%*]"
+  prompt_segment 105 false "%*"
+}
+
+prompt_vim() {
+  if functions | egrep "^vi_mode_prompt_info \(\) {$" &> /dev/null; then
+    vi_mode_prompt_info
+  fi
+}
+
+prompt_jobs() {
+  [[ $(jobs -l | wc -l) -gt 0 ]] && prompt_segment 111 bold "⚙"
 }
 
 # Main prompt:
 build_prompt() {
   RETVAL=$?
   prompt_status
+  prompt_jobs
+  prompt_time
   prompt_virtualenv
   prompt_context
   prompt_cwd
@@ -125,10 +127,10 @@ build_prompt() {
 }
 
 build_right_prompt() {
-  prompt_time
+  prompt_vim
 }
 
-RPROMPT='$(build_right_prompt)'
 PROMPT='$(build_prompt)'
+RPROMPT='$(build_right_prompt)'
 SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 LSCOLORS="exfxcxdxbxegedabagacad"
