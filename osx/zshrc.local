@@ -11,17 +11,51 @@ alias gvim='open -a MacVim '
 # Automatically use tmux in Control Center mode
 alias tc='tmux -CC'
 alias ta='tmux -CC new -A -s'
+alias tt='tmux -CC attach -t'
 
+# Editors
+alias vim="nvim"
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
-
-alias vim="nvim"
 
 # Change NVIM cursor shape.
 export NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
 # Fix issues with bracketed-paste-magic
-zstyle ':bracketed-paste-magic' active-widgets '.self-*'
+# zstyle ':bracketed-paste-magic' active-widgets '.self-*'
+
+# Do not automatically set iTerm's title.
+export DISABLE_AUTO_TITLE="true"
+
+# Set key timeout to a lower value, useful for vi-mode
+# export KEYTIMEOUT=1
+
+# Customize LESS
+export LESS='-R -g -i'
+
+# Set tab color programmatically.
+tab-color() {
+    echo -ne "\033]6;1;bg;red;brightness;$1\a"
+    echo -ne "\033]6;1;bg;green;brightness;$2\a"
+    echo -ne "\033]6;1;bg;blue;brightness;$3\a"
+}
+
+# Set the tabl title programmatically.
+tab-title() {
+    echo -ne "\033]0;"$*"\007"
+}
 
 # Source iTerm2 integration tools.
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+# Tmux integration.
+iterm2_print_user_vars() {
+    # Keep track of the tmux session in a variable.
+    iterm2_set_user_var tmuxSession $([[ -n "${TMUX+set}" ]] && tmux display-message -p "#S")
+}
+
+# Set iTerm's tab name to the name of the tmux session.
+if [[ -n "${TMUX+set}" ]] then 
+    # tab-color 0 255 0  # This line should not be necessary.
+    tmux rename-window -t${TMUX_PANE} "$(tmux display-message -p "#S")"
+fi
