@@ -21,19 +21,22 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 HIST_STAMPS="dd/mm/yyyy"
 
 plugins=( \
-    git \ 
+    git \
     virtualenv \  # Auto-completion
-    colored-man \  # Colors
+    colored-man-pages \  # Colors
     history-substring-search z \  # Utilities
-    zsh-syntax-highlighting \  # Spellchecking (load it last)
+    zsh-syntax-highlighting \  # Syntax Highlights (load it last)
 )
 
 source $ZSH/oh-my-zsh.sh
+
 # ----------- Personal configuration -------------
 
 # Aliases
+
 # Enable aliases to be sudo’ed
 alias sudo='sudo '
+alias history='fc -dElD 0'  # Better history with timestamps, elapsed time, etc.
 
 # Global environment
 # Preferred editor for local and remote sessions
@@ -55,10 +58,13 @@ export SSH_KEY_PATH="$HOME/.ssh/id_rsa"
 # good ol' Bash :)
 setopt interactivecomments
 
-# Appends every command to the history file once it is executed
-# and reloads the history whenever you use it
-setopt inc_append_history
-setopt share_history
+# History configuration.
+# Increase size.
+export HISTSIZE=1000000
+export SAVEHIST=$HISTSIZE
+
+# History file locking with better performance.
+setopt hist_fcntl_lock
 
 # Load local configuration files
 if [[ -f $HOME/.zshrc.local ]]; then
