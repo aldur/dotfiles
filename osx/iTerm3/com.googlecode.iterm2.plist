@@ -2964,21 +2964,35 @@
 		<key>0xf702-0x300000</key>
 		<dict>
 			<key>Action</key>
-			<integer>2</integer>
+			<integer>25</integer>
 			<key>Text</key>
-			<string></string>
+			<string>Move Divider Left</string>
 		</dict>
 		<key>0xf703-0x300000</key>
 		<dict>
 			<key>Action</key>
-			<integer>0</integer>
+			<integer>25</integer>
+			<key>Text</key>
+			<string>Move Divider Right</string>
+		</dict>
+		<key>0xf72c-0x0</key>
+		<dict>
+			<key>Action</key>
+			<integer>7</integer>
 			<key>Text</key>
 			<string></string>
 		</dict>
 		<key>0xf72c-0x100000</key>
 		<dict>
 			<key>Action</key>
-			<integer>8</integer>
+			<integer>9</integer>
+			<key>Text</key>
+			<string></string>
+		</dict>
+		<key>0xf72d-0x0</key>
+		<dict>
+			<key>Action</key>
+			<integer>6</integer>
 			<key>Text</key>
 			<string></string>
 		</dict>
@@ -2997,7 +3011,7 @@
 	<key>HideActivityIndicator</key>
 	<false/>
 	<key>HideFromDockAndAppSwitcher</key>
-	<false/>
+	<true/>
 	<key>HideMenuBarInFullscreen</key>
 	<true/>
 	<key>HideScrollbar</key>
@@ -3015,7 +3029,7 @@
 	<key>HotKeyTogglesWindow</key>
 	<false/>
 	<key>Hotkey</key>
-	<true/>
+	<false/>
 	<key>HotkeyChar</key>
 	<integer>32</integer>
 	<key>HotkeyCode</key>
@@ -3315,9 +3329,9 @@
 		<integer>1</integer>
 	</dict>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>644 271 796 473 0 0 1440 900 </string>
+	<string>297 331 796 473 0 0 1440 900 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>0 427 570 473 0 0 1440 900 </string>
+	<string>0 132 1050 768 0 0 1440 900 </string>
 	<key>NeverWarnAboutShortLivedSessions_C1F76C2B-05CA-41C1-AA22-E3B21CB892F5</key>
 	<true/>
 	<key>New Bookmarks</key>
