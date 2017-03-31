@@ -2,3 +2,7 @@ source ~/.vimrc
 
 nnoremap / /
 vnoremap / /
+nnoremap <tab> gt
+nnoremap <s-tab> gT
+
+set surround

@@ -198,11 +198,11 @@ local function focusSecondToLastFocused()
 end
 
 globals["windows"]["savedFrames"] = {}
-local function saveFrame(w)
-    assert(w)
-    local savedFrame = globals["windows"]["savedFrames"][w:id()]
+local function saveFrame(window)
+    assert(window)
+    local savedFrame = globals["windows"]["savedFrames"][window:id()]
     if savedFrame == nil then
-        globals["windows"]["savedFrames"][w:id()] = w:frame()
+        globals["windows"]["savedFrames"][window:id()] = window:frame()
     end
 end
 
@@ -342,10 +342,14 @@ hs.hotkey.bind(hyper, "c", function()
     hs.window.frontmostWindow():focus()
 end)
 
+-- Force pasting where forbidden
+hs.hotkey.bind(hyper, "v", function()
+    hs.eventtap.keyStrokes(hs.pasteboard.getContents())
+end)
+
 -- Move through the grid
 hs.fnutils.each({
-    {"pad8", "Up"}, {"pad2", "Down"}, {"pad4", "Left"}, {"pad6", "Right"},
-    {"8", "Up"}, {"7", "Down"}, {"6", "Left"}, {"9", "Right"},
+    {"up", "Up"}, {"down", "Down"}, {"left", "Left"}, {"right", "Right"},
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function()
         saveFrame(hs.window.focusedWindow());
@@ -355,8 +359,7 @@ end)
 
 -- Shrink/enlarge within the grid
 hs.fnutils.each({
-    {"pad8", "Shorter"}, {"pad2", "Taller"}, {"pad4", "Thinner"}, {"pad6", "Wider"},
-    {"8", "Shorter"}, {"7", "Taller"}, {"6", "Thinner"}, {"9", "Wider"},
+    {"up", "Shorter"}, {"down", "Taller"}, {"left", "Thinner"}, {"right", "Wider"},
 }, function(k)
     hs.hotkey.bind(hyper_shift, k[1], function()
         saveFrame(hs.window.focusedWindow());
@@ -420,6 +423,7 @@ end)
 -- Center on screen
 hs.hotkey.bind(hyper, ".", function()
     local focused = hs.window.focusedWindow()
+    saveFrame(focused)
     if focused then focused:centerOnScreen() end
 end)
 
@@ -443,21 +447,18 @@ hs.fnutils.each({{"M", 'com.deezer.Deezer'}, {"B", 'com.google.Chrome'}}, functi
 end)
 
 -- Redshift manual toggle
-hs.hotkey.bind(hyper, 'I', function()
-    hs.redshift.toggle()
-end)
+-- hs.hotkey.bind(hyper, 'I', function()
+--     hs.redshift.toggle()
+-- end)
 
 -- Toggle window hints
 hs.hotkey.bind(hyper, 'space', function()
     hs.hints.windowHints()
 end)
 
+-- Emoji chooser
 hs.hotkey.bind(hyper, 'e', function()
-    if chooser:isVisible() then
-        chooser:hide()
-    else
-        chooser:show()
-    end
+    if chooser:isVisible() then chooser:hide() else chooser:show() end
 end)
 
 -- }}}
@@ -466,25 +467,38 @@ end)
 
 -- Launch iTerm2 by pressing alt-space
 globals["hotkey"]["iTerm"] = hs.hotkey.new({"alt"}, "space", function()
-    hs.application.open("com.googlecode.iterm2")
-end)
+    local iTerms = hs.application.applicationsForBundleID("com.googlecode.iterm2")
 
--- Enable the hotkey if iTerm2 is not running
-if not hs.application.find("iTerm") then
-    globals["hotkey"]["iTerm"]:enable()
-end
-
--- Then enable/disable it as needed
-globals["watcher"]["app"] = hs.application.watcher.new(function(appName, event, _)
-    if appName == "iTerm2" then
-        if event == hs.application.watcher.launching then
-            globals["hotkey"]["iTerm"]:disable()
-        elseif
-        event == hs.application.watcher.terminated then
-            globals["hotkey"]["iTerm"]:enable()
-        end
+    if #iTerms == 0 then
+        hs.application.open("com.googlecode.iterm2")
+        return
     end
-end):start()
+
+    local iTerm2 = iTerms[1]
+    local w = iTerm2:mainWindow()
+    if w == hs.window.focusedWindow() then
+        iTerm2:hide()
+    else
+        w:focus()
+    end
+end)
+globals["hotkey"]["iTerm"]:enable()
+
+-- -- Enable the hotkey if iTerm2 is not running
+-- if not hs.application.find("iTerm") then
+--     globals["hotkey"]["iTerm"]:enable()
+-- end
+
+-- -- Then enable/disable it as needed
+-- globals["watcher"]["app"] = hs.application.watcher.new(function(appName, event, _)
+--     if appName == "iTerm2" then
+--         if event == hs.application.watcher.launching then
+--             globals["hotkey"]["iTerm"]:disable()
+--         elseif event == hs.application.watcher.terminated then
+--             globals["hotkey"]["iTerm"]:enable()
+--         end
+--     end
+-- end):start()
 
 -- }}}
 

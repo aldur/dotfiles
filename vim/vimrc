@@ -20,27 +20,29 @@
 
     " The list of installed plugins
     Plug 'Konfekt/FastFold'             " Better fold refresh
-    Plug 'bogado/file-line'             " Open vim file:line
-    Plug 'christoomey/vim-sort-motion'  " Add gl sort motion
     Plug 'cohama/lexima.vim'            " Wonderful auto-pair
     Plug 'ctrlpvim/ctrlp.vim'           " Fuzzy file, buffer, MRU, tag finder
     Plug 'honza/vim-snippets'           " Vim snippets
-    Plug 'junegunn/vim-peekaboo'        " See content of registers
-    Plug 'justinmk/vim-sneak'           " Sneak motion
+    Plug 'keith/investigate.vim'        " Smart documentation finder
+    Plug 'lervag/vimtex'                " Syntax schemes and better indent
     Plug 'ludovicchabant/vim-gutentags' " Automatic tag management
-    Plug 'scrooloose/syntastic'         " Syntax Checkers
+    Plug 'neomake/neomake'              " Asynchronous Syntax Checkers
+    Plug 'sheerun/vim-polyglot'         " Additional syntaxes / indent
     Plug 'tommcdo/vim-lion'             " Add gl/gL to align text
     Plug 'tpope/vim-commentary'         " Toggle comments
     Plug 'tpope/vim-repeat'             " Enable supported plugin actions to be repeated with '.'
     Plug 'tpope/vim-surround'           " All about surrounding
     Plug 'tpope/vim-vinegar'            " Lightweight file manager
-    Plug 'vim-airline/vim-airline'      " Better statusbar
     Plug 'wellle/targets.vim'           " Additional text objects
-    Plug 'sheerun/vim-polyglot'         " Additional syntaxes
+
+    " Statusline
+    Plug 'itchyny/lightline.vim'        " Configure the statusbar / tabline
+    Plug 'taohex/lightline-buffer'      " Buffers in tabline
+
+    Plug 'sbdchd/neoformat',
+                \ { 'on': 'Neoformat' } " Code auto-formatting
 
     " Lazy loaded plugins / platform specific plugins
-    Plug 'Valloric/YouCompleteMe',
-                \ {'on': [] } " Completion engine
     Plug 'SirVer/ultisnips',
                 \ { 'on': [] } " Snippets engine
 
@@ -49,12 +51,14 @@
                 \ : { 'on': [] } " Completion engine - only works with NeoVim
 
     " Appearance
-    Plug 'junegunn/rainbow_parentheses.vim' " Rainbow parentheses
-    Plug 'fatih/molokai'                    " Molokai color scheme
+    Plug 'junegunn/rainbow_parentheses.vim',
+                \ { 'on' : 'RainbowParentheses'}  " Rainbow parentheses
+    Plug 'fatih/molokai'                          " Molokai color scheme
 
     " Language specific plugins {{{
         " Python
-        Plug 'python-mode/python-mode', { 'for': 'python' } " VIM as a powerful Python IDE
+        Plug 'jmcantrell/vim-virtualenv',
+                    \ { 'for': 'python' }            " Virtualenv within VIM
 
         " Markdown
         Plug 'jtratner/vim-flavored-markdown',
@@ -76,6 +80,10 @@
                     \ has('nvim') ? { 'do': 'make' } : { 'on': [] }  " Go completion
         Plug 'zchee/deoplete-clang',
                     \ has('nvim') ? {  } : { 'on': [] }              " Clang completion
+        Plug 'ujihisa/neco-look',
+                    \ has('nvim') ? {  } : { 'on': [] }              " Spell completion
+        Plug 'Shougo/neco-vim',
+                    \ has('nvim') ? {  } : { 'on': [] }              " VIM completion
     " }}}
 
     " Enable Vim-stay after all the other plugins
@@ -96,8 +104,7 @@
     " Mouse
     set mouse=a
     set mousehide               " Hide the mouse cursor while typing
-
-    " End of line (unix EOL is preferred over the dos one and before the mac one).
+" End of line (unix EOL is preferred over the dos one and before the mac one).
     set fileformats=unix,dos,mac
 
     " With a map leader it's possible to do extra key combinations
@@ -163,6 +170,7 @@
     set wildignore+=*.png,*.gif,*.jpg,*.ico
     set wildignore+=.git,.svn,.hg
     set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+    set wildignore+=.DS_Store
 
     " Save cursor position, folds, and so on.
     set viewoptions=cursor,folds,slash,unix
@@ -204,6 +212,10 @@
     if has('conceal')
         set conceallevel=2 concealcursor=i
     endif
+
+    " Only show cursorline in current window
+    autocmd vimrc WinEnter * set cursorline
+    autocmd vimrc WinLeave * set nocursorline
 " }}}
 
 " Auto completion {{{
@@ -212,14 +224,14 @@
 
     " Clever tab to cycle the completion popup menu
     " If you even need to insert a literal tab, press <CTRL-V><Tab>
-    function! CleverTab()
-        if strpart(getline('.'), 0, col('.') -1) =~# '^\s*$'
-            return "\<Tab>"
-        else
-            return "\<C-N>"
-        endif
-    endfunction
-    inoremap <Tab> <C-R>=CleverTab()<CR>
+    inoremap <silent><expr> <TAB>
+                \ pumvisible() ? "\<C-n>" :
+                \ <SID>check_back_space() ? "\<TAB>" :
+                \ deoplete#manual_complete()
+    function! s:check_back_space() abort "{{{
+        let l:col = col('.') - 1
+        return !l:col || getline('.')[l:col - 1]  =~? '\s'
+    endfunction"}}}
 
     if has('patch-7.4.314')
         set shortmess+=c " Quiet completions
@@ -288,7 +300,7 @@
         autocmd vimrc Filetype gitcommit setlocal spell textwidth=72
 
         " Latex
-        autocmd vimrc Filetype tex setlocal spell conceallevel=0 synmaxcol=200 ttyfast lazyredraw
+        autocmd vimrc Filetype tex setlocal spell conceallevel=0
 
         " Markdown
         autocmd vimrc Filetype ghmarkdown,markdown,md setlocal spell
@@ -335,6 +347,9 @@
     nnoremap <leader>ba :bufdo bdelete<cr>
 
     " Move to next buffer
+    nnoremap <tab> :bnext<cr>
+    nnoremap <s-tab> :bprevious<cr>
+
     nnoremap <leader>bn :bnext<cr>
     nnoremap <leader>bp :bprevious<cr>
 
@@ -386,7 +401,7 @@
     " Quickly call 'make'
     nnoremap <leader>m :make<cr>
 
-    " loclist mappings
+    " Loclist mappings
     nnoremap <leader>lo :lopen<cr>
     nnoremap <leader>ln :lnext<cr>
     nnoremap <leader>lp :lprev<cr>
@@ -438,10 +453,16 @@
     function! StripTrailingWhitespace()
         " Preparation: save cursor position
         " (last search is automatically saved because inside a function)
+        let l:search = @/
         let l:save = winsaveview()
+
         " Do the business.
-        %s/\s\+$//e
+        " vint: -ProhibitCommandRelyOnUser -ProhibitCommandWithUnintendedSideEffect
+        %s/\s\+$//ei
+
         " Clean up: restore cursor position.
+        " vint: +ProhibitCommandRelyOnUser +ProhibitCommandWithUnintendedSideEffect
+        let @/=l:search
         call winrestview(l:save)
     endfunction
     " }}}
@@ -449,13 +470,25 @@
     " Before saving, delete trailing white-spaces and ^M
     autocmd vimrc FileType c,cpp,java,php,javascript,python,twig,xml,yaml,vim,tex,lua
                 \ autocmd vimrc BufWritePre <buffer> call StripTrailingWhitespace()
+
+    " Return the number of lines in a window, between minheight and maxheight
+    function! AdjustWindowHeight(minheight, maxheight)
+        execute max([a:minheight, min([line('$') + 1, a:maxheight])])
+                    \ . 'wincmd _'
+    endfunction
+
+    " Automatically resize the quickfix/loclist window
+    autocmd vimrc BufReadPost quickfix set modifiable |
+                \ call AdjustWindowHeight(2, 10) |
+                \ set nomodifiable
 " }}}
 
 " Plugin settings {{{
-    " Lazy plugin loading
-    if !has('nvim')
-        autocmd vimrc InsertEnter * call plug#load('YouCompleteMe')
-    endif
+
+    " netrw {{{
+        " Not an external plugin, but still... :)
+        let g:netrw_silent = 1  " Do not output `scp` commands etc, while saving.
+    " }}}
 
     " CtrlP {{{
         let g:ctrlp_map = '<c-p>'
@@ -480,88 +513,162 @@
         " Manually enable CtrlP extensions.
         let g:ctrlp_extensions = ['buffertag', 'quickfix', 'undo', 'line', 'changes', 'mixed']
 
-        nnoremap <leader><space> :CtrlPBufTag<cr>
+        nnoremap <leader><space> :<C-u>CtrlPBufTagAll<CR>
     " }}}
 
-    " Vim Airline / Statusbar {{{
-        let g:bufferline_echo = 0
-        set noshowmode   " do not show default mode indicator
-        set laststatus=2 " always show the statusbar
+    " Lightline {{{
+        set noshowmode   " Do not show mode indicator below status bar
+        set laststatus=2 " Always show the statusbar
 
-        " general configuration
-        let g:airline#extensions#disable_rtp_load = 1 " do not find extensions in run time path
-        let g:airline_powerline_fonts             = 1 " powerline fonts
+        let g:lightline = {}
 
-        " custom symbols
-        if !exists('g:airline_symbols')
-            let g:airline_symbols = {}
-        endif
+        " Setup the single components
+        let g:lightline.component = {
+                    \ 'mode': '%{lightline#mode()}',
+                    \ 'absolutepath': '%F',
+                    \ 'relativepath': '%f',
+                    \ 'filename': '%t',
+                    \ 'modified': '%M',
+                    \ 'bufnum': '%n',
+                    \ 'paste': '%{&paste?"P":""}',
+                    \ 'readonly': '%R',
+                    \ 'charvalue': '%b',
+                    \ 'charvaluehex': '%B',
+                    \ 'fileencoding': '%{&fenc!=#""?&fenc:&enc}',
+                    \ 'fileformat': '%{&ff}',
+                    \ 'filetype': '%{&ft!=#""?&ft:"no ft"}',
+                    \ 'percent': '%3p%%',
+                    \ 'percentwin': '%P',
+                    \ 'spell': '%{&spell?&spelllang:""}',
+                    \ 'lineinfo': '%3l:%-2v',
+                    \ 'line': '%l',
+                    \ 'column': '%c',
+                    \ 'close': '%999X X ' }
 
-        let g:airline_symbols.linenr    = '#'
-        let g:airline_symbols.maxlinenr = ''
-        let g:airline_symbols.spell     = 'S'
-        let g:airline_symbols.paste     = 'P'
+        let g:lightline.component_function = {
+                    \ 'mode': 'LightlineMode',
+                    \ 'ctrlpmark': 'LightlineCtrlPMark',
+                    \ 'bufferbefore': 'lightline#buffer#bufferbefore',
+                    \ 'bufferafter': 'lightline#buffer#bufferafter',
+                    \ 'bufferinfo': 'lightline#buffer#bufferinfo',
+                    \ }
 
-        " extensions
-        " only load what you want
-        let g:airline_extensions = [ 'syntastic', 'ctrlp', 'virtualenv', 'tabline' ]
+        let g:lightline.component_expand = {
+                    \ 'tabs': 'lightline#tabs',
+                    \ 'buffercurrent': 'lightline#buffer#buffercurrent2',
+                    \ 'virtualenv': 'LightlineVirtualenv',
+                    \ 'syntax_error': 'LightlineNeomakeError',
+                    \ 'syntax_warning': 'LightlineNeomakeWarning',
+                    \ 'syntax_info': 'LightlineNeomakeInfo',
+                    \ }
 
-        let g:airline#extensions#tabline#fnamemod   = ':t' " only show filename in tab
-        let g:airline#extensions#quickfix#quickfix_text = 'Quickfix'
-        let g:airline#extensions#quickfix#location_text = 'Location'
+        let g:lightline.component_type = {
+                    \ 'syntax_error': 'error',
+                    \ 'syntax_warning': 'warning',
+                    \ 'syntax_info': 'info',
+                    \ 'buffercurrent': 'tabsel',
+                    \ }
 
-    " }}}
+        " Setup the active status bar
+        let g:lightline.active = {
+                    \ 'left': [ [ 'mode', 'paste', 'spell' ],
+                    \           [ 'readonly', 'filename', 'modified' ],
+                    \           [ 'ctrlpmark' ] ],
+                    \ 'right': [ [ 'syntax_error', 'syntax_warning', 'syntax_info' ],
+                    \            [ 'lineinfo' ],
+                    \            [ 'fileformat', 'fileencoding', 'filetype' ],
+                    \            [ 'virtualenv' ] ] }
 
-    " Syntastic {{{
-        let g:syntastic_check_on_open            = 1 " Automatically check on file open
-        let g:syntastic_always_populate_loc_list = 1 " Fill location list
-        let g:syntastic_auto_loc_list            = 2 " Close it when no errors are detected
+        " Setup the inactive status bar
+        let g:lightline.inactive = {
+                    \ 'left': [ [ 'filename' ] ],
+                    \ 'right': [ [ 'lineinfo' ],
+                    \            [ 'percent' ] ] }
 
-        let g:syntastic_error_symbol         = "\u2718"
-        highlight SyntasticErrorSign ctermbg=235 ctermfg=161 guifg=#F92672 guibg=#232526
+        " Setup the tabline
+        let g:lightline.tabline = {
+                    \ 'left': [ [ 'bufferinfo' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
+                    \ 'right': [ [ 'close' ] ] }
 
-        let g:syntastic_warning_symbol       = "\u2718"
-        highlight SyntasticWarningSign ctermbg=235 ctermfg=144 guifg=#E6DB74 guibg=#232526
+        " CtrlP integration {{{
+            let g:ctrlp_status_func = {
+                        \ 'main': 'CtrlPStatusFunc_1',
+                        \ 'prog': 'CtrlPStatusFunc_2',
+                        \ }
 
-        let g:syntastic_style_error_symbol   = "\u26A0"
-        highlight link SyntasticStyleErrorSign SyntasticErrorSign
+            function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
+                let g:lightline.ctrlp_regex = a:regex
+                let g:lightline.ctrlp_prev = a:prev
+                let g:lightline.ctrlp_item = a:item
+                let g:lightline.ctrlp_next = a:next
+                return lightline#statusline(0)
+            endfunction
 
-        let g:syntastic_style_warning_symbol   = "\u26A0"
-        highlight link SyntasticStyleWarningSign SyntasticWarningSign
+            function! CtrlPStatusFunc_2(str)
+                echom a:str
+                return lightline#statusline(0)
+            endfunction
 
-        " Aggregate checkers
-        let g:syntastic_aggregate_errors = 1
-
-        " Syntastic status line for airline
-        let g:syntastic_stl_format = '%E{#%e Errs: %fe}%B{, }%W{#%w Warns: %fw}'
-
-        " Language specific checkers {{{
-            " Java
-            let g:syntastic_java_checkers = []
-
-            " Go
-            let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
-
-            " Enable again perl checker
-            let g:syntastic_enable_perl_checker = 1
-            let g:syntastic_perl_checkers = ['perl']
-
-            " Enable check C headers file
-            let g:syntastic_c_check_header = 1
-            let g:syntastic_c_compiler_options = '-Wall'
-
-            " Enable C++11 standard
-            let g:syntastic_cpp_compiler_options='-std=c++11 -stdlib=libc++ -Wall'
-
-            " Javascript
-            let g:syntastic_javascript_jshint_args = '--extract=auto'
-
-            " Lua
-            let g:syntastic_lua_checkers = ['luac', 'luacheck']
-
-            " VimL
-            " let g:syntastic_vim_checkers = ['vint']
+            function! LightlineCtrlPMark()
+                if expand('%:t') =~? 'ControlP' && has_key(g:lightline, 'ctrlp_item')
+                    call lightline#link('iR'[g:lightline.ctrlp_regex])
+                    return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item, g:lightline.ctrlp_next], 0)
+                else
+                    return ''
+                endif
+            endfunction
         " }}}
+
+        function! LightlineMode()
+            let l:fname = expand('%:t')
+            return l:fname ==? 'ControlP' ? 'CtrlP' :
+                        \ winwidth(0) > 60 ? lightline#mode() : ''
+        endfunction
+
+        " Virtualenv integration
+        function! LightlineVirtualenv()
+            return &filetype ==? 'python' ? virtualenv#statusline() : ''
+        endfunction
+
+        " Neomake integration {{{
+            function! LightlineNeomakeError()
+                let l:errors = get(neomake#statusline#LoclistCounts(), 'E', 0)
+                return l:errors > 0 ? 'E: '.l:errors : ''
+
+                let l:warning = get(neomake#statusline#LoclistCounts(), 'E', 0)
+                let l:infos = get(neomake#statusline#LoclistCounts(), 'E', 0)
+            endfunction
+
+            function! LightlineNeomakeWarning()
+                let l:warnings = get(neomake#statusline#LoclistCounts(), 'W', 0)
+                return l:warnings > 0 ? 'W: '.l:warnings : ''
+            endfunction
+
+            function! LightlineNeomakeInfo()
+                let l:infos = get(neomake#statusline#LoclistCounts(), 'I', 0)
+                return l:infos > 0 ? 'I: '.l:infos : ''
+            endfunction
+        " }}}
+    " }}}
+
+    " Neomake {{{
+        let g:neomake_airline = 0  " Disable airline integration
+
+        " Run Neomake on save / WinEnter
+        autocmd vimrc BufWritePost,BufWinEnter * silent Neomake
+
+        function! NeomakeDidFinish()
+            " Update lightline
+            call lightline#update()
+            " Close loclist if no errors
+            if get(neomake#statusline#LoclistCounts(), 'E', 0) == 0 &&
+                        \ get(neomake#statusline#LoclistCounts(), 'W', 0) == 0 &&
+                        \ get(neomake#statusline#LoclistCounts(), 'I', 0) == 0
+                lclose
+            endif
+        endfunction
+
+        autocmd User NeomakeFinished call NeomakeDidFinish()
     " }}}
 
     " Rainbow parentheses {{{
@@ -570,43 +677,27 @@
 
         let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
         let g:rainbow#max_level = 16
-
-        autocmd vimrc BufReadPre,FileReadPre * :RainbowParentheses
-    " }}}
-
-    " YouCompleteMe {{{
-        let g:ycm_autoclose_preview_window_after_completion = 1
-
-        let g:ycm_collect_identifiers_from_tags_files       = 1 " enable completion from tags
-        let g:ycm_use_ultisnips_completer                   = 1 " Default 1, just ensure
-        let g:ycm_seed_identifiers_with_syntax              = 1 " Completion for programming language's keyword
-        let g:ycm_complete_in_comments                      = 1 " Completion in comments
-        let g:ycm_complete_in_strings                       = 1 " Completion in string
-        let g:ycm_add_preview_to_completeopt                = 0 " Add preview to completeopt
-
-        let g:ycm_show_diagnostics_ui                       = 0 " Disable YCM syntax checker in favour of syntastic
-        let g:ycm_key_detailed_diagnostics                  = '' " Disable YCM detailed diagnostic
-
-        nnoremap <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
     " }}}
 
     " Deoplete {{{
         let g:deoplete#enable_at_startup = 1 " Enable Deoplete
-        let g:deoplete#auto_complete_delay = 20 " ms delay to trigger autocomplete
-        let g:deoplete#auto_refresh_delay = 20 " ms delay to refresh autocomplete
+        " let g:deoplete#auto_complete_delay = 20 " ms delay to trigger autocomplete
 
         let g:deoplete#sources = {}
-        let g:deoplete#sources._ = ['buffer', 'member', 'tag', 'file', 'omni', 'ultisnips']
-        let g:deoplete#sources.tex = ['buffer', 'member', 'dictionary', 'file', 'omni', 'ultisnips']
-        let g:deoplete#sources.gitcommit = ['buffer', 'member', 'dictionary', 'file', 'omni']
-        let g:deoplete#sources.python = ['buffer', 'member', 'jedi', 'file', 'omni', 'ultisnips']
-        let g:deoplete#sources.go = ['buffer', 'member', 'go', 'file', 'omni', 'ultisnips']
-        let g:deoplete#sources.c = ['buffer', 'member', 'clang', 'file', 'omni', 'ultisnips']
-        let g:deoplete#sources.cpp = ['buffer', 'member', 'clang', 'file', 'omni', 'ultisnips']
-        let g:deoplete#sources.objc = ['buffer', 'member', 'clang', 'file', 'omni', 'ultisnips']
+        let g:deoplete#sources._ = ['buffer', 'member', 'tag', 'file', 'ultisnips']  " Disabled 'omni' 'cause it's not async
+        let g:deoplete#sources.vim = g:deoplete#sources._ + ['vim']
+        let g:deoplete#sources.tex = g:deoplete#sources._ + ['look', 'omni']
+        let g:deoplete#sources.gitcommit = g:deoplete#sources._ + ['look']
+        let g:deoplete#sources.python = g:deoplete#sources._ + ['jedi']
+        let g:deoplete#sources.go = g:deoplete#sources._ + ['go']
+        let g:deoplete#sources.c = g:deoplete#sources._ + ['clang']
+        let g:deoplete#sources.cpp = g:deoplete#sources._ + ['clang']
+        let g:deoplete#sources.objc = g:deoplete#sources._ + ['clang']
 
-        let g:deoplete#max_list = 20 " Show 10 entries at most
+        let g:deoplete#max_list = 20 " Show 20 entries at most
         let g:deoplete#max_menu_width = 20 " Matches the list length
+
+        let g:deoplete#skip_chars = ['(', ')']
 
         if has('nvim')
             call deoplete#custom#set('ultisnips', 'rank', 1000) " Keep snippets on top
@@ -673,57 +764,13 @@
         let g:instant_markdown_slow = 1
     " }}}
 
-    " Py-Mode {{{
-        let g:pymode = 1
-        let g:pymode_warnings = 0
-
-        let g:pymode_trim_whitespaces = 0  " We already do that
-        let g:pymode_options = 0
-        let g:pymode_options_colorcolumn = 0
-        let g:pymode_indent = 1
-        let g:pymode_folding = 0
-        let g:pymode_motion = 1
-
-        let g:pymode_doc = 1
-        let g:pymode_doc_bind = 'K'
-
-        let g:pymode_breakpoint = 0
-        let g:pymode_virtualenv = 1
-
-        " Enable manual linting only
-        let g:pymode_lint = 1  " Keep it enable for PymodeLintAuto
-        let g:pymode_lint_on_write = 0
-        let g:pymode_lint_unmodified = 0
-        let g:pymode_lint_on_fly = 0
-        let g:pymode_lint_message = 0
-
-        let g:pymode_syntax = 0
-        let g:pymode_syntax_all = 0
-        let g:pymode_syntax_print_as_function = 0
-        let g:pymode_syntax_slow_sync = 0
-
-        let g:pymode_rope = 0
-        let g:pymode_rope_completion = 0
-        let g:pymode_rope_complete_on_dot = 0
-        let g:pymode_rope_lookup_project = 0
-        let g:pymode_rope_autoimport = 0
-
-        let g:pymode_quickfix_minheight = 3
-        let g:pymode_quickfix_maxheight = 3
-
-        " Automatically fix PEP8 errors in the current buffer:
-        autocmd vimrc Filetype python noremap <F8> :PymodeLintAuto<CR>
-    "}}}
-
     " Vimtex settings {{{
         let g:vimtex_enabled = 1
         let g:tex_flavor = 'latex'  " Open '.tex' files as 'tex' and not 'plaintex'.
-
-        let g:vimtex_quickfix_mode = 2  " Auto-open with no focus.
-        let g:vimtex_latexmk_build_dir = 'build'
+        let g:vimtex_quickfix_mode = 2  " Auto-open quickfix with no focus.
 
         if has('nvim')
-            let g:vimtex_latexmk_progname = 'nvr'
+            let g:vimtex_latexmk_progname = '/usr/local/bin/nvr'
         end
 
         if has('mac')
@@ -751,45 +798,14 @@
             endfunction
         end
 
-        if !has('nvim')
-            " YCM semantic completion
-            if !exists('g:ycm_semantic_triggers')
-                let g:ycm_semantic_triggers = {}
-            endif
-            let g:ycm_semantic_triggers.tex = [
-                        \ 're!\\[A-Za-z]*cite[A-Za-z]*(\[[^]]*\]){0,2}{[^}]*',
-                        \ 're!\\[A-Za-z]*ref({[^}]*|range{([^,{}]*(}{)?))',
-                        \ 're!\\hyperref\[[^]]*',
-                        \ 're!\\includegraphics\*?(\[[^]]*\]){0,2}{[^}]*',
-                        \ 're!\\(include(only)?|input){[^}]*',
-                        \ 're!\\\a*(gls|Gls|GLS)(pl)?\a*(\s*\[[^]]*\]){0,2}\s*\{[^}]*',
-                        \ 're!\\includepdf(\s*\[[^]]*\])?\s*\{[^}]*',
-                        \ 're!\\includestandalone(\s*\[[^]]*\])?\s*\{[^}]*',
-                        \ ]
-        endif
-
         " Disable insert mode mappings
         let g:vimtex_imaps_enabled = 0
 
-        " Integration with vim-surround
-        autocmd vimrc FileType tex call s:latexSurround()
+        " Enable vimtex folds
+        let g:vimtex_fold_enabled = 1
 
-        " Better formatting with gq
+        " Enable better formatting with gq
         let g:vimtex_format_enabled = 1
-
-        function! s:latexSurround()
-            let b:surround_{char2nr("e")}
-                        \ = "\\begin{\1environment: \1}\n\t\r\n\\end{\1\1}"
-            let b:surround_{char2nr("c")} = "\\\1command: \1{\r}"
-        endfunction
-    " }}}
-
-    " Vim-easy-align {{{
-        " Start interactive EasyAlign in visual mode (e.g. vip<Enter>)
-        vmap <Enter> <Plug>(EasyAlign)
-
-        " Start interactive EasyAlign for a motion/text object (e.g. gaip)
-        nmap ga <Plug>(EasyAlign)
     " }}}
 
     " Molokai {{{
@@ -819,16 +835,16 @@
         autocmd vimrc FileType go nmap <leader>t <Plug>(go-test)
         autocmd vimrc FileType go nmap <leader>c <Plug>(go-coverage)
 
-        autocmd vimrc FileType go nmap <Leader>ds <Plug>(go-def-split)
-        autocmd vimrc FileType go nmap <Leader>dv <Plug>(go-def-vertical)
-        autocmd vimrc FileType go nmap <Leader>dt <Plug>(go-def-tab)
+        " autocmd vimrc FileType go nmap <Leader>ds <Plug>(go-def-split)
+        " autocmd vimrc FileType go nmap <Leader>dv <Plug>(go-def-vertical)
+        " autocmd vimrc FileType go nmap <Leader>dt <Plug>(go-def-tab)
 
-        autocmd vimrc FileType go nmap <Leader>gd <Plug>(go-doc)
-        autocmd vimrc FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
+        " autocmd vimrc FileType go nmap <Leader>gd <Plug>(go-doc)
+        " autocmd vimrc FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
 
-        autocmd vimrc FileType go nmap <Leader>e <Plug>(go-rename)
+        " autocmd vimrc FileType go nmap <Leader>e <Plug>(go-rename)
         autocmd vimrc FileType go nmap <Leader>i <Plug>(go-imports)
-        autocmd vimrc FileType go nmap <Leader>s <Plug>(go-implements)
+        " autocmd vimrc FileType go nmap <Leader>s <Plug>(go-implements)
 
         " Syntastic integration
         let g:go_list_type = 'quickfix'
@@ -838,7 +854,38 @@
         if isdirectory($HOME . '/.vim/tags/') == 0
             :silent !mkdir -p ~/.vim/tags >/dev/null 2>&1
         endif
+
         let g:gutentags_cache_dir = $HOME . '/.vim/tags/'
+
+        " Only select .git folders as project roots.
+        let g:gutentags_add_default_project_roots = 0
+        let g:gutentags_project_root = [ '.git', ]
+    " }}}
+
+    " Neoformat {{{
+        nnoremap <leader>f :<C-u>Neoformat<CR>
+    " }}}
+
+    " Investigate {{{
+        " Use Dash on macOS (if available)
+        let g:investigate_use_dash=1
+
+        nnoremap K :call investigate#Investigate('n')<CR>
+        vnoremap K :call investigate#Investigate('v')<CR>
+    " }}}
+
+    " Targets {{{
+        let g:targets_pairs = '()b {}B []S <>t'
+    " }}}
+
+    " vim-polyglot {{{
+        let g:polyglot_disabled = ['tex', 'latex']
+    " }}}
+
+    " vim-surround {{{
+        " Add a custom 'S' mapping to surround with square brackets.
+        " Works together with vim-targets.
+        let g:surround_{char2nr("S")} = "[\r]"
     " }}}
 " }}}
 

@@ -21,6 +21,11 @@ export VISUAL="$EDITOR"
 # Change NVIM cursor shape.
 export NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
+# Brew security/privacy options
+export HOMEBREW_NO_INSECURE_REDIRECT=1
+export HOMEBREW_CASK_OPTS=--require-sha
+export HOMEBREW_NO_ANALYTICS=1
+
 # Fix issues with bracketed-paste-magic
 # zstyle ':bracketed-paste-magic' active-widgets '.self-*'
 
