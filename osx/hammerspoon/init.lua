@@ -721,3 +721,9 @@ end
 hs.urlevent.bind("instapaper", function(_, _) toInstapaper(nil) end)
 
 -- }}}
+
+-- Experiments {{{
+
+local seal = require('seal')
+seal:init({'tunnelblick', 'network_locations'})
+seal:start(hyper, '0')
