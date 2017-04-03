@@ -1,6 +1,6 @@
 -- Modeline {{{
 -- vim: set foldmarker={{{,}}} foldlevel=0 foldmethod=marker
--- luacheck: globals hs ignore globals
+-- luacheck: globals hs utf8 ignore globals
 -- }}}
 
 -- Require {{{
@@ -303,20 +303,24 @@ globals["wfilters"]["redshift"] = wf.new({
 -- Chooser {{{
 
 local choices = {}
-for _, emoji in ipairs(hs.json.decode(io.open("emojis/emojis.json"):read())) do
+-- We are using emojione emojis. Clone the repository, then use emoji.json and assets/png/
+print('Reading emojis...')
+for _, emoji in pairs(hs.json.decode(io.open('emojis/emojis.json'):read())) do
     table.insert(choices,
-        {text=emoji['name'],
-            subText=table.concat(emoji['kwds'], ", "),
-            image=hs.image.imageFromPath("emojis/" .. emoji['id'] .. ".png"),
-            chars=emoji['chars']
+        {text=emoji['name']:gsub("^%l", string.upper),
+            subText=table.concat(emoji['keywords'], ', '),
+            image=hs.image.imageFromPath('emojis/png/' .. emoji['unicode'] .. '.png'),
+            char=tonumber(emoji['code_decimal']:sub(3, -2)),
+            order=tonumber(emoji['emoji_order']),
         })
 end
+print('Sorting emojis...')
+table.sort(choices, function(a, b) return a['order'] < b['order'] end)
 
 local chooser = hs.chooser.new(function(choice)
     if not choice then focusLastFocused(); return end
-    hs.pasteboard.setContents(choice["chars"])
     focusLastFocused()
-    hs.eventtap.keyStrokes(hs.pasteboard.getContents())
+    hs.eventtap.keyStrokes(utf8.char(choice['char']))
 end)
 
 chooser:rows(5)
