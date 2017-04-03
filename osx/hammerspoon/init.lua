@@ -21,7 +21,6 @@ globals = {}
 globals["WiFi"] = {}
 globals["watcher"] = {}
 globals["windows"] = {}
-globals["hotkey"] = {}
 globals["geeklets"] = {}
 globals["wfilters"] = {}
 globals["cycle"] = {}
@@ -65,7 +64,6 @@ hs.application.enableSpotlightForNameSearches(true)  -- Enable alternate applica
 
 local function cleanup()
     -- Cleanup here.
-    hs.fnutils.each(globals["hotkey"], function(h) h:disable() end)
     hs.fnutils.each(globals["watcher"], function(w) w:stop() end)
     hs.fnutils.each(globals["geeklets"]["timers"], function(t) t:stop() end)
     hs.fnutils.each(globals["geeklets"]["geeklets"], function(g) g:delete() end)
@@ -102,7 +100,7 @@ local function ssidChangedCallback()
         hs.notify.new({
             title="Hammerspoon",
             informativeText="Wireless disconnected",
-            contentImage=hs.image.imageFromPath("icons/internet.ico"),
+            contentImage=hs.image.imageFromPath('icons/internet.ico'),
             autoWithdraw=true
         }):send()
         return
@@ -286,18 +284,6 @@ globals["wfilters"]["finder"]:subscribe(wf.windowDestroyed, function(_, _, _)
     focusLastFocused()
 end)
 
-globals["wfilters"]["redshift"] = wf.new({
-    VLC={visible=true}, Photos={focused=true}, Kodi={visible=true},
-    loginwindow={visible=true, allowRoles='*'},
-    default={fullscreen=true}
-})
-
--- }}}
-
--- Redshift {{{
-
--- hs.redshift.start(3000, '21:00', '7:00', '4h', false, globals["wfilters"]["redshift"])
-
 -- }}}
 
 -- Chooser {{{
@@ -432,14 +418,17 @@ hs.hotkey.bind(hyper, ".", function()
 end)
 
 -- Enlarge / shrink window
-hs.fnutils.each({{"-", false}, {"+", true}}, function(k)
+hs.fnutils.each({{"-", false}, {"=", true}}, function(k)
     hs.hotkey.bind(hyper, k[1], function()
         resize(hs.window.focusedWindow(), k[2])
     end)
 end)
 
 -- Focus/launch most commonly used applications.
-hs.fnutils.each({{"M", 'com.deezer.Deezer'}, {"B", 'com.google.Chrome'}}, function(k)
+hs.fnutils.each({
+    {'M', 'com.deezer.Deezer'}, {'B', 'com.google.Chrome'},
+    {'O', 'com.omnigroup.OmniFocus2'}, {'W', 'com.kapeli.dashdoc'}
+}, function(k)
     hs.hotkey.bind(hyper, k[1], function()
         local window = hs.window.focusedWindow()
         if window and window:application():bundleID() == k[2] then
@@ -449,11 +438,6 @@ hs.fnutils.each({{"M", 'com.deezer.Deezer'}, {"B", 'com.google.Chrome'}}, functi
         end
     end)
 end)
-
--- Redshift manual toggle
--- hs.hotkey.bind(hyper, 'I', function()
---     hs.redshift.toggle()
--- end)
 
 -- Toggle window hints
 hs.hotkey.bind(hyper, 'space', function()
@@ -470,7 +454,7 @@ end)
 -- iTerm2 {{{
 
 -- Launch iTerm2 by pressing alt-space
-globals["hotkey"]["iTerm"] = hs.hotkey.new({"alt"}, "space", function()
+hs.hotkey.new({"alt"}, "space", function()
     local iTerms = hs.application.applicationsForBundleID("com.googlecode.iterm2")
 
     if #iTerms == 0 then
@@ -480,29 +464,17 @@ globals["hotkey"]["iTerm"] = hs.hotkey.new({"alt"}, "space", function()
 
     local iTerm2 = iTerms[1]
     local w = iTerm2:mainWindow()
-    if w == hs.window.focusedWindow() then
+    if not w then
+        hs.osascript.applescript('tell application "iTerm2" \n'
+            .. 'create window with default profile\n' ..
+            'end tell')
+        return
+    elseif w == hs.window.focusedWindow() then
         iTerm2:hide()
     else
         w:focus()
     end
-end)
-globals["hotkey"]["iTerm"]:enable()
-
--- -- Enable the hotkey if iTerm2 is not running
--- if not hs.application.find("iTerm") then
---     globals["hotkey"]["iTerm"]:enable()
--- end
-
--- -- Then enable/disable it as needed
--- globals["watcher"]["app"] = hs.application.watcher.new(function(appName, event, _)
---     if appName == "iTerm2" then
---         if event == hs.application.watcher.launching then
---             globals["hotkey"]["iTerm"]:disable()
---         elseif event == hs.application.watcher.terminated then
---             globals["hotkey"]["iTerm"]:enable()
---         end
---     end
--- end):start()
+end):enable()
 
 -- }}}
 
@@ -592,7 +564,7 @@ local function drawTopGeeklets()
     top_background:setStroke(false)
     top_background:setFillColor(hs.drawing.color.asRGB({red=0, green=0, blue=0, alpha=0.4}))
     top_background:setLevel(hs.drawing.windowLevels['desktop'])
-    top_background:setBehaviorByLabels({'stationary'})
+    top_background:setBehaviorByLabels({'stationary', 'canJoinAllSpaces'})
     top_background:show()
 
     local timeRect = hs.geometry.rect(0, textVOffset, frame.w / 4, height / 3 * 2)
@@ -604,7 +576,7 @@ local function drawTopGeeklets()
 
     for _, geeklet in pairs(geeklets) do
         geeklet:setLevel(hs.drawing.windowLevels['desktop'])
-        geeklet:setBehaviorByLabels({'stationary'})
+        geeklet:setBehaviorByLabels({'stationary', 'canJoinAllSpaces'})
     end
 
     local timers = globals["geeklets"]["timers"]
