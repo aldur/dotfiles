@@ -21,14 +21,6 @@ export VISUAL="$EDITOR"
 # Change NVIM cursor shape.
 export NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
-# Brew security/privacy options
-export HOMEBREW_NO_INSECURE_REDIRECT=1
-export HOMEBREW_CASK_OPTS=--require-sha
-export HOMEBREW_NO_ANALYTICS=1
-
-# Fix issues with bracketed-paste-magic
-# zstyle ':bracketed-paste-magic' active-widgets '.self-*'
-
 # Do not automatically set iTerm's title.
 export DISABLE_AUTO_TITLE="true"
 
@@ -52,6 +44,7 @@ tab-title() {
 
 # Source iTerm2 integration tools.
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+alias imgcat=~/.iterm2/imgcat; alias it2dl=~/.iterm2/it2dl
 
 # Tmux integration.
 iterm2_print_user_vars() {
