@@ -1,5 +1,5 @@
-.PHONY: all zsh theme colors
 DOTFILES = colors dircolors
+.PHONY: zsh theme $(DOTFILES)
 
 all: zsh theme $(DOTFILES)
 
