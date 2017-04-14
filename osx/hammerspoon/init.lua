@@ -1,16 +1,22 @@
 -- Modeline {{{
 -- vim: set foldmarker={{{,}}} foldlevel=0 foldmethod=marker
--- luacheck: globals hs utf8 ignore globals
+-- luacheck: globals hs utf8 globals
 -- }}}
 
 -- Require {{{
 
-local spaces = require("hs._asm.undocumented.spaces")
-local secrets = require("secrets")
+local spaces = require('hs._asm.undocumented.spaces')
+local secrets = require('secrets')
 
 -- }}}
 
 -- Constants / Definitions {{{
+
+hs.logger.defaultLogLevel = 'verbose'
+local logger = hs.logger.new('init')
+
+-- Use hs.canvas drawing wrapper.
+hs.canvas.drawingWrapper(true)
 
 local animationDuration = 0
 local shadows = false
@@ -18,21 +24,26 @@ local shadows = false
 local wf = hs.window.filter
 
 globals = {}
-globals["WiFi"] = {}
-globals["watcher"] = {}
-globals["windows"] = {}
-globals["geeklets"] = {}
-globals["wfilters"] = {}
-globals["cycle"] = {}
+globals['WiFi'] = {}
+globals['watcher'] = {}
+globals['watchable_watcher'] = {}
+globals['watchable'] = hs.watchable.new('globals')
+globals['windows'] = {}
+globals['geeklets'] = {}
+globals['wfilters'] = {}
 
-local cardinals = { h="west", l="east", k="north", j="south", }
+local cardinals = { h='west', l='east', k='north', j='south', }
 local snapped = {
     west=hs.geometry(0,0,0.5,1), east=hs.geometry(0.5,0,0.5,1),
     north=hs.geometry(0,0,1,0.5), south=hs.geometry(0,0.5,1,0.5),
 }
 
-local hyper = {"cmd", "alt", "ctrl"}
-local hyper_shift = {"cmd", "alt", "ctrl", "shift"}
+local hyper = {'cmd', 'alt', 'ctrl'}
+local hyper_shift = {'cmd', 'alt', 'ctrl', 'shift'}
+
+-- Source http://www.color-hex.com/color-palette/5452
+local red = hs.drawing.color.asRGB({red=217/255, green=83/255, blue=79/255})
+local green = hs.drawing.color.asRGB({red=92/255, green=184/255, blue=92/255})
 
 -- }}}
 
@@ -42,40 +53,27 @@ hs.window.animationDuration = animationDuration  -- Disable window animation
 hs.window.setShadows(shadows)  -- No windows shadow
 wf.setLogLevel('nothing')  -- Disable window filter logging
 hs.hotkey.setLogLevel('warning')  -- Less verbose hotkey logging
-hs.hints.style = 'vimperator'  -- Hint names start with application's first letter
 hs.application.enableSpotlightForNameSearches(true)  -- Enable alternate application names
-
--- Reject iTerm2 in default window filters.
--- wf.default:rejectApp("iTerm2")
--- wf.defaultCurrentSpace:rejectApp("iTerm2")
 
 -- }}}
 
 -- Helpers {{{
 
--- Inspired by hs.fnutils.cycle
--- local function cycle(t)
---     local i = 1
---     return function(reverse)
---         if not reverse then i = i % #t + 1 else i = i ~= 1 and i - 1 or #t end
---         return t[i]
---     end
--- end
-
 local function cleanup()
     -- Cleanup here.
-    hs.fnutils.each(globals["watcher"], function(w) w:stop() end)
-    hs.fnutils.each(globals["geeklets"]["timers"], function(t) t:stop() end)
-    hs.fnutils.each(globals["geeklets"]["geeklets"], function(g) g:delete() end)
-    hs.fnutils.each(globals["wfilters"], function(f) f:unsubscribeAll() end)
+    hs.fnutils.each(globals['watcher'], function(w) w:stop() end)
+    hs.fnutils.each(globals['watchable_watcher'], function(w) w:release() end)
+    hs.fnutils.each(globals['geeklets']['timers'], function(t) t:stop() end)
+    hs.fnutils.each(globals['geeklets']['geeklets'], function(g) g:delete() end)
+    hs.fnutils.each(globals['wfilters'], function(f) f:unsubscribeAll() end)
 
-    globals["pushbullet"]:close()
+    globals['pushbullet']:close()
 
     for key in pairs(globals) do globals[key] = nil end
     globals = nil
 end
 
--- }}}
+    -- }}}
 
 -- WiFi management {{{
 
@@ -96,7 +94,7 @@ globals["WiFi"]["lastSSID"] = hs.wifi.currentNetwork()
 local function ssidChangedCallback()
     local newSSID = hs.wifi.currentNetwork()
 
-    if newSSID == nil and hs.wifi.interfaceDetails("en0")["power"] == true then
+    if newSSID == nil and hs.wifi.interfaceDetails('en0').power then
         hs.notify.new({
             title="Hammerspoon",
             informativeText="Wireless disconnected",
@@ -106,24 +104,30 @@ local function ssidChangedCallback()
         return
     end
 
-    if globals["WiFi"]["lastSSID"] == newSSID then return end
+    local networkLocation = secrets.SSIDS[newSSID] or 'Automatic'
+    local networkConfiguration = hs.network.configuration.open()
+    local networkLocations = networkConfiguration:locations()
 
-    local networkLocation = secrets.SSIDS[newSSID]
-    if networkLocation then
-        if hs.network.configuration.open():setLocation(networkLocation) then
-            hs.notify.new({
+    if ((globals["WiFi"].lastSSID and globals["WiFi"].lastSSID == newSSID
+                and networkLocations[networkConfiguration:location()] == networkLocation) or
+            not hs.wifi.interfaceDetails('en0').power) then
+        return
+    end
+
+    if networkConfiguration:setLocation(networkLocation) then
+        if not hs.wifi.interfaceDetails('en0').power then hs.wifi.setPower(true, 'en0') end
+        hs.notify.new({
                 title="Hammerspoon",
                 contentImage=hs.image.imageFromPath("icons/internet.ico"),
                 informativeText="Selecting '" .. networkLocation .. "' network location.",
                 autoWithdraw=true
             }):send()
-        else
-            hs.notify.new({
+    else
+        hs.notify.new({
                 title="Hammerspoon",
                 informativeText="An error occurred while managing network locations.",
                 autoWithdraw=true
             }):send()
-        end
     end
 
     -- Execute IN callback for new network location.
@@ -132,7 +136,7 @@ local function ssidChangedCallback()
 
     -- Execute OUT callback for last network location.
     local lastSSID = globals["WiFi"]["lastSSID"]
-    local lastNetworkLocation = secrets.SSIDS[lastSSID]
+    local lastNetworkLocation = secrets.SSIDS[lastSSID] or 'Automatic'
     callback = secrets.SSID_CALLBACKS[lastNetworkLocation]
     if callback then assert(#callback == 2); callback[2]() end
 
@@ -144,16 +148,16 @@ globals["watcher"]["wifi"] = hs.wifi.watcher.new(ssidChangedCallback):start()
 
 -- USB management {{{
 
-local function usbDeviceCallback(data)
-    if data["productID"] == 49944 and data["vendorID"] == 1133 then
-        if (data["eventType"] == "added") then
-            hs.keycodes.setLayout('Keyboard Illuminated IT')
-        elseif (data["eventType"] == "removed") then
-            hs.keycodes.setLayout('Italian')
-        end
-    end
-end
-globals["watcher"]["usb"] = hs.usb.watcher.new(usbDeviceCallback):start()
+-- local function usbDeviceCallback(data)
+--     if data["productID"] == 49944 and data["vendorID"] == 1133 then
+--         if (data["eventType"] == "added") then
+--             hs.keycodes.setLayout('Keyboard Illuminated IT')
+--         elseif (data["eventType"] == "removed") then
+--             hs.keycodes.setLayout('Italian')
+--         end
+--     end
+-- end
+-- globals["watcher"]["usb"] = hs.usb.watcher.new(usbDeviceCallback):start()
 
 -- }}}
 
@@ -195,7 +199,7 @@ local function focusSecondToLastFocused()
     if #lastFocused > 1 then lastFocused[2]:focus() end
 end
 
-globals["windows"]["savedFrames"] = {}
+globals['windows']['savedFrames'] = {}
 local function saveFrame(window)
     assert(window)
     local savedFrame = globals["windows"]["savedFrames"][window:id()]
@@ -286,33 +290,9 @@ end)
 
 -- }}}
 
--- Chooser {{{
+-- Emojis {{{
 
-local choices = {}
--- We are using emojione emojis. Clone the repository, then use emoji.json and assets/png/
-print('Reading emojis...')
-for _, emoji in pairs(hs.json.decode(io.open('emojis/emojis.json'):read())) do
-    table.insert(choices,
-        {text=emoji['name']:gsub("^%l", string.upper),
-            subText=table.concat(emoji['keywords'], ', '),
-            image=hs.image.imageFromPath('emojis/png/' .. emoji['unicode'] .. '.png'),
-            char=tonumber(emoji['code_decimal']:sub(3, -2)),
-            order=tonumber(emoji['emoji_order']),
-        })
-end
-print('Sorting emojis...')
-table.sort(choices, function(a, b) return a['order'] < b['order'] end)
-
-local chooser = hs.chooser.new(function(choice)
-    if not choice then focusLastFocused(); return end
-    focusLastFocused()
-    hs.eventtap.keyStrokes(utf8.char(choice['char']))
-end)
-
-chooser:rows(5)
-chooser:searchSubText(true)
-chooser:choices(choices)
-chooser:bgDark(true)
+globals.emojis = hs.loadSpoon('Emojis')
 
 -- }}}
 
@@ -327,8 +307,16 @@ hs.hotkey.bind(hyper, "r", function()
 end)
 
 -- Toggle console
-hs.hotkey.bind(hyper, "c", function()
+hs.hotkey.bind(hyper_shift, "c", function()
     hs.toggleConsole()
+    hs.window.frontmostWindow():focus()
+end)
+
+-- Clipboard manager
+globals.clipboard = require('clipboard')
+hs.hotkey.bind(hyper, "c", function()
+    local clipboard = globals.clipboard.chooser
+    if clipboard:isVisible() then clipboard:hide() else clipboard:show() end
     hs.window.frontmostWindow():focus()
 end)
 
@@ -439,15 +427,8 @@ hs.fnutils.each({
     end)
 end)
 
--- Toggle window hints
-hs.hotkey.bind(hyper, 'space', function()
-    hs.hints.windowHints()
-end)
-
 -- Emoji chooser
-hs.hotkey.bind(hyper, 'e', function()
-    if chooser:isVisible() then chooser:hide() else chooser:show() end
-end)
+globals.emojis:bindHotkeys({toggle={hyper, 'e'}})
 
 -- }}}
 
@@ -483,12 +464,13 @@ end):enable()
 local geekletsTextStyle = {
     font={name='Futura', size=22},
     strokeColor=hs.drawing.color.asRGB({red=0, green=0, blue=0, alpha=1}),
+    color=hs.drawing.color.asRGB({red=1, green=1, blue=1, alpha=1}),
     strokeWidth=-1.0,
-    paragraphStyle={alignment='center', }
+    paragraphStyle={alignment='center', lineBreak='truncateMiddle'}
 }
 
-globals["geeklets"]["geeklets"] = {}  -- Holds geeklets for future updates.
-globals["geeklets"]["timers"] = {}  -- Hold timers updating the geeklets
+globals['geeklets']['geeklets'] = {}  -- Holds geeklets for future updates.
+globals['geeklets']['timers'] = {}  -- Hold timers updating the geeklets
 
 local function drawTimeGeeklet(r)
     local geeklets = globals["geeklets"]["geeklets"]
@@ -516,33 +498,35 @@ local function drawMusicGeeklet(r)
     end
     assert(music)
 
-    local musicApp = nil
+    local musicApp
     if hs.deezer.isRunning() then
         musicApp = hs.deezer
     elseif hs.spotify.isRunning() then
         musicApp = hs.spotify
-    end
-
-    if musicApp then
-        local track = musicApp.getCurrentTrack()
-        local album = musicApp.getCurrentAlbum()
-        local artist = musicApp.getCurrentArtist()
-
-        if not track or not album or not artist then
-            return
-        end
-
-        music:setStyledText(hs.styledtext.new(
-            track .. " | " .. album .. " | " .. artist, geekletsTextStyle
-        ))
     else
         music:setStyledText(empty)
+        return
     end
+
+    assert(musicApp)
+    local track = musicApp.getCurrentTrack()
+    local album = musicApp.getCurrentAlbum()
+    local artist = musicApp.getCurrentArtist()
+
+    if not track or not album or not artist then return end
+
+    music:setStyledText(hs.styledtext.new(
+        track .. " | " .. album .. " | " .. artist, geekletsTextStyle
+    ))
 end
 
 local function drawBatteryGeeklet(r)
-    local geeklets = globals["geeklets"]["geeklets"]
-    local batteryPercentage = hs.styledtext.new(math.floor(hs.battery.percentage()) .. "%", geekletsTextStyle)
+    local geeklets = globals['geeklets']['geeklets']
+
+    local prefix = ''
+    if hs.battery.isCharging() then prefix = '+' end
+    local batteryPercentage = hs.styledtext.new(prefix .. math.floor(hs.battery.percentage()) .. "%", geekletsTextStyle)
+
     local battery = geeklets['battery']
     if battery == nil then
         battery = hs.drawing.text(r, batteryPercentage)
@@ -553,23 +537,81 @@ local function drawBatteryGeeklet(r)
     end
 end
 
+local function drawInternetGeeklet(r)
+    local geeklets = globals['geeklets']['geeklets']
+
+    local color = red
+    if globals['watchable']['reachability'] then
+        color = green
+    end
+
+    local internet = geeklets['internet']
+    if internet == nil then
+        internet = hs.drawing.circle(r)
+        internet:setFillColor(color)
+        internet:setStroke(false)
+        geeklets['internet'] = internet
+        assert(geeklets['internet'])
+        internet:show()
+    else
+        internet:setFillColor(color)
+    end
+end
+
+local function drawVPNGeeklet(r)
+    local geeklets = globals['geeklets']['geeklets']
+
+    local states_code, states, _ = hs.osascript.applescript([[
+        tell application "Tunnelblick" to get state of configurations
+    ]])
+    if not states_code then logger.e('[Geeklets] - Could not get Tunnelblick configuration states.'); return {} end
+
+    local color = red
+    for _, state in ipairs(states) do
+        if state == 'CONNECTED' then
+            color = green
+            break
+        end
+    end
+
+    local vpn = geeklets['vpn']
+    if vpn == nil then
+        vpn = hs.drawing.circle(r)
+        vpn:setStroke(false)
+        vpn:setFillColor(color)
+        geeklets['vpn'] = vpn
+        assert(geeklets['vpn'])
+        vpn:show()
+    else
+        vpn:setFillColor(color)
+    end
+end
+
+local function drawBackground(height, y)
+    local frame = hs.screen.primaryScreen():frame()
+
+    local background = hs.drawing.rectangle(hs.geometry.rect(0, y, frame.w, height))
+    background:setStroke(false)
+    background:setFillColor(hs.drawing.color.asRGB({red=0, green=0, blue=0, alpha=0.4}))
+    background:setLevel(hs.drawing.windowLevels['desktop'])
+    background:setBehaviorByLabels({'stationary', 'canJoinAllSpaces'})
+
+    return background
+end
+
 local function drawTopGeeklets()
-    local geeklets = globals["geeklets"]["geeklets"]
+    local geeklets = globals['geeklets']['geeklets']
     local height = 50
     local textVOffset = (height - geekletsTextStyle['font']['size'] * 1.33)
     local frame = hs.screen.primaryScreen():frame()
 
-    local top_background = hs.drawing.rectangle(hs.geometry.rect(0, 10, frame.w, height))
+    local top_background = drawBackground(height, 10)
     geeklets['top_bg'] = top_background
-    top_background:setStroke(false)
-    top_background:setFillColor(hs.drawing.color.asRGB({red=0, green=0, blue=0, alpha=0.4}))
-    top_background:setLevel(hs.drawing.windowLevels['desktop'])
-    top_background:setBehaviorByLabels({'stationary', 'canJoinAllSpaces'})
     top_background:show()
 
     local timeRect = hs.geometry.rect(0, textVOffset, frame.w / 4, height / 3 * 2)
     drawTimeGeeklet(timeRect)
-    local musicRect = hs.geometry.rect(frame.w / 4, textVOffset, frame.w / 2, height / 3 * 2)
+    local musicRect = hs.geometry.rect(frame.w / 5, textVOffset, frame.w / 5 * 3, height / 3 * 2)
     drawMusicGeeklet(musicRect)
     local batteryRect = hs.geometry.rect(frame.w * 3 / 4, textVOffset, frame.w / 4, height / 3 * 2)
     drawBatteryGeeklet(batteryRect)
@@ -579,12 +621,35 @@ local function drawTopGeeklets()
         geeklet:setBehaviorByLabels({'stationary', 'canJoinAllSpaces'})
     end
 
-    local timers = globals["geeklets"]["timers"]
+    local timers = globals['geeklets']['timers']
     timers['time'] = hs.timer.doEvery(10, function() drawTimeGeeklet(timeRect) end)
-    timers['music'] = hs.timer.doEvery(5, function() drawMusicGeeklet(musicRect) end)
+    timers['music'] = hs.timer.doEvery(10, function() drawMusicGeeklet(musicRect) end)
     timers['battery'] = hs.timer.doEvery(120, function() drawBatteryGeeklet(batteryRect) end)
 end
 drawTopGeeklets()
+
+local function drawBottomGeeklets()
+    local geeklets = globals['geeklets']['geeklets']
+    local frame = hs.screen.primaryScreen():frame()
+
+    local internetRect = hs.geometry.rect(10, frame.h - 20, 10, 10)
+    drawInternetGeeklet(internetRect)
+
+    local vpnRect = hs.geometry.rect(10 + 10 / 3 * 2, frame.h - 20, 10, 10)
+    drawVPNGeeklet(vpnRect)
+
+    for _, geeklet in pairs(geeklets) do
+        geeklet:setLevel(hs.drawing.windowLevels['desktop'])
+        geeklet:setBehaviorByLabels({'stationary', 'canJoinAllSpaces'})
+    end
+
+    globals['watchable_watcher']['reachability'] = hs.watchable.watch('globals', 'reachability',
+        function(_, _, _, _, _) drawInternetGeeklet(internetRect) end)
+
+    local timers = globals['geeklets']['timers']
+    timers['vpn'] = hs.timer.doEvery(10, function() drawVPNGeeklet(vpnRect) end)
+end
+drawBottomGeeklets()
 
 globals["watcher"]["screen"] = hs.screen.watcher.new(function()
     local timers = globals["geeklets"]["timers"]
@@ -597,8 +662,9 @@ globals["watcher"]["screen"] = hs.screen.watcher.new(function()
     globals["geeklets"]["geeklets"] = {}
 
     drawTopGeeklets()
+    drawBottomGeeklets()
 end)
-globals["watcher"]["screen"]:start()
+globals['watcher']['screen']:start()
 
 -- }}}
 
@@ -611,7 +677,7 @@ hs.notify.register('pb', function()
     {["Access-Token"]=pb_api_key},
     function(status, body, _)
         if not status or status > 200 then
-            print("Error (" .. status .. ") while getting pushes.")
+            logger.e('[Pushbullet] - Error (' .. status .. ") while getting pushes.")
             return
         end
 
@@ -625,7 +691,7 @@ hs.notify.register('pb', function()
                 {["Access-Token"]=pb_api_key, ["Content-Type"]='application/json'},
                 function(postStatus, _, _)
                     if not postStatus or postStatus > 200 then
-                        print("Error (" .. postStatus .. ") while marking push as read")
+                        logger.e('[Pushbhullet] - Error (' .. postStatus .. ") while marking push as read")
                     end
                 end
             )
@@ -643,7 +709,7 @@ local function pushbullet()
             {["Access-Token"]=pb_api_key},
             function(status, body, _)
                 if not status or status > 200 then
-                    print("Error (" .. status .. ") while getting pushes.")
+                    logger.e("[Pushbullet] - Error (" .. status .. ") while getting pushes.")
                     return
                 end
 
@@ -660,70 +726,54 @@ local function pushbullet()
             end)
         end)
 end
-globals["pushbullet"] = pushbullet()
+globals['pushbullet'] = pushbullet()
 
 -- }}}
 
 -- Reachability {{{
 
-globals["watcher"]["internet"] = hs.network.reachability.internet():setCallback(
-    function(_, flags)
-        if flags == hs.network.reachability.flags.reachable then
-            -- A default route exists, so an active internet connection is present
-            print("Active internet connection found.")
-            globals["pushbullet"]:close()
-            globals["pushbullet"] = pushbullet()
-        else
-            -- No default route exists, so no active internet connection is present
-            print("Internet connectivity lost.")
-            globals["pushbullet"]:close()
-        end
-end):start()
+local function reachabilityCallback(_, flags)
+    if globals['pushbullet'] then globals['pushbullet']:close() end
+    if flags == hs.network.reachability.flags.reachable then
+        -- A default route exists, so an active internet connection is present
+        logger.v('[Reachability] - Active route found.')
+        local pingReceived = false
+        hs.network.ping.ping('8.8.8.8', 3, 0.1, 1, 'IPv4', function(_, message, _, _)
+            if message == 'didFail' or message == 'sendPacketFailed' or (
+                    message == 'didFinish' and not pingReceived) then
+                logger.v('[Reachability] - Ping did fail.')
+                globals['watchable']['reachability'] = false
+            elseif message == 'receivedPacket' then
+                logger.v('[Reachability] - Ping did succeed.')
+                pingReceived = true
+            elseif message == 'didFinish' and pingReceived then
+                logger.v('[Reachability] - Ping did finish.')
+                globals['watchable']['reachability'] = true
+                globals['pushbullet'] = pushbullet()
+            end
+        end)
+    else
+        -- No default route exists, so no active internet connection is present
+        logger.v('[Reachability] - No active Internet connection.')
+        globals['watchable']['reachability'] = false
+    end
+end
+
+globals['watcher']['internet'] = hs.network.reachability.internet():setCallback(reachabilityCallback):start()
+reachabilityCallback(nil, globals['watcher']['internet']:status())
 
 -- }}}
 
 -- Instapaper {{{
 
-local instapaper_auth = hs.base64.encode(
-    secrets.INSTAPAPER_USERNAME .. ":" .. secrets.INSTAPAPER_PASSWORD
-)
-
-local function toInstapaper(url)
-    if not url then url = hs.pasteboard.getContents() end
-    assert(url)
-
-    if not (string.match(url, "www") or
-        string.match(url, "http://") or
-        string.match(url, "https://"))
-        then
-            print("Invalid url: " .. url .. ".")
-            return
-        end
-
-    hs.http.asyncPost(
-        'https://www.instapaper.com/api/add',
-        "url=" .. url, {Authorization="Basic " .. instapaper_auth},
-        function(status, _, _)
-            if not status or status ~= 201 then
-                print("Error (" .. status .. ") while adding url (" .. url .. ") to Instapaper.")
-            else
-                hs.notify.new({
-                    title="Hammerspoon",
-                    informativeText=url .. " added to Instapaper",
-                    autoWithdraw=true
-                }):send()
-            end
-            hs.window.frontmostWindow():focus()  -- Always focus frontmost window before returning
-        end
-    )
-end
-
-hs.urlevent.bind("instapaper", function(_, _) toInstapaper(nil) end)
+require('instapaper')
 
 -- }}}
 
 -- Experiments {{{
 
 local seal = require('seal')
-seal:init({'tunnelblick', 'network_locations'})
-seal:start(hyper, '0')
+seal:init({'tunnelblick', 'network_locations', 'snippets', 'macos', 'hammerspoon'})
+seal:start(hyper, 'space')
+
+-- }}}

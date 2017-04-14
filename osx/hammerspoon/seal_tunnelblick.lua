@@ -4,6 +4,10 @@ local obj = {}
 obj.__index = obj
 obj.__name = 'seal_tunnelblick'
 obj.__icon = hs.image.imageFromAppBundle('net.tunnelblick.tunnelblick')
+obj.__logger = hs.logger.new(obj.__name)
+
+-- Disconnect all other VPNs before connecting.
+local disconnect_before = true
 
 function obj:commands()
     return {vpn={
@@ -20,12 +24,12 @@ function obj.getVPNConnections()
     local names_code, names, _ = hs.osascript.applescript([[
         tell application "Tunnelblick" to get name of configurations
     ]])
-    if not names_code then print('Could not get Tunnelblick configuration names.'); return {} end
+    if not names_code then hs.logger.e('Could not get Tunnelblick configuration names.'); return {} end
 
     local states_code, states, _ = hs.osascript.applescript([[
         tell application "Tunnelblick" to get state of configurations
     ]])
-    if not states_code then print('Could not get Tunnelblick configuration states.'); return {} end
+    if not states_code then obj.__logger('Could not get Tunnelblick configuration states.'); return {} end
 
     local connections = {}
     for idx, value in ipairs(names) do
@@ -42,7 +46,7 @@ function obj.disconnectVPN(name)
     ]], name))
 
     if not code then
-        print(string.format(
+        obj.__logger(string.format(
             'An error occurred while disconnecting Tunnelblick from "%s".'), name)
     end
 end
@@ -53,18 +57,20 @@ function obj.disconnectAll()
     ]])
 
     if not code then
-        print('An error occurred while disconnecting Tunnelblick from all.')
+        obj.__logger('An error occurred while disconnecting Tunnelblick from all.')
     end
 end
 
 function obj.connectVPN(name)
+    if disconnect_before then obj.disconnectAll() end
+
     -- TODO: Add checks.
     local code, _, _ = hs.osascript.applescript(string.format([[
         tell application "Tunnelblick" to connect "%s"
     ]], name))
 
     if not code then
-        print(string.format(
+        obj.__logger(string.format(
             'An error occurred while connecting Tunnelblick to "%s".'), name)
         end
 end
@@ -78,24 +84,25 @@ function obj.choicesVPNCommand(query)
     for name, state in pairs(connections) do
         if string.match(name:lower(), query:lower()) then
             local choice = {}
-            choice["text"] = name
-            choice["subText"] = state
+            choice['text'] = name
+            choice['subText'] = state
 
-            if state == "CONNECTED" then
-                choice["image"] = img_connected
+            if state == 'CONNECTED' then
+                choice['image'] = img_connected
             else
-                choice["image"] = img_disconnected
+                choice['image'] = img_disconnected
             end
 
-            choice["name"] = name
-            choice["state"] = state
-            choice["plugin"] = obj.__name
-            choice["type"] = "toggle"
+            choice['name'] = name
+            choice['state'] = state
+            choice['plugin'] = obj.__name
+            choice['type'] = 'toggle'
             table.insert(choices, choice)
         end
     end
 
-    table.sort(choices, function(a, b) return a['state'] < b['state'] end)
+    table.sort(choices, function(a, b)
+            if (a.state == b.state) then return a.name < b.name else return a.state < b.state end end)
 
     local choice = {text='Disconnect all', plugin=obj.__name, type='disconnect'}
     table.insert(choices, 1, choice)

@@ -1,7 +1,6 @@
-print("Loading seal...")
-
 local obj = {}
 obj.__index = obj
+obj.__logger = hs.logger.new('seal')
 
 obj.chooser = nil
 obj.hotkeyShow = nil
@@ -9,17 +8,17 @@ obj.plugins = {}
 obj.commands = {}
 
 function obj:init(plugins)
-    print("Initialising seal...")
+    obj.__logger.v("Initialising Seal...")
     self.chooser = hs.chooser.new(self.completionCallback)
     self.chooser:choices(self.choicesCallback)
     self.chooser:queryChangedCallback(self.queryChangedCallback)
 
     for _, plugin_name in pairs(plugins) do
-        print("Loading seal plugin: " .. plugin_name)
+        obj.__logger.v("Loading Seal plugin: '" .. plugin_name .. "'.")
         local plugin = require("seal_" .. plugin_name)
         table.insert(obj.plugins, plugin)
         for cmd, cmd_info in pairs(plugin:commands()) do
-            print("Adding command: " .. cmd)
+            obj.__logger.v("Adding command: '" .. cmd .. "'.")
             obj.commands[cmd] = cmd_info
         end
     end
@@ -27,15 +26,15 @@ function obj:init(plugins)
 end
 
 function obj:start(modifiers, hotkey)
-    print("Starting seal")
+    obj.__logger.v("Starting Seal.")
     if hotkey then
-        self.hotkeyShow = hs.hotkey.bind(modifiers, hotkey, function() obj:show() end)
+        self.hotkeyShow = hs.hotkey.bind(modifiers, hotkey, function() obj:toggle() end)
     end
     return self
 end
 
 function obj:stop()
-    print("Stopping seal")
+    obj.__logger.v("Stopping Seal.")
     self.chooser:hide()
     if self.hotkeyShow then self.hotkeyShow:disable() end
     return self
@@ -46,8 +45,18 @@ function obj:show()
     return self
 end
 
+function obj:toggle()
+    if self.chooser:isVisible() then self.chooser:hide() else self.chooser:show() end
+    return self
+end
+
 function obj.completionCallback(row_info)
-    if row_info == nil then return end
+    if row_info == nil then
+        local wf = hs.window.filter
+        local lastFocused = wf.defaultCurrentSpace:getWindows(wf.sortByFocusedLast)
+        if #lastFocused > 0 then lastFocused[1]:focus() end
+        return
+    end
 
     if row_info["type"] == "plugin_cmd" then
         obj.chooser:query(row_info["cmd"])
@@ -126,4 +135,3 @@ function obj.queryChangedCallback(_)
 end
 
 return obj
-
