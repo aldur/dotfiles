@@ -3,6 +3,7 @@
 
 skip_global_compinit=1
 
+# Lang settings.
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
@@ -14,43 +15,47 @@ PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
 # And Gnu coreutils manuals
 export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
 
-# Virtualenv / Virtualenvwrapper
-export WORKON_HOME=$HOME/Programmazione/VirtualEnvs
-export PROJECT_HOME=$HOME/Programmazione
+# VMWare command line tools
+PATH="/Applications/VMware Fusion.app/Contents/Library:$PATH"
+
+# PostgreSQL App
+PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"
+
+# Homebrew zsh-completions
+export fpath=(/usr/local/share/zsh-completions $fpath)
+
+# Python / Virtualenv / Virtualenvwrapper
+export WORKON_HOME=$HOME/.virtualenvs
+export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
 source /usr/local/bin/virtualenvwrapper_lazy.sh
-
-# Android SDK
-PATH="/opt/adt-bundle-mac-x86_64/sdk/tools:/opt/adt-bundle-mac-x86_64/sdk/platform-tools:$PATH"
-
-# Go
-export GOPATH=$HOME/Programmazione/Go
-PATH="/usr/local/opt/go/libexec/bin:$GOPATH/bin:$PATH"
-
-# Java
-export JAVA_HOME=$(/usr/libexec/java_home)
-
-# RubyGems environment.
-export GEM_HOME=$HOME/.gem
-PATH=$GEM_HOME/bin:$PATH
-
-# Stack (Haskell) environemnt.
-PATH=$PATH:$HOME/.local/bin
 
 # Load Python RC file
 export PYTHONSTARTUP="$HOME/.pythonrc"
 
+# Lua/Luarocks
+PATH="${HOME}/.luarocks/bin:$PATH"
+
+# Android SDK
+# PATH="/opt/adt-bundle-mac-x86_64/sdk/tools:/opt/adt-bundle-mac-x86_64/sdk/platform-tools:$PATH"
+
+# Go
+# export GOPATH=$HOME/Programmazione/Go
+# PATH="/usr/local/opt/go/libexec/bin:$GOPATH/bin:$PATH"
+
+# Java
+# export JAVA_HOME=$(/usr/libexec/java_home)
+
+# Ruby
+# eval "$(rbenv init -)"  # Commented for performance reasons.
+
+# Stack (Haskell) environemnt.
+# PATH=$PATH:$HOME/.local/bin
+
 # Export $PATH
 export PATH=$PATH
 
-# Automatically setup gpg-agent for every shell
-if [ -f ~/.gnupg/.gpg-agent-info ] && [ -n "$(pgrep gpg-agent)" ]; then
-    source ~/.gnupg/.gpg-agent-info
-    export GPG_AGENT_INFO
-else
-    eval $(gpg-agent --daemon --write-env-file ~/.gnupg/.gpg-agent-info)
-fi
-
-# Ask homebrew to disable analytics
-export HOMEBREW_NO_ANALYTICS=1
-# Do not automatically update brew
-export HOMEBREW_NO_AUTO_UPDATE=1
+# Homebrew settings
+export HOMEBREW_NO_ANALYTICS=1  # Ask homebrew to disable analytics
+export HOMEBREW_NO_AUTO_UPDATE=1  # Do not automatically update brew
+export HOMEBREW_NO_INSECURE_REDIRECT=1
+export HOMEBREW_CASK_OPTS=--require-sha
