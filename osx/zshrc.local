@@ -18,9 +18,6 @@ alias vim="nvim"
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
 
-# Change NVIM cursor shape.
-export NVIM_TUI_ENABLE_CURSOR_SHAPE=1
-
 # Do not automatically set iTerm's title.
 export DISABLE_AUTO_TITLE="true"
 
