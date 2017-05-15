@@ -1,13 +1,17 @@
-.PHONY: all vimrc python.vim neovim
+.PHONY: all vimrc ftplugin neovim templates
 
-all: vimrc python.vim neovim
+all: vimrc ftplugin neovim templates
 
 vimrc:
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
 
-python.vim:
+templates:
+	$(LN) $(shell readlink -f $@) ${HOME}/.vim/$@
+
+ftplugin:
 	mkdir -p ${HOME}/.vim/after/ftplugin/
 	$(LN) $(shell readlink -f python.vim) ${HOME}/.vim/after/ftplugin/python.vim
+	$(LN) $(shell readlink -f gnuplot.vim) ${HOME}/.vim/after/ftplugin/gnuplot.vim
 
 neovim:
 	mkdir -p ${HOME}/.config
