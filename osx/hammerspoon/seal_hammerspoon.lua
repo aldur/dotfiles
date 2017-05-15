@@ -12,6 +12,14 @@ function obj.clipboardToInstapaper()
     if not success then obj.__logger.e('Got an error while opening Hammerspoon/Instapaper url handler.') end
 end
 
+function obj.clipboardToTermBin()
+    local success, output, _ = hs.applescript([[do shell script "pbpaste | nc termbin.com 9999"]])
+    if not success then obj.__logger.e('Got an error while sending clipboard to TermBin.'); return end
+
+    success, _, _ = hs.applescript(string.format([[do shell script "open '%s'"]], output))
+    if not success then obj.__logger.e('Got an error while opening TermBin url.'); return end
+end
+
 function obj.clipboardToFile()
     local success, _, _ = hs.applescript(
         [[do shell script "open 'hammerspoon://clipboard?clipboard=/tmp/clipboard.json&archive=/tmp/archive.json'"]])
@@ -50,9 +58,10 @@ end
 
 obj.cmds = {
     {text='Clipboard to Instapaper', type='clipboardToInstapaper'},
-    {text='Clipboard to file', type='clipboardToFile'},
-    {text='Clear clipboard', type='clearClipboard'},
-    {text='Archive clipboard', type='archiveClipboard'},
+    {text='Clipboard to TermBin', type='clipboardToTermBin'},
+    {text='Save Clipboard to File', type='clipboardToFile'},
+    {text='Clear Clipboard', type='clearClipboard'},
+    {text='Archive Clipboard', type='archiveClipboard'},
     {text='Toggle Caffeine', type='toggleCaffeine'},
 }
 
