@@ -10,7 +10,7 @@ module = {
     chooser_max_size=1000,
     archive_max_size=10000,
     element_max_size=1000,
-    consider_ignore=false,
+    consider_ignore=true,
     trim=true,
     ignore={'1Password 6', '1Password mini'},
 
