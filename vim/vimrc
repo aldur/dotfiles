@@ -21,10 +21,8 @@
     " The list of installed plugins
     Plug 'Konfekt/FastFold'             " Better fold refresh
     Plug 'cohama/lexima.vim'            " Wonderful auto-pair
-    Plug 'ctrlpvim/ctrlp.vim'           " Fuzzy file, buffer, MRU, tag finder
     Plug 'honza/vim-snippets'           " Vim snippets
     Plug 'keith/investigate.vim'        " Smart documentation finder
-    Plug 'lervag/vimtex'                " Syntax schemes and better indent
     Plug 'ludovicchabant/vim-gutentags' " Automatic tag management
     Plug 'neomake/neomake'              " Asynchronous Syntax Checkers
     Plug 'sheerun/vim-polyglot'         " Additional syntaxes / indent
@@ -32,8 +30,9 @@
     Plug 'tpope/vim-commentary'         " Toggle comments
     Plug 'tpope/vim-repeat'             " Enable supported plugin actions to be repeated with '.'
     Plug 'tpope/vim-surround'           " All about surrounding
-    Plug 'tpope/vim-vinegar'            " Lightweight file manager
     Plug 'wellle/targets.vim'           " Additional text objects
+
+    Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 
     " Statusline
     Plug 'itchyny/lightline.vim'        " Configure the statusbar / tabline
@@ -61,8 +60,6 @@
                     \ { 'for': 'python' }            " Virtualenv within VIM
 
         " Markdown
-        Plug 'jtratner/vim-flavored-markdown',
-                    \ { 'for' : 'markdown' }         " GitHub flavored markdown
         Plug 'suan/vim-instant-markdown',
                     \ { 'for' : 'markdown' }         " Instant markdown preview in browser (requirements on GitHub)
 
@@ -97,14 +94,15 @@
     " Sets how many lines of history VIM has to remember
     set history=10000 " Maximum value for history
 
-    " Modeline in the first five lines
+    " Modeline in the first three lines
     set modeline
     set modelines=3
 
     " Mouse
     set mouse=a
     set mousehide               " Hide the mouse cursor while typing
-" End of line (unix EOL is preferred over the dos one and before the mac one).
+
+    " End of line (unix EOL is preferred over the dos one and before the mac one).
     set fileformats=unix,dos,mac
 
     " With a map leader it's possible to do extra key combinations
@@ -140,30 +138,29 @@
     set directory+=.
 
     " Tell (n)vim to remember certain things when we exit
-    "  '20  :  marks will be remembered for up to 10 previously edited files
+    "  '100  :  marks will be remembered for up to 100 previously edited files
     "  "100 :  will save up to 100 lines for each register
+    "  <100 :  will save up to 100 lines for each register (new alternative to ")
     "  :1000  :  up to 1000 lines of command-line history will be remembered
     "  %    :  saves and restores the buffer list
     "  n... :  where to save the viminfo files
     if has('nvim')
-        set shada='20,<100,:1000,%,n~/.nvim/nviminfo
+        set shada='100,<100,:10000,%,n~/.nvim/nviminfo
         set viewdir=~/.vim/view
     else
-        set viminfo='20,\"100,:100,%,n~/.vim/viminfo
+        set viminfo='100,\"100,:10000,%,n~/.vim/viminfo
     endif
 
-    if exists('+undofile')
-        " undofile - This allows you to use undos after exiting and restarting
-        " This, like swap and backups, uses .vim-undo first, then ~/.vim/undo
-        " :help undo-persistence
-        " This is only present in 7.3+
-        if isdirectory($HOME . '/.vim/undo') == 0
-            :silent !mkdir -p ~/.vim/undo > /dev/null 2>&1
-        endif
-        set undodir=./.vim-undo//
-        set undodir+=~/.vim/undo//
-        set undofile
+    " undofile - This allows you to use undos after exiting and restarting
+    " This, like swap and backups, uses .vim-undo first, then ~/.vim/undo
+    " :help undo-persistence
+    " This is only present in 7.3+
+    if isdirectory($HOME . '/.vim/undo') == 0
+        :silent !mkdir -p ~/.vim/undo > /dev/null 2>&1
     endif
+    set undodir=./.vim-undo//
+    set undodir+=~/.vim/undo//
+    set undofile
 
     " Ignore unreadable files, images, etc.
     set wildignore=*.o,*~,*.pyc
@@ -250,6 +247,11 @@
     set smartcase             " Case sensitive when upper case is present
     set gdefault
 
+    if has('nvim')
+        " Preview command results.
+        set inccommand=nosplit
+    endif
+
     set wildmenu              " Show list instead of just completing
     set wildmode=longest,full " Command <Tab> completion, list matches, then longest common part, then all.
 
@@ -303,7 +305,7 @@
         autocmd vimrc Filetype tex setlocal spell conceallevel=0
 
         " Markdown
-        autocmd vimrc Filetype ghmarkdown,markdown,md setlocal spell
+        autocmd vimrc Filetype markdown,md setlocal spell
     " }}}
 " }}}
 
@@ -330,15 +332,6 @@
     nnoremap <C-j> <C-w>j
     nnoremap <C-k> <C-w>k
     nnoremap <C-l> <C-w>l
-
-    " Same smart ways with nvim terminal buffers
-    if has('nvim')
-        tnoremap <Esc> <C-\><C-n>
-        tnoremap <C-h> <C-\><C-n><C-w>h
-        tnoremap <C-j> <C-\><C-n><C-w>j
-        tnoremap <C-k> <C-\><C-n><C-w>k
-        tnoremap <C-l> <C-\><C-n><C-w>l
-    endif
 
     " Close the current buffer
     nnoremap <leader>bd :bd<cr>
@@ -421,10 +414,6 @@
 " Spell checking {{{
     " Shortcuts
     nnoremap <leader>ss :setlocal spell!<cr>
-    nnoremap <leader>sn ]s
-    nnoremap <leader>sp [s
-    nnoremap <leader>sa zg
-    nnoremap <leader>s? z=
 " }}}
 
 " Misc {{{
@@ -445,6 +434,11 @@
 
     if has('nvim')
         set termguicolors
+    endif
+
+    " Templates support.
+    if isdirectory($HOME . '/.vim/backup') == 1
+        autocmd vimrc BufNewFile *.py 0r ~/.vim/templates/skeleton.py
     endif
 " }}}
 
@@ -487,33 +481,15 @@
 
     " netrw {{{
         " Not an external plugin, but still... :)
+        let g:netrw_banner = 0  " Disable top banner
         let g:netrw_silent = 1  " Do not output `scp` commands etc, while saving.
-    " }}}
+        let g:netrw_liststyle = 3  " Tree style
+        let g:netrw_browse_split = 4  " Open new files in previous window
+        let g:netrw_altv = 1  " Split to right
+        let g:netrw_winsize = 25  " Window height/width on split
+        let g:netrw_list_hide = netrw_gitignore#Hide()  " Hide git-ignored files
 
-    " CtrlP {{{
-        let g:ctrlp_map = '<c-p>'
-        let g:ctrlp_cmd = 'CtrlPMixed'
-
-        " Use the nearest .git directory as the cwd
-        " This makes a lot of sense if you are working on a project that is
-        " in version control. It also supports works with .svn, .hg, .bzr.
-        let g:ctrlp_working_path_mode = 'ra'
-
-        let g:ctrlp_cache_dir = $HOME.'/.vim/.cache/ctrlp'
-        let g:ctrlp_match_window_reversed = 1
-        let g:ctrlp_clear_cache_on_exit = 0
-
-        " Allow a maximum depth of 5 sub-folders and a total of 1000 files.
-        let g:ctrlp_max_depth = 10
-        let g:ctrlp_max_files = 10000
-
-        " Exclude ZSH scratches
-        let g:ctrlp_mruf_exclude = '/tmp/zsh.*\|/private/tmp/zsh.*'
-
-        " Manually enable CtrlP extensions.
-        let g:ctrlp_extensions = ['buffertag', 'quickfix', 'undo', 'line', 'changes', 'mixed']
-
-        nnoremap <leader><space> :<C-u>CtrlPBufTagAll<CR>
+        nnoremap - :Vexplore<cr>
     " }}}
 
     " Lightline {{{
@@ -547,7 +523,6 @@
 
         let g:lightline.component_function = {
                     \ 'mode': 'LightlineMode',
-                    \ 'ctrlpmark': 'LightlineCtrlPMark',
                     \ 'bufferbefore': 'lightline#buffer#bufferbefore',
                     \ 'bufferafter': 'lightline#buffer#bufferafter',
                     \ 'bufferinfo': 'lightline#buffer#bufferinfo',
@@ -572,8 +547,7 @@
         " Setup the active status bar
         let g:lightline.active = {
                     \ 'left': [ [ 'mode', 'paste', 'spell' ],
-                    \           [ 'readonly', 'filename', 'modified' ],
-                    \           [ 'ctrlpmark' ] ],
+                    \           [ 'readonly', 'filename', 'modified' ] ],
                     \ 'right': [ [ 'syntax_error', 'syntax_warning', 'syntax_info' ],
                     \            [ 'lineinfo' ],
                     \            [ 'fileformat', 'fileencoding', 'filetype' ],
@@ -590,39 +564,8 @@
                     \ 'left': [ [ 'bufferinfo' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
                     \ 'right': [ [ 'close' ] ] }
 
-        " CtrlP integration {{{
-            let g:ctrlp_status_func = {
-                        \ 'main': 'CtrlPStatusFunc_1',
-                        \ 'prog': 'CtrlPStatusFunc_2',
-                        \ }
-
-            function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
-                let g:lightline.ctrlp_regex = a:regex
-                let g:lightline.ctrlp_prev = a:prev
-                let g:lightline.ctrlp_item = a:item
-                let g:lightline.ctrlp_next = a:next
-                return lightline#statusline(0)
-            endfunction
-
-            function! CtrlPStatusFunc_2(str)
-                echom a:str
-                return lightline#statusline(0)
-            endfunction
-
-            function! LightlineCtrlPMark()
-                if expand('%:t') =~? 'ControlP' && has_key(g:lightline, 'ctrlp_item')
-                    call lightline#link('iR'[g:lightline.ctrlp_regex])
-                    return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item, g:lightline.ctrlp_next], 0)
-                else
-                    return ''
-                endif
-            endfunction
-        " }}}
-
         function! LightlineMode()
-            let l:fname = expand('%:t')
-            return l:fname ==? 'ControlP' ? 'CtrlP' :
-                        \ winwidth(0) > 60 ? lightline#mode() : ''
+            return winwidth(0) > 60 ? lightline#mode() : ''
         endfunction
 
         " Virtualenv integration
@@ -669,6 +612,10 @@
         endfunction
 
         autocmd User NeomakeFinished call NeomakeDidFinish()
+
+        " Filetype Specific Options {{{ "
+            let g:neomake_tex_enabled_makers = ['chktex', 'lacheck', 'proselint']
+        " }}} Filetype Specific Options "
     " }}}
 
     " Rainbow parentheses {{{
@@ -724,8 +671,7 @@
                     \ .')'
     " }}}
 
-    " UltiSnips {{{
-        " Remap UltiSnips for compatibility with completion handlers
+    " UltiSnips {{{ Remap UltiSnips for compatibility with completion handlers
         let g:UltiSnipsExpandTrigger                        = '<C-j>'
         let g:UltiSnipsJumpForwardTrigger                   = '<C-j>'
         let g:UltiSnipsJumpBackwardTrigger                  = '<C-k>'
@@ -755,9 +701,14 @@
         let g:snips_github=g:github
     " }}}
 
-    " GitHub Flavored Markdown {{{
-        " Set GitHub flavour for all markdown files
-        autocmd vimrc BufNewFile,BufRead *.md,*.markdown setlocal filetype=ghmarkdown
+    " Markdown {{{
+        " Highlight YAML front matter.
+        let g:vim_markdown_frontmatter = 1
+
+        let g:vim_markdown_no_default_key_mappings = 1
+        let g:vim_markdown_conceal = 0
+
+        " let g:vim_markdown_fenced_languages = ['c++=cpp', 'viml=vim', 'bash=sh', 'ini=dosini', 'c', 'html', 'javascript', 'python']
     " }}}
 
     " Vim Instant Markdown {{{
@@ -766,46 +717,21 @@
 
     " Vimtex settings {{{
         let g:vimtex_enabled = 1
+
         let g:tex_flavor = 'latex'  " Open '.tex' files as 'tex' and not 'plaintex'.
         let g:vimtex_quickfix_mode = 2  " Auto-open quickfix with no focus.
 
         if has('nvim')
-            let g:vimtex_latexmk_progname = '/usr/local/bin/nvr'
+            let g:vimtex_compiler_progname = '/usr/local/bin/nvr'
         end
 
         if has('mac')
-            " Skim as a PDF viewer
-            let g:vimtex_view_general_viewer = '/Applications/Skim.app/Contents/SharedSupport/displayline'
-            let g:vimtex_view_general_options = '-r @line @pdf @tex'
-
-            " This adds a callback hook that updates Skim after compilation
-            let g:vimtex_latexmk_callback_hooks = ['UpdateSkim']
-            function! UpdateSkim(status)
-                if !a:status | return | endif
-
-                let l:out = b:vimtex.out()
-                let l:cmd = [g:vimtex_view_general_viewer, '-r']
-                if !empty(system('pgrep Skim'))
-                    call extend(l:cmd, ['-g'])
-                endif
-                if has('nvim')
-                    call jobstart(l:cmd + [line('.'), l:out])
-                elseif has('job')
-                    call job_start(l:cmd + [line('.'), l:out])
-                else
-                    call system(join(l:cmd + [line('.'), shellescape(l:out)], ' '))
-                endif
-            endfunction
+            let g:vimtex_view_method = 'skim'
         end
 
-        " Disable insert mode mappings
-        let g:vimtex_imaps_enabled = 0
-
-        " Enable vimtex folds
-        let g:vimtex_fold_enabled = 1
-
-        " Enable better formatting with gq
-        let g:vimtex_format_enabled = 1
+        let g:vimtex_imaps_enabled = 0   " Disable insert mode mappings
+        let g:vimtex_fold_enabled = 1    " Enable vimtex folds
+        let g:vimtex_format_enabled = 1  " Enable better formatting with gq
     " }}}
 
     " Molokai {{{
@@ -886,6 +812,28 @@
         " Add a custom 'S' mapping to surround with square brackets.
         " Works together with vim-targets.
         let g:surround_{char2nr("S")} = "[\r]"
+    " }}}
+
+    " vim-fzf {{{
+        let g:fzf_layout = { 'down': '~40%' }
+
+        function! s:FZFFiles()
+            try
+                " If possible, launch FZF from the current project root.
+                " We're using gutentags#get_project_root for the task.
+                execute 'Files' gutentags#get_project_root(expand('%:p:h', 1))
+            catch
+                execute 'Files' expand('%:p:h', 1)
+            endtry
+        endfunction
+
+        nnoremap <silent> <leader><space> :call <SID>FZFFiles()<CR>
+        nnoremap <silent> <leader>a :Buffers<CR>
+        nnoremap <silent> <leader>A :Ag<CR>
+        nnoremap <silent> <leader>tt :BTags<CR>
+        nnoremap <silent> <leader>tT :Tags<CR>
+        nnoremap <silent> <leader>? :History<CR>
+        nnoremap <silent> <leader>: :History:<CR>
     " }}}
 " }}}
 
