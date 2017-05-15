@@ -1,20 +1,19 @@
--- luacheck: globals utf8
-
---- === Emojis Spoon ===
+--- === Emojis ===
 ---
 --- Let users choose emojis by name/keyword
 local obj = {}
 obj.__index = obj
 
+-- luacheck: globals utf8
+
 -- Metadata
-obj.name = "Emojis Spoon"
+obj.name = "Emojis"
 obj.version = "1.0"
 obj.author = "Adriano Di Luzio <adrianodl@hotmail.it>"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
--- Define a function that will help us locate ourself
--- This isn't mandatory, but it's strongly encouraged that you include this
--- function and use it to set obj.spoonPath
+-- Internal function used to find our location, so we know where to load files from
+
 local function script_path()
   local str = debug.getinfo(2, "S").source:sub(2)
   return str:match("(.*/)")
@@ -34,15 +33,6 @@ function obj.callback(choice)
     hs.eventtap.keyStrokes(utf8.char(choice['char']))
 end
 
-
--- Initialisation function
-
---- Emojis:init()
---- Method
---- Sets up the Emojis Spoon
----
---- Returns:
----  * None
 function obj:init()
     self.choices = {}
     for _, emoji in pairs(hs.json.decode(io.open(self.spoonPath .. '/emojis/emojis.json'):read())) do
@@ -65,15 +55,15 @@ function obj:init()
 end
 
 --- Emojis:bindHotkeys(mapping)
------ Method
------ Binds hotkeys for Emojis
------
------ Parameters:
------  * mapping - A table containing hotkey modifier/key details for the following items:
------   * toggle - This will toggle the emoji chooser
------
------ Returns:
------  * The Emojis object
+--- Method
+--- Binds hotkeys for Emojis
+---
+--- Parameters:
+---  * mapping - A table containing hotkey modifier/key details for the following items:
+---   * toggle - This will toggle the emoji chooser
+---
+--- Returns:
+---  * The Emojis object
 function obj:bindHotkeys(mapping)
     if self.hotkey then self.hotkey:delete() end
     local toggleMods = mapping['toggle'][1]
@@ -82,7 +72,8 @@ function obj:bindHotkeys(mapping)
     self.hotkey = hs.hotkey.new(
         toggleMods, toggleKey,
         function() if self.chooser:isVisible() then
-        self.chooser:hide() else self.chooser:show() end end):enable()
+            self.chooser:hide() else self.chooser:show() end end
+    ):enable()
 
     return self
 end
