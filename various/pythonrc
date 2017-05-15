@@ -1,30 +1,47 @@
-# encoding: utf-8
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # vim:ft=python
 
+"""
+Define an RC file for the Python interpreters.
+
+Credits/inspiration:
+    - https://gist.github.com/mgedmin/760273
+    - https://github.com/whiteinge/dotfiles/blob/master/.pythonrc.py
+"""
+
 import sys
+import pprint
 import os.path
-import readline
-import atexit
-import rlcompleter as _  # side effects
-
-history_path = os.path.expanduser("~/.python_history")  # same as default for Python 3
 
 
-def save_history(history_path=history_path):
-    readline.write_history_file(history_path)
-
-if os.path.exists(history_path):
-    readline.read_history_file(history_path)
-
-atexit.register(save_history)
-
-
-def TAB_COMPLETION():
+try:
+    import readline
+except ImportError:
+    print("Module readline not available.")
+else:
+    # Persistent history
+    HISTFILE = os.path.expanduser('~/.python_history')
     try:
-        readline.parse_and_bind("tab: complete")
-        print('(Tab completion loaded)')
-    except:
-        print("(Tab completion not loaded)")
+        readline.read_history_file(HISTFILE)
+    except IOError:
+        pass
+    import atexit
+    atexit.register(readline.write_history_file, HISTFILE)
+    del HISTFILE, atexit, readline
 
 
+# Pretty printing
+def _pp_diplayhook(value):
+    if value is not None:
+        try:
+            import __builtin__
+            __builtin__._ = value
+        except ImportError:
+            __builtins__._ = value
+
+        pprint.pprint(value)
+
+
+sys.displayhook = _pp_diplayhook
 sys.ps1 = '\033[34;1m>\033[0m '
