@@ -30,7 +30,8 @@ function obj.callback(choice)
     local lastFocused = wf:getWindows(wf.sortByFocusedLast)
     if #lastFocused > 0 then lastFocused[1]:focus() end
     if not choice then return end
-    hs.eventtap.keyStrokes(utf8.char(choice['char']))
+    assert(choice.char)
+    hs.eventtap.keyStrokes(hs.utf8.codepointToUTF8(table.unpack(choice.char)))  -- luacheck: ignore
 end
 
 function obj:init()
@@ -38,12 +39,18 @@ function obj:init()
     for _, emoji in pairs(hs.json.decode(io.open(self.spoonPath .. '/emojis/emojis.json'):read())) do
         local subText = emoji.shortname
         if #emoji.keywords > 0 then subText = table.concat(emoji['keywords'], ', ') .. ', ' .. subText end
+        local chars = hs.fnutils.imap(
+            hs.fnutils.split(emoji.code_points.output, '-'),
+            function(s) return tonumber(s, 16) end
+        )
+
         table.insert(self.choices,
             {text=emoji['name']:gsub("^%l", string.upper),
                 subText=subText,
-                image=hs.image.imageFromPath(self.spoonPath .. '/emojis/png/' .. emoji['unicode'] .. '.png'),
-                char=tonumber(emoji['code_decimal']:sub(3, -2)),
-                order=tonumber(emoji['emoji_order']),
+                image=hs.image.imageFromPath(
+                    self.spoonPath .. '/emojis/png/' .. emoji['code_points']['base'] .. '.png'),
+                char=chars,
+                order=tonumber(emoji['order']),
             })
     end
     table.sort(self.choices, function(a, b) return a['order'] < b['order'] end)
