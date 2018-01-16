@@ -1,5 +1,5 @@
-DOTFILES = psqlrc pdbrc radare2rc pythonrc pdbrc.py curlrc gdbinit ctags inputrc ideavimrc chktexrc
-CONFIG_FILES = flake8 pep8 
+DOTFILES = psqlrc pdbrc radare2rc pythonrc pdbrc.py curlrc gdbinit ctags inputrc ideavimrc chktexrc pylintrc
+CONFIG_FILES = flake8 pep8
 
 .PHONY: all gitignore $(DOTFILES) $(CONFIG_FILES)
 
@@ -13,4 +13,4 @@ $(DOTFILES):
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
 
 $(CONFIG_FILES):
-	$(LN) $(shell readlink -f $@) ${HOME}/config/$@
+	$(LN) $(shell readlink -f $@) ${HOME}/.config/$@
