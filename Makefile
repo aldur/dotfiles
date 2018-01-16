@@ -1,6 +1,6 @@
 # TODO: check for requirements. 
 
-SUBDIRS = zsh vim various
+SUBDIRS = zsh vim various ssh
 
 OS := $(shell uname)
 ifeq ($(OS), Darwin)
