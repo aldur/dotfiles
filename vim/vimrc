@@ -24,14 +24,13 @@
     Plug 'honza/vim-snippets'           " Vim snippets
     Plug 'keith/investigate.vim'        " Smart documentation finder
     Plug 'ludovicchabant/vim-gutentags' " Automatic tag management
-    Plug 'neomake/neomake'              " Asynchronous Syntax Checkers
     Plug 'sheerun/vim-polyglot'         " Additional syntaxes / indent
     Plug 'tommcdo/vim-lion'             " Add gl/gL to align text
     Plug 'tpope/vim-commentary'         " Toggle comments
     Plug 'tpope/vim-repeat'             " Enable supported plugin actions to be repeated with '.'
     Plug 'tpope/vim-surround'           " All about surrounding
-    Plug 'wellle/targets.vim'           " Additional text objects
 
+    " Fuzzy files, tags, life.
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 
     " Statusline
@@ -42,12 +41,21 @@
                 \ { 'on': 'Neoformat' } " Code auto-formatting
 
     " Lazy loaded plugins / platform specific plugins
-    Plug 'SirVer/ultisnips',
-                \ { 'on': [] } " Snippets engine
+    " Plug 'SirVer/ultisnips', { 'on': [] } " Snippets engine
+    Plug 'SirVer/ultisnips'  " Snippets engine
+    Plug 'wellle/targets.vim',
+                \ { 'on': [] } " Additional text objects
+    Plug 'neomake/neomake',
+                \ { 'on': [] } " Asynchronous Syntax Checkers
 
-    Plug 'Shougo/deoplete.nvim',
-                \ has('nvim') ? {'do': ':UpdateRemotePlugins'}
-                \ : { 'on': [] } " Completion engine - only works with NeoVim
+    " Deoplete Completion engine
+    if has('nvim')
+        Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    else
+        Plug 'Shougo/deoplete.nvim'
+        Plug 'roxma/nvim-yarp'
+        Plug 'roxma/vim-hug-neovim-rpc'
+    endif
 
     " Appearance
     Plug 'junegunn/rainbow_parentheses.vim',
@@ -71,23 +79,23 @@
     " }}}
 
     " Deoplete specific plugins {{{
-        Plug 'zchee/deoplete-jedi',
-                    \ has('nvim') ? {  } : { 'on': [] }              " Python completion
+        Plug 'zchee/deoplete-jedi'  " Python completion
         Plug 'zchee/deoplete-go',
-                    \ has('nvim') ? { 'do': 'make' } : { 'on': [] }  " Go completion
-        Plug 'zchee/deoplete-clang',
-                    \ has('nvim') ? {  } : { 'on': [] }              " Clang completion
-        Plug 'ujihisa/neco-look',
-                    \ has('nvim') ? {  } : { 'on': [] }              " Spell completion
-        Plug 'Shougo/neco-vim',
-                    \ has('nvim') ? {  } : { 'on': [] }              " VIM completion
+                    \ { 'do': 'make' }  " Go completion
+        Plug 'ujihisa/neco-look'  " Spell completion
+        Plug 'Shougo/neco-vim'  " VIM dictionary completion
     " }}}
 
     " Enable Vim-stay after all the other plugins
-    Plug 'kopischke/vim-stay'                 " Save and restore cursor position, folds and so on
+    Plug 'kopischke/vim-stay' " Save and restore cursor position, folds and so on
 
     " ...Vim-plug is done
     call plug#end()
+
+    " Lazy loading of some heavier plugins.
+    " autocmd vimrc CursorHold,CursorHoldI * call plug#load('ultisnips')
+    autocmd vimrc CursorHold,CursorHoldI * call plug#load('targets.vim')
+    autocmd vimrc CursorHold,CursorHoldI * call plug#load('neomake')
 " }}}
 
 " General {{{
@@ -171,6 +179,9 @@
 
     " Save cursor position, folds, and so on.
     set viewoptions=cursor,folds,slash,unix
+
+    " Trigger the CursorHold/CursorHoldI events after this amount of ms
+    set updatetime=1000
 " }}}
 
 " Appearance {{{
@@ -296,17 +307,6 @@
     " Do not insert comment leader on 'o'
     " Needs an autocmd because different filetypes override this option
     autocmd vimrc FileType * setlocal formatoptions-=o
-
-    " Filetype specific settings {{{
-        " Git commit
-        autocmd vimrc Filetype gitcommit setlocal spell textwidth=72
-
-        " Latex
-        autocmd vimrc Filetype tex setlocal spell conceallevel=0
-
-        " Markdown
-        autocmd vimrc Filetype markdown,md setlocal spell
-    " }}}
 " }}}
 
 " Tabs, windows and buffers {{{
@@ -437,8 +437,11 @@
     endif
 
     " Templates support.
-    if isdirectory($HOME . '/.vim/backup') == 1
+    if isdirectory($HOME . '/.vim/templates') == 1
         autocmd vimrc BufNewFile *.py 0r ~/.vim/templates/skeleton.py
+        autocmd vimrc BufNewFile *.gnuplot 0r ~/.vim/templates/skeleton.gnuplot
+        autocmd vimrc BufNewFile *.tex 0r ~/.vim/templates/skeleton.tex
+        autocmd vimrc BufNewFile *.sh 0r ~/.vim/templates/skeleton.sh
     endif
 " }}}
 
@@ -462,7 +465,7 @@
     " }}}
 
     " Before saving, delete trailing white-spaces and ^M
-    autocmd vimrc FileType c,cpp,java,php,javascript,python,twig,xml,yaml,vim,tex,lua
+    autocmd vimrc FileType c,cpp,java,php,javascript,python,twig,xml,yaml,vim,lua
                 \ autocmd vimrc BufWritePre <buffer> call StripTrailingWhitespace()
 
     " Return the number of lines in a window, between minheight and maxheight
@@ -480,6 +483,10 @@
 " Plugin settings {{{
 
     " netrw {{{
+        " Should not be required, but if we don't set it netrw does not have
+        " network capacities in Neovim
+        set nocompatible
+
         " Not an external plugin, but still... :)
         let g:netrw_banner = 0  " Disable top banner
         let g:netrw_silent = 1  " Do not output `scp` commands etc, while saving.
@@ -523,14 +530,14 @@
 
         let g:lightline.component_function = {
                     \ 'mode': 'LightlineMode',
-                    \ 'bufferbefore': 'lightline#buffer#bufferbefore',
-                    \ 'bufferafter': 'lightline#buffer#bufferafter',
                     \ 'bufferinfo': 'lightline#buffer#bufferinfo',
                     \ }
 
         let g:lightline.component_expand = {
                     \ 'tabs': 'lightline#tabs',
-                    \ 'buffercurrent': 'lightline#buffer#buffercurrent2',
+                    \ 'buffercurrent': 'lightline#buffer#buffercurrent',
+                    \ 'bufferbefore': 'lightline#buffer#bufferbefore',
+                    \ 'bufferafter': 'lightline#buffer#bufferafter',
                     \ 'virtualenv': 'LightlineVirtualenv',
                     \ 'syntax_error': 'LightlineNeomakeError',
                     \ 'syntax_warning': 'LightlineNeomakeWarning',
@@ -542,6 +549,8 @@
                     \ 'syntax_warning': 'warning',
                     \ 'syntax_info': 'info',
                     \ 'buffercurrent': 'tabsel',
+                    \ 'bufferbefore': 'raw',
+                    \ 'bufferafter': 'raw',
                     \ }
 
         " Setup the active status bar
@@ -598,7 +607,7 @@
         let g:neomake_airline = 0  " Disable airline integration
 
         " Run Neomake on save / WinEnter
-        autocmd vimrc BufWritePost,BufWinEnter * silent Neomake
+        autocmd vimrc BufWritePost,BufWinEnter * silent! Neomake
 
         function! NeomakeDidFinish()
             " Update lightline
@@ -628,6 +637,7 @@
 
     " Deoplete {{{
         let g:deoplete#enable_at_startup = 1 " Enable Deoplete
+        let g:deoplete#enable_smart_case = 1 " Enable smartcase
         " let g:deoplete#auto_complete_delay = 20 " ms delay to trigger autocomplete
 
         let g:deoplete#sources = {}
@@ -637,9 +647,6 @@
         let g:deoplete#sources.gitcommit = g:deoplete#sources._ + ['look']
         let g:deoplete#sources.python = g:deoplete#sources._ + ['jedi']
         let g:deoplete#sources.go = g:deoplete#sources._ + ['go']
-        let g:deoplete#sources.c = g:deoplete#sources._ + ['clang']
-        let g:deoplete#sources.cpp = g:deoplete#sources._ + ['clang']
-        let g:deoplete#sources.objc = g:deoplete#sources._ + ['clang']
 
         let g:deoplete#max_list = 20 " Show 20 entries at most
         let g:deoplete#max_menu_width = 20 " Matches the list length
@@ -671,22 +678,11 @@
                     \ .')'
     " }}}
 
-    " UltiSnips {{{ Remap UltiSnips for compatibility with completion handlers
+    " UltiSnips {{{
+        " Remap UltiSnips for compatibility with completion handlers
         let g:UltiSnipsExpandTrigger                        = '<C-j>'
         let g:UltiSnipsJumpForwardTrigger                   = '<C-j>'
         let g:UltiSnipsJumpBackwardTrigger                  = '<C-k>'
-
-        " This function only runs when UltiSnips is not loaded (credits github/saaguero)
-        function! LoadUltiSnips()
-            let l:curpos = getcurpos()
-            execute plug#load('ultisnips')
-            call cursor(l:curpos[1], l:curpos[2])
-            call UltiSnips#ExpandSnippet()
-            " Add command to manually list snippets
-            command UltiSnipsListSnippets call UltiSnips#ListSnippets()
-            return ''
-        endfunction
-        inoremap <silent> <C-j> <C-r>=LoadUltiSnips()<cr>
 
         " Give higher priority to UltiSnips specific snippets over SnipMate ones
         let g:UltiSnipsSnippetDirectories=[$HOME . '/.vim/plugged/vim-snippets/UltiSnips']
