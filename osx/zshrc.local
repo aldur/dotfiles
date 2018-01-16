@@ -41,7 +41,6 @@ tab-title() {
 
 # Source iTerm2 integration tools.
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-alias imgcat=~/.iterm2/imgcat; alias it2dl=~/.iterm2/it2dl
 
 # Tmux integration.
 iterm2_print_user_vars() {
@@ -54,3 +53,5 @@ if [[ -n "${TMUX+set}" ]] then
     # tab-color 0 255 0  # This line should not be necessary.
     tmux rename-window -t${TMUX_PANE} "$(tmux display-message -p "#S")"
 fi
+
+alias ssh=autossh

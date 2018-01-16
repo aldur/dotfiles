@@ -59,3 +59,6 @@ export HOMEBREW_NO_ANALYTICS=1  # Ask homebrew to disable analytics
 export HOMEBREW_NO_AUTO_UPDATE=1  # Do not automatically update brew
 export HOMEBREW_NO_INSECURE_REDIRECT=1
 export HOMEBREW_CASK_OPTS=--require-sha
+
+# Autossh
+export AUTOSSH_PORT=0
