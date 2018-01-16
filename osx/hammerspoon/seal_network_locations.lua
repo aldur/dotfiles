@@ -7,7 +7,7 @@ obj.__icon = hs.image.imageFromPath('icons/internet.ico')
 
 function obj:commands()
     return {network={
-            cmd='network', fn=obj.choicesNetworkLocation,
+            cmd='net', fn=obj.choicesNetworkLocation,
             name='Network Location',
             description="Set a network location",
             plugin=obj.__name, icon=obj.__icon,

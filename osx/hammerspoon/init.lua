@@ -1,6 +1,5 @@
 -- Modeline {{{
 -- vim: set foldmarker={{{,}}} foldlevel=0 foldmethod=marker
--- luacheck: globals hs utf8 globals
 -- }}}
 
 -- Require {{{
@@ -13,11 +12,8 @@ local secrets = require('secrets')
 -- Constants / Definitions {{{
 
 -- Change this line to enable verbose logging.
-hs.logger.defaultLogLevel = 'info'
+hs.logger.defaultLogLevel = 'debug'
 local logger = hs.logger.new('init')
-
--- Use hs.canvas drawing wrapper.
-hs.canvas.drawingWrapper(true)
 
 local animationDuration = 0
 local shadows = false
@@ -27,8 +23,8 @@ local wf = hs.window.filter
 globals = {}
 globals['WiFi'] = {}
 globals['watcher'] = {}
-globals['watchable_watcher'] = {}
-globals['watchable'] = hs.watchable.new('globals')
+-- globals['watchable_watcher'] = {}
+-- globals['watchable'] = hs.watchable.new('globals')
 globals['windows'] = {}
 globals['geeklets'] = {}
 globals['timers'] = {}
@@ -56,6 +52,8 @@ hs.window.setShadows(shadows)  -- No windows shadow
 wf.setLogLevel('error')  -- Only log WF errors
 hs.hotkey.setLogLevel('warning')  -- Less verbose hotkey logging
 hs.application.enableSpotlightForNameSearches(true)  -- Enable alternate application names
+hs.grid.setGrid('11x7')  -- Gtid size
+hs.canvas.drawingWrapper(true)  -- Use hs.canvas drawing wrapper.
 
 -- }}}
 
@@ -130,6 +128,7 @@ local function ssidChangedCallback()
                 informativeText="An error occurred while managing network locations.",
                 autoWithdraw=true
             }):send()
+        logger.e('[Network Locations] Error setting ' .. networkLocation .. '.')
     end
 
     -- Execute IN callback for new network location.
@@ -150,16 +149,7 @@ globals.watcher.WiFi = hs.wifi.watcher.new(ssidChangedCallback):start()
 
 -- USB management {{{
 
--- local function usbDeviceCallback(data)
---     if data["productID"] == 49944 and data["vendorID"] == 1133 then
---         if (data["eventType"] == "added") then
---             hs.keycodes.setLayout('Keyboard Illuminated IT')
---         elseif (data["eventType"] == "removed") then
---             hs.keycodes.setLayout('Italian')
---         end
---     end
--- end
--- globals["watcher"]["usb"] = hs.usb.watcher.new(usbDeviceCallback):start()
+-- require('usb')
 
 -- }}}
 
@@ -275,12 +265,6 @@ end
 
 -- }}}
 
--- Grid {{{
-
-hs.grid.setGrid('11x7')
-
--- }}}
-
 -- Window filters {{{
 
 globals.wfilters.finder = wf.copy(
@@ -298,14 +282,20 @@ globals.emojis = hs.loadSpoon('Emojis')
 
 -- }}}
 
+-- Seal {{{
+
+local seal = require('seal')
+seal:init({'tunnelblick', 'network_locations', 'snippets', 'macos', 'hammerspoon'})
+seal:start(hyper, 'space')
+
+-- }}}
+
 -- Bindings {{{
 
 -- Configuration reload
 hs.hotkey.bind(hyper_shift, "r", function()
     cleanup()
     hs.reload()
-    hs.notify.new({title="Hammerspoon", informativeText="Configuration reloaded",
-        autoWithdraw=true}):send()
 end)
 
 -- Toggle console
@@ -316,11 +306,7 @@ end)
 
 -- Clipboard manager
 globals.clipboard = require('clipboard')
-hs.hotkey.bind(hyper, "c", function()
-    local clipboard = globals.clipboard.chooser
-    if clipboard:isVisible() then clipboard:hide() else clipboard:show() end
-    hs.window.frontmostWindow():focus()
-end)
+hs.hotkey.bind(hyper, "c", globals.clipboard.toggle)
 
 -- Force pasting where forbidden
 hs.hotkey.bind(hyper, "v", function()
@@ -416,7 +402,7 @@ end)
 
 -- Focus/launch most commonly used applications.
 hs.fnutils.each({
-    {'M', 'com.deezer.Deezer'}, {'B', 'com.google.Chrome'},
+    {'M', 'com.deezer.deezer-desktop'}, {'B', 'com.google.Chrome'},
     {'O', 'com.omnigroup.OmniFocus2'}, {'W', 'com.kapeli.dashdoc'}
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function()
@@ -430,6 +416,7 @@ hs.fnutils.each({
 end)
 
 -- Emoji chooser
+
 globals.emojis:bindHotkeys({toggle={hyper, 'e'}})
 
 -- }}}
@@ -437,25 +424,36 @@ globals.emojis:bindHotkeys({toggle={hyper, 'e'}})
 -- iTerm2 {{{
 
 -- Launch iTerm2 by pressing alt-space
-hs.hotkey.new({"alt"}, "space", function()
-    local iTerms = hs.application.applicationsForBundleID("com.googlecode.iterm2")
+hs.hotkey.new({'alt'}, 'space', function()
+    local iTerms = hs.application.applicationsForBundleID('com.googlecode.iterm2')
+    assert(#iTerms <= 1)
 
     if #iTerms == 0 then
-        hs.application.open("com.googlecode.iterm2")
+        hs.application.open('com.googlecode.iterm2')
         return
     end
 
     local iTerm2 = iTerms[1]
-    local w = iTerm2:mainWindow()
-    if not w then
+    local windows = iTerm2:allWindows()
+
+    if #windows == 0 then
         hs.osascript.applescript('tell application "iTerm2" \n'
             .. 'create window with default profile\n' ..
             'end tell')
         return
-    elseif w == hs.window.focusedWindow() then
-        iTerm2:hide()
     else
-        w:focus()
+        local focused = hs.window.focusedWindow()
+        if focused and focused:application() == iTerm2 then
+            iTerm2:hide()
+            return
+        end
+
+        for _, window in pairs(windows) do
+            if window:isMinimized() then window:unminimize() end
+        end
+
+        local mainWindow = iTerm2:mainWindow()
+        if mainWindow then mainWindow:focus() else windows[1]:focus() end
     end
 end):enable()
 
@@ -463,110 +461,110 @@ end):enable()
 
 -- Pushbullet {{{
 
-local pb_api_key = secrets.PUSHBULLET_API_KEY
+-- local pb_api_key = secrets.PUSHBULLET_API_KEY
 
-hs.notify.register('pb', function()
-    hs.http.asyncGet('https://api.pushbullet.com/v2/pushes?limit=1',
-    {["Access-Token"]=pb_api_key},
-    function(status, body, _)
-        if not status or status > 200 then
-            logger.e('[Pushbullet] - Error (' .. status .. ") while getting pushes.")
-            return
-        end
+-- hs.notify.register('pb', function()
+--     hs.http.asyncGet('https://api.pushbullet.com/v2/pushes?limit=1',
+--     {["Access-Token"]=pb_api_key},
+--     function(status, body, _)
+--         if not status or status > 200 then
+--             logger.e('[Pushbullet] - Error (' .. status .. ") while getting pushes.")
+--             return
+--         end
 
-        local pushes = hs.json.decode(body)
-        local push = pushes.pushes[1]
-        if not push.dismissed then
-            assert(push.iden)
-            hs.http.asyncPost(
-                'https://api.pushbullet.com/v2/pushes/' .. push.iden,
-                hs.json.encode({dismissed=true}),
-                {["Access-Token"]=pb_api_key, ["Content-Type"]='application/json'},
-                function(postStatus, _, _)
-                    if not postStatus or postStatus > 200 then
-                        logger.e('[Pushbhullet] - Error (' .. postStatus .. ") while marking push as read")
-                    end
-                end
-            )
-        end
-    end)
-end)
+--         local pushes = hs.json.decode(body)
+--         local push = pushes.pushes[1]
+--         if not push.dismissed then
+--             assert(push.iden)
+--             hs.http.asyncPost(
+--                 'https://api.pushbullet.com/v2/pushes/' .. push.iden,
+--                 hs.json.encode({dismissed=true}),
+--                 {["Access-Token"]=pb_api_key, ["Content-Type"]='application/json'},
+--                 function(postStatus, _, _)
+--                     if not postStatus or postStatus > 200 then
+--                         logger.e('[Pushbhullet] - Error (' .. postStatus .. ") while marking push as read")
+--                     end
+--                 end
+--             )
+--         end
+--     end)
+-- end)
 
-local function pushbullet()
-    return hs.http.websocket(
-        'wss://stream.pushbullet.com/websocket/' .. pb_api_key,
-        function(ws_body)
-            local alert = hs.json.decode(ws_body)
-            if alert['type'] == 'nop' then return end
-            hs.http.asyncGet('https://api.pushbullet.com/v2/pushes?limit=1',
-            {["Access-Token"]=pb_api_key},
-            function(status, body, _)
-                if not status or status > 200 then
-                    logger.e("[Pushbullet] - Error (" .. status .. ") while getting pushes.")
-                    return
-                end
+-- local function pushbullet()
+--     return hs.http.websocket(
+--         'wss://stream.pushbullet.com/websocket/' .. pb_api_key,
+--         function(ws_body)
+--             local alert = hs.json.decode(ws_body)
+--             if alert['type'] == 'nop' then return end
+--             hs.http.asyncGet('https://api.pushbullet.com/v2/pushes?limit=1',
+--             {["Access-Token"]=pb_api_key},
+--             function(status, body, _)
+--                 if not status or status > 200 then
+--                     logger.e("[Pushbullet] - Error (" .. status .. ") while getting pushes.")
+--                     return
+--                 end
 
-                local pushes = hs.json.decode(body)
-                local push = pushes.pushes[1]
-                if not push or push.dismissed or not push.body then return end
+--                 local pushes = hs.json.decode(body)
+--                 local push = pushes.pushes[1]
+--                 if not push or push.dismissed or not push.body then return end
 
-                hs.pasteboard.setContents(push.body)
-                hs.notify.new('pb', {
-                    title=push.title or "Pushbullet",
-                    informativeText=push.body, autoWithdraw=true,
-                    contentImage=hs.image.imageFromPath('icons/pushbullet.ico')
-                }):send()
-            end)
-        end)
-end
+--                 hs.pasteboard.setContents(push.body)
+--                 hs.notify.new('pb', {
+--                     title=push.title or "Pushbullet",
+--                     informativeText=push.body, autoWithdraw=true,
+--                     contentImage=hs.image.imageFromPath('icons/pushbullet.ico')
+--                 }):send()
+--             end)
+--         end)
+-- end
 
 -- The callback will start Pushbullet as soon as Internet connectivity is found.
-globals.watchable_watcher.reachability_pb = hs.watchable.watch('globals', 'reachability',
-    function(_, _, _, _, _)
-        if not globals.watchable.reachability then
-            if globals.pushbullet then logger.v('[Pushbullet] - Closing PB.'); globals.pushbullet:close() end
-        else
-            logger.v('[Pushbullet] - Creating new PB instance.'); globals.pushbullet = pushbullet()
-        end
-    end)
+-- globals.watchable_watcher.reachability_pb = hs.watchable.watch('globals', 'reachability',
+--     function(_, _, _, _, _)
+--         if not globals.watchable.reachability then
+--             if globals.pushbullet then logger.v('[Pushbullet] - Closing PB.'); globals.pushbullet:close() end
+--         else
+--             logger.v('[Pushbullet] - Creating new PB instance.'); globals.pushbullet = pushbullet()
+--         end
+--     end)
 
 -- }}}
 
 -- Reachability {{{
 
-local function testPing()
-    logger.v('[Ping] - Testing ping.')
-    local pingReceived = false
-    hs.network.ping.ping('8.8.8.8', 2, 0.1, 2.0, 'IPv4', function(_, message, _, _)
-        if message == 'didFail' or message == 'sendPacketFailed' or (
-                message == 'didFinish' and not pingReceived) then
-            logger.v('[Ping] - Ping did fail.')
-            globals.watchable.reachability = false
-        elseif message == 'receivedPacket' then
-            logger.v('[Ping] - Ping did succeed.')
-            pingReceived = true
-        elseif message == 'didFinish' and pingReceived then
-            logger.v('[Ping] - Ping did finish.')
-            globals.watchable.reachability = true
-        end
-    end)
-end
-globals.timers.ping = hs.timer.doEvery(10, function() testPing() end)
+-- local function testPing()
+--     logger.v('[Ping] - Testing ping.')
+--     local pingReceived = false
+--     hs.network.ping.ping('8.8.8.8', 2, 0.1, 2.0, 'IPv4', function(_, message, _, _)
+--         if message == 'didFail' or message == 'sendPacketFailed' or (
+--                 message == 'didFinish' and not pingReceived) then
+--             logger.v('[Ping] - Ping did fail.')
+--             globals.watchable.reachability = false
+--         elseif message == 'receivedPacket' then
+--             logger.v('[Ping] - Ping did succeed.')
+--             pingReceived = true
+--         elseif message == 'didFinish' and pingReceived then
+--             logger.v('[Ping] - Ping did finish.')
+--             globals.watchable.reachability = true
+--         end
+--     end)
+-- end
+-- globals.timers.ping = hs.timer.doEvery(10, function() testPing() end)
 
-local function reachabilityCallback(_, flags)
-    if flags == hs.network.reachability.flags.reachable then
-        -- A default route exists, so an active internet connection may be present
-        logger.v('[Reachability] - Active route found.')
-        testPing()
-    else
-        -- No default route exists, so no active internet connection is present
-        logger.v('[Reachability] - No active Internet connection.')
-        globals.watchable.reachability = false
-    end
-end
+-- local function reachabilityCallback(_, flags)
+--     if flags == hs.network.reachability.flags.reachable then
+--         -- A default route exists, so an active internet connection may be present
+--         logger.v('[Reachability] - Active route found.')
+--         testPing()
+--     else
+--         -- No default route exists, so no active internet connection is present
+--         logger.v('[Reachability] - No active Internet connection.')
+--         globals.watchable.reachability = false
+--     end
+-- end
 
-globals.watcher.internet = hs.network.reachability.internet():setCallback(reachabilityCallback):start()
-reachabilityCallback(nil, globals.watcher.internet:status())
+-- globals.watcher.internet = hs.network.reachability.internet():setCallback(reachabilityCallback):start()
+-- reachabilityCallback(nil, globals.watcher.internet:status())
 
 -- }}}
 
@@ -670,8 +668,7 @@ local function drawVPNGeeklet(r)
     local geeklets = globals.geeklets
 
     local color = red
-    -- if hs.application.find('net.tunnelblick.tunnelblick') then
-    if true then
+    if hs.application.find('net.tunnelblick.tunnelblick') then
         local states_code, states, _ = hs.osascript.applescript([[
             tell application "Tunnelblick" to get state of configurations
         ]])
@@ -786,10 +783,10 @@ local function setupScreenlets()
     drawTopGeeklets()
     drawBottomGeeklets()
 end
-setupScreenlets()
+-- setupScreenlets()
 
-globals.watcher.screen = hs.screen.watcher.new(function() setupScreenlets() end)
-globals.watcher.screen:start()
+-- globals.watcher.screen = hs.screen.watcher.new(function() setupScreenlets() end)
+-- globals.watcher.screen:start()
 
 -- }}}
 
@@ -799,10 +796,16 @@ require('instapaper')
 
 -- }}}
 
--- Seal {{{
+-- Local Configuration {{{
 
-local seal = require('seal')
-seal:init({'tunnelblick', 'network_locations', 'snippets', 'macos', 'hammerspoon'})
-seal:start(hyper, 'space')
+if hs.fs.attributes('local.lua') then
+    require('local')
+end
+
+-- }}}
+
+-- Ending {{{
+
+hs.notify.new({title="Hammerspoon", informativeText="Hammerspoon is ready", autoWithdraw=true}):send()
 
 -- }}}

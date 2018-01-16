@@ -4,6 +4,7 @@ obj.__logger = hs.logger.new('seal')
 
 obj.chooser = nil
 obj.hotkeyShow = nil
+obj.lastFocused = nil
 obj.plugins = {}
 obj.commands = {}
 
@@ -41,20 +42,24 @@ function obj:stop()
 end
 
 function obj:show()
+    self.lastFocused = hs.window.focusedWindow()
     self.chooser:show()
     return self
 end
 
 function obj:toggle()
-    if self.chooser:isVisible() then self.chooser:hide() else self.chooser:show() end
-    return self
+    if self.chooser:isVisible() then
+        self.chooser:hide()
+        if self.lastFocused then self.lastFocused:focus() end
+        return self
+    end
+
+    return self:show()
 end
 
 function obj.completionCallback(row_info)
     if row_info == nil then
-        local wf = hs.window.filter
-        local lastFocused = wf.defaultCurrentSpace:getWindows(wf.sortByFocusedLast)
-        if #lastFocused > 0 then lastFocused[1]:focus() end
+        if obj.lastFocused then obj.lastFocused:focus() end
         return
     end
 
@@ -66,6 +71,7 @@ function obj.completionCallback(row_info)
     for _, plugin in pairs(obj.plugins) do
         if plugin.__name == row_info["plugin"] then
             plugin.completionCallback(row_info)
+            if obj.lastFocused then obj.lastFocused:focus() end
             break
         end
     end

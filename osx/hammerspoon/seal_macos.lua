@@ -100,6 +100,22 @@ function obj.toggleBluetooth()
     end
 end
 
+-- Toggle the menu bar auto-hiding.
+function obj.toggleMenuBar()
+    local result = hs.osascript.applescript([[
+    tell application "System Preferences"
+        reveal pane id "com.apple.preference.general"
+    end tell
+    tell application "System Events" to tell process "System Preferences" to tell window "General"
+        click checkbox "Automatically hide and show the menu bar"
+    end tell
+    delay 1
+    quit application "System Preferences"
+    ]])
+    if not result then obj.__logger.e('Error while toggling the Menu Bar.') end
+end
+
+
 obj.cmds = {
     {text='Toggle WiFi', type='toggleWiFi'},
     {text='Toggle Bluetooth', type='toggleBluetooth'},
@@ -109,6 +125,7 @@ obj.cmds = {
     {text='Toggle Dark Mode', type='toggleDarkMode'},
     {text='Eject All Disks', type='ejectAll'},
     {text='Eject All Local Disks', type='ejectAllLocal'},
+    {text='Toggle Menu Bar', type='toggleMenuBar'},
 }
 
 function obj:commands()
