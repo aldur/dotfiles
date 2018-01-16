@@ -4,5 +4,6 @@ nnoremap / /
 vnoremap / /
 nnoremap <tab> gt
 nnoremap <s-tab> gT
+nnoremap K K
 
 set surround
