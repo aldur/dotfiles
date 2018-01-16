@@ -1,0 +1,58 @@
+\title{A Simple \LaTeX{} Template}
+\author{%
+    Adriano Di Luzio \\
+    Department of Computer Science\\
+    Sapienza University of Rome\\
+}
+\date{\today}
+
+\documentclass[12pt]{article}
+
+\usepackage{microtype}
+\usepackage{cleveref}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This is the paper's abstract \ldots
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+This is time for all good men to come to the aid of their party!
+
+\paragraph{Outline}
+\label{par:outline}
+The remainder of this article is organized as follows.
+\Cref{sec:related_works} gives account of previous work.
+Our new and exciting results are described in~\Cref{sec:results}.
+Finally, \Cref{sec:conclusions} gives the conclusions.
+
+\section{Related Works}
+\label{sec:related_works}
+A much longer \LaTeX{} example was written by Lamport~\cite{lamport94}.
+
+\section{Results}
+\label{sec:results}
+In this section we describe the results.
+
+\section{Conclusions}
+\label{sec:conclusions}
+We worked hard, and achieved little.
+
+\begin{thebibliography}{9}
+
+\bibitem{lamport94}
+    Leslie Lamport,
+    \emph{\LaTeX:\@ a document preparation system},
+    Addison Wesley, Massachusetts,
+    2nd edition,
+    1994.
+
+\end{thebibliography}
+
+% \bibliographystyle{abbrv}
+% \bibliography{main}
+
+\end{document}
