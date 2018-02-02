@@ -523,6 +523,7 @@
                     \ 'percent': '%3p%%',
                     \ 'percentwin': '%P',
                     \ 'spell': '%{&spell?&spelllang:""}',
+                    \ 'separator': '',
                     \ 'lineinfo': '%3l:%-2v',
                     \ 'line': '%l',
                     \ 'column': '%c',
@@ -570,8 +571,19 @@
 
         " Setup the tabline
         let g:lightline.tabline = {
-                    \ 'left': [ [ 'bufferinfo' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
+                    \ 'left': [ [ 'bufferinfo' ], [ 'separator' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
                     \ 'right': [ [ 'close' ] ] }
+
+        " Setup lightline buffer
+        let g:lightline_buffer_readonly_icon = ''
+        let g:lightline_buffer_modified_icon = '✭'
+        let g:lightline_buffer_git_icon = ' '
+        let g:lightline_buffer_ellipsis_icon = '..'
+        let g:lightline_buffer_expand_left_icon = '◀ '
+        let g:lightline_buffer_expand_right_icon = ' ▶'
+        let g:lightline_buffer_active_buffer_left_icon = ''
+        let g:lightline_buffer_active_buffer_right_icon = ''
+        let g:lightline_buffer_separator_icon = '  '
 
         function! LightlineMode()
             return winwidth(0) > 60 ? lightline#mode() : ''
