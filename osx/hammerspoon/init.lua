@@ -402,8 +402,9 @@ end)
 
 -- Focus/launch most commonly used applications.
 hs.fnutils.each({
-    {'M', 'com.deezer.deezer-desktop'}, {'B', 'com.google.Chrome'},
-    {'O', 'com.omnigroup.OmniFocus2'}, {'W', 'com.kapeli.dashdoc'}
+    {'M', 'com.spotify.client'}, {'B', 'com.google.Chrome'},
+    {'O', 'com.omnigroup.OmniFocus2'}, {'W', 'com.kapeli.dashdoc'},
+    {'T', 'com.qvacua.VimR'}
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function()
         local window = hs.window.focusedWindow()
