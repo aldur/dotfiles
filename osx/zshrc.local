@@ -14,18 +14,16 @@ alias ta='tmux -CC new -A -s'
 alias tt='tmux -CC attach -t'
 
 # Editors
-alias vim="nvim"
-export EDITOR="nvim"
+alias vim="vimr"
+export EDITOR="vimr"
 export VISUAL="$EDITOR"
+export GIT_EDITOR="nvim"
 
 # Do not automatically set iTerm's title.
 export DISABLE_AUTO_TITLE="true"
 
 # Set key timeout to a lower value, useful for vi-mode
 # export KEYTIMEOUT=1
-
-# Customize LESS
-export LESS='-R -g -i'
 
 # Set tab color programmatically.
 tab-color() {
@@ -41,6 +39,9 @@ tab-title() {
 
 # Source iTerm2 integration tools.
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+# Source FZF bindings
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Tmux integration.
 iterm2_print_user_vars() {
