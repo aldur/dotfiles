@@ -19,19 +19,25 @@
     call plug#begin('~/.vim/plugged')
 
     " The list of installed plugins
-    Plug 'Konfekt/FastFold'             " Better fold refresh
-    Plug 'cohama/lexima.vim'            " Wonderful auto-pair
-    Plug 'honza/vim-snippets'           " Vim snippets
-    Plug 'keith/investigate.vim'        " Smart documentation finder
-    Plug 'ludovicchabant/vim-gutentags' " Automatic tag management
-    Plug 'sheerun/vim-polyglot'         " Additional syntaxes / indent
-    Plug 'tommcdo/vim-lion'             " Add gl/gL to align text
-    Plug 'tpope/vim-commentary'         " Toggle comments
-    Plug 'tpope/vim-repeat'             " Enable supported plugin actions to be repeated with '.'
-    Plug 'tpope/vim-surround'           " All about surrounding
+    Plug 'Konfekt/FastFold'                        " Better fold refresh
+    Plug 'cohama/lexima.vim'                       " Wonderful auto-pair
+    Plug 'honza/vim-snippets'                      " Vim snippets
+    Plug 'keith/investigate.vim'                   " Smart documentation finder
+    Plug 'ludovicchabant/vim-gutentags'            " Automatic tag management
+    Plug 'sheerun/vim-polyglot'                    " Additional syntaxes / indent
+    Plug 'tommcdo/vim-lion'                        " Add gl/gL to align text
+    Plug 'tpope/vim-commentary'                    " Toggle comments
+    Plug 'tpope/vim-repeat'                        " Enable supported plugin actions to be repeated with '.'
+    Plug 'tpope/vim-surround'                      " All about surrounding
+    Plug 'machakann/vim-highlightedyank'           " Highlight last yanked object
 
     " Fuzzy files, tags, life.
-    Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
+    if has('mac')  " Install fzf with homebrew
+        Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
+    else  " Install it as a local plugin
+        Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+        Plug 'junegunn/fzf.vim'
+    end
 
     " Statusline
     Plug 'itchyny/lightline.vim'        " Configure the statusbar / tabline
@@ -228,6 +234,7 @@
 
 " Auto completion {{{
     " How to show completion informations in insert mode
+    set complete+=kspell
     set completeopt=menuone,longest
 
     " Clever tab to cycle the completion popup menu
@@ -255,8 +262,9 @@
     set incsearch             " Find as you type search
     set hlsearch              " Highlight search terms
     set ignorecase            " Case insensitive search
+    set infercase             " Case sensitive completions
     set smartcase             " Case sensitive when upper case is present
-    set gdefault
+    set gdefault              " Work on all matches on the line
 
     if has('nvim')
         " Preview command results.
@@ -303,6 +311,7 @@
     " Line wrapping
     set wrap                                           " Visually wrap lines too long
     set textwidth=0 wrapmargin=0                       " Turn off physical line wrapping
+    set breakindent                                    " Preserve indent of wrapped lines
 
     " Do not insert comment leader on 'o'
     " Needs an autocmd because different filetypes override this option
@@ -319,9 +328,10 @@
     set autoread
 
     " Switch CWD to the directory of the open buffer
-    set autochdir
+    " set autochdir
 
     " Auto save on :next, :edit, :quit, etc.
+    set autowrite
     set autowriteall
 
     " ... and on focus lost
@@ -334,10 +344,10 @@
     nnoremap <C-l> <C-w>l
 
     " Close the current buffer
-    nnoremap <leader>bd :bd<cr>
+    nnoremap <leader>bd :bdelete<cr>
 
     " Close all the buffers
-    nnoremap <leader>ba :bufdo bdelete<cr>
+    nnoremap <leader>ba :%bdelete<cr>
 
     " Move to next buffer
     nnoremap <tab> :bnext<cr>
@@ -485,17 +495,18 @@
     " netrw {{{
         " Should not be required, but if we don't set it netrw does not have
         " network capacities in Neovim
+        " vint: -ProhibitSetNoCompatible
         set nocompatible
 
         " Not an external plugin, but still... :)
         let g:netrw_banner = 0  " Disable top banner
         let g:netrw_silent = 1  " Do not output `scp` commands etc, while saving.
-        let g:netrw_liststyle = 3  " Tree style
         let g:netrw_browse_split = 4  " Open new files in previous window
         let g:netrw_altv = 1  " Split to right
         let g:netrw_winsize = 25  " Window height/width on split
         let g:netrw_list_hide = netrw_gitignore#Hide()  " Hide git-ignored files
 
+        autocmd vimrc FileType netrw setl bufhidden=wipe  " Wipe netrw buffers when hidden
         nnoremap - :Vexplore<cr>
     " }}}
 
@@ -813,13 +824,21 @@
     " }}}
 
     " vim-polyglot {{{
-        let g:polyglot_disabled = ['tex', 'latex']
+        let g:polyglot_disabled = ['tex', 'latex', 'python-compiler']
     " }}}
 
     " vim-surround {{{
         " Add a custom 'S' mapping to surround with square brackets.
         " Works together with vim-targets.
         let g:surround_{char2nr("S")} = "[\r]"
+
+        " Add ability to use ysc to add commands to targets in LaTeX/vimtex
+        autocmd vimrc FileType tex call s:latexSurround()
+        function! s:latexSurround()
+            let b:surround_{char2nr("e")}
+            \ = "\\begin{\1environment: \1}\n\t\r\n\\end{\1\1}"
+            let b:surround_{char2nr("c")} = "\\\1command: \1{\r}"
+        endfunction
     " }}}
 
     " vim-fzf {{{
@@ -842,6 +861,21 @@
         nnoremap <silent> <leader>tT :Tags<CR>
         nnoremap <silent> <leader>? :History<CR>
         nnoremap <silent> <leader>: :History:<CR>
+
+        let g:fzf_colors = {
+                    \ 'fg':      ['fg', 'Normal'],
+                    \ 'bg':      ['bg', 'Normal'],
+                    \ 'hl':      ['fg', 'Comment'],
+                    \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+                    \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+                    \ 'hl+':     ['fg', 'Statement'],
+                    \ 'info':    ['fg', 'PreProc'],
+                    \ 'border':  ['fg', 'Ignore'],
+                    \ 'prompt':  ['fg', 'Conditional'],
+                    \ 'pointer': ['fg', 'Exception'],
+                    \ 'marker':  ['fg', 'Keyword'],
+                    \ 'spinner': ['fg', 'Label'],
+                    \ 'header':  ['fg', 'Comment'] }
     " }}}
 " }}}
 
