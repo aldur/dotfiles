@@ -1,4 +1,4 @@
-# TODO: check for requirements. 
+# TODO: check for requirements.
 
 SUBDIRS = zsh vim various ssh
 
@@ -11,9 +11,13 @@ endif
 
 export LN = ln -sf
 
-.PHONY: all $(SUBDIRS)
+.PHONY: all $(SUBDIRS) weechat
 
-all: $(SUBDIRS)
+all: $(SUBDIRS) weechat
 
 $(SUBDIRS):
 	$(MAKE) -C $@
+
+weechat:
+	$(LN) $(shell readlink -f weechat) ${HOME}/.weechat
+
