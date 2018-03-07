@@ -42,9 +42,10 @@ end
 
 function obj:init()
     -- is the emojis file available?
+    print("Starting Emojis Spoon...")
     local mod, err = table.load(script_path() .. "emojis_json_lua.lua")
     if err then
-        print("Table's not here, generating it from json.")
+        print("Emojis Spoon: table's not here, generating it from json.")
         mod = nil
     end
     if mod then
@@ -85,9 +86,9 @@ function obj:init()
             end
         )
 
-        print("Saving emojis... ")
+        print("Emojis Spoon: Saving emojis... ")
         table.save(self.choices, self.spoonPath .. "/emojis_json_lua.lua")
-        print("... saved")
+        print("Emojis Spoon: ... saved")
     end
     -- inject all images now
     for _, ch in pairs(self.choices) do
@@ -100,6 +101,7 @@ function obj:init()
     self.chooser:rows(5)
     self.chooser:searchSubText(true)
     self.chooser:choices(self.choices)
+    print("Emojis Spoon: Startup completed")
 end
 
 --- Emojis:bindHotkeys(mapping)
