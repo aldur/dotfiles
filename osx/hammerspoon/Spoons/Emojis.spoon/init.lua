@@ -43,7 +43,7 @@ end
 function obj:init()
     -- is the emojis file available?
     print("Starting Emojis Spoon...")
-    local mod, err = table.load(script_path() .. "emojis_json_lua.lua")
+    local mod, err = table.load(script_path() .. "emojis_json_lua.lua") -- luacheck: ignore
     if err then
         print("Emojis Spoon: table's not here, generating it from json.")
         mod = nil
@@ -87,7 +87,7 @@ function obj:init()
         )
 
         print("Emojis Spoon: Saving emojis... ")
-        table.save(self.choices, self.spoonPath .. "/emojis_json_lua.lua")
+        table.save(self.choices, self.spoonPath .. "/emojis_json_lua.lua") -- luacheck: ignore
         print("Emojis Spoon: ... saved")
     end
     -- inject all images now
