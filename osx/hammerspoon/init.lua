@@ -308,8 +308,19 @@ end)
 globals.clipboard = require('clipboard')
 hs.hotkey.bind(hyper, "c", globals.clipboard.toggle)
 
+-- vim-anywhere
+local function vim_anywhere()
+    local focusedWindow = hs.window.focusedWindow()
+    hs.execute('bash vim-anywhere.sh', 1)
+    if focusedWindow then
+        focusedWindow:focus()
+        hs.eventtap.keyStroke({'cmd'}, 'v')
+    end
+end
+hs.hotkey.bind(hyper, "v", vim_anywhere)
+
 -- Force pasting where forbidden
-hs.hotkey.bind(hyper, "v", function()
+hs.hotkey.bind(hyper_shift, "v", function()
     hs.eventtap.keyStrokes(hs.pasteboard.getContents())
 end)
 
