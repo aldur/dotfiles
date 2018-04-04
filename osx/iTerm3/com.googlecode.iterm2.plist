@@ -2938,6 +2938,13 @@ tmux.Detach</string>
 			<key>Text</key>
 			<string></string>
 		</dict>
+		<key>0xd-0x100000</key>
+		<dict>
+			<key>Action</key>
+			<integer>13</integer>
+			<key>Text</key>
+			<string></string>
+		</dict>
 		<key>0xf700-0x300000</key>
 		<dict>
 			<key>Action</key>
@@ -3322,11 +3329,13 @@ tmux.Detach</string>
 	<key>NSWindow Frame SessionsPreferences</key>
 	<string>1761 853 606 456 1440 627 1600 1178 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>469 490 918 512 0 0 1920 1058 </string>
+	<string>522 -542 937 512 254 -900 1440 878 </string>
+	<key>NSWindow Frame UKCrashReporter</key>
+	<string>99 294 592 584 0 0 1440 878 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>0 4 1440 874 0 0 1440 878 </string>
+	<string>0 0 1440 878 0 0 1440 878 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
-	<string>176 75 1050 768 0 0 1440 900 </string>
+	<string>176 73 1050 770 0 0 1440 878 </string>
 	<key>NeverWarnAboutShortLivedSessions_C1F76C2B-05CA-41C1-AA22-E3B21CB892F5</key>
 	<true/>
 	<key>New Bookmarks</key>
@@ -3819,11 +3828,11 @@ tmux.Detach</string>
 			<key>Thin Strokes</key>
 			<integer>1</integer>
 			<key>Transparency</key>
-			<real>0.023150347858408665</real>
+			<real>0.0</real>
 			<key>Triggers</key>
 			<array/>
 			<key>Unicode Version</key>
-			<integer>8</integer>
+			<integer>9</integer>
 			<key>Unlimited Scrollback</key>
 			<true/>
 			<key>Use Bold Font</key>
@@ -4414,9 +4423,11 @@ tmux.Detach</string>
 			<key>Thin Strokes</key>
 			<integer>1</integer>
 			<key>Transparency</key>
-			<real>0.02113081444968682</real>
+			<real>0.0</real>
 			<key>Triggers</key>
 			<array/>
+			<key>Unicode Version</key>
+			<integer>9</integer>
 			<key>Unlimited Scrollback</key>
 			<true/>
 			<key>Use Bold Font</key>
@@ -4982,15 +4993,18 @@ tmux.Detach</string>
 			<array>
 				<string>aldur</string>
 				<string>Monokai</string>
+				<string>tmux</string>
 			</array>
 			<key>Terminal Type</key>
 			<string>xterm-256color</string>
 			<key>Thin Strokes</key>
 			<integer>1</integer>
 			<key>Transparency</key>
-			<real>0.02362743301440013</real>
+			<real>0.0</real>
 			<key>Triggers</key>
 			<array/>
+			<key>Unicode Version</key>
+			<integer>9</integer>
 			<key>Unlimited Scrollback</key>
 			<true/>
 			<key>Use Bold Font</key>
@@ -5023,6 +5037,10 @@ tmux.Detach</string>
 	<true/>
 	<key>NoSyncCommandHistoryHasEverBeenUsed</key>
 	<true/>
+	<key>NoSyncConfirmShellIntegrationCommand</key>
+	<true/>
+	<key>NoSyncConfirmShellIntegrationCommand_selection</key>
+	<integer>0</integer>
 	<key>NoSyncDoNotWarnBeforeMultilinePaste</key>
 	<true/>
 	<key>NoSyncDoNotWarnBeforeMultilinePaste_selection</key>
@@ -5045,6 +5063,10 @@ tmux.Detach</string>
 	<integer>1</integer>
 	<key>NoSyncPermissionToShowTip</key>
 	<false/>
+	<key>NoSyncSuppressBroadcastInputWarning</key>
+	<true/>
+	<key>NoSyncSuppressBroadcastInputWarning_selection</key>
+	<integer>0</integer>
 	<key>NoSyncTimeOfFirstLaunchOfVersionWithTip</key>
 	<real>512675379.93668801</real>
 	<key>NumberOfLinesForAccessibility</key>
@@ -5136,6 +5158,8 @@ tmux.Detach</string>
 	<false/>
 	<key>ShowFullScreenTabBar</key>
 	<true/>
+	<key>ShowMetalFPSmeter</key>
+	<false/>
 	<key>ShowPaneTitles</key>
 	<false/>
 	<key>ShowYellowMarkForJobStoppedBySignal</key>
@@ -5197,6 +5221,8 @@ tmux.Detach</string>
 	</array>
 	<key>TripleClickSelectsFullWrappedLines</key>
 	<true/>
+	<key>UKCrashReporterLastCrashReportDate</key>
+	<real>1519296256</real>
 	<key>URLHandlers</key>
 	<dict/>
 	<key>URLHandlersByGuid</key>
@@ -5208,6 +5234,8 @@ tmux.Detach</string>
 	<key>UseCompactLabel</key>
 	<true/>
 	<key>UseLionStyleFullscreen</key>
+	<true/>
+	<key>UseMetal</key>
 	<true/>
 	<key>WebKitDefaultFontSize</key>
 	<integer>11</integer>
@@ -7778,7 +7806,7 @@ tmux.Detach</string>
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>3.1.5</string>
+	<string>3.1.6beta4</string>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>3</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
