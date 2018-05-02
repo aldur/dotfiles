@@ -677,7 +677,7 @@
         let g:deoplete#skip_chars = ['(', ')']
 
         if has('nvim')
-            call deoplete#custom#set('ultisnips', 'rank', 1000) " Keep snippets on top
+            call deoplete#custom#source('ultisnips', 'rank', 1000) " Keep snippets on top
         endif
 
         " Go completion settings
@@ -832,7 +832,7 @@
         " Works together with vim-targets.
         let g:surround_{char2nr("S")} = "[\r]"
 
-        " Add ability to use ysc to add commands to targets in LaTeX/vimtex
+        " Add ability to use ysc to add commands to targets in LaTeX
         autocmd vimrc FileType tex call s:latexSurround()
         function! s:latexSurround()
             let b:surround_{char2nr("e")}
