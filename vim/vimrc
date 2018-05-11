@@ -342,9 +342,6 @@
     nnoremap <tab> :bnext<cr>
     nnoremap <s-tab> :bprevious<cr>
 
-    nnoremap <leader>bn :bnext<cr>
-    nnoremap <leader>bp :bprevious<cr>
-
     " Useful mappings for managing tabs
     nnoremap <leader>tn :tabnew<cr>
     nnoremap <leader>to :tabonly<cr>
@@ -352,11 +349,8 @@
     nnoremap <leader>tm :tabmove
 
     " Specify the behavior when switching between buffers
-    try
-        set switchbuf=useopen,usetab,newtab
-        set showtabline=2
-    catch
-    endtry
+    set switchbuf=useopen,usetab,newtab
+    set showtabline=2
 
     " Code folding mappings
     nmap <leader>f0 :set foldlevel=0<CR>
@@ -385,7 +379,7 @@
     nnoremap <silent> <leader><cr> :noh<cr>
 
     " Toggle paste mode on and off
-    nnoremap <leader>pp :setlocal paste!<cr>
+    nnoremap <localleader>pp :setlocal paste!<cr>
 
     " Make Y yank everything from the cursor to the end of the line.
     noremap Y y$
@@ -412,7 +406,7 @@
 
 " Spell checking {{{
     " Shortcuts
-    nnoremap <leader>ss :setlocal spell!<cr>
+    nnoremap <localleader>ss :setlocal spell!<cr>
 " }}}
 
 " Misc {{{
@@ -466,7 +460,7 @@
                 \ autocmd vimrc BufWritePre <buffer> call StripTrailingWhitespace()
 
     " Return the number of lines in a window, between minheight and maxheight
-    function! AdjustWindowHeight(minheight, maxheight)
+    function! AdjustWindowHeight(minheight, maxheight) abort
         execute max([a:minheight, min([line('$') + 1, a:maxheight])])
                     \ . 'wincmd _'
     endfunction
@@ -583,17 +577,17 @@
         let g:lightline_buffer_active_buffer_right_icon = ''
         let g:lightline_buffer_separator_icon = '  '
 
-        function! LightlineMode()
+        function! LightlineMode() abort
             return winwidth(0) > 60 ? lightline#mode() : ''
         endfunction
 
         " Virtualenv integration
-        function! LightlineVirtualenv()
+        function! LightlineVirtualenv() abort
             return &filetype ==? 'python' ? virtualenv#statusline() : ''
         endfunction
 
         " Neomake integration {{{
-            function! LightlineNeomakeError()
+            function! LightlineNeomakeError() abort
                 let l:errors = get(neomake#statusline#LoclistCounts(), 'E', 0)
                 return l:errors > 0 ? 'E: '.l:errors : ''
 
@@ -601,12 +595,12 @@
                 let l:infos = get(neomake#statusline#LoclistCounts(), 'E', 0)
             endfunction
 
-            function! LightlineNeomakeWarning()
+            function! LightlineNeomakeWarning() abort
                 let l:warnings = get(neomake#statusline#LoclistCounts(), 'W', 0)
                 return l:warnings > 0 ? 'W: '.l:warnings : ''
             endfunction
 
-            function! LightlineNeomakeInfo()
+            function! LightlineNeomakeInfo() abort
                 let l:infos = get(neomake#statusline#LoclistCounts(), 'I', 0)
                 return l:infos > 0 ? 'I: '.l:infos : ''
             endfunction
@@ -619,7 +613,7 @@
         " Run Neomake on save / WinEnter
         autocmd vimrc BufWritePost,BufWinEnter * silent! Neomake
 
-        function! NeomakeDidFinish()
+        function! NeomakeDidFinish() abort
             " Update lightline
             call lightline#update()
             " Close loclist if no errors
@@ -663,9 +657,7 @@
 
         let g:deoplete#skip_chars = ['(', ')']
 
-        if has('nvim')
-            call deoplete#custom#source('ultisnips', 'rank', 1000) " Keep snippets on top
-        endif
+        call deoplete#custom#source('ultisnips', 'rank', 1000) " Keep snippets on top
 
         " Go completion settings
         let g:deoplete#sources#go#gocode_binary = $GOPATH.'/bin/gocode'
@@ -821,7 +813,7 @@
 
         " Add ability to use ysc to add commands to targets in LaTeX
         autocmd vimrc FileType tex call s:latexSurround()
-        function! s:latexSurround()
+        function! s:latexSurround() abort
             let b:surround_{char2nr("e")}
             \ = "\\begin{\1environment: \1}\n\t\r\n\\end{\1\1}"
             let b:surround_{char2nr("c")} = "\\\1command: \1{\r}"
@@ -831,7 +823,7 @@
     " vim-fzf {{{
         let g:fzf_layout = { 'down': '~40%' }
 
-        function! s:FZFFiles()
+        function! s:FZFFiles() abort
             try
                 " If possible, launch FZF from the current project root.
                 " We're using gutentags#get_project_root for the task.
