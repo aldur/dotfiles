@@ -141,17 +141,6 @@
     set backupdir^=./.vim-backup/
     set backup
 
-    " Save your swap files to a less annoying place than the current directory.
-    " If you have .vim-swap in the current directory, it'll use that.
-    " Otherwise it saves it to ~/.vim/swap, ~/tmp or .
-    if isdirectory($HOME . '/.vim/swap') == 0
-        call mkdir($HOME . '/.vim/swap', 'p')
-    endif
-    set directory=./.vim-swap//
-    set directory+=~/.vim/swap//
-    set directory+=~/tmp//
-    set directory+=.
-
     " Tell (n)vim to remember certain things when we exit
     "  '100  :  marks will be remembered for up to 100 previously edited files
     "  "100 :  will save up to 100 lines for each register
