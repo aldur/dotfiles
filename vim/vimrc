@@ -59,9 +59,10 @@
         Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
     else
         Plug 'Shougo/deoplete.nvim'
-        Plug 'roxma/nvim-yarp'
-        Plug 'roxma/vim-hug-neovim-rpc'
     endif
+
+    Plug 'roxma/nvim-yarp'
+    Plug 'roxma/vim-hug-neovim-rpc'
 
     " Appearance
     Plug 'junegunn/rainbow_parentheses.vim',
@@ -131,7 +132,7 @@
     " If you have .vim-backup in the current directory, it'll use that.
     " Otherwise it saves it to ~/.vim/backup or . if all else fails.
     if isdirectory($HOME . '/.vim/backup') == 0
-        :silent !mkdir -p ~/.vim/backup >/dev/null 2>&1
+        call mkdir($HOME . '/.vim/backup', 'p')
     endif
     set backupdir-=.
     set backupdir+=.
@@ -144,7 +145,7 @@
     " If you have .vim-swap in the current directory, it'll use that.
     " Otherwise it saves it to ~/.vim/swap, ~/tmp or .
     if isdirectory($HOME . '/.vim/swap') == 0
-        :silent !mkdir -p ~/.vim/swap >/dev/null 2>&1
+        call mkdir($HOME . '/.vim/swap', 'p')
     endif
     set directory=./.vim-swap//
     set directory+=~/.vim/swap//
@@ -170,7 +171,7 @@
     " :help undo-persistence
     " This is only present in 7.3+
     if isdirectory($HOME . '/.vim/undo') == 0
-        :silent !mkdir -p ~/.vim/undo > /dev/null 2>&1
+        call mkdir($HOME . '/.vim/undo', 'p')
     endif
     set undodir=./.vim-undo//
     set undodir+=~/.vim/undo//
@@ -198,7 +199,7 @@
     set cmdheight=1
 
     set background=dark
-    colorscheme molokai
+    silent! colorscheme molokai  " set the Molokai colorscheme, if it's installed
 
     set scrolloff=8       " don't scroll any closer to top/bottom
     set sidescrolloff=5   " don't scroll any closer to left/right
@@ -301,7 +302,7 @@
     set expandtab                                      " In insert mode, insert the appropriate number of spaces to insert a Tab
     set smarttab                                       " Insert tabs in front of lines according to shiftwidth
     set shiftwidth=4                                   " Operation >> indents 4 columns; << un-indents 4 columns
-    set tabstop=4                                      " A hard TAB displays as 4 columns
+    set tabstop=8                                      " A hard TAB displays as 8 columns
     set expandtab                                      " Insert spaces when hitting TABs
     set softtabstop=4                                  " Insert/delete 4 spaces when hitting a TAB/BACKSPACE
     set shiftround                                     " Round indent to multiple of 'shiftwidth'
@@ -442,9 +443,7 @@
         set grepprg=ack\ -k
     endif
 
-    if has('nvim')
-        set termguicolors
-    endif
+    set termguicolors
 
     " Templates support.
     if isdirectory($HOME . '/.vim/templates') == 1
@@ -457,7 +456,7 @@
 
 " Helper functions {{{
     " Strip whitespace {{{
-    function! StripTrailingWhitespace()
+    function! StripTrailingWhitespace() abort
         " Preparation: save cursor position
         " (last search is automatically saved because inside a function)
         let l:search = @/
@@ -797,7 +796,7 @@
 
     " vim-gutentags {{{
         if isdirectory($HOME . '/.vim/tags/') == 0
-            :silent !mkdir -p ~/.vim/tags >/dev/null 2>&1
+            call mkdir($HOME . '/.vim/tags/', 'p')
         endif
 
         let g:gutentags_cache_dir = $HOME . '/.vim/tags/'
