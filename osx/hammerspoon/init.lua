@@ -99,7 +99,8 @@ local function ssidChangedCallback()
             title="Hammerspoon",
             informativeText="Wireless disconnected",
             contentImage=hs.image.imageFromPath('icons/internet.ico'),
-            autoWithdraw=true
+            autoWithdraw=true,
+            hasActionButton=false,
         }):send()
         return
     end
@@ -120,13 +121,15 @@ local function ssidChangedCallback()
                 title="Hammerspoon",
                 contentImage=hs.image.imageFromPath("icons/internet.ico"),
                 informativeText="Selecting '" .. networkLocation .. "' network location.",
-                autoWithdraw=true
+                autoWithdraw=true,
+                hasActionButton=false,
             }):send()
     else
         hs.notify.new({
                 title="Hammerspoon",
                 informativeText="An error occurred while managing network locations.",
-                autoWithdraw=true
+                autoWithdraw=true,
+                hasActionButton=false,
             }):send()
         logger.e('[Network Locations] Error setting ' .. networkLocation .. '.')
     end
@@ -818,6 +821,11 @@ end
 
 -- Ending {{{
 
-hs.notify.new({title="Hammerspoon", informativeText="Hammerspoon is ready", autoWithdraw=true}):send()
+hs.notify.new({
+    title="Hammerspoon",
+    informativeText="Hammerspoon is ready",
+    autoWithdraw=true,
+    hasActionButton=false,
+}):send()
 
 -- }}}
