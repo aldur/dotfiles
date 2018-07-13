@@ -5,8 +5,6 @@
 export TERM="screen-256color"
 
 # Aliases
-# Open new MacVim buffers in the same MacVim window
-alias gvim='open -a MacVim '
 
 # Automatically use tmux in Control Center mode
 alias tc='tmux -CC'
@@ -15,8 +13,8 @@ alias tt='tmux -CC attach -t'
 
 # Editors
 alias vim="vimr"
-export EDITOR="vimr"
-export VISUAL="$EDITOR"
+export EDITOR="nvim"
+export VISUAL="vimr"
 export GIT_EDITOR="nvim"
 
 # Do not automatically set iTerm's title.
