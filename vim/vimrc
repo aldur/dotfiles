@@ -30,6 +30,7 @@
     Plug 'tpope/vim-repeat'                        " Enable supported plugin actions to be repeated with '.'
     Plug 'tpope/vim-surround'                      " All about surrounding
     Plug 'machakann/vim-highlightedyank'           " Highlight last yanked object
+    Plug 'romainl/vim-qf'                          " Fix the quickfix
 
     " Fuzzy files, tags, life.
     if has('mac')  " Install fzf with homebrew
@@ -316,8 +317,8 @@
     " Set to auto read when a file is changed from the outside
     set autoread
 
-    " Switch CWD to the directory of the open buffer
-    " set autochdir
+    " Quickly change current working directory to buffer's
+    nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 
     " Auto save on :next, :edit, :quit, etc.
     set autowrite
@@ -387,11 +388,6 @@
     " Quickly call 'make'
     nnoremap <leader>m :make<cr>
 
-    " Loclist mappings
-    nnoremap <leader>lo :lopen<cr>
-    nnoremap <leader>ln :lnext<cr>
-    nnoremap <leader>lp :lprev<cr>
-
     " Use 'c*' to change the word under the cursor, repeat with '.'
     nnoremap c* *<C-o>cgn
 
@@ -434,6 +430,33 @@
         autocmd vimrc BufNewFile *.tex 0r ~/.vim/templates/skeleton.tex
         autocmd vimrc BufNewFile *.sh 0r ~/.vim/templates/skeleton.sh
     endif
+
+    " Backup through GIT
+    if executable('git')
+        autocmd vimrc BufWritePost * call BackupCurrentFile()
+    endif
+
+    let s:custom_backup_dir=$HOME . '/.vim/git_backups'
+    if isdirectory(s:custom_backup_dir) == 0 && executable('git')
+        call mkdir(s:custom_backup_dir, 'p')
+        call system('git init ' . s:custom_backup_dir)
+    endif
+
+    function! BackupCurrentFile()
+        let file = expand('%:p')
+        if file =~ fnamemodify(s:custom_backup_dir, ':t') | return | endif
+        let file_dir = s:custom_backup_dir . expand('%:p:h')
+        let backup_file = s:custom_backup_dir . file
+        let cmd = ''
+        if !isdirectory(expand(file_dir))
+            let cmd .= 'mkdir -p ' . file_dir . ';'
+        endif
+        let cmd .= 'cp ' . file . ' ' . backup_file . ';'
+        let cmd .= 'cd ' . s:custom_backup_dir . ';'
+        let cmd .= 'git add ' . backup_file . ';'
+        let cmd .= 'git commit -m "Backup - `date`";'
+        call jobstart(cmd)
+    endfunction
 " }}}
 
 " Helper functions {{{
@@ -458,17 +481,6 @@
     " Before saving, delete trailing white-spaces and ^M
     autocmd vimrc FileType c,cpp,java,php,javascript,python,twig,xml,yaml,vim,lua
                 \ autocmd vimrc BufWritePre <buffer> call StripTrailingWhitespace()
-
-    " Return the number of lines in a window, between minheight and maxheight
-    function! AdjustWindowHeight(minheight, maxheight) abort
-        execute max([a:minheight, min([line('$') + 1, a:maxheight])])
-                    \ . 'wincmd _'
-    endfunction
-
-    " Automatically resize the quickfix/loclist window
-    autocmd vimrc BufReadPost quickfix set modifiable |
-                \ call AdjustWindowHeight(2, 10) |
-                \ set nomodifiable
 " }}}
 
 " Plugin settings {{{
@@ -657,7 +669,9 @@
 
         let g:deoplete#skip_chars = ['(', ')']
 
-        call deoplete#custom#source('ultisnips', 'rank', 1000) " Keep snippets on top
+        if &runtimepath =~# 'deoplete'
+            call deoplete#custom#source('ultisnips', 'rank', 1000) " Keep snippets on top
+        endif
 
         " Go completion settings
         let g:deoplete#sources#go#gocode_binary = $GOPATH.'/bin/gocode'
@@ -730,6 +744,12 @@
         let g:vimtex_imaps_enabled = 0   " Disable insert mode mappings
         let g:vimtex_fold_enabled = 1    " Enable vimtex folds
         let g:vimtex_format_enabled = 1  " Enable better formatting with gq
+
+        " Disable overfull/underfull \hbox
+        let g:vimtex_quickfix_latexlog = {
+            \ 'overfull' : 0,
+            \ 'underfull' : 0,
+            \}
     " }}}
 
     " Molokai {{{
@@ -757,7 +777,7 @@
         autocmd vimrc FileType go nmap <leader>r <Plug>(go-run)
         autocmd vimrc FileType go nmap <leader>b <Plug>(go-build)
         autocmd vimrc FileType go nmap <leader>t <Plug>(go-test)
-        autocmd vimrc FileType go nmap <leader>c <Plug>(go-coverage)
+        " autocmd vimrc FileType go nmap <leader>c <Plug>(go-coverage)
 
         " autocmd vimrc FileType go nmap <Leader>ds <Plug>(go-def-split)
         " autocmd vimrc FileType go nmap <Leader>dv <Plug>(go-def-vertical)
@@ -855,6 +875,21 @@
                     \ 'marker':  ['fg', 'Keyword'],
                     \ 'spinner': ['fg', 'Label'],
                     \ 'header':  ['fg', 'Comment'] }
+    " }}}
+
+    " vim-qf {{{
+        let g:qf_auto_open_quickfix = 0
+        let g:qf_auto_open_loclist = 0
+
+        " Loclist mappings
+        nmap <leader>lo <Plug>(qf_loc_toggle)
+        nmap <leader>ln <Plug>(qf_loc_next)
+        nmap <leader>lp <Plug>(qf_loc_previous)
+
+        " Quickfix mappings
+        nmap <leader>co <Plug>(qf_qf_toggle)
+        nmap <leader>cn <Plug>(qf_qf_next)
+        nmap <leader>cp <Plug>(qf_qf_previous)
     " }}}
 " }}}
 
