@@ -802,9 +802,9 @@ end
 
 -- }}}
 
--- Instapaper {{{
+-- Pocket {{{
 
-require('instapaper')
+require('pocket')
 
 -- }}}
 
