@@ -7,9 +7,9 @@ obj.__icon = hs.image.imageFromAppBundle('org.hammerspoon.Hammerspoon')
 obj.__logger = hs.logger.new(obj.__name)
 obj.__caffeine = nil
 
-function obj.clipboardToInstapaper()
-    local success, _, _ = hs.applescript([[do shell script "open hammerspoon://instapaper"]])
-    if not success then obj.__logger.e('Got an error while opening Hammerspoon/Instapaper url handler.') end
+function obj.clipboardToPocket()
+    local success, _, _ = hs.applescript([[do shell script "open hammerspoon://pocket"]])
+    if not success then obj.__logger.e('Got an error while opening Hammerspoon/Pocket url handler.') end
 end
 
 function obj.clipboardToTermBin()
@@ -57,7 +57,7 @@ function obj.toggleCaffeine()
 end
 
 obj.cmds = {
-    {text='Clipboard to Instapaper', type='clipboardToInstapaper'},
+    {text='Clipboard to Pocket', type='clipboardToPocket'},
     {text='Clipboard to TermBin', type='clipboardToTermBin'},
     {text='Save Clipboard to File', type='clipboardToFile'},
     {text='Clear Clipboard', type='clearClipboard'},
