@@ -42,8 +42,8 @@ export LESS='-R -g -i'
 # PATH="/opt/adt-bundle-mac-x86_64/sdk/tools:/opt/adt-bundle-mac-x86_64/sdk/platform-tools:$PATH"
 
 # Go
-# export GOPATH=$HOME/Programmazione/Go
-# PATH="/usr/local/opt/go/libexec/bin:$GOPATH/bin:$PATH"
+export GOPATH=$HOME/Programming/Go
+PATH=$PATH:/usr/local/opt/go/libexec/bin
 
 # Java
 # export JAVA_HOME=$(/usr/libexec/java_home)
