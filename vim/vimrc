@@ -24,7 +24,6 @@
     Plug 'honza/vim-snippets'                      " Vim snippets
     Plug 'keith/investigate.vim'                   " Smart documentation finder
     Plug 'ludovicchabant/vim-gutentags'            " Automatic tag management
-    Plug 'sheerun/vim-polyglot'                    " Additional syntaxes / indent
     Plug 'tommcdo/vim-lion'                        " Add gl/gL to align text
     Plug 'tpope/vim-commentary'                    " Toggle comments
     Plug 'tpope/vim-repeat'                        " Enable supported plugin actions to be repeated with '.'
@@ -42,14 +41,12 @@
 
     " Statusline
     Plug 'itchyny/lightline.vim'        " Configure the statusbar / tabline
-    Plug 'taohex/lightline-buffer'      " Buffers in tabline
 
     Plug 'sbdchd/neoformat',
                 \ { 'on': 'Neoformat' } " Code auto-formatting
 
     " Lazy loaded plugins / platform specific plugins
-    " Plug 'SirVer/ultisnips', { 'on': [] } " Snippets engine
-    Plug 'SirVer/ultisnips'  " Snippets engine
+    Plug 'SirVer/ultisnips'    " Snippets engine
     Plug 'wellle/targets.vim',
                 \ { 'on': [] } " Additional text objects
     Plug 'neomake/neomake',
@@ -83,25 +80,26 @@
         Plug 'lervag/vimtex', { 'for': 'tex' }
 
         " Go
-        Plug 'fatih/vim-go', { 'for': 'go' }
+        Plug 'fatih/vim-go',
+                    \ { 'for': 'go', 'do': ':GoUpdateBinaries' }
     " }}}
 
     " Deoplete specific plugins {{{
-        Plug 'zchee/deoplete-jedi'  " Python completion
+        Plug 'zchee/deoplete-jedi'      " Python completion
         Plug 'zchee/deoplete-go',
                     \ { 'do': 'make' }  " Go completion
-        Plug 'ujihisa/neco-look'  " Spell completion
-        Plug 'Shougo/neco-vim'  " VIM dictionary completion
+        Plug 'ujihisa/neco-look'        " Spell completion
+        Plug 'Shougo/neco-vim'          " VIM dictionary completion
     " }}}
 
     " Enable Vim-stay after all the other plugins
-    Plug 'kopischke/vim-stay' " Save and restore cursor position, folds and so on
+    Plug 'kopischke/vim-stay'                      " Save and restore cursor position, folds and so on
+    Plug 'sheerun/vim-polyglot'                    " Additional syntaxes / indent, load it after syntax specific plugins
 
     " ...Vim-plug is done
     call plug#end()
 
     " Lazy loading of some heavier plugins.
-    " autocmd vimrc CursorHold,CursorHoldI * call plug#load('ultisnips')
     autocmd vimrc CursorHold,CursorHoldI * call plug#load('targets.vim')
     autocmd vimrc CursorHold,CursorHoldI * call plug#load('neomake')
 " }}}
@@ -289,7 +287,7 @@
     let &showbreak = '↪'                               " Show whether lines have been wrapped
 
     " Tabs
-    set tabstop=8                                      " A hard TAB displays as 8 columns
+    set tabstop=4                                      " A hard TAB displays as 4 columns
     set softtabstop=4                                  " Insert/delete 4 spaces when hitting a TAB/BACKSPACE
     set shiftwidth=4                                   " Operation >> indents 4 columns; << un-indents 4 columns
     set expandtab                                      " In insert mode, insert the appropriate number of spaces to insert a Tab
@@ -314,8 +312,13 @@
     " Open new split panes to right and bottom, which feels more natural
     set splitbelow splitright
 
-    " Set to auto read when a file is changed from the outside
+    " Set to auto read when a file is changed from an outside command
     set autoread
+
+    " And trigger it when files changes on disk outside of VIM
+    autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | checktime | endif
+    autocmd vimrc FileChangedShellPost *
+                \ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
 
     " Quickly change current working directory to buffer's
     nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
@@ -339,15 +342,10 @@
     " Close all the buffers
     nnoremap <leader>ba :%bdelete<cr>
 
-    " Move to next buffer
-    nnoremap <tab> :bnext<cr>
-    nnoremap <s-tab> :bprevious<cr>
-
     " Useful mappings for managing tabs
     nnoremap <leader>tn :tabnew<cr>
     nnoremap <leader>to :tabonly<cr>
     nnoremap <leader>tc :tabclose<cr>
-    nnoremap <leader>tm :tabmove
 
     " Specify the behavior when switching between buffers
     set switchbuf=useopen,usetab,newtab
@@ -573,22 +571,6 @@
                     \ 'right': [ [ 'lineinfo' ],
                     \            [ 'percent' ] ] }
 
-        " Setup the tabline
-        let g:lightline.tabline = {
-                    \ 'left': [ [ 'bufferinfo' ], [ 'separator' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
-                    \ 'right': [ [ 'close' ] ] }
-
-        " Setup lightline buffer
-        let g:lightline_buffer_readonly_icon = ''
-        let g:lightline_buffer_modified_icon = '✭'
-        let g:lightline_buffer_git_icon = ' '
-        let g:lightline_buffer_ellipsis_icon = '..'
-        let g:lightline_buffer_expand_left_icon = '◀ '
-        let g:lightline_buffer_expand_right_icon = ' ▶'
-        let g:lightline_buffer_active_buffer_left_icon = ''
-        let g:lightline_buffer_active_buffer_right_icon = ''
-        let g:lightline_buffer_separator_icon = '  '
-
         function! LightlineMode() abort
             return winwidth(0) > 60 ? lightline#mode() : ''
         endfunction
@@ -759,24 +741,41 @@
 
     " Vim-Go {{{
         " Enable better syntax highlighting
-        let g:go_highlight_functions = 1
-        let g:go_highlight_methods = 1
-        let g:go_highlight_fields = 1
-        let g:go_highlight_structs = 1
-        let g:go_highlight_interfaces = 1
-        let g:go_highlight_operators = 1
-        let g:go_highlight_build_constraints = 1
+        " let g:go_highlight_functions = 1
+        " let g:go_highlight_function_arguments = 1
+        " let g:go_highlight_function_calls = 1
+        " let g:go_highlight_methods = 1
+        " let g:go_highlight_fields = 1
+        " let g:go_highlight_structs = 1
+        " let g:go_highlight_interfaces = 1
+        " let g:go_highlight_operators = 1
+        " let g:go_highlight_build_constraints = 1
+        " let g:go_highlight_extra_types = 1
+        " let g:go_highlight_variable_declarations = 1
+        " let g:go_highlight_variable_assignments = 1
 
-        " On recent VIM version better go fmt should work
-        let g:go_fmt_experimental = 1
+        " Go Format
+        let g:go_fmt_autosave = 0  " Don't run :GoFmt on save.
+        let g:go_fmt_experimental = 0  " On recent VIM version better go fmt should work.
+        " let g:go_fmt_command = "goimports"  " Run goimports on save (also calls gofmt)
+        let g:go_mod_fmt_autosave = 0
 
         " Show info for word under cursor
-        let g:go_auto_type_info = 1
+        let g:go_auto_type_info = 0
+
+        let g:go_doc_keywordprg_enabled = 0  " Don't run :GoDoc on K
+
+        " Text objects
+        let g:go_textobj_include_function_doc = 1
+        let g:go_textobj_include_variable = 1
+
+        " Metalinter
+        let g:go_metalinter_autosave = 0
 
         " Mappings
-        autocmd vimrc FileType go nmap <leader>r <Plug>(go-run)
-        autocmd vimrc FileType go nmap <leader>b <Plug>(go-build)
-        autocmd vimrc FileType go nmap <leader>t <Plug>(go-test)
+        " autocmd vimrc FileType go nmap <leader>r <Plug>(go-run)
+        " autocmd vimrc FileType go nmap <leader>b <Plug>(go-build)
+        " autocmd vimrc FileType go nmap <leader>t <Plug>(go-test)
         " autocmd vimrc FileType go nmap <leader>c <Plug>(go-coverage)
 
         " autocmd vimrc FileType go nmap <Leader>ds <Plug>(go-def-split)
@@ -787,11 +786,11 @@
         " autocmd vimrc FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
 
         " autocmd vimrc FileType go nmap <Leader>e <Plug>(go-rename)
-        autocmd vimrc FileType go nmap <Leader>i <Plug>(go-imports)
+        autocmd vimrc FileType go nmap <Leader>gi <Plug>(go-imports)
         " autocmd vimrc FileType go nmap <Leader>s <Plug>(go-implements)
 
         " Syntastic integration
-        let g:go_list_type = 'quickfix'
+        " let g:go_list_type = 'quickfix'
     " }}}
 
     " vim-gutentags {{{
@@ -823,7 +822,7 @@
     " }}}
 
     " vim-polyglot {{{
-        let g:polyglot_disabled = ['tex', 'latex', 'python-compiler']
+        let g:polyglot_disabled = ['tex', 'latex', 'python-compiler', ]
     " }}}
 
     " vim-surround {{{
