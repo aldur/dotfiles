@@ -5157,7 +5157,7 @@ tmux.Detach</string>
 	<key>ShowBookmarkName</key>
 	<false/>
 	<key>ShowFullScreenTabBar</key>
-	<true/>
+	<false/>
 	<key>ShowMetalFPSmeter</key>
 	<false/>
 	<key>ShowPaneTitles</key>
@@ -7806,7 +7806,7 @@ tmux.Detach</string>
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>3.1.6beta4</string>
+	<string>3.1.6beta5</string>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>3</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
