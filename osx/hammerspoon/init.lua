@@ -287,9 +287,10 @@ globals.emojis = hs.loadSpoon('Emojis')
 
 -- Seal {{{
 
-local seal = require('seal')
-seal:init({'tunnelblick', 'network_locations', 'snippets', 'macos', 'hammerspoon'})
-seal:start(hyper, 'space')
+globals.seal = hs.loadSpoon('Seal')
+globals.seal:loadPlugins({'tunnelblick', 'network_locations', 'snippets', 'macos', 'hammerspoon'})
+globals.seal:bindHotkeys({toggle={hyper, 'space'}})
+globals.seal:start()
 
 -- }}}
 
