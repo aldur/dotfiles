@@ -14,7 +14,7 @@ alias tt='tmux -CC attach -t'
 # Editors
 alias vim="vimr"
 export EDITOR="nvim"
-export VISUAL="vimr"
+export VISUAL="nvim"
 export GIT_EDITOR="nvim"
 
 # Do not automatically set iTerm's title.
