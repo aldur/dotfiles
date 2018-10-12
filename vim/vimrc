@@ -47,10 +47,9 @@
 
     " Lazy loaded plugins / platform specific plugins
     Plug 'SirVer/ultisnips'    " Snippets engine
+    Plug 'neomake/neomake'  " Asynchronous Syntax Checkers
     Plug 'wellle/targets.vim',
                 \ { 'on': [] } " Additional text objects
-    Plug 'neomake/neomake',
-                \ { 'on': [] } " Asynchronous Syntax Checkers
 
     " Deoplete Completion engine
     if has('nvim')
@@ -101,7 +100,6 @@
 
     " Lazy loading of some heavier plugins.
     autocmd vimrc CursorHold,CursorHoldI * call plug#load('targets.vim')
-    autocmd vimrc CursorHold,CursorHoldI * call plug#load('neomake')
 " }}}
 
 " General {{{
@@ -602,10 +600,10 @@
     " }}}
 
     " Neomake {{{
-        let g:neomake_airline = 0  " Disable airline integration
+        let g:airline#extensions#neomake#enabled = 0  " Disable airline integration
 
         " Run Neomake on save / WinEnter
-        autocmd vimrc BufWritePost,BufWinEnter * silent! Neomake
+        call neomake#configure#automake('rw')
 
         function! NeomakeDidFinish() abort
             " Update lightline
@@ -618,7 +616,7 @@
             endif
         endfunction
 
-        autocmd User NeomakeFinished call NeomakeDidFinish()
+        autocmd vimrc User NeomakeFinished call NeomakeDidFinish()
 
         " Filetype Specific Options {{{ "
             let g:neomake_tex_enabled_makers = ['chktex', 'lacheck', 'proselint']
