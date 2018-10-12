@@ -43,7 +43,7 @@ export LESS='-R -g -i'
 
 # Go
 export GOPATH=$HOME/Programming/Go
-PATH=$PATH:/usr/local/opt/go/libexec/bin
+PATH=$PATH:/usr/local/opt/go/libexec/bin:$GOPATH/bin
 
 # Java
 # export JAVA_HOME=$(/usr/libexec/java_home)
