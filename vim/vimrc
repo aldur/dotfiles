@@ -20,75 +20,57 @@
 
     " The list of installed plugins
     Plug 'Konfekt/FastFold'                        " Better fold refresh
-    Plug 'cohama/lexima.vim'                       " Wonderful auto-pair
+    Plug 'SirVer/ultisnips'                        " Snippets engine
     Plug 'honza/vim-snippets'                      " Vim snippets
     Plug 'keith/investigate.vim'                   " Smart documentation finder
     Plug 'ludovicchabant/vim-gutentags'            " Automatic tag management
+    Plug 'machakann/vim-highlightedyank'           " Highlight last yanked object
+    Plug 'neomake/neomake'                         " Asynchronous Syntax Checkers
+    Plug 'romainl/vim-qf'                          " Fix the quickfix
+    Plug 'sbdchd/neoformat'                        " Code auto-formatting
+    Plug 'tmsvg/pear-tree'                         " Auto-pair
     Plug 'tommcdo/vim-lion'                        " Add gl/gL to align text
     Plug 'tpope/vim-commentary'                    " Toggle comments
     Plug 'tpope/vim-repeat'                        " Enable supported plugin actions to be repeated with '.'
     Plug 'tpope/vim-surround'                      " All about surrounding
-    Plug 'machakann/vim-highlightedyank'           " Highlight last yanked object
-    Plug 'romainl/vim-qf'                          " Fix the quickfix
 
     " Fuzzy files, tags, life.
-    if has('mac')  " Install fzf with homebrew
+    if has('mac') && executable('fzf')  " Install `fzf` with homebrew
         Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
     else  " Install it as a local plugin
         Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
         Plug 'junegunn/fzf.vim'
     end
 
-    " Statusline
-    Plug 'itchyny/lightline.vim'        " Configure the statusbar / tabline
-
-    Plug 'sbdchd/neoformat',
-                \ { 'on': 'Neoformat' } " Code auto-formatting
-
-    " Lazy loaded plugins / platform specific plugins
-    Plug 'SirVer/ultisnips'    " Snippets engine
-    Plug 'neomake/neomake'  " Asynchronous Syntax Checkers
-    Plug 'wellle/targets.vim',
-                \ { 'on': [] } " Additional text objects
-
-    " Deoplete Completion engine
-    if has('nvim')
-        Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-    else
-        Plug 'Shougo/deoplete.nvim'
-    endif
-
-    Plug 'roxma/nvim-yarp'
-    Plug 'roxma/vim-hug-neovim-rpc'
-
-    " Appearance
-    Plug 'junegunn/rainbow_parentheses.vim',
-                \ { 'on' : 'RainbowParentheses'}  " Rainbow parentheses
+    " Appearance and Statusline
+    Plug 'itchyny/lightline.vim'                  " Configure the statusbar
     Plug 'fatih/molokai'                          " Molokai color scheme
 
     " Language specific plugins {{{
-        " Python
-        Plug 'jmcantrell/vim-virtualenv',
-                    \ { 'for': 'python' }            " Virtualenv within VIM
-
-        " Markdown
-        Plug 'suan/vim-instant-markdown',
-                    \ { 'for' : 'markdown' }         " Instant markdown preview in browser (requirements on GitHub)
+        " Python virtualenvs within VIM
+        Plug 'jmcantrell/vim-virtualenv', { 'for': 'python' }
 
         " Latex
         Plug 'lervag/vimtex', { 'for': 'tex' }
 
         " Go
-        Plug 'fatih/vim-go',
-                    \ { 'for': 'go', 'do': ':GoUpdateBinaries' }
+        Plug 'fatih/vim-go', { 'for': 'go', 'do': ':GoUpdateBinaries' }
     " }}}
 
-    " Deoplete specific plugins {{{
-        Plug 'zchee/deoplete-jedi'      " Python completion
-        Plug 'zchee/deoplete-go',
-                    \ { 'do': 'make' }  " Go completion
-        Plug 'ujihisa/neco-look'        " Spell completion
-        Plug 'Shougo/neco-vim'          " VIM dictionary completion
+    " Deoplete and its plugins {{{
+        Plug 'Shougo/deoplete.nvim', has('nvim') ? { 'do': ':UpdateRemotePlugins' } : {}
+
+        " Required dependencies for standard VIM.
+        Plug 'roxma/nvim-yarp', has('nvim') ? { 'on': [] } : {  }
+        Plug 'roxma/vim-hug-neovim-rpc', has('nvim') ? { 'on': [] } : {  }
+
+        Plug 'zchee/deoplete-jedi'                  " Python completion
+        Plug 'zchee/deoplete-go', { 'do': 'make' }  " Go completion
+        Plug 'Shougo/neco-vim'                      " VIM dictionary completion
+
+        if executable('look')
+            Plug 'ujihisa/neco-look'                    " Spell completion
+        endif
     " }}}
 
     " Enable Vim-stay after all the other plugins
@@ -97,9 +79,6 @@
 
     " ...Vim-plug is done
     call plug#end()
-
-    " Lazy loading of some heavier plugins.
-    autocmd vimrc CursorHold,CursorHoldI * call plug#load('targets.vim')
 " }}}
 
 " General {{{
@@ -114,79 +93,16 @@
     set mouse=a
     set mousehide               " Hide the mouse cursor while typing
 
-    " End of line (unix EOL is preferred over the dos one and before the mac one).
-    set fileformats=unix,dos,mac
+    set noswapfile  " Stop annoying swap files
+
+    set updatetime=1000  " ms to trigger the CursorHold/CursorHoldI events
 
     " With a map leader it's possible to do extra key combinations
     let g:mapleader = "\<Space>"
     let g:maplocalleader = "\<Space>"
 " }}}
 
-" Backup, swap, info and ignore files {{{
-    set noswapfile  " Stop annoying swap files
-
-    " Save your backups to a less annoying place than the current directory.
-    " If you have .vim-backup in the current directory, it'll use that.
-    " Otherwise it saves it to ~/.vim/backup or . if all else fails.
-    if isdirectory($HOME . '/.vim/backup') == 0
-        call mkdir($HOME . '/.vim/backup', 'p')
-    endif
-    set backupdir-=.
-    set backupdir+=.
-    set backupdir-=~/
-    set backupdir^=~/.vim/backup/
-    set backupdir^=./.vim-backup/
-    set backup
-
-    " Tell (n)vim to remember certain things when we exit
-    "  '100  :  marks will be remembered for up to 100 previously edited files
-    "  "100 :  will save up to 100 lines for each register
-    "  <100 :  will save up to 100 lines for each register (new alternative to ")
-    "  :1000  :  up to 1000 lines of command-line history will be remembered
-    "  %    :  saves and restores the buffer list
-    "  n... :  where to save the viminfo files
-    if has('nvim')
-        set shada='100,<100,:10000,%,n~/.nvim/nviminfo
-        set viewdir=~/.vim/view
-    else
-        set viminfo='100,\"100,:10000,%,n~/.vim/viminfo
-    endif
-
-    " undofile - This allows you to use undos after exiting and restarting
-    " This, like swap and backups, uses .vim-undo first, then ~/.vim/undo
-    " :help undo-persistence
-    " This is only present in 7.3+
-    if isdirectory($HOME . '/.vim/undo') == 0
-        call mkdir($HOME . '/.vim/undo', 'p')
-    endif
-    set undodir=./.vim-undo//
-    set undodir+=~/.vim/undo//
-    set undofile
-
-    " Ignore unreadable files, images, etc.
-    set wildignore=*.o,*~,*.pyc
-    set wildignore+=*.png,*.gif,*.jpg,*.ico
-    set wildignore+=.git,.svn,.hg
-    set wildignore+=*/tmp/*,*.so,*.swp,*.zip
-    set wildignore+=.DS_Store
-
-    " Save cursor position, folds, and so on.
-    set viewoptions=cursor,folds,slash,unix
-
-    " Trigger the CursorHold/CursorHoldI events after this amount of ms
-    set updatetime=1000
-" }}}
-
 " Appearance {{{
-    "Always show current position
-    set cursorline                   " highlights the current line
-
-    " Height of the command bar
-    set cmdheight=1
-
-    set background=dark
-    silent! colorscheme molokai  " set the Molokai colorscheme, if it's installed
-
     set scrolloff=8       " don't scroll any closer to top/bottom
     set sidescrolloff=5   " don't scroll any closer to left/right
 
@@ -194,105 +110,13 @@
     set noerrorbells visualbell t_vb=
     autocmd vimrc GUIEnter * set visualbell t_vb=
 
-    " Line and relative numbers
-    set number
-    set relativenumber
-
-    set showmatch                   " Show matching brackets/parenthesis
-    set matchtime=2                 " How many tenths of seconds to blink matching bracket/parenthesis
-
-    set linespace=0                 " No extra spaces between rows in GUI
-
     " Allow the cursor to be one more the last char.
     set virtualedit=onemore
-
-    " Disable split separator characters
-    set fillchars=""
-
-    " Show snippet_complete marker (if any)
-    if has('conceal')
-        set conceallevel=2 concealcursor=i
-    endif
-
-    " Only show cursorline in current window
-    autocmd vimrc WinEnter * set cursorline
-    autocmd vimrc WinLeave * set nocursorline
-" }}}
-
-" Auto completion {{{
-    " How to show completion informations in insert mode
-    set complete+=kspell
-    set completeopt=menuone,longest
-
-    " Clever tab to cycle the completion popup menu
-    " If you even need to insert a literal tab, press <CTRL-V><Tab>
-    inoremap <silent><expr> <TAB>
-                \ pumvisible() ? "\<C-n>" :
-                \ <SID>check_back_space() ? "\<TAB>" :
-                \ deoplete#manual_complete()
-    function! s:check_back_space() abort "{{{
-        let l:col = col('.') - 1
-        return !l:col || getline('.')[l:col - 1]  =~? '\s'
-    endfunction"}}}
-
-    if has('patch-7.4.314')
-        set shortmess+=c " Quiet completions
-    endif
-" }}}
-
-" Search and commands {{{
-    set showcmd               " Display incomplete commands
-
-    " Magic pattern matching
-    set magic
-
-    set incsearch             " Find as you type search
-    set hlsearch              " Highlight search terms
-    set ignorecase            " Case insensitive search
-    set infercase             " Case sensitive completions
-    set smartcase             " Case sensitive when upper case is present
-    set gdefault              " Work on all matches on the line
-
-    if has('nvim')
-        " Preview command results.
-        set inccommand=nosplit
-    endif
-
-    set wildmenu              " Show list instead of just completing
-    set wildmode=longest,full " Command <Tab> completion, list matches, then longest common part, then all.
-
-    " Use sane magic regexes
-    nnoremap / /\v
-    vnoremap / /\v
 " }}}
 
 " Text, lines, tab, indent and folding {{{
-    " Set utf-8 as standard encoding
-    if !has('nvim') " NeoVim defaults to this
-        set encoding=utf-8                             " The encoding displayed.
-    end
-    scriptencoding utf-8                               " Specify the encoding of this file
-    set fileencoding=utf-8                             " The encoding written to file.
-
     set backspace=indent,eol,start                     " Backspace for dummies
     set whichwrap=b,s,h,l,<,>,[,]                      " Backspace and cursor keys wrap too
-
-    " White spaces
-    set list                                           " Display white spaces
-    set listchars=tab:→\ ,trail:•,                     " Custom characters highlights
-    set listchars+=extends:⟩,precedes:⟨,
-    set listchars+=\nbsp:␣,conceal:*,
-    let &showbreak = '↪'                               " Show whether lines have been wrapped
-
-    " Tabs
-    set tabstop=4                                      " A hard TAB displays as 4 columns
-    set softtabstop=4                                  " Insert/delete 4 spaces when hitting a TAB/BACKSPACE
-    set shiftwidth=4                                   " Operation >> indents 4 columns; << un-indents 4 columns
-    set expandtab                                      " In insert mode, insert the appropriate number of spaces to insert a Tab
-    set smarttab                                       " Insert tabs in front of lines according to shiftwidth
-    set shiftround                                     " Round indent to multiple of 'shiftwidth'
-    set autoindent                                     " Align the new line indent with the previous line
-    set cindent                                        " Automatic C programming indenting
 
     " Line wrapping
     set wrap                                           " Visually wrap lines too long
@@ -304,65 +128,10 @@
     autocmd vimrc FileType * setlocal formatoptions-=o
 " }}}
 
-" Tabs, windows and buffers {{{
-    set hidden  " Allows to change buffer without saving
-
-    " Open new split panes to right and bottom, which feels more natural
-    set splitbelow splitright
-
-    " Set to auto read when a file is changed from an outside command
-    set autoread
-
-    " And trigger it when files changes on disk outside of VIM
-    autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | checktime | endif
-    autocmd vimrc FileChangedShellPost *
-                \ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
-
+" Misc mappings {{{
     " Quickly change current working directory to buffer's
     nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 
-    " Auto save on :next, :edit, :quit, etc.
-    set autowrite
-    set autowriteall
-
-    " ... and on focus lost
-    autocmd vimrc FocusLost * :silent! wall
-
-    " Smart way to move between windows
-    nnoremap <C-h> <C-w>h
-    nnoremap <C-j> <C-w>j
-    nnoremap <C-k> <C-w>k
-    nnoremap <C-l> <C-w>l
-
-    " Close the current buffer
-    nnoremap <leader>bd :bdelete<cr>
-
-    " Close all the buffers
-    nnoremap <leader>ba :%bdelete<cr>
-
-    " Useful mappings for managing tabs
-    nnoremap <leader>tn :tabnew<cr>
-    nnoremap <leader>to :tabonly<cr>
-    nnoremap <leader>tc :tabclose<cr>
-
-    " Specify the behavior when switching between buffers
-    set switchbuf=useopen,usetab,newtab
-    set showtabline=2
-
-    " Code folding mappings
-    nmap <leader>f0 :set foldlevel=0<CR>
-    nmap <leader>f1 :set foldlevel=1<CR>
-    nmap <leader>f2 :set foldlevel=2<CR>
-    nmap <leader>f3 :set foldlevel=3<CR>
-
-    " Exclude quickfix windows from buflist
-    autocmd vimrc FileType qf set nobuflisted
-
-    " Resize splits when the window is resized
-    autocmd vimrc VimResized * :wincmd =
-" }}}
-
-" Misc mappings {{{
     " Remap VIM 0 to first non-blank character
     map 0 ^
 
@@ -394,10 +163,13 @@
         execute "set <xRight>=\e[1;*C"
         execute "set <xLeft>=\e[1;*D"
     endif
-" }}}
 
-" Spell checking {{{
-    " Shortcuts
+    " Useful mappings for managing tabs
+    nnoremap <leader>tn :tabnew<cr>
+    nnoremap <leader>to :tabonly<cr>
+    nnoremap <leader>tc :tabclose<cr>
+
+    " Spell checking
     nnoremap <localleader>ss :setlocal spell!<cr>
 " }}}
 
@@ -405,402 +177,15 @@
     set iskeyword-=.                    " '.' is an end of word designator
     set iskeyword-=#                    " '#' is an end of word designator
     set iskeyword-=-                    " '-' is an end of word designator
-
-    " Highlight TODO, FIXME, NOTE, etc.
-    autocmd vimrc Syntax * call matchadd('Todo',  '\W\zs\(TODO\|FIXME\|CHANGED\|XXX\|BUG\|HACK\)')
-    autocmd vimrc Syntax * call matchadd('Debug', '\W\zs\(NOTE\|INFO\|IDEA\|DEBUG\)')
-
-    if executable('ag')
-        set grepprg=ag\ --vimgrep\ $*
-        set grepformat=%f:%l:%c:%m
-    elseif executable('ack')
-        set grepprg=ack\ -k
-    endif
-
-    set termguicolors
-
-    " Templates support.
-    if isdirectory($HOME . '/.vim/templates') == 1
-        autocmd vimrc BufNewFile *.py 0r ~/.vim/templates/skeleton.py
-        autocmd vimrc BufNewFile *.gnuplot 0r ~/.vim/templates/skeleton.gnuplot
-        autocmd vimrc BufNewFile *.tex 0r ~/.vim/templates/skeleton.tex
-        autocmd vimrc BufNewFile *.sh 0r ~/.vim/templates/skeleton.sh
-    endif
-
-    " Backup through GIT
-    if executable('git')
-        autocmd vimrc BufWritePost * call BackupCurrentFile()
-    endif
-
-    let s:custom_backup_dir=$HOME . '/.vim/git_backups'
-    if isdirectory(s:custom_backup_dir) == 0 && executable('git')
-        call mkdir(s:custom_backup_dir, 'p')
-        call system('git init ' . s:custom_backup_dir)
-    endif
-
-    function! BackupCurrentFile()
-        let file = expand('%:p')
-        if file =~ fnamemodify(s:custom_backup_dir, ':t') | return | endif
-        let file_dir = s:custom_backup_dir . expand('%:p:h')
-        let backup_file = s:custom_backup_dir . file
-        let cmd = ''
-        if !isdirectory(expand(file_dir))
-            let cmd .= 'mkdir -p ' . file_dir . ';'
-        endif
-        let cmd .= 'cp ' . file . ' ' . backup_file . ';'
-        let cmd .= 'cd ' . s:custom_backup_dir . ';'
-        let cmd .= 'git add ' . backup_file . ';'
-        let cmd .= 'git commit -m "Backup - `date`";'
-        call jobstart(cmd)
-    endfunction
-" }}}
-
-" Helper functions {{{
-    " Strip whitespace {{{
-    function! StripTrailingWhitespace() abort
-        " Preparation: save cursor position
-        " (last search is automatically saved because inside a function)
-        let l:search = @/
-        let l:save = winsaveview()
-
-        " Do the business.
-        " vint: -ProhibitCommandRelyOnUser -ProhibitCommandWithUnintendedSideEffect
-        %s/\s\+$//ei
-
-        " Clean up: restore cursor position.
-        " vint: +ProhibitCommandRelyOnUser +ProhibitCommandWithUnintendedSideEffect
-        let @/=l:search
-        call winrestview(l:save)
-    endfunction
-    " }}}
-
-    " Before saving, delete trailing white-spaces and ^M
-    autocmd vimrc FileType c,cpp,java,php,javascript,python,twig,xml,yaml,vim,lua
-                \ autocmd vimrc BufWritePre <buffer> call StripTrailingWhitespace()
 " }}}
 
 " Plugin settings {{{
-
-    " netrw {{{
-        " Should not be required, but if we don't set it netrw does not have
-        " network capacities in Neovim
-        " vint: -ProhibitSetNoCompatible
-        set nocompatible
-
-        " Not an external plugin, but still... :)
-        let g:netrw_banner = 0  " Disable top banner
-        let g:netrw_silent = 1  " Do not output `scp` commands etc, while saving.
-        let g:netrw_browse_split = 4  " Open new files in previous window
-        let g:netrw_altv = 1  " Split to right
-        let g:netrw_winsize = 25  " Window height/width on split
-        let g:netrw_list_hide = netrw_gitignore#Hide()  " Hide git-ignored files
-
-        autocmd vimrc FileType netrw setl bufhidden=wipe  " Wipe netrw buffers when hidden
-        nnoremap - :Vexplore<cr>
-    " }}}
-
-    " Lightline {{{
-        set noshowmode   " Do not show mode indicator below status bar
-        set laststatus=2 " Always show the statusbar
-
-        let g:lightline = {}
-
-        " Setup the single components
-        let g:lightline.component = {
-                    \ 'mode': '%{lightline#mode()}',
-                    \ 'absolutepath': '%F',
-                    \ 'relativepath': '%f',
-                    \ 'filename': '%t',
-                    \ 'modified': '%M',
-                    \ 'bufnum': '%n',
-                    \ 'paste': '%{&paste?"P":""}',
-                    \ 'readonly': '%R',
-                    \ 'charvalue': '%b',
-                    \ 'charvaluehex': '%B',
-                    \ 'fileencoding': '%{&fenc!=#""?&fenc:&enc}',
-                    \ 'fileformat': '%{&ff}',
-                    \ 'filetype': '%{&ft!=#""?&ft:"no ft"}',
-                    \ 'percent': '%3p%%',
-                    \ 'percentwin': '%P',
-                    \ 'spell': '%{&spell?&spelllang:""}',
-                    \ 'separator': '',
-                    \ 'lineinfo': '%3l:%-2v',
-                    \ 'line': '%l',
-                    \ 'column': '%c',
-                    \ 'close': '%999X X ' }
-
-        let g:lightline.component_function = {
-                    \ 'mode': 'LightlineMode',
-                    \ 'bufferinfo': 'lightline#buffer#bufferinfo',
-                    \ }
-
-        let g:lightline.component_expand = {
-                    \ 'tabs': 'lightline#tabs',
-                    \ 'buffercurrent': 'lightline#buffer#buffercurrent',
-                    \ 'bufferbefore': 'lightline#buffer#bufferbefore',
-                    \ 'bufferafter': 'lightline#buffer#bufferafter',
-                    \ 'virtualenv': 'LightlineVirtualenv',
-                    \ 'syntax_error': 'LightlineNeomakeError',
-                    \ 'syntax_warning': 'LightlineNeomakeWarning',
-                    \ 'syntax_info': 'LightlineNeomakeInfo',
-                    \ }
-
-        let g:lightline.component_type = {
-                    \ 'syntax_error': 'error',
-                    \ 'syntax_warning': 'warning',
-                    \ 'syntax_info': 'info',
-                    \ 'buffercurrent': 'tabsel',
-                    \ 'bufferbefore': 'raw',
-                    \ 'bufferafter': 'raw',
-                    \ }
-
-        " Setup the active status bar
-        let g:lightline.active = {
-                    \ 'left': [ [ 'mode', 'paste', 'spell' ],
-                    \           [ 'readonly', 'filename', 'modified' ] ],
-                    \ 'right': [ [ 'syntax_error', 'syntax_warning', 'syntax_info' ],
-                    \            [ 'lineinfo' ],
-                    \            [ 'fileformat', 'fileencoding', 'filetype' ],
-                    \            [ 'virtualenv' ] ] }
-
-        " Setup the inactive status bar
-        let g:lightline.inactive = {
-                    \ 'left': [ [ 'filename' ] ],
-                    \ 'right': [ [ 'lineinfo' ],
-                    \            [ 'percent' ] ] }
-
-        function! LightlineMode() abort
-            return winwidth(0) > 60 ? lightline#mode() : ''
-        endfunction
-
-        " Virtualenv integration
-        function! LightlineVirtualenv() abort
-            return &filetype ==? 'python' ? virtualenv#statusline() : ''
-        endfunction
-
-        " Neomake integration {{{
-            function! LightlineNeomakeError() abort
-                let l:errors = get(neomake#statusline#LoclistCounts(), 'E', 0)
-                return l:errors > 0 ? 'E: '.l:errors : ''
-
-                let l:warning = get(neomake#statusline#LoclistCounts(), 'E', 0)
-                let l:infos = get(neomake#statusline#LoclistCounts(), 'E', 0)
-            endfunction
-
-            function! LightlineNeomakeWarning() abort
-                let l:warnings = get(neomake#statusline#LoclistCounts(), 'W', 0)
-                return l:warnings > 0 ? 'W: '.l:warnings : ''
-            endfunction
-
-            function! LightlineNeomakeInfo() abort
-                let l:infos = get(neomake#statusline#LoclistCounts(), 'I', 0)
-                return l:infos > 0 ? 'I: '.l:infos : ''
-            endfunction
-        " }}}
-    " }}}
-
-    " Neomake {{{
-        let g:airline#extensions#neomake#enabled = 0  " Disable airline integration
-
-        " Run Neomake on save / WinEnter
-        call neomake#configure#automake('rw')
-
-        function! NeomakeDidFinish() abort
-            " Update lightline
-            call lightline#update()
-            " Close loclist if no errors
-            if get(neomake#statusline#LoclistCounts(), 'E', 0) == 0 &&
-                        \ get(neomake#statusline#LoclistCounts(), 'W', 0) == 0 &&
-                        \ get(neomake#statusline#LoclistCounts(), 'I', 0) == 0
-                lclose
-            endif
-        endfunction
-
-        autocmd vimrc User NeomakeFinished call NeomakeDidFinish()
-
-        " Filetype Specific Options {{{ "
-            let g:neomake_tex_enabled_makers = ['chktex', 'lacheck', 'proselint']
-        " }}} Filetype Specific Options "
-    " }}}
-
-    " Rainbow parentheses {{{
-        " List of colors that you do not want. ANSI code or #RRGGBB
-        let g:rainbow#blacklist = [225, 245, 241, 244, 193]
-
-        let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
-        let g:rainbow#max_level = 16
-    " }}}
-
-    " Deoplete {{{
-        let g:deoplete#enable_at_startup = 1 " Enable Deoplete
-        let g:deoplete#enable_smart_case = 1 " Enable smartcase
-        " let g:deoplete#auto_complete_delay = 20 " ms delay to trigger autocomplete
-
-        let g:deoplete#sources = {}
-        let g:deoplete#sources._ = ['buffer', 'member', 'tag', 'file', 'ultisnips']  " Disabled 'omni' 'cause it's not async
-        let g:deoplete#sources.vim = g:deoplete#sources._ + ['vim']
-        let g:deoplete#sources.tex = g:deoplete#sources._ + ['look', 'omni']
-        let g:deoplete#sources.gitcommit = g:deoplete#sources._ + ['look']
-        let g:deoplete#sources.python = g:deoplete#sources._ + ['jedi']
-        let g:deoplete#sources.go = g:deoplete#sources._ + ['go']
-
-        let g:deoplete#max_list = 20 " Show 20 entries at most
-        let g:deoplete#max_menu_width = 20 " Matches the list length
-
-        let g:deoplete#skip_chars = ['(', ')']
-
-        if &runtimepath =~# 'deoplete'
-            call deoplete#custom#source('ultisnips', 'rank', 1000) " Keep snippets on top
-        endif
-
-        " Go completion settings
-        let g:deoplete#sources#go#gocode_binary = $GOPATH.'/bin/gocode'
-        let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
-        let g:deoplete#sources#go#use_cache = 0
-
-        " vim-tex integration
-        if !exists('g:deoplete#omni#input_patterns')
-            let g:deoplete#omni#input_patterns = {}
-        endif
-        let g:deoplete#omni#input_patterns.tex = '\\(?:'
-                    \ .  '\w*cite\w*(?:\s*\[[^]]*\]){0,2}\s*{[^}]*'
-                    \ . '|\w*ref(?:\s*\{[^}]*|range\s*\{[^,}]*(?:}{)?)'
-                    \ . '|hyperref\s*\[[^]]*'
-                    \ . '|includegraphics\*?(?:\s*\[[^]]*\]){0,2}\s*\{[^}]*'
-                    \ . '|(?:include(?:only)?|input)\s*\{[^}]*'
-                    \ . '|\w*(gls|Gls|GLS)(pl)?\w*(\s*\[[^]]*\]){0,2}\s*\{[^}]*'
-                    \ . '|includepdf(\s*\[[^]]*\])?\s*\{[^}]*'
-                    \ . '|includestandalone(\s*\[[^]]*\])?\s*\{[^}]*'
-                    \ .')'
-    " }}}
-
-    " UltiSnips {{{
-        " Remap UltiSnips for compatibility with completion handlers
-        let g:UltiSnipsExpandTrigger                        = '<C-j>'
-        let g:UltiSnipsJumpForwardTrigger                   = '<C-j>'
-        let g:UltiSnipsJumpBackwardTrigger                  = '<C-k>'
-
-        " Give higher priority to UltiSnips specific snippets over SnipMate ones
-        let g:UltiSnipsSnippetDirectories=[$HOME . '/.vim/plugged/vim-snippets/UltiSnips']
-        let g:UltiSnipsEnableSnipMate=1
-
-        " Snippets variables
-        let g:author='Adriano Di Luzio'
-        let g:snips_author=g:author
-        let g:email='adrianodl@hotmail.it'
-        let g:snips_email=g:email
-        let g:github='https://github.com/aldur'
-        let g:snips_github=g:github
-    " }}}
-
     " Markdown {{{
         " Highlight YAML front matter.
         let g:vim_markdown_frontmatter = 1
 
         let g:vim_markdown_no_default_key_mappings = 1
         let g:vim_markdown_conceal = 0
-
-        " let g:vim_markdown_fenced_languages = ['c++=cpp', 'viml=vim', 'bash=sh', 'ini=dosini', 'c', 'html', 'javascript', 'python']
-    " }}}
-
-    " Vim Instant Markdown {{{
-        let g:instant_markdown_slow = 1
-    " }}}
-
-    " Vimtex settings {{{
-        let g:vimtex_enabled = 1
-
-        let g:tex_flavor = 'latex'  " Open '.tex' files as 'tex' and not 'plaintex'.
-        let g:vimtex_quickfix_mode = 2  " Auto-open quickfix with no focus.
-
-        if has('nvim')
-            let g:vimtex_compiler_progname = '/usr/local/bin/nvr'
-        end
-
-        if has('mac')
-            let g:vimtex_view_method = 'skim'
-        end
-
-        let g:vimtex_imaps_enabled = 0   " Disable insert mode mappings
-        let g:vimtex_fold_enabled = 1    " Enable vimtex folds
-        let g:vimtex_format_enabled = 1  " Enable better formatting with gq
-
-        " Disable overfull/underfull \hbox
-        let g:vimtex_quickfix_latexlog = {
-            \ 'overfull' : 0,
-            \ 'underfull' : 0,
-            \}
-    " }}}
-
-    " Molokai {{{
-        let g:molokai_original = 0 " Prefer gray background color
-        let g:rehash256 = 1        " Enable experimental 256 colors support
-    " }}}
-
-    " Vim-Go {{{
-        " Enable better syntax highlighting
-        " let g:go_highlight_functions = 1
-        " let g:go_highlight_function_arguments = 1
-        " let g:go_highlight_function_calls = 1
-        " let g:go_highlight_methods = 1
-        " let g:go_highlight_fields = 1
-        " let g:go_highlight_structs = 1
-        " let g:go_highlight_interfaces = 1
-        " let g:go_highlight_operators = 1
-        " let g:go_highlight_build_constraints = 1
-        " let g:go_highlight_extra_types = 1
-        " let g:go_highlight_variable_declarations = 1
-        " let g:go_highlight_variable_assignments = 1
-
-        " Go Format
-        let g:go_fmt_autosave = 0  " Don't run :GoFmt on save.
-        let g:go_fmt_experimental = 0  " On recent VIM version better go fmt should work.
-        " let g:go_fmt_command = "goimports"  " Run goimports on save (also calls gofmt)
-        let g:go_mod_fmt_autosave = 0
-
-        " Show info for word under cursor
-        let g:go_auto_type_info = 0
-
-        let g:go_doc_keywordprg_enabled = 0  " Don't run :GoDoc on K
-
-        " Text objects
-        let g:go_textobj_include_function_doc = 1
-        let g:go_textobj_include_variable = 1
-
-        " Metalinter
-        let g:go_metalinter_autosave = 0
-
-        " Mappings
-        " autocmd vimrc FileType go nmap <leader>r <Plug>(go-run)
-        " autocmd vimrc FileType go nmap <leader>b <Plug>(go-build)
-        " autocmd vimrc FileType go nmap <leader>t <Plug>(go-test)
-        " autocmd vimrc FileType go nmap <leader>c <Plug>(go-coverage)
-
-        " autocmd vimrc FileType go nmap <Leader>ds <Plug>(go-def-split)
-        " autocmd vimrc FileType go nmap <Leader>dv <Plug>(go-def-vertical)
-        " autocmd vimrc FileType go nmap <Leader>dt <Plug>(go-def-tab)
-
-        " autocmd vimrc FileType go nmap <Leader>gd <Plug>(go-doc)
-        " autocmd vimrc FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
-
-        " autocmd vimrc FileType go nmap <Leader>e <Plug>(go-rename)
-        autocmd vimrc FileType go nmap <Leader>gi <Plug>(go-imports)
-        " autocmd vimrc FileType go nmap <Leader>s <Plug>(go-implements)
-
-        " Syntastic integration
-        " let g:go_list_type = 'quickfix'
-    " }}}
-
-    " vim-gutentags {{{
-        if isdirectory($HOME . '/.vim/tags/') == 0
-            call mkdir($HOME . '/.vim/tags/', 'p')
-        endif
-
-        let g:gutentags_cache_dir = $HOME . '/.vim/tags/'
-
-        " Only select .git folders as project roots.
-        let g:gutentags_add_default_project_roots = 0
-        let g:gutentags_project_root = [ '.git', ]
     " }}}
 
     " Neoformat {{{
@@ -821,72 +206,6 @@
 
     " vim-polyglot {{{
         let g:polyglot_disabled = ['tex', 'latex', 'python-compiler', ]
-    " }}}
-
-    " vim-surround {{{
-        " Add a custom 'S' mapping to surround with square brackets.
-        " Works together with vim-targets.
-        let g:surround_{char2nr("S")} = "[\r]"
-
-        " Add ability to use ysc to add commands to targets in LaTeX
-        autocmd vimrc FileType tex call s:latexSurround()
-        function! s:latexSurround() abort
-            let b:surround_{char2nr("e")}
-            \ = "\\begin{\1environment: \1}\n\t\r\n\\end{\1\1}"
-            let b:surround_{char2nr("c")} = "\\\1command: \1{\r}"
-        endfunction
-    " }}}
-
-    " vim-fzf {{{
-        let g:fzf_layout = { 'down': '~40%' }
-
-        function! s:FZFFiles() abort
-            try
-                " If possible, launch FZF from the current project root.
-                " We're using gutentags#get_project_root for the task.
-                execute 'Files' gutentags#get_project_root(expand('%:p:h', 1))
-            catch
-                execute 'Files' expand('%:p:h', 1)
-            endtry
-        endfunction
-
-        nnoremap <silent> <leader><space> :call <SID>FZFFiles()<CR>
-        nnoremap <silent> <leader>a :Buffers<CR>
-        nnoremap <silent> <leader>A :Ag<CR>
-        nnoremap <silent> <leader>tt :BTags<CR>
-        nnoremap <silent> <leader>tT :Tags<CR>
-        nnoremap <silent> <leader>? :History<CR>
-        nnoremap <silent> <leader>: :History:<CR>
-
-        let g:fzf_colors = {
-                    \ 'fg':      ['fg', 'Normal'],
-                    \ 'bg':      ['bg', 'Normal'],
-                    \ 'hl':      ['fg', 'Comment'],
-                    \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-                    \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-                    \ 'hl+':     ['fg', 'Statement'],
-                    \ 'info':    ['fg', 'PreProc'],
-                    \ 'border':  ['fg', 'Ignore'],
-                    \ 'prompt':  ['fg', 'Conditional'],
-                    \ 'pointer': ['fg', 'Exception'],
-                    \ 'marker':  ['fg', 'Keyword'],
-                    \ 'spinner': ['fg', 'Label'],
-                    \ 'header':  ['fg', 'Comment'] }
-    " }}}
-
-    " vim-qf {{{
-        let g:qf_auto_open_quickfix = 0
-        let g:qf_auto_open_loclist = 0
-
-        " Loclist mappings
-        nmap <leader>lo <Plug>(qf_loc_toggle)
-        nmap <leader>ln <Plug>(qf_loc_next)
-        nmap <leader>lp <Plug>(qf_loc_previous)
-
-        " Quickfix mappings
-        nmap <leader>co <Plug>(qf_qf_toggle)
-        nmap <leader>cn <Plug>(qf_qf_next)
-        nmap <leader>cp <Plug>(qf_qf_previous)
     " }}}
 " }}}
 
