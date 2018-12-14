@@ -1,6 +1,6 @@
 .PHONY: all vimrc ftplugin neovim templates
 
-all: vimrc ftplugin neovim templates
+all: vimrc ftplugin neovim templates autload plugin after_ftplugin
 
 vimrc:
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
