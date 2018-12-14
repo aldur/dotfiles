@@ -1,4 +1,4 @@
-.PHONY: all vimrc ftplugin neovim templates
+.PHONY: all neovim templates autoload plugin after_plugin after_ftplugin
 
 all: vimrc neovim templates autoload plugin after_plugin after_ftplugin
 
