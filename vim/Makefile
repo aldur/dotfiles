@@ -1,6 +1,6 @@
 .PHONY: all vimrc ftplugin neovim templates
 
-all: vimrc ftplugin neovim templates autoload plugin after_ftplugin
+all: vimrc neovim templates autoload plugin after_plugin after_ftplugin
 
 vimrc:
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
@@ -17,11 +17,11 @@ autoload:
 	mkdir -p ${HOME}/.vim
 	$(LN) $(shell readlink -f $@) ${HOME}/.vim/$@
 
-ftplugin:
-	mkdir -p ${HOME}/.vim/after/
-	$(LN) $(shell readlink -f $@) ${HOME}/.vim/after/$@
-
 after_ftplugin:
+	mkdir -p ${HOME}/.vim/after/
+	$(LN) $(shell readlink -f $@) ${HOME}/.vim/after/ftplugin
+
+after_plugin:
 	mkdir -p ${HOME}/.vim/after/
 	$(LN) $(shell readlink -f $@) ${HOME}/.vim/after/plugin
 
