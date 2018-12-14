@@ -17,6 +17,10 @@ autoload:
 ftplugin:
 	$(LN) $(shell readlink -f $@) ${HOME}/.vim/$@
 
+after_ftplugin:
+	mkdir -p ${HOME}/.vim/after/
+	$(LN) $(shell readlink -f $@) ${HOME}/.vim/afte/plugin
+
 neovim:
 	mkdir -p ${HOME}/.config
 	$(LN) ${HOME}/.vim ${HOME}/.config/nvim
