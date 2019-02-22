@@ -17,7 +17,7 @@ set fillchars=""  " Disable split separator characters
 
 " Show snippet_complete marker (if any)
 if has('conceal')
-    set conceallevel=2 concealcursor=i
+    set conceallevel=2 concealcursor=""
 endif
 
 " Line and relative numbers
