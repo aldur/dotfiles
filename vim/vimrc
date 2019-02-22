@@ -200,10 +200,6 @@
         vnoremap K :call investigate#Investigate('v')<CR>
     " }}}
 
-    " Targets {{{
-        let g:targets_pairs = '()b {}B []S <>t'
-    " }}}
-
     " vim-polyglot {{{
         let g:polyglot_disabled = ['tex', 'latex', 'python-compiler', ]
     " }}}
