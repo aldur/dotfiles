@@ -1,6 +1,6 @@
-if !exists('*lightline.init')
-    finish
-end
+" if !exists('*lightline.init')
+"     finish
+" end
 
 let g:lightline = {}
 
