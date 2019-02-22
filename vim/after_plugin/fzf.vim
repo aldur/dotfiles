@@ -14,7 +14,7 @@ function! s:FZFFiles() abort
 endfunction
 
 autocmd vimrc FileType fzf set laststatus=0 noshowmode noruler
-  \| autocmd vimrc BufLeave <buffer> set laststatus=2 showmode ruler
+  \| autocmd vimrc BufLeave <buffer> set laststatus=2 noshowmode ruler
 
 nnoremap <silent> <leader><space> :call <SID>FZFFiles()<CR>
 nnoremap <silent> <leader>a :Buffers<CR>
