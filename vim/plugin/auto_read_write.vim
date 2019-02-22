@@ -10,5 +10,8 @@ autocmd vimrc FileChangedShellPost *
 set autowrite
 set autowriteall
 
+" ... when changing window
+autocmd vimrc WinLeave * :silent! w
+
 " ... and on focus lost
 autocmd vimrc FocusLost * :silent! wall
