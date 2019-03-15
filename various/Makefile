@@ -12,7 +12,6 @@ git:
 	git config --global push.default simple
 	git config --global push.followTags true
 	git config --global core.excludesfile ~/.gitignore_global
-	git config --global merge.ff false
 	git config --global log.abbrevCommit true
 	git config --global log.follow true
 	git config --global status.showUntrackedFiles all

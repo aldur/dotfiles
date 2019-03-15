@@ -44,4 +44,4 @@ fi
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Source virtualenvwrapper
-[-f /usr/local/bin/virtualenvwrapper_lazy.sh] && source /usr/local/bin/virtualenvwrapper_lazy.sh
+[ -f /usr/local/bin/virtualenvwrapper_lazy.sh ] && source /usr/local/bin/virtualenvwrapper_lazy.sh
