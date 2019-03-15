@@ -1,27 +1,17 @@
 # Store here your os-local zsh settings
 # This is for OS X
 
-# Set the terminal type:
-export TERM="screen-256color"
-
 # Aliases
-
 # Automatically use tmux in Control Center mode
 alias tc='tmux -CC'
 alias ta='tmux -CC new -A -s'
 alias tt='tmux -CC attach -t'
 
-# Editors
-alias vim="vimr"
-export EDITOR="nvim"
-export VISUAL="nvim"
-export GIT_EDITOR="nvim"
+# Alsias vim to its GUI
+[ -x "$(command -v vimr)" ] && alias vim="vimr"
 
-# Do not automatically set iTerm's title.
-export DISABLE_AUTO_TITLE="true"
-
-# Set key timeout to a lower value, useful for vi-mode
-# export KEYTIMEOUT=1
+# SSH to autossh
+[ -x "$(command -v autossh)" ] && alias ssh=autossh
 
 # Set tab color programmatically.
 tab-color() {
@@ -38,9 +28,6 @@ tab-title() {
 # Source iTerm2 integration tools.
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-# Source FZF bindings
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 # Tmux integration.
 iterm2_print_user_vars() {
     # Keep track of the tmux session in a variable.
@@ -53,4 +40,8 @@ if [[ -n "${TMUX+set}" ]] then
     tmux rename-window -t${TMUX_PANE} "$(tmux display-message -p "#S")"
 fi
 
-alias ssh=autossh
+# Source FZF bindings
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Source virtualenvwrapper
+[-f /usr/local/bin/virtualenvwrapper_lazy.sh] && source /usr/local/bin/virtualenvwrapper_lazy.sh

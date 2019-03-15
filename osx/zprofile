@@ -1,7 +1,21 @@
 # .zprofile
 # We'll set the environemnt variables here
 
+# Set the terminal type:
+export TERM="screen-256color"
+
+# Set the editors:
+export EDITOR="nvim"
+export VISUAL="nvim"
+export GIT_EDITOR="nvim"
+
+# Configure ZSH
 skip_global_compinit=1
+# Set key timeout to a lower value, useful for vi-mode
+# export KEYTIMEOUT=1
+
+# Do not automatically set iTerm's title.
+export DISABLE_AUTO_TITLE="true"
 
 # Lang settings.
 export LC_ALL=en_US.UTF-8
@@ -13,10 +27,7 @@ PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 # Gnu coreutils take precedence
 PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
 # And Gnu coreutils manuals
-export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
-
-# VMWare command line tools
-PATH="/Applications/VMware Fusion.app/Contents/Library:$PATH"
+MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
 
 # PostgreSQL App
 PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"
@@ -29,8 +40,7 @@ export fpath=(/usr/local/share/zsh-completions $fpath)
 
 # Python / Virtualenv / Virtualenvwrapper
 export WORKON_HOME=$HOME/.virtualenvs
-export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
-source /usr/local/bin/virtualenvwrapper_lazy.sh
+export VIRTUALENVWRAPPER_SCRIPT=/usr/local/bin/virtualenvwrapper.sh
 
 # Load Python RC file
 export PYTHONSTARTUP="$HOME/.pythonrc"
@@ -38,27 +48,27 @@ export PYTHONSTARTUP="$HOME/.pythonrc"
 # Lua/Luarocks
 PATH="${HOME}/.luarocks/bin:$PATH"
 
+# Android development
+export ANT_HOME=/usr/local/opt/ant
+export MAVEN_HOME=/usr/local/opt/maven
+export GRADLE_HOME=/usr/local/opt/gradle
+export ANDROID_HOME=/usr/local/share/android-sdk
+export ANDROID_NDK_HOME=/usr/local/share/android-ndk
+export INTEL_HAXM_HOME=/usr/local/Caskroom/intel-haxm
+
+export PATH=$ANT_HOME/bin:$PATH
+export PATH=$MAVEN_HOME/bin:$PATH
+export PATH=$GRADLE_HOME/bin:$PATH
+export PATH=$ANDROID_HOME/tools:$PATH
+export PATH=$ANDROID_HOME/platform-tools:$PATH
+export PATH=$ANDROID_HOME/build-tools/23.0.1:$PATH
+
 # Customize LESS
 export LESS='-R -g -i'
-
-# Android SDK
-# PATH="/opt/adt-bundle-mac-x86_64/sdk/tools:/opt/adt-bundle-mac-x86_64/sdk/platform-tools:$PATH"
 
 # Go
 export GOPATH=$HOME/Programming/Go
 PATH=$PATH:/usr/local/opt/go/libexec/bin:$GOPATH/bin
-
-# Java
-# export JAVA_HOME=$(/usr/libexec/java_home)
-
-# Ruby
-# eval "$(rbenv init -)"  # Commented for performance reasons.
-
-# Stack (Haskell) environemnt.
-# PATH=$PATH:$HOME/.local/bin
-
-# Export $PATH
-export PATH=$PATH
 
 # Homebrew settings
 export HOMEBREW_NO_ANALYTICS=1  # Ask homebrew to disable analytics
@@ -74,3 +84,7 @@ if [ -x "$(command -v fd)" ]; then
     export FZF_DEFAULT_COMMAND='fd -d 10 --hidden --follow --exclude .git --exclude .svn'
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 fi
+
+# Export $PATH and MANPATH
+export PATH=$PATH
+export MANPATH=$MANPATH
