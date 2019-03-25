@@ -15,6 +15,8 @@ git:
 	git config --global log.abbrevCommit true
 	git config --global log.follow true
 	git config --global status.showUntrackedFiles all
+	git config --global pull.rebase true
+	git config --global rebase.autoStash true
 
 $(DOTFILES):
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
