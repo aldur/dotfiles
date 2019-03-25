@@ -20,12 +20,12 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # yyyy-mm-dd
 HIST_STAMPS="dd/mm/yyyy"
 
-plugins=( \
-    git \
-    virtualenv \  # Auto-completion
-    colored-man-pages \  # Colors
-    history-substring-search z \  # Utilities
-    zsh-syntax-highlighting \  # Syntax Highlights (load it last)
+plugins=(
+    git 
+    virtualenv  # Auto-completion
+    colored-man-pages  # Colors
+    history-substring-search z  # Utilities
+    zsh-syntax-highlighting  # Syntax Highlights (load it last)
 )
 
 source $ZSH/oh-my-zsh.sh
