@@ -3,9 +3,7 @@
 
 # Aliases
 # Automatically use tmux in Control Center mode
-alias tc='tmux -CC'
-alias ta='tmux -CC new -A -s'
-alias tt='tmux -CC attach -t'
+alias ta='tmux -CC new -ADs'
 
 # Alsias vim to its GUI
 [ -x "$(command -v vimr)" ] && alias vim="vimr"
