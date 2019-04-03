@@ -2,8 +2,8 @@
 # This is for OS X
 
 # Aliases
-# Automatically use tmux in Control Center mode
-alias ta='tmux -CC new -ADs'
+alias ta='tmux -CC new -ADs'  # Automatically use tmux in Control Center mode
+alias tls='tmux ls'
 
 # Alsias vim to its GUI
 [ -x "$(command -v vimr)" ] && alias vim="vimr"
@@ -18,13 +18,10 @@ tab-color() {
     echo -ne "\033]6;1;bg;blue;brightness;$3\a"
 }
 
-# Set the tabl title programmatically.
+# Set the tab title programmatically.
 tab-title() {
     echo -ne "\033]0;"$*"\007"
 }
-
-# Source iTerm2 integration tools.
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # Tmux integration.
 iterm2_print_user_vars() {
@@ -34,12 +31,14 @@ iterm2_print_user_vars() {
 
 # Set iTerm's tab name to the name of the tmux session.
 if [[ -n "${TMUX+set}" ]] then 
-    # tab-color 0 255 0  # This line should not be necessary.
-    tmux rename-window -t${TMUX_PANE} "$(tmux display-message -p "#S")"
+    tmux rename-window -t ${TMUX_PANE} "$(tmux display-message -p "#S")"
 fi
 
 # Source FZF bindings
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f "${HOME}/.fzf.zsh" ] && source "${HOME}/.fzf.zsh"
 
 # Source virtualenvwrapper
-[ -f /usr/local/bin/virtualenvwrapper_lazy.sh ] && source /usr/local/bin/virtualenvwrapper_lazy.sh
+[ -f "/usr/local/bin/virtualenvwrapper_lazy.sh" ] && source "/usr/local/bin/virtualenvwrapper_lazy.sh"
+
+# Source iTerm2 integration tools.
+[ -f "${HOME}/.iterm2_shell_integration.zsh" ] && source "${HOME}/.iterm2_shell_integration.zsh"
