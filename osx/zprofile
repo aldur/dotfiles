@@ -83,6 +83,7 @@ export AUTOSSH_PORT=0
 if [ -x "$(command -v fd)" ]; then
     export FZF_DEFAULT_COMMAND='fd -d 10 --hidden --follow --exclude .git --exclude .svn'
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    export FZF_ALT_C_COMMAND="${FZF_DEFAULT_COMMAND} --type d"
 fi
 
 # Export $PATH and MANPATH
