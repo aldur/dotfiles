@@ -33,6 +33,7 @@
     Plug 'tpope/vim-commentary'                    " Toggle comments
     Plug 'tpope/vim-repeat'                        " Enable supported plugin actions to be repeated with '.'
     Plug 'tpope/vim-surround'                      " All about surrounding
+    Plug 'tpope/vim-fugitive'                      " A GIT wrapper
 
     " Fuzzy files, tags, life.
     if has('mac') && executable('fzf')  " Install `fzf` with homebrew
@@ -66,7 +67,7 @@
 
         Plug 'zchee/deoplete-jedi'                  " Python completion
         Plug 'zchee/deoplete-go', { 'do': 'make' }  " Go completion
-        Plug 'Shougo/neco-vim'                      " VIM dictionary completion
+        Plug 'Shougo/neco-vim'                      " VIM completion
 
         if executable('look')
             Plug 'ujihisa/neco-look'                    " Spell completion
