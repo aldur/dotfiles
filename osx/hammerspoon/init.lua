@@ -408,7 +408,7 @@ end)
 hs.fnutils.each({
     {'M', 'com.spotify.client'}, {'B', 'com.google.Chrome'},
     {'O', 'com.omnigroup.OmniFocus2'}, {'W', 'com.kapeli.dashdoc'},
-    {'T', 'com.qvacua.VimR'}
+    {'T', 'com.qvacua.VimR'}, {'P', 'com.jetbrains.pycharm'}
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function()
         local window = hs.window.focusedWindow()
