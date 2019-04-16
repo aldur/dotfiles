@@ -9,7 +9,7 @@ else
 	SUBDIRS += arch
 endif
 
-export LN = ln -sf
+export LN = ln -sfT
 
 .PHONY: all $(SUBDIRS) weechat
 
