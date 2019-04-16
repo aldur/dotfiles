@@ -13,5 +13,5 @@ karabiner:
 
 gpg-agent:
 	mkdir -p ${HOME}/.gnupg
-	$(LN) $(shell readlink -f gpg-agent.conf) ${HOME}/gpg-agent.conf
+	$(LN) $(shell readlink -f gpg-agent.conf) ${HOME}/.gnupg/gpg-agent.conf
 
