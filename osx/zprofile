@@ -32,8 +32,8 @@ MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
 # PostgreSQL App
 PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"
 
-# MacTex 2018
-PATH="/usr/local/texlive/2018/bin/x86_64-darwin:$PATH"
+# MacTex 2019
+PATH="/usr/local/texlive/2019/bin/x86_64-darwin:$PATH"
 
 # Homebrew zsh-completions
 export fpath=(/usr/local/share/zsh-completions $fpath)
