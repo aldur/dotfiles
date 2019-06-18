@@ -45,4 +45,4 @@ inoremap <silent><expr> <TAB>
             \ deoplete#manual_complete()
 
 " Add a command to quickly toggle deoplete.
-command DeopleteToggle call(deoplete#toggle())
+command! DeopleteToggle call deoplete#toggle()
