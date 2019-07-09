@@ -1,6 +1,4 @@
-if ! exists('*neomake#configure#automake')
-    finish
-endif
+scriptencoding utf-8
 
 " Run Neomake on save / WinEnter
 call neomake#configure#automake('rw')
@@ -18,4 +16,9 @@ endfunction
 autocmd vimrc User NeomakeFinished call <SID>NeomakeDidFinish()
 let g:airline#extensions#neomake#enabled = 0  " Disable airline integration
 
+" Better warning sign.
+let g:neomake_warning_sign = {'text': '•', 'texthl': 'NeomakeWarningSign'}
+
+" tex-specific makers
 let g:neomake_tex_enabled_makers = ['chktex', 'lacheck', 'proselint']
+
