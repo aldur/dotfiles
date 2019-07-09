@@ -4,6 +4,8 @@
 ---
 --- Download: [https://github.com/Hammerspoon/Spoons/raw/master/Spoons/Seal.spoon.zip](https://github.com/Hammerspoon/Spoons/raw/master/Spoons/Seal.spoon.zip)
 
+-- luacheck: ignore 631
+
 local obj = {}
 obj.__index = obj
 
@@ -41,7 +43,7 @@ obj.plugin_search_paths = { hs.configdir .. "/seal_plugins", obj.spoonPath }
 --- Notes:
 ---  * Most Seal plugins expose a static list of commands (if any), which are registered at the time the plugin is loaded. This method is used for plugins which expose a dynamic or changing (e.g. depending on configuration) list of commands.
 function obj:refreshCommandsForPlugin(plugin_name)
-   plugin = self.plugins[plugin_name]
+   local plugin = self.plugins[plugin_name]
    if plugin.commands then
       for cmd,cmdInfo in pairs(plugin:commands()) do
          if not self.commands[cmd] then
@@ -88,7 +90,7 @@ end
 ---    from non-standard locations and is mostly a development interface.
 ---  * Some plugins may immediately begin doing background work (e.g. Spotlight searches)
 function obj:loadPluginFromFile(plugin_name, file)
-   local f,err = loadfile(file)
+   local f,_ = loadfile(file)
    if f~= nil then
       local plugin = f()
       plugin.seal = self
@@ -119,7 +121,7 @@ function obj:loadPlugins(plugins)
     self.chooser:choices(self.choicesCallback)
     self.chooser:queryChangedCallback(self.queryChangedCallback)
 
-    for k,plugin_name in pairs(plugins) do
+    for _,plugin_name in pairs(plugins) do
        local loaded=nil
        print("-- Loading Seal plugin: " .. plugin_name)
        for _,dir in ipairs(self.plugin_search_paths) do
@@ -248,14 +250,14 @@ function obj:toggle()
 end
 
 function obj.completionCallback(rowInfo)
-    if rowInfo == nil then
-        return
-    end
+    if rowInfo == nil then return end
+
     if rowInfo["type"] == "plugin_cmd" then
         obj.chooser:query(rowInfo["cmd"])
         return
     end
-    for k,plugin in pairs(obj.plugins) do
+
+    for _,plugin in pairs(obj.plugins) do
         if plugin.__name == rowInfo["plugin"] then
             plugin.completionCallback(rowInfo)
             break
@@ -265,10 +267,10 @@ end
 
 function obj.choicesCallback()
     -- TODO: Sort each of these clusters of choices, alphabetically
-    choices = {}
-    query = obj.chooser:query()
-    cmd = nil
-    query_words = {}
+    local choices = {}
+    local query = obj.chooser:query()
+    local cmd = nil
+    local query_words = {}
     for word in string.gmatch(query, "%S+") do
         if cmd == nil then
             cmd = word
@@ -281,14 +283,14 @@ function obj.choicesCallback()
     if cmd then
         -- First get any direct command matches
         for command,cmdInfo in pairs(obj.commands) do
-            cmd_fn = cmdInfo["fn"]
+            local cmd_fn = cmdInfo["fn"]
             if cmd:lower() == command:lower() then
                 if (query_words or "") == "" then
                     query_words = ".*"
                 end
-                fn_choices = cmd_fn(query_words)
+                local fn_choices = cmd_fn(query_words)
                 if fn_choices ~= nil then
-                    for j,choice in pairs(fn_choices) do
+                    for _,choice in pairs(fn_choices) do
                         table.insert(choices, choice)
                     end
                 end
@@ -297,19 +299,20 @@ function obj.choicesCallback()
     end
 
     -- Now get any bare matches
-    for k,plugin in pairs(obj.plugins) do
-        bare = plugin:bare()
+    for _,plugin in pairs(obj.plugins) do
+        local bare = plugin:bare()
         if bare then
-            for i,choice in pairs(bare(query)) do
+            for _,choice in pairs(bare(query)) do
                 table.insert(choices, choice)
             end
         end
     end
+
     -- Now add in any matching commands
     -- TODO: This only makes sense to do if we can select the choice without dismissing the chooser, which requires changes to HSChooser
     for command,cmdInfo in pairs(obj.commands) do
         if string.match(command, query) and #query_words == 0 then
-            choice = {}
+            local choice = {}
             choice["text"] = cmdInfo["name"]
             choice["subText"] = cmdInfo["description"]
             choice["type"] = "plugin_cmd"
@@ -321,12 +324,8 @@ function obj.choicesCallback()
     return choices
 end
 
-function obj.queryChangedCallback(query)
-    if obj.queryChangedTimer then
-        obj.queryChangedTimer:stop()
-    end
-    obj.queryChangedTimer = hs.timer.doAfter(0.1, function() obj.chooser:refreshChoicesCallback() end)
+function obj.queryChangedCallback(_)
+    obj.chooser:refreshChoicesCallback()
 end
 
 return obj
-
