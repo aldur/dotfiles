@@ -23,11 +23,7 @@ local wf = hs.window.filter
 globals = {}
 globals['WiFi'] = {}
 globals['watcher'] = {}
--- globals['watchable_watcher'] = {}
--- globals['watchable'] = hs.watchable.new('globals')
 globals['windows'] = {}
-globals['geeklets'] = {}
-globals['timers'] = {}
 globals['wfilters'] = {}
 
 local cardinals = { h='west', l='east', k='north', j='south', }
@@ -39,10 +35,6 @@ local snapped = {
 local hyper = {'cmd', 'alt', 'ctrl'}
 local hyper_shift = {'cmd', 'alt', 'ctrl', 'shift'}
 
--- Source http://www.color-hex.com/color-palette/5452
-local red = hs.drawing.color.asRGB({red=217/255, green=83/255, blue=79/255})
-local green = hs.drawing.color.asRGB({red=92/255, green=184/255, blue=92/255})
-
 -- }}}
 
 -- Settings {{{
@@ -52,7 +44,7 @@ hs.window.setShadows(shadows)  -- No windows shadow
 wf.setLogLevel('error')  -- Only log WF errors
 hs.hotkey.setLogLevel('warning')  -- Less verbose hotkey logging
 hs.application.enableSpotlightForNameSearches(true)  -- Enable alternate application names
-hs.grid.setGrid('11x7')  -- Gtid size
+hs.grid.setGrid('11x7')  -- Grid size
 hs.canvas.drawingWrapper(true)  -- Use hs.canvas drawing wrapper.
 
 -- }}}
@@ -63,8 +55,6 @@ local function cleanup()
     -- Cleanup here.
     hs.fnutils.each(globals.watcher, function(w) w:stop() end)
     -- hs.fnutils.each(globals.watchable_watcher, function(w) w:release() end)
-    hs.fnutils.each(globals.timers, function(t) t:stop() end)
-    hs.fnutils.each(globals.geeklets, function(g) g:delete() end)
     hs.fnutils.each(globals.wfilters, function(f) f:unsubscribeAll() end)
 
     if globals.pushbullet then globals.pushbullet:close() end
@@ -196,7 +186,7 @@ end
 
 globals.windows.savedFrames = {}
 local function saveFrame(window)
-    assert(window)
+    if window == nil then return end
     local savedFrame = globals.windows.savedFrames[window:id()]
     if savedFrame == nil then
         globals.windows.savedFrames[window:id()] = window:frame()
@@ -428,6 +418,8 @@ globals.emojis:bindHotkeys({toggle={hyper, 'e'}})
 
 -- iTerm2 {{{
 
+globals.wfilters.iterm = wf.new(false):setAppFilter('iTerm2', {})
+
 -- Launch iTerm2 by pressing alt-space
 hs.hotkey.new({'alt'}, 'space', function()
     local iTerms = hs.application.applicationsForBundleID('com.googlecode.iterm2')
@@ -439,7 +431,7 @@ hs.hotkey.new({'alt'}, 'space', function()
     end
 
     local iTerm2 = iTerms[1]
-    local windows = iTerm2:allWindows()
+    local windows = globals.wfilters.iterm:getWindows()
 
     if #windows == 0 then
         hs.osascript.applescript('tell application "iTerm2" \n'
@@ -447,242 +439,22 @@ hs.hotkey.new({'alt'}, 'space', function()
             'end tell')
         return
     else
-        local focused = hs.window.focusedWindow()
-        if focused and focused:application() == iTerm2 then
-            iTerm2:hide()
-            return
-        end
-
         for _, window in pairs(windows) do
-            if window:isMinimized() then window:unminimize() end
+            if window:isMinimized() then
+                window:unminimize()
+                return
+            end
+
+            if window == hs.window.focusedWindow() then
+            iTerm2:hide()
+                return
+            end
         end
 
         local mainWindow = iTerm2:mainWindow()
         if mainWindow then mainWindow:focus() else windows[1]:focus() end
     end
 end):enable()
-
--- }}}
-
--- Drawing {{{
-
-local geekletsTextStyle = {
-    font={name='Futura', size=22},
-    strokeColor=hs.drawing.color.asRGB({red=0, green=0, blue=0, alpha=1}),
-    color=hs.drawing.color.asRGB({red=1, green=1, blue=1, alpha=1}),
-    strokeWidth=-1.0,
-    paragraphStyle={alignment='center', lineBreak='truncateMiddle'}
-}
-
-local function drawTimeGeeklet(r)
-    local geeklets = globals.geeklets
-    local timeString = hs.styledtext.new(os.date("%H:%M"), geekletsTextStyle)
-    local time = geeklets['time']
-    if time == nil then
-        time = hs.drawing.text(r, timeString)
-        geeklets['time'] = time
-        assert(geeklets['time'])
-        time:show()
-    else
-        time:setStyledText(timeString)
-    end
-end
-
-local function drawMusicGeeklet(r)
-    local geeklets = globals.geeklets
-    local empty = hs.styledtext.new("", geekletsTextStyle)
-
-    local music = geeklets['music']
-    if music == nil then
-        music = hs.drawing.text(hs.geometry.rect(r), empty)
-        geeklets['music'] = music
-        music:show()
-    end
-    assert(music)
-
-    local musicApp
-    if hs.deezer.isRunning() then
-        musicApp = hs.deezer
-    elseif hs.spotify.isRunning() then
-        musicApp = hs.spotify
-    else
-        music:setStyledText(empty)
-        return
-    end
-
-    assert(musicApp)
-    local track = musicApp.getCurrentTrack()
-    local album = musicApp.getCurrentAlbum()
-    local artist = musicApp.getCurrentArtist()
-
-    if not track or not album or not artist then return end
-
-    music:setStyledText(hs.styledtext.new(
-        track .. " | " .. album .. " | " .. artist, geekletsTextStyle
-    ))
-end
-
-local function drawBatteryGeeklet(r)
-    local geeklets = globals.geeklets
-
-    local prefix = ''
-    if hs.battery.isCharging() then prefix = '+' end
-    local batteryPercentage = hs.styledtext.new(prefix .. math.floor(hs.battery.percentage()) .. "%", geekletsTextStyle)
-
-    local battery = geeklets['battery']
-    if battery == nil then
-        battery = hs.drawing.text(r, batteryPercentage)
-        geeklets['battery'] = battery
-        battery:show()
-    else
-        battery:setStyledText(batteryPercentage)
-    end
-end
-
-local function drawInternetGeeklet(r)
-    local geeklets = globals.geeklets
-
-    local color = red
-    if globals.watchable.reachability then
-        color = green
-    end
-
-    local internet = geeklets['internet']
-    if internet == nil then
-        internet = hs.drawing.circle(r)
-        internet:setFillColor(color)
-        internet:setStroke(false)
-        geeklets['internet'] = internet
-        assert(geeklets['internet'])
-        internet:show()
-    else
-        internet:setFillColor(color)
-    end
-end
-
-local function drawVPNGeeklet(r)
-    local geeklets = globals.geeklets
-
-    local color = red
-    if hs.application.find('net.tunnelblick.tunnelblick') then
-        local states_code, states, _ = hs.osascript.applescript([[
-            tell application "Tunnelblick" to get state of configurations
-        ]])
-
-        if not states_code then
-            logger.e('[Geeklets] - Could not get Tunnelblick configuration states.')
-            states = {}
-        end
-
-        for _, state in ipairs(states) do
-            if state == 'CONNECTED' then color = green; break end
-        end
-    end
-
-    local vpn = geeklets['vpn']
-    if vpn == nil then
-        vpn = hs.drawing.circle(r)
-        vpn:setStroke(false)
-        vpn:setFillColor(color)
-        geeklets['vpn'] = vpn
-        assert(geeklets['vpn'])
-        vpn:show()
-    else
-        vpn:setFillColor(color)
-    end
-end
-
-local function drawBackground(height, y)
-    local frame = hs.screen.primaryScreen():frame()
-
-    local background = hs.drawing.rectangle(hs.geometry.rect(0, y, frame.w, height))
-    background:setStroke(false)
-    background:setFillColor(hs.drawing.color.asRGB({red=0, green=0, blue=0, alpha=0.4}))
-    background:setLevel(hs.drawing.windowLevels['desktop'])
-    background:setBehaviorByLabels({'stationary', 'canJoinAllSpaces'})
-
-    return background
-end
-
-local function drawTopGeeklets()
-    local geeklets = globals.geeklets
-    local height = 50
-    local textVOffset = (height - geekletsTextStyle['font']['size'] * 1.33)
-    local frame = hs.screen.primaryScreen():frame()
-
-    local top_background = drawBackground(height, 10)
-    geeklets['top_bg'] = top_background
-    top_background:show()
-
-    local timeRect = hs.geometry.rect(0, textVOffset, frame.w / 4, height / 3 * 2)
-    drawTimeGeeklet(timeRect)
-    local musicRect = hs.geometry.rect(frame.w / 5, textVOffset, frame.w / 5 * 3, height / 3 * 2)
-    drawMusicGeeklet(musicRect)
-    local batteryRect = hs.geometry.rect(frame.w * 3 / 4, textVOffset, frame.w / 4, height / 3 * 2)
-    drawBatteryGeeklet(batteryRect)
-
-    for _, geeklet in pairs(geeklets) do
-        geeklet:setLevel(hs.drawing.windowLevels['desktop'])
-        geeklet:setBehaviorByLabels({'stationary', 'canJoinAllSpaces'})
-    end
-
-    local timers = globals.timers
-    timers['g_time'] = hs.timer.doEvery(10, function() drawTimeGeeklet(timeRect) end)
-    timers['g_music'] = hs.timer.doEvery(10, function() drawMusicGeeklet(musicRect) end)
-    timers['g_battery'] = hs.timer.doEvery(60, function() drawBatteryGeeklet(batteryRect) end)
-
-    globals.watcher.g_battery = hs.battery.watcher.new(function() drawBatteryGeeklet(batteryRect) end)
-end
-
-local function drawBottomGeeklets()
-    local geeklets = globals.geeklets
-    local frame = hs.screen.primaryScreen():frame()
-
-    local internetRect = hs.geometry.rect(10, frame.h - 20, 10, 10)
-    drawInternetGeeklet(internetRect)
-
-    local vpnRect = hs.geometry.rect(10 + 10 / 3 * 2, frame.h - 20, 10, 10)
-    drawVPNGeeklet(vpnRect)
-
-    for _, geeklet in pairs(geeklets) do
-        geeklet:setLevel(hs.drawing.windowLevels['desktop'])
-        geeklet:setBehaviorByLabels({'stationary', 'canJoinAllSpaces'})
-    end
-
-    globals.watchable_watcher.reachability_drawing = hs.watchable.watch('globals', 'reachability',
-        function(_, _, _, _, _) drawInternetGeeklet(internetRect) end)
-
-    local timers = globals.timers
-    timers['g_vpn'] = hs.timer.doEvery(10, function() drawVPNGeeklet(vpnRect) end)
-end
-
-local function setupScreenlets()
-    local geeklets = globals.geeklets
-    local timers = globals.timers
-
-    for _, geeklet in pairs(geeklets) do geeklet:hide() end
-    globals.geeklets = {}
-
-    for name, timer in pairs(timers) do
-        -- Only remove timers that start with 'g_'.
-        if string.sub(name, 1, string.len('g_')) == 'g_' then
-            timer:stop()
-            timers[name] = nil
-        end
-    end
-
-    if globals.watcher['g_battery'] then
-        globals.watcher.g_battery:stop()
-        globals.watcher['g_battery'] = nil
-    end
-
-    drawTopGeeklets()
-    drawBottomGeeklets()
-end
--- setupScreenlets()
-
--- globals.watcher.screen = hs.screen.watcher.new(function() setupScreenlets() end)
--- globals.watcher.screen:start()
 
 -- }}}
 
