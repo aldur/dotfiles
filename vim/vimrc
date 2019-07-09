@@ -55,7 +55,7 @@
         Plug 'lervag/vimtex', { 'for': 'tex' }
 
         " Go
-        Plug 'fatih/vim-go', { 'for': 'go', 'do': ':GoUpdateBinaries' }
+        Plug 'fatih/vim-go', { 'for': 'go' }
     " }}}
 
     " Deoplete and its plugins {{{
