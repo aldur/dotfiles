@@ -14,4 +14,4 @@ oh:
 
 theme:
 	mkdir -p ${HOME}/.oh-my-zsh/custom/themes
-	$(LN) $(shell readlink -f aldur.zsh-theme) ${HOME}/.oh-my-zsh/custom/themes
+	$(LN) $(shell readlink -f aldur.zsh-theme) ${HOME}/.oh-my-zsh/custom/themes/aldur.zsh-theme
