@@ -330,8 +330,7 @@ end)
 -- Quick open Downloads/Desktop
 hs.fnutils.each({{"d", "Downloads"}, {"s", "Desktop"}}, function(k)
     hs.hotkey.bind(hyper, k[1], function()
-        hs.applescript('tell application "Finder"\n'
-        .. 'open folder "' .. k[2] .. '" of home\nactivate\nend tell')
+        os.execute('open ~/' .. k[2])
     end)
 end)
 
@@ -394,19 +393,46 @@ hs.fnutils.each({{"-", false}, {"=", true}}, function(k)
     end)
 end)
 
+local function focusOrSwitch(bundleID)
+    if bundleID == nil then return end
+    local window = hs.window.focusedWindow()
+    if window and window:application():bundleID() == bundleID then
+        focusSecondToLastFocused()
+    else
+        assert(hs.application.launchOrFocusByBundleID(bundleID))
+    end
+end
+
+local spotifyBundleID = nil  -- Get the bundle ID of the spotify Chrome app
+local spotifyBundleInfo = hs.application.infoForBundlePath(
+    [[~/Applications/Chrome Apps.localized/Spotify.app]]
+)
+if spotifyBundleInfo ~= nil then
+    spotifyBundleID = spotifyBundleInfo['CFBundleIdentifier']
+end
+
 -- Focus/launch most commonly used applications.
 hs.fnutils.each({
-    {'M', 'com.spotify.client'}, {'B', 'com.google.Chrome'},
-    {'O', 'com.omnigroup.OmniFocus2'}, {'W', 'com.kapeli.dashdoc'},
-    {'T', 'com.qvacua.VimR'}, {'P', 'com.jetbrains.pycharm'}
+    {'M', spotifyBundleID}, {'B', 'com.google.Chrome'},
+    {'W', 'com.kapeli.dashdoc'}, {'T', 'com.qvacua.VimR'},
+}, function(k)
+    hs.hotkey.bind(hyper, k[1], function() focusOrSwitch(k[2]) end)
+end)
+
+-- Focus/launch most commonly used applications / multiple options.
+hs.fnutils.each({
+    {'P', {'com.jetbrains.pycharm', 'com.microsoft.VSCode', 'com.apple.dt.Xcode'}}
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function()
-        local window = hs.window.focusedWindow()
-        if window and window:application():bundleID() == k[2] then
-            focusSecondToLastFocused()
-        else
-            assert(hs.application.launchOrFocusByBundleID(k[2]))
+        for _, bundleID in pairs(k[2]) do
+            if hs.application.get(bundleID) ~= nil then
+                focusOrSwitch(bundleID)
+                return
+            end
         end
+
+        -- Fallback to open and focus the first one.
+        focusOrSwitch(k[2][1])
     end)
 end)
 
