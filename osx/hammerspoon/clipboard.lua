@@ -117,7 +117,7 @@ module.chooser:choices(module.clipboard_history)
 local function storeCopy()
     local now = hs.pasteboard.changeCount()
     if hs.pasteboard.changeCount() == module.last_change then return end
-    assert(now > module.last_change)
+    if (now <= module.last_change) then return end
     module.last_change = now
 
     if not shouldBeStored() then return end
