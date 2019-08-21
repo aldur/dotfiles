@@ -79,20 +79,20 @@ endfunction
 
 " Neomake integration {{{
     function! LightlineNeomakeError() abort
-        let l:errors = get(neomake#statusline#LoclistCounts(), 'E', 0)
+        let l:counts = ale#statusline#Count(bufnr(''))
+        let l:errors = l:counts.error + l:counts.style_error
         return l:errors > 0 ? 'E: '.l:errors : ''
-
-        let l:warning = get(neomake#statusline#LoclistCounts(), 'E', 0)
-        let l:infos = get(neomake#statusline#LoclistCounts(), 'E', 0)
     endfunction
 
     function! LightlineNeomakeWarning() abort
-        let l:warnings = get(neomake#statusline#LoclistCounts(), 'W', 0)
+        let l:counts = ale#statusline#Count(bufnr(''))
+        let l:warnings = l:counts.warning + l:counts.style_warning
         return l:warnings > 0 ? 'W: '.l:warnings : ''
     endfunction
 
     function! LightlineNeomakeInfo() abort
-        let l:infos = get(neomake#statusline#LoclistCounts(), 'I', 0)
+        let l:counts = ale#statusline#Count(bufnr(''))
+        let l:infos = l:counts.info
         return l:infos > 0 ? 'I: '.l:infos : ''
     endfunction
 " }}}
