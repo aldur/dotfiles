@@ -13,6 +13,7 @@ call deoplete#custom#source('ultisnips', 'rank', 1000) " Keep snippets on top
 let s:default_sources = ['buffer', 'member', 'tag', 'file', 'ultisnips']  " 'omni' is disabled 'cause is not async
 call deoplete#custom#option('sources', {
             \ '_': s:default_sources,
+            \ 'cpp': s:default_sources + ['ale'],
             \ 'vim': s:default_sources + ['vim'],
             \ 'tex': s:default_sources + ['look'],
             \ 'gitcommit': s:default_sources + ['look'],
