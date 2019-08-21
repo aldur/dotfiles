@@ -32,6 +32,7 @@ iterm2_print_user_vars() {
 # Set iTerm's tab name to the name of the tmux session.
 if [[ -n "${TMUX+set}" ]] then 
     tmux rename-window -t ${TMUX_PANE} "$(tmux display-message -p "#S")"
+    tab-title "$(tmux display-message -p "#S")"
 fi
 
 # Source FZF bindings
