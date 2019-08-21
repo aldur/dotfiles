@@ -25,9 +25,8 @@
     Plug 'keith/investigate.vim'                   " Smart documentation finder
     Plug 'ludovicchabant/vim-gutentags'            " Automatic tag management
     Plug 'machakann/vim-highlightedyank'           " Highlight last yanked object
-    Plug 'neomake/neomake'                         " Asynchronous Syntax Checkers
+    Plug 'dense-analysis/ale'                      " Async linting engine
     Plug 'romainl/vim-qf'                          " Fix the quickfix
-    Plug 'sbdchd/neoformat'                        " Code auto-formatting
     Plug 'tmsvg/pear-tree'                         " Auto-pair
     Plug 'tommcdo/vim-lion'                        " Add gl/gL to align text
     Plug 'tpope/vim-commentary'                    " Toggle comments
@@ -187,10 +186,6 @@
 
         let g:vim_markdown_no_default_key_mappings = 1
         let g:vim_markdown_conceal = 0
-    " }}}
-
-    " Neoformat {{{
-        nnoremap <leader>f :<C-u>Neoformat<CR>
     " }}}
 
     " Investigate {{{
