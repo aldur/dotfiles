@@ -9,7 +9,7 @@ git:
 	git config --global user.name "Adriano Di Luzio"
 	git config --global user.email "adrianodl@hotmail.it"
 	git config --global commit.verbose true
-	git config --global push.default simple
+	git config --global push.default current
 	git config --global push.followTags true
 	git config --global core.excludesfile ~/.gitignore_global
 	git config --global log.abbrevCommit true
