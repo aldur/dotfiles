@@ -12,4 +12,3 @@ let g:netrw_winsize = 25  " Window height/width on split
 let g:netrw_list_hide = netrw_gitignore#Hide()  " Hide git-ignored files
 
 autocmd vimrc FileType netrw setl bufhidden=wipe  " Wipe netrw buffers when hidden
-nnoremap - :Vexplore<cr>
