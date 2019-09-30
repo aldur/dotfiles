@@ -37,20 +37,8 @@ source $ZSH/oh-my-zsh.sh
 alias sudo='sudo '
 alias history='fc -dElD 0'  # Better history with timestamps, elapsed time, etc.
 
-# Global environment
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-    export EDITOR=vim
-else
-    export EDITOR=vim
-fi
-export VISUAL="$EDITOR"
-
 # Compilation flags
 export ARCHFLAGS="-arch x86_64"
-
-# SSH key path
-export SSH_KEY_PATH="$HOME/.ssh/id_rsa"
 
 # ZSH specific configuration
 # Allows you to type Bash style comments on your command line
