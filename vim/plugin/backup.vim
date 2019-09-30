@@ -5,8 +5,7 @@ if isdirectory($HOME . '/.vim/backup') == 0
     call mkdir($HOME . '/.vim/backup', 'p')
 endif
 set backupdir-=.
-set backupdir+=.
 set backupdir-=~/
+set backupdir-=~/.local/share/nvim/backup
 set backupdir^=~/.vim/backup/
-set backupdir^=./.vim-backup/
 set backup
