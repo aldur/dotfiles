@@ -56,19 +56,18 @@ export ANDROID_HOME=/usr/local/share/android-sdk
 export ANDROID_NDK_HOME=/usr/local/share/android-ndk
 export INTEL_HAXM_HOME=/usr/local/Caskroom/intel-haxm
 
-export PATH=$ANT_HOME/bin:$PATH
-export PATH=$MAVEN_HOME/bin:$PATH
-export PATH=$GRADLE_HOME/bin:$PATH
-export PATH=$ANDROID_HOME/tools:$PATH
-export PATH=$ANDROID_HOME/platform-tools:$PATH
-export PATH=$ANDROID_HOME/build-tools/23.0.1:$PATH
+PATH=$ANT_HOME/bin:$PATH
+PATH=$MAVEN_HOME/bin:$PATH
+PATH=$GRADLE_HOME/bin:$PATH
+PATH=$ANDROID_HOME/tools:$PATH
+PATH=$ANDROID_HOME/platform-tools:$PATH
+PATH=$ANDROID_HOME/build-tools/23.0.1:$PATH
+
+# Integrate Vale
+PATH=$HOME/.vale/bin:$PATH
 
 # Customize LESS
 export LESS='-R -g -i'
-
-# Go
-export GOPATH=$HOME/Programming/Go
-PATH=$PATH:/usr/local/opt/go/libexec/bin:$GOPATH/bin
 
 # Homebrew settings
 export HOMEBREW_NO_ANALYTICS=1  # Ask homebrew to disable analytics
