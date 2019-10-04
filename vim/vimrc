@@ -60,10 +60,6 @@
     " Deoplete and its plugins {{{
         Plug 'Shougo/deoplete.nvim', has('nvim') ? { 'do': ':UpdateRemotePlugins' } : {}
 
-        " Required dependencies for standard VIM.
-        Plug 'roxma/nvim-yarp', has('nvim') ? { 'on': [] } : {  }
-        Plug 'roxma/vim-hug-neovim-rpc', has('nvim') ? { 'on': [] } : {  }
-
         Plug 'zchee/deoplete-jedi'                  " Python completion
         Plug 'zchee/deoplete-go', { 'do': 'make' }  " Go completion
         Plug 'Shougo/neco-vim'                      " VIM completion
