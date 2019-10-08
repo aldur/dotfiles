@@ -44,7 +44,6 @@ wf.setLogLevel('error')  -- Only log WF errors
 hs.hotkey.setLogLevel('warning')  -- Less verbose hotkey logging
 hs.application.enableSpotlightForNameSearches(true)  -- Enable alternate application names
 hs.grid.setGrid('11x7')  -- Grid size
-hs.canvas.drawingWrapper(true)  -- Use hs.canvas drawing wrapper.
 
 -- }}}
 
