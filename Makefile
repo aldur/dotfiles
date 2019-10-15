@@ -11,7 +11,7 @@ endif
 
 export LN = ln -sfT
 
-.PHONY: all $(SUBDIRS) weechat
+.PHONY: all $(SUBDIRS) weechat vale
 
 all: $(SUBDIRS) weechat
 
@@ -21,3 +21,5 @@ $(SUBDIRS):
 weechat:
 	$(LN) $(shell readlink -f weechat) ${HOME}/.weechat
 
+vale:
+	$(MAKE) -C $@
