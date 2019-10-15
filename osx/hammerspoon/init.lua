@@ -4,7 +4,6 @@
 
 -- Require {{{
 
-local spaces = require('hs._asm.undocumented.spaces')
 local secrets = require('secrets')
 
 -- }}}
@@ -143,32 +142,6 @@ globals.watcher.WiFi = hs.wifi.watcher.new(ssidChangedCallback):start()
 -- USB management {{{
 
 -- require('usb')
-
--- }}}
-
--- Spaces {{{
-
-local function adjacentSpace(left)
-    local layout = spaces.layout()[spaces.mainScreenUUID()]
-
-    local current = hs.fnutils.indexOf(layout, spaces.activeSpace())
-    assert(current ~= nil)
-
-    local adjacent
-    if not left then
-        adjacent = current % #layout + 1
-    else
-        adjacent = current ~= 1 and current - 1 or #layout
-    end
-
-    return layout[adjacent], adjacent
-end
-
-local function moveToNextSpace(window, left)
-    local newSpaceID = adjacentSpace(left)
-    window:spacesMoveTo(newSpaceID)
-    hs.window.frontmostWindow():focus()
-end
 
 -- }}}
 
