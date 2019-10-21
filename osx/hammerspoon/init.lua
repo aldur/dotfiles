@@ -385,7 +385,7 @@ end
 
 -- Focus/launch most commonly used applications.
 hs.fnutils.each({
-    {'M', com.apple.Music}, {'B', 'com.google.Chrome'},
+    {'M', 'com.apple.Music'}, {'B', 'com.apple.Safari'},
     {'W', 'com.kapeli.dashdoc'}, {'T', 'com.qvacua.VimR'},
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function() focusOrSwitch(k[2]) end)
