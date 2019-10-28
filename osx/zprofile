@@ -42,9 +42,6 @@ export fpath=(/usr/local/share/zsh-completions $fpath)
 export WORKON_HOME=$HOME/.virtualenvs
 export VIRTUALENVWRAPPER_SCRIPT=/usr/local/bin/virtualenvwrapper.sh
 
-# Load Python RC file
-export PYTHONSTARTUP="$HOME/.pythonrc"
-
 # Lua/Luarocks
 PATH="${HOME}/.luarocks/bin:$PATH"
 
