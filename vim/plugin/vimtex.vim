@@ -14,7 +14,7 @@ if has('mac')
 end
 
 let g:vimtex_imaps_enabled = 0   " Disable insert mode mappings
-let g:vimtex_fold_enabled = 1    " Enable vimtex folds
+let g:vimtex_fold_enabled = 0    " Enable vimtex folds
 let g:vimtex_format_enabled = 1  " Enable better formatting with gq
 
 " Disable overfull/underfull \hbox
