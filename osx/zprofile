@@ -26,6 +26,7 @@ PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 
 # Gnu coreutils take precedence
 PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+PATH="/usr/local/opt/make/libexec/gnubin:$PATH"
 # And Gnu coreutils manuals
 MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
 
@@ -85,3 +86,6 @@ fi
 # Export $PATH and MANPATH
 export PATH=$PATH
 export MANPATH=$MANPATH
+
+# Enable iTerm and tmux integration (breaks non -CC sessions)
+export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
