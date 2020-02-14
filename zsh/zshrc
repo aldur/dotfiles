@@ -24,7 +24,6 @@ plugins=(
     git  # Git aliases
     virtualenv  # Auto-completion
     colored-man-pages  # Colors
-    z  # Utilities
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -34,11 +33,7 @@ source $ZSH/oh-my-zsh.sh
 # Aliases
 
 # Enable aliases to be sudo’ed
-alias sudo='sudo '
 alias history='fc -dElD 0'  # Better history with timestamps, elapsed time, etc.
-
-# Compilation flags
-export ARCHFLAGS="-arch x86_64"
 
 # ZSH specific configuration
 # Allows you to type Bash style comments on your command line
