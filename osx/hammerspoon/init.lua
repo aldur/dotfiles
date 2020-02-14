@@ -375,17 +375,9 @@ local function focusOrSwitch(bundleID)
     end
 end
 
--- local spotifyBundleID = nil  -- Get the bundle ID of the spotify Chrome app
--- local spotifyBundleInfo = hs.application.infoForBundlePath(
---     [[~/Applications/Chrome Apps.localized/Spotify.app]]
--- )
--- if spotifyBundleInfo ~= nil then
---     spotifyBundleID = spotifyBundleInfo['CFBundleIdentifier']
--- end
-
 -- Focus/launch most commonly used applications.
 hs.fnutils.each({
-    {'M', 'com.apple.Music'}, {'B', 'com.apple.Safari'},
+    {'M', 'com.spotify.client'}, {'B', 'com.apple.Safari'},
     {'W', 'com.kapeli.dashdoc'}, {'T', 'com.qvacua.VimR'},
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function() focusOrSwitch(k[2]) end)
