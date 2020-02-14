@@ -38,6 +38,12 @@ function obj.archiveClipboard()
     if not success then obj.__logger.e('Got an error while opening Hammerspoon/Clipboard url handler.') end
 end
 
+function obj.meetingNote()
+    local success, _, _ = hs.osascript.javascriptFromFile(
+        [[/Users/aldur/Library/Mobile Documents/com~apple~CloudDocs/Keyless/KeylessEventNotes.scpt]])
+    if not success then obj.__logger.e('Got an error while creating meeting note.') end
+end
+
 function obj.showCaffeineMenubar(isEnabled)
     if isEnabled == nil then isEnabled = hs.caffeinate.get('displayIdle') end
     if isEnabled then
@@ -63,6 +69,7 @@ obj.cmds = {
     {text='Clear Clipboard', type='clearClipboard'},
     {text='Archive Clipboard', type='archiveClipboard'},
     {text='Toggle Caffeine', type='toggleCaffeine'},
+    {text='Create Meeting Note', type='meetingNote'},
 }
 
 function obj:commands()
