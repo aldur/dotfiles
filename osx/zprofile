@@ -41,11 +41,10 @@ export fpath=(/usr/local/share/zsh-completions $fpath)
 
 # Python / Virtualenv / Virtualenvwrapper
 export WORKON_HOME=$HOME/.virtualenvs
+VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
 export VIRTUALENVWRAPPER_SCRIPT=/usr/local/bin/virtualenvwrapper.sh
 
-# Lua/Luarocks
-PATH="${HOME}/.luarocks/bin:$PATH"
-
+# Lua/Luarocks PATH="${HOME}/.luarocks/bin:$PATH" 
 # Android development
 export ANT_HOME=/usr/local/opt/ant
 export MAVEN_HOME=/usr/local/opt/maven
@@ -63,6 +62,9 @@ PATH=$ANDROID_HOME/build-tools/23.0.1:$PATH
 
 # Integrate Vale
 PATH=$HOME/.vale/bin:$PATH
+
+# Integrate Python executables
+PATH=$HOME/Library/Python/3.7/bin:$PATH
 
 # Customize LESS
 export LESS='-R -g -i'
@@ -89,3 +91,6 @@ export MANPATH=$MANPATH
 
 # Enable iTerm and tmux integration (breaks non -CC sessions)
 export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
+
+# Set `bat` theme
+export BAT_THEME="Monokai Extended"
