@@ -306,14 +306,6 @@ hs.fnutils.each({{"d", "Downloads"}, {"s", "Desktop"}}, function(k)
     end)
 end)
 
--- Move window to space on left/right
-hs.fnutils.each({{"right", false}, {"left", true}}, function(k)
-    hs.hotkey.bind({"ctrl", "shift"}, k[1], function()
-        local focused = hs.window.focusedWindow()
-        if focused then moveToNextSpace(focused, k[2]) end
-    end)
-end)
-
 -- Fullscreen / revert to original
 hs.fnutils.each({{"delete", nil}, {"return", hs.geometry(0,0,1,1)}}, function(k)
     hs.hotkey.bind(hyper, k[1], function()
