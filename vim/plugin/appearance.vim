@@ -42,3 +42,8 @@ set noshowmode   " Do not show mode indicator below status bar
 set laststatus=2 " Always show the statusbar
 
 set termguicolors
+
+if has('nvim')
+    " Restore terminal cursor when nvim leaves.
+    autocmd vimrc VimLeave * set guicursor=a:hor10-blinkon0
+endif
