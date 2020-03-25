@@ -60,11 +60,7 @@ function obj.toggleDarkMode()
 end
 
 function obj.lock()
-    -- luacheck: no max line length
-    local success, _, _ = hs.applescript([[do shell script "/System/Library/Frameworks/ScreenSaver.framework/Resources/ScreenSaverEngine.app/Contents/MacOS/ScreenSaverEngine"]])
-    if not success then
-        obj.__logger.e('Got an error while locking MacOS.')
-    end
+    hs.eventtap.keyStroke({"cmd", "ctrl"}, "q")
 end
 
 function obj.sleep()
