@@ -34,6 +34,7 @@ function obj.choicesZoom(query)
             choice['subText'] = room.roon_number
             choice['room_number'] = room.number
             choice['plugin'] = obj.__name
+            choice['image'] = obj.__icon
             table.insert(choices, choice)
         end
     end
