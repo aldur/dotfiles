@@ -2,6 +2,9 @@
 -- vim: set foldmarker={{{,}}} foldlevel=0 foldmethod=marker
 -- }}}
 
+-- luacheck: globals hs
+-- luacheck: globals globals
+
 -- Require {{{
 
 local secrets = require('secrets')
@@ -250,7 +253,7 @@ globals.emojis = hs.loadSpoon('Emojis')
 -- Seal {{{
 
 globals.seal = hs.loadSpoon('Seal')
-globals.seal:loadPlugins({'tunnelblick', 'network_locations', 'snippets', 'macos', 'hammerspoon'})
+globals.seal:loadPlugins({'tunnelblick', 'network_locations', 'snippets', 'macos', 'hammerspoon', 'zoom'})
 globals.seal:bindHotkeys({toggle={hyper, 'space'}})
 globals.seal:start()
 
@@ -371,6 +374,7 @@ end
 hs.fnutils.each({
     {'M', 'com.spotify.client'}, {'B', 'com.apple.Safari'},
     {'W', 'com.kapeli.dashdoc'}, {'T', 'com.qvacua.VimR'},
+    {'Z', 'us.zoom.xos'},
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function() focusOrSwitch(k[2]) end)
 end)
