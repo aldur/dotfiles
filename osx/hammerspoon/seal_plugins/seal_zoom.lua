@@ -27,11 +27,10 @@ function obj.choicesZoom(query)
     local choices = {}
 
     for _, room in pairs(obj.zoom_rooms) do
-        if (string.match(room.name:lower(), query) or
-                string.match(room.number, query)) then
+        if string.match(room.name:lower(), query) then
             local choice = {}
             choice['text'] = room.name
-            choice['subText'] = room.roon_number
+            choice['subText'] = room.number
             choice['room_number'] = room.number
             choice['plugin'] = obj.__name
             choice['image'] = obj.__icon
