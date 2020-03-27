@@ -407,17 +407,17 @@ local function pingResult(object, message, _, _)
         if avg == 0.0 then
             hs.alert.show("No network")
         elseif avg < 200.0 then
-            hs.alert.show("Network good (" .. avg .. "ms)")
+            hs.alert.show("Network: good (" .. avg .. "ms)")
         elseif avg < 500.0 then
-            hs.alert.show("Network poor(" .. avg .. "ms)")
+            hs.alert.show("Network: poor(" .. avg .. "ms)")
         else
-            hs.alert.show("Network bad(" .. avg .. "ms)")
+            hs.alert.show("Network: bad(" .. avg .. "ms)")
         end
     end
 end
 
 hs.hotkey.bind(hyper_shift, "p", function()
-    hs.network.ping.ping("8.8.8.8", 1, 0.01, 1.0, "any", pingResult)
+    hs.network.ping.ping("8.8.8.8", 1, 0.01, 0.5, "any", pingResult)
 end)
 
 -- Emoji chooser
