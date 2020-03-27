@@ -303,9 +303,14 @@ hs.fnutils.each({
 end)
 
 -- Quick open Downloads/Desktop
+local home = os.getenv("HOME")
 hs.fnutils.each({{"d", "Downloads"}, {"s", "Desktop"}}, function(k)
     hs.hotkey.bind(hyper, k[1], function()
-        os.execute('open ~/' .. k[2])
+        -- os.execute('open ~/' .. k[2])
+        local url = 'file://' .. home .. '/' .. k[2]
+        if not hs.urlevent.openURL(url) then
+            logger.e('Error opening URL:' .. url)
+        end
     end)
 end)
 
@@ -394,6 +399,27 @@ hs.fnutils.each({
         -- Fallback to open and focus the first one.
         focusOrSwitch(k[2][1])
     end)
+end)
+
+-- Get network latency
+-- Source: https://medium.com/@robhowlett/hammerspoon-the-best-mac-software-youve-never-heard-of-40c2df6db0f8
+local function pingResult(object, message, _, _)
+    if message == "didFinish" then
+        local avg = tonumber(string.match(object:summary(), '/(%d+.%d+)/'))
+        if avg == 0.0 then
+            hs.alert.show("No network")
+        elseif avg < 200.0 then
+            hs.alert.show("Network good (" .. avg .. "ms)")
+        elseif avg < 500.0 then
+            hs.alert.show("Network poor(" .. avg .. "ms)")
+        else
+            hs.alert.show("Network bad(" .. avg .. "ms)")
+        end
+    end
+end
+
+hs.hotkey.bind(hyper_shift, "p", function()
+    hs.network.ping.ping("8.8.8.8", 1, 0.01, 1.0, "any", pingResult)
 end)
 
 -- Emoji chooser
