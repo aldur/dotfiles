@@ -1,11 +1,12 @@
 -- Original credits: https://github.com/VFS/.hammerspoon/blob/master/tools/clipboard.lua
+-- luacheck: globals hs
 -- luacheck: ignore module
 
 local pasteboard_name='com.aldur.clipboard'
 local archive_name='com.aldur.clipboard.archive'
 local logger = hs.logger.new('clipboard')
 
-module = {
+local module = {
     frequency=1.0,  -- Clipboar polling frequency.
     chooser_max_size=1000,  -- Number of elements to store in the chooser.
     element_max_length=1000,  -- Maximum length of elements to store.

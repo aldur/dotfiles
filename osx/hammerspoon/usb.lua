@@ -1,5 +1,8 @@
 -- USB related callbacks.
 
+-- luacheck: globals hs
+-- luacheck: globals globals
+
 local function usbDeviceCallback(data)
     if data["productID"] == 49944 and data["vendorID"] == 1133 then
         if (data["eventType"] == "added") then
