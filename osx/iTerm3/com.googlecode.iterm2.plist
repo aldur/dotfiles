@@ -16,6 +16,8 @@
 	<true/>
 	<key>AppleAntiAliasingThreshold</key>
 	<integer>1</integer>
+	<key>ApplePressAndHoldEnabled</key>
+	<false/>
 	<key>AppleScrollAnimationEnabled</key>
 	<integer>0</integer>
 	<key>AppleSmoothFixedFontsSizeThreshold</key>
@@ -3312,7 +3314,7 @@ tmux.Detach</string>
 	dWxs0g0ODxJaTlMub2JqZWN0c1YkY2xhc3OiEBGAAoAKgA3TFA0OFRkdV05TLmtleXOj
 	FhcYgAOABIAFoxobHIAGgAeACIAJWklkZW50aWZpZXJVV2lkdGhWSGlkZGVuUTAjQGjA
 	AAAAAAAI0iUmJyhaJGNsYXNzbmFtZVgkY2xhc3Nlc1xOU0RpY3Rpb25hcnmiJylYTlNP
-	YmplY3TTFA0OKy8doxYXGIADgASABaMwMRyAC4AMgAiACVExI0BzsZ2yLQ5W0iUmNzhe
+	YmplY3TTFA0OKy8doxYXGIADgASABaMwMRyAC4AMgAiACVExI0B0oZ2yLQ5W0iUmNzhe
 	TlNNdXRhYmxlQXJyYXmjNzkpV05TQXJyYXkACAARABoAJAApADIANwBJAEwAUgBUAGMA
 	aQBuAHkAgACDAIUAhwCJAJAAmACcAJ4AoACiAKYAqACqAKwArgC5AL8AxgDIANEA0gDX
 	AOIA6wD4APsBBAELAQ8BEQETARUBGQEbAR0BHwEhASMBLAExAUABRAAAAAAAAAIBAAAA
@@ -3342,9 +3344,9 @@ tmux.Detach</string>
 	<key>NSWindow Frame UKCrashReporter</key>
 	<string>99 294 592 584 0 0 1440 878 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>5 290 1050 762 0 0 1920 1057 </string>
+	<string>0 0 1440 877 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
-	<string>11 156 1906 888 0 0 1920 1057 </string>
+	<string>0 108 1050 762 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 2</key>
 	<string>197 47 1050 762 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 3</key>
@@ -5057,16 +5059,22 @@ tmux.Detach</string>
 	<key>NoSyncAllAppVersions</key>
 	<array>
 		<string>3.3.3beta1</string>
-		<string>3.3.0beta6</string>
-		<string>3.3.7beta4</string>
-		<string>3.3.3beta2</string>
-		<string>3.3.0beta16</string>
-		<string>3.3.2beta2</string>
-		<string>3.3.0beta13</string>
+		<string>3.3.8beta5</string>
 		<string>3.3.2beta1</string>
-		<string>3.3.0beta15</string>
 		<string>3.3.0beta12</string>
+		<string>3.3.0beta13</string>
+		<string>3.3.0beta6</string>
+		<string>3.3.0beta15</string>
+		<string>3.3.8beta2</string>
+		<string>3.3.0beta16</string>
+		<string>3.3.3beta2</string>
+		<string>3.3.8beta4</string>
+		<string>3.3.9beta1</string>
+		<string>3.3.2beta2</string>
+		<string>3.3.7beta4</string>
+		<string>3.3.10beta2</string>
 		<string>3.3.8beta1</string>
+		<string>3.3.9</string>
 	</array>
 	<key>NoSyncAutoBurialReveal</key>
 	<true/>
@@ -5088,12 +5096,19 @@ tmux.Detach</string>
 	<true/>
 	<key>NoSyncDoNotWarnBeforePastingOneLineEndingInNewlineAtShellPrompt_selection</key>
 	<integer>1</integer>
-	<key>NoSyncFrame_SharedPreferences</key>
+	<key>NoSyncFrame_SessionsPreferences</key>
 	<dict>
 		<key>screenFrame</key>
 		<string>{{0, 0}, {1920, 1080}}</string>
 		<key>topLeft</key>
-		<string>{686, 615}</string>
+		<string>{657, 922}</string>
+	</dict>
+	<key>NoSyncFrame_SharedPreferences</key>
+	<dict>
+		<key>screenFrame</key>
+		<string>{{0, 0}, {1440, 900}}</string>
+		<key>topLeft</key>
+		<string>{269, 595}</string>
 	</dict>
 	<key>NoSyncHaveRequestedFullDiskAccess</key>
 	<true/>
@@ -5102,7 +5117,7 @@ tmux.Detach</string>
 	<key>NoSyncInstallationId</key>
 	<string>9C205E01-822A-42D2-BF04-DD0B95E91CF5</string>
 	<key>NoSyncLaunchExperienceControllerRunCount</key>
-	<integer>52</integer>
+	<integer>64</integer>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile</key>
 	<true/>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile_selection</key>
@@ -5460,6 +5475,14 @@ tmux.Detach</string>
 				<true/>
 				<key>name</key>
 				<string>style</string>
+				<key>nonterminalContext</key>
+				<integer>0</integer>
+			</dict>
+			<dict>
+				<key>isTerminal</key>
+				<true/>
+				<key>name</key>
+				<string>currentTab.currentSession.jobPid</string>
 				<key>nonterminalContext</key>
 				<integer>0</integer>
 			</dict>
@@ -6071,7 +6094,6 @@ tmux.Detach</string>
 		<string>Captured Output</string>
 		<string>Jobs</string>
 		<string>Notes</string>
-		<string>Paste History</string>
 	</array>
 	<key>TripleClickSelectsFullWrappedLines</key>
 	<true/>
@@ -8662,7 +8684,7 @@ tmux.Detach</string>
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>3.3.8beta1</string>
+	<string>3.3.9</string>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>3</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
