@@ -58,8 +58,6 @@ local function cleanup()
     -- hs.fnutils.each(globals.watchable_watcher, function(w) w:release() end)
     hs.fnutils.each(globals.wfilters, function(f) f:unsubscribeAll() end)
 
-    if globals.pushbullet then globals.pushbullet:close() end
-
     for key in pairs(globals) do globals[key] = nil end
     globals = nil
 end
@@ -473,6 +471,13 @@ end):enable()
 -- Pocket {{{
 
 require('pocket')
+
+-- }}}
+
+-- Audio input/output {{{
+
+globals.audio = require('audio')
+hs.hotkey.bind(hyper, "a", globals.audio.toggleAudioInput)
 
 -- }}}
 
