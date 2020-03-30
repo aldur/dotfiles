@@ -4,6 +4,7 @@
 
 -- luacheck: globals hs
 -- luacheck: globals globals
+-- luacheck: no self
 
 -- Require {{{
 
@@ -23,10 +24,11 @@ local shadows = false
 local wf = hs.window.filter
 
 globals = {}
-globals['WiFi'] = {}
-globals['watcher'] = {}
-globals['windows'] = {}
-globals['wfilters'] = {}
+globals.WiFi = {}
+globals.watcher = {}
+globals.windows = {}
+globals.wfilters = {}
+globals.modals = {}
 
 local cardinals = { h='west', l='east', k='north', j='south', }
 local snapped = {
@@ -187,7 +189,9 @@ local function setFrame(window, frame)
 
     saveFrame(window)  -- Save the current frame.
 
-    if frame and frame.x <= 1 and frame.y <= 1
+    if frame == 'full' then
+        hs.grid.maximizeWindow(window)
+    elseif frame and frame.x <= 1 and frame.y <= 1
         and frame.w <= 1 and frame.h <= 1 then
         window:moveToUnit(frame)
     else
@@ -280,11 +284,23 @@ hs.hotkey.bind(hyper_shift, "v", function()
     hs.eventtap.keyStrokes(hs.pasteboard.getContents())
 end)
 
+-- Grid Snapping Mode {{{
+
+local h = hs.hotkey.modal.new(hyper, 'q')
+globals.modals.grid_snapping_hotkey = h
+function h:entered()
+    hs.alert('Entered grid snapping mode')
+end
+function h:exited()
+    hs.alert('Exited grid snapping mode')
+end
+h:bind('', 'escape', function() h:exit() end)
+
 -- Move through the grid
 hs.fnutils.each({
-    {"up", "Up"}, {"down", "Down"}, {"left", "Left"}, {"right", "Right"},
+    {"k", "Up"}, {"j", "Down"}, {"h", "Left"}, {"l", "Right"},
 }, function(k)
-    hs.hotkey.bind(hyper, k[1], function()
+    h:bind('', k[1], nil, function()
         saveFrame(hs.window.focusedWindow());
         hs.grid["pushWindow" .. k[2]]()
     end)
@@ -292,13 +308,15 @@ end)
 
 -- Shrink/enlarge within the grid
 hs.fnutils.each({
-    {"up", "Shorter"}, {"down", "Taller"}, {"left", "Thinner"}, {"right", "Wider"},
+    {"k", "Shorter"}, {"j", "Taller"}, {"h", "Thinner"}, {"l", "Wider"},
 }, function(k)
-    hs.hotkey.bind(hyper_shift, k[1], function()
+    h:bind('shift', k[1], nil, function()
         saveFrame(hs.window.focusedWindow());
         hs.grid["resizeWindow" .. k[2]]()
     end)
 end)
+
+-- }}}
 
 -- Quick open Downloads/Desktop
 local home = os.getenv("HOME")
@@ -313,10 +331,11 @@ hs.fnutils.each({{"d", "Downloads"}, {"s", "Desktop"}}, function(k)
 end)
 
 -- Fullscreen / revert to original
-hs.fnutils.each({{"delete", nil}, {"return", hs.geometry(0,0,1,1)}}, function(k)
+hs.fnutils.each({{"delete", nil}, {"return", 'full'}}, function(k)
     hs.hotkey.bind(hyper, k[1], function()
         local focused = hs.window.focusedWindow()
-        if focused then setFrame(focused, k[2]) end
+        if not focused then return end
+        setFrame(focused, k[2])
     end)
 end)
 
