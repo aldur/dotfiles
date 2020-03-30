@@ -7,23 +7,27 @@ local module = {}
 module.is_muted = false
 module.__menubar = nil
 
-function module.audiowatch(arg)
-    -- TODO: if a new input device gets added, we might need to mute it as well.
-    logger.df("Audiowatch arg: %s", arg)
-end
-
-function module.toggleAudioInput()
-    module.is_muted = not module.is_muted
+local function setAudioInput(is_muted)
     for _, d in pairs(hs.audiodevice.allInputDevices()) do
         local name = d:name()
         if name == nil then name = '<nil>' end
-        if module.is_muted then
+        if is_muted then
             logger.d('Muting device ' .. name .. ' input.')
         else
             logger.d('Unmuting device ' .. name .. ' input.')
         end
         d:setInputMuted(module.is_muted)
     end
+end
+
+function module.audiowatch(_)
+    -- When a audio device gets added or removed, we mute it as well.
+    setAudioInput(module.is_muted)
+end
+
+function module.toggleAudioInput()
+    module.is_muted = not module.is_muted
+    setAudioInput(module.is_muted)
     module.toggleMutedMenubar()
 end
 
