@@ -50,7 +50,7 @@ hs.hotkey.setLogLevel('warning')  -- Less verbose hotkey logging
 hs.application.enableSpotlightForNameSearches(true)  -- Enable alternate application names
 hs.grid.setGrid('11x7')  -- Grid size
 local margin = hs.geometry('5x5')
-hs.grid.setMargin(margin)
+hs.grid.setMargins(margin)
 
 -- }}}
 
