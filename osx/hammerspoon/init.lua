@@ -239,12 +239,10 @@ end
 
 -- Window filters {{{
 
-globals.wfilters.finder = wf.copy(
-    wf.defaultCurrentSpace):setDefaultFilter(false):setAppFilter('Finder')
-globals.wfilters.finder:subscribe(wf.windowDestroyed, function(_, _, _)
-    -- Focus last focused window as soon as a window is destroyed.
-    focusLastFocused()
-end)
+-- Focus last window when closing Finder.
+globals.wfilters.finder = wf.copy(wf.defaultCurrentSpace):
+    setDefaultFilter(false):setAppFilter('Finder'):
+    subscribe(wf.windowDestroyed, focusLastFocused)
 
 -- }}}
 
@@ -449,43 +447,22 @@ globals.emojis:bindHotkeys({toggle={hyper, 'e'}})
 
 -- iTerm2 {{{
 
-globals.wfilters.iterm = wf.new(false):setAppFilter('iTerm2', {})
-
 -- Launch iTerm2 by pressing alt-space
-hs.hotkey.new({'alt'}, 'space', function()
+-- Showing/hiding the window is managed within iTerm itself
+local function launchOrFocusITerm()
     local iTerms = hs.application.applicationsForBundleID('com.googlecode.iterm2')
     assert(#iTerms <= 1)
 
     if #iTerms == 0 then
         hs.application.open('com.googlecode.iterm2')
-        return
-    end
-
-    local iTerm2 = iTerms[1]
-    local windows = globals.wfilters.iterm:getWindows()
-
-    if #windows == 0 then
-        hs.osascript.applescript('tell application "iTerm2" \n'
-            .. 'create window with default profile\n' ..
-            'end tell')
-        return
     else
-        for _, window in pairs(windows) do
-            if window:isMinimized() then
-                window:unminimize()
-                return
-            end
-
-            if window == hs.window.focusedWindow() then
-            iTerm2:hide()
-                return
-            end
-        end
-
-        local mainWindow = iTerm2:mainWindow()
-        if mainWindow then mainWindow:focus() else windows[1]:focus() end
+        -- Pass the hotkey through.
+        globals.iTermHotkey:disable()
+        hs.eventtap.keyStroke({'alt'}, 'space')
+        globals.iTermHotkey:enable()
     end
-end):enable()
+end
+globals.iTermHotkey = hs.hotkey.new({'alt'}, 'space', launchOrFocusITerm):enable()
 
 -- }}}
 
