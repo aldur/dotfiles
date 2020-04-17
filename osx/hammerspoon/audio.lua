@@ -2,7 +2,7 @@
 -- luacheck: globals globals
 
 local logger = hs.logger.new('mic')
--- logger.level = 3
+logger.level = 3
 
 local module = {}
 module.__menubar = nil
@@ -47,9 +47,7 @@ function module.localAudioWatchCallback(device_uid, event_name, event_scope, _)
 
         if d:inputMuted() ~= module.isMuted then
             local m = 'false'
-            if module.isMuted then
-                m = 'true'
-            end
+            if module.isMuted then m = 'true' end
             logger.i(
                 'Device named ' .. name ..' did not respect the module `isMuted` state (' .. m .. '). Re-setting it.'
             )
