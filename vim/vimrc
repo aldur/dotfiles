@@ -60,7 +60,6 @@
     " Deoplete and its plugins {{{
         Plug 'Shougo/deoplete.nvim', has('nvim') ? { 'do': ':UpdateRemotePlugins' } : {}
 
-        Plug 'zchee/deoplete-jedi'                  " Python completion
         Plug 'zchee/deoplete-go', { 'do': 'make' }  " Go completion
         Plug 'Shougo/neco-vim'                      " VIM completion
 
