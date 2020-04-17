@@ -11,14 +11,17 @@ call deoplete#custom#option({
 call deoplete#custom#source('ultisnips', 'rank', 1000) " Keep snippets on top
 
 let s:default_sources = ['buffer', 'member', 'tag', 'file', 'ultisnips']  " 'omni' is disabled 'cause is not async
+" cpp completion provided by CCLS
+" py completion provided by python-language-server
+" latex completion provided by texlab
 call deoplete#custom#option('sources', {
             \ '_': s:default_sources,
             \ 'cpp': s:default_sources + ['ale'],
             \ 'vim': s:default_sources + ['vim'],
-            \ 'tex': s:default_sources + ['look'],
+            \ 'tex': s:default_sources + ['look'] + ['ale'],
             \ 'gitcommit': s:default_sources + ['look'],
             \ 'markdown': s:default_sources + ['look'],
-            \ 'python': s:default_sources + ['jedi'],
+            \ 'python': s:default_sources + ['ale'],
             \ 'go': s:default_sources + ['go'],
             \})
 
