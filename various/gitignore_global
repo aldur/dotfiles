@@ -35,6 +35,10 @@
 ehthumbs.db
 Thumbs.db
 
+# Vim backup files #
+####################
+*~
+
 # Python files #
 ################
 __pycache__/
