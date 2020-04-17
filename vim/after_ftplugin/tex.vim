@@ -8,3 +8,6 @@ iabbrev etal \emph{et al.}
 
 " }}} Abbreviations "
 
+let b:ale_linters = 'all'
+" Try setting the LSP root for the texlab language server
+let b:ale_lsp_root = gutentags#get_project_root(expand('%:p:h', 1))
