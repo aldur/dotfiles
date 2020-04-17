@@ -91,6 +91,3 @@ export MANPATH=$MANPATH
 
 # Enable iTerm and tmux integration (breaks non -CC sessions)
 export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
-
-# Set `bat` theme
-export BAT_THEME="Monokai Extended"
