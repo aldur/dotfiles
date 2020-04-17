@@ -26,7 +26,7 @@ let g:ale_cpp_ccls_init_options = {
             \   'clang': {
             \        'extraArgs': [
             \	            '-isystem', '/Library/Developer/CommandLineTools/usr/include/c++/v1',
-            \	            '-isystem', '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include'
+            \	            '-isystem', '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include'
             \        ],
             \   },
             \ }
