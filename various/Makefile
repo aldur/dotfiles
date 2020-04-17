@@ -3,7 +3,7 @@ CONFIG_FILES = flake8 pep8
 
 .PHONY: all git $(DOTFILES) $(CONFIG_FILES)
 
-all: $(DOTFILES) $(CONFIG_FILES) git _yamllint
+all: $(DOTFILES) $(CONFIG_FILES) git _yamllint _bat
 
 git: 
 	git config --global user.name "Adriano Di Luzio"
@@ -28,3 +28,7 @@ $(CONFIG_FILES):
 _yamllint: yamllint
 	mkdir -p ${HOME}/.config/yamllint/
 	$(LN) $(shell readlink -f yamllint) ${HOME}/.config/yamllint/config
+
+_bat: bat
+	mkdir -p ${HOME}/.config/bat/
+	$(LN) $(shell readlink -f bat) ${HOME}/.config/bat/config
