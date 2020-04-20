@@ -9,7 +9,6 @@ let g:netrw_silent = 1  " Do not output `scp` commands etc, while saving.
 let g:netrw_browse_split = 0  " Open new files in same window
 let g:netrw_altv = 1  " Split to right
 let g:netrw_winsize = 25  " Window height/width on split
-let g:netrw_list_hide = netrw_gitignore#Hide()  " Hide git-ignored files
 let g:netrw_liststyle = 3  " Tree style listing
 
 autocmd vimrc FileType netrw setl bufhidden=wipe  " Wipe netrw buffers when hidden
