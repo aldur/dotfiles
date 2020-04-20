@@ -38,6 +38,7 @@ Thumbs.db
 # Vim backup files #
 ####################
 *~
+.vim_backups/
 
 # Python files #
 ################
