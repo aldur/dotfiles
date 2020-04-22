@@ -239,7 +239,7 @@
 
     " vim-wiki {{{
         let g:vimwiki_table_mappings = 0  " Disable tab mapping in insert mode
-        let g:vimwiki_list = [{'maxhi': 1, 'auto_export': 1, 'auto_tags': 1}]
+        let g:vimwiki_list = [{'path': '~/Documents/Notes', 'maxhi': 1, 'auto_export': 1, 'auto_tags': 1}]
     " }}}
 " }}}
 
