@@ -1,7 +1,3 @@
-if !executable('ctags')
-    finish
-endif
-
 if isdirectory($HOME . '/.vim_backups/tags/') == 0
     call mkdir($HOME . '/.vim_backups/tags/', 'p')
 endif
