@@ -21,6 +21,7 @@ call deoplete#custom#option('sources', {
             \ 'tex': s:default_sources + ['look'] + ['ale'],
             \ 'gitcommit': s:default_sources + ['look'],
             \ 'markdown': s:default_sources + ['look'],
+            \ 'vimwiki': s:default_sources + ['look'] + ['omni'],
             \ 'python': s:default_sources + ['ale'],
             \ 'go': s:default_sources + ['go'],
             \})
