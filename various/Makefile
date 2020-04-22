@@ -1,11 +1,12 @@
-DOTFILES = psqlrc radare2rc curlrc gdbinit ctags inputrc ideavimrc chktexrc pylintrc gitignore_global
+include ../include.mk
+
+DOTFILES = psqlrc radare2rc curlrc gdbinit ctags inputrc ideavimrc chktexrc pylintrc gitignore_global weechat
 CONFIG_FILES = flake8 pep8
 
-.PHONY: all git $(DOTFILES) $(CONFIG_FILES)
-
+.PHONY: all
 all: $(DOTFILES) $(CONFIG_FILES) git _yamllint _bat
 
-git: 
+git:
 	git config --global user.name "Adriano Di Luzio"
 	git config --global user.email "adrianodl@hotmail.it"
 	git config --global commit.verbose true
@@ -26,9 +27,9 @@ $(CONFIG_FILES):
 	$(LN) $(shell readlink -f $@) ${HOME}/.config/$@
 
 _yamllint: yamllint
-	mkdir -p ${HOME}/.config/yamllint/
-	$(LN) $(shell readlink -f yamllint) ${HOME}/.config/yamllint/config
+	mkdir -p ${HOME}/.config/$</
+	$(LN) $(shell readlink -f $<) ${HOME}/.config/$</config
 
 _bat: bat
-	mkdir -p ${HOME}/.config/bat/
-	$(LN) $(shell readlink -f bat) ${HOME}/.config/bat/config
+	mkdir -p ${HOME}/.config/$</
+	$(LN) $(shell readlink -f $<) ${HOME}/.config/$</config

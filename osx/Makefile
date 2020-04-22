@@ -1,8 +1,9 @@
-DOTFILES = latexmkrc hammerspoon tmux.conf zprofile zshrc.local tmux-osx.conf hushlogin
+include ../include.mk
 
-.PHONY: all $(DOTFILES) karabiner gpg-agent
+DOTFILES = latexmkrc hammerspoon tmux.conf tmux-osx.conf hushlogin zprofile zshrc.local
 
-all: $(DOTFILES) karabiner gpg-agent
+.PHONY: all gpg-agent karabiner
+all: $(DOTFILES)
 
 $(DOTFILES):
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@

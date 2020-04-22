@@ -1,5 +1,6 @@
-.PHONY: vale
+include ../include.mk
 
+.PHONY: all
 all: vale styles link
 
 vale:

@@ -40,8 +40,16 @@ function obj.archiveClipboard()
 end
 
 function obj.meetingNote()
-    local success, _, _ = hs.osascript.javascriptFromFile(
-        [[/Users/aldur/Library/Mobile Documents/com~apple~CloudDocs/Keyless/KeylessEventNotes.scpt]])
+    local success, _, e = hs.applescript([[
+    set currentEvent to do shell script "/usr/local/bin/icalBuddy --includeOnlyEventsFromNowOn --noCalendarNames --limitItems 1 --includeEventProps title,datetime,attendees --bullet '' eventsToday | python3 -c \"import fileinput; lines = list(l.strip() for l in fileinput.input()); print(f'''<body><h1>{lines[0]}</h1><br>{'<br>'.join(lines[1:])}<br></body>''')\""
+    tell application "Notes"
+        tell account "iCloud"
+            make new note at folder "Keyless" with properties {name:"", body:currentEvent}
+            show
+        end tell
+    end tell
+    ]])
+    print(hs.inspect.inspect(e))
     if not success then obj.__logger.e('Got an error while creating meeting note.') end
 end
 

@@ -1,25 +1,13 @@
 # TODO: check for requirements.
+TARGETS = zsh vim various ssh weechat vale
 
-SUBDIRS = zsh vim various ssh
-
-OS := $(shell uname)
-ifeq ($(OS), Darwin)
-	SUBDIRS += osx
-else
-	SUBDIRS += arch
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+TARGETS += osx
 endif
 
-export LN = ln -sfT
+.PHONY: all
+all: $(TARGETS)
 
-.PHONY: all $(SUBDIRS) weechat vale
-
-all: $(SUBDIRS) weechat
-
-$(SUBDIRS):
-	$(MAKE) -C $@
-
-weechat:
-	$(LN) $(shell readlink -f weechat) ${HOME}/.weechat
-
-vale:
+$(TARGETS):
 	$(MAKE) -C $@
