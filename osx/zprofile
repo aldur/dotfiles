@@ -66,6 +66,9 @@ PATH=$HOME/.vale/bin:$PATH
 # Integrate Python executables
 PATH=$HOME/Library/Python/3.7/bin:$PATH
 
+# Integrate Ruby gems
+PATH=/usr/local/lib/ruby/gems/2.7.0/bin:$PATH
+
 # Customize LESS
 export LESS='-R -g -i'
 
