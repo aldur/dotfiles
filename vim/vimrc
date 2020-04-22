@@ -7,6 +7,23 @@
     augroup vimrc
         autocmd!
     augroup end
+
+    " {{{ Providers
+        " This needs to be done before loading plugins, as they might
+        " require/load providers.
+
+        " Disable non-required providers
+        if has('nvim')
+            let g:loaded_python_provider = 0  " Disable Python 2 support.
+            let g:loaded_ruby_provider = 0  " Disable Ruby support.
+            let g:loaded_node_provider = 0  " Disable nodeJS support.
+        endif
+
+        " Path to homebrew Python3 for nvim
+        if filereadable('/usr/local/bin/python3')
+            let g:python3_host_prog = '/usr/local/bin/python3'
+        end
+    " }}}
 " }}}
 
 " Vim-plug {{{
@@ -20,10 +37,7 @@
 
     " The list of installed plugins
     Plug 'Konfekt/FastFold'                        " Better fold refresh
-    Plug 'SirVer/ultisnips'                        " Snippets engine
-    Plug 'honza/vim-snippets'                      " Vim snippets
     Plug 'keith/investigate.vim'                   " Smart documentation finder
-    Plug 'ludovicchabant/vim-gutentags'            " Automatic tag management
     Plug 'machakann/vim-highlightedyank'           " Highlight last yanked object
     Plug 'dense-analysis/ale'                      " Async linting engine
     Plug 'romainl/vim-qf'                          " Fix the quickfix
@@ -32,7 +46,10 @@
     Plug 'tpope/vim-commentary'                    " Toggle comments
     Plug 'tpope/vim-repeat'                        " Enable supported plugin actions to be repeated with '.'
     Plug 'tpope/vim-surround'                      " All about surrounding
-    Plug 'tpope/vim-fugitive'                      " A GIT wrapper
+
+    " Plug 'tpope/vim-fugitive'                      " A GIT wrapper
+
+    Plug 'vimwiki/vimwiki'                         " Your own VIM wiki
 
     " Fuzzy files, tags, life.
     if has('mac') && executable('fzf')  " Install `fzf` with homebrew
@@ -41,6 +58,10 @@
         Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
         Plug 'junegunn/fzf.vim'
     end
+
+    if executable('ctags')
+        Plug 'ludovicchabant/vim-gutentags'            " Automatic tag management
+    endif
 
     " Appearance and Statusline
     Plug 'itchyny/lightline.vim'                  " Configure the statusbar
@@ -57,16 +78,33 @@
         Plug 'fatih/vim-go', { 'for': 'go' }
     " }}}
 
-    " Deoplete and its plugins {{{
-        Plug 'Shougo/deoplete.nvim', has('nvim') ? { 'do': ':UpdateRemotePlugins' } : {}
+    let b:has_nvim_python3 = has('nvim') && has('python3')
 
-        Plug 'zchee/deoplete-go', { 'do': 'make' }  " Go completion
-        Plug 'Shougo/neco-vim'                      " VIM completion
+    " Deoplete and its plugins {{{
+        " Conditionally load `deoplete` and friends if on `nvim` with `python3`.
+        Plug 'Shougo/deoplete.nvim', b:has_nvim_python3 ? { 'do': ':UpdateRemotePlugins' } : { 'on': [] }
+
+        " Go completion
+        Plug 'zchee/deoplete-go', b:has_nvim_python3 ? { 'do': ':make' } : { 'on': [] }
+
+        " VIM completion
+        Plug 'Shougo/neco-vim', b:has_nvim_python3 ? {} : { 'on': [] }
 
         if executable('look')
-            Plug 'ujihisa/neco-look'                    " Spell completion
+            " Spell completion
+            Plug 'ujihisa/neco-look', b:has_nvim_python3 ? {} : { 'on': [] }
         endif
     " }}}
+
+    " Snippets  {{{
+        " Conditionally load `ultisnips` if on `nvim` with `python3`.
+
+        " Snippets engine
+        Plug 'SirVer/ultisnips', b:has_nvim_python3 ? {} : { 'on': [] }
+        " Vim snippets
+        Plug 'honza/vim-snippets', b:has_nvim_python3 ? {} : { 'on': [] }
+    " }}}
+
 
     " Enable Vim-stay after all the other plugins
     Plug 'kopischke/vim-stay'                      " Save and restore cursor position, folds and so on
@@ -74,6 +112,10 @@
 
     " ...Vim-plug is done
     call plug#end()
+
+    " Disable some of VIM standard plugins
+    let g:loaded_2html_plugin = 1  " Disable tohtml.vim
+    let g:loaded_tutor_mode_plugin = 1  " Disable vimtutor
 " }}}
 
 " General {{{
@@ -193,6 +235,11 @@
 
     " vim-polyglot {{{
         let g:polyglot_disabled = ['tex', 'latex', 'python-compiler', ]
+    " }}}
+
+    " vim-wiki {{{
+        let g:vimwiki_table_mappings = 0  " Disable tab mapping in insert mode
+        let g:vimwiki_list = [{'maxhi': 1, 'auto_export': 1, 'auto_tags': 1}]
     " }}}
 " }}}
 
