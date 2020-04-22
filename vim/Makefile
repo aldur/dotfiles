@@ -1,8 +1,11 @@
-.PHONY: all neovim templates autoload plugin after_plugin after_ftplugin
-all: vimrc neovim templates autoload plugin after_plugin after_ftplugin
+.PHONY: all neovim templates autoload plugin after_plugin after_ftplugin scripts
+all: vimrc neovim templates autoload plugin after_plugin after_ftplugin scripts
 
 vimrc:
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
+
+scripts: vimf
+	$(LN) $(shell readlink -f $@) ${HOME}/.vim/$@
 
 templates: vimf
 	$(LN) $(shell readlink -f $@) ${HOME}/.vim/$@
