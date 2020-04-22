@@ -34,10 +34,10 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+.zcompdump*
 
 # Vim backup files #
 ####################
-*~
 .vim_backups/
 
 # Python files #
