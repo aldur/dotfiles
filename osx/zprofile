@@ -45,20 +45,11 @@ VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
 export VIRTUALENVWRAPPER_SCRIPT=/usr/local/bin/virtualenvwrapper.sh
 
 # Lua/Luarocks PATH="${HOME}/.luarocks/bin:$PATH" 
-# Android development
-export ANT_HOME=/usr/local/opt/ant
-export MAVEN_HOME=/usr/local/opt/maven
-export GRADLE_HOME=/usr/local/opt/gradle
-export ANDROID_HOME=/usr/local/share/android-sdk
-export ANDROID_NDK_HOME=/usr/local/share/android-ndk
-export INTEL_HAXM_HOME=/usr/local/Caskroom/intel-haxm
 
-PATH=$ANT_HOME/bin:$PATH
-PATH=$MAVEN_HOME/bin:$PATH
-PATH=$GRADLE_HOME/bin:$PATH
-PATH=$ANDROID_HOME/tools:$PATH
-PATH=$ANDROID_HOME/platform-tools:$PATH
-PATH=$ANDROID_HOME/build-tools/23.0.1:$PATH
+# Android development
+export ANDROID_HOME=~/Library/Android/sdk
+export ANDROID_SDK_ROOT=~/Library/Android/sdk
+export ANDROID_AVD_HOME=~/.android/avd
 
 # Integrate Vale
 PATH=$HOME/.vale/bin:$PATH
