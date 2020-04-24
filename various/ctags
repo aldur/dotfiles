@@ -9,7 +9,7 @@
 --exclude=log/*
 
 --langdef=markdown
---langmap=markdown:.md .markdown .mkd
+--langmap=markdown:.md .markdown .mkd .wiki
 
 --langdef=Go
 --langmap=Go:.go
