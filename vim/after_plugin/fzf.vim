@@ -18,10 +18,10 @@ autocmd vimrc FileType fzf set laststatus=0 noshowmode noruler
 
 nnoremap <silent> <leader><space> :call <SID>FZFFiles()<CR>
 nnoremap <silent> <leader>a :Buffers<CR>
-nnoremap <silent> <leader>A :Ag<CR>
+nnoremap <silent> <leader>g :Ag<CR>
 nnoremap <silent> <leader>tt :BTags<CR>
 nnoremap <silent> <leader>tT :Tags<CR>
-nnoremap <silent> <leader>? :History<CR>
+nnoremap <silent> <leader>h :History<CR>
 nnoremap <silent> <leader>: :History:<CR>
 
 let g:fzf_colors = {
