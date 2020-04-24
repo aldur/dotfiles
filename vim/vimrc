@@ -49,7 +49,7 @@
 
     " Plug 'tpope/vim-fugitive'                      " A GIT wrapper
 
-    Plug 'vimwiki/vimwiki'                         " Your own VIM wiki
+    Plug 'lervag/wiki.vim'
 
     " Fuzzy files, tags, life.
     if has('mac') && executable('fzf')  " Install `fzf` with homebrew
@@ -107,7 +107,13 @@
 
 
     " Enable Vim-stay after all the other plugins
-    Plug 'kopischke/vim-stay'                      " Save and restore cursor position, folds and so on
+    " Plug 'kopischke/vim-stay'                      " Save and restore cursor position, folds and so on
+    " TRIAL: Replace `vim-stay` with:
+    autocmd vimrc BufReadPost *
+      \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+      \ |   exe "normal! g`\""
+      \ | endif
+
     Plug 'sheerun/vim-polyglot'                    " Additional syntaxes / indent, load it after syntax specific plugins
 
     " ...Vim-plug is done
@@ -217,14 +223,6 @@
 " }}}
 
 " Plugin settings {{{
-    " Markdown {{{
-        " Highlight YAML front matter.
-        let g:vim_markdown_frontmatter = 1
-
-        let g:vim_markdown_no_default_key_mappings = 1
-        let g:vim_markdown_conceal = 0
-    " }}}
-
     " Investigate {{{
         " Use Dash on macOS (if available)
         let g:investigate_use_dash=1
@@ -237,10 +235,26 @@
         let g:polyglot_disabled = ['tex', 'latex', 'python-compiler', ]
     " }}}
 
-    " vim-wiki {{{
-        let g:vimwiki_table_mappings = 0  " Disable tab mapping in insert mode
-        let g:vimwiki_list = [{'path': '~/Documents/Notes', 'maxhi': 1, 'auto_export': 1, 'auto_tags': 1}]
-    " }}}
+    " vim.wiki {{{
+        let g:wiki_root = '~/Documents/NotesMD'
+        let g:wiki_filetypes = ['wiki']
+        let g:wiki_link_target_type = 'md'
+
+        let g:wiki_export = {
+            \ 'args' : '-s',
+            \ 'from_format' : 'markdown',
+            \ 'ext' : 'html',
+            \ 'view' : v:true,
+            \ 'output': fnamemodify(tempname(), ':h'),
+            \}
+
+        let g:wiki_mappings_global = {
+                    \ '<plug>(wiki-journal)' : '<plug>',
+                    \ '<plug>(wiki-page-toc)' : '<plug>',
+                    \}
+
+        let g:wiki_mappings_local = g:wiki_mappings_global
+        " }}}
 " }}}
 
 " Ending settings {{{
