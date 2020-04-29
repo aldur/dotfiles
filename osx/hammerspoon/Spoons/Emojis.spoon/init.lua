@@ -4,7 +4,7 @@
 local obj = {}
 obj.__index = obj
 
--- luacheck: globals utf8
+-- luacheck: globals hs
 
 -- Metadata
 obj.name = "Emojis"
@@ -37,13 +37,13 @@ function obj.callback(choice)
         return
     end
     assert(choice.char)
-    hs.eventtap.keyStrokes(hs.utf8.codepointToUTF8(table.unpack(choice.char))) -- luacheck: ignore
+    hs.eventtap.keyStrokes(hs.utf8.codepointToUTF8(table.unpack(choice.char)))
 end
 
 function obj:init()
     -- is the emojis file available?
     print("Starting Emojis Spoon...")
-    local mod, err = table.load(script_path() .. "emojis_json_lua.lua") -- luacheck: ignore
+    local mod, err = table.load(script_path() .. "emoji_json_lua.lua") -- luacheck: ignore
     if err then
         print("Emojis Spoon: table's not here, generating it from json.")
         mod = nil
@@ -52,14 +52,22 @@ function obj:init()
         self.choices = mod
     else
         self.choices = {}
-        for _, emoji in pairs(hs.json.decode(io.open(self.spoonPath .. "/emojis/emojis.json"):read())) do
-            local subText = emoji.shortname
-            if #emoji.keywords > 0 then
-                subText = table.concat(emoji["keywords"], ", ") .. ", " .. subText
+        for _, emoji in pairs(hs.json.decode(io.open(self.spoonPath .. "/emojis/emoji.json"):read())) do
+            -- Skip different skin tones
+            if string.match(emoji.name, 'skin tone') then goto continue end
+
+            local subTexts = {emoji.shortname}
+            for _, k in pairs(emoji.keywords) do
+                -- Skip `uc*` and repeated shortname
+                if not string.match(k, '^uc[0-9]+$') and ':' .. k .. ':' ~= emoji.shortname then
+                    subTexts[#subTexts+1] = k
+                end
             end
+
+            local subText = table.concat(subTexts, ", ")
             local chars =
                 hs.fnutils.imap(
-                hs.fnutils.split(emoji.code_points.output, "-"),
+                hs.fnutils.split(emoji.code_points.base, "-"),
                 function(s)
                     return tonumber(s, 16)
                 end
@@ -71,13 +79,12 @@ function obj:init()
                     text = emoji["name"]:gsub("^%l", string.upper),
                     subText = subText,
                     image_path = emoji["code_points"]["base"],
-                    -- image = hs.image.imageFromPath(
-                    --     self.spoonPath .. "/emojis/png/" .. emoji["code_points"]["base"] .. ".png"
-                    -- ),
                     char = chars,
                     order = tonumber(emoji["order"])
                 }
             )
+
+            ::continue::
         end
         table.sort(
             self.choices,
@@ -94,6 +101,7 @@ function obj:init()
     for _, ch in pairs(self.choices) do
         if ch["image_path"] then
             ch["image"] = hs.image.imageFromPath(self.spoonPath .. "/emojis/png/" .. ch["image_path"] .. ".png")
+            assert(ch["image"])
         end
     end
 

@@ -1781,35300 +1781,21752 @@ return {
    {1779},
    {1780},
    {1781},
-   {1782},
-   {1783},
-   {1784},
-   {1785},
-   {1786},
-   {1787},
-   {1788},
-   {1789},
-   {1790},
-   {1791},
-   {1792},
-   {1793},
-   {1794},
-   {1795},
-   {1796},
-   {1797},
-   {1798},
-   {1799},
-   {1800},
-   {1801},
-   {1802},
-   {1803},
-   {1804},
-   {1805},
-   {1806},
-   {1807},
-   {1808},
-   {1809},
-   {1810},
-   {1811},
-   {1812},
-   {1813},
-   {1814},
-   {1815},
-   {1816},
-   {1817},
-   {1818},
-   {1819},
-   {1820},
-   {1821},
-   {1822},
-   {1823},
-   {1824},
-   {1825},
-   {1826},
-   {1827},
-   {1828},
-   {1829},
-   {1830},
-   {1831},
-   {1832},
-   {1833},
-   {1834},
-   {1835},
-   {1836},
-   {1837},
-   {1838},
-   {1839},
-   {1840},
-   {1841},
-   {1842},
-   {1843},
-   {1844},
-   {1845},
-   {1846},
-   {1847},
-   {1848},
-   {1849},
-   {1850},
-   {1851},
-   {1852},
-   {1853},
-   {1854},
-   {1855},
-   {1856},
-   {1857},
-   {1858},
-   {1859},
-   {1860},
-   {1861},
-   {1862},
-   {1863},
-   {1864},
-   {1865},
-   {1866},
-   {1867},
-   {1868},
-   {1869},
-   {1870},
-   {1871},
-   {1872},
-   {1873},
-   {1874},
-   {1875},
-   {1876},
-   {1877},
-   {1878},
-   {1879},
-   {1880},
-   {1881},
-   {1882},
-   {1883},
-   {1884},
-   {1885},
-   {1886},
-   {1887},
-   {1888},
-   {1889},
-   {1890},
-   {1891},
-   {1892},
-   {1893},
-   {1894},
-   {1895},
-   {1896},
-   {1897},
-   {1898},
-   {1899},
-   {1900},
-   {1901},
-   {1902},
-   {1903},
-   {1904},
-   {1905},
-   {1906},
-   {1907},
-   {1908},
-   {1909},
-   {1910},
-   {1911},
-   {1912},
-   {1913},
-   {1914},
-   {1915},
-   {1916},
-   {1917},
-   {1918},
-   {1919},
-   {1920},
-   {1921},
-   {1922},
-   {1923},
-   {1924},
-   {1925},
-   {1926},
-   {1927},
-   {1928},
-   {1929},
-   {1930},
-   {1931},
-   {1932},
-   {1933},
-   {1934},
-   {1935},
-   {1936},
-   {1937},
-   {1938},
-   {1939},
-   {1940},
-   {1941},
-   {1942},
-   {1943},
-   {1944},
-   {1945},
-   {1946},
-   {1947},
-   {1948},
-   {1949},
-   {1950},
-   {1951},
-   {1952},
-   {1953},
-   {1954},
-   {1955},
-   {1956},
-   {1957},
-   {1958},
-   {1959},
-   {1960},
-   {1961},
-   {1962},
-   {1963},
-   {1964},
-   {1965},
-   {1966},
-   {1967},
-   {1968},
-   {1969},
-   {1970},
-   {1971},
-   {1972},
-   {1973},
-   {1974},
-   {1975},
-   {1976},
-   {1977},
-   {1978},
-   {1979},
-   {1980},
-   {1981},
-   {1982},
-   {1983},
-   {1984},
-   {1985},
-   {1986},
-   {1987},
-   {1988},
-   {1989},
-   {1990},
-   {1991},
-   {1992},
-   {1993},
-   {1994},
-   {1995},
-   {1996},
-   {1997},
-   {1998},
-   {1999},
-   {2000},
-   {2001},
-   {2002},
-   {2003},
-   {2004},
-   {2005},
-   {2006},
-   {2007},
-   {2008},
-   {2009},
-   {2010},
-   {2011},
-   {2012},
-   {2013},
-   {2014},
-   {2015},
-   {2016},
-   {2017},
-   {2018},
-   {2019},
-   {2020},
-   {2021},
-   {2022},
-   {2023},
-   {2024},
-   {2025},
-   {2026},
-   {2027},
-   {2028},
-   {2029},
-   {2030},
-   {2031},
-   {2032},
-   {2033},
-   {2034},
-   {2035},
-   {2036},
-   {2037},
-   {2038},
-   {2039},
-   {2040},
-   {2041},
-   {2042},
-   {2043},
-   {2044},
-   {2045},
-   {2046},
-   {2047},
-   {2048},
-   {2049},
-   {2050},
-   {2051},
-   {2052},
-   {2053},
-   {2054},
-   {2055},
-   {2056},
-   {2057},
-   {2058},
-   {2059},
-   {2060},
-   {2061},
-   {2062},
-   {2063},
-   {2064},
-   {2065},
-   {2066},
-   {2067},
-   {2068},
-   {2069},
-   {2070},
-   {2071},
-   {2072},
-   {2073},
-   {2074},
-   {2075},
-   {2076},
-   {2077},
-   {2078},
-   {2079},
-   {2080},
-   {2081},
-   {2082},
-   {2083},
-   {2084},
-   {2085},
-   {2086},
-   {2087},
-   {2088},
-   {2089},
-   {2090},
-   {2091},
-   {2092},
-   {2093},
-   {2094},
-   {2095},
-   {2096},
-   {2097},
-   {2098},
-   {2099},
-   {2100},
-   {2101},
-   {2102},
-   {2103},
-   {2104},
-   {2105},
-   {2106},
-   {2107},
-   {2108},
-   {2109},
-   {2110},
-   {2111},
-   {2112},
-   {2113},
-   {2114},
-   {2115},
-   {2116},
-   {2117},
-   {2118},
-   {2119},
-   {2120},
-   {2121},
-   {2122},
-   {2123},
-   {2124},
-   {2125},
-   {2126},
-   {2127},
-   {2128},
-   {2129},
-   {2130},
-   {2131},
-   {2132},
-   {2133},
-   {2134},
-   {2135},
-   {2136},
-   {2137},
-   {2138},
-   {2139},
-   {2140},
-   {2141},
-   {2142},
-   {2143},
-   {2144},
-   {2145},
-   {2146},
-   {2147},
-   {2148},
-   {2149},
-   {2150},
-   {2151},
-   {2152},
-   {2153},
-   {2154},
-   {2155},
-   {2156},
-   {2157},
-   {2158},
-   {2159},
-   {2160},
-   {2161},
-   {2162},
-   {2163},
-   {2164},
-   {2165},
-   {2166},
-   {2167},
-   {2168},
-   {2169},
-   {2170},
-   {2171},
-   {2172},
-   {2173},
-   {2174},
-   {2175},
-   {2176},
-   {2177},
-   {2178},
-   {2179},
-   {2180},
-   {2181},
-   {2182},
-   {2183},
-   {2184},
-   {2185},
-   {2186},
-   {2187},
-   {2188},
-   {2189},
-   {2190},
-   {2191},
-   {2192},
-   {2193},
-   {2194},
-   {2195},
-   {2196},
-   {2197},
-   {2198},
-   {2199},
-   {2200},
-   {2201},
-   {2202},
-   {2203},
-   {2204},
-   {2205},
-   {2206},
-   {2207},
-   {2208},
-   {2209},
-   {2210},
-   {2211},
-   {2212},
-   {2213},
-   {2214},
-   {2215},
-   {2216},
-   {2217},
-   {2218},
-   {2219},
-   {2220},
-   {2221},
-   {2222},
-   {2223},
-   {2224},
-   {2225},
-   {2226},
-   {2227},
-   {2228},
-   {2229},
-   {2230},
-   {2231},
-   {2232},
-   {2233},
-   {2234},
-   {2235},
-   {2236},
-   {2237},
-   {2238},
-   {2239},
-   {2240},
-   {2241},
-   {2242},
-   {2243},
-   {2244},
-   {2245},
-   {2246},
-   {2247},
-   {2248},
-   {2249},
-   {2250},
-   {2251},
-   {2252},
-   {2253},
-   {2254},
-   {2255},
-   {2256},
-   {2257},
-   {2258},
-   {2259},
-   {2260},
-   {2261},
-   {2262},
-   {2263},
-   {2264},
-   {2265},
-   {2266},
-   {2267},
-   {2268},
-   {2269},
-   {2270},
-   {2271},
-   {2272},
-   {2273},
-   {2274},
-   {2275},
-   {2276},
-   {2277},
-   {2278},
-   {2279},
-   {2280},
-   {2281},
-   {2282},
-   {2283},
-   {2284},
-   {2285},
-   {2286},
-   {2287},
-   {2288},
-   {2289},
-   {2290},
-   {2291},
-   {2292},
-   {2293},
-   {2294},
-   {2295},
-   {2296},
-   {2297},
-   {2298},
-   {2299},
-   {2300},
-   {2301},
-   {2302},
-   {2303},
-   {2304},
-   {2305},
-   {2306},
-   {2307},
-   {2308},
-   {2309},
-   {2310},
-   {2311},
-   {2312},
-   {2313},
-   {2314},
-   {2315},
-   {2316},
-   {2317},
-   {2318},
-   {2319},
-   {2320},
-   {2321},
-   {2322},
-   {2323},
-   {2324},
-   {2325},
-   {2326},
-   {2327},
-   {2328},
-   {2329},
-   {2330},
-   {2331},
-   {2332},
-   {2333},
-   {2334},
-   {2335},
-   {2336},
-   {2337},
-   {2338},
-   {2339},
-   {2340},
-   {2341},
-   {2342},
-   {2343},
-   {2344},
-   {2345},
-   {2346},
-   {2347},
-   {2348},
-   {2349},
-   {2350},
-   {2351},
-   {2352},
-   {2353},
-   {2354},
-   {2355},
-   {2356},
-   {2357},
-   {2358},
-   {2359},
-   {2360},
-   {2361},
-   {2362},
-   {2363},
-   {2364},
-   {2365},
-   {2366},
-   {2367},
-   {2368},
-   {2369},
-   {2370},
-   {2371},
-   {2372},
-   {2373},
-   {2374},
-   {2375},
-   {2376},
-   {2377},
-   {2378},
-   {2379},
-   {2380},
-   {2381},
-   {2382},
-   {2383},
-   {2384},
-   {2385},
-   {2386},
-   {2387},
-   {2388},
-   {2389},
-   {2390},
-   {2391},
-   {2392},
-   {2393},
-   {2394},
-   {2395},
-   {2396},
-   {2397},
-   {2398},
-   {2399},
-   {2400},
-   {2401},
-   {2402},
-   {2403},
-   {2404},
-   {2405},
-   {2406},
-   {2407},
-   {2408},
-   {2409},
-   {2410},
-   {2411},
-   {2412},
-   {2413},
-   {2414},
-   {2415},
-   {2416},
-   {2417},
-   {2418},
-   {2419},
-   {2420},
-   {2421},
-   {2422},
-   {2423},
-   {2424},
-   {2425},
-   {2426},
-   {2427},
-   {2428},
-   {2429},
-   {2430},
-   {2431},
-   {2432},
-   {2433},
-   {2434},
-   {2435},
-   {2436},
-   {2437},
-   {2438},
-   {2439},
-   {2440},
-   {2441},
-   {2442},
-   {2443},
-   {2444},
-   {2445},
-   {2446},
-   {2447},
-   {2448},
-   {2449},
-   {2450},
-   {2451},
-   {2452},
-   {2453},
-   {2454},
-   {2455},
-   {2456},
-   {2457},
-   {2458},
-   {2459},
-   {2460},
-   {2461},
-   {2462},
-   {2463},
-   {2464},
-   {2465},
-   {2466},
-   {2467},
-   {2468},
-   {2469},
-   {2470},
-   {2471},
-   {2472},
-   {2473},
-   {2474},
-   {2475},
-   {2476},
-   {2477},
-   {2478},
-   {2479},
-   {2480},
-   {2481},
-   {2482},
-   {2483},
-   {2484},
-   {2485},
-   {2486},
-   {2487},
-   {2488},
-   {2489},
-   {2490},
-   {2491},
-   {2492},
-   {2493},
-   {2494},
-   {2495},
-   {2496},
-   {2497},
-   {2498},
-   {2499},
-   {2500},
-   {2501},
-   {2502},
-   {2503},
-   {2504},
-   {2505},
-   {2506},
-   {2507},
-   {2508},
-   {2509},
-   {2510},
-   {2511},
-   {2512},
-   {2513},
-   {2514},
-   {2515},
-   {2516},
-   {2517},
-   {2518},
-   {2519},
-   {2520},
-   {2521},
-   {2522},
-   {2523},
-   {2524},
-   {2525},
-   {2526},
-   {2527},
-   {2528},
-   {2529},
-   {2530},
-   {2531},
-   {2532},
-   {2533},
-   {2534},
-   {2535},
-   {2536},
-   {2537},
-   {2538},
-   {2539},
-   {2540},
-   {2541},
-   {2542},
-   {2543},
-   {2544},
-   {2545},
-   {2546},
-   {2547},
-   {2548},
-   {2549},
-   {2550},
-   {2551},
-   {2552},
-   {2553},
-   {2554},
-   {2555},
-   {2556},
-   {2557},
-   {2558},
-   {2559},
-   {2560},
-   {2561},
-   {2562},
-   {2563},
-   {2564},
-   {2565},
-   {2566},
-   {2567},
-   {2568},
-   {2569},
-   {2570},
-   {2571},
-   {2572},
-   {2573},
-   {2574},
-   {2575},
-   {2576},
-   {2577},
-   {2578},
-   {2579},
-   {2580},
-   {2581},
-   {2582},
-   {2583},
-   {2584},
-   {2585},
-   {2586},
-   {2587},
-   {2588},
-   {2589},
-   {2590},
-   {2591},
-   {2592},
-   {2593},
-   {2594},
-   {2595},
-   {2596},
-   {2597},
-   {2598},
-   {2599},
-   {2600},
-   {2601},
-   {2602},
-   {2603},
-   {2604},
-   {2605},
-   {2606},
-   {2607},
-   {2608},
-   {2609},
-   {2610},
-   {2611},
-   {2612},
-   {2613},
-   {2614},
-   {2615},
-   {2616},
-   {2617},
-   {2618},
-   {2619},
-   {2620},
-   {2621},
-   {2622},
-   {2623},
-   {2624},
-   {2625},
-   {2626},
-   {2627},
-   {2628},
-   {2629},
-   {2630},
-   {2631},
-   {2632},
-   {2633},
-   {2634},
-   {2635},
-   {2636},
-   {2637},
-   {2638},
-   {2639},
-   {2640},
-   {2641},
-   {2642},
-   {2643},
-   {2644},
-   {2645},
-   {2646},
-   {2647},
-   {2648},
-   {2649},
-   {2650},
-   {2651},
-   {2652},
-   {2653},
-   {2654},
-   {2655},
-   {2656},
-   {2657},
-   {2658},
-   {2659},
-   {2660},
-   {2661},
-   {2662},
-   {2663},
-   {2664},
-   {2665},
-   {2666},
-   {2667},
 },
 -- Table: {2}
 {
-   ["subText"]="face, grin, :grinning:",
+   ["subText"]=":heart:",
    ["order"]=1,
-   ["char"]={2668},
-   ["text"]="Grinning face",
-   ["image_path"]="1f600",
+   ["image_path"]="2764",
+   ["text"]="Red heart",
+   ["char"]={1782},
 },
 -- Table: {3}
 {
-   ["subText"]="face, mouth, open, smile, :smiley:",
+   ["subText"]=":orange_heart:, orange",
    ["order"]=2,
-   ["char"]={2669},
-   ["text"]="Smiling face with open mouth",
-   ["image_path"]="1f603",
+   ["image_path"]="1f9e1",
+   ["text"]="Orange heart",
+   ["char"]={1783},
 },
 -- Table: {4}
 {
-   ["subText"]="eye, face, mouth, open, smile, :smile:",
+   ["subText"]=":yellow_heart:, yellow",
    ["order"]=3,
-   ["char"]={2670},
-   ["text"]="Smiling face with open mouth & smiling eyes",
-   ["image_path"]="1f604",
+   ["image_path"]="1f49b",
+   ["text"]="Yellow heart",
+   ["char"]={1784},
 },
 -- Table: {5}
 {
-   ["subText"]="eye, face, grin, smile, :grin:",
+   ["subText"]=":green_heart:, green",
    ["order"]=4,
-   ["char"]={2671},
-   ["text"]="Grinning face with smiling eyes",
-   ["image_path"]="1f601",
+   ["image_path"]="1f49a",
+   ["text"]="Green heart",
+   ["char"]={1785},
 },
 -- Table: {6}
 {
-   ["subText"]="face, laugh, mouth, open, satisfied, smile, :laughing:",
+   ["subText"]=":blue_heart:, blue",
    ["order"]=5,
-   ["char"]={2672},
-   ["text"]="Smiling face with open mouth & closed eyes",
-   ["image_path"]="1f606",
+   ["image_path"]="1f499",
+   ["text"]="Blue heart",
+   ["char"]={1786},
 },
 -- Table: {7}
 {
-   ["subText"]="cold, face, open, smile, sweat, :sweat_smile:",
+   ["subText"]=":purple_heart:, purple",
    ["order"]=6,
-   ["char"]={2673},
-   ["text"]="Smiling face with open mouth & cold sweat",
-   ["image_path"]="1f605",
+   ["image_path"]="1f49c",
+   ["text"]="Purple heart",
+   ["char"]={1787},
 },
 -- Table: {8}
 {
-   ["subText"]="face, joy, laugh, tear, :joy:",
+   ["subText"]=":black_heart:, black, evil, wicked",
    ["order"]=7,
-   ["char"]={2674},
-   ["text"]="Face with tears of joy",
-   ["image_path"]="1f602",
+   ["image_path"]="1f5a4",
+   ["text"]="Black heart",
+   ["char"]={1788},
 },
 -- Table: {9}
 {
-   ["subText"]="face, floor, laugh, rolling, :rofl:",
+   ["subText"]=":brown_heart:",
    ["order"]=8,
-   ["char"]={2675},
-   ["text"]="Rolling on the floor laughing",
-   ["image_path"]="1f923",
+   ["image_path"]="1f90e",
+   ["text"]="Brown heart",
+   ["char"]={1789},
 },
 -- Table: {10}
 {
-   ["subText"]="face, outlined, relaxed, smile, :relaxed:",
+   ["subText"]=":white_heart:",
    ["order"]=9,
-   ["char"]={2676},
-   ["text"]="Smiling face",
-   ["image_path"]="263a",
+   ["image_path"]="1f90d",
+   ["text"]="White heart",
+   ["char"]={1790},
 },
 -- Table: {11}
 {
-   ["subText"]="blush, eye, face, smile, :blush:",
+   ["subText"]=":broken_heart:, break, broken",
    ["order"]=10,
-   ["char"]={2677},
-   ["text"]="Smiling face with smiling eyes",
-   ["image_path"]="1f60a",
+   ["image_path"]="1f494",
+   ["text"]="Broken heart",
+   ["char"]={1791},
 },
 -- Table: {12}
 {
-   ["subText"]="angel, face, fairy tale, fantasy, halo, innocent, smile, :innocent:",
+   ["subText"]=":heart_exclamation:, exclamation, mark, punctuation",
    ["order"]=11,
-   ["char"]={2678},
-   ["text"]="Smiling face with halo",
-   ["image_path"]="1f607",
+   ["image_path"]="2763",
+   ["text"]="Heart exclamation",
+   ["char"]={1792},
 },
 -- Table: {13}
 {
-   ["subText"]="face, smile, :slight_smile:",
+   ["subText"]=":two_hearts:, love",
    ["order"]=12,
-   ["char"]={2679},
-   ["text"]="Slightly smiling face",
-   ["image_path"]="1f642",
+   ["image_path"]="1f495",
+   ["text"]="Two hearts",
+   ["char"]={1793},
 },
 -- Table: {14}
 {
-   ["subText"]="face, upside-down, :upside_down:",
+   ["subText"]=":revolving_hearts:, revolving",
    ["order"]=13,
-   ["char"]={2680},
-   ["text"]="Upside-down face",
-   ["image_path"]="1f643",
+   ["image_path"]="1f49e",
+   ["text"]="Revolving hearts",
+   ["char"]={1794},
 },
 -- Table: {15}
 {
-   ["subText"]="face, wink, :wink:",
+   ["subText"]=":heartbeat:, beating, pulsating",
    ["order"]=14,
-   ["char"]={2681},
-   ["text"]="Winking face",
-   ["image_path"]="1f609",
+   ["image_path"]="1f493",
+   ["text"]="Beating heart",
+   ["char"]={1795},
 },
 -- Table: {16}
 {
-   ["subText"]="face, relieved, :relieved:",
+   ["subText"]=":heartpulse:, excited, growing, nervous, pulse",
    ["order"]=15,
-   ["char"]={2682},
-   ["text"]="Relieved face",
-   ["image_path"]="1f60c",
+   ["image_path"]="1f497",
+   ["text"]="Growing heart",
+   ["char"]={1796},
 },
 -- Table: {17}
 {
-   ["subText"]="eye, face, love, smile, :heart_eyes:",
+   ["subText"]=":sparkling_heart:, excited, sparkle",
    ["order"]=16,
-   ["char"]={2683},
-   ["text"]="Smiling face with heart-eyes",
-   ["image_path"]="1f60d",
+   ["image_path"]="1f496",
+   ["text"]="Sparkling heart",
+   ["char"]={1797},
 },
 -- Table: {18}
 {
-   ["subText"]="face, kiss, :kissing_heart:",
+   ["subText"]=":cupid:, arrow",
    ["order"]=17,
-   ["char"]={2684},
-   ["text"]="Face blowing a kiss",
-   ["image_path"]="1f618",
+   ["image_path"]="1f498",
+   ["text"]="Heart with arrow",
+   ["char"]={1798},
 },
 -- Table: {19}
 {
-   ["subText"]="face, kiss, :kissing:",
+   ["subText"]=":gift_heart:, ribbon, valentine",
    ["order"]=18,
-   ["char"]={2685},
-   ["text"]="Kissing face",
-   ["image_path"]="1f617",
+   ["image_path"]="1f49d",
+   ["text"]="Heart with ribbon",
+   ["char"]={1799},
 },
 -- Table: {20}
 {
-   ["subText"]="eye, face, kiss, smile, :kissing_smiling_eyes:",
+   ["subText"]=":heart_decoration:, heart",
    ["order"]=19,
-   ["char"]={2686},
-   ["text"]="Kissing face with smiling eyes",
-   ["image_path"]="1f619",
+   ["image_path"]="1f49f",
+   ["text"]="Heart decoration",
+   ["char"]={1800},
 },
 -- Table: {21}
 {
-   ["subText"]="closed, eye, face, kiss, :kissing_closed_eyes:",
+   ["subText"]=":peace:",
    ["order"]=20,
-   ["char"]={2687},
-   ["text"]="Kissing face with closed eyes",
-   ["image_path"]="1f61a",
+   ["image_path"]="262e",
+   ["text"]="Peace symbol",
+   ["char"]={1801},
 },
 -- Table: {22}
 {
-   ["subText"]="delicious, face, savouring, smile, um, yum, :yum:",
+   ["subText"]=":cross:, Christian, religion",
    ["order"]=21,
-   ["char"]={2688},
-   ["text"]="Face savouring delicious food",
-   ["image_path"]="1f60b",
+   ["image_path"]="271d",
+   ["text"]="Latin cross",
+   ["char"]={1802},
 },
 -- Table: {23}
 {
-   ["subText"]="eye, face, joke, tongue, wink, :stuck_out_tongue_winking_eye:",
+   ["subText"]=":star_and_crescent:, Muslim, islam, religion",
    ["order"]=22,
-   ["char"]={2689},
-   ["text"]="Face with stuck-out tongue & winking eye",
-   ["image_path"]="1f61c",
+   ["image_path"]="262a",
+   ["text"]="Star and crescent",
+   ["char"]={1803},
 },
 -- Table: {24}
 {
-   ["subText"]="eye, face, horrible, taste, tongue, :stuck_out_tongue_closed_eyes:",
+   ["subText"]=":om_symbol:, Hindu, religion",
    ["order"]=23,
-   ["char"]={2690},
-   ["text"]="Face with stuck-out tongue & closed eyes",
-   ["image_path"]="1f61d",
+   ["image_path"]="1f549",
+   ["text"]="Om",
+   ["char"]={1804},
 },
 -- Table: {25}
 {
-   ["subText"]="face, tongue, :stuck_out_tongue:",
+   ["subText"]=":wheel_of_dharma:, Buddhist, dharma, religion, wheel",
    ["order"]=24,
-   ["char"]={2691},
-   ["text"]="Face with stuck-out tongue",
-   ["image_path"]="1f61b",
+   ["image_path"]="2638",
+   ["text"]="Wheel of dharma",
+   ["char"]={1805},
 },
 -- Table: {26}
 {
-   ["subText"]="face, money, mouth, :money_mouth:",
+   ["subText"]=":star_of_david:, David, Jew, Jewish, religion, star",
    ["order"]=25,
-   ["char"]={2692},
-   ["text"]="Money-mouth face",
-   ["image_path"]="1f911",
+   ["image_path"]="2721",
+   ["text"]="Star of David",
+   ["char"]={1806},
 },
 -- Table: {27}
 {
-   ["subText"]="face, hug, hugging, :hugging:",
+   ["subText"]=":six_pointed_star:, fortune, star",
    ["order"]=26,
-   ["char"]={2693},
-   ["text"]="Hugging face",
-   ["image_path"]="1f917",
+   ["image_path"]="1f52f",
+   ["text"]="Dotted six-pointed star",
+   ["char"]={1807},
 },
 -- Table: {28}
 {
-   ["subText"]="face, geek, nerd, :nerd:",
+   ["subText"]=":menorah:, candelabrum, candlestick, religion",
    ["order"]=27,
-   ["char"]={2694},
-   ["text"]="Nerd face",
-   ["image_path"]="1f913",
+   ["image_path"]="1f54e",
+   ["text"]="Menorah",
+   ["char"]={1808},
 },
 -- Table: {29}
 {
-   ["subText"]="bright, cool, eye, eyewear, face, glasses, smile, sun, sunglasses, :sunglasses:",
+   ["subText"]=":yin_yang:, religion, tao, taoist, yang, yin",
    ["order"]=28,
-   ["char"]={2695},
-   ["text"]="Smiling face with sunglasses",
-   ["image_path"]="1f60e",
+   ["image_path"]="262f",
+   ["text"]="Yin yang",
+   ["char"]={1809},
 },
 -- Table: {30}
 {
-   ["subText"]="clown, face, :clown:",
+   ["subText"]=":orthodox_cross:, Christian, cross, religion",
    ["order"]=29,
-   ["char"]={2696},
-   ["text"]="Clown face",
-   ["image_path"]="1f921",
+   ["image_path"]="2626",
+   ["text"]="Orthodox cross",
+   ["char"]={1810},
 },
 -- Table: {31}
 {
-   ["subText"]="cowboy, cowgirl, face, hat, :cowboy:",
+   ["subText"]=":place_of_worship:, religion, worship",
    ["order"]=30,
-   ["char"]={2697},
-   ["text"]="Cowboy hat face",
-   ["image_path"]="1f920",
+   ["image_path"]="1f6d0",
+   ["text"]="Place of worship",
+   ["char"]={1811},
 },
 -- Table: {32}
 {
-   ["subText"]="face, smirk, :smirk:",
+   ["subText"]=":ophiuchus:, bearer, serpent, snake, zodiac",
    ["order"]=31,
-   ["char"]={2698},
-   ["text"]="Smirking face",
-   ["image_path"]="1f60f",
+   ["image_path"]="26ce",
+   ["text"]="Ophiuchus",
+   ["char"]={1812},
 },
 -- Table: {33}
 {
-   ["subText"]="face, unamused, unhappy, :unamused:",
+   ["subText"]=":aries:, ram, zodiac",
    ["order"]=32,
-   ["char"]={2699},
-   ["text"]="Unamused face",
-   ["image_path"]="1f612",
+   ["image_path"]="2648",
+   ["text"]="Aries",
+   ["char"]={1813},
 },
 -- Table: {34}
 {
-   ["subText"]="disappointed, face, :disappointed:",
+   ["subText"]=":taurus:, bull, ox, zodiac",
    ["order"]=33,
-   ["char"]={2700},
-   ["text"]="Disappointed face",
-   ["image_path"]="1f61e",
+   ["image_path"]="2649",
+   ["text"]="Taurus",
+   ["char"]={1814},
 },
 -- Table: {35}
 {
-   ["subText"]="dejected, face, pensive, :pensive:",
+   ["subText"]=":gemini:, twins, zodiac",
    ["order"]=34,
-   ["char"]={2701},
-   ["text"]="Pensive face",
-   ["image_path"]="1f614",
+   ["image_path"]="264a",
+   ["text"]="Gemini",
+   ["char"]={1815},
 },
 -- Table: {36}
 {
-   ["subText"]="face, worried, :worried:",
+   ["subText"]=":cancer:, crab, zodiac",
    ["order"]=35,
-   ["char"]={2702},
-   ["text"]="Worried face",
-   ["image_path"]="1f61f",
+   ["image_path"]="264b",
+   ["text"]="Cancer",
+   ["char"]={1816},
 },
 -- Table: {37}
 {
-   ["subText"]="confused, face, :confused:",
+   ["subText"]=":leo:, lion, zodiac",
    ["order"]=36,
-   ["char"]={2703},
-   ["text"]="Confused face",
-   ["image_path"]="1f615",
+   ["image_path"]="264c",
+   ["text"]="Leo",
+   ["char"]={1817},
 },
 -- Table: {38}
 {
-   ["subText"]="face, frown, :slight_frown:",
+   ["subText"]=":virgo:, zodiac",
    ["order"]=37,
-   ["char"]={2704},
-   ["text"]="Slightly frowning face",
-   ["image_path"]="1f641",
+   ["image_path"]="264d",
+   ["text"]="Virgo",
+   ["char"]={1818},
 },
 -- Table: {39}
 {
-   ["subText"]="face, frown, :frowning2:",
+   ["subText"]=":libra:, balance, justice, scales, zodiac",
    ["order"]=38,
-   ["char"]={2705},
-   ["text"]="Frowning face",
-   ["image_path"]="2639",
+   ["image_path"]="264e",
+   ["text"]="Libra",
+   ["char"]={1819},
 },
 -- Table: {40}
 {
-   ["subText"]="face, persevere, :persevere:",
+   ["subText"]=":scorpius:, scorpio, scorpion, zodiac",
    ["order"]=39,
-   ["char"]={2706},
-   ["text"]="Persevering face",
-   ["image_path"]="1f623",
+   ["image_path"]="264f",
+   ["text"]="Scorpio",
+   ["char"]={1820},
 },
 -- Table: {41}
 {
-   ["subText"]="confounded, face, :confounded:",
+   ["subText"]=":sagittarius:, archer, zodiac",
    ["order"]=40,
-   ["char"]={2707},
-   ["text"]="Confounded face",
-   ["image_path"]="1f616",
+   ["image_path"]="2650",
+   ["text"]="Sagittarius",
+   ["char"]={1821},
 },
 -- Table: {42}
 {
-   ["subText"]="face, tired, :tired_face:",
+   ["subText"]=":capricorn:, goat, zodiac",
    ["order"]=41,
-   ["char"]={2708},
-   ["text"]="Tired face",
-   ["image_path"]="1f62b",
+   ["image_path"]="2651",
+   ["text"]="Capricorn",
+   ["char"]={1822},
 },
 -- Table: {43}
 {
-   ["subText"]="face, tired, weary, :weary:",
+   ["subText"]=":aquarius:, bearer, water, zodiac",
    ["order"]=42,
-   ["char"]={2709},
-   ["text"]="Weary face",
-   ["image_path"]="1f629",
+   ["image_path"]="2652",
+   ["text"]="Aquarius",
+   ["char"]={1823},
 },
 -- Table: {44}
 {
-   ["subText"]="face, triumph, won, :triumph:",
+   ["subText"]=":pisces:, fish, zodiac",
    ["order"]=43,
-   ["char"]={2710},
-   ["text"]="Face with steam from nose",
-   ["image_path"]="1f624",
+   ["image_path"]="2653",
+   ["text"]="Pisces",
+   ["char"]={1824},
 },
 -- Table: {45}
 {
-   ["subText"]="angry, face, mad, :angry:",
+   ["subText"]=":id:, identity",
    ["order"]=44,
-   ["char"]={2711},
-   ["text"]="Angry face",
-   ["image_path"]="1f620",
+   ["image_path"]="1f194",
+   ["text"]="ID button",
+   ["char"]={1825},
 },
 -- Table: {46}
 {
-   ["subText"]="angry, face, mad, pouting, rage, red, :rage:",
+   ["subText"]=":atom:, atheist",
    ["order"]=45,
-   ["char"]={2712},
-   ["text"]="Pouting face",
-   ["image_path"]="1f621",
+   ["image_path"]="269b",
+   ["text"]="Atom symbol",
+   ["char"]={1826},
 },
 -- Table: {47}
 {
-   ["subText"]="face, mouth, quiet, silent, :no_mouth:",
+   ["subText"]=":accept:, Japanese, ideograph, “acceptable”, 可",
    ["order"]=46,
-   ["char"]={2713},
-   ["text"]="Face without mouth",
-   ["image_path"]="1f636",
+   ["image_path"]="1f251",
+   ["text"]="Japanese “acceptable” button",
+   ["char"]={1827},
 },
 -- Table: {48}
 {
-   ["subText"]="deadpan, face, neutral, :neutral_face:",
+   ["subText"]=":radioactive:, sign",
    ["order"]=47,
-   ["char"]={2714},
-   ["text"]="Neutral face",
-   ["image_path"]="1f610",
+   ["image_path"]="2622",
+   ["text"]="Radioactive",
+   ["char"]={1828},
 },
 -- Table: {49}
 {
-   ["subText"]="expressionless, face, inexpressive, unexpressive, :expressionless:",
+   ["subText"]=":biohazard:, sign",
    ["order"]=48,
-   ["char"]={2715},
-   ["text"]="Expressionless face",
-   ["image_path"]="1f611",
+   ["image_path"]="2623",
+   ["text"]="Biohazard",
+   ["char"]={1829},
 },
 -- Table: {50}
 {
-   ["subText"]="face, hushed, stunned, surprised, :hushed:",
+   ["subText"]=":mobile_phone_off:, cell, mobile, off, phone, telephone",
    ["order"]=49,
-   ["char"]={2716},
-   ["text"]="Hushed face",
-   ["image_path"]="1f62f",
+   ["image_path"]="1f4f4",
+   ["text"]="Mobile phone off",
+   ["char"]={1830},
 },
 -- Table: {51}
 {
-   ["subText"]="face, frown, mouth, open, :frowning:",
+   ["subText"]=":vibration_mode:, cell, mobile, mode, phone, telephone, vibration",
    ["order"]=50,
-   ["char"]={2717},
-   ["text"]="Frowning face with open mouth",
-   ["image_path"]="1f626",
+   ["image_path"]="1f4f3",
+   ["text"]="Vibration mode",
+   ["char"]={1831},
 },
 -- Table: {52}
 {
-   ["subText"]="anguished, face, :anguished:",
+   ["subText"]=":u6709:, Japanese, ideograph, “not free of charge”, 有",
    ["order"]=51,
-   ["char"]={2718},
-   ["text"]="Anguished face",
-   ["image_path"]="1f627",
+   ["image_path"]="1f236",
+   ["text"]="Japanese “not free of charge” button",
+   ["char"]={1832},
 },
 -- Table: {53}
 {
-   ["subText"]="face, mouth, open, sympathy, :open_mouth:",
+   ["subText"]=":u7121:, Japanese, ideograph, “free of charge”, 無",
    ["order"]=52,
-   ["char"]={2719},
-   ["text"]="Face with open mouth",
-   ["image_path"]="1f62e",
+   ["image_path"]="1f21a",
+   ["text"]="Japanese “free of charge” button",
+   ["char"]={1833},
 },
 -- Table: {54}
 {
-   ["subText"]="astonished, face, shocked, totally, :astonished:",
+   ["subText"]=":u7533:, Japanese, ideograph, “application”, 申",
    ["order"]=53,
-   ["char"]={2720},
-   ["text"]="Astonished face",
-   ["image_path"]="1f632",
+   ["image_path"]="1f238",
+   ["text"]="Japanese “application” button",
+   ["char"]={1834},
 },
 -- Table: {55}
 {
-   ["subText"]="dizzy, face, :dizzy_face:",
+   ["subText"]=":u55b6:, Japanese, ideograph, “open for business”, 営",
    ["order"]=54,
-   ["char"]={2721},
-   ["text"]="Dizzy face",
-   ["image_path"]="1f635",
+   ["image_path"]="1f23a",
+   ["text"]="Japanese “open for business” button",
+   ["char"]={1835},
 },
 -- Table: {56}
 {
-   ["subText"]="dazed, face, flushed, :flushed:",
+   ["subText"]=":u6708:, Japanese, ideograph, “monthly amount”, 月",
    ["order"]=55,
-   ["char"]={2722},
-   ["text"]="Flushed face",
-   ["image_path"]="1f633",
+   ["image_path"]="1f237",
+   ["text"]="Japanese “monthly amount” button",
+   ["char"]={1836},
 },
 -- Table: {57}
 {
-   ["subText"]="face, fear, fearful, munch, scared, scream, :scream:",
+   ["subText"]=":eight_pointed_black_star:, star",
    ["order"]=56,
-   ["char"]={2723},
-   ["text"]="Face screaming in fear",
-   ["image_path"]="1f631",
+   ["image_path"]="2734",
+   ["text"]="Eight-pointed star",
+   ["char"]={1837},
 },
 -- Table: {58}
 {
-   ["subText"]="face, fear, fearful, scared, :fearful:",
+   ["subText"]=":vs:, versus",
    ["order"]=57,
-   ["char"]={2724},
-   ["text"]="Fearful face",
-   ["image_path"]="1f628",
+   ["image_path"]="1f19a",
+   ["text"]="VS button",
+   ["char"]={1838},
 },
 -- Table: {59}
 {
-   ["subText"]="blue, cold, face, mouth, open, rushed, sweat, :cold_sweat:",
+   ["subText"]=":white_flower:, flower",
    ["order"]=58,
-   ["char"]={2725},
-   ["text"]="Face with open mouth & cold sweat",
-   ["image_path"]="1f630",
+   ["image_path"]="1f4ae",
+   ["text"]="White flower",
+   ["char"]={1839},
 },
 -- Table: {60}
 {
-   ["subText"]="cry, face, sad, tear, :cry:",
+   ["subText"]=":ideograph_advantage:, Japanese, ideograph, “bargain”, 得",
    ["order"]=59,
-   ["char"]={2726},
-   ["text"]="Crying face",
-   ["image_path"]="1f622",
+   ["image_path"]="1f250",
+   ["text"]="Japanese “bargain” button",
+   ["char"]={1840},
 },
 -- Table: {61}
 {
-   ["subText"]="disappointed, face, relieved, whew, :disappointed_relieved:",
+   ["subText"]=":secret:, Japanese, ideograph, “secret”, 秘",
    ["order"]=60,
-   ["char"]={2727},
-   ["text"]="Disappointed but relieved face",
-   ["image_path"]="1f625",
+   ["image_path"]="3299",
+   ["text"]="Japanese “secret” button",
+   ["char"]={1841},
 },
 -- Table: {62}
 {
-   ["subText"]="drooling, face, :drooling_face:",
+   ["subText"]=":congratulations:, Japanese, ideograph, “congratulations”, 祝",
    ["order"]=61,
-   ["char"]={2728},
-   ["text"]="Drooling face",
-   ["image_path"]="1f924",
+   ["image_path"]="3297",
+   ["text"]="Japanese “congratulations” button",
+   ["char"]={1842},
 },
 -- Table: {63}
 {
-   ["subText"]="cry, face, sad, sob, tear, :sob:",
+   ["subText"]=":u5408:, Japanese, ideograph, “passing grade”, 合",
    ["order"]=62,
-   ["char"]={2729},
-   ["text"]="Loudly crying face",
-   ["image_path"]="1f62d",
+   ["image_path"]="1f234",
+   ["text"]="Japanese “passing grade” button",
+   ["char"]={1843},
 },
 -- Table: {64}
 {
-   ["subText"]="cold, face, sweat, :sweat:",
+   ["subText"]=":u6e80:, Japanese, ideograph, “no vacancy”, 満",
    ["order"]=63,
-   ["char"]={2730},
-   ["text"]="Face with cold sweat",
-   ["image_path"]="1f613",
+   ["image_path"]="1f235",
+   ["text"]="Japanese “no vacancy” button",
+   ["char"]={1844},
 },
 -- Table: {65}
 {
-   ["subText"]="face, sleep, :sleepy:",
+   ["subText"]=":u5272:, Japanese, ideograph, “discount”, 割",
    ["order"]=64,
-   ["char"]={2731},
-   ["text"]="Sleepy face",
-   ["image_path"]="1f62a",
+   ["image_path"]="1f239",
+   ["text"]="Japanese “discount” button",
+   ["char"]={1845},
 },
 -- Table: {66}
 {
-   ["subText"]="face, sleep, zzz, :sleeping:",
+   ["subText"]=":u7981:, Japanese, ideograph, “prohibited”, 禁",
    ["order"]=65,
-   ["char"]={2732},
-   ["text"]="Sleeping face",
-   ["image_path"]="1f634",
+   ["image_path"]="1f232",
+   ["text"]="Japanese “prohibited” button",
+   ["char"]={1846},
 },
 -- Table: {67}
 {
-   ["subText"]="eyes, face, rolling, :rolling_eyes:",
+   ["subText"]=":a:, blood type",
    ["order"]=66,
-   ["char"]={2733},
-   ["text"]="Face with rolling eyes",
-   ["image_path"]="1f644",
+   ["image_path"]="1f170",
+   ["text"]="A button (blood type)",
+   ["char"]={1847},
 },
 -- Table: {68}
 {
-   ["subText"]="face, thinking, :thinking:",
+   ["subText"]=":b:, blood type",
    ["order"]=67,
-   ["char"]={2734},
-   ["text"]="Thinking face",
-   ["image_path"]="1f914",
+   ["image_path"]="1f171",
+   ["text"]="B button (blood type)",
+   ["char"]={1848},
 },
 -- Table: {69}
 {
-   ["subText"]="face, lie, pinocchio, :lying_face:",
+   ["subText"]=":ab:, blood type",
    ["order"]=68,
-   ["char"]={2735},
-   ["text"]="Lying face",
-   ["image_path"]="1f925",
+   ["image_path"]="1f18e",
+   ["text"]="AB button (blood type)",
+   ["char"]={1849},
 },
 -- Table: {70}
 {
-   ["subText"]="face, grimace, :grimacing:",
+   ["subText"]=":cl:",
    ["order"]=69,
-   ["char"]={2736},
-   ["text"]="Grimacing face",
-   ["image_path"]="1f62c",
+   ["image_path"]="1f191",
+   ["text"]="CL button",
+   ["char"]={1850},
 },
 -- Table: {71}
 {
-   ["subText"]="face, mouth, zipper, :zipper_mouth:",
+   ["subText"]=":o2:, blood type, o",
    ["order"]=70,
-   ["char"]={2737},
-   ["text"]="Zipper-mouth face",
-   ["image_path"]="1f910",
+   ["image_path"]="1f17e",
+   ["text"]="O button (blood type)",
+   ["char"]={1851},
 },
 -- Table: {72}
 {
-   ["subText"]="face, nauseated, vomit, :nauseated_face:",
+   ["subText"]=":sos:, help",
    ["order"]=71,
-   ["char"]={2738},
-   ["text"]="Nauseated face",
-   ["image_path"]="1f922",
+   ["image_path"]="1f198",
+   ["text"]="SOS button",
+   ["char"]={1852},
 },
 -- Table: {73}
 {
-   ["subText"]="face, gesundheit, sneeze, :sneezing_face:",
+   ["subText"]=":x:, cancel, mark, multiplication, multiply",
    ["order"]=72,
-   ["char"]={2739},
-   ["text"]="Sneezing face",
-   ["image_path"]="1f927",
+   ["image_path"]="274c",
+   ["text"]="Cross mark",
+   ["char"]={1853},
 },
 -- Table: {74}
 {
-   ["subText"]="cold, doctor, face, mask, medicine, sick, :mask:",
+   ["subText"]=":o:, circle",
    ["order"]=73,
-   ["char"]={2740},
-   ["text"]="Face with medical mask",
-   ["image_path"]="1f637",
+   ["image_path"]="2b55",
+   ["text"]="Hollow red circle",
+   ["char"]={1854},
 },
 -- Table: {75}
 {
-   ["subText"]="face, ill, sick, thermometer, :thermometer_face:",
+   ["subText"]=":octagonal_sign:, octagonal, sign, stop",
    ["order"]=74,
-   ["char"]={2741},
-   ["text"]="Face with thermometer",
-   ["image_path"]="1f912",
+   ["image_path"]="1f6d1",
+   ["text"]="Stop sign",
+   ["char"]={1855},
 },
 -- Table: {76}
 {
-   ["subText"]="bandage, face, hurt, injury, :head_bandage:",
+   ["subText"]=":no_entry:, entry, forbidden, no, not, prohibited, traffic",
    ["order"]=75,
-   ["char"]={2742},
-   ["text"]="Face with head-bandage",
-   ["image_path"]="1f915",
+   ["image_path"]="26d4",
+   ["text"]="No entry",
+   ["char"]={1856},
 },
 -- Table: {77}
 {
-   ["subText"]="face, fairy tale, fantasy, horns, smile, :smiling_imp:",
+   ["subText"]=":name_badge:, badge, name",
    ["order"]=76,
-   ["char"]={2743},
-   ["text"]="Smiling face with horns",
-   ["image_path"]="1f608",
+   ["image_path"]="1f4db",
+   ["text"]="Name badge",
+   ["char"]={1857},
 },
 -- Table: {78}
 {
-   ["subText"]="demon, devil, face, fairy tale, fantasy, imp, :imp:",
+   ["subText"]=":no_entry_sign:, entry, forbidden, no, not",
    ["order"]=77,
-   ["char"]={2744},
-   ["text"]="Angry face with horns",
-   ["image_path"]="1f47f",
+   ["image_path"]="1f6ab",
+   ["text"]="Prohibited",
+   ["char"]={1858},
 },
 -- Table: {79}
 {
-   ["subText"]=", :japanese_ogre:",
+   ["subText"]=":100:, full, hundred, score",
    ["order"]=78,
-   ["char"]={2745},
-   ["text"]="Ogre",
-   ["image_path"]="1f479",
+   ["image_path"]="1f4af",
+   ["text"]="Hundred points",
+   ["char"]={1859},
 },
 -- Table: {80}
 {
-   ["subText"]="creature, face, fairy tale, fantasy, monster, :japanese_goblin:",
+   ["subText"]=":anger:, angry, comic, mad",
    ["order"]=79,
-   ["char"]={2746},
-   ["text"]="Goblin",
-   ["image_path"]="1f47a",
+   ["image_path"]="1f4a2",
+   ["text"]="Anger symbol",
+   ["char"]={1860},
 },
 -- Table: {81}
 {
-   ["subText"]="comic, dung, face, monster, poo, poop, :poop:",
+   ["subText"]=":hotsprings:, hot, springs, steaming",
    ["order"]=80,
-   ["char"]={2747},
-   ["text"]="Pile of poo",
-   ["image_path"]="1f4a9",
+   ["image_path"]="2668",
+   ["text"]="Hot springs",
+   ["char"]={1861},
 },
 -- Table: {82}
 {
-   ["subText"]="creature, face, fairy tale, fantasy, monster, :ghost:",
+   ["subText"]=":no_pedestrians:, forbidden, no, not, pedestrian, prohibited",
    ["order"]=81,
-   ["char"]={2748},
-   ["text"]="Ghost",
-   ["image_path"]="1f47b",
+   ["image_path"]="1f6b7",
+   ["text"]="No pedestrians",
+   ["char"]={1862},
 },
 -- Table: {83}
 {
-   ["subText"]="death, face, fairy tale, monster, :skull:",
+   ["subText"]=":do_not_litter:, forbidden, litter, no, not, prohibited",
    ["order"]=82,
-   ["char"]={2749},
-   ["text"]="Skull",
-   ["image_path"]="1f480",
+   ["image_path"]="1f6af",
+   ["text"]="No littering",
+   ["char"]={1863},
 },
 -- Table: {84}
 {
-   ["subText"]="crossbones, death, face, monster, skull, :skull_crossbones:",
+   ["subText"]=":no_bicycles:, bicycle, bike, forbidden, no, not, prohibited",
    ["order"]=83,
-   ["char"]={2750},
-   ["text"]="Skull and crossbones",
-   ["image_path"]="2620",
+   ["image_path"]="1f6b3",
+   ["text"]="No bicycles",
+   ["char"]={1864},
 },
 -- Table: {85}
 {
-   ["subText"]="creature, extraterrestrial, face, fairy tale, fantasy, monster, ufo, :alien:",
+   ["subText"]=":non-potable_water:, non-drinking, non-potable, water",
    ["order"]=84,
-   ["char"]={2751},
-   ["text"]="Alien",
-   ["image_path"]="1f47d",
+   ["image_path"]="1f6b1",
+   ["text"]="Non-potable water",
+   ["char"]={1865},
 },
 -- Table: {86}
 {
-   ["subText"]="alien, creature, extraterrestrial, face, fairy tale, fantasy, monster, ufo, :space_invader:",
+   ["subText"]=":underage:, 18, age restriction, eighteen, forbidden, no, not, prohibited",
    ["order"]=85,
-   ["char"]={2752},
-   ["text"]="Alien monster",
-   ["image_path"]="1f47e",
+   ["image_path"]="1f51e",
+   ["text"]="No one under eighteen",
+   ["char"]={1866},
 },
 -- Table: {87}
 {
-   ["subText"]="face, monster, robot, :robot:",
+   ["subText"]=":no_mobile_phones:, cell, forbidden, mobile, no, not, phone, prohibited, telephone",
    ["order"]=86,
-   ["char"]={2753},
-   ["text"]="Robot face",
-   ["image_path"]="1f916",
+   ["image_path"]="1f4f5",
+   ["text"]="No mobile phones",
+   ["char"]={1867},
 },
 -- Table: {88}
 {
-   ["subText"]="celebration, halloween, jack, lantern, :jack_o_lantern:",
+   ["subText"]=":no_smoking:, forbidden, no, not, prohibited, smoking",
    ["order"]=87,
-   ["char"]={2754},
-   ["text"]="Jack-o-lantern",
-   ["image_path"]="1f383",
+   ["image_path"]="1f6ad",
+   ["text"]="No smoking",
+   ["char"]={1868},
 },
 -- Table: {89}
 {
-   ["subText"]="cat, face, mouth, open, smile, :smiley_cat:",
+   ["subText"]=":exclamation:, mark, punctuation",
    ["order"]=88,
-   ["char"]={2755},
-   ["text"]="Smiling cat face with open mouth",
-   ["image_path"]="1f63a",
+   ["image_path"]="2757",
+   ["text"]="Exclamation mark",
+   ["char"]={1869},
 },
 -- Table: {90}
 {
-   ["subText"]="cat, eye, face, grin, smile, :smile_cat:",
+   ["subText"]=":grey_exclamation:, exclamation, mark, outlined, punctuation",
    ["order"]=89,
-   ["char"]={2756},
-   ["text"]="Grinning cat face with smiling eyes",
-   ["image_path"]="1f638",
+   ["image_path"]="2755",
+   ["text"]="White exclamation mark",
+   ["char"]={1870},
 },
 -- Table: {91}
 {
-   ["subText"]="cat, face, joy, tear, :joy_cat:",
+   ["subText"]=":question:, mark, punctuation",
    ["order"]=90,
-   ["char"]={2757},
-   ["text"]="Cat face with tears of joy",
-   ["image_path"]="1f639",
+   ["image_path"]="2753",
+   ["text"]="Question mark",
+   ["char"]={1871},
 },
 -- Table: {92}
 {
-   ["subText"]="cat, eye, face, love, smile, :heart_eyes_cat:",
+   ["subText"]=":grey_question:, mark, outlined, punctuation, question",
    ["order"]=91,
-   ["char"]={2758},
-   ["text"]="Smiling cat face with heart-eyes",
-   ["image_path"]="1f63b",
+   ["image_path"]="2754",
+   ["text"]="White question mark",
+   ["char"]={1872},
 },
 -- Table: {93}
 {
-   ["subText"]="cat, face, ironic, smile, wry, :smirk_cat:",
+   ["subText"]=":bangbang:, exclamation, mark, punctuation",
    ["order"]=92,
-   ["char"]={2759},
-   ["text"]="Cat face with wry smile",
-   ["image_path"]="1f63c",
+   ["image_path"]="203c",
+   ["text"]="Double exclamation mark",
+   ["char"]={1873},
 },
 -- Table: {94}
 {
-   ["subText"]="cat, eye, face, kiss, :kissing_cat:",
+   ["subText"]=":interrobang:, exclamation, mark, punctuation, question",
    ["order"]=93,
-   ["char"]={2760},
-   ["text"]="Kissing cat face with closed eyes",
-   ["image_path"]="1f63d",
+   ["image_path"]="2049",
+   ["text"]="Exclamation question mark",
+   ["char"]={1874},
 },
 -- Table: {95}
 {
-   ["subText"]="cat, face, oh, surprised, weary, :scream_cat:",
+   ["subText"]=":low_brightness:, brightness, dim, low",
    ["order"]=94,
-   ["char"]={2761},
-   ["text"]="Weary cat face",
-   ["image_path"]="1f640",
+   ["image_path"]="1f505",
+   ["text"]="Dim button",
+   ["char"]={1875},
 },
 -- Table: {96}
 {
-   ["subText"]="cat, cry, face, sad, tear, :crying_cat_face:",
+   ["subText"]=":high_brightness:, bright, brightness",
    ["order"]=95,
-   ["char"]={2762},
-   ["text"]="Crying cat face",
-   ["image_path"]="1f63f",
+   ["image_path"]="1f506",
+   ["text"]="Bright button",
+   ["char"]={1876},
 },
 -- Table: {97}
 {
-   ["subText"]="cat, face, pouting, :pouting_cat:",
+   ["subText"]=":part_alternation_mark:, mark, part",
    ["order"]=96,
-   ["char"]={2763},
-   ["text"]="Pouting cat face",
-   ["image_path"]="1f63e",
+   ["image_path"]="303d",
+   ["text"]="Part alternation mark",
+   ["char"]={1877},
 },
 -- Table: {98}
 {
-   ["subText"]="hand, open, :open_hands:",
+   ["subText"]=":warning:",
    ["order"]=97,
-   ["char"]={2764},
-   ["text"]="Open hands",
-   ["image_path"]="1f450",
+   ["image_path"]="26a0",
+   ["text"]="Warning",
+   ["char"]={1878},
 },
 -- Table: {99}
 {
-   ["subText"]="hand, light skin tone, open, :open_hands_tone1:",
+   ["subText"]=":children_crossing:, child, crossing, pedestrian, traffic",
    ["order"]=98,
-   ["char"]={2765},
-   ["text"]="Open hands: light skin tone",
-   ["image_path"]="1f450-1f3fb",
+   ["image_path"]="1f6b8",
+   ["text"]="Children crossing",
+   ["char"]={1879},
 },
 -- Table: {100}
 {
-   ["subText"]="hand, medium-light skin tone, open, :open_hands_tone2:",
+   ["subText"]=":trident:, anchor, emblem, ship, tool",
    ["order"]=99,
-   ["char"]={2766},
-   ["text"]="Open hands: medium-light skin tone",
-   ["image_path"]="1f450-1f3fc",
+   ["image_path"]="1f531",
+   ["text"]="Trident emblem",
+   ["char"]={1880},
 },
 -- Table: {101}
 {
-   ["subText"]="hand, medium skin tone, open, :open_hands_tone3:",
+   ["subText"]=":fleur-de-lis:",
    ["order"]=100,
-   ["char"]={2767},
-   ["text"]="Open hands: medium skin tone",
-   ["image_path"]="1f450-1f3fd",
+   ["image_path"]="269c",
+   ["text"]="Fleur-de-lis",
+   ["char"]={1881},
 },
 -- Table: {102}
 {
-   ["subText"]="hand, medium-dark skin tone, open, :open_hands_tone4:",
+   ["subText"]=":beginner:, Japanese, chevron, green, leaf, tool, yellow",
    ["order"]=101,
-   ["char"]={2768},
-   ["text"]="Open hands: medium-dark skin tone",
-   ["image_path"]="1f450-1f3fe",
+   ["image_path"]="1f530",
+   ["text"]="Japanese symbol for beginner",
+   ["char"]={1882},
 },
 -- Table: {103}
 {
-   ["subText"]="dark skin tone, hand, open, :open_hands_tone5:",
+   ["subText"]=":recycle:",
    ["order"]=102,
-   ["char"]={2769},
-   ["text"]="Open hands: dark skin tone",
-   ["image_path"]="1f450-1f3ff",
+   ["image_path"]="267b",
+   ["text"]="Recycling symbol",
+   ["char"]={1883},
 },
 -- Table: {104}
 {
-   ["subText"]="celebration, gesture, hand, hooray, raised, :raised_hands:",
+   ["subText"]=":white_check_mark:, check, mark",
    ["order"]=103,
-   ["char"]={2770},
-   ["text"]="Raising hands",
-   ["image_path"]="1f64c",
+   ["image_path"]="2705",
+   ["text"]="Check mark button",
+   ["char"]={1884},
 },
 -- Table: {105}
 {
-   ["subText"]="celebration, gesture, hand, hooray, light skin tone, raised, :raised_hands_tone1:",
+   ["subText"]=":u6307:, Japanese, ideograph, “reserved”, 指",
    ["order"]=104,
-   ["char"]={2771},
-   ["text"]="Raising hands: light skin tone",
-   ["image_path"]="1f64c-1f3fb",
+   ["image_path"]="1f22f",
+   ["text"]="Japanese “reserved” button",
+   ["char"]={1885},
 },
 -- Table: {106}
 {
-   ["subText"]="celebration, gesture, hand, hooray, medium-light skin tone, raised, :raised_hands_tone2:",
+   ["subText"]=":chart:, bank, currency, graph, growth, market, money, rise, trend, upward, yen",
    ["order"]=105,
-   ["char"]={2772},
-   ["text"]="Raising hands: medium-light skin tone",
-   ["image_path"]="1f64c-1f3fc",
+   ["image_path"]="1f4b9",
+   ["text"]="Chart increasing with yen",
+   ["char"]={1886},
 },
 -- Table: {107}
 {
-   ["subText"]="celebration, gesture, hand, hooray, medium skin tone, raised, :raised_hands_tone3:",
+   ["subText"]=":sparkle:",
    ["order"]=106,
-   ["char"]={2773},
-   ["text"]="Raising hands: medium skin tone",
-   ["image_path"]="1f64c-1f3fd",
+   ["image_path"]="2747",
+   ["text"]="Sparkle",
+   ["char"]={1887},
 },
 -- Table: {108}
 {
-   ["subText"]="celebration, gesture, hand, hooray, medium-dark skin tone, raised, :raised_hands_tone4:",
+   ["subText"]=":eight_spoked_asterisk:, asterisk",
    ["order"]=107,
-   ["char"]={2774},
-   ["text"]="Raising hands: medium-dark skin tone",
-   ["image_path"]="1f64c-1f3fe",
+   ["image_path"]="2733",
+   ["text"]="Eight-spoked asterisk",
+   ["char"]={1888},
 },
 -- Table: {109}
 {
-   ["subText"]="celebration, dark skin tone, gesture, hand, hooray, raised, :raised_hands_tone5:",
+   ["subText"]=":negative_squared_cross_mark:, mark, square",
    ["order"]=108,
-   ["char"]={2775},
-   ["text"]="Raising hands: dark skin tone",
-   ["image_path"]="1f64c-1f3ff",
+   ["image_path"]="274e",
+   ["text"]="Cross mark button",
+   ["char"]={1889},
 },
 -- Table: {110}
 {
-   ["subText"]="clap, hand, :clap:",
+   ["subText"]=":globe_with_meridians:, earth, globe, meridians, world",
    ["order"]=109,
-   ["char"]={2776},
-   ["text"]="Clapping hands",
-   ["image_path"]="1f44f",
+   ["image_path"]="1f310",
+   ["text"]="Globe with meridians",
+   ["char"]={1890},
 },
 -- Table: {111}
 {
-   ["subText"]="clap, hand, light skin tone, :clap_tone1:",
+   ["subText"]=":diamond_shape_with_a_dot_inside:, comic, diamond, geometric, inside",
    ["order"]=110,
-   ["char"]={2777},
-   ["text"]="Clapping hands: light skin tone",
-   ["image_path"]="1f44f-1f3fb",
+   ["image_path"]="1f4a0",
+   ["text"]="Diamond with a dot",
+   ["char"]={1891},
 },
 -- Table: {112}
 {
-   ["subText"]="clap, hand, medium-light skin tone, :clap_tone2:",
+   ["subText"]=":m:, circle",
    ["order"]=111,
-   ["char"]={2778},
-   ["text"]="Clapping hands: medium-light skin tone",
-   ["image_path"]="1f44f-1f3fc",
+   ["image_path"]="24c2",
+   ["text"]="Circled M",
+   ["char"]={1892},
 },
 -- Table: {113}
 {
-   ["subText"]="clap, hand, medium skin tone, :clap_tone3:",
+   ["subText"]=":cyclone:, dizzy, twister, typhoon",
    ["order"]=112,
-   ["char"]={2779},
-   ["text"]="Clapping hands: medium skin tone",
-   ["image_path"]="1f44f-1f3fd",
+   ["image_path"]="1f300",
+   ["text"]="Cyclone",
+   ["char"]={1893},
 },
 -- Table: {114}
 {
-   ["subText"]="clap, hand, medium-dark skin tone, :clap_tone4:",
+   ["subText"]=":zzz:, comic, sleep",
    ["order"]=113,
-   ["char"]={2780},
-   ["text"]="Clapping hands: medium-dark skin tone",
-   ["image_path"]="1f44f-1f3fe",
+   ["image_path"]="1f4a4",
+   ["text"]="Zzz",
+   ["char"]={1894},
 },
 -- Table: {115}
 {
-   ["subText"]="clap, dark skin tone, hand, :clap_tone5:",
+   ["subText"]=":atm:, automated, bank, teller",
    ["order"]=114,
-   ["char"]={2781},
-   ["text"]="Clapping hands: dark skin tone",
-   ["image_path"]="1f44f-1f3ff",
+   ["image_path"]="1f3e7",
+   ["text"]="ATM sign",
+   ["char"]={1895},
 },
 -- Table: {116}
 {
-   ["subText"]="ask, bow, folded, gesture, hand, please, pray, thanks, :pray:",
+   ["subText"]=":wc:, closet, lavatory, restroom, water",
    ["order"]=115,
-   ["char"]={2782},
-   ["text"]="Folded hands",
-   ["image_path"]="1f64f",
+   ["image_path"]="1f6be",
+   ["text"]="Water closet",
+   ["char"]={1896},
 },
 -- Table: {117}
 {
-   ["subText"]="ask, bow, folded, gesture, hand, light skin tone, please, pray, thanks, :pray_tone1:",
+   ["subText"]=":wheelchair:, access",
    ["order"]=116,
-   ["char"]={2783},
-   ["text"]="Folded hands: light skin tone",
-   ["image_path"]="1f64f-1f3fb",
+   ["image_path"]="267f",
+   ["text"]="Wheelchair symbol",
+   ["char"]={1897},
 },
 -- Table: {118}
 {
-   ["subText"]="ask, bow, folded, gesture, hand, medium-light skin tone, please, pray, thanks, :pray_tone2:",
+   ["subText"]=":parking:",
    ["order"]=117,
-   ["char"]={2784},
-   ["text"]="Folded hands: medium-light skin tone",
-   ["image_path"]="1f64f-1f3fc",
+   ["image_path"]="1f17f",
+   ["text"]="P button",
+   ["char"]={1898},
 },
 -- Table: {119}
 {
-   ["subText"]="ask, bow, folded, gesture, hand, medium skin tone, please, pray, thanks, :pray_tone3:",
+   ["subText"]=":u7a7a:, Japanese, ideograph, “vacancy”, 空",
    ["order"]=118,
-   ["char"]={2785},
-   ["text"]="Folded hands: medium skin tone",
-   ["image_path"]="1f64f-1f3fd",
+   ["image_path"]="1f233",
+   ["text"]="Japanese “vacancy” button",
+   ["char"]={1899},
 },
 -- Table: {120}
 {
-   ["subText"]="ask, bow, folded, gesture, hand, medium-dark skin tone, please, pray, thanks, :pray_tone4:",
+   ["subText"]=":sa:, Japanese, katakana, “service charge”, サ",
    ["order"]=119,
-   ["char"]={2786},
-   ["text"]="Folded hands: medium-dark skin tone",
-   ["image_path"]="1f64f-1f3fe",
+   ["image_path"]="1f202",
+   ["text"]="Japanese “service charge” button",
+   ["char"]={1900},
 },
 -- Table: {121}
 {
-   ["subText"]="ask, bow, dark skin tone, folded, gesture, hand, please, pray, thanks, :pray_tone5:",
+   ["subText"]=":passport_control:, control, passport",
    ["order"]=120,
-   ["char"]={2787},
-   ["text"]="Folded hands: dark skin tone",
-   ["image_path"]="1f64f-1f3ff",
+   ["image_path"]="1f6c2",
+   ["text"]="Passport control",
+   ["char"]={1901},
 },
 -- Table: {122}
 {
-   ["subText"]="agreement, hand, handshake, meeting, shake, :handshake:",
+   ["subText"]=":customs:",
    ["order"]=121,
-   ["char"]={2788},
-   ["text"]="Handshake",
-   ["image_path"]="1f91d",
+   ["image_path"]="1f6c3",
+   ["text"]="Customs",
+   ["char"]={1902},
 },
 -- Table: {123}
 {
-   ["subText"]="+1, hand, thumb, up, :thumbsup:",
+   ["subText"]=":baggage_claim:, baggage, claim",
    ["order"]=122,
-   ["char"]={2789},
-   ["text"]="Thumbs up",
-   ["image_path"]="1f44d",
+   ["image_path"]="1f6c4",
+   ["text"]="Baggage claim",
+   ["char"]={1903},
 },
 -- Table: {124}
 {
-   ["subText"]="+1, hand, light skin tone, thumb, up, :thumbsup_tone1:",
+   ["subText"]=":left_luggage:, baggage, locker, luggage",
    ["order"]=123,
-   ["char"]={2790},
-   ["text"]="Thumbs up: light skin tone",
-   ["image_path"]="1f44d-1f3fb",
+   ["image_path"]="1f6c5",
+   ["text"]="Left luggage",
+   ["char"]={1904},
 },
 -- Table: {125}
 {
-   ["subText"]="+1, hand, medium-light skin tone, thumb, up, :thumbsup_tone2:",
+   ["subText"]=":mens:, lavatory, man, restroom, wc",
    ["order"]=124,
-   ["char"]={2791},
-   ["text"]="Thumbs up: medium-light skin tone",
-   ["image_path"]="1f44d-1f3fc",
+   ["image_path"]="1f6b9",
+   ["text"]="Men’s room",
+   ["char"]={1905},
 },
 -- Table: {126}
 {
-   ["subText"]="+1, hand, medium skin tone, thumb, up, :thumbsup_tone3:",
+   ["subText"]=":womens:, lavatory, restroom, wc, woman",
    ["order"]=125,
-   ["char"]={2792},
-   ["text"]="Thumbs up: medium skin tone",
-   ["image_path"]="1f44d-1f3fd",
+   ["image_path"]="1f6ba",
+   ["text"]="Women’s room",
+   ["char"]={1906},
 },
 -- Table: {127}
 {
-   ["subText"]="+1, hand, medium-dark skin tone, thumb, up, :thumbsup_tone4:",
+   ["subText"]=":baby_symbol:, baby, changing",
    ["order"]=126,
-   ["char"]={2793},
-   ["text"]="Thumbs up: medium-dark skin tone",
-   ["image_path"]="1f44d-1f3fe",
+   ["image_path"]="1f6bc",
+   ["text"]="Baby symbol",
+   ["char"]={1907},
 },
 -- Table: {128}
 {
-   ["subText"]="+1, dark skin tone, hand, thumb, up, :thumbsup_tone5:",
+   ["subText"]=":restroom:, WC, lavatory",
    ["order"]=127,
-   ["char"]={2794},
-   ["text"]="Thumbs up: dark skin tone",
-   ["image_path"]="1f44d-1f3ff",
+   ["image_path"]="1f6bb",
+   ["text"]="Restroom",
+   ["char"]={1908},
 },
 -- Table: {129}
 {
-   ["subText"]="-1, down, hand, thumb, :thumbsdown:",
+   ["subText"]=":put_litter_in_its_place:, litter, litter bin",
    ["order"]=128,
-   ["char"]={2795},
-   ["text"]="Thumbs down",
-   ["image_path"]="1f44e",
+   ["image_path"]="1f6ae",
+   ["text"]="Litter in bin sign",
+   ["char"]={1909},
 },
 -- Table: {130}
 {
-   ["subText"]="-1, down, hand, light skin tone, thumb, :thumbsdown_tone1:",
+   ["subText"]=":cinema:, camera, film, movie",
    ["order"]=129,
-   ["char"]={2796},
-   ["text"]="Thumbs down: light skin tone",
-   ["image_path"]="1f44e-1f3fb",
+   ["image_path"]="1f3a6",
+   ["text"]="Cinema",
+   ["char"]={1910},
 },
 -- Table: {131}
 {
-   ["subText"]="-1, down, hand, medium-light skin tone, thumb, :thumbsdown_tone2:",
+   ["subText"]=":signal_strength:, antenna, bar, cell, mobile, phone, signal, telephone",
    ["order"]=130,
-   ["char"]={2797},
-   ["text"]="Thumbs down: medium-light skin tone",
-   ["image_path"]="1f44e-1f3fc",
+   ["image_path"]="1f4f6",
+   ["text"]="Antenna bars",
+   ["char"]={1911},
 },
 -- Table: {132}
 {
-   ["subText"]="-1, down, hand, medium skin tone, thumb, :thumbsdown_tone3:",
+   ["subText"]=":koko:, Japanese, katakana, “here”, ココ",
    ["order"]=131,
-   ["char"]={2798},
-   ["text"]="Thumbs down: medium skin tone",
-   ["image_path"]="1f44e-1f3fd",
+   ["image_path"]="1f201",
+   ["text"]="Japanese “here” button",
+   ["char"]={1912},
 },
 -- Table: {133}
 {
-   ["subText"]="-1, down, hand, medium-dark skin tone, thumb, :thumbsdown_tone4:",
+   ["subText"]=":symbols:, input, 〒♪&amp;%",
    ["order"]=132,
-   ["char"]={2799},
-   ["text"]="Thumbs down: medium-dark skin tone",
-   ["image_path"]="1f44e-1f3fe",
+   ["image_path"]="1f523",
+   ["text"]="Input symbols",
+   ["char"]={1913},
 },
 -- Table: {134}
 {
-   ["subText"]="-1, dark skin tone, down, hand, thumb, :thumbsdown_tone5:",
+   ["subText"]=":information_source:, i, information",
    ["order"]=133,
-   ["char"]={2800},
-   ["text"]="Thumbs down: dark skin tone",
-   ["image_path"]="1f44e-1f3ff",
+   ["image_path"]="2139",
+   ["text"]="Information",
+   ["char"]={1914},
 },
 -- Table: {135}
 {
-   ["subText"]="clenched, fist, hand, punch, :punch:",
+   ["subText"]=":abc:, alphabet, input, latin, letters",
    ["order"]=134,
-   ["char"]={2801},
-   ["text"]="Oncoming fist",
-   ["image_path"]="1f44a",
+   ["image_path"]="1f524",
+   ["text"]="Input latin letters",
+   ["char"]={1915},
 },
 -- Table: {136}
 {
-   ["subText"]="clenched, fist, hand, light skin tone, punch, :punch_tone1:",
+   ["subText"]=":abcd:, input, latin, letters, lowercase",
    ["order"]=135,
-   ["char"]={2802},
-   ["text"]="Oncoming fist: light skin tone",
-   ["image_path"]="1f44a-1f3fb",
+   ["image_path"]="1f521",
+   ["text"]="Input latin lowercase",
+   ["char"]={1916},
 },
 -- Table: {137}
 {
-   ["subText"]="clenched, fist, hand, medium-light skin tone, punch, :punch_tone2:",
+   ["subText"]=":capital_abcd:, ABCD, input, latin, letters, uppercase",
    ["order"]=136,
-   ["char"]={2803},
-   ["text"]="Oncoming fist: medium-light skin tone",
-   ["image_path"]="1f44a-1f3fc",
+   ["image_path"]="1f520",
+   ["text"]="Input latin uppercase",
+   ["char"]={1917},
 },
 -- Table: {138}
 {
-   ["subText"]="clenched, fist, hand, medium skin tone, punch, :punch_tone3:",
+   ["subText"]=":ng:",
    ["order"]=137,
-   ["char"]={2804},
-   ["text"]="Oncoming fist: medium skin tone",
-   ["image_path"]="1f44a-1f3fd",
+   ["image_path"]="1f196",
+   ["text"]="NG button",
+   ["char"]={1918},
 },
 -- Table: {139}
 {
-   ["subText"]="clenched, fist, hand, medium-dark skin tone, punch, :punch_tone4:",
+   ["subText"]=":ok:, OK",
    ["order"]=138,
-   ["char"]={2805},
-   ["text"]="Oncoming fist: medium-dark skin tone",
-   ["image_path"]="1f44a-1f3fe",
+   ["image_path"]="1f197",
+   ["text"]="OK button",
+   ["char"]={1919},
 },
 -- Table: {140}
 {
-   ["subText"]="clenched, dark skin tone, fist, hand, punch, :punch_tone5:",
+   ["subText"]=":up:, mark",
    ["order"]=139,
-   ["char"]={2806},
-   ["text"]="Oncoming fist: dark skin tone",
-   ["image_path"]="1f44a-1f3ff",
+   ["image_path"]="1f199",
+   ["text"]="UP! button",
+   ["char"]={1920},
 },
 -- Table: {141}
 {
-   ["subText"]="clenched, fist, hand, punch, :fist:",
+   ["subText"]=":cool:",
    ["order"]=140,
-   ["char"]={2807},
-   ["text"]="Raised fist",
-   ["image_path"]="270a",
+   ["image_path"]="1f192",
+   ["text"]="COOL button",
+   ["char"]={1921},
 },
 -- Table: {142}
 {
-   ["subText"]="clenched, fist, hand, light skin tone, punch, :fist_tone1:",
+   ["subText"]=":new:",
    ["order"]=141,
-   ["char"]={2808},
-   ["text"]="Raised fist: light skin tone",
-   ["image_path"]="270a-1f3fb",
+   ["image_path"]="1f195",
+   ["text"]="NEW button",
+   ["char"]={1922},
 },
 -- Table: {143}
 {
-   ["subText"]="clenched, fist, hand, medium-light skin tone, punch, :fist_tone2:",
+   ["subText"]=":free:",
    ["order"]=142,
-   ["char"]={2809},
-   ["text"]="Raised fist: medium-light skin tone",
-   ["image_path"]="270a-1f3fc",
+   ["image_path"]="1f193",
+   ["text"]="FREE button",
+   ["char"]={1923},
 },
 -- Table: {144}
 {
-   ["subText"]="clenched, fist, hand, medium skin tone, punch, :fist_tone3:",
+   ["subText"]=":zero:, keycap",
    ["order"]=143,
-   ["char"]={2810},
-   ["text"]="Raised fist: medium skin tone",
-   ["image_path"]="270a-1f3fd",
+   ["image_path"]="0030-20e3",
+   ["text"]="Keycap: 0",
+   ["char"]={1924},
 },
 -- Table: {145}
 {
-   ["subText"]="clenched, fist, hand, medium-dark skin tone, punch, :fist_tone4:",
+   ["subText"]=":one:, keycap",
    ["order"]=144,
-   ["char"]={2811},
-   ["text"]="Raised fist: medium-dark skin tone",
-   ["image_path"]="270a-1f3fe",
+   ["image_path"]="0031-20e3",
+   ["text"]="Keycap: 1",
+   ["char"]={1925},
 },
 -- Table: {146}
 {
-   ["subText"]="clenched, dark skin tone, fist, hand, punch, :fist_tone5:",
+   ["subText"]=":two:, keycap",
    ["order"]=145,
-   ["char"]={2812},
-   ["text"]="Raised fist: dark skin tone",
-   ["image_path"]="270a-1f3ff",
+   ["image_path"]="0032-20e3",
+   ["text"]="Keycap: 2",
+   ["char"]={1926},
 },
 -- Table: {147}
 {
-   ["subText"]="fist, leftwards, :left_facing_fist:",
+   ["subText"]=":three:, keycap",
    ["order"]=146,
-   ["char"]={2813},
-   ["text"]="Left-facing fist",
-   ["image_path"]="1f91b",
+   ["image_path"]="0033-20e3",
+   ["text"]="Keycap: 3",
+   ["char"]={1927},
 },
 -- Table: {148}
 {
-   ["subText"]="fist, leftwards, light skin tone, :left_facing_fist_tone1:",
+   ["subText"]=":four:, keycap",
    ["order"]=147,
-   ["char"]={2814},
-   ["text"]="Left-facing fist: light skin tone",
-   ["image_path"]="1f91b-1f3fb",
+   ["image_path"]="0034-20e3",
+   ["text"]="Keycap: 4",
+   ["char"]={1928},
 },
 -- Table: {149}
 {
-   ["subText"]="fist, leftwards, medium-light skin tone, :left_facing_fist_tone2:",
+   ["subText"]=":five:, keycap",
    ["order"]=148,
-   ["char"]={2815},
-   ["text"]="Left-facing fist: medium-light skin tone",
-   ["image_path"]="1f91b-1f3fc",
+   ["image_path"]="0035-20e3",
+   ["text"]="Keycap: 5",
+   ["char"]={1929},
 },
 -- Table: {150}
 {
-   ["subText"]="fist, leftwards, medium skin tone, :left_facing_fist_tone3:",
+   ["subText"]=":six:, keycap",
    ["order"]=149,
-   ["char"]={2816},
-   ["text"]="Left-facing fist: medium skin tone",
-   ["image_path"]="1f91b-1f3fd",
+   ["image_path"]="0036-20e3",
+   ["text"]="Keycap: 6",
+   ["char"]={1930},
 },
 -- Table: {151}
 {
-   ["subText"]="fist, leftwards, medium-dark skin tone, :left_facing_fist_tone4:",
+   ["subText"]=":seven:, keycap",
    ["order"]=150,
-   ["char"]={2817},
-   ["text"]="Left-facing fist: medium-dark skin tone",
-   ["image_path"]="1f91b-1f3fe",
+   ["image_path"]="0037-20e3",
+   ["text"]="Keycap: 7",
+   ["char"]={1931},
 },
 -- Table: {152}
 {
-   ["subText"]="dark skin tone, fist, leftwards, :left_facing_fist_tone5:",
+   ["subText"]=":eight:, keycap",
    ["order"]=151,
-   ["char"]={2818},
-   ["text"]="Left-facing fist: dark skin tone",
-   ["image_path"]="1f91b-1f3ff",
+   ["image_path"]="0038-20e3",
+   ["text"]="Keycap: 8",
+   ["char"]={1932},
 },
 -- Table: {153}
 {
-   ["subText"]="fist, rightwards, :right_facing_fist:",
+   ["subText"]=":nine:, keycap",
    ["order"]=152,
-   ["char"]={2819},
-   ["text"]="Right-facing fist",
-   ["image_path"]="1f91c",
+   ["image_path"]="0039-20e3",
+   ["text"]="Keycap: 9",
+   ["char"]={1933},
 },
 -- Table: {154}
 {
-   ["subText"]="fist, light skin tone, rightwards, :right_facing_fist_tone1:",
+   ["subText"]=":keycap_ten:, keycap 10",
    ["order"]=153,
-   ["char"]={2820},
-   ["text"]="Right-facing fist: light skin tone",
-   ["image_path"]="1f91c-1f3fb",
+   ["image_path"]="1f51f",
+   ["text"]="Keycap: 10",
+   ["char"]={1934},
 },
 -- Table: {155}
 {
-   ["subText"]="fist, medium-light skin tone, rightwards, :right_facing_fist_tone2:",
+   ["subText"]=":1234:, input, numbers",
    ["order"]=154,
-   ["char"]={2821},
-   ["text"]="Right-facing fist: medium-light skin tone",
-   ["image_path"]="1f91c-1f3fc",
+   ["image_path"]="1f522",
+   ["text"]="Input numbers",
+   ["char"]={1935},
 },
 -- Table: {156}
 {
-   ["subText"]="fist, medium skin tone, rightwards, :right_facing_fist_tone3:",
+   ["subText"]=":hash:, keycap",
    ["order"]=155,
-   ["char"]={2822},
-   ["text"]="Right-facing fist: medium skin tone",
-   ["image_path"]="1f91c-1f3fd",
+   ["image_path"]="0023-20e3",
+   ["text"]="Keycap: #",
+   ["char"]={1936},
 },
 -- Table: {157}
 {
-   ["subText"]="fist, medium-dark skin tone, rightwards, :right_facing_fist_tone4:",
+   ["subText"]=":asterisk:, keycap",
    ["order"]=156,
-   ["char"]={2823},
-   ["text"]="Right-facing fist: medium-dark skin tone",
-   ["image_path"]="1f91c-1f3fe",
+   ["image_path"]="002a-20e3",
+   ["text"]="Keycap: *",
+   ["char"]={1937},
 },
 -- Table: {158}
 {
-   ["subText"]="dark skin tone, fist, rightwards, :right_facing_fist_tone5:",
+   ["subText"]=":eject:",
    ["order"]=157,
-   ["char"]={2824},
-   ["text"]="Right-facing fist: dark skin tone",
-   ["image_path"]="1f91c-1f3ff",
+   ["image_path"]="23cf",
+   ["text"]="Eject button",
+   ["char"]={1938},
 },
 -- Table: {159}
 {
-   ["subText"]="cross, finger, hand, luck, :fingers_crossed:",
+   ["subText"]=":arrow_forward:, arrow, play, right, triangle",
    ["order"]=158,
-   ["char"]={2825},
-   ["text"]="Crossed fingers",
-   ["image_path"]="1f91e",
+   ["image_path"]="25b6",
+   ["text"]="Play button",
+   ["char"]={1939},
 },
 -- Table: {160}
 {
-   ["subText"]="cross, finger, hand, light skin tone, luck, :fingers_crossed_tone1:",
+   ["subText"]=":pause_button:, bar, double, pause, vertical",
    ["order"]=159,
-   ["char"]={2826},
-   ["text"]="Crossed fingers: light skin tone",
-   ["image_path"]="1f91e-1f3fb",
+   ["image_path"]="23f8",
+   ["text"]="Pause button",
+   ["char"]={1940},
 },
 -- Table: {161}
 {
-   ["subText"]="cross, finger, hand, luck, medium-light skin tone, :fingers_crossed_tone2:",
+   ["subText"]=":play_pause:, arrow, pause, play, right, triangle",
    ["order"]=160,
-   ["char"]={2827},
-   ["text"]="Crossed fingers: medium-light skin tone",
-   ["image_path"]="1f91e-1f3fc",
+   ["image_path"]="23ef",
+   ["text"]="Play or pause button",
+   ["char"]={1941},
 },
 -- Table: {162}
 {
-   ["subText"]="cross, finger, hand, luck, medium skin tone, :fingers_crossed_tone3:",
+   ["subText"]=":stop_button:, square, stop",
    ["order"]=161,
-   ["char"]={2828},
-   ["text"]="Crossed fingers: medium skin tone",
-   ["image_path"]="1f91e-1f3fd",
+   ["image_path"]="23f9",
+   ["text"]="Stop button",
+   ["char"]={1942},
 },
 -- Table: {163}
 {
-   ["subText"]="cross, finger, hand, luck, medium-dark skin tone, :fingers_crossed_tone4:",
+   ["subText"]=":record_button:, circle, record",
    ["order"]=162,
-   ["char"]={2829},
-   ["text"]="Crossed fingers: medium-dark skin tone",
-   ["image_path"]="1f91e-1f3fe",
+   ["image_path"]="23fa",
+   ["text"]="Record button",
+   ["char"]={1943},
 },
 -- Table: {164}
 {
-   ["subText"]="cross, dark skin tone, finger, hand, luck, :fingers_crossed_tone5:",
+   ["subText"]=":track_next:, arrow, next scene, next track, triangle",
    ["order"]=163,
-   ["char"]={2830},
-   ["text"]="Crossed fingers: dark skin tone",
-   ["image_path"]="1f91e-1f3ff",
+   ["image_path"]="23ed",
+   ["text"]="Next track button",
+   ["char"]={1944},
 },
 -- Table: {165}
 {
-   ["subText"]="hand, v, victory, :v:",
+   ["subText"]=":track_previous:, arrow, previous scene, previous track, triangle",
    ["order"]=164,
-   ["char"]={2831},
-   ["text"]="Victory hand",
-   ["image_path"]="270c",
+   ["image_path"]="23ee",
+   ["text"]="Last track button",
+   ["char"]={1945},
 },
 -- Table: {166}
 {
-   ["subText"]="hand, light skin tone, v, victory, :v_tone1:",
+   ["subText"]=":fast_forward:, arrow, double, fast, forward",
    ["order"]=165,
-   ["char"]={2832},
-   ["text"]="Victory hand: light skin tone",
-   ["image_path"]="270c-1f3fb",
+   ["image_path"]="23e9",
+   ["text"]="Fast-forward button",
+   ["char"]={1946},
 },
 -- Table: {167}
 {
-   ["subText"]="hand, medium-light skin tone, v, victory, :v_tone2:",
+   ["subText"]=":rewind:, arrow, double",
    ["order"]=166,
-   ["char"]={2833},
-   ["text"]="Victory hand: medium-light skin tone",
-   ["image_path"]="270c-1f3fc",
+   ["image_path"]="23ea",
+   ["text"]="Fast reverse button",
+   ["char"]={1947},
 },
 -- Table: {168}
 {
-   ["subText"]="hand, medium skin tone, v, victory, :v_tone3:",
+   ["subText"]=":arrow_double_up:, arrow, double",
    ["order"]=167,
-   ["char"]={2834},
-   ["text"]="Victory hand: medium skin tone",
-   ["image_path"]="270c-1f3fd",
+   ["image_path"]="23eb",
+   ["text"]="Fast up button",
+   ["char"]={1948},
 },
 -- Table: {169}
 {
-   ["subText"]="hand, medium-dark skin tone, v, victory, :v_tone4:",
+   ["subText"]=":arrow_double_down:, arrow, double, down",
    ["order"]=168,
-   ["char"]={2835},
-   ["text"]="Victory hand: medium-dark skin tone",
-   ["image_path"]="270c-1f3fe",
+   ["image_path"]="23ec",
+   ["text"]="Fast down button",
+   ["char"]={1949},
 },
 -- Table: {170}
 {
-   ["subText"]="dark skin tone, hand, v, victory, :v_tone5:",
+   ["subText"]=":arrow_backward:, arrow, left, reverse, triangle",
    ["order"]=169,
-   ["char"]={2836},
-   ["text"]="Victory hand: dark skin tone",
-   ["image_path"]="270c-1f3ff",
+   ["image_path"]="25c0",
+   ["text"]="Reverse button",
+   ["char"]={1950},
 },
 -- Table: {171}
 {
-   ["subText"]="finger, hand, horns, rock-on, :metal:",
+   ["subText"]=":arrow_up_small:, arrow, button, red",
    ["order"]=170,
-   ["char"]={2837},
-   ["text"]="Sign of the horns",
-   ["image_path"]="1f918",
+   ["image_path"]="1f53c",
+   ["text"]="Upwards button",
+   ["char"]={1951},
 },
 -- Table: {172}
 {
-   ["subText"]="finger, hand, horns, light skin tone, rock-on, :metal_tone1:",
+   ["subText"]=":arrow_down_small:, arrow, button, down, red",
    ["order"]=171,
-   ["char"]={2838},
-   ["text"]="Sign of the horns: light skin tone",
-   ["image_path"]="1f918-1f3fb",
+   ["image_path"]="1f53d",
+   ["text"]="Downwards button",
+   ["char"]={1952},
 },
 -- Table: {173}
 {
-   ["subText"]="finger, hand, horns, medium-light skin tone, rock-on, :metal_tone2:",
+   ["subText"]=":arrow_right:, arrow, cardinal, direction, east",
    ["order"]=172,
-   ["char"]={2839},
-   ["text"]="Sign of the horns: medium-light skin tone",
-   ["image_path"]="1f918-1f3fc",
+   ["image_path"]="27a1",
+   ["text"]="Right arrow",
+   ["char"]={1953},
 },
 -- Table: {174}
 {
-   ["subText"]="finger, hand, horns, medium skin tone, rock-on, :metal_tone3:",
+   ["subText"]=":arrow_left:, arrow, cardinal, direction, west",
    ["order"]=173,
-   ["char"]={2840},
-   ["text"]="Sign of the horns: medium skin tone",
-   ["image_path"]="1f918-1f3fd",
+   ["image_path"]="2b05",
+   ["text"]="Left arrow",
+   ["char"]={1954},
 },
 -- Table: {175}
 {
-   ["subText"]="finger, hand, horns, medium-dark skin tone, rock-on, :metal_tone4:",
+   ["subText"]=":arrow_up:, arrow, cardinal, direction, north",
    ["order"]=174,
-   ["char"]={2841},
-   ["text"]="Sign of the horns: medium-dark skin tone",
-   ["image_path"]="1f918-1f3fe",
+   ["image_path"]="2b06",
+   ["text"]="Up arrow",
+   ["char"]={1955},
 },
 -- Table: {176}
 {
-   ["subText"]="dark skin tone, finger, hand, horns, rock-on, :metal_tone5:",
+   ["subText"]=":arrow_down:, arrow, cardinal, direction, down, south",
    ["order"]=175,
-   ["char"]={2842},
-   ["text"]="Sign of the horns: dark skin tone",
-   ["image_path"]="1f918-1f3ff",
+   ["image_path"]="2b07",
+   ["text"]="Down arrow",
+   ["char"]={1956},
 },
 -- Table: {177}
 {
-   ["subText"]="OK, hand, :ok_hand:",
+   ["subText"]=":arrow_upper_right:, arrow, direction, intercardinal, northeast",
    ["order"]=176,
-   ["char"]={2843},
-   ["text"]="OK hand",
-   ["image_path"]="1f44c",
+   ["image_path"]="2197",
+   ["text"]="Up-right arrow",
+   ["char"]={1957},
 },
 -- Table: {178}
 {
-   ["subText"]="OK, hand, light skin tone, :ok_hand_tone1:",
+   ["subText"]=":arrow_lower_right:, arrow, direction, intercardinal, southeast",
    ["order"]=177,
-   ["char"]={2844},
-   ["text"]="OK hand: light skin tone",
-   ["image_path"]="1f44c-1f3fb",
+   ["image_path"]="2198",
+   ["text"]="Down-right arrow",
+   ["char"]={1958},
 },
 -- Table: {179}
 {
-   ["subText"]="OK, hand, medium-light skin tone, :ok_hand_tone2:",
+   ["subText"]=":arrow_lower_left:, arrow, direction, intercardinal, southwest",
    ["order"]=178,
-   ["char"]={2845},
-   ["text"]="OK hand: medium-light skin tone",
-   ["image_path"]="1f44c-1f3fc",
+   ["image_path"]="2199",
+   ["text"]="Down-left arrow",
+   ["char"]={1959},
 },
 -- Table: {180}
 {
-   ["subText"]="OK, hand, medium skin tone, :ok_hand_tone3:",
+   ["subText"]=":arrow_upper_left:, arrow, direction, intercardinal, northwest",
    ["order"]=179,
-   ["char"]={2846},
-   ["text"]="OK hand: medium skin tone",
-   ["image_path"]="1f44c-1f3fd",
+   ["image_path"]="2196",
+   ["text"]="Up-left arrow",
+   ["char"]={1960},
 },
 -- Table: {181}
 {
-   ["subText"]="OK, hand, medium-dark skin tone, :ok_hand_tone4:",
+   ["subText"]=":arrow_up_down:, arrow",
    ["order"]=180,
-   ["char"]={2847},
-   ["text"]="OK hand: medium-dark skin tone",
-   ["image_path"]="1f44c-1f3fe",
+   ["image_path"]="2195",
+   ["text"]="Up-down arrow",
+   ["char"]={1961},
 },
 -- Table: {182}
 {
-   ["subText"]="OK, dark skin tone, hand, :ok_hand_tone5:",
+   ["subText"]=":left_right_arrow:, arrow",
    ["order"]=181,
-   ["char"]={2848},
-   ["text"]="OK hand: dark skin tone",
-   ["image_path"]="1f44c-1f3ff",
+   ["image_path"]="2194",
+   ["text"]="Left-right arrow",
+   ["char"]={1962},
 },
 -- Table: {183}
 {
-   ["subText"]="backhand, finger, hand, index, point, :point_left:",
+   ["subText"]=":arrow_right_hook:, arrow",
    ["order"]=182,
-   ["char"]={2849},
-   ["text"]="Backhand index pointing left",
-   ["image_path"]="1f448",
+   ["image_path"]="21aa",
+   ["text"]="Left arrow curving right",
+   ["char"]={1963},
 },
 -- Table: {184}
 {
-   ["subText"]="backhand, finger, hand, index, light skin tone, point, :point_left_tone1:",
+   ["subText"]=":leftwards_arrow_with_hook:, arrow",
    ["order"]=183,
-   ["char"]={2850},
-   ["text"]="Backhand index pointing left: light skin tone",
-   ["image_path"]="1f448-1f3fb",
+   ["image_path"]="21a9",
+   ["text"]="Right arrow curving left",
+   ["char"]={1964},
 },
 -- Table: {185}
 {
-   ["subText"]="backhand, finger, hand, index, medium-light skin tone, point, :point_left_tone2:",
+   ["subText"]=":arrow_heading_up:, arrow",
    ["order"]=184,
-   ["char"]={2851},
-   ["text"]="Backhand index pointing left: medium-light skin tone",
-   ["image_path"]="1f448-1f3fc",
+   ["image_path"]="2934",
+   ["text"]="Right arrow curving up",
+   ["char"]={1965},
 },
 -- Table: {186}
 {
-   ["subText"]="backhand, finger, hand, index, medium skin tone, point, :point_left_tone3:",
+   ["subText"]=":arrow_heading_down:, arrow, down",
    ["order"]=185,
-   ["char"]={2852},
-   ["text"]="Backhand index pointing left: medium skin tone",
-   ["image_path"]="1f448-1f3fd",
+   ["image_path"]="2935",
+   ["text"]="Right arrow curving down",
+   ["char"]={1966},
 },
 -- Table: {187}
 {
-   ["subText"]="backhand, finger, hand, index, medium-dark skin tone, point, :point_left_tone4:",
+   ["subText"]=":twisted_rightwards_arrows:, arrow, crossed",
    ["order"]=186,
-   ["char"]={2853},
-   ["text"]="Backhand index pointing left: medium-dark skin tone",
-   ["image_path"]="1f448-1f3fe",
+   ["image_path"]="1f500",
+   ["text"]="Shuffle tracks button",
+   ["char"]={1967},
 },
 -- Table: {188}
 {
-   ["subText"]="backhand, dark skin tone, finger, hand, index, point, :point_left_tone5:",
+   ["subText"]=":repeat:, arrow, clockwise",
    ["order"]=187,
-   ["char"]={2854},
-   ["text"]="Backhand index pointing left: dark skin tone",
-   ["image_path"]="1f448-1f3ff",
+   ["image_path"]="1f501",
+   ["text"]="Repeat button",
+   ["char"]={1968},
 },
 -- Table: {189}
 {
-   ["subText"]="backhand, finger, hand, index, point, :point_right:",
+   ["subText"]=":repeat_one:, arrow, clockwise, once",
    ["order"]=188,
-   ["char"]={2855},
-   ["text"]="Backhand index pointing right",
-   ["image_path"]="1f449",
+   ["image_path"]="1f502",
+   ["text"]="Repeat single button",
+   ["char"]={1969},
 },
 -- Table: {190}
 {
-   ["subText"]="backhand, finger, hand, index, light skin tone, point, :point_right_tone1:",
+   ["subText"]=":arrows_counterclockwise:, anticlockwise, arrow, counterclockwise, withershins",
    ["order"]=189,
-   ["char"]={2856},
-   ["text"]="Backhand index pointing right: light skin tone",
-   ["image_path"]="1f449-1f3fb",
+   ["image_path"]="1f504",
+   ["text"]="Counterclockwise arrows button",
+   ["char"]={1970},
 },
 -- Table: {191}
 {
-   ["subText"]="backhand, finger, hand, index, medium-light skin tone, point, :point_right_tone2:",
+   ["subText"]=":arrows_clockwise:, arrow, clockwise, reload",
    ["order"]=190,
-   ["char"]={2857},
-   ["text"]="Backhand index pointing right: medium-light skin tone",
-   ["image_path"]="1f449-1f3fc",
+   ["image_path"]="1f503",
+   ["text"]="Clockwise vertical arrows",
+   ["char"]={1971},
 },
 -- Table: {192}
 {
-   ["subText"]="backhand, finger, hand, index, medium skin tone, point, :point_right_tone3:",
+   ["subText"]=":musical_note:, music, note",
    ["order"]=191,
-   ["char"]={2858},
-   ["text"]="Backhand index pointing right: medium skin tone",
-   ["image_path"]="1f449-1f3fd",
+   ["image_path"]="1f3b5",
+   ["text"]="Musical note",
+   ["char"]={1972},
 },
 -- Table: {193}
 {
-   ["subText"]="backhand, finger, hand, index, medium-dark skin tone, point, :point_right_tone4:",
+   ["subText"]=":notes:, music, note",
    ["order"]=192,
-   ["char"]={2859},
-   ["text"]="Backhand index pointing right: medium-dark skin tone",
-   ["image_path"]="1f449-1f3fe",
+   ["image_path"]="1f3b6",
+   ["text"]="Musical notes",
+   ["char"]={1973},
 },
 -- Table: {194}
 {
-   ["subText"]="backhand, dark skin tone, finger, hand, index, point, :point_right_tone5:",
+   ["subText"]=":heavy_plus_sign:, math, plus",
    ["order"]=193,
-   ["char"]={2860},
-   ["text"]="Backhand index pointing right: dark skin tone",
-   ["image_path"]="1f449-1f3ff",
+   ["image_path"]="2795",
+   ["text"]="Plus sign",
+   ["char"]={1974},
 },
 -- Table: {195}
 {
-   ["subText"]="backhand, finger, hand, index, point, up, :point_up_2:",
+   ["subText"]=":heavy_minus_sign:, math, minus",
    ["order"]=194,
-   ["char"]={2861},
-   ["text"]="Backhand index pointing up",
-   ["image_path"]="1f446",
+   ["image_path"]="2796",
+   ["text"]="Minus sign",
+   ["char"]={1975},
 },
 -- Table: {196}
 {
-   ["subText"]="backhand, finger, hand, index, light skin tone, point, up, :point_up_2_tone1:",
+   ["subText"]=":heavy_division_sign:, division, math",
    ["order"]=195,
-   ["char"]={2862},
-   ["text"]="Backhand index pointing up: light skin tone",
-   ["image_path"]="1f446-1f3fb",
+   ["image_path"]="2797",
+   ["text"]="Division sign",
+   ["char"]={1976},
 },
 -- Table: {197}
 {
-   ["subText"]="backhand, finger, hand, index, medium-light skin tone, point, up, :point_up_2_tone2:",
+   ["subText"]=":heavy_multiplication_x:, cancel, multiplication, multiply, x",
    ["order"]=196,
-   ["char"]={2863},
-   ["text"]="Backhand index pointing up: medium-light skin tone",
-   ["image_path"]="1f446-1f3fc",
+   ["image_path"]="2716",
+   ["text"]="Multiplication sign",
+   ["char"]={1977},
 },
 -- Table: {198}
 {
-   ["subText"]="backhand, finger, hand, index, medium skin tone, point, up, :point_up_2_tone3:",
+   ["subText"]=":infinity:",
    ["order"]=197,
-   ["char"]={2864},
-   ["text"]="Backhand index pointing up: medium skin tone",
-   ["image_path"]="1f446-1f3fd",
+   ["image_path"]="267e",
+   ["text"]="Infinity",
+   ["char"]={1978},
 },
 -- Table: {199}
 {
-   ["subText"]="backhand, finger, hand, index, medium-dark skin tone, point, up, :point_up_2_tone4:",
+   ["subText"]=":heavy_dollar_sign:, currency, dollar, money",
    ["order"]=198,
-   ["char"]={2865},
-   ["text"]="Backhand index pointing up: medium-dark skin tone",
-   ["image_path"]="1f446-1f3fe",
+   ["image_path"]="1f4b2",
+   ["text"]="Heavy dollar sign",
+   ["char"]={1979},
 },
 -- Table: {200}
 {
-   ["subText"]="backhand, dark skin tone, finger, hand, index, point, up, :point_up_2_tone5:",
+   ["subText"]=":currency_exchange:, bank, currency, exchange, money",
    ["order"]=199,
-   ["char"]={2866},
-   ["text"]="Backhand index pointing up: dark skin tone",
-   ["image_path"]="1f446-1f3ff",
+   ["image_path"]="1f4b1",
+   ["text"]="Currency exchange",
+   ["char"]={1980},
 },
 -- Table: {201}
 {
-   ["subText"]="backhand, down, finger, hand, index, point, :point_down:",
+   ["subText"]=":tm:, mark, trademark",
    ["order"]=200,
-   ["char"]={2867},
-   ["text"]="Backhand index pointing down",
-   ["image_path"]="1f447",
+   ["image_path"]="2122",
+   ["text"]="Trade mark",
+   ["char"]={1981},
 },
 -- Table: {202}
 {
-   ["subText"]="backhand, down, finger, hand, index, light skin tone, point, :point_down_tone1:",
+   ["subText"]=":copyright:",
    ["order"]=201,
-   ["char"]={2868},
-   ["text"]="Backhand index pointing down: light skin tone",
-   ["image_path"]="1f447-1f3fb",
+   ["image_path"]="00a9",
+   ["text"]="Copyright",
+   ["char"]={1982},
 },
 -- Table: {203}
 {
-   ["subText"]="backhand, down, finger, hand, index, medium-light skin tone, point, :point_down_tone2:",
+   ["subText"]=":registered:",
    ["order"]=202,
-   ["char"]={2869},
-   ["text"]="Backhand index pointing down: medium-light skin tone",
-   ["image_path"]="1f447-1f3fc",
+   ["image_path"]="00ae",
+   ["text"]="Registered",
+   ["char"]={1983},
 },
 -- Table: {204}
 {
-   ["subText"]="backhand, down, finger, hand, index, medium skin tone, point, :point_down_tone3:",
+   ["subText"]=":wavy_dash:, dash, punctuation, wavy",
    ["order"]=203,
-   ["char"]={2870},
-   ["text"]="Backhand index pointing down: medium skin tone",
-   ["image_path"]="1f447-1f3fd",
+   ["image_path"]="3030",
+   ["text"]="Wavy dash",
+   ["char"]={1984},
 },
 -- Table: {205}
 {
-   ["subText"]="backhand, down, finger, hand, index, medium-dark skin tone, point, :point_down_tone4:",
+   ["subText"]=":curly_loop:, curl, loop",
    ["order"]=204,
-   ["char"]={2871},
-   ["text"]="Backhand index pointing down: medium-dark skin tone",
-   ["image_path"]="1f447-1f3fe",
+   ["image_path"]="27b0",
+   ["text"]="Curly loop",
+   ["char"]={1985},
 },
 -- Table: {206}
 {
-   ["subText"]="backhand, dark skin tone, down, finger, hand, index, point, :point_down_tone5:",
+   ["subText"]=":loop:, curl, double",
    ["order"]=205,
-   ["char"]={2872},
-   ["text"]="Backhand index pointing down: dark skin tone",
-   ["image_path"]="1f447-1f3ff",
+   ["image_path"]="27bf",
+   ["text"]="Double curly loop",
+   ["char"]={1986},
 },
 -- Table: {207}
 {
-   ["subText"]="finger, hand, index, point, up, :point_up:",
+   ["subText"]=":end:, arrow",
    ["order"]=206,
-   ["char"]={2873},
-   ["text"]="Index pointing up",
-   ["image_path"]="261d",
+   ["image_path"]="1f51a",
+   ["text"]="END arrow",
+   ["char"]={1987},
 },
 -- Table: {208}
 {
-   ["subText"]="finger, hand, index, light skin tone, point, up, :point_up_tone1:",
+   ["subText"]=":back:, arrow",
    ["order"]=207,
-   ["char"]={2874},
-   ["text"]="Index pointing up: light skin tone",
-   ["image_path"]="261d-1f3fb",
+   ["image_path"]="1f519",
+   ["text"]="BACK arrow",
+   ["char"]={1988},
 },
 -- Table: {209}
 {
-   ["subText"]="finger, hand, index, medium-light skin tone, point, up, :point_up_tone2:",
+   ["subText"]=":on:, arrow, mark",
    ["order"]=208,
-   ["char"]={2875},
-   ["text"]="Index pointing up: medium-light skin tone",
-   ["image_path"]="261d-1f3fc",
+   ["image_path"]="1f51b",
+   ["text"]="ON! arrow",
+   ["char"]={1989},
 },
 -- Table: {210}
 {
-   ["subText"]="finger, hand, index, medium skin tone, point, up, :point_up_tone3:",
+   ["subText"]=":top:, arrow, up",
    ["order"]=209,
-   ["char"]={2876},
-   ["text"]="Index pointing up: medium skin tone",
-   ["image_path"]="261d-1f3fd",
+   ["image_path"]="1f51d",
+   ["text"]="TOP arrow",
+   ["char"]={1990},
 },
 -- Table: {211}
 {
-   ["subText"]="finger, hand, index, medium-dark skin tone, point, up, :point_up_tone4:",
+   ["subText"]=":soon:, arrow",
    ["order"]=210,
-   ["char"]={2877},
-   ["text"]="Index pointing up: medium-dark skin tone",
-   ["image_path"]="261d-1f3fe",
+   ["image_path"]="1f51c",
+   ["text"]="SOON arrow",
+   ["char"]={1991},
 },
 -- Table: {212}
 {
-   ["subText"]="dark skin tone, finger, hand, index, point, up, :point_up_tone5:",
+   ["subText"]=":heavy_check_mark:, check, mark",
    ["order"]=211,
-   ["char"]={2878},
-   ["text"]="Index pointing up: dark skin tone",
-   ["image_path"]="261d-1f3ff",
+   ["image_path"]="2714",
+   ["text"]="Check mark",
+   ["char"]={1992},
 },
 -- Table: {213}
 {
-   ["subText"]="hand, :raised_hand:",
+   ["subText"]=":ballot_box_with_check:, ballot, box, check",
    ["order"]=212,
-   ["char"]={2879},
-   ["text"]="Raised hand",
-   ["image_path"]="270b",
+   ["image_path"]="2611",
+   ["text"]="Check box with check",
+   ["char"]={1993},
 },
 -- Table: {214}
 {
-   ["subText"]="hand, light skin tone, :raised_hand_tone1:",
+   ["subText"]=":radio_button:, button, geometric, radio",
    ["order"]=213,
-   ["char"]={2880},
-   ["text"]="Raised hand: light skin tone",
-   ["image_path"]="270b-1f3fb",
+   ["image_path"]="1f518",
+   ["text"]="Radio button",
+   ["char"]={1994},
 },
 -- Table: {215}
 {
-   ["subText"]="hand, medium-light skin tone, :raised_hand_tone2:",
+   ["subText"]=":white_circle:, circle, geometric",
    ["order"]=214,
-   ["char"]={2881},
-   ["text"]="Raised hand: medium-light skin tone",
-   ["image_path"]="270b-1f3fc",
+   ["image_path"]="26aa",
+   ["text"]="White circle",
+   ["char"]={1995},
 },
 -- Table: {216}
 {
-   ["subText"]="hand, medium skin tone, :raised_hand_tone3:",
+   ["subText"]=":black_circle:, circle, geometric",
    ["order"]=215,
-   ["char"]={2882},
-   ["text"]="Raised hand: medium skin tone",
-   ["image_path"]="270b-1f3fd",
+   ["image_path"]="26ab",
+   ["text"]="Black circle",
+   ["char"]={1996},
 },
 -- Table: {217}
 {
-   ["subText"]="hand, medium-dark skin tone, :raised_hand_tone4:",
+   ["subText"]=":red_circle:, circle, geometric, red",
    ["order"]=216,
-   ["char"]={2883},
-   ["text"]="Raised hand: medium-dark skin tone",
-   ["image_path"]="270b-1f3fe",
+   ["image_path"]="1f534",
+   ["text"]="Red circle",
+   ["char"]={1997},
 },
 -- Table: {218}
 {
-   ["subText"]="dark skin tone, hand, :raised_hand_tone5:",
+   ["subText"]=":blue_circle:, blue, circle, geometric",
    ["order"]=217,
-   ["char"]={2884},
-   ["text"]="Raised hand: dark skin tone",
-   ["image_path"]="270b-1f3ff",
+   ["image_path"]="1f535",
+   ["text"]="Blue circle",
+   ["char"]={1998},
 },
 -- Table: {219}
 {
-   ["subText"]="backhand, raised, :raised_back_of_hand:",
+   ["subText"]=":brown_circle:",
    ["order"]=218,
-   ["char"]={2885},
-   ["text"]="Raised back of hand",
-   ["image_path"]="1f91a",
+   ["image_path"]="1f7e4",
+   ["text"]="Brown circle",
+   ["char"]={1999},
 },
 -- Table: {220}
 {
-   ["subText"]="backhand, light skin tone, raised, :raised_back_of_hand_tone1:",
+   ["subText"]=":purple_circle:",
    ["order"]=219,
-   ["char"]={2886},
-   ["text"]="Raised back of hand: light skin tone",
-   ["image_path"]="1f91a-1f3fb",
+   ["image_path"]="1f7e3",
+   ["text"]="Purple circle",
+   ["char"]={2000},
 },
 -- Table: {221}
 {
-   ["subText"]="backhand, medium-light skin tone, raised, :raised_back_of_hand_tone2:",
+   ["subText"]=":green_circle:",
    ["order"]=220,
-   ["char"]={2887},
-   ["text"]="Raised back of hand: medium-light skin tone",
-   ["image_path"]="1f91a-1f3fc",
+   ["image_path"]="1f7e2",
+   ["text"]="Green circle",
+   ["char"]={2001},
 },
 -- Table: {222}
 {
-   ["subText"]="backhand, medium skin tone, raised, :raised_back_of_hand_tone3:",
+   ["subText"]=":yellow_circle:",
    ["order"]=221,
-   ["char"]={2888},
-   ["text"]="Raised back of hand: medium skin tone",
-   ["image_path"]="1f91a-1f3fd",
+   ["image_path"]="1f7e1",
+   ["text"]="Yellow circle",
+   ["char"]={2002},
 },
 -- Table: {223}
 {
-   ["subText"]="backhand, medium-dark skin tone, raised, :raised_back_of_hand_tone4:",
+   ["subText"]=":orange_circle:",
    ["order"]=222,
-   ["char"]={2889},
-   ["text"]="Raised back of hand: medium-dark skin tone",
-   ["image_path"]="1f91a-1f3fe",
+   ["image_path"]="1f7e0",
+   ["text"]="Orange circle",
+   ["char"]={2003},
 },
 -- Table: {224}
 {
-   ["subText"]="backhand, dark skin tone, raised, :raised_back_of_hand_tone5:",
+   ["subText"]=":small_red_triangle:, geometric, red",
    ["order"]=223,
-   ["char"]={2890},
-   ["text"]="Raised back of hand: dark skin tone",
-   ["image_path"]="1f91a-1f3ff",
+   ["image_path"]="1f53a",
+   ["text"]="Red triangle pointed up",
+   ["char"]={2004},
 },
 -- Table: {225}
 {
-   ["subText"]="finger, hand, splayed, :hand_splayed:",
+   ["subText"]=":small_red_triangle_down:, down, geometric, red",
    ["order"]=224,
-   ["char"]={2891},
-   ["text"]="Raised hand with fingers splayed",
-   ["image_path"]="1f590",
+   ["image_path"]="1f53b",
+   ["text"]="Red triangle pointed down",
+   ["char"]={2005},
 },
 -- Table: {226}
 {
-   ["subText"]="finger, hand, light skin tone, splayed, :hand_splayed_tone1:",
+   ["subText"]=":small_orange_diamond:, diamond, geometric, orange",
    ["order"]=225,
-   ["char"]={2892},
-   ["text"]="Raised hand with fingers splayed: light skin tone",
-   ["image_path"]="1f590-1f3fb",
+   ["image_path"]="1f538",
+   ["text"]="Small orange diamond",
+   ["char"]={2006},
 },
 -- Table: {227}
 {
-   ["subText"]="finger, hand, medium-light skin tone, splayed, :hand_splayed_tone2:",
+   ["subText"]=":small_blue_diamond:, blue, diamond, geometric",
    ["order"]=226,
-   ["char"]={2893},
-   ["text"]="Raised hand with fingers splayed: medium-light skin tone",
-   ["image_path"]="1f590-1f3fc",
+   ["image_path"]="1f539",
+   ["text"]="Small blue diamond",
+   ["char"]={2007},
 },
 -- Table: {228}
 {
-   ["subText"]="finger, hand, medium skin tone, splayed, :hand_splayed_tone3:",
+   ["subText"]=":large_orange_diamond:, diamond, geometric, orange",
    ["order"]=227,
-   ["char"]={2894},
-   ["text"]="Raised hand with fingers splayed: medium skin tone",
-   ["image_path"]="1f590-1f3fd",
+   ["image_path"]="1f536",
+   ["text"]="Large orange diamond",
+   ["char"]={2008},
 },
 -- Table: {229}
 {
-   ["subText"]="finger, hand, medium-dark skin tone, splayed, :hand_splayed_tone4:",
+   ["subText"]=":large_blue_diamond:, blue, diamond, geometric",
    ["order"]=228,
-   ["char"]={2895},
-   ["text"]="Raised hand with fingers splayed: medium-dark skin tone",
-   ["image_path"]="1f590-1f3fe",
+   ["image_path"]="1f537",
+   ["text"]="Large blue diamond",
+   ["char"]={2009},
 },
 -- Table: {230}
 {
-   ["subText"]="dark skin tone, finger, hand, splayed, :hand_splayed_tone5:",
+   ["subText"]=":white_square_button:, button, geometric, outlined, square",
    ["order"]=229,
-   ["char"]={2896},
-   ["text"]="Raised hand with fingers splayed: dark skin tone",
-   ["image_path"]="1f590-1f3ff",
+   ["image_path"]="1f533",
+   ["text"]="White square button",
+   ["char"]={2010},
 },
 -- Table: {231}
 {
-   ["subText"]="finger, hand, spock, vulcan, :vulcan:",
+   ["subText"]=":black_square_button:, button, geometric, square",
    ["order"]=230,
-   ["char"]={2897},
-   ["text"]="Vulcan salute",
-   ["image_path"]="1f596",
+   ["image_path"]="1f532",
+   ["text"]="Black square button",
+   ["char"]={2011},
 },
 -- Table: {232}
 {
-   ["subText"]="finger, hand, light skin tone, spock, vulcan, :vulcan_tone1:",
+   ["subText"]=":black_small_square:, geometric, square",
    ["order"]=231,
-   ["char"]={2898},
-   ["text"]="Vulcan salute: light skin tone",
-   ["image_path"]="1f596-1f3fb",
+   ["image_path"]="25aa",
+   ["text"]="Black small square",
+   ["char"]={2012},
 },
 -- Table: {233}
 {
-   ["subText"]="finger, hand, medium-light skin tone, spock, vulcan, :vulcan_tone2:",
+   ["subText"]=":white_small_square:, geometric, square",
    ["order"]=232,
-   ["char"]={2899},
-   ["text"]="Vulcan salute: medium-light skin tone",
-   ["image_path"]="1f596-1f3fc",
+   ["image_path"]="25ab",
+   ["text"]="White small square",
+   ["char"]={2013},
 },
 -- Table: {234}
 {
-   ["subText"]="finger, hand, medium skin tone, spock, vulcan, :vulcan_tone3:",
+   ["subText"]=":black_medium_small_square:, geometric, square",
    ["order"]=233,
-   ["char"]={2900},
-   ["text"]="Vulcan salute: medium skin tone",
-   ["image_path"]="1f596-1f3fd",
+   ["image_path"]="25fe",
+   ["text"]="Black medium-small square",
+   ["char"]={2014},
 },
 -- Table: {235}
 {
-   ["subText"]="finger, hand, medium-dark skin tone, spock, vulcan, :vulcan_tone4:",
+   ["subText"]=":white_medium_small_square:, geometric, square",
    ["order"]=234,
-   ["char"]={2901},
-   ["text"]="Vulcan salute: medium-dark skin tone",
-   ["image_path"]="1f596-1f3fe",
+   ["image_path"]="25fd",
+   ["text"]="White medium-small square",
+   ["char"]={2015},
 },
 -- Table: {236}
 {
-   ["subText"]="dark skin tone, finger, hand, spock, vulcan, :vulcan_tone5:",
+   ["subText"]=":black_medium_square:, geometric, square",
    ["order"]=235,
-   ["char"]={2902},
-   ["text"]="Vulcan salute: dark skin tone",
-   ["image_path"]="1f596-1f3ff",
+   ["image_path"]="25fc",
+   ["text"]="Black medium square",
+   ["char"]={2016},
 },
 -- Table: {237}
 {
-   ["subText"]="hand, wave, waving, :wave:",
+   ["subText"]=":white_medium_square:, geometric, square",
    ["order"]=236,
-   ["char"]={2903},
-   ["text"]="Waving hand",
-   ["image_path"]="1f44b",
+   ["image_path"]="25fb",
+   ["text"]="White medium square",
+   ["char"]={2017},
 },
 -- Table: {238}
 {
-   ["subText"]="hand, light skin tone, wave, waving, :wave_tone1:",
+   ["subText"]=":black_large_square:, geometric, square",
    ["order"]=237,
-   ["char"]={2904},
-   ["text"]="Waving hand: light skin tone",
-   ["image_path"]="1f44b-1f3fb",
+   ["image_path"]="2b1b",
+   ["text"]="Black large square",
+   ["char"]={2018},
 },
 -- Table: {239}
 {
-   ["subText"]="hand, medium-light skin tone, wave, waving, :wave_tone2:",
+   ["subText"]=":white_large_square:, geometric, square",
    ["order"]=238,
-   ["char"]={2905},
-   ["text"]="Waving hand: medium-light skin tone",
-   ["image_path"]="1f44b-1f3fc",
+   ["image_path"]="2b1c",
+   ["text"]="White large square",
+   ["char"]={2019},
 },
 -- Table: {240}
 {
-   ["subText"]="hand, medium skin tone, wave, waving, :wave_tone3:",
+   ["subText"]=":orange_square:",
    ["order"]=239,
-   ["char"]={2906},
-   ["text"]="Waving hand: medium skin tone",
-   ["image_path"]="1f44b-1f3fd",
+   ["image_path"]="1f7e7",
+   ["text"]="Orange square",
+   ["char"]={2020},
 },
 -- Table: {241}
 {
-   ["subText"]="hand, medium-dark skin tone, wave, waving, :wave_tone4:",
+   ["subText"]=":blue_square:",
    ["order"]=240,
-   ["char"]={2907},
-   ["text"]="Waving hand: medium-dark skin tone",
-   ["image_path"]="1f44b-1f3fe",
+   ["image_path"]="1f7e6",
+   ["text"]="Blue square",
+   ["char"]={2021},
 },
 -- Table: {242}
 {
-   ["subText"]="dark skin tone, hand, wave, waving, :wave_tone5:",
+   ["subText"]=":red_square:",
    ["order"]=241,
-   ["char"]={2908},
-   ["text"]="Waving hand: dark skin tone",
-   ["image_path"]="1f44b-1f3ff",
+   ["image_path"]="1f7e5",
+   ["text"]="Red square",
+   ["char"]={2022},
 },
 -- Table: {243}
 {
-   ["subText"]="call, hand, :call_me:",
+   ["subText"]=":brown_square:",
    ["order"]=242,
-   ["char"]={2909},
-   ["text"]="Call me hand",
-   ["image_path"]="1f919",
+   ["image_path"]="1f7eb",
+   ["text"]="Brown square",
+   ["char"]={2023},
 },
 -- Table: {244}
 {
-   ["subText"]="call, hand, light skin tone, :call_me_tone1:",
+   ["subText"]=":purple_square:",
    ["order"]=243,
-   ["char"]={2910},
-   ["text"]="Call me hand: light skin tone",
-   ["image_path"]="1f919-1f3fb",
+   ["image_path"]="1f7ea",
+   ["text"]="Purple square",
+   ["char"]={2024},
 },
 -- Table: {245}
 {
-   ["subText"]="call, hand, medium-light skin tone, :call_me_tone2:",
+   ["subText"]=":green_square:",
    ["order"]=244,
-   ["char"]={2911},
-   ["text"]="Call me hand: medium-light skin tone",
-   ["image_path"]="1f919-1f3fc",
+   ["image_path"]="1f7e9",
+   ["text"]="Green square",
+   ["char"]={2025},
 },
 -- Table: {246}
 {
-   ["subText"]="call, hand, medium skin tone, :call_me_tone3:",
+   ["subText"]=":yellow_square:",
    ["order"]=245,
-   ["char"]={2912},
-   ["text"]="Call me hand: medium skin tone",
-   ["image_path"]="1f919-1f3fd",
+   ["image_path"]="1f7e8",
+   ["text"]="Yellow square",
+   ["char"]={2026},
 },
 -- Table: {247}
 {
-   ["subText"]="call, hand, medium-dark skin tone, :call_me_tone4:",
+   ["subText"]=":speaker:, soft",
    ["order"]=246,
-   ["char"]={2913},
-   ["text"]="Call me hand: medium-dark skin tone",
-   ["image_path"]="1f919-1f3fe",
+   ["image_path"]="1f508",
+   ["text"]="Speaker low volume",
+   ["char"]={2027},
 },
 -- Table: {248}
 {
-   ["subText"]="call, dark skin tone, hand, :call_me_tone5:",
+   ["subText"]=":mute:, quiet, silent, speaker",
    ["order"]=247,
-   ["char"]={2914},
-   ["text"]="Call me hand: dark skin tone",
-   ["image_path"]="1f919-1f3ff",
+   ["image_path"]="1f507",
+   ["text"]="Muted speaker",
+   ["char"]={2028},
 },
 -- Table: {249}
 {
-   ["subText"]="biceps, comic, flex, muscle, :muscle:",
+   ["subText"]=":sound:, medium",
    ["order"]=248,
-   ["char"]={2915},
-   ["text"]="Flexed biceps",
-   ["image_path"]="1f4aa",
+   ["image_path"]="1f509",
+   ["text"]="Speaker medium volume",
+   ["char"]={2029},
 },
 -- Table: {250}
 {
-   ["subText"]="biceps, comic, flex, light skin tone, muscle, :muscle_tone1:",
+   ["subText"]=":loud_sound:, loud",
    ["order"]=249,
-   ["char"]={2916},
-   ["text"]="Flexed biceps: light skin tone",
-   ["image_path"]="1f4aa-1f3fb",
+   ["image_path"]="1f50a",
+   ["text"]="Speaker high volume",
+   ["char"]={2030},
 },
 -- Table: {251}
 {
-   ["subText"]="biceps, comic, flex, medium-light skin tone, muscle, :muscle_tone2:",
+   ["subText"]=":bell:",
    ["order"]=250,
-   ["char"]={2917},
-   ["text"]="Flexed biceps: medium-light skin tone",
-   ["image_path"]="1f4aa-1f3fc",
+   ["image_path"]="1f514",
+   ["text"]="Bell",
+   ["char"]={2031},
 },
 -- Table: {252}
 {
-   ["subText"]="biceps, comic, flex, medium skin tone, muscle, :muscle_tone3:",
+   ["subText"]=":no_bell:, bell, forbidden, mute, no, not, prohibited, quiet, silent",
    ["order"]=251,
-   ["char"]={2918},
-   ["text"]="Flexed biceps: medium skin tone",
-   ["image_path"]="1f4aa-1f3fd",
+   ["image_path"]="1f515",
+   ["text"]="Bell with slash",
+   ["char"]={2032},
 },
 -- Table: {253}
 {
-   ["subText"]="biceps, comic, flex, medium-dark skin tone, muscle, :muscle_tone4:",
+   ["subText"]=":mega:, cheering",
    ["order"]=252,
-   ["char"]={2919},
-   ["text"]="Flexed biceps: medium-dark skin tone",
-   ["image_path"]="1f4aa-1f3fe",
+   ["image_path"]="1f4e3",
+   ["text"]="Megaphone",
+   ["char"]={2033},
 },
 -- Table: {254}
 {
-   ["subText"]="biceps, comic, dark skin tone, flex, muscle, :muscle_tone5:",
+   ["subText"]=":loudspeaker:, loud, public address",
    ["order"]=253,
-   ["char"]={2920},
-   ["text"]="Flexed biceps: dark skin tone",
-   ["image_path"]="1f4aa-1f3ff",
+   ["image_path"]="1f4e2",
+   ["text"]="Loudspeaker",
+   ["char"]={2034},
 },
 -- Table: {255}
 {
-   ["subText"]="finger, hand, :middle_finger:",
+   ["subText"]=":speech_left:, dialog, speech",
    ["order"]=254,
-   ["char"]={2921},
-   ["text"]="Middle finger",
-   ["image_path"]="1f595",
+   ["image_path"]="1f5e8",
+   ["text"]="Left speech bubble",
+   ["char"]={2035},
 },
 -- Table: {256}
 {
-   ["subText"]="finger, hand, light skin tone, :middle_finger_tone1:",
+   ["subText"]=":eye_in_speech_bubble:, eye, speech bubble, witness",
    ["order"]=255,
-   ["char"]={2922},
-   ["text"]="Middle finger: light skin tone",
-   ["image_path"]="1f595-1f3fb",
+   ["image_path"]="1f441-1f5e8",
+   ["text"]="Eye in speech bubble",
+   ["char"]={2036},
 },
 -- Table: {257}
 {
-   ["subText"]="finger, hand, medium-light skin tone, :middle_finger_tone2:",
+   ["subText"]=":speech_balloon:, balloon, bubble, comic, dialog, speech",
    ["order"]=256,
-   ["char"]={2923},
-   ["text"]="Middle finger: medium-light skin tone",
-   ["image_path"]="1f595-1f3fc",
+   ["image_path"]="1f4ac",
+   ["text"]="Speech balloon",
+   ["char"]={2037},
 },
 -- Table: {258}
 {
-   ["subText"]="finger, hand, medium skin tone, :middle_finger_tone3:",
+   ["subText"]=":thought_balloon:, balloon, bubble, comic, thought",
    ["order"]=257,
-   ["char"]={2924},
-   ["text"]="Middle finger: medium skin tone",
-   ["image_path"]="1f595-1f3fd",
+   ["image_path"]="1f4ad",
+   ["text"]="Thought balloon",
+   ["char"]={2038},
 },
 -- Table: {259}
 {
-   ["subText"]="finger, hand, medium-dark skin tone, :middle_finger_tone4:",
+   ["subText"]=":anger_right:, angry, balloon, bubble, mad",
    ["order"]=258,
-   ["char"]={2925},
-   ["text"]="Middle finger: medium-dark skin tone",
-   ["image_path"]="1f595-1f3fe",
+   ["image_path"]="1f5ef",
+   ["text"]="Right anger bubble",
+   ["char"]={2039},
 },
 -- Table: {260}
 {
-   ["subText"]="dark skin tone, finger, hand, :middle_finger_tone5:",
+   ["subText"]=":spades:, card, game",
    ["order"]=259,
-   ["char"]={2926},
-   ["text"]="Middle finger: dark skin tone",
-   ["image_path"]="1f595-1f3ff",
+   ["image_path"]="2660",
+   ["text"]="Spade suit",
+   ["char"]={2040},
 },
 -- Table: {261}
 {
-   ["subText"]="hand, write, :writing_hand:",
+   ["subText"]=":clubs:, card, game",
    ["order"]=260,
-   ["char"]={2927},
-   ["text"]="Writing hand",
-   ["image_path"]="270d",
+   ["image_path"]="2663",
+   ["text"]="Club suit",
+   ["char"]={2041},
 },
 -- Table: {262}
 {
-   ["subText"]="hand, light skin tone, write, :writing_hand_tone1:",
+   ["subText"]=":hearts:, card, game",
    ["order"]=261,
-   ["char"]={2928},
-   ["text"]="Writing hand: light skin tone",
-   ["image_path"]="270d-1f3fb",
+   ["image_path"]="2665",
+   ["text"]="Heart suit",
+   ["char"]={2042},
 },
 -- Table: {263}
 {
-   ["subText"]="hand, medium-light skin tone, write, :writing_hand_tone2:",
+   ["subText"]=":diamonds:, card, game",
    ["order"]=262,
-   ["char"]={2929},
-   ["text"]="Writing hand: medium-light skin tone",
-   ["image_path"]="270d-1f3fc",
+   ["image_path"]="2666",
+   ["text"]="Diamond suit",
+   ["char"]={2043},
 },
 -- Table: {264}
 {
-   ["subText"]="hand, medium skin tone, write, :writing_hand_tone3:",
+   ["subText"]=":black_joker:, card, game, wildcard",
    ["order"]=263,
-   ["char"]={2930},
-   ["text"]="Writing hand: medium skin tone",
-   ["image_path"]="270d-1f3fd",
+   ["image_path"]="1f0cf",
+   ["text"]="Joker",
+   ["char"]={2044},
 },
 -- Table: {265}
 {
-   ["subText"]="hand, medium-dark skin tone, write, :writing_hand_tone4:",
+   ["subText"]=":flower_playing_cards:, Japanese, card, flower, game, playing",
    ["order"]=264,
-   ["char"]={2931},
-   ["text"]="Writing hand: medium-dark skin tone",
-   ["image_path"]="270d-1f3fe",
+   ["image_path"]="1f3b4",
+   ["text"]="Flower playing cards",
+   ["char"]={2045},
 },
 -- Table: {266}
 {
-   ["subText"]="dark skin tone, hand, write, :writing_hand_tone5:",
+   ["subText"]=":mahjong:, game, red",
    ["order"]=265,
-   ["char"]={2932},
-   ["text"]="Writing hand: dark skin tone",
-   ["image_path"]="270d-1f3ff",
+   ["image_path"]="1f004",
+   ["text"]="Mahjong red dragon",
+   ["char"]={2046},
 },
 -- Table: {267}
 {
-   ["subText"]="camera, phone, selfie, :selfie:",
+   ["subText"]=":clock1:, 00, 1, 1:00, clock, one, o’clock",
    ["order"]=266,
-   ["char"]={2933},
-   ["text"]="Selfie",
-   ["image_path"]="1f933",
+   ["image_path"]="1f550",
+   ["text"]="One o’clock",
+   ["char"]={2047},
 },
 -- Table: {268}
 {
-   ["subText"]="camera, light skin tone, phone, selfie, :selfie_tone1:",
+   ["subText"]=":clock2:, 00, 2, 2:00, clock, o’clock, two",
    ["order"]=267,
-   ["char"]={2934},
-   ["text"]="Selfie: light skin tone",
-   ["image_path"]="1f933-1f3fb",
+   ["image_path"]="1f551",
+   ["text"]="Two o’clock",
+   ["char"]={2048},
 },
 -- Table: {269}
 {
-   ["subText"]="camera, medium-light skin tone, phone, selfie, :selfie_tone2:",
+   ["subText"]=":clock3:, 00, 3, 3:00, clock, o’clock, three",
    ["order"]=268,
-   ["char"]={2935},
-   ["text"]="Selfie: medium-light skin tone",
-   ["image_path"]="1f933-1f3fc",
+   ["image_path"]="1f552",
+   ["text"]="Three o’clock",
+   ["char"]={2049},
 },
 -- Table: {270}
 {
-   ["subText"]="camera, medium skin tone, phone, selfie, :selfie_tone3:",
+   ["subText"]=":clock4:, 00, 4, 4:00, clock, four, o’clock",
    ["order"]=269,
-   ["char"]={2936},
-   ["text"]="Selfie: medium skin tone",
-   ["image_path"]="1f933-1f3fd",
+   ["image_path"]="1f553",
+   ["text"]="Four o’clock",
+   ["char"]={2050},
 },
 -- Table: {271}
 {
-   ["subText"]="camera, medium-dark skin tone, phone, selfie, :selfie_tone4:",
+   ["subText"]=":clock5:, 00, 5, 5:00, clock, five, o’clock",
    ["order"]=270,
-   ["char"]={2937},
-   ["text"]="Selfie: medium-dark skin tone",
-   ["image_path"]="1f933-1f3fe",
+   ["image_path"]="1f554",
+   ["text"]="Five o’clock",
+   ["char"]={2051},
 },
 -- Table: {272}
 {
-   ["subText"]="camera, dark skin tone, phone, selfie, :selfie_tone5:",
+   ["subText"]=":clock6:, 00, 6, 6:00, clock, o’clock, six",
    ["order"]=271,
-   ["char"]={2938},
-   ["text"]="Selfie: dark skin tone",
-   ["image_path"]="1f933-1f3ff",
+   ["image_path"]="1f555",
+   ["text"]="Six o’clock",
+   ["char"]={2052},
 },
 -- Table: {273}
 {
-   ["subText"]="care, cosmetics, manicure, nail, polish, :nail_care:",
+   ["subText"]=":clock7:, 00, 7, 7:00, clock, o’clock, seven",
    ["order"]=272,
-   ["char"]={2939},
-   ["text"]="Nail polish",
-   ["image_path"]="1f485",
+   ["image_path"]="1f556",
+   ["text"]="Seven o’clock",
+   ["char"]={2053},
 },
 -- Table: {274}
 {
-   ["subText"]="care, cosmetics, light skin tone, manicure, nail, polish, :nail_care_tone1:",
+   ["subText"]=":clock8:, 00, 8, 8:00, clock, eight, o’clock",
    ["order"]=273,
-   ["char"]={2940},
-   ["text"]="Nail polish: light skin tone",
-   ["image_path"]="1f485-1f3fb",
+   ["image_path"]="1f557",
+   ["text"]="Eight o’clock",
+   ["char"]={2054},
 },
 -- Table: {275}
 {
-   ["subText"]="care, cosmetics, manicure, medium-light skin tone, nail, polish, :nail_care_tone2:",
+   ["subText"]=":clock9:, 00, 9, 9:00, clock, nine, o’clock",
    ["order"]=274,
-   ["char"]={2941},
-   ["text"]="Nail polish: medium-light skin tone",
-   ["image_path"]="1f485-1f3fc",
+   ["image_path"]="1f558",
+   ["text"]="Nine o’clock",
+   ["char"]={2055},
 },
 -- Table: {276}
 {
-   ["subText"]="care, cosmetics, manicure, medium skin tone, nail, polish, :nail_care_tone3:",
+   ["subText"]=":clock10:, 00, 10, 10:00, clock, o’clock, ten",
    ["order"]=275,
-   ["char"]={2942},
-   ["text"]="Nail polish: medium skin tone",
-   ["image_path"]="1f485-1f3fd",
+   ["image_path"]="1f559",
+   ["text"]="Ten o’clock",
+   ["char"]={2056},
 },
 -- Table: {277}
 {
-   ["subText"]="care, cosmetics, manicure, medium-dark skin tone, nail, polish, :nail_care_tone4:",
+   ["subText"]=":clock11:, 00, 11, 11:00, clock, eleven, o’clock",
    ["order"]=276,
-   ["char"]={2943},
-   ["text"]="Nail polish: medium-dark skin tone",
-   ["image_path"]="1f485-1f3fe",
+   ["image_path"]="1f55a",
+   ["text"]="Eleven o’clock",
+   ["char"]={2057},
 },
 -- Table: {278}
 {
-   ["subText"]="care, cosmetics, dark skin tone, manicure, nail, polish, :nail_care_tone5:",
+   ["subText"]=":clock12:, 00, 12, 12:00, clock, o’clock, twelve",
    ["order"]=277,
-   ["char"]={2944},
-   ["text"]="Nail polish: dark skin tone",
-   ["image_path"]="1f485-1f3ff",
+   ["image_path"]="1f55b",
+   ["text"]="Twelve o’clock",
+   ["char"]={2058},
 },
 -- Table: {279}
 {
-   ["subText"]="diamond, :ring:",
+   ["subText"]=":clock130:, 1, 1:30, 30, clock, one, thirty",
    ["order"]=278,
-   ["char"]={2945},
-   ["text"]="Ring",
-   ["image_path"]="1f48d",
+   ["image_path"]="1f55c",
+   ["text"]="One-thirty",
+   ["char"]={2059},
 },
 -- Table: {280}
 {
-   ["subText"]="cosmetics, makeup, :lipstick:",
+   ["subText"]=":clock230:, 2, 2:30, 30, clock, thirty, two",
    ["order"]=279,
-   ["char"]={2946},
-   ["text"]="Lipstick",
-   ["image_path"]="1f484",
+   ["image_path"]="1f55d",
+   ["text"]="Two-thirty",
+   ["char"]={2060},
 },
 -- Table: {281}
 {
-   ["subText"]="kiss, lips, :kiss:",
+   ["subText"]=":clock330:, 3, 30, 3:30, clock, thirty, three",
    ["order"]=280,
-   ["char"]={2947},
-   ["text"]="Kiss mark",
-   ["image_path"]="1f48b",
+   ["image_path"]="1f55e",
+   ["text"]="Three-thirty",
+   ["char"]={2061},
 },
 -- Table: {282}
 {
-   ["subText"]="lips, :lips:",
+   ["subText"]=":clock430:, 4, 30, 4:30, clock, four, thirty",
    ["order"]=281,
-   ["char"]={2948},
-   ["text"]="Mouth",
-   ["image_path"]="1f444",
+   ["image_path"]="1f55f",
+   ["text"]="Four-thirty",
+   ["char"]={2062},
 },
 -- Table: {283}
 {
-   ["subText"]="body, :tongue:",
+   ["subText"]=":clock530:, 5, 30, 5:30, clock, five, thirty",
    ["order"]=282,
-   ["char"]={2949},
-   ["text"]="Tongue",
-   ["image_path"]="1f445",
+   ["image_path"]="1f560",
+   ["text"]="Five-thirty",
+   ["char"]={2063},
 },
 -- Table: {284}
 {
-   ["subText"]="body, :ear:",
+   ["subText"]=":clock630:, 6, 30, 6:30, clock, six, thirty",
    ["order"]=283,
-   ["char"]={2950},
-   ["text"]="Ear",
-   ["image_path"]="1f442",
+   ["image_path"]="1f561",
+   ["text"]="Six-thirty",
+   ["char"]={2064},
 },
 -- Table: {285}
 {
-   ["subText"]="body, light skin tone, :ear_tone1:",
+   ["subText"]=":clock730:, 7, 30, 7:30, clock, seven, thirty",
    ["order"]=284,
-   ["char"]={2951},
-   ["text"]="Ear: light skin tone",
-   ["image_path"]="1f442-1f3fb",
+   ["image_path"]="1f562",
+   ["text"]="Seven-thirty",
+   ["char"]={2065},
 },
 -- Table: {286}
 {
-   ["subText"]="body, medium-light skin tone, :ear_tone2:",
+   ["subText"]=":clock830:, 8, 30, 8:30, clock, eight, thirty",
    ["order"]=285,
-   ["char"]={2952},
-   ["text"]="Ear: medium-light skin tone",
-   ["image_path"]="1f442-1f3fc",
+   ["image_path"]="1f563",
+   ["text"]="Eight-thirty",
+   ["char"]={2066},
 },
 -- Table: {287}
 {
-   ["subText"]="body, medium skin tone, :ear_tone3:",
+   ["subText"]=":clock930:, 9, 30, 9:30, clock, nine, thirty",
    ["order"]=286,
-   ["char"]={2953},
-   ["text"]="Ear: medium skin tone",
-   ["image_path"]="1f442-1f3fd",
+   ["image_path"]="1f564",
+   ["text"]="Nine-thirty",
+   ["char"]={2067},
 },
 -- Table: {288}
 {
-   ["subText"]="body, medium-dark skin tone, :ear_tone4:",
+   ["subText"]=":clock1030:, 10, 10:30, 30, clock, ten, thirty",
    ["order"]=287,
-   ["char"]={2954},
-   ["text"]="Ear: medium-dark skin tone",
-   ["image_path"]="1f442-1f3fe",
+   ["image_path"]="1f565",
+   ["text"]="Ten-thirty",
+   ["char"]={2068},
 },
 -- Table: {289}
 {
-   ["subText"]="body, dark skin tone, :ear_tone5:",
+   ["subText"]=":clock1130:, 11, 11:30, 30, clock, eleven, thirty",
    ["order"]=288,
-   ["char"]={2955},
-   ["text"]="Ear: dark skin tone",
-   ["image_path"]="1f442-1f3ff",
+   ["image_path"]="1f566",
+   ["text"]="Eleven-thirty",
+   ["char"]={2069},
 },
 -- Table: {290}
 {
-   ["subText"]="body, :nose:",
+   ["subText"]=":clock1230:, 12, 12:30, 30, clock, thirty, twelve",
    ["order"]=289,
-   ["char"]={2956},
-   ["text"]="Nose",
-   ["image_path"]="1f443",
+   ["image_path"]="1f567",
+   ["text"]="Twelve-thirty",
+   ["char"]={2070},
 },
 -- Table: {291}
 {
-   ["subText"]="body, light skin tone, :nose_tone1:",
+   ["subText"]=":digit_zero:",
    ["order"]=290,
-   ["char"]={2957},
-   ["text"]="Nose: light skin tone",
-   ["image_path"]="1f443-1f3fb",
+   ["image_path"]="0030",
+   ["text"]="Digit zero",
+   ["char"]={2071},
 },
 -- Table: {292}
 {
-   ["subText"]="body, medium-light skin tone, :nose_tone2:",
+   ["subText"]=":digit_one:",
    ["order"]=291,
-   ["char"]={2958},
-   ["text"]="Nose: medium-light skin tone",
-   ["image_path"]="1f443-1f3fc",
+   ["image_path"]="0031",
+   ["text"]="Digit one",
+   ["char"]={2072},
 },
 -- Table: {293}
 {
-   ["subText"]="body, medium skin tone, :nose_tone3:",
+   ["subText"]=":digit_two:",
    ["order"]=292,
-   ["char"]={2959},
-   ["text"]="Nose: medium skin tone",
-   ["image_path"]="1f443-1f3fd",
+   ["image_path"]="0032",
+   ["text"]="Digit two",
+   ["char"]={2073},
 },
 -- Table: {294}
 {
-   ["subText"]="body, medium-dark skin tone, :nose_tone4:",
+   ["subText"]=":digit_three:",
    ["order"]=293,
-   ["char"]={2960},
-   ["text"]="Nose: medium-dark skin tone",
-   ["image_path"]="1f443-1f3fe",
+   ["image_path"]="0033",
+   ["text"]="Digit three",
+   ["char"]={2074},
 },
 -- Table: {295}
 {
-   ["subText"]="body, dark skin tone, :nose_tone5:",
+   ["subText"]=":digit_four:",
    ["order"]=294,
-   ["char"]={2961},
-   ["text"]="Nose: dark skin tone",
-   ["image_path"]="1f443-1f3ff",
+   ["image_path"]="0034",
+   ["text"]="Digit four",
+   ["char"]={2075},
 },
 -- Table: {296}
 {
-   ["subText"]="clothing, footprint, print, :footprints:",
+   ["subText"]=":digit_five:",
    ["order"]=295,
-   ["char"]={2962},
-   ["text"]="Footprints",
-   ["image_path"]="1f463",
+   ["image_path"]="0035",
+   ["text"]="Digit five",
+   ["char"]={2076},
 },
 -- Table: {297}
 {
-   ["subText"]="body, :eye:",
+   ["subText"]=":digit_six:",
    ["order"]=296,
-   ["char"]={2963},
-   ["text"]="Eye",
-   ["image_path"]="1f441",
+   ["image_path"]="0036",
+   ["text"]="Digit six",
+   ["char"]={2077},
 },
 -- Table: {298}
 {
-   ["subText"]="eye, face, :eyes:",
+   ["subText"]=":digit_seven:",
    ["order"]=297,
-   ["char"]={2964},
-   ["text"]="Eyes",
-   ["image_path"]="1f440",
+   ["image_path"]="0037",
+   ["text"]="Digit seven",
+   ["char"]={2078},
 },
 -- Table: {299}
 {
-   ["subText"]="face, head, silhouette, speak, speaking, :speaking_head:",
+   ["subText"]=":digit_eight:",
    ["order"]=298,
-   ["char"]={2965},
-   ["text"]="Speaking head",
-   ["image_path"]="1f5e3",
+   ["image_path"]="0038",
+   ["text"]="Digit eight",
+   ["char"]={2079},
 },
 -- Table: {300}
 {
-   ["subText"]="bust, silhouette, :bust_in_silhouette:",
+   ["subText"]=":digit_nine:",
    ["order"]=299,
-   ["char"]={2966},
-   ["text"]="Bust in silhouette",
-   ["image_path"]="1f464",
+   ["image_path"]="0039",
+   ["text"]="Digit nine",
+   ["char"]={2080},
 },
 -- Table: {301}
 {
-   ["subText"]="bust, silhouette, :busts_in_silhouette:",
+   ["subText"]=":pound_symbol:",
    ["order"]=300,
-   ["char"]={2967},
-   ["text"]="Busts in silhouette",
-   ["image_path"]="1f465",
+   ["image_path"]="0023",
+   ["text"]="Pound symbol",
+   ["char"]={2081},
 },
 -- Table: {302}
 {
-   ["subText"]="baby, young, :baby:",
+   ["subText"]=":asterisk_symbol:",
    ["order"]=301,
-   ["char"]={2968},
-   ["text"]="Baby",
-   ["image_path"]="1f476",
+   ["image_path"]="002a",
+   ["text"]="Asterisk",
+   ["char"]={2082},
 },
 -- Table: {303}
 {
-   ["subText"]="baby, light skin tone, young, :baby_tone1:",
+   ["subText"]=":female_sign:, woman",
    ["order"]=302,
-   ["char"]={2969},
-   ["text"]="Baby: light skin tone",
-   ["image_path"]="1f476-1f3fb",
+   ["image_path"]="2640",
+   ["text"]="Female sign",
+   ["char"]={2083},
 },
 -- Table: {304}
 {
-   ["subText"]="baby, medium-light skin tone, young, :baby_tone2:",
+   ["subText"]=":male_sign:, man",
    ["order"]=303,
-   ["char"]={2970},
-   ["text"]="Baby: medium-light skin tone",
-   ["image_path"]="1f476-1f3fc",
+   ["image_path"]="2642",
+   ["text"]="Male sign",
+   ["char"]={2084},
 },
 -- Table: {305}
 {
-   ["subText"]="baby, medium skin tone, young, :baby_tone3:",
+   ["subText"]=":medical_symbol:, aesculapius, medicine, staff",
    ["order"]=304,
-   ["char"]={2971},
-   ["text"]="Baby: medium skin tone",
-   ["image_path"]="1f476-1f3fd",
+   ["image_path"]="2695",
+   ["text"]="Medical symbol",
+   ["char"]={2085},
 },
 -- Table: {306}
 {
-   ["subText"]="baby, medium-dark skin tone, young, :baby_tone4:",
+   ["subText"]=":soccer:, ball, football",
    ["order"]=305,
-   ["char"]={2972},
-   ["text"]="Baby: medium-dark skin tone",
-   ["image_path"]="1f476-1f3fe",
+   ["image_path"]="26bd",
+   ["text"]="Soccer ball",
+   ["char"]={2086},
 },
 -- Table: {307}
 {
-   ["subText"]="baby, dark skin tone, young, :baby_tone5:",
+   ["subText"]=":basketball:, ball, hoop",
    ["order"]=306,
-   ["char"]={2973},
-   ["text"]="Baby: dark skin tone",
-   ["image_path"]="1f476-1f3ff",
+   ["image_path"]="1f3c0",
+   ["text"]="Basketball",
+   ["char"]={2087},
 },
 -- Table: {308}
 {
-   ["subText"]="boy, young, :boy:",
+   ["subText"]=":football:, american, ball",
    ["order"]=307,
-   ["char"]={2974},
-   ["text"]="Boy",
-   ["image_path"]="1f466",
+   ["image_path"]="1f3c8",
+   ["text"]="American football",
+   ["char"]={2088},
 },
 -- Table: {309}
 {
-   ["subText"]="boy, light skin tone, young, :boy_tone1:",
+   ["subText"]=":baseball:, ball",
    ["order"]=308,
-   ["char"]={2975},
-   ["text"]="Boy: light skin tone",
-   ["image_path"]="1f466-1f3fb",
+   ["image_path"]="26be",
+   ["text"]="Baseball",
+   ["char"]={2089},
 },
 -- Table: {310}
 {
-   ["subText"]="boy, medium-light skin tone, young, :boy_tone2:",
+   ["subText"]=":softball:",
    ["order"]=309,
-   ["char"]={2976},
-   ["text"]="Boy: medium-light skin tone",
-   ["image_path"]="1f466-1f3fc",
+   ["image_path"]="1f94e",
+   ["text"]="Softball",
+   ["char"]={2090},
 },
 -- Table: {311}
 {
-   ["subText"]="boy, medium skin tone, young, :boy_tone3:",
+   ["subText"]=":tennis:, ball, racquet",
    ["order"]=310,
-   ["char"]={2977},
-   ["text"]="Boy: medium skin tone",
-   ["image_path"]="1f466-1f3fd",
+   ["image_path"]="1f3be",
+   ["text"]="Tennis",
+   ["char"]={2091},
 },
 -- Table: {312}
 {
-   ["subText"]="boy, medium-dark skin tone, young, :boy_tone4:",
+   ["subText"]=":volleyball:, ball, game",
    ["order"]=311,
-   ["char"]={2978},
-   ["text"]="Boy: medium-dark skin tone",
-   ["image_path"]="1f466-1f3fe",
+   ["image_path"]="1f3d0",
+   ["text"]="Volleyball",
+   ["char"]={2092},
 },
 -- Table: {313}
 {
-   ["subText"]="boy, dark skin tone, young, :boy_tone5:",
+   ["subText"]=":rugby_football:, ball, football, rugby",
    ["order"]=312,
-   ["char"]={2979},
-   ["text"]="Boy: dark skin tone",
-   ["image_path"]="1f466-1f3ff",
+   ["image_path"]="1f3c9",
+   ["text"]="Rugby football",
+   ["char"]={2093},
 },
 -- Table: {314}
 {
-   ["subText"]="Virgo, young, zodiac, :girl:",
+   ["subText"]=":flying_disc:",
    ["order"]=313,
-   ["char"]={2980},
-   ["text"]="Girl",
-   ["image_path"]="1f467",
+   ["image_path"]="1f94f",
+   ["text"]="Flying disc",
+   ["char"]={2094},
 },
 -- Table: {315}
 {
-   ["subText"]="Virgo, light skin tone, young, zodiac, :girl_tone1:",
+   ["subText"]=":8ball:, 8, 8 ball, ball, billiard, eight, game",
    ["order"]=314,
-   ["char"]={2981},
-   ["text"]="Girl: light skin tone",
-   ["image_path"]="1f467-1f3fb",
+   ["image_path"]="1f3b1",
+   ["text"]="Pool 8 ball",
+   ["char"]={2095},
 },
 -- Table: {316}
 {
-   ["subText"]="Virgo, medium-light skin tone, young, zodiac, :girl_tone2:",
+   ["subText"]=":ping_pong:, ball, bat, game, paddle, ping pong, table tennis",
    ["order"]=315,
-   ["char"]={2982},
-   ["text"]="Girl: medium-light skin tone",
-   ["image_path"]="1f467-1f3fc",
+   ["image_path"]="1f3d3",
+   ["text"]="Ping pong",
+   ["char"]={2096},
 },
 -- Table: {317}
 {
-   ["subText"]="Virgo, medium skin tone, young, zodiac, :girl_tone3:",
+   ["subText"]=":badminton:, birdie, game, racquet, shuttlecock",
    ["order"]=316,
-   ["char"]={2983},
-   ["text"]="Girl: medium skin tone",
-   ["image_path"]="1f467-1f3fd",
+   ["image_path"]="1f3f8",
+   ["text"]="Badminton",
+   ["char"]={2097},
 },
 -- Table: {318}
 {
-   ["subText"]="Virgo, medium-dark skin tone, young, zodiac, :girl_tone4:",
+   ["subText"]=":hockey:, game, ice, puck, stick",
    ["order"]=317,
-   ["char"]={2984},
-   ["text"]="Girl: medium-dark skin tone",
-   ["image_path"]="1f467-1f3fe",
+   ["image_path"]="1f3d2",
+   ["text"]="Ice hockey",
+   ["char"]={2098},
 },
 -- Table: {319}
 {
-   ["subText"]="Virgo, dark skin tone, young, zodiac, :girl_tone5:",
+   ["subText"]=":field_hockey:, ball, field, game, hockey, stick",
    ["order"]=318,
-   ["char"]={2985},
-   ["text"]="Girl: dark skin tone",
-   ["image_path"]="1f467-1f3ff",
+   ["image_path"]="1f3d1",
+   ["text"]="Field hockey",
+   ["char"]={2099},
 },
 -- Table: {320}
 {
-   ["subText"]="man, :man:",
+   ["subText"]=":lacrosse:",
    ["order"]=319,
-   ["char"]={2986},
-   ["text"]="Man",
-   ["image_path"]="1f468",
+   ["image_path"]="1f94d",
+   ["text"]="Lacrosse",
+   ["char"]={2100},
 },
 -- Table: {321}
 {
-   ["subText"]="light skin tone, man, :man_tone1:",
+   ["subText"]=":cricket_game:, ball, bat, game",
    ["order"]=320,
-   ["char"]={2987},
-   ["text"]="Man: light skin tone",
-   ["image_path"]="1f468-1f3fb",
+   ["image_path"]="1f3cf",
+   ["text"]="Cricket game",
+   ["char"]={2101},
 },
 -- Table: {322}
 {
-   ["subText"]="man, medium-light skin tone, :man_tone2:",
+   ["subText"]=":goal:, net",
    ["order"]=321,
-   ["char"]={2988},
-   ["text"]="Man: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc",
+   ["image_path"]="1f945",
+   ["text"]="Goal net",
+   ["char"]={2102},
 },
 -- Table: {323}
 {
-   ["subText"]="man, medium skin tone, :man_tone3:",
+   ["subText"]=":golf:, hole",
    ["order"]=322,
-   ["char"]={2989},
-   ["text"]="Man: medium skin tone",
-   ["image_path"]="1f468-1f3fd",
+   ["image_path"]="26f3",
+   ["text"]="Flag in hole",
+   ["char"]={2103},
 },
 -- Table: {324}
 {
-   ["subText"]="man, medium-dark skin tone, :man_tone4:",
+   ["subText"]=":bow_and_arrow:, Sagittarius, archer, archery, arrow, bow, tool, weapon, zodiac",
    ["order"]=323,
-   ["char"]={2990},
-   ["text"]="Man: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe",
+   ["image_path"]="1f3f9",
+   ["text"]="Bow and arrow",
+   ["char"]={2104},
 },
 -- Table: {325}
 {
-   ["subText"]="dark skin tone, man, :man_tone5:",
+   ["subText"]=":fishing_pole_and_fish:, fish, pole",
    ["order"]=324,
-   ["char"]={2991},
-   ["text"]="Man: dark skin tone",
-   ["image_path"]="1f468-1f3ff",
+   ["image_path"]="1f3a3",
+   ["text"]="Fishing pole",
+   ["char"]={2105},
 },
 -- Table: {326}
 {
-   ["subText"]="woman, :woman:",
+   ["subText"]=":boxing_glove:, boxing, glove",
    ["order"]=325,
-   ["char"]={2992},
-   ["text"]="Woman",
-   ["image_path"]="1f469",
+   ["image_path"]="1f94a",
+   ["text"]="Boxing glove",
+   ["char"]={2106},
 },
 -- Table: {327}
 {
-   ["subText"]="light skin tone, woman, :woman_tone1:",
+   ["subText"]=":martial_arts_uniform:, judo, karate, martial arts, taekwondo, uniform",
    ["order"]=326,
-   ["char"]={2993},
-   ["text"]="Woman: light skin tone",
-   ["image_path"]="1f469-1f3fb",
+   ["image_path"]="1f94b",
+   ["text"]="Martial arts uniform",
+   ["char"]={2107},
 },
 -- Table: {328}
 {
-   ["subText"]="medium-light skin tone, woman, :woman_tone2:",
+   ["subText"]=":running_shirt_with_sash:, athletics, running, sash, shirt",
    ["order"]=327,
-   ["char"]={2994},
-   ["text"]="Woman: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc",
+   ["image_path"]="1f3bd",
+   ["text"]="Running shirt",
+   ["char"]={2108},
 },
 -- Table: {329}
 {
-   ["subText"]="medium skin tone, woman, :woman_tone3:",
+   ["subText"]=":skateboard:",
    ["order"]=328,
-   ["char"]={2995},
-   ["text"]="Woman: medium skin tone",
-   ["image_path"]="1f469-1f3fd",
+   ["image_path"]="1f6f9",
+   ["text"]="Skateboard",
+   ["char"]={2109},
 },
 -- Table: {330}
 {
-   ["subText"]="medium-dark skin tone, woman, :woman_tone4:",
+   ["subText"]=":sled:",
    ["order"]=329,
-   ["char"]={2996},
-   ["text"]="Woman: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe",
+   ["image_path"]="1f6f7",
+   ["text"]="Sled",
+   ["char"]={2110},
 },
 -- Table: {331}
 {
-   ["subText"]="dark skin tone, woman, :woman_tone5:",
+   ["subText"]=":parachute:",
    ["order"]=330,
-   ["char"]={2997},
-   ["text"]="Woman: dark skin tone",
-   ["image_path"]="1f469-1f3ff",
+   ["image_path"]="1fa82",
+   ["text"]="Parachute",
+   ["char"]={2111},
 },
 -- Table: {332}
 {
-   ["subText"]="blonde, woman, :blond-haired_woman:",
+   ["subText"]=":ice_skate:, ice, skate",
    ["order"]=331,
-   ["char"]={2998},
-   ["text"]="Blond-haired woman",
-   ["image_path"]="1f471-2640",
+   ["image_path"]="26f8",
+   ["text"]="Ice skate",
+   ["char"]={2112},
 },
 -- Table: {333}
 {
-   ["subText"]="blonde, light skin tone, woman, :blond-haired_woman_tone1:",
+   ["subText"]=":curling_stone:, game, rock",
    ["order"]=332,
-   ["char"]={2999},
-   ["text"]="Blond-haired woman: light skin tone",
-   ["image_path"]="1f471-1f3fb-2640",
+   ["image_path"]="1f94c",
+   ["text"]="Curling stone",
+   ["char"]={2113},
 },
 -- Table: {334}
 {
-   ["subText"]="blonde, medium-light skin tone, woman, :blond-haired_woman_tone2:",
+   ["subText"]=":ski:, snow",
    ["order"]=333,
-   ["char"]={3000},
-   ["text"]="Blond-haired woman: medium-light skin tone",
-   ["image_path"]="1f471-1f3fc-2640",
+   ["image_path"]="1f3bf",
+   ["text"]="Skis",
+   ["char"]={2114},
 },
 -- Table: {335}
 {
-   ["subText"]="blonde, medium skin tone, woman, :blond-haired_woman_tone3:",
+   ["subText"]=":skier:, ski, snow",
    ["order"]=334,
-   ["char"]={3001},
-   ["text"]="Blond-haired woman: medium skin tone",
-   ["image_path"]="1f471-1f3fd-2640",
+   ["image_path"]="26f7",
+   ["text"]="Skier",
+   ["char"]={2115},
 },
 -- Table: {336}
 {
-   ["subText"]="blonde, medium-dark skin tone, woman, :blond-haired_woman_tone4:",
+   ["subText"]=":snowboarder:, ski, snow, snowboard",
    ["order"]=335,
-   ["char"]={3002},
-   ["text"]="Blond-haired woman: medium-dark skin tone",
-   ["image_path"]="1f471-1f3fe-2640",
+   ["image_path"]="1f3c2",
+   ["text"]="Snowboarder",
+   ["char"]={2116},
 },
 -- Table: {337}
 {
-   ["subText"]="blonde, dark skin tone, woman, :blond-haired_woman_tone5:",
-   ["order"]=336,
-   ["char"]={3003},
-   ["text"]="Blond-haired woman: dark skin tone",
-   ["image_path"]="1f471-1f3ff-2640",
+   ["subText"]=":person_lifting_weights:, lifter, weight",
+   ["order"]=341,
+   ["image_path"]="1f3cb",
+   ["text"]="Person lifting weights",
+   ["char"]={2117},
 },
 -- Table: {338}
 {
-   ["subText"]="blond, :blond_haired_person:",
-   ["order"]=337,
-   ["char"]={3004},
-   ["text"]="Blond-haired person",
-   ["image_path"]="1f471",
+   ["subText"]=":woman_lifting_weights:, weight lifter, woman",
+   ["order"]=347,
+   ["image_path"]="1f3cb-2640",
+   ["text"]="Woman lifting weights",
+   ["char"]={2118},
 },
 -- Table: {339}
 {
-   ["subText"]="blond, light skin tone, :blond_haired_person_tone1:",
-   ["order"]=338,
-   ["char"]={3005},
-   ["text"]="Blond-haired person: light skin tone",
-   ["image_path"]="1f471-1f3fb",
+   ["subText"]=":man_lifting_weights:, man, weight lifter",
+   ["order"]=353,
+   ["image_path"]="1f3cb-2642",
+   ["text"]="Man lifting weights",
+   ["char"]={2119},
 },
 -- Table: {340}
 {
-   ["subText"]="blond, medium-light skin tone, :blond_haired_person_tone2:",
-   ["order"]=339,
-   ["char"]={3006},
-   ["text"]="Blond-haired person: medium-light skin tone",
-   ["image_path"]="1f471-1f3fc",
+   ["subText"]=":people_wrestling:, wrestle, wrestler",
+   ["order"]=359,
+   ["image_path"]="1f93c",
+   ["text"]="People wrestling",
+   ["char"]={2120},
 },
 -- Table: {341}
 {
-   ["subText"]="blond, medium skin tone, :blond_haired_person_tone3:",
-   ["order"]=340,
-   ["char"]={3007},
-   ["text"]="Blond-haired person: medium skin tone",
-   ["image_path"]="1f471-1f3fd",
+   ["subText"]=":women_wrestling:, women, wrestle",
+   ["order"]=360,
+   ["image_path"]="1f93c-2640",
+   ["text"]="Women wrestling",
+   ["char"]={2121},
 },
 -- Table: {342}
 {
-   ["subText"]="blond, medium-dark skin tone, :blond_haired_person_tone4:",
-   ["order"]=341,
-   ["char"]={3008},
-   ["text"]="Blond-haired person: medium-dark skin tone",
-   ["image_path"]="1f471-1f3fe",
+   ["subText"]=":men_wrestling:, men, wrestle",
+   ["order"]=361,
+   ["image_path"]="1f93c-2642",
+   ["text"]="Men wrestling",
+   ["char"]={2122},
 },
 -- Table: {343}
 {
-   ["subText"]="blond, dark skin tone, :blond_haired_person_tone5:",
-   ["order"]=342,
-   ["char"]={3009},
-   ["text"]="Blond-haired person: dark skin tone",
-   ["image_path"]="1f471-1f3ff",
+   ["subText"]=":person_doing_cartwheel:, cartwheel, gymnastics",
+   ["order"]=362,
+   ["image_path"]="1f938",
+   ["text"]="Person cartwheeling",
+   ["char"]={2123},
 },
 -- Table: {344}
 {
-   ["subText"]="blond, man, :blond-haired_man:",
-   ["order"]=343,
-   ["char"]={3010},
-   ["text"]="Blond-haired man",
-   ["image_path"]="1f471-2642",
+   ["subText"]=":woman_cartwheeling:, cartwheel, gymnastics, woman",
+   ["order"]=368,
+   ["image_path"]="1f938-2640",
+   ["text"]="Woman cartwheeling",
+   ["char"]={2124},
 },
 -- Table: {345}
 {
-   ["subText"]="blond, dark skin tone, man, :blond-haired_man_tone5:",
-   ["order"]=344,
-   ["char"]={3011},
-   ["text"]="Blond-haired man: dark skin tone",
-   ["image_path"]="1f471-1f3ff-2642",
+   ["subText"]=":man_cartwheeling:, cartwheel, gymnastics, man",
+   ["order"]=374,
+   ["image_path"]="1f938-2642",
+   ["text"]="Man cartwheeling",
+   ["char"]={2125},
 },
 -- Table: {346}
 {
-   ["subText"]="blond, man, medium-dark skin tone, :blond-haired_man_tone4:",
-   ["order"]=345,
-   ["char"]={3012},
-   ["text"]="Blond-haired man: medium-dark skin tone",
-   ["image_path"]="1f471-1f3fe-2642",
+   ["subText"]=":person_bouncing_ball:, ball",
+   ["order"]=380,
+   ["image_path"]="26f9",
+   ["text"]="Person bouncing ball",
+   ["char"]={2126},
 },
 -- Table: {347}
 {
-   ["subText"]="blond, man, medium skin tone, :blond-haired_man_tone3:",
-   ["order"]=346,
-   ["char"]={3013},
-   ["text"]="Blond-haired man: medium skin tone",
-   ["image_path"]="1f471-1f3fd-2642",
+   ["subText"]=":woman_bouncing_ball:, ball, woman",
+   ["order"]=386,
+   ["image_path"]="26f9-2640",
+   ["text"]="Woman bouncing ball",
+   ["char"]={2127},
 },
 -- Table: {348}
 {
-   ["subText"]="blond, man, medium-light skin tone, :blond-haired_man_tone2:",
-   ["order"]=347,
-   ["char"]={3014},
-   ["text"]="Blond-haired man: medium-light skin tone",
-   ["image_path"]="1f471-1f3fc-2642",
+   ["subText"]=":man_bouncing_ball:, ball, man",
+   ["order"]=392,
+   ["image_path"]="26f9-2642",
+   ["text"]="Man bouncing ball",
+   ["char"]={2128},
 },
 -- Table: {349}
 {
-   ["subText"]="blond, light skin tone, man, :blond-haired_man_tone1:",
-   ["order"]=348,
-   ["char"]={3015},
-   ["text"]="Blond-haired man: light skin tone",
-   ["image_path"]="1f471-1f3fb-2642",
+   ["subText"]=":person_fencing:, fencer, fencing, sword",
+   ["order"]=398,
+   ["image_path"]="1f93a",
+   ["text"]="Person fencing",
+   ["char"]={2129},
 },
 -- Table: {350}
 {
-   ["subText"]="man, old, :older_man:",
-   ["order"]=349,
-   ["char"]={3016},
-   ["text"]="Old man",
-   ["image_path"]="1f474",
+   ["subText"]=":person_playing_handball:, ball, handball",
+   ["order"]=399,
+   ["image_path"]="1f93e",
+   ["text"]="Person playing handball",
+   ["char"]={2130},
 },
 -- Table: {351}
 {
-   ["subText"]="light skin tone, man, old, :older_man_tone1:",
-   ["order"]=350,
-   ["char"]={3017},
-   ["text"]="Old man: light skin tone",
-   ["image_path"]="1f474-1f3fb",
+   ["subText"]=":woman_playing_handball:, handball, woman",
+   ["order"]=405,
+   ["image_path"]="1f93e-2640",
+   ["text"]="Woman playing handball",
+   ["char"]={2131},
 },
 -- Table: {352}
 {
-   ["subText"]="man, medium-light skin tone, old, :older_man_tone2:",
-   ["order"]=351,
-   ["char"]={3018},
-   ["text"]="Old man: medium-light skin tone",
-   ["image_path"]="1f474-1f3fc",
+   ["subText"]=":man_playing_handball:, handball, man",
+   ["order"]=411,
+   ["image_path"]="1f93e-2642",
+   ["text"]="Man playing handball",
+   ["char"]={2132},
 },
 -- Table: {353}
 {
-   ["subText"]="man, medium skin tone, old, :older_man_tone3:",
-   ["order"]=352,
-   ["char"]={3019},
-   ["text"]="Old man: medium skin tone",
-   ["image_path"]="1f474-1f3fd",
+   ["subText"]=":person_golfing:, ball, golf",
+   ["order"]=417,
+   ["image_path"]="1f3cc",
+   ["text"]="Person golfing",
+   ["char"]={2133},
 },
 -- Table: {354}
 {
-   ["subText"]="man, medium-dark skin tone, old, :older_man_tone4:",
-   ["order"]=353,
-   ["char"]={3020},
-   ["text"]="Old man: medium-dark skin tone",
-   ["image_path"]="1f474-1f3fe",
+   ["subText"]=":woman_golfing:, golf, woman",
+   ["order"]=423,
+   ["image_path"]="1f3cc-2640",
+   ["text"]="Woman golfing",
+   ["char"]={2134},
 },
 -- Table: {355}
 {
-   ["subText"]="dark skin tone, man, old, :older_man_tone5:",
-   ["order"]=354,
-   ["char"]={3021},
-   ["text"]="Old man: dark skin tone",
-   ["image_path"]="1f474-1f3ff",
+   ["subText"]=":man_golfing:, golf, man",
+   ["order"]=429,
+   ["image_path"]="1f3cc-2642",
+   ["text"]="Man golfing",
+   ["char"]={2135},
 },
 -- Table: {356}
 {
-   ["subText"]="old, woman, :older_woman:",
-   ["order"]=355,
-   ["char"]={3022},
-   ["text"]="Old woman",
-   ["image_path"]="1f475",
+   ["subText"]=":horse_racing:, horse, jockey, racehorse, racing",
+   ["order"]=435,
+   ["image_path"]="1f3c7",
+   ["text"]="Horse racing",
+   ["char"]={2136},
 },
 -- Table: {357}
 {
-   ["subText"]="light skin tone, old, woman, :older_woman_tone1:",
-   ["order"]=356,
-   ["char"]={3023},
-   ["text"]="Old woman: light skin tone",
-   ["image_path"]="1f475-1f3fb",
+   ["subText"]=":person_in_lotus_position:",
+   ["order"]=441,
+   ["image_path"]="1f9d8",
+   ["text"]="Person in lotus position",
+   ["char"]={2137},
 },
 -- Table: {358}
 {
-   ["subText"]="medium-light skin tone, old, woman, :older_woman_tone2:",
-   ["order"]=357,
-   ["char"]={3024},
-   ["text"]="Old woman: medium-light skin tone",
-   ["image_path"]="1f475-1f3fc",
+   ["subText"]=":woman_in_lotus_position:, meditation, yoga",
+   ["order"]=447,
+   ["image_path"]="1f9d8-2640",
+   ["text"]="Woman in lotus position",
+   ["char"]={2138},
 },
 -- Table: {359}
 {
-   ["subText"]="medium skin tone, old, woman, :older_woman_tone3:",
-   ["order"]=358,
-   ["char"]={3025},
-   ["text"]="Old woman: medium skin tone",
-   ["image_path"]="1f475-1f3fd",
+   ["subText"]=":man_in_lotus_position:, meditation, yoga",
+   ["order"]=453,
+   ["image_path"]="1f9d8-2642",
+   ["text"]="Man in lotus position",
+   ["char"]={2139},
 },
 -- Table: {360}
 {
-   ["subText"]="medium-dark skin tone, old, woman, :older_woman_tone4:",
-   ["order"]=359,
-   ["char"]={3026},
-   ["text"]="Old woman: medium-dark skin tone",
-   ["image_path"]="1f475-1f3fe",
+   ["subText"]=":person_surfing:, surfing",
+   ["order"]=459,
+   ["image_path"]="1f3c4",
+   ["text"]="Person surfing",
+   ["char"]={2140},
 },
 -- Table: {361}
 {
-   ["subText"]="dark skin tone, old, woman, :older_woman_tone5:",
-   ["order"]=360,
-   ["char"]={3027},
-   ["text"]="Old woman: dark skin tone",
-   ["image_path"]="1f475-1f3ff",
+   ["subText"]=":woman_surfing:, surfing, woman",
+   ["order"]=465,
+   ["image_path"]="1f3c4-2640",
+   ["text"]="Woman surfing",
+   ["char"]={2141},
 },
 -- Table: {362}
 {
-   ["subText"]="gua pi mao, hat, man, :man_with_chinese_cap:",
-   ["order"]=361,
-   ["char"]={3028},
-   ["text"]="Man with Chinese cap",
-   ["image_path"]="1f472",
+   ["subText"]=":man_surfing:, man, surfing",
+   ["order"]=471,
+   ["image_path"]="1f3c4-2642",
+   ["text"]="Man surfing",
+   ["char"]={2142},
 },
 -- Table: {363}
 {
-   ["subText"]="gua pi mao, hat, light skin tone, man, :man_with_chinese_cap_tone1:",
-   ["order"]=362,
-   ["char"]={3029},
-   ["text"]="Man with Chinese cap: light skin tone",
-   ["image_path"]="1f472-1f3fb",
+   ["subText"]=":person_swimming:, swim",
+   ["order"]=477,
+   ["image_path"]="1f3ca",
+   ["text"]="Person swimming",
+   ["char"]={2143},
 },
 -- Table: {364}
 {
-   ["subText"]="gua pi mao, hat, man, medium-light skin tone, :man_with_chinese_cap_tone2:",
-   ["order"]=363,
-   ["char"]={3030},
-   ["text"]="Man with Chinese cap: medium-light skin tone",
-   ["image_path"]="1f472-1f3fc",
+   ["subText"]=":woman_swimming:, swim, woman",
+   ["order"]=483,
+   ["image_path"]="1f3ca-2640",
+   ["text"]="Woman swimming",
+   ["char"]={2144},
 },
 -- Table: {365}
 {
-   ["subText"]="gua pi mao, hat, man, medium skin tone, :man_with_chinese_cap_tone3:",
-   ["order"]=364,
-   ["char"]={3031},
-   ["text"]="Man with Chinese cap: medium skin tone",
-   ["image_path"]="1f472-1f3fd",
+   ["subText"]=":man_swimming:, man, swim",
+   ["order"]=489,
+   ["image_path"]="1f3ca-2642",
+   ["text"]="Man swimming",
+   ["char"]={2145},
 },
 -- Table: {366}
 {
-   ["subText"]="gua pi mao, hat, man, medium-dark skin tone, :man_with_chinese_cap_tone4:",
-   ["order"]=365,
-   ["char"]={3032},
-   ["text"]="Man with Chinese cap: medium-dark skin tone",
-   ["image_path"]="1f472-1f3fe",
+   ["subText"]=":person_playing_water_polo:, polo, water",
+   ["order"]=495,
+   ["image_path"]="1f93d",
+   ["text"]="Person playing water polo",
+   ["char"]={2146},
 },
 -- Table: {367}
 {
-   ["subText"]="dark skin tone, gua pi mao, hat, man, :man_with_chinese_cap_tone5:",
-   ["order"]=366,
-   ["char"]={3033},
-   ["text"]="Man with Chinese cap: dark skin tone",
-   ["image_path"]="1f472-1f3ff",
+   ["subText"]=":woman_playing_water_polo:, water polo, woman",
+   ["order"]=501,
+   ["image_path"]="1f93d-2640",
+   ["text"]="Woman playing water polo",
+   ["char"]={2147},
 },
 -- Table: {368}
 {
-   ["subText"]="turban, woman, :woman_wearing_turban:",
-   ["order"]=367,
-   ["char"]={3034},
-   ["text"]="Woman wearing turban",
-   ["image_path"]="1f473-2640",
+   ["subText"]=":man_playing_water_polo:, man, water polo",
+   ["order"]=507,
+   ["image_path"]="1f93d-2642",
+   ["text"]="Man playing water polo",
+   ["char"]={2148},
 },
 -- Table: {369}
 {
-   ["subText"]="light skin tone, turban, woman, :woman_wearing_turban_tone1:",
-   ["order"]=368,
-   ["char"]={3035},
-   ["text"]="Woman wearing turban: light skin tone",
-   ["image_path"]="1f473-1f3fb-2640",
+   ["subText"]=":person_rowing_boat:, boat, rowboat",
+   ["order"]=513,
+   ["image_path"]="1f6a3",
+   ["text"]="Person rowing boat",
+   ["char"]={2149},
 },
 -- Table: {370}
 {
-   ["subText"]="medium-light skin tone, turban, woman, :woman_wearing_turban_tone2:",
-   ["order"]=369,
-   ["char"]={3036},
-   ["text"]="Woman wearing turban: medium-light skin tone",
-   ["image_path"]="1f473-1f3fc-2640",
+   ["subText"]=":woman_rowing_boat:, boat, rowboat, woman",
+   ["order"]=519,
+   ["image_path"]="1f6a3-2640",
+   ["text"]="Woman rowing boat",
+   ["char"]={2150},
 },
 -- Table: {371}
 {
-   ["subText"]="medium skin tone, turban, woman, :woman_wearing_turban_tone3:",
-   ["order"]=370,
-   ["char"]={3037},
-   ["text"]="Woman wearing turban: medium skin tone",
-   ["image_path"]="1f473-1f3fd-2640",
+   ["subText"]=":man_rowing_boat:, boat, man, rowboat",
+   ["order"]=525,
+   ["image_path"]="1f6a3-2642",
+   ["text"]="Man rowing boat",
+   ["char"]={2151},
 },
 -- Table: {372}
 {
-   ["subText"]="medium-dark skin tone, turban, woman, :woman_wearing_turban_tone4:",
-   ["order"]=371,
-   ["char"]={3038},
-   ["text"]="Woman wearing turban: medium-dark skin tone",
-   ["image_path"]="1f473-1f3fe-2640",
+   ["subText"]=":person_climbing:, climber",
+   ["order"]=531,
+   ["image_path"]="1f9d7",
+   ["text"]="Person climbing",
+   ["char"]={2152},
 },
 -- Table: {373}
 {
-   ["subText"]="dark skin tone, turban, woman, :woman_wearing_turban_tone5:",
-   ["order"]=372,
-   ["char"]={3039},
-   ["text"]="Woman wearing turban: dark skin tone",
-   ["image_path"]="1f473-1f3ff-2640",
+   ["subText"]=":woman_climbing:, climber",
+   ["order"]=537,
+   ["image_path"]="1f9d7-2640",
+   ["text"]="Woman climbing",
+   ["char"]={2153},
 },
 -- Table: {374}
 {
-   ["subText"]="turban, :person_wearing_turban:",
-   ["order"]=373,
-   ["char"]={3040},
-   ["text"]="Person wearing turban",
-   ["image_path"]="1f473",
+   ["subText"]=":man_climbing:, climber",
+   ["order"]=543,
+   ["image_path"]="1f9d7-2642",
+   ["text"]="Man climbing",
+   ["char"]={2154},
 },
 -- Table: {375}
 {
-   ["subText"]="light skin tone, turban, :person_wearing_turban_tone1:",
-   ["order"]=374,
-   ["char"]={3041},
-   ["text"]="Person wearing turban: light skin tone",
-   ["image_path"]="1f473-1f3fb",
+   ["subText"]=":person_mountain_biking:, bicycle, bicyclist, bike, cyclist, mountain",
+   ["order"]=549,
+   ["image_path"]="1f6b5",
+   ["text"]="Person mountain biking",
+   ["char"]={2155},
 },
 -- Table: {376}
 {
-   ["subText"]="medium-light skin tone, turban, :person_wearing_turban_tone2:",
-   ["order"]=375,
-   ["char"]={3042},
-   ["text"]="Person wearing turban: medium-light skin tone",
-   ["image_path"]="1f473-1f3fc",
+   ["subText"]=":woman_mountain_biking:, bicycle, bike, biking, cyclist, mountain, woman",
+   ["order"]=555,
+   ["image_path"]="1f6b5-2640",
+   ["text"]="Woman mountain biking",
+   ["char"]={2156},
 },
 -- Table: {377}
 {
-   ["subText"]="medium skin tone, turban, :person_wearing_turban_tone3:",
-   ["order"]=376,
-   ["char"]={3043},
-   ["text"]="Person wearing turban: medium skin tone",
-   ["image_path"]="1f473-1f3fd",
+   ["subText"]=":man_mountain_biking:, bicycle, bike, cyclist, man, mountain",
+   ["order"]=561,
+   ["image_path"]="1f6b5-2642",
+   ["text"]="Man mountain biking",
+   ["char"]={2157},
 },
 -- Table: {378}
 {
-   ["subText"]="medium-dark skin tone, turban, :person_wearing_turban_tone4:",
-   ["order"]=377,
-   ["char"]={3044},
-   ["text"]="Person wearing turban: medium-dark skin tone",
-   ["image_path"]="1f473-1f3fe",
+   ["subText"]=":person_biking:, bicycle, biking, cyclist",
+   ["order"]=567,
+   ["image_path"]="1f6b4",
+   ["text"]="Person biking",
+   ["char"]={2158},
 },
 -- Table: {379}
 {
-   ["subText"]="dark skin tone, turban, :person_wearing_turban_tone5:",
-   ["order"]=378,
-   ["char"]={3045},
-   ["text"]="Person wearing turban: dark skin tone",
-   ["image_path"]="1f473-1f3ff",
+   ["subText"]=":woman_biking:, bicycle, biking, cyclist, woman",
+   ["order"]=573,
+   ["image_path"]="1f6b4-2640",
+   ["text"]="Woman biking",
+   ["char"]={2159},
 },
 -- Table: {380}
 {
-   ["subText"]="man, turban, :man_wearing_turban:",
-   ["order"]=379,
-   ["char"]={3046},
-   ["text"]="Man wearing turban",
-   ["image_path"]="1f473-2642",
+   ["subText"]=":man_biking:, bicycle, biking, cyclist, man",
+   ["order"]=579,
+   ["image_path"]="1f6b4-2642",
+   ["text"]="Man biking",
+   ["char"]={2160},
 },
 -- Table: {381}
 {
-   ["subText"]="dark skin tone, man, turban, :man_wearing_turban_tone5:",
-   ["order"]=380,
-   ["char"]={3047},
-   ["text"]="Man wearing turban: dark skin tone",
-   ["image_path"]="1f473-1f3ff-2642",
+   ["subText"]=":trophy:, prize",
+   ["order"]=585,
+   ["image_path"]="1f3c6",
+   ["text"]="Trophy",
+   ["char"]={2161},
 },
 -- Table: {382}
 {
-   ["subText"]="man, medium-dark skin tone, turban, :man_wearing_turban_tone4:",
-   ["order"]=381,
-   ["char"]={3048},
-   ["text"]="Man wearing turban: medium-dark skin tone",
-   ["image_path"]="1f473-1f3fe-2642",
+   ["subText"]=":first_place:, first, gold, medal",
+   ["order"]=586,
+   ["image_path"]="1f947",
+   ["text"]="1st place medal",
+   ["char"]={2162},
 },
 -- Table: {383}
 {
-   ["subText"]="man, medium skin tone, turban, :man_wearing_turban_tone3:",
-   ["order"]=382,
-   ["char"]={3049},
-   ["text"]="Man wearing turban: medium skin tone",
-   ["image_path"]="1f473-1f3fd-2642",
+   ["subText"]=":second_place:, medal, second, silver",
+   ["order"]=587,
+   ["image_path"]="1f948",
+   ["text"]="2nd place medal",
+   ["char"]={2163},
 },
 -- Table: {384}
 {
-   ["subText"]="man, medium-light skin tone, turban, :man_wearing_turban_tone2:",
-   ["order"]=383,
-   ["char"]={3050},
-   ["text"]="Man wearing turban: medium-light skin tone",
-   ["image_path"]="1f473-1f3fc-2642",
+   ["subText"]=":third_place:, bronze, medal, third",
+   ["order"]=588,
+   ["image_path"]="1f949",
+   ["text"]="3rd place medal",
+   ["char"]={2164},
 },
 -- Table: {385}
 {
-   ["subText"]="light skin tone, man, turban, :man_wearing_turban_tone1:",
-   ["order"]=384,
-   ["char"]={3051},
-   ["text"]="Man wearing turban: light skin tone",
-   ["image_path"]="1f473-1f3fb-2642",
+   ["subText"]=":medal:",
+   ["order"]=589,
+   ["image_path"]="1f3c5",
+   ["text"]="Sports medal",
+   ["char"]={2165},
 },
 -- Table: {386}
 {
-   ["subText"]="cop, officer, police, woman, :woman_police_officer:",
-   ["order"]=385,
-   ["char"]={3052},
-   ["text"]="Woman police officer",
-   ["image_path"]="1f46e-2640",
+   ["subText"]=":military_medal:, celebration, medal, military",
+   ["order"]=590,
+   ["image_path"]="1f396",
+   ["text"]="Military medal",
+   ["char"]={2166},
 },
 -- Table: {387}
 {
-   ["subText"]="cop, light skin tone, officer, police, woman, :woman_police_officer_tone1:",
-   ["order"]=386,
-   ["char"]={3053},
-   ["text"]="Woman police officer: light skin tone",
-   ["image_path"]="1f46e-1f3fb-2640",
+   ["subText"]=":rosette:, plant",
+   ["order"]=591,
+   ["image_path"]="1f3f5",
+   ["text"]="Rosette",
+   ["char"]={2167},
 },
 -- Table: {388}
 {
-   ["subText"]="cop, medium-light skin tone, officer, police, woman, :woman_police_officer_tone2:",
-   ["order"]=387,
-   ["char"]={3054},
-   ["text"]="Woman police officer: medium-light skin tone",
-   ["image_path"]="1f46e-1f3fc-2640",
+   ["subText"]=":reminder_ribbon:, celebration, reminder, ribbon",
+   ["order"]=592,
+   ["image_path"]="1f397",
+   ["text"]="Reminder ribbon",
+   ["char"]={2168},
 },
 -- Table: {389}
 {
-   ["subText"]="cop, medium skin tone, officer, police, woman, :woman_police_officer_tone3:",
-   ["order"]=388,
-   ["char"]={3055},
-   ["text"]="Woman police officer: medium skin tone",
-   ["image_path"]="1f46e-1f3fd-2640",
+   ["subText"]=":ticket:, admission",
+   ["order"]=593,
+   ["image_path"]="1f3ab",
+   ["text"]="Ticket",
+   ["char"]={2169},
 },
 -- Table: {390}
 {
-   ["subText"]="cop, medium-dark skin tone, officer, police, woman, :woman_police_officer_tone4:",
-   ["order"]=389,
-   ["char"]={3056},
-   ["text"]="Woman police officer: medium-dark skin tone",
-   ["image_path"]="1f46e-1f3fe-2640",
+   ["subText"]=":tickets:, admission, ticket",
+   ["order"]=594,
+   ["image_path"]="1f39f",
+   ["text"]="Admission tickets",
+   ["char"]={2170},
 },
 -- Table: {391}
 {
-   ["subText"]="cop, dark skin tone, officer, police, woman, :woman_police_officer_tone5:",
-   ["order"]=390,
-   ["char"]={3057},
-   ["text"]="Woman police officer: dark skin tone",
-   ["image_path"]="1f46e-1f3ff-2640",
+   ["subText"]=":circus_tent:, circus, tent",
+   ["order"]=595,
+   ["image_path"]="1f3aa",
+   ["text"]="Circus tent",
+   ["char"]={2171},
 },
 -- Table: {392}
 {
-   ["subText"]="cop, officer, police, :police_officer:",
-   ["order"]=391,
-   ["char"]={3058},
-   ["text"]="Police officer",
-   ["image_path"]="1f46e",
+   ["subText"]=":person_juggling:, balance, juggle, multitask, skill",
+   ["order"]=596,
+   ["image_path"]="1f939",
+   ["text"]="Person juggling",
+   ["char"]={2172},
 },
 -- Table: {393}
 {
-   ["subText"]="cop, light skin tone, officer, police, :police_officer_tone1:",
-   ["order"]=392,
-   ["char"]={3059},
-   ["text"]="Police officer: light skin tone",
-   ["image_path"]="1f46e-1f3fb",
+   ["subText"]=":woman_juggling:, juggling, multitask, woman",
+   ["order"]=602,
+   ["image_path"]="1f939-2640",
+   ["text"]="Woman juggling",
+   ["char"]={2173},
 },
 -- Table: {394}
 {
-   ["subText"]="cop, medium-light skin tone, officer, police, :police_officer_tone2:",
-   ["order"]=393,
-   ["char"]={3060},
-   ["text"]="Police officer: medium-light skin tone",
-   ["image_path"]="1f46e-1f3fc",
+   ["subText"]=":man_juggling:, juggling, man, multitask",
+   ["order"]=608,
+   ["image_path"]="1f939-2642",
+   ["text"]="Man juggling",
+   ["char"]={2174},
 },
 -- Table: {395}
 {
-   ["subText"]="cop, medium skin tone, officer, police, :police_officer_tone3:",
-   ["order"]=394,
-   ["char"]={3061},
-   ["text"]="Police officer: medium skin tone",
-   ["image_path"]="1f46e-1f3fd",
+   ["subText"]=":performing_arts:, art, mask, performing, theater, theatre",
+   ["order"]=614,
+   ["image_path"]="1f3ad",
+   ["text"]="Performing arts",
+   ["char"]={2175},
 },
 -- Table: {396}
 {
-   ["subText"]="cop, medium-dark skin tone, officer, police, :police_officer_tone4:",
-   ["order"]=395,
-   ["char"]={3062},
-   ["text"]="Police officer: medium-dark skin tone",
-   ["image_path"]="1f46e-1f3fe",
+   ["subText"]=":art:, museum, painting, palette",
+   ["order"]=615,
+   ["image_path"]="1f3a8",
+   ["text"]="Artist palette",
+   ["char"]={2176},
 },
 -- Table: {397}
 {
-   ["subText"]="cop, dark skin tone, officer, police, :police_officer_tone5:",
-   ["order"]=396,
-   ["char"]={3063},
-   ["text"]="Police officer: dark skin tone",
-   ["image_path"]="1f46e-1f3ff",
+   ["subText"]=":clapper:, movie",
+   ["order"]=616,
+   ["image_path"]="1f3ac",
+   ["text"]="Clapper board",
+   ["char"]={2177},
 },
 -- Table: {398}
 {
-   ["subText"]="cop, man, officer, police, :man_police_officer:",
-   ["order"]=397,
-   ["char"]={3064},
-   ["text"]="Man police officer",
-   ["image_path"]="1f46e-2642",
+   ["subText"]=":microphone:, karaoke, mic",
+   ["order"]=617,
+   ["image_path"]="1f3a4",
+   ["text"]="Microphone",
+   ["char"]={2178},
 },
 -- Table: {399}
 {
-   ["subText"]="cop, dark skin tone, man, officer, police, :man_police_officer_tone5:",
-   ["order"]=398,
-   ["char"]={3065},
-   ["text"]="Man police officer: dark skin tone",
-   ["image_path"]="1f46e-1f3ff-2642",
+   ["subText"]=":headphones:, earbud",
+   ["order"]=618,
+   ["image_path"]="1f3a7",
+   ["text"]="Headphone",
+   ["char"]={2179},
 },
 -- Table: {400}
 {
-   ["subText"]="cop, man, medium-dark skin tone, officer, police, :man_police_officer_tone4:",
-   ["order"]=399,
-   ["char"]={3066},
-   ["text"]="Man police officer: medium-dark skin tone",
-   ["image_path"]="1f46e-1f3fe-2642",
+   ["subText"]=":musical_score:, music, score",
+   ["order"]=619,
+   ["image_path"]="1f3bc",
+   ["text"]="Musical score",
+   ["char"]={2180},
 },
 -- Table: {401}
 {
-   ["subText"]="cop, man, medium skin tone, officer, police, :man_police_officer_tone3:",
-   ["order"]=400,
-   ["char"]={3067},
-   ["text"]="Man police officer: medium skin tone",
-   ["image_path"]="1f46e-1f3fd-2642",
+   ["subText"]=":musical_keyboard:, instrument, keyboard, music, piano",
+   ["order"]=620,
+   ["image_path"]="1f3b9",
+   ["text"]="Musical keyboard",
+   ["char"]={2181},
 },
 -- Table: {402}
 {
-   ["subText"]="cop, man, medium-light skin tone, officer, police, :man_police_officer_tone2:",
-   ["order"]=401,
-   ["char"]={3068},
-   ["text"]="Man police officer: medium-light skin tone",
-   ["image_path"]="1f46e-1f3fc-2642",
+   ["subText"]=":drum:, drumsticks, music",
+   ["order"]=621,
+   ["image_path"]="1f941",
+   ["text"]="Drum",
+   ["char"]={2182},
 },
 -- Table: {403}
 {
-   ["subText"]="cop, light skin tone, man, officer, police, :man_police_officer_tone1:",
-   ["order"]=402,
-   ["char"]={3069},
-   ["text"]="Man police officer: light skin tone",
-   ["image_path"]="1f46e-1f3fb-2642",
+   ["subText"]=":saxophone:, instrument, music, sax",
+   ["order"]=622,
+   ["image_path"]="1f3b7",
+   ["text"]="Saxophone",
+   ["char"]={2183},
 },
 -- Table: {404}
 {
-   ["subText"]="construction, woman, worker, :woman_construction_worker:",
-   ["order"]=403,
-   ["char"]={3070},
-   ["text"]="Woman construction worker",
-   ["image_path"]="1f477-2640",
+   ["subText"]=":trumpet:, instrument, music",
+   ["order"]=623,
+   ["image_path"]="1f3ba",
+   ["text"]="Trumpet",
+   ["char"]={2184},
 },
 -- Table: {405}
 {
-   ["subText"]="construction, light skin tone, woman, worker, :woman_construction_worker_tone1:",
-   ["order"]=404,
-   ["char"]={3071},
-   ["text"]="Woman construction worker: light skin tone",
-   ["image_path"]="1f477-1f3fb-2640",
+   ["subText"]=":banjo:",
+   ["order"]=624,
+   ["image_path"]="1fa95",
+   ["text"]="Banjo",
+   ["char"]={2185},
 },
 -- Table: {406}
 {
-   ["subText"]="construction, medium-light skin tone, woman, worker, :woman_construction_worker_tone2:",
-   ["order"]=405,
-   ["char"]={3072},
-   ["text"]="Woman construction worker: medium-light skin tone",
-   ["image_path"]="1f477-1f3fc-2640",
+   ["subText"]=":guitar:, instrument, music",
+   ["order"]=625,
+   ["image_path"]="1f3b8",
+   ["text"]="Guitar",
+   ["char"]={2186},
 },
 -- Table: {407}
 {
-   ["subText"]="construction, medium skin tone, woman, worker, :woman_construction_worker_tone3:",
-   ["order"]=406,
-   ["char"]={3073},
-   ["text"]="Woman construction worker: medium skin tone",
-   ["image_path"]="1f477-1f3fd-2640",
+   ["subText"]=":violin:, instrument, music",
+   ["order"]=626,
+   ["image_path"]="1f3bb",
+   ["text"]="Violin",
+   ["char"]={2187},
 },
 -- Table: {408}
 {
-   ["subText"]="construction, medium-dark skin tone, woman, worker, :woman_construction_worker_tone4:",
-   ["order"]=407,
-   ["char"]={3074},
-   ["text"]="Woman construction worker: medium-dark skin tone",
-   ["image_path"]="1f477-1f3fe-2640",
+   ["subText"]=":game_die:, dice, die, game",
+   ["order"]=627,
+   ["image_path"]="1f3b2",
+   ["text"]="Game die",
+   ["char"]={2188},
 },
 -- Table: {409}
 {
-   ["subText"]="construction, dark skin tone, woman, worker, :woman_construction_worker_tone5:",
-   ["order"]=408,
-   ["char"]={3075},
-   ["text"]="Woman construction worker: dark skin tone",
-   ["image_path"]="1f477-1f3ff-2640",
+   ["subText"]=":chess_pawn:",
+   ["order"]=628,
+   ["image_path"]="265f",
+   ["text"]="Chess pawn",
+   ["char"]={2189},
 },
 -- Table: {410}
 {
-   ["subText"]="construction, hat, worker, :construction_worker:",
-   ["order"]=409,
-   ["char"]={3076},
-   ["text"]="Construction worker",
-   ["image_path"]="1f477",
+   ["subText"]=":dart:, bull, bullseye, eye, game, hit, target",
+   ["order"]=629,
+   ["image_path"]="1f3af",
+   ["text"]="Direct hit",
+   ["char"]={2190},
 },
 -- Table: {411}
 {
-   ["subText"]="construction, hat, light skin tone, worker, :construction_worker_tone1:",
-   ["order"]=410,
-   ["char"]={3077},
-   ["text"]="Construction worker: light skin tone",
-   ["image_path"]="1f477-1f3fb",
+   ["subText"]=":kite:",
+   ["order"]=630,
+   ["image_path"]="1fa81",
+   ["text"]="Kite",
+   ["char"]={2191},
 },
 -- Table: {412}
 {
-   ["subText"]="construction, hat, medium-light skin tone, worker, :construction_worker_tone2:",
-   ["order"]=411,
-   ["char"]={3078},
-   ["text"]="Construction worker: medium-light skin tone",
-   ["image_path"]="1f477-1f3fc",
+   ["subText"]=":yo_yo:",
+   ["order"]=631,
+   ["image_path"]="1fa80",
+   ["text"]="Yo-yo",
+   ["char"]={2192},
 },
 -- Table: {413}
 {
-   ["subText"]="construction, hat, medium skin tone, worker, :construction_worker_tone3:",
-   ["order"]=412,
-   ["char"]={3079},
-   ["text"]="Construction worker: medium skin tone",
-   ["image_path"]="1f477-1f3fd",
+   ["subText"]=":bowling:, ball, game",
+   ["order"]=632,
+   ["image_path"]="1f3b3",
+   ["text"]="Bowling",
+   ["char"]={2193},
 },
 -- Table: {414}
 {
-   ["subText"]="construction, hat, medium-dark skin tone, worker, :construction_worker_tone4:",
-   ["order"]=413,
-   ["char"]={3080},
-   ["text"]="Construction worker: medium-dark skin tone",
-   ["image_path"]="1f477-1f3fe",
+   ["subText"]=":video_game:, controller, game",
+   ["order"]=633,
+   ["image_path"]="1f3ae",
+   ["text"]="Video game",
+   ["char"]={2194},
 },
 -- Table: {415}
 {
-   ["subText"]="construction, dark skin tone, hat, worker, :construction_worker_tone5:",
-   ["order"]=414,
-   ["char"]={3081},
-   ["text"]="Construction worker: dark skin tone",
-   ["image_path"]="1f477-1f3ff",
+   ["subText"]=":slot_machine:, game, slot",
+   ["order"]=634,
+   ["image_path"]="1f3b0",
+   ["text"]="Slot machine",
+   ["char"]={2195},
 },
 -- Table: {416}
 {
-   ["subText"]="construction, man, worker, :man_construction_worker:",
-   ["order"]=415,
-   ["char"]={3082},
-   ["text"]="Man construction worker",
-   ["image_path"]="1f477-2642",
+   ["subText"]=":jigsaw:",
+   ["order"]=635,
+   ["image_path"]="1f9e9",
+   ["text"]="Puzzle piece",
+   ["char"]={2196},
 },
 -- Table: {417}
 {
-   ["subText"]="construction, dark skin tone, man, worker, :man_construction_worker_tone5:",
-   ["order"]=416,
-   ["char"]={3083},
-   ["text"]="Man construction worker: dark skin tone",
-   ["image_path"]="1f477-1f3ff-2642",
+   ["subText"]=":watch:, clock",
+   ["order"]=636,
+   ["image_path"]="231a",
+   ["text"]="Watch",
+   ["char"]={2197},
 },
 -- Table: {418}
 {
-   ["subText"]="construction, man, medium-dark skin tone, worker, :man_construction_worker_tone4:",
-   ["order"]=417,
-   ["char"]={3084},
-   ["text"]="Man construction worker: medium-dark skin tone",
-   ["image_path"]="1f477-1f3fe-2642",
+   ["subText"]=":mobile_phone:, cell, mobile, phone, telephone",
+   ["order"]=637,
+   ["image_path"]="1f4f1",
+   ["text"]="Mobile phone",
+   ["char"]={2198},
 },
 -- Table: {419}
 {
-   ["subText"]="construction, man, medium skin tone, worker, :man_construction_worker_tone3:",
-   ["order"]=418,
-   ["char"]={3085},
-   ["text"]="Man construction worker: medium skin tone",
-   ["image_path"]="1f477-1f3fd-2642",
+   ["subText"]=":calling:, arrow, call, cell, mobile, phone, receive, telephone",
+   ["order"]=638,
+   ["image_path"]="1f4f2",
+   ["text"]="Mobile phone with arrow",
+   ["char"]={2199},
 },
 -- Table: {420}
 {
-   ["subText"]="construction, man, medium-light skin tone, worker, :man_construction_worker_tone2:",
-   ["order"]=419,
-   ["char"]={3086},
-   ["text"]="Man construction worker: medium-light skin tone",
-   ["image_path"]="1f477-1f3fc-2642",
+   ["subText"]=":computer:, pc, personal",
+   ["order"]=639,
+   ["image_path"]="1f4bb",
+   ["text"]="Laptop computer",
+   ["char"]={2200},
 },
 -- Table: {421}
 {
-   ["subText"]="construction, light skin tone, man, worker, :man_construction_worker_tone1:",
-   ["order"]=420,
-   ["char"]={3087},
-   ["text"]="Man construction worker: light skin tone",
-   ["image_path"]="1f477-1f3fb-2642",
+   ["subText"]=":keyboard:, computer",
+   ["order"]=640,
+   ["image_path"]="2328",
+   ["text"]="Keyboard",
+   ["char"]={2201},
 },
 -- Table: {422}
 {
-   ["subText"]="guard, woman, :woman_guard:",
-   ["order"]=421,
-   ["char"]={3088},
-   ["text"]="Woman guard",
-   ["image_path"]="1f482-2640",
+   ["subText"]=":desktop:, computer",
+   ["order"]=641,
+   ["image_path"]="1f5a5",
+   ["text"]="Desktop computer",
+   ["char"]={2202},
 },
 -- Table: {423}
 {
-   ["subText"]="guard, light skin tone, woman, :woman_guard_tone1:",
-   ["order"]=422,
-   ["char"]={3089},
-   ["text"]="Woman guard: light skin tone",
-   ["image_path"]="1f482-1f3fb-2640",
+   ["subText"]=":printer:, computer",
+   ["order"]=642,
+   ["image_path"]="1f5a8",
+   ["text"]="Printer",
+   ["char"]={2203},
 },
 -- Table: {424}
 {
-   ["subText"]="guard, medium-light skin tone, woman, :woman_guard_tone2:",
-   ["order"]=423,
-   ["char"]={3090},
-   ["text"]="Woman guard: medium-light skin tone",
-   ["image_path"]="1f482-1f3fc-2640",
+   ["subText"]=":mouse_three_button:, computer",
+   ["order"]=643,
+   ["image_path"]="1f5b1",
+   ["text"]="Computer mouse",
+   ["char"]={2204},
 },
 -- Table: {425}
 {
-   ["subText"]="guard, medium skin tone, woman, :woman_guard_tone3:",
-   ["order"]=424,
-   ["char"]={3091},
-   ["text"]="Woman guard: medium skin tone",
-   ["image_path"]="1f482-1f3fd-2640",
+   ["subText"]=":trackball:, computer",
+   ["order"]=644,
+   ["image_path"]="1f5b2",
+   ["text"]="Trackball",
+   ["char"]={2205},
 },
 -- Table: {426}
 {
-   ["subText"]="guard, medium-dark skin tone, woman, :woman_guard_tone4:",
-   ["order"]=425,
-   ["char"]={3092},
-   ["text"]="Woman guard: medium-dark skin tone",
-   ["image_path"]="1f482-1f3fe-2640",
+   ["subText"]=":joystick:, game, video game",
+   ["order"]=645,
+   ["image_path"]="1f579",
+   ["text"]="Joystick",
+   ["char"]={2206},
 },
 -- Table: {427}
 {
-   ["subText"]="dark skin tone, guard, woman, :woman_guard_tone5:",
-   ["order"]=426,
-   ["char"]={3093},
-   ["text"]="Woman guard: dark skin tone",
-   ["image_path"]="1f482-1f3ff-2640",
+   ["subText"]=":compression:, compress, tool, vice",
+   ["order"]=646,
+   ["image_path"]="1f5dc",
+   ["text"]="Clamp",
+   ["char"]={2207},
 },
 -- Table: {428}
 {
-   ["subText"]="guard, :guard:",
-   ["order"]=427,
-   ["char"]={3094},
-   ["text"]="Guard",
-   ["image_path"]="1f482",
+   ["subText"]=":minidisc:, computer, disk, minidisk, optical",
+   ["order"]=647,
+   ["image_path"]="1f4bd",
+   ["text"]="Computer disk",
+   ["char"]={2208},
 },
 -- Table: {429}
 {
-   ["subText"]="guard, light skin tone, :guard_tone1:",
-   ["order"]=428,
-   ["char"]={3095},
-   ["text"]="Guard: light skin tone",
-   ["image_path"]="1f482-1f3fb",
+   ["subText"]=":floppy_disk:, computer, disk, floppy",
+   ["order"]=648,
+   ["image_path"]="1f4be",
+   ["text"]="Floppy disk",
+   ["char"]={2209},
 },
 -- Table: {430}
 {
-   ["subText"]="guard, medium-light skin tone, :guard_tone2:",
-   ["order"]=429,
-   ["char"]={3096},
-   ["text"]="Guard: medium-light skin tone",
-   ["image_path"]="1f482-1f3fc",
+   ["subText"]=":cd:, computer, disk, optical",
+   ["order"]=649,
+   ["image_path"]="1f4bf",
+   ["text"]="Optical disk",
+   ["char"]={2210},
 },
 -- Table: {431}
 {
-   ["subText"]="guard, medium skin tone, :guard_tone3:",
-   ["order"]=430,
-   ["char"]={3097},
-   ["text"]="Guard: medium skin tone",
-   ["image_path"]="1f482-1f3fd",
+   ["subText"]=":dvd:, blu-ray, computer, disk, optical",
+   ["order"]=650,
+   ["image_path"]="1f4c0",
+   ["text"]="Dvd",
+   ["char"]={2211},
 },
 -- Table: {432}
 {
-   ["subText"]="guard, medium-dark skin tone, :guard_tone4:",
-   ["order"]=431,
-   ["char"]={3098},
-   ["text"]="Guard: medium-dark skin tone",
-   ["image_path"]="1f482-1f3fe",
+   ["subText"]=":vhs:, tape, video",
+   ["order"]=651,
+   ["image_path"]="1f4fc",
+   ["text"]="Videocassette",
+   ["char"]={2212},
 },
 -- Table: {433}
 {
-   ["subText"]="dark skin tone, guard, :guard_tone5:",
-   ["order"]=432,
-   ["char"]={3099},
-   ["text"]="Guard: dark skin tone",
-   ["image_path"]="1f482-1f3ff",
+   ["subText"]=":camera:, video",
+   ["order"]=652,
+   ["image_path"]="1f4f7",
+   ["text"]="Camera",
+   ["char"]={2213},
 },
 -- Table: {434}
 {
-   ["subText"]="guard, man, :man_guard:",
-   ["order"]=433,
-   ["char"]={3100},
-   ["text"]="Man guard",
-   ["image_path"]="1f482-2642",
+   ["subText"]=":camera_with_flash:, camera, flash, video",
+   ["order"]=653,
+   ["image_path"]="1f4f8",
+   ["text"]="Camera with flash",
+   ["char"]={2214},
 },
 -- Table: {435}
 {
-   ["subText"]="dark skin tone, guard, man, :man_guard_tone5:",
-   ["order"]=434,
-   ["char"]={3101},
-   ["text"]="Man guard: dark skin tone",
-   ["image_path"]="1f482-1f3ff-2642",
+   ["subText"]=":video_camera:, camera, video",
+   ["order"]=654,
+   ["image_path"]="1f4f9",
+   ["text"]="Video camera",
+   ["char"]={2215},
 },
 -- Table: {436}
 {
-   ["subText"]="guard, man, medium-dark skin tone, :man_guard_tone4:",
-   ["order"]=435,
-   ["char"]={3102},
-   ["text"]="Man guard: medium-dark skin tone",
-   ["image_path"]="1f482-1f3fe-2642",
+   ["subText"]=":movie_camera:, camera, cinema, movie",
+   ["order"]=655,
+   ["image_path"]="1f3a5",
+   ["text"]="Movie camera",
+   ["char"]={2216},
 },
 -- Table: {437}
 {
-   ["subText"]="guard, man, medium skin tone, :man_guard_tone3:",
-   ["order"]=436,
-   ["char"]={3103},
-   ["text"]="Man guard: medium skin tone",
-   ["image_path"]="1f482-1f3fd-2642",
+   ["subText"]=":projector:, cinema, film, movie, video",
+   ["order"]=656,
+   ["image_path"]="1f4fd",
+   ["text"]="Film projector",
+   ["char"]={2217},
 },
 -- Table: {438}
 {
-   ["subText"]="guard, man, medium-light skin tone, :man_guard_tone2:",
-   ["order"]=437,
-   ["char"]={3104},
-   ["text"]="Man guard: medium-light skin tone",
-   ["image_path"]="1f482-1f3fc-2642",
+   ["subText"]=":film_frames:, cinema, film, frames, movie",
+   ["order"]=657,
+   ["image_path"]="1f39e",
+   ["text"]="Film frames",
+   ["char"]={2218},
 },
 -- Table: {439}
 {
-   ["subText"]="guard, light skin tone, man, :man_guard_tone1:",
-   ["order"]=438,
-   ["char"]={3105},
-   ["text"]="Man guard: light skin tone",
-   ["image_path"]="1f482-1f3fb-2642",
+   ["subText"]=":telephone_receiver:, phone, receiver, telephone",
+   ["order"]=658,
+   ["image_path"]="1f4de",
+   ["text"]="Telephone receiver",
+   ["char"]={2219},
 },
 -- Table: {440}
 {
-   ["subText"]="detective, sleuth, spy, woman, :woman_detective:",
-   ["order"]=439,
-   ["char"]={3106},
-   ["text"]="Woman detective",
-   ["image_path"]="1f575-2640",
+   ["subText"]=":telephone:, phone",
+   ["order"]=659,
+   ["image_path"]="260e",
+   ["text"]="Telephone",
+   ["char"]={2220},
 },
 -- Table: {441}
 {
-   ["subText"]="detective, light skin tone, sleuth, spy, woman, :woman_detective_tone1:",
-   ["order"]=440,
-   ["char"]={3107},
-   ["text"]="Woman detective: light skin tone",
-   ["image_path"]="1f575-1f3fb-2640",
+   ["subText"]=":pager:",
+   ["order"]=660,
+   ["image_path"]="1f4df",
+   ["text"]="Pager",
+   ["char"]={2221},
 },
 -- Table: {442}
 {
-   ["subText"]="detective, medium-light skin tone, sleuth, spy, woman, :woman_detective_tone2:",
-   ["order"]=441,
-   ["char"]={3108},
-   ["text"]="Woman detective: medium-light skin tone",
-   ["image_path"]="1f575-1f3fc-2640",
+   ["subText"]=":fax:",
+   ["order"]=661,
+   ["image_path"]="1f4e0",
+   ["text"]="Fax machine",
+   ["char"]={2222},
 },
 -- Table: {443}
 {
-   ["subText"]="detective, medium skin tone, sleuth, spy, woman, :woman_detective_tone3:",
-   ["order"]=442,
-   ["char"]={3109},
-   ["text"]="Woman detective: medium skin tone",
-   ["image_path"]="1f575-1f3fd-2640",
+   ["subText"]=":tv:, video",
+   ["order"]=662,
+   ["image_path"]="1f4fa",
+   ["text"]="Television",
+   ["char"]={2223},
 },
 -- Table: {444}
 {
-   ["subText"]="detective, medium-dark skin tone, sleuth, spy, woman, :woman_detective_tone4:",
-   ["order"]=443,
-   ["char"]={3110},
-   ["text"]="Woman detective: medium-dark skin tone",
-   ["image_path"]="1f575-1f3fe-2640",
+   ["subText"]=":radio:, video",
+   ["order"]=663,
+   ["image_path"]="1f4fb",
+   ["text"]="Radio",
+   ["char"]={2224},
 },
 -- Table: {445}
 {
-   ["subText"]="dark skin tone, detective, sleuth, spy, woman, :woman_detective_tone5:",
-   ["order"]=444,
-   ["char"]={3111},
-   ["text"]="Woman detective: dark skin tone",
-   ["image_path"]="1f575-1f3ff-2640",
+   ["subText"]=":microphone2:, mic, microphone, music, studio",
+   ["order"]=664,
+   ["image_path"]="1f399",
+   ["text"]="Studio microphone",
+   ["char"]={2225},
 },
 -- Table: {446}
 {
-   ["subText"]="detective, sleuth, spy, :detective:",
-   ["order"]=445,
-   ["char"]={3112},
-   ["text"]="Detective",
-   ["image_path"]="1f575",
+   ["subText"]=":level_slider:, level, music, slider",
+   ["order"]=665,
+   ["image_path"]="1f39a",
+   ["text"]="Level slider",
+   ["char"]={2226},
 },
 -- Table: {447}
 {
-   ["subText"]="detective, light skin tone, sleuth, spy, :detective_tone1:",
-   ["order"]=446,
-   ["char"]={3113},
-   ["text"]="Detective: light skin tone",
-   ["image_path"]="1f575-1f3fb",
+   ["subText"]=":control_knobs:, control, knobs, music",
+   ["order"]=666,
+   ["image_path"]="1f39b",
+   ["text"]="Control knobs",
+   ["char"]={2227},
 },
 -- Table: {448}
 {
-   ["subText"]="detective, medium-light skin tone, sleuth, spy, :detective_tone2:",
-   ["order"]=447,
-   ["char"]={3114},
-   ["text"]="Detective: medium-light skin tone",
-   ["image_path"]="1f575-1f3fc",
+   ["subText"]=":compass:",
+   ["order"]=667,
+   ["image_path"]="1f9ed",
+   ["text"]="Compass",
+   ["char"]={2228},
 },
 -- Table: {449}
 {
-   ["subText"]="detective, medium skin tone, sleuth, spy, :detective_tone3:",
-   ["order"]=448,
-   ["char"]={3115},
-   ["text"]="Detective: medium skin tone",
-   ["image_path"]="1f575-1f3fd",
+   ["subText"]=":stopwatch:, clock",
+   ["order"]=668,
+   ["image_path"]="23f1",
+   ["text"]="Stopwatch",
+   ["char"]={2229},
 },
 -- Table: {450}
 {
-   ["subText"]="detective, medium-dark skin tone, sleuth, spy, :detective_tone4:",
-   ["order"]=449,
-   ["char"]={3116},
-   ["text"]="Detective: medium-dark skin tone",
-   ["image_path"]="1f575-1f3fe",
+   ["subText"]=":timer:, clock",
+   ["order"]=669,
+   ["image_path"]="23f2",
+   ["text"]="Timer clock",
+   ["char"]={2230},
 },
 -- Table: {451}
 {
-   ["subText"]="dark skin tone, detective, sleuth, spy, :detective_tone5:",
-   ["order"]=450,
-   ["char"]={3117},
-   ["text"]="Detective: dark skin tone",
-   ["image_path"]="1f575-1f3ff",
+   ["subText"]=":alarm_clock:, alarm, clock",
+   ["order"]=670,
+   ["image_path"]="23f0",
+   ["text"]="Alarm clock",
+   ["char"]={2231},
 },
 -- Table: {452}
 {
-   ["subText"]="detective, man, sleuth, spy, :man_detective:",
-   ["order"]=451,
-   ["char"]={3118},
-   ["text"]="Man detective",
-   ["image_path"]="1f575-2642",
+   ["subText"]=":clock:",
+   ["order"]=671,
+   ["image_path"]="1f570",
+   ["text"]="Mantelpiece clock",
+   ["char"]={2232},
 },
 -- Table: {453}
 {
-   ["subText"]="dark skin tone, detective, man, sleuth, spy, :man_detective_tone5:",
-   ["order"]=452,
-   ["char"]={3119},
-   ["text"]="Man detective: dark skin tone",
-   ["image_path"]="1f575-1f3ff-2642",
+   ["subText"]=":hourglass:, sand, timer",
+   ["order"]=672,
+   ["image_path"]="231b",
+   ["text"]="Hourglass done",
+   ["char"]={2233},
 },
 -- Table: {454}
 {
-   ["subText"]="detective, man, medium-dark skin tone, sleuth, spy, :man_detective_tone4:",
-   ["order"]=453,
-   ["char"]={3120},
-   ["text"]="Man detective: medium-dark skin tone",
-   ["image_path"]="1f575-1f3fe-2642",
+   ["subText"]=":hourglass_flowing_sand:, hourglass, sand, timer",
+   ["order"]=673,
+   ["image_path"]="23f3",
+   ["text"]="Hourglass not done",
+   ["char"]={2234},
 },
 -- Table: {455}
 {
-   ["subText"]="detective, man, medium skin tone, sleuth, spy, :man_detective_tone3:",
-   ["order"]=454,
-   ["char"]={3121},
-   ["text"]="Man detective: medium skin tone",
-   ["image_path"]="1f575-1f3fd-2642",
+   ["subText"]=":satellite:, antenna, dish",
+   ["order"]=674,
+   ["image_path"]="1f4e1",
+   ["text"]="Satellite antenna",
+   ["char"]={2235},
 },
 -- Table: {456}
 {
-   ["subText"]="detective, man, medium-light skin tone, sleuth, spy, :man_detective_tone2:",
-   ["order"]=455,
-   ["char"]={3122},
-   ["text"]="Man detective: medium-light skin tone",
-   ["image_path"]="1f575-1f3fc-2642",
+   ["subText"]=":battery:",
+   ["order"]=675,
+   ["image_path"]="1f50b",
+   ["text"]="Battery",
+   ["char"]={2236},
 },
 -- Table: {457}
 {
-   ["subText"]="detective, light skin tone, man, sleuth, spy, :man_detective_tone1:",
-   ["order"]=456,
-   ["char"]={3123},
-   ["text"]="Man detective: light skin tone",
-   ["image_path"]="1f575-1f3fb-2642",
+   ["subText"]=":electric_plug:, electric, electricity, plug",
+   ["order"]=676,
+   ["image_path"]="1f50c",
+   ["text"]="Electric plug",
+   ["char"]={2237},
 },
 -- Table: {458}
 {
-   ["subText"]="doctor, healthcare, nurse, therapist, woman, :woman_health_worker:",
-   ["order"]=457,
-   ["char"]={3124},
-   ["text"]="Woman health worker",
-   ["image_path"]="1f469-2695",
+   ["subText"]=":bulb:, comic, electric, idea, light",
+   ["order"]=677,
+   ["image_path"]="1f4a1",
+   ["text"]="Light bulb",
+   ["char"]={2238},
 },
 -- Table: {459}
 {
-   ["subText"]="doctor, healthcare, light skin tone, nurse, therapist, woman, :woman_health_worker_tone1:",
-   ["order"]=458,
-   ["char"]={3125},
-   ["text"]="Woman health worker: light skin tone",
-   ["image_path"]="1f469-1f3fb-2695",
+   ["subText"]=":flashlight:, electric, light, tool, torch",
+   ["order"]=678,
+   ["image_path"]="1f526",
+   ["text"]="Flashlight",
+   ["char"]={2239},
 },
 -- Table: {460}
 {
-   ["subText"]="doctor, healthcare, medium-light skin tone, nurse, therapist, woman, :woman_health_worker_tone2:",
-   ["order"]=459,
-   ["char"]={3126},
-   ["text"]="Woman health worker: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-2695",
+   ["subText"]=":candle:, light",
+   ["order"]=679,
+   ["image_path"]="1f56f",
+   ["text"]="Candle",
+   ["char"]={2240},
 },
 -- Table: {461}
 {
-   ["subText"]="doctor, healthcare, medium skin tone, nurse, therapist, woman, :woman_health_worker_tone3:",
-   ["order"]=460,
-   ["char"]={3127},
-   ["text"]="Woman health worker: medium skin tone",
-   ["image_path"]="1f469-1f3fd-2695",
+   ["subText"]=":fire_extinguisher:",
+   ["order"]=680,
+   ["image_path"]="1f9ef",
+   ["text"]="Fire extinguisher",
+   ["char"]={2241},
 },
 -- Table: {462}
 {
-   ["subText"]="doctor, healthcare, medium-dark skin tone, nurse, therapist, woman, :woman_health_worker_tone4:",
-   ["order"]=461,
-   ["char"]={3128},
-   ["text"]="Woman health worker: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-2695",
+   ["subText"]=":oil:, drum",
+   ["order"]=681,
+   ["image_path"]="1f6e2",
+   ["text"]="Oil drum",
+   ["char"]={2242},
 },
 -- Table: {463}
 {
-   ["subText"]="dark skin tone, doctor, healthcare, nurse, therapist, woman, :woman_health_worker_tone5:",
-   ["order"]=462,
-   ["char"]={3129},
-   ["text"]="Woman health worker: dark skin tone",
-   ["image_path"]="1f469-1f3ff-2695",
+   ["subText"]=":money_with_wings:, bank, banknote, bill, dollar, fly, money, note, wings",
+   ["order"]=682,
+   ["image_path"]="1f4b8",
+   ["text"]="Money with wings",
+   ["char"]={2243},
 },
 -- Table: {464}
 {
-   ["subText"]="doctor, healthcare, man, nurse, therapist, :man_health_worker:",
-   ["order"]=463,
-   ["char"]={3130},
-   ["text"]="Man health worker",
-   ["image_path"]="1f468-2695",
+   ["subText"]=":dollar:, bank, banknote, bill, currency, money, note",
+   ["order"]=683,
+   ["image_path"]="1f4b5",
+   ["text"]="Dollar banknote",
+   ["char"]={2244},
 },
 -- Table: {465}
 {
-   ["subText"]="doctor, healthcare, light skin tone, man, nurse, therapist, :man_health_worker_tone1:",
-   ["order"]=464,
-   ["char"]={3131},
-   ["text"]="Man health worker: light skin tone",
-   ["image_path"]="1f468-1f3fb-2695",
+   ["subText"]=":yen:, bank, banknote, bill, currency, money, note",
+   ["order"]=684,
+   ["image_path"]="1f4b4",
+   ["text"]="Yen banknote",
+   ["char"]={2245},
 },
 -- Table: {466}
 {
-   ["subText"]="doctor, healthcare, man, medium-light skin tone, nurse, therapist, :man_health_worker_tone2:",
-   ["order"]=465,
-   ["char"]={3132},
-   ["text"]="Man health worker: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-2695",
+   ["subText"]=":euro:, bank, banknote, bill, currency, money, note",
+   ["order"]=685,
+   ["image_path"]="1f4b6",
+   ["text"]="Euro banknote",
+   ["char"]={2246},
 },
 -- Table: {467}
 {
-   ["subText"]="doctor, healthcare, man, medium skin tone, nurse, therapist, :man_health_worker_tone3:",
-   ["order"]=466,
-   ["char"]={3133},
-   ["text"]="Man health worker: medium skin tone",
-   ["image_path"]="1f468-1f3fd-2695",
+   ["subText"]=":pound:, bank, banknote, bill, currency, money, note",
+   ["order"]=686,
+   ["image_path"]="1f4b7",
+   ["text"]="Pound banknote",
+   ["char"]={2247},
 },
 -- Table: {468}
 {
-   ["subText"]="doctor, healthcare, man, medium-dark skin tone, nurse, therapist, :man_health_worker_tone4:",
-   ["order"]=467,
-   ["char"]={3134},
-   ["text"]="Man health worker: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-2695",
+   ["subText"]=":moneybag:, bag, dollar, money",
+   ["order"]=687,
+   ["image_path"]="1f4b0",
+   ["text"]="Money bag",
+   ["char"]={2248},
 },
 -- Table: {469}
 {
-   ["subText"]="dark skin tone, doctor, healthcare, man, nurse, therapist, :man_health_worker_tone5:",
-   ["order"]=468,
-   ["char"]={3135},
-   ["text"]="Man health worker: dark skin tone",
-   ["image_path"]="1f468-1f3ff-2695",
+   ["subText"]=":credit_card:, bank, card, credit, money",
+   ["order"]=688,
+   ["image_path"]="1f4b3",
+   ["text"]="Credit card",
+   ["char"]={2249},
 },
 -- Table: {470}
 {
-   ["subText"]="farmer, gardener, rancher, woman, :woman_farmer:",
-   ["order"]=469,
-   ["char"]={3136},
-   ["text"]="Woman farmer",
-   ["image_path"]="1f469-1f33e",
+   ["subText"]=":gem:, diamond, jewel",
+   ["order"]=689,
+   ["image_path"]="1f48e",
+   ["text"]="Gem stone",
+   ["char"]={2250},
 },
 -- Table: {471}
 {
-   ["subText"]="farmer, gardener, light skin tone, rancher, woman, :woman_farmer_tone1:",
-   ["order"]=470,
-   ["char"]={3137},
-   ["text"]="Woman farmer: light skin tone",
-   ["image_path"]="1f469-1f3fb-1f33e",
+   ["subText"]=":scales:, Libra, balance, justice, tool, weight, zodiac",
+   ["order"]=690,
+   ["image_path"]="2696",
+   ["text"]="Balance scale",
+   ["char"]={2251},
 },
 -- Table: {472}
 {
-   ["subText"]="farmer, gardener, medium-light skin tone, rancher, woman, :woman_farmer_tone2:",
-   ["order"]=471,
-   ["char"]={3138},
-   ["text"]="Woman farmer: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-1f33e",
+   ["subText"]=":toolbox:",
+   ["order"]=691,
+   ["image_path"]="1f9f0",
+   ["text"]="Toolbox",
+   ["char"]={2252},
 },
 -- Table: {473}
 {
-   ["subText"]="farmer, gardener, medium skin tone, rancher, woman, :woman_farmer_tone3:",
-   ["order"]=472,
-   ["char"]={3139},
-   ["text"]="Woman farmer: medium skin tone",
-   ["image_path"]="1f469-1f3fd-1f33e",
+   ["subText"]=":wrench:, spanner, tool",
+   ["order"]=692,
+   ["image_path"]="1f527",
+   ["text"]="Wrench",
+   ["char"]={2253},
 },
 -- Table: {474}
 {
-   ["subText"]="farmer, gardener, medium-dark skin tone, rancher, woman, :woman_farmer_tone4:",
-   ["order"]=473,
-   ["char"]={3140},
-   ["text"]="Woman farmer: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-1f33e",
+   ["subText"]=":hammer:, tool",
+   ["order"]=693,
+   ["image_path"]="1f528",
+   ["text"]="Hammer",
+   ["char"]={2254},
 },
 -- Table: {475}
 {
-   ["subText"]="dark skin tone, farmer, gardener, rancher, woman, :woman_farmer_tone5:",
-   ["order"]=474,
-   ["char"]={3141},
-   ["text"]="Woman farmer: dark skin tone",
-   ["image_path"]="1f469-1f3ff-1f33e",
+   ["subText"]=":hammer_pick:, hammer, pick, tool",
+   ["order"]=694,
+   ["image_path"]="2692",
+   ["text"]="Hammer and pick",
+   ["char"]={2255},
 },
 -- Table: {476}
 {
-   ["subText"]="farmer, gardener, man, rancher, :man_farmer:",
-   ["order"]=475,
-   ["char"]={3142},
-   ["text"]="Man farmer",
-   ["image_path"]="1f468-1f33e",
+   ["subText"]=":tools:, hammer, spanner, tool, wrench",
+   ["order"]=695,
+   ["image_path"]="1f6e0",
+   ["text"]="Hammer and wrench",
+   ["char"]={2256},
 },
 -- Table: {477}
 {
-   ["subText"]="farmer, gardener, light skin tone, man, rancher, :man_farmer_tone1:",
-   ["order"]=476,
-   ["char"]={3143},
-   ["text"]="Man farmer: light skin tone",
-   ["image_path"]="1f468-1f3fb-1f33e",
+   ["subText"]=":pick:, mining, tool",
+   ["order"]=696,
+   ["image_path"]="26cf",
+   ["text"]="Pick",
+   ["char"]={2257},
 },
 -- Table: {478}
 {
-   ["subText"]="farmer, gardener, man, medium-light skin tone, rancher, :man_farmer_tone2:",
-   ["order"]=477,
-   ["char"]={3144},
-   ["text"]="Man farmer: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-1f33e",
+   ["subText"]=":nut_and_bolt:, bolt, nut, tool",
+   ["order"]=697,
+   ["image_path"]="1f529",
+   ["text"]="Nut and bolt",
+   ["char"]={2258},
 },
 -- Table: {479}
 {
-   ["subText"]="farmer, gardener, man, medium skin tone, rancher, :man_farmer_tone3:",
-   ["order"]=478,
-   ["char"]={3145},
-   ["text"]="Man farmer: medium skin tone",
-   ["image_path"]="1f468-1f3fd-1f33e",
+   ["subText"]=":gear:, tool",
+   ["order"]=698,
+   ["image_path"]="2699",
+   ["text"]="Gear",
+   ["char"]={2259},
 },
 -- Table: {480}
 {
-   ["subText"]="farmer, gardener, man, medium-dark skin tone, rancher, :man_farmer_tone4:",
-   ["order"]=479,
-   ["char"]={3146},
-   ["text"]="Man farmer: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-1f33e",
+   ["subText"]=":bricks:",
+   ["order"]=699,
+   ["image_path"]="1f9f1",
+   ["text"]="Brick",
+   ["char"]={2260},
 },
 -- Table: {481}
 {
-   ["subText"]="dark skin tone, farmer, gardener, man, rancher, :man_farmer_tone5:",
-   ["order"]=480,
-   ["char"]={3147},
-   ["text"]="Man farmer: dark skin tone",
-   ["image_path"]="1f468-1f3ff-1f33e",
+   ["subText"]=":chains:, chain",
+   ["order"]=700,
+   ["image_path"]="26d3",
+   ["text"]="Chains",
+   ["char"]={2261},
 },
 -- Table: {482}
 {
-   ["subText"]="chef, cook, woman, :woman_cook:",
-   ["order"]=481,
-   ["char"]={3148},
-   ["text"]="Woman cook",
-   ["image_path"]="1f469-1f373",
+   ["subText"]=":magnet:",
+   ["order"]=701,
+   ["image_path"]="1f9f2",
+   ["text"]="Magnet",
+   ["char"]={2262},
 },
 -- Table: {483}
 {
-   ["subText"]="chef, cook, light skin tone, woman, :woman_cook_tone1:",
-   ["order"]=482,
-   ["char"]={3149},
-   ["text"]="Woman cook: light skin tone",
-   ["image_path"]="1f469-1f3fb-1f373",
+   ["subText"]=":gun:, handgun, revolver, tool, weapon",
+   ["order"]=702,
+   ["image_path"]="1f52b",
+   ["text"]="Pistol",
+   ["char"]={2263},
 },
 -- Table: {484}
 {
-   ["subText"]="chef, cook, medium-light skin tone, woman, :woman_cook_tone2:",
-   ["order"]=483,
-   ["char"]={3150},
-   ["text"]="Woman cook: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-1f373",
+   ["subText"]=":bomb:, comic",
+   ["order"]=703,
+   ["image_path"]="1f4a3",
+   ["text"]="Bomb",
+   ["char"]={2264},
 },
 -- Table: {485}
 {
-   ["subText"]="chef, cook, medium skin tone, woman, :woman_cook_tone3:",
-   ["order"]=484,
-   ["char"]={3151},
-   ["text"]="Woman cook: medium skin tone",
-   ["image_path"]="1f469-1f3fd-1f373",
+   ["subText"]=":firecracker:",
+   ["order"]=704,
+   ["image_path"]="1f9e8",
+   ["text"]="Firecracker",
+   ["char"]={2265},
 },
 -- Table: {486}
 {
-   ["subText"]="chef, cook, medium-dark skin tone, woman, :woman_cook_tone4:",
-   ["order"]=485,
-   ["char"]={3152},
-   ["text"]="Woman cook: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-1f373",
+   ["subText"]=":axe:",
+   ["order"]=705,
+   ["image_path"]="1fa93",
+   ["text"]="Axe",
+   ["char"]={2266},
 },
 -- Table: {487}
 {
-   ["subText"]="chef, cook, dark skin tone, woman, :woman_cook_tone5:",
-   ["order"]=486,
-   ["char"]={3153},
-   ["text"]="Woman cook: dark skin tone",
-   ["image_path"]="1f469-1f3ff-1f373",
+   ["subText"]=":razor:",
+   ["order"]=706,
+   ["image_path"]="1fa92",
+   ["text"]="Razor",
+   ["char"]={2267},
 },
 -- Table: {488}
 {
-   ["subText"]="chef, cook, man, :man_cook:",
-   ["order"]=487,
-   ["char"]={3154},
-   ["text"]="Man cook",
-   ["image_path"]="1f468-1f373",
+   ["subText"]=":knife:, cooking, hocho, tool, weapon",
+   ["order"]=707,
+   ["image_path"]="1f52a",
+   ["text"]="Kitchen knife",
+   ["char"]={2268},
 },
 -- Table: {489}
 {
-   ["subText"]="chef, cook, light skin tone, man, :man_cook_tone1:",
-   ["order"]=488,
-   ["char"]={3155},
-   ["text"]="Man cook: light skin tone",
-   ["image_path"]="1f468-1f3fb-1f373",
+   ["subText"]=":dagger:, knife, weapon",
+   ["order"]=708,
+   ["image_path"]="1f5e1",
+   ["text"]="Dagger",
+   ["char"]={2269},
 },
 -- Table: {490}
 {
-   ["subText"]="chef, cook, man, medium-light skin tone, :man_cook_tone2:",
-   ["order"]=489,
-   ["char"]={3156},
-   ["text"]="Man cook: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-1f373",
+   ["subText"]=":crossed_swords:, crossed, swords, weapon",
+   ["order"]=709,
+   ["image_path"]="2694",
+   ["text"]="Crossed swords",
+   ["char"]={2270},
 },
 -- Table: {491}
 {
-   ["subText"]="chef, cook, man, medium skin tone, :man_cook_tone3:",
-   ["order"]=490,
-   ["char"]={3157},
-   ["text"]="Man cook: medium skin tone",
-   ["image_path"]="1f468-1f3fd-1f373",
+   ["subText"]=":shield:, weapon",
+   ["order"]=710,
+   ["image_path"]="1f6e1",
+   ["text"]="Shield",
+   ["char"]={2271},
 },
 -- Table: {492}
 {
-   ["subText"]="chef, cook, man, medium-dark skin tone, :man_cook_tone4:",
-   ["order"]=491,
-   ["char"]={3158},
-   ["text"]="Man cook: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-1f373",
+   ["subText"]=":smoking:",
+   ["order"]=711,
+   ["image_path"]="1f6ac",
+   ["text"]="Cigarette",
+   ["char"]={2272},
 },
 -- Table: {493}
 {
-   ["subText"]="chef, cook, dark skin tone, man, :man_cook_tone5:",
-   ["order"]=492,
-   ["char"]={3159},
-   ["text"]="Man cook: dark skin tone",
-   ["image_path"]="1f468-1f3ff-1f373",
+   ["subText"]=":coffin:, death",
+   ["order"]=712,
+   ["image_path"]="26b0",
+   ["text"]="Coffin",
+   ["char"]={2273},
 },
 -- Table: {494}
 {
-   ["subText"]="graduate, student, woman, :woman_student:",
-   ["order"]=493,
-   ["char"]={3160},
-   ["text"]="Woman student",
-   ["image_path"]="1f469-1f393",
+   ["subText"]=":urn:, ashes, death, funeral",
+   ["order"]=713,
+   ["image_path"]="26b1",
+   ["text"]="Funeral urn",
+   ["char"]={2274},
 },
 -- Table: {495}
 {
-   ["subText"]="graduate, light skin tone, student, woman, :woman_student_tone1:",
-   ["order"]=494,
-   ["char"]={3161},
-   ["text"]="Woman student: light skin tone",
-   ["image_path"]="1f469-1f3fb-1f393",
+   ["subText"]=":amphora:, Aquarius, cooking, drink, jug, tool, weapon, zodiac",
+   ["order"]=714,
+   ["image_path"]="1f3fa",
+   ["text"]="Amphora",
+   ["char"]={2275},
 },
 -- Table: {496}
 {
-   ["subText"]="graduate, medium-light skin tone, student, woman, :woman_student_tone2:",
-   ["order"]=495,
-   ["char"]={3162},
-   ["text"]="Woman student: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-1f393",
+   ["subText"]=":diya_lamp:",
+   ["order"]=715,
+   ["image_path"]="1fa94",
+   ["text"]="Diya lamp",
+   ["char"]={2276},
 },
 -- Table: {497}
 {
-   ["subText"]="graduate, medium skin tone, student, woman, :woman_student_tone3:",
-   ["order"]=496,
-   ["char"]={3163},
-   ["text"]="Woman student: medium skin tone",
-   ["image_path"]="1f469-1f3fd-1f393",
+   ["subText"]=":crystal_ball:, ball, crystal, fairy tale, fantasy, fortune, tool",
+   ["order"]=716,
+   ["image_path"]="1f52e",
+   ["text"]="Crystal ball",
+   ["char"]={2277},
 },
 -- Table: {498}
 {
-   ["subText"]="graduate, medium-dark skin tone, student, woman, :woman_student_tone4:",
-   ["order"]=497,
-   ["char"]={3164},
-   ["text"]="Woman student: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-1f393",
+   ["subText"]=":prayer_beads:, beads, clothing, necklace, prayer, religion",
+   ["order"]=717,
+   ["image_path"]="1f4ff",
+   ["text"]="Prayer beads",
+   ["char"]={2278},
 },
 -- Table: {499}
 {
-   ["subText"]="dark skin tone, graduate, student, woman, :woman_student_tone5:",
-   ["order"]=498,
-   ["char"]={3165},
-   ["text"]="Woman student: dark skin tone",
-   ["image_path"]="1f469-1f3ff-1f393",
+   ["subText"]=":nazar_amulet:",
+   ["order"]=718,
+   ["image_path"]="1f9ff",
+   ["text"]="Nazar amulet",
+   ["char"]={2279},
 },
 -- Table: {500}
 {
-   ["subText"]="graduate, man, student, :man_student:",
-   ["order"]=499,
-   ["char"]={3166},
-   ["text"]="Man student",
-   ["image_path"]="1f468-1f393",
+   ["subText"]=":barber:, haircut, pole",
+   ["order"]=719,
+   ["image_path"]="1f488",
+   ["text"]="Barber pole",
+   ["char"]={2280},
 },
 -- Table: {501}
 {
-   ["subText"]="graduate, light skin tone, man, student, :man_student_tone1:",
-   ["order"]=500,
-   ["char"]={3167},
-   ["text"]="Man student: light skin tone",
-   ["image_path"]="1f468-1f3fb-1f393",
+   ["subText"]=":alembic:, chemistry, tool",
+   ["order"]=720,
+   ["image_path"]="2697",
+   ["text"]="Alembic",
+   ["char"]={2281},
 },
 -- Table: {502}
 {
-   ["subText"]="graduate, man, medium-light skin tone, student, :man_student_tone2:",
-   ["order"]=501,
-   ["char"]={3168},
-   ["text"]="Man student: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-1f393",
+   ["subText"]=":telescope:, science, tool",
+   ["order"]=721,
+   ["image_path"]="1f52d",
+   ["text"]="Telescope",
+   ["char"]={2282},
 },
 -- Table: {503}
 {
-   ["subText"]="graduate, man, medium skin tone, student, :man_student_tone3:",
-   ["order"]=502,
-   ["char"]={3169},
-   ["text"]="Man student: medium skin tone",
-   ["image_path"]="1f468-1f3fd-1f393",
+   ["subText"]=":microscope:, science, tool",
+   ["order"]=722,
+   ["image_path"]="1f52c",
+   ["text"]="Microscope",
+   ["char"]={2283},
 },
 -- Table: {504}
 {
-   ["subText"]="graduate, man, medium-dark skin tone, student, :man_student_tone4:",
-   ["order"]=503,
-   ["char"]={3170},
-   ["text"]="Man student: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-1f393",
+   ["subText"]=":hole:",
+   ["order"]=723,
+   ["image_path"]="1f573",
+   ["text"]="Hole",
+   ["char"]={2284},
 },
 -- Table: {505}
 {
-   ["subText"]="dark skin tone, graduate, man, student, :man_student_tone5:",
-   ["order"]=504,
-   ["char"]={3171},
-   ["text"]="Man student: dark skin tone",
-   ["image_path"]="1f468-1f3ff-1f393",
+   ["subText"]=":probing_cane:",
+   ["order"]=724,
+   ["image_path"]="1f9af",
+   ["text"]="Probing cane",
+   ["char"]={2285},
 },
 -- Table: {506}
 {
-   ["subText"]="actor, entertainer, rock, singer, star, woman, :woman_singer:",
-   ["order"]=505,
-   ["char"]={3172},
-   ["text"]="Woman singer",
-   ["image_path"]="1f469-1f3a4",
+   ["subText"]=":stethoscope:",
+   ["order"]=725,
+   ["image_path"]="1fa7a",
+   ["text"]="Stethoscope",
+   ["char"]={2286},
 },
 -- Table: {507}
 {
-   ["subText"]="actor, entertainer, light skin tone, rock, singer, star, woman, :woman_singer_tone1:",
-   ["order"]=506,
-   ["char"]={3173},
-   ["text"]="Woman singer: light skin tone",
-   ["image_path"]="1f469-1f3fb-1f3a4",
+   ["subText"]=":adhesive_bandage:",
+   ["order"]=726,
+   ["image_path"]="1fa79",
+   ["text"]="Adhesive bandage",
+   ["char"]={2287},
 },
 -- Table: {508}
 {
-   ["subText"]="actor, entertainer, medium-light skin tone, rock, singer, star, woman, :woman_singer_tone2:",
-   ["order"]=507,
-   ["char"]={3174},
-   ["text"]="Woman singer: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-1f3a4",
+   ["subText"]=":pill:, doctor, medicine, sick",
+   ["order"]=727,
+   ["image_path"]="1f48a",
+   ["text"]="Pill",
+   ["char"]={2288},
 },
 -- Table: {509}
 {
-   ["subText"]="actor, entertainer, medium skin tone, rock, singer, star, woman, :woman_singer_tone3:",
-   ["order"]=508,
-   ["char"]={3175},
-   ["text"]="Woman singer: medium skin tone",
-   ["image_path"]="1f469-1f3fd-1f3a4",
+   ["subText"]=":syringe:, doctor, medicine, needle, shot, sick, tool",
+   ["order"]=728,
+   ["image_path"]="1f489",
+   ["text"]="Syringe",
+   ["char"]={2289},
 },
 -- Table: {510}
 {
-   ["subText"]="actor, entertainer, medium-dark skin tone, rock, singer, star, woman, :woman_singer_tone4:",
-   ["order"]=509,
-   ["char"]={3176},
-   ["text"]="Woman singer: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-1f3a4",
+   ["subText"]=":drop_of_blood:",
+   ["order"]=729,
+   ["image_path"]="1fa78",
+   ["text"]="Drop of blood",
+   ["char"]={2290},
 },
 -- Table: {511}
 {
-   ["subText"]="actor, dark skin tone, entertainer, rock, singer, star, woman, :woman_singer_tone5:",
-   ["order"]=510,
-   ["char"]={3177},
-   ["text"]="Woman singer: dark skin tone",
-   ["image_path"]="1f469-1f3ff-1f3a4",
+   ["subText"]=":dna:",
+   ["order"]=730,
+   ["image_path"]="1f9ec",
+   ["text"]="Dna",
+   ["char"]={2291},
 },
 -- Table: {512}
 {
-   ["subText"]="actor, entertainer, man, rock, singer, star, :man_singer:",
-   ["order"]=511,
-   ["char"]={3178},
-   ["text"]="Man singer",
-   ["image_path"]="1f468-1f3a4",
+   ["subText"]=":microbe:",
+   ["order"]=731,
+   ["image_path"]="1f9a0",
+   ["text"]="Microbe",
+   ["char"]={2292},
 },
 -- Table: {513}
 {
-   ["subText"]="actor, entertainer, light skin tone, man, rock, singer, star, :man_singer_tone1:",
-   ["order"]=512,
-   ["char"]={3179},
-   ["text"]="Man singer: light skin tone",
-   ["image_path"]="1f468-1f3fb-1f3a4",
+   ["subText"]=":petri_dish:",
+   ["order"]=732,
+   ["image_path"]="1f9eb",
+   ["text"]="Petri dish",
+   ["char"]={2293},
 },
 -- Table: {514}
 {
-   ["subText"]="actor, entertainer, man, medium-light skin tone, rock, singer, star, :man_singer_tone2:",
-   ["order"]=513,
-   ["char"]={3180},
-   ["text"]="Man singer: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-1f3a4",
+   ["subText"]=":test_tube:",
+   ["order"]=733,
+   ["image_path"]="1f9ea",
+   ["text"]="Test tube",
+   ["char"]={2294},
 },
 -- Table: {515}
 {
-   ["subText"]="actor, entertainer, man, medium skin tone, rock, singer, star, :man_singer_tone3:",
-   ["order"]=514,
-   ["char"]={3181},
-   ["text"]="Man singer: medium skin tone",
-   ["image_path"]="1f468-1f3fd-1f3a4",
+   ["subText"]=":thermometer:, weather",
+   ["order"]=734,
+   ["image_path"]="1f321",
+   ["text"]="Thermometer",
+   ["char"]={2295},
 },
 -- Table: {516}
 {
-   ["subText"]="actor, entertainer, man, medium-dark skin tone, rock, singer, star, :man_singer_tone4:",
-   ["order"]=515,
-   ["char"]={3182},
-   ["text"]="Man singer: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-1f3a4",
+   ["subText"]=":chair:",
+   ["order"]=735,
+   ["image_path"]="1fa91",
+   ["text"]="Chair",
+   ["char"]={2296},
 },
 -- Table: {517}
 {
-   ["subText"]="actor, dark skin tone, entertainer, man, rock, singer, star, :man_singer_tone5:",
-   ["order"]=516,
-   ["char"]={3183},
-   ["text"]="Man singer: dark skin tone",
-   ["image_path"]="1f468-1f3ff-1f3a4",
+   ["subText"]=":broom:",
+   ["order"]=736,
+   ["image_path"]="1f9f9",
+   ["text"]="Broom",
+   ["char"]={2297},
 },
 -- Table: {518}
 {
-   ["subText"]="instructor, professor, teacher, woman, :woman_teacher:",
-   ["order"]=517,
-   ["char"]={3184},
-   ["text"]="Woman teacher",
-   ["image_path"]="1f469-1f3eb",
+   ["subText"]=":basket:",
+   ["order"]=737,
+   ["image_path"]="1f9fa",
+   ["text"]="Basket",
+   ["char"]={2298},
 },
 -- Table: {519}
 {
-   ["subText"]="instructor, light skin tone, professor, teacher, woman, :woman_teacher_tone1:",
-   ["order"]=518,
-   ["char"]={3185},
-   ["text"]="Woman teacher: light skin tone",
-   ["image_path"]="1f469-1f3fb-1f3eb",
+   ["subText"]=":roll_of_paper:",
+   ["order"]=738,
+   ["image_path"]="1f9fb",
+   ["text"]="Roll of paper",
+   ["char"]={2299},
 },
 -- Table: {520}
 {
-   ["subText"]="instructor, medium-light skin tone, professor, teacher, woman, :woman_teacher_tone2:",
-   ["order"]=519,
-   ["char"]={3186},
-   ["text"]="Woman teacher: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-1f3eb",
+   ["subText"]=":toilet:",
+   ["order"]=739,
+   ["image_path"]="1f6bd",
+   ["text"]="Toilet",
+   ["char"]={2300},
 },
 -- Table: {521}
 {
-   ["subText"]="instructor, medium skin tone, professor, teacher, woman, :woman_teacher_tone3:",
-   ["order"]=520,
-   ["char"]={3187},
-   ["text"]="Woman teacher: medium skin tone",
-   ["image_path"]="1f469-1f3fd-1f3eb",
+   ["subText"]=":potable_water:, drinking, potable, water",
+   ["order"]=740,
+   ["image_path"]="1f6b0",
+   ["text"]="Potable water",
+   ["char"]={2301},
 },
 -- Table: {522}
 {
-   ["subText"]="instructor, medium-dark skin tone, professor, teacher, woman, :woman_teacher_tone4:",
-   ["order"]=521,
-   ["char"]={3188},
-   ["text"]="Woman teacher: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-1f3eb",
+   ["subText"]=":shower:, water",
+   ["order"]=741,
+   ["image_path"]="1f6bf",
+   ["text"]="Shower",
+   ["char"]={2302},
 },
 -- Table: {523}
 {
-   ["subText"]="dark skin tone, instructor, professor, teacher, woman, :woman_teacher_tone5:",
-   ["order"]=522,
-   ["char"]={3189},
-   ["text"]="Woman teacher: dark skin tone",
-   ["image_path"]="1f469-1f3ff-1f3eb",
+   ["subText"]=":bathtub:, bath",
+   ["order"]=742,
+   ["image_path"]="1f6c1",
+   ["text"]="Bathtub",
+   ["char"]={2303},
 },
 -- Table: {524}
 {
-   ["subText"]="instructor, man, professor, teacher, :man_teacher:",
-   ["order"]=523,
-   ["char"]={3190},
-   ["text"]="Man teacher",
-   ["image_path"]="1f468-1f3eb",
+   ["subText"]=":bath:, bathtub",
+   ["order"]=743,
+   ["image_path"]="1f6c0",
+   ["text"]="Person taking bath",
+   ["char"]={2304},
 },
 -- Table: {525}
 {
-   ["subText"]="instructor, light skin tone, man, professor, teacher, :man_teacher_tone1:",
-   ["order"]=524,
-   ["char"]={3191},
-   ["text"]="Man teacher: light skin tone",
-   ["image_path"]="1f468-1f3fb-1f3eb",
+   ["subText"]=":soap:",
+   ["order"]=749,
+   ["image_path"]="1f9fc",
+   ["text"]="Soap",
+   ["char"]={2305},
 },
 -- Table: {526}
 {
-   ["subText"]="instructor, man, medium-light skin tone, professor, teacher, :man_teacher_tone2:",
-   ["order"]=525,
-   ["char"]={3192},
-   ["text"]="Man teacher: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-1f3eb",
+   ["subText"]=":sponge:",
+   ["order"]=750,
+   ["image_path"]="1f9fd",
+   ["text"]="Sponge",
+   ["char"]={2306},
 },
 -- Table: {527}
 {
-   ["subText"]="instructor, man, medium skin tone, professor, teacher, :man_teacher_tone3:",
-   ["order"]=526,
-   ["char"]={3193},
-   ["text"]="Man teacher: medium skin tone",
-   ["image_path"]="1f468-1f3fd-1f3eb",
+   ["subText"]=":squeeze_bottle:",
+   ["order"]=751,
+   ["image_path"]="1f9f4",
+   ["text"]="Lotion bottle",
+   ["char"]={2307},
 },
 -- Table: {528}
 {
-   ["subText"]="instructor, man, medium-dark skin tone, professor, teacher, :man_teacher_tone4:",
-   ["order"]=527,
-   ["char"]={3194},
-   ["text"]="Man teacher: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-1f3eb",
+   ["subText"]=":bellhop:, bell, hotel",
+   ["order"]=752,
+   ["image_path"]="1f6ce",
+   ["text"]="Bellhop bell",
+   ["char"]={2308},
 },
 -- Table: {529}
 {
-   ["subText"]="dark skin tone, instructor, man, professor, teacher, :man_teacher_tone5:",
-   ["order"]=528,
-   ["char"]={3195},
-   ["text"]="Man teacher: dark skin tone",
-   ["image_path"]="1f468-1f3ff-1f3eb",
+   ["subText"]=":key:, lock, password",
+   ["order"]=753,
+   ["image_path"]="1f511",
+   ["text"]="Key",
+   ["char"]={2309},
 },
 -- Table: {530}
 {
-   ["subText"]="assembly, factory, industrial, woman, worker, :woman_factory_worker:",
-   ["order"]=529,
-   ["char"]={3196},
-   ["text"]="Woman factory worker",
-   ["image_path"]="1f469-1f3ed",
+   ["subText"]=":key2:, clue, key, lock, old",
+   ["order"]=754,
+   ["image_path"]="1f5dd",
+   ["text"]="Old key",
+   ["char"]={2310},
 },
 -- Table: {531}
 {
-   ["subText"]="assembly, factory, industrial, light skin tone, woman, worker, :woman_factory_worker_tone1:",
-   ["order"]=530,
-   ["char"]={3197},
-   ["text"]="Woman factory worker: light skin tone",
-   ["image_path"]="1f469-1f3fb-1f3ed",
+   ["subText"]=":door:",
+   ["order"]=755,
+   ["image_path"]="1f6aa",
+   ["text"]="Door",
+   ["char"]={2311},
 },
 -- Table: {532}
 {
-   ["subText"]="assembly, factory, industrial, medium-light skin tone, woman, worker, :woman_factory_worker_tone2:",
-   ["order"]=531,
-   ["char"]={3198},
-   ["text"]="Woman factory worker: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-1f3ed",
+   ["subText"]=":couch:, hotel, lamp",
+   ["order"]=756,
+   ["image_path"]="1f6cb",
+   ["text"]="Couch and lamp",
+   ["char"]={2312},
 },
 -- Table: {533}
 {
-   ["subText"]="assembly, factory, industrial, medium skin tone, woman, worker, :woman_factory_worker_tone3:",
-   ["order"]=532,
-   ["char"]={3199},
-   ["text"]="Woman factory worker: medium skin tone",
-   ["image_path"]="1f469-1f3fd-1f3ed",
+   ["subText"]=":bed:, hotel, sleep",
+   ["order"]=757,
+   ["image_path"]="1f6cf",
+   ["text"]="Bed",
+   ["char"]={2313},
 },
 -- Table: {534}
 {
-   ["subText"]="assembly, factory, industrial, medium-dark skin tone, woman, worker, :woman_factory_worker_tone4:",
-   ["order"]=533,
-   ["char"]={3200},
-   ["text"]="Woman factory worker: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-1f3ed",
+   ["subText"]=":sleeping_accommodation:, hotel, sleep",
+   ["order"]=758,
+   ["image_path"]="1f6cc",
+   ["text"]="Person in bed",
+   ["char"]={2314},
 },
 -- Table: {535}
 {
-   ["subText"]="assembly, dark skin tone, factory, industrial, woman, worker, :woman_factory_worker_tone5:",
-   ["order"]=534,
-   ["char"]={3201},
-   ["text"]="Woman factory worker: dark skin tone",
-   ["image_path"]="1f469-1f3ff-1f3ed",
+   ["subText"]=":teddy_bear:",
+   ["order"]=764,
+   ["image_path"]="1f9f8",
+   ["text"]="Teddy bear",
+   ["char"]={2315},
 },
 -- Table: {536}
 {
-   ["subText"]="assembly, factory, industrial, man, worker, :man_factory_worker:",
-   ["order"]=535,
-   ["char"]={3202},
-   ["text"]="Man factory worker",
-   ["image_path"]="1f468-1f3ed",
+   ["subText"]=":frame_photo:, art, frame, museum, painting, picture",
+   ["order"]=765,
+   ["image_path"]="1f5bc",
+   ["text"]="Framed picture",
+   ["char"]={2316},
 },
 -- Table: {537}
 {
-   ["subText"]="assembly, factory, industrial, light skin tone, man, worker, :man_factory_worker_tone1:",
-   ["order"]=536,
-   ["char"]={3203},
-   ["text"]="Man factory worker: light skin tone",
-   ["image_path"]="1f468-1f3fb-1f3ed",
+   ["subText"]=":shopping_bags:, bag, hotel, shopping",
+   ["order"]=766,
+   ["image_path"]="1f6cd",
+   ["text"]="Shopping bags",
+   ["char"]={2317},
 },
 -- Table: {538}
 {
-   ["subText"]="assembly, factory, industrial, man, medium-light skin tone, worker, :man_factory_worker_tone2:",
-   ["order"]=537,
-   ["char"]={3204},
-   ["text"]="Man factory worker: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-1f3ed",
+   ["subText"]=":shopping_cart:, cart, shopping, trolley",
+   ["order"]=767,
+   ["image_path"]="1f6d2",
+   ["text"]="Shopping cart",
+   ["char"]={2318},
 },
 -- Table: {539}
 {
-   ["subText"]="assembly, factory, industrial, man, medium skin tone, worker, :man_factory_worker_tone3:",
-   ["order"]=538,
-   ["char"]={3205},
-   ["text"]="Man factory worker: medium skin tone",
-   ["image_path"]="1f468-1f3fd-1f3ed",
+   ["subText"]=":gift:, box, celebration, present, wrapped",
+   ["order"]=768,
+   ["image_path"]="1f381",
+   ["text"]="Wrapped gift",
+   ["char"]={2319},
 },
 -- Table: {540}
 {
-   ["subText"]="assembly, factory, industrial, man, medium-dark skin tone, worker, :man_factory_worker_tone4:",
-   ["order"]=539,
-   ["char"]={3206},
-   ["text"]="Man factory worker: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-1f3ed",
+   ["subText"]=":balloon:, celebration",
+   ["order"]=769,
+   ["image_path"]="1f388",
+   ["text"]="Balloon",
+   ["char"]={2320},
 },
 -- Table: {541}
 {
-   ["subText"]="assembly, dark skin tone, factory, industrial, man, worker, :man_factory_worker_tone5:",
-   ["order"]=540,
-   ["char"]={3207},
-   ["text"]="Man factory worker: dark skin tone",
-   ["image_path"]="1f468-1f3ff-1f3ed",
+   ["subText"]=":flags:, carp, celebration, streamer",
+   ["order"]=770,
+   ["image_path"]="1f38f",
+   ["text"]="Carp streamer",
+   ["char"]={2321},
 },
 -- Table: {542}
 {
-   ["subText"]="coder, developer, inventor, software, technologist, woman, :woman_technologist:",
-   ["order"]=541,
-   ["char"]={3208},
-   ["text"]="Woman technologist",
-   ["image_path"]="1f469-1f4bb",
+   ["subText"]=":ribbon:, celebration",
+   ["order"]=771,
+   ["image_path"]="1f380",
+   ["text"]="Ribbon",
+   ["char"]={2322},
 },
 -- Table: {543}
 {
-   ["subText"]="coder, developer, inventor, light skin tone, software, technologist, woman, :woman_technologist_tone1:",
-   ["order"]=542,
-   ["char"]={3209},
-   ["text"]="Woman technologist: light skin tone",
-   ["image_path"]="1f469-1f3fb-1f4bb",
+   ["subText"]=":confetti_ball:, ball, celebration, confetti",
+   ["order"]=772,
+   ["image_path"]="1f38a",
+   ["text"]="Confetti ball",
+   ["char"]={2323},
 },
 -- Table: {544}
 {
-   ["subText"]="coder, developer, inventor, medium-light skin tone, software, technologist, woman, :woman_technologist_tone2:",
-   ["order"]=543,
-   ["char"]={3210},
-   ["text"]="Woman technologist: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-1f4bb",
+   ["subText"]=":tada:, celebration, party, popper",
+   ["order"]=773,
+   ["image_path"]="1f389",
+   ["text"]="Party popper",
+   ["char"]={2324},
 },
 -- Table: {545}
 {
-   ["subText"]="coder, developer, inventor, medium skin tone, software, technologist, woman, :woman_technologist_tone3:",
-   ["order"]=544,
-   ["char"]={3211},
-   ["text"]="Woman technologist: medium skin tone",
-   ["image_path"]="1f469-1f3fd-1f4bb",
+   ["subText"]=":dolls:, Japanese, celebration, doll, festival",
+   ["order"]=774,
+   ["image_path"]="1f38e",
+   ["text"]="Japanese dolls",
+   ["char"]={2325},
 },
 -- Table: {546}
 {
-   ["subText"]="coder, developer, inventor, medium-dark skin tone, software, technologist, woman, :woman_technologist_tone4:",
-   ["order"]=545,
-   ["char"]={3212},
-   ["text"]="Woman technologist: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-1f4bb",
+   ["subText"]=":izakaya_lantern:, bar, lantern, light, red",
+   ["order"]=775,
+   ["image_path"]="1f3ee",
+   ["text"]="Red paper lantern",
+   ["char"]={2326},
 },
 -- Table: {547}
 {
-   ["subText"]="coder, dark skin tone, developer, inventor, software, technologist, woman, :woman_technologist_tone5:",
-   ["order"]=546,
-   ["char"]={3213},
-   ["text"]="Woman technologist: dark skin tone",
-   ["image_path"]="1f469-1f3ff-1f4bb",
+   ["subText"]=":wind_chime:, bell, celebration, chime, wind",
+   ["order"]=776,
+   ["image_path"]="1f390",
+   ["text"]="Wind chime",
+   ["char"]={2327},
 },
 -- Table: {548}
 {
-   ["subText"]="coder, developer, inventor, man, software, technologist, :man_technologist:",
-   ["order"]=547,
-   ["char"]={3214},
-   ["text"]="Man technologist",
-   ["image_path"]="1f468-1f4bb",
+   ["subText"]=":red_envelope:",
+   ["order"]=777,
+   ["image_path"]="1f9e7",
+   ["text"]="Red envelope",
+   ["char"]={2328},
 },
 -- Table: {549}
 {
-   ["subText"]="coder, developer, inventor, light skin tone, man, software, technologist, :man_technologist_tone1:",
-   ["order"]=548,
-   ["char"]={3215},
-   ["text"]="Man technologist: light skin tone",
-   ["image_path"]="1f468-1f3fb-1f4bb",
+   ["subText"]=":envelope:, email, letter",
+   ["order"]=778,
+   ["image_path"]="2709",
+   ["text"]="Envelope",
+   ["char"]={2329},
 },
 -- Table: {550}
 {
-   ["subText"]="coder, developer, inventor, man, medium-light skin tone, software, technologist, :man_technologist_tone2:",
-   ["order"]=549,
-   ["char"]={3216},
-   ["text"]="Man technologist: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-1f4bb",
+   ["subText"]=":envelope_with_arrow:, arrow, down, e-mail, email, envelope, letter, mail, outgoing, sent",
+   ["order"]=779,
+   ["image_path"]="1f4e9",
+   ["text"]="Envelope with arrow",
+   ["char"]={2330},
 },
 -- Table: {551}
 {
-   ["subText"]="coder, developer, inventor, man, medium skin tone, software, technologist, :man_technologist_tone3:",
-   ["order"]=550,
-   ["char"]={3217},
-   ["text"]="Man technologist: medium skin tone",
-   ["image_path"]="1f468-1f3fd-1f4bb",
+   ["subText"]=":incoming_envelope:, e-mail, email, envelope, incoming, letter, mail, receive",
+   ["order"]=780,
+   ["image_path"]="1f4e8",
+   ["text"]="Incoming envelope",
+   ["char"]={2331},
 },
 -- Table: {552}
 {
-   ["subText"]="coder, developer, inventor, man, medium-dark skin tone, software, technologist, :man_technologist_tone4:",
-   ["order"]=551,
-   ["char"]={3218},
-   ["text"]="Man technologist: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-1f4bb",
+   ["subText"]=":e-mail:, email, letter, mail",
+   ["order"]=781,
+   ["image_path"]="1f4e7",
+   ["text"]="E-mail",
+   ["char"]={2332},
 },
 -- Table: {553}
 {
-   ["subText"]="coder, dark skin tone, developer, inventor, man, software, technologist, :man_technologist_tone5:",
-   ["order"]=552,
-   ["char"]={3219},
-   ["text"]="Man technologist: dark skin tone",
-   ["image_path"]="1f468-1f3ff-1f4bb",
+   ["subText"]=":love_letter:, heart, letter, love, mail",
+   ["order"]=782,
+   ["image_path"]="1f48c",
+   ["text"]="Love letter",
+   ["char"]={2333},
 },
 -- Table: {554}
 {
-   ["subText"]="architect, business, manager, office, white-collar, woman, :woman_office_worker:",
-   ["order"]=553,
-   ["char"]={3220},
-   ["text"]="Woman office worker",
-   ["image_path"]="1f469-1f4bc",
+   ["subText"]=":inbox_tray:, box, inbox, letter, mail, receive, tray",
+   ["order"]=783,
+   ["image_path"]="1f4e5",
+   ["text"]="Inbox tray",
+   ["char"]={2334},
 },
 -- Table: {555}
 {
-   ["subText"]="architect, business, light skin tone, manager, office, white-collar, woman, :woman_office_worker_tone1:",
-   ["order"]=554,
-   ["char"]={3221},
-   ["text"]="Woman office worker: light skin tone",
-   ["image_path"]="1f469-1f3fb-1f4bc",
+   ["subText"]=":outbox_tray:, box, letter, mail, outbox, sent, tray",
+   ["order"]=784,
+   ["image_path"]="1f4e4",
+   ["text"]="Outbox tray",
+   ["char"]={2335},
 },
 -- Table: {556}
 {
-   ["subText"]="architect, business, manager, medium-light skin tone, office, white-collar, woman, :woman_office_worker_tone2:",
-   ["order"]=555,
-   ["char"]={3222},
-   ["text"]="Woman office worker: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-1f4bc",
+   ["subText"]=":package:, box, parcel",
+   ["order"]=785,
+   ["image_path"]="1f4e6",
+   ["text"]="Package",
+   ["char"]={2336},
 },
 -- Table: {557}
 {
-   ["subText"]="architect, business, manager, medium skin tone, office, white-collar, woman, :woman_office_worker_tone3:",
-   ["order"]=556,
-   ["char"]={3223},
-   ["text"]="Woman office worker: medium skin tone",
-   ["image_path"]="1f469-1f3fd-1f4bc",
+   ["subText"]=":label:",
+   ["order"]=786,
+   ["image_path"]="1f3f7",
+   ["text"]="Label",
+   ["char"]={2337},
 },
 -- Table: {558}
 {
-   ["subText"]="architect, business, manager, medium-dark skin tone, office, white-collar, woman, :woman_office_worker_tone4:",
-   ["order"]=557,
-   ["char"]={3224},
-   ["text"]="Woman office worker: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-1f4bc",
+   ["subText"]=":mailbox_closed:, closed, lowered, mail, mailbox, postbox",
+   ["order"]=787,
+   ["image_path"]="1f4ea",
+   ["text"]="Closed mailbox with lowered flag",
+   ["char"]={2338},
 },
 -- Table: {559}
 {
-   ["subText"]="architect, business, dark skin tone, manager, office, white-collar, woman, :woman_office_worker_tone5:",
-   ["order"]=558,
-   ["char"]={3225},
-   ["text"]="Woman office worker: dark skin tone",
-   ["image_path"]="1f469-1f3ff-1f4bc",
+   ["subText"]=":mailbox:, closed, mail, postbox",
+   ["order"]=788,
+   ["image_path"]="1f4eb",
+   ["text"]="Closed mailbox with raised flag",
+   ["char"]={2339},
 },
 -- Table: {560}
 {
-   ["subText"]="architect, business, man, manager, office, white-collar, :man_office_worker:",
-   ["order"]=559,
-   ["char"]={3226},
-   ["text"]="Man office worker",
-   ["image_path"]="1f468-1f4bc",
+   ["subText"]=":mailbox_with_mail:, mail, mailbox, open, postbox",
+   ["order"]=789,
+   ["image_path"]="1f4ec",
+   ["text"]="Open mailbox with raised flag",
+   ["char"]={2340},
 },
 -- Table: {561}
 {
-   ["subText"]="architect, business, light skin tone, man, manager, office, white-collar, :man_office_worker_tone1:",
-   ["order"]=560,
-   ["char"]={3227},
-   ["text"]="Man office worker: light skin tone",
-   ["image_path"]="1f468-1f3fb-1f4bc",
+   ["subText"]=":mailbox_with_no_mail:, lowered, mail, mailbox, open, postbox",
+   ["order"]=790,
+   ["image_path"]="1f4ed",
+   ["text"]="Open mailbox with lowered flag",
+   ["char"]={2341},
 },
 -- Table: {562}
 {
-   ["subText"]="architect, business, man, manager, medium-light skin tone, office, white-collar, :man_office_worker_tone2:",
-   ["order"]=561,
-   ["char"]={3228},
-   ["text"]="Man office worker: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-1f4bc",
+   ["subText"]=":postbox:, mail, mailbox",
+   ["order"]=791,
+   ["image_path"]="1f4ee",
+   ["text"]="Postbox",
+   ["char"]={2342},
 },
 -- Table: {563}
 {
-   ["subText"]="architect, business, man, manager, medium skin tone, office, white-collar, :man_office_worker_tone3:",
-   ["order"]=562,
-   ["char"]={3229},
-   ["text"]="Man office worker: medium skin tone",
-   ["image_path"]="1f468-1f3fd-1f4bc",
+   ["subText"]=":postal_horn:, horn, post, postal",
+   ["order"]=792,
+   ["image_path"]="1f4ef",
+   ["text"]="Postal horn",
+   ["char"]={2343},
 },
 -- Table: {564}
 {
-   ["subText"]="architect, business, man, manager, medium-dark skin tone, office, white-collar, :man_office_worker_tone4:",
-   ["order"]=563,
-   ["char"]={3230},
-   ["text"]="Man office worker: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-1f4bc",
+   ["subText"]=":scroll:, paper",
+   ["order"]=793,
+   ["image_path"]="1f4dc",
+   ["text"]="Scroll",
+   ["char"]={2344},
 },
 -- Table: {565}
 {
-   ["subText"]="architect, business, dark skin tone, man, manager, office, white-collar, :man_office_worker_tone5:",
-   ["order"]=564,
-   ["char"]={3231},
-   ["text"]="Man office worker: dark skin tone",
-   ["image_path"]="1f468-1f3ff-1f4bc",
+   ["subText"]=":page_with_curl:, curl, document, page",
+   ["order"]=794,
+   ["image_path"]="1f4c3",
+   ["text"]="Page with curl",
+   ["char"]={2345},
 },
 -- Table: {566}
 {
-   ["subText"]="electrician, mechanic, plumber, tradesperson, woman, :woman_mechanic:",
-   ["order"]=565,
-   ["char"]={3232},
-   ["text"]="Woman mechanic",
-   ["image_path"]="1f469-1f527",
+   ["subText"]=":page_facing_up:, document, page",
+   ["order"]=795,
+   ["image_path"]="1f4c4",
+   ["text"]="Page facing up",
+   ["char"]={2346},
 },
 -- Table: {567}
 {
-   ["subText"]="electrician, light skin tone, mechanic, plumber, tradesperson, woman, :woman_mechanic_tone1:",
-   ["order"]=566,
-   ["char"]={3233},
-   ["text"]="Woman mechanic: light skin tone",
-   ["image_path"]="1f469-1f3fb-1f527",
+   ["subText"]=":bookmark_tabs:, bookmark, mark, marker, tabs",
+   ["order"]=796,
+   ["image_path"]="1f4d1",
+   ["text"]="Bookmark tabs",
+   ["char"]={2347},
 },
 -- Table: {568}
 {
-   ["subText"]="electrician, mechanic, medium-light skin tone, plumber, tradesperson, woman, :woman_mechanic_tone2:",
-   ["order"]=567,
-   ["char"]={3234},
-   ["text"]="Woman mechanic: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-1f527",
+   ["subText"]=":receipt:",
+   ["order"]=797,
+   ["image_path"]="1f9fe",
+   ["text"]="Receipt",
+   ["char"]={2348},
 },
 -- Table: {569}
 {
-   ["subText"]="electrician, mechanic, medium skin tone, plumber, tradesperson, woman, :woman_mechanic_tone3:",
-   ["order"]=568,
-   ["char"]={3235},
-   ["text"]="Woman mechanic: medium skin tone",
-   ["image_path"]="1f469-1f3fd-1f527",
+   ["subText"]=":bar_chart:, bar, chart, graph",
+   ["order"]=798,
+   ["image_path"]="1f4ca",
+   ["text"]="Bar chart",
+   ["char"]={2349},
 },
 -- Table: {570}
 {
-   ["subText"]="electrician, mechanic, medium-dark skin tone, plumber, tradesperson, woman, :woman_mechanic_tone4:",
-   ["order"]=569,
-   ["char"]={3236},
-   ["text"]="Woman mechanic: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-1f527",
+   ["subText"]=":chart_with_upwards_trend:, chart, graph, growth, trend, upward",
+   ["order"]=799,
+   ["image_path"]="1f4c8",
+   ["text"]="Chart increasing",
+   ["char"]={2350},
 },
 -- Table: {571}
 {
-   ["subText"]="dark skin tone, electrician, mechanic, plumber, tradesperson, woman, :woman_mechanic_tone5:",
-   ["order"]=570,
-   ["char"]={3237},
-   ["text"]="Woman mechanic: dark skin tone",
-   ["image_path"]="1f469-1f3ff-1f527",
+   ["subText"]=":chart_with_downwards_trend:, chart, down, graph, trend",
+   ["order"]=800,
+   ["image_path"]="1f4c9",
+   ["text"]="Chart decreasing",
+   ["char"]={2351},
 },
 -- Table: {572}
 {
-   ["subText"]="electrician, man, mechanic, plumber, tradesperson, :man_mechanic:",
-   ["order"]=571,
-   ["char"]={3238},
-   ["text"]="Man mechanic",
-   ["image_path"]="1f468-1f527",
+   ["subText"]=":notepad_spiral:, note, pad, spiral",
+   ["order"]=801,
+   ["image_path"]="1f5d2",
+   ["text"]="Spiral notepad",
+   ["char"]={2352},
 },
 -- Table: {573}
 {
-   ["subText"]="electrician, light skin tone, man, mechanic, plumber, tradesperson, :man_mechanic_tone1:",
-   ["order"]=572,
-   ["char"]={3239},
-   ["text"]="Man mechanic: light skin tone",
-   ["image_path"]="1f468-1f3fb-1f527",
+   ["subText"]=":calendar_spiral:, calendar, pad, spiral",
+   ["order"]=802,
+   ["image_path"]="1f5d3",
+   ["text"]="Spiral calendar",
+   ["char"]={2353},
 },
 -- Table: {574}
 {
-   ["subText"]="electrician, man, mechanic, medium-light skin tone, plumber, tradesperson, :man_mechanic_tone2:",
-   ["order"]=573,
-   ["char"]={3240},
-   ["text"]="Man mechanic: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-1f527",
+   ["subText"]=":calendar:",
+   ["order"]=803,
+   ["image_path"]="1f4c6",
+   ["text"]="Tear-off calendar",
+   ["char"]={2354},
 },
 -- Table: {575}
 {
-   ["subText"]="electrician, man, mechanic, medium skin tone, plumber, tradesperson, :man_mechanic_tone3:",
-   ["order"]=574,
-   ["char"]={3241},
-   ["text"]="Man mechanic: medium skin tone",
-   ["image_path"]="1f468-1f3fd-1f527",
+   ["subText"]=":date:",
+   ["order"]=804,
+   ["image_path"]="1f4c5",
+   ["text"]="Calendar",
+   ["char"]={2355},
 },
 -- Table: {576}
 {
-   ["subText"]="electrician, man, mechanic, medium-dark skin tone, plumber, tradesperson, :man_mechanic_tone4:",
-   ["order"]=575,
-   ["char"]={3242},
-   ["text"]="Man mechanic: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-1f527",
+   ["subText"]=":wastebasket:",
+   ["order"]=805,
+   ["image_path"]="1f5d1",
+   ["text"]="Wastebasket",
+   ["char"]={2356},
 },
 -- Table: {577}
 {
-   ["subText"]="dark skin tone, electrician, man, mechanic, plumber, tradesperson, :man_mechanic_tone5:",
-   ["order"]=576,
-   ["char"]={3243},
-   ["text"]="Man mechanic: dark skin tone",
-   ["image_path"]="1f468-1f3ff-1f527",
+   ["subText"]=":card_index:, card, index, rolodex",
+   ["order"]=806,
+   ["image_path"]="1f4c7",
+   ["text"]="Card index",
+   ["char"]={2357},
 },
 -- Table: {578}
 {
-   ["subText"]="biologist, chemist, engineer, mathematician, physicist, scientist, woman, :woman_scientist:",
-   ["order"]=577,
-   ["char"]={3244},
-   ["text"]="Woman scientist",
-   ["image_path"]="1f469-1f52c",
+   ["subText"]=":card_box:, box, card, file",
+   ["order"]=807,
+   ["image_path"]="1f5c3",
+   ["text"]="Card file box",
+   ["char"]={2358},
 },
 -- Table: {579}
 {
-   ["subText"]="biologist, chemist, engineer, light skin tone, mathematician, physicist, scientist, woman, :woman_scientist_tone1:",
-   ["order"]=578,
-   ["char"]={3245},
-   ["text"]="Woman scientist: light skin tone",
-   ["image_path"]="1f469-1f3fb-1f52c",
+   ["subText"]=":ballot_box:, ballot, box",
+   ["order"]=808,
+   ["image_path"]="1f5f3",
+   ["text"]="Ballot box with ballot",
+   ["char"]={2359},
 },
 -- Table: {580}
 {
-   ["subText"]="biologist, chemist, engineer, mathematician, medium-light skin tone, physicist, scientist, woman, :woman_scientist_tone2:",
-   ["order"]=579,
-   ["char"]={3246},
-   ["text"]="Woman scientist: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-1f52c",
+   ["subText"]=":file_cabinet:, cabinet, file, filing",
+   ["order"]=809,
+   ["image_path"]="1f5c4",
+   ["text"]="File cabinet",
+   ["char"]={2360},
 },
 -- Table: {581}
 {
-   ["subText"]="biologist, chemist, engineer, mathematician, medium skin tone, physicist, scientist, woman, :woman_scientist_tone3:",
-   ["order"]=580,
-   ["char"]={3247},
-   ["text"]="Woman scientist: medium skin tone",
-   ["image_path"]="1f469-1f3fd-1f52c",
+   ["subText"]=":clipboard:",
+   ["order"]=810,
+   ["image_path"]="1f4cb",
+   ["text"]="Clipboard",
+   ["char"]={2361},
 },
 -- Table: {582}
 {
-   ["subText"]="biologist, chemist, engineer, mathematician, medium-dark skin tone, physicist, scientist, woman, :woman_scientist_tone4:",
-   ["order"]=581,
-   ["char"]={3248},
-   ["text"]="Woman scientist: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-1f52c",
+   ["subText"]=":file_folder:, file, folder",
+   ["order"]=811,
+   ["image_path"]="1f4c1",
+   ["text"]="File folder",
+   ["char"]={2362},
 },
 -- Table: {583}
 {
-   ["subText"]="biologist, chemist, dark skin tone, engineer, mathematician, physicist, scientist, woman, :woman_scientist_tone5:",
-   ["order"]=582,
-   ["char"]={3249},
-   ["text"]="Woman scientist: dark skin tone",
-   ["image_path"]="1f469-1f3ff-1f52c",
+   ["subText"]=":open_file_folder:, file, folder, open",
+   ["order"]=812,
+   ["image_path"]="1f4c2",
+   ["text"]="Open file folder",
+   ["char"]={2363},
 },
 -- Table: {584}
 {
-   ["subText"]="biologist, chemist, engineer, man, mathematician, physicist, scientist, :man_scientist:",
-   ["order"]=583,
-   ["char"]={3250},
-   ["text"]="Man scientist",
-   ["image_path"]="1f468-1f52c",
+   ["subText"]=":dividers:, card, index",
+   ["order"]=813,
+   ["image_path"]="1f5c2",
+   ["text"]="Card index dividers",
+   ["char"]={2364},
 },
 -- Table: {585}
 {
-   ["subText"]="biologist, chemist, engineer, light skin tone, man, mathematician, physicist, scientist, :man_scientist_tone1:",
-   ["order"]=584,
-   ["char"]={3251},
-   ["text"]="Man scientist: light skin tone",
-   ["image_path"]="1f468-1f3fb-1f52c",
+   ["subText"]=":newspaper2:, news, newspaper, paper, rolled",
+   ["order"]=814,
+   ["image_path"]="1f5de",
+   ["text"]="Rolled-up newspaper",
+   ["char"]={2365},
 },
 -- Table: {586}
 {
-   ["subText"]="biologist, chemist, engineer, man, mathematician, medium-light skin tone, physicist, scientist, :man_scientist_tone2:",
-   ["order"]=585,
-   ["char"]={3252},
-   ["text"]="Man scientist: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-1f52c",
+   ["subText"]=":newspaper:, news, paper",
+   ["order"]=815,
+   ["image_path"]="1f4f0",
+   ["text"]="Newspaper",
+   ["char"]={2366},
 },
 -- Table: {587}
 {
-   ["subText"]="biologist, chemist, engineer, man, mathematician, medium skin tone, physicist, scientist, :man_scientist_tone3:",
-   ["order"]=586,
-   ["char"]={3253},
-   ["text"]="Man scientist: medium skin tone",
-   ["image_path"]="1f468-1f3fd-1f52c",
+   ["subText"]=":notebook:",
+   ["order"]=816,
+   ["image_path"]="1f4d3",
+   ["text"]="Notebook",
+   ["char"]={2367},
 },
 -- Table: {588}
 {
-   ["subText"]="biologist, chemist, engineer, man, mathematician, medium-dark skin tone, physicist, scientist, :man_scientist_tone4:",
-   ["order"]=587,
-   ["char"]={3254},
-   ["text"]="Man scientist: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-1f52c",
+   ["subText"]=":notebook_with_decorative_cover:, book, cover, decorated, notebook",
+   ["order"]=817,
+   ["image_path"]="1f4d4",
+   ["text"]="Notebook with decorative cover",
+   ["char"]={2368},
 },
 -- Table: {589}
 {
-   ["subText"]="biologist, chemist, dark skin tone, engineer, man, mathematician, physicist, scientist, :man_scientist_tone5:",
-   ["order"]=588,
-   ["char"]={3255},
-   ["text"]="Man scientist: dark skin tone",
-   ["image_path"]="1f468-1f3ff-1f52c",
+   ["subText"]=":ledger:, notebook",
+   ["order"]=818,
+   ["image_path"]="1f4d2",
+   ["text"]="Ledger",
+   ["char"]={2369},
 },
 -- Table: {590}
 {
-   ["subText"]="artist, palette, woman, :woman_artist:",
-   ["order"]=589,
-   ["char"]={3256},
-   ["text"]="Woman artist",
-   ["image_path"]="1f469-1f3a8",
+   ["subText"]=":closed_book:, book, closed",
+   ["order"]=819,
+   ["image_path"]="1f4d5",
+   ["text"]="Closed book",
+   ["char"]={2370},
 },
 -- Table: {591}
 {
-   ["subText"]="artist, light skin tone, palette, woman, :woman_artist_tone1:",
-   ["order"]=590,
-   ["char"]={3257},
-   ["text"]="Woman artist: light skin tone",
-   ["image_path"]="1f469-1f3fb-1f3a8",
+   ["subText"]=":green_book:, book, green",
+   ["order"]=820,
+   ["image_path"]="1f4d7",
+   ["text"]="Green book",
+   ["char"]={2371},
 },
 -- Table: {592}
 {
-   ["subText"]="artist, medium-light skin tone, palette, woman, :woman_artist_tone2:",
-   ["order"]=591,
-   ["char"]={3258},
-   ["text"]="Woman artist: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-1f3a8",
+   ["subText"]=":blue_book:, blue, book",
+   ["order"]=821,
+   ["image_path"]="1f4d8",
+   ["text"]="Blue book",
+   ["char"]={2372},
 },
 -- Table: {593}
 {
-   ["subText"]="artist, medium skin tone, palette, woman, :woman_artist_tone3:",
-   ["order"]=592,
-   ["char"]={3259},
-   ["text"]="Woman artist: medium skin tone",
-   ["image_path"]="1f469-1f3fd-1f3a8",
+   ["subText"]=":orange_book:, book, orange",
+   ["order"]=822,
+   ["image_path"]="1f4d9",
+   ["text"]="Orange book",
+   ["char"]={2373},
 },
 -- Table: {594}
 {
-   ["subText"]="artist, medium-dark skin tone, palette, woman, :woman_artist_tone4:",
-   ["order"]=593,
-   ["char"]={3260},
-   ["text"]="Woman artist: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-1f3a8",
+   ["subText"]=":books:, book",
+   ["order"]=823,
+   ["image_path"]="1f4da",
+   ["text"]="Books",
+   ["char"]={2374},
 },
 -- Table: {595}
 {
-   ["subText"]="artist, dark skin tone, palette, woman, :woman_artist_tone5:",
-   ["order"]=594,
-   ["char"]={3261},
-   ["text"]="Woman artist: dark skin tone",
-   ["image_path"]="1f469-1f3ff-1f3a8",
+   ["subText"]=":book:, open",
+   ["order"]=824,
+   ["image_path"]="1f4d6",
+   ["text"]="Open book",
+   ["char"]={2375},
 },
 -- Table: {596}
 {
-   ["subText"]="artist, man, palette, :man_artist:",
-   ["order"]=595,
-   ["char"]={3262},
-   ["text"]="Man artist",
-   ["image_path"]="1f468-1f3a8",
+   ["subText"]=":bookmark:, mark",
+   ["order"]=825,
+   ["image_path"]="1f516",
+   ["text"]="Bookmark",
+   ["char"]={2376},
 },
 -- Table: {597}
 {
-   ["subText"]="artist, light skin tone, man, palette, :man_artist_tone1:",
-   ["order"]=596,
-   ["char"]={3263},
-   ["text"]="Man artist: light skin tone",
-   ["image_path"]="1f468-1f3fb-1f3a8",
+   ["subText"]=":safety_pin:",
+   ["order"]=826,
+   ["image_path"]="1f9f7",
+   ["text"]="Safety pin",
+   ["char"]={2377},
 },
 -- Table: {598}
 {
-   ["subText"]="artist, man, medium-light skin tone, palette, :man_artist_tone2:",
-   ["order"]=597,
-   ["char"]={3264},
-   ["text"]="Man artist: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-1f3a8",
+   ["subText"]=":link:",
+   ["order"]=827,
+   ["image_path"]="1f517",
+   ["text"]="Link",
+   ["char"]={2378},
 },
 -- Table: {599}
 {
-   ["subText"]="artist, man, medium skin tone, palette, :man_artist_tone3:",
-   ["order"]=598,
-   ["char"]={3265},
-   ["text"]="Man artist: medium skin tone",
-   ["image_path"]="1f468-1f3fd-1f3a8",
+   ["subText"]=":paperclip:",
+   ["order"]=828,
+   ["image_path"]="1f4ce",
+   ["text"]="Paperclip",
+   ["char"]={2379},
 },
 -- Table: {600}
 {
-   ["subText"]="artist, man, medium-dark skin tone, palette, :man_artist_tone4:",
-   ["order"]=599,
-   ["char"]={3266},
-   ["text"]="Man artist: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-1f3a8",
+   ["subText"]=":paperclips:, link, paperclip",
+   ["order"]=829,
+   ["image_path"]="1f587",
+   ["text"]="Linked paperclips",
+   ["char"]={2380},
 },
 -- Table: {601}
 {
-   ["subText"]="artist, dark skin tone, man, palette, :man_artist_tone5:",
-   ["order"]=600,
-   ["char"]={3267},
-   ["text"]="Man artist: dark skin tone",
-   ["image_path"]="1f468-1f3ff-1f3a8",
+   ["subText"]=":triangular_ruler:, ruler, set, triangle",
+   ["order"]=830,
+   ["image_path"]="1f4d0",
+   ["text"]="Triangular ruler",
+   ["char"]={2381},
 },
 -- Table: {602}
 {
-   ["subText"]="firefighter, firetruck, woman, :woman_firefighter:",
-   ["order"]=601,
-   ["char"]={3268},
-   ["text"]="Woman firefighter",
-   ["image_path"]="1f469-1f692",
+   ["subText"]=":straight_ruler:, ruler, straight edge",
+   ["order"]=831,
+   ["image_path"]="1f4cf",
+   ["text"]="Straight ruler",
+   ["char"]={2382},
 },
 -- Table: {603}
 {
-   ["subText"]="firefighter, firetruck, light skin tone, woman, :woman_firefighter_tone1:",
-   ["order"]=602,
-   ["char"]={3269},
-   ["text"]="Woman firefighter: light skin tone",
-   ["image_path"]="1f469-1f3fb-1f692",
+   ["subText"]=":abacus:",
+   ["order"]=832,
+   ["image_path"]="1f9ee",
+   ["text"]="Abacus",
+   ["char"]={2383},
 },
 -- Table: {604}
 {
-   ["subText"]="firefighter, firetruck, medium-light skin tone, woman, :woman_firefighter_tone2:",
-   ["order"]=603,
-   ["char"]={3270},
-   ["text"]="Woman firefighter: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-1f692",
+   ["subText"]=":pushpin:, pin",
+   ["order"]=833,
+   ["image_path"]="1f4cc",
+   ["text"]="Pushpin",
+   ["char"]={2384},
 },
 -- Table: {605}
 {
-   ["subText"]="firefighter, firetruck, medium skin tone, woman, :woman_firefighter_tone3:",
-   ["order"]=604,
-   ["char"]={3271},
-   ["text"]="Woman firefighter: medium skin tone",
-   ["image_path"]="1f469-1f3fd-1f692",
+   ["subText"]=":round_pushpin:, pin, pushpin",
+   ["order"]=834,
+   ["image_path"]="1f4cd",
+   ["text"]="Round pushpin",
+   ["char"]={2385},
 },
 -- Table: {606}
 {
-   ["subText"]="firefighter, firetruck, medium-dark skin tone, woman, :woman_firefighter_tone4:",
-   ["order"]=605,
-   ["char"]={3272},
-   ["text"]="Woman firefighter: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-1f692",
+   ["subText"]=":scissors:, cutting, tool",
+   ["order"]=835,
+   ["image_path"]="2702",
+   ["text"]="Scissors",
+   ["char"]={2386},
 },
 -- Table: {607}
 {
-   ["subText"]="dark skin tone, firefighter, firetruck, woman, :woman_firefighter_tone5:",
-   ["order"]=606,
-   ["char"]={3273},
-   ["text"]="Woman firefighter: dark skin tone",
-   ["image_path"]="1f469-1f3ff-1f692",
+   ["subText"]=":pen_ballpoint:, ballpoint",
+   ["order"]=836,
+   ["image_path"]="1f58a",
+   ["text"]="Pen",
+   ["char"]={2387},
 },
 -- Table: {608}
 {
-   ["subText"]="firefighter, firetruck, man, :man_firefighter:",
-   ["order"]=607,
-   ["char"]={3274},
-   ["text"]="Man firefighter",
-   ["image_path"]="1f468-1f692",
+   ["subText"]=":pen_fountain:, fountain, pen",
+   ["order"]=837,
+   ["image_path"]="1f58b",
+   ["text"]="Fountain pen",
+   ["char"]={2388},
 },
 -- Table: {609}
 {
-   ["subText"]="firefighter, firetruck, light skin tone, man, :man_firefighter_tone1:",
-   ["order"]=608,
-   ["char"]={3275},
-   ["text"]="Man firefighter: light skin tone",
-   ["image_path"]="1f468-1f3fb-1f692",
+   ["subText"]=":black_nib:, nib, pen",
+   ["order"]=838,
+   ["image_path"]="2712",
+   ["text"]="Black nib",
+   ["char"]={2389},
 },
 -- Table: {610}
 {
-   ["subText"]="firefighter, firetruck, man, medium-light skin tone, :man_firefighter_tone2:",
-   ["order"]=609,
-   ["char"]={3276},
-   ["text"]="Man firefighter: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-1f692",
+   ["subText"]=":paintbrush:, painting",
+   ["order"]=839,
+   ["image_path"]="1f58c",
+   ["text"]="Paintbrush",
+   ["char"]={2390},
 },
 -- Table: {611}
 {
-   ["subText"]="firefighter, firetruck, man, medium skin tone, :man_firefighter_tone3:",
-   ["order"]=610,
-   ["char"]={3277},
-   ["text"]="Man firefighter: medium skin tone",
-   ["image_path"]="1f468-1f3fd-1f692",
+   ["subText"]=":crayon:",
+   ["order"]=840,
+   ["image_path"]="1f58d",
+   ["text"]="Crayon",
+   ["char"]={2391},
 },
 -- Table: {612}
 {
-   ["subText"]="firefighter, firetruck, man, medium-dark skin tone, :man_firefighter_tone4:",
-   ["order"]=611,
-   ["char"]={3278},
-   ["text"]="Man firefighter: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-1f692",
+   ["subText"]=":pencil:",
+   ["order"]=841,
+   ["image_path"]="1f4dd",
+   ["text"]="Memo",
+   ["char"]={2392},
 },
 -- Table: {613}
 {
-   ["subText"]="dark skin tone, firefighter, firetruck, man, :man_firefighter_tone5:",
-   ["order"]=612,
-   ["char"]={3279},
-   ["text"]="Man firefighter: dark skin tone",
-   ["image_path"]="1f468-1f3ff-1f692",
+   ["subText"]=":pencil2:, pencil",
+   ["order"]=842,
+   ["image_path"]="270f",
+   ["text"]="Pencil",
+   ["char"]={2393},
 },
 -- Table: {614}
 {
-   ["subText"]="pilot, plane, woman, :woman_pilot:",
-   ["order"]=613,
-   ["char"]={3280},
-   ["text"]="Woman pilot",
-   ["image_path"]="1f469-2708",
+   ["subText"]=":mag:, glass, magnifying, search, tool",
+   ["order"]=843,
+   ["image_path"]="1f50d",
+   ["text"]="Magnifying glass tilted left",
+   ["char"]={2394},
 },
 -- Table: {615}
 {
-   ["subText"]="light skin tone, pilot, plane, woman, :woman_pilot_tone1:",
-   ["order"]=614,
-   ["char"]={3281},
-   ["text"]="Woman pilot: light skin tone",
-   ["image_path"]="1f469-1f3fb-2708",
+   ["subText"]=":mag_right:, glass, magnifying, search, tool",
+   ["order"]=844,
+   ["image_path"]="1f50e",
+   ["text"]="Magnifying glass tilted right",
+   ["char"]={2395},
 },
 -- Table: {616}
 {
-   ["subText"]="medium-light skin tone, pilot, plane, woman, :woman_pilot_tone2:",
-   ["order"]=615,
-   ["char"]={3282},
-   ["text"]="Woman pilot: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-2708",
+   ["subText"]=":lock_with_ink_pen:, ink, lock, nib, pen, privacy",
+   ["order"]=845,
+   ["image_path"]="1f50f",
+   ["text"]="Locked with pen",
+   ["char"]={2396},
 },
 -- Table: {617}
 {
-   ["subText"]="medium skin tone, pilot, plane, woman, :woman_pilot_tone3:",
-   ["order"]=616,
-   ["char"]={3283},
-   ["text"]="Woman pilot: medium skin tone",
-   ["image_path"]="1f469-1f3fd-2708",
+   ["subText"]=":closed_lock_with_key:, closed, key, lock, secure",
+   ["order"]=846,
+   ["image_path"]="1f510",
+   ["text"]="Locked with key",
+   ["char"]={2397},
 },
 -- Table: {618}
 {
-   ["subText"]="medium-dark skin tone, pilot, plane, woman, :woman_pilot_tone4:",
-   ["order"]=617,
-   ["char"]={3284},
-   ["text"]="Woman pilot: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-2708",
+   ["subText"]=":lock:, closed",
+   ["order"]=847,
+   ["image_path"]="1f512",
+   ["text"]="Locked",
+   ["char"]={2398},
 },
 -- Table: {619}
 {
-   ["subText"]="dark skin tone, pilot, plane, woman, :woman_pilot_tone5:",
-   ["order"]=618,
-   ["char"]={3285},
-   ["text"]="Woman pilot: dark skin tone",
-   ["image_path"]="1f469-1f3ff-2708",
+   ["subText"]=":unlock:, lock, open",
+   ["order"]=848,
+   ["image_path"]="1f513",
+   ["text"]="Unlocked",
+   ["char"]={2399},
 },
 -- Table: {620}
 {
-   ["subText"]="man, pilot, plane, :man_pilot:",
-   ["order"]=619,
-   ["char"]={3286},
-   ["text"]="Man pilot",
-   ["image_path"]="1f468-2708",
+   ["subText"]=":dog:, face, pet",
+   ["order"]=849,
+   ["image_path"]="1f436",
+   ["text"]="Dog face",
+   ["char"]={2400},
 },
 -- Table: {621}
 {
-   ["subText"]="light skin tone, man, pilot, plane, :man_pilot_tone1:",
-   ["order"]=620,
-   ["char"]={3287},
-   ["text"]="Man pilot: light skin tone",
-   ["image_path"]="1f468-1f3fb-2708",
+   ["subText"]=":cat:, face, pet",
+   ["order"]=850,
+   ["image_path"]="1f431",
+   ["text"]="Cat face",
+   ["char"]={2401},
 },
 -- Table: {622}
 {
-   ["subText"]="man, medium-light skin tone, pilot, plane, :man_pilot_tone2:",
-   ["order"]=621,
-   ["char"]={3288},
-   ["text"]="Man pilot: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-2708",
+   ["subText"]=":mouse:, face",
+   ["order"]=851,
+   ["image_path"]="1f42d",
+   ["text"]="Mouse face",
+   ["char"]={2402},
 },
 -- Table: {623}
 {
-   ["subText"]="man, medium skin tone, pilot, plane, :man_pilot_tone3:",
-   ["order"]=622,
-   ["char"]={3289},
-   ["text"]="Man pilot: medium skin tone",
-   ["image_path"]="1f468-1f3fd-2708",
+   ["subText"]=":hamster:, face, pet",
+   ["order"]=852,
+   ["image_path"]="1f439",
+   ["text"]="Hamster",
+   ["char"]={2403},
 },
 -- Table: {624}
 {
-   ["subText"]="man, medium-dark skin tone, pilot, plane, :man_pilot_tone4:",
-   ["order"]=623,
-   ["char"]={3290},
-   ["text"]="Man pilot: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-2708",
+   ["subText"]=":rabbit:, bunny, face, pet",
+   ["order"]=853,
+   ["image_path"]="1f430",
+   ["text"]="Rabbit face",
+   ["char"]={2404},
 },
 -- Table: {625}
 {
-   ["subText"]="dark skin tone, man, pilot, plane, :man_pilot_tone5:",
-   ["order"]=624,
-   ["char"]={3291},
-   ["text"]="Man pilot: dark skin tone",
-   ["image_path"]="1f468-1f3ff-2708",
+   ["subText"]=":fox:, face",
+   ["order"]=854,
+   ["image_path"]="1f98a",
+   ["text"]="Fox",
+   ["char"]={2405},
 },
 -- Table: {626}
 {
-   ["subText"]="astronaut, rocket, woman, :woman_astronaut:",
-   ["order"]=625,
-   ["char"]={3292},
-   ["text"]="Woman astronaut",
-   ["image_path"]="1f469-1f680",
+   ["subText"]=":bear:, face",
+   ["order"]=855,
+   ["image_path"]="1f43b",
+   ["text"]="Bear",
+   ["char"]={2406},
 },
 -- Table: {627}
 {
-   ["subText"]="astronaut, light skin tone, rocket, woman, :woman_astronaut_tone1:",
-   ["order"]=626,
-   ["char"]={3293},
-   ["text"]="Woman astronaut: light skin tone",
-   ["image_path"]="1f469-1f3fb-1f680",
+   ["subText"]=":panda_face:, face, panda",
+   ["order"]=856,
+   ["image_path"]="1f43c",
+   ["text"]="Panda",
+   ["char"]={2407},
 },
 -- Table: {628}
 {
-   ["subText"]="astronaut, medium-light skin tone, rocket, woman, :woman_astronaut_tone2:",
-   ["order"]=627,
-   ["char"]={3294},
-   ["text"]="Woman astronaut: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-1f680",
+   ["subText"]=":koala:, bear",
+   ["order"]=857,
+   ["image_path"]="1f428",
+   ["text"]="Koala",
+   ["char"]={2408},
 },
 -- Table: {629}
 {
-   ["subText"]="astronaut, medium skin tone, rocket, woman, :woman_astronaut_tone3:",
-   ["order"]=628,
-   ["char"]={3295},
-   ["text"]="Woman astronaut: medium skin tone",
-   ["image_path"]="1f469-1f3fd-1f680",
+   ["subText"]=":tiger:, face",
+   ["order"]=858,
+   ["image_path"]="1f42f",
+   ["text"]="Tiger face",
+   ["char"]={2409},
 },
 -- Table: {630}
 {
-   ["subText"]="astronaut, medium-dark skin tone, rocket, woman, :woman_astronaut_tone4:",
-   ["order"]=629,
-   ["char"]={3296},
-   ["text"]="Woman astronaut: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-1f680",
+   ["subText"]=":lion_face:, Leo, face, lion, zodiac",
+   ["order"]=859,
+   ["image_path"]="1f981",
+   ["text"]="Lion",
+   ["char"]={2410},
 },
 -- Table: {631}
 {
-   ["subText"]="astronaut, dark skin tone, rocket, woman, :woman_astronaut_tone5:",
-   ["order"]=630,
-   ["char"]={3297},
-   ["text"]="Woman astronaut: dark skin tone",
-   ["image_path"]="1f469-1f3ff-1f680",
+   ["subText"]=":cow:, face",
+   ["order"]=860,
+   ["image_path"]="1f42e",
+   ["text"]="Cow face",
+   ["char"]={2411},
 },
 -- Table: {632}
 {
-   ["subText"]="astronaut, man, rocket, :man_astronaut:",
-   ["order"]=631,
-   ["char"]={3298},
-   ["text"]="Man astronaut",
-   ["image_path"]="1f468-1f680",
+   ["subText"]=":pig:, face",
+   ["order"]=861,
+   ["image_path"]="1f437",
+   ["text"]="Pig face",
+   ["char"]={2412},
 },
 -- Table: {633}
 {
-   ["subText"]="astronaut, light skin tone, man, rocket, :man_astronaut_tone1:",
-   ["order"]=632,
-   ["char"]={3299},
-   ["text"]="Man astronaut: light skin tone",
-   ["image_path"]="1f468-1f3fb-1f680",
+   ["subText"]=":pig_nose:, face, nose, pig",
+   ["order"]=862,
+   ["image_path"]="1f43d",
+   ["text"]="Pig nose",
+   ["char"]={2413},
 },
 -- Table: {634}
 {
-   ["subText"]="astronaut, man, medium-light skin tone, rocket, :man_astronaut_tone2:",
-   ["order"]=633,
-   ["char"]={3300},
-   ["text"]="Man astronaut: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-1f680",
+   ["subText"]=":frog:, face",
+   ["order"]=863,
+   ["image_path"]="1f438",
+   ["text"]="Frog",
+   ["char"]={2414},
 },
 -- Table: {635}
 {
-   ["subText"]="astronaut, man, medium skin tone, rocket, :man_astronaut_tone3:",
-   ["order"]=634,
-   ["char"]={3301},
-   ["text"]="Man astronaut: medium skin tone",
-   ["image_path"]="1f468-1f3fd-1f680",
+   ["subText"]=":monkey_face:, face, monkey",
+   ["order"]=864,
+   ["image_path"]="1f435",
+   ["text"]="Monkey face",
+   ["char"]={2415},
 },
 -- Table: {636}
 {
-   ["subText"]="astronaut, man, medium-dark skin tone, rocket, :man_astronaut_tone4:",
-   ["order"]=635,
-   ["char"]={3302},
-   ["text"]="Man astronaut: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-1f680",
+   ["subText"]=":see_no_evil:, evil, face, forbidden, gesture, monkey, no, not, prohibited, see",
+   ["order"]=865,
+   ["image_path"]="1f648",
+   ["text"]="See-no-evil monkey",
+   ["char"]={2416},
 },
 -- Table: {637}
 {
-   ["subText"]="astronaut, dark skin tone, man, rocket, :man_astronaut_tone5:",
-   ["order"]=636,
-   ["char"]={3303},
-   ["text"]="Man astronaut: dark skin tone",
-   ["image_path"]="1f468-1f3ff-1f680",
+   ["subText"]=":hear_no_evil:, evil, face, forbidden, gesture, hear, monkey, no, not, prohibited",
+   ["order"]=866,
+   ["image_path"]="1f649",
+   ["text"]="Hear-no-evil monkey",
+   ["char"]={2417},
 },
 -- Table: {638}
 {
-   ["subText"]="judge, scales, woman, :woman_judge:",
-   ["order"]=637,
-   ["char"]={3304},
-   ["text"]="Woman judge",
-   ["image_path"]="1f469-2696",
+   ["subText"]=":speak_no_evil:, evil, face, forbidden, gesture, monkey, no, not, prohibited, speak",
+   ["order"]=867,
+   ["image_path"]="1f64a",
+   ["text"]="Speak-no-evil monkey",
+   ["char"]={2418},
 },
 -- Table: {639}
 {
-   ["subText"]="judge, light skin tone, scales, woman, :woman_judge_tone1:",
-   ["order"]=638,
-   ["char"]={3305},
-   ["text"]="Woman judge: light skin tone",
-   ["image_path"]="1f469-1f3fb-2696",
+   ["subText"]=":monkey:",
+   ["order"]=868,
+   ["image_path"]="1f412",
+   ["text"]="Monkey",
+   ["char"]={2419},
 },
 -- Table: {640}
 {
-   ["subText"]="judge, medium-light skin tone, scales, woman, :woman_judge_tone2:",
-   ["order"]=639,
-   ["char"]={3306},
-   ["text"]="Woman judge: medium-light skin tone",
-   ["image_path"]="1f469-1f3fc-2696",
+   ["subText"]=":chicken:, bird",
+   ["order"]=869,
+   ["image_path"]="1f414",
+   ["text"]="Chicken",
+   ["char"]={2420},
 },
 -- Table: {641}
 {
-   ["subText"]="judge, medium skin tone, scales, woman, :woman_judge_tone3:",
-   ["order"]=640,
-   ["char"]={3307},
-   ["text"]="Woman judge: medium skin tone",
-   ["image_path"]="1f469-1f3fd-2696",
+   ["subText"]=":penguin:, bird",
+   ["order"]=870,
+   ["image_path"]="1f427",
+   ["text"]="Penguin",
+   ["char"]={2421},
 },
 -- Table: {642}
 {
-   ["subText"]="judge, medium-dark skin tone, scales, woman, :woman_judge_tone4:",
-   ["order"]=641,
-   ["char"]={3308},
-   ["text"]="Woman judge: medium-dark skin tone",
-   ["image_path"]="1f469-1f3fe-2696",
+   ["subText"]=":bird:",
+   ["order"]=871,
+   ["image_path"]="1f426",
+   ["text"]="Bird",
+   ["char"]={2422},
 },
 -- Table: {643}
 {
-   ["subText"]="dark skin tone, judge, scales, woman, :woman_judge_tone5:",
-   ["order"]=642,
-   ["char"]={3309},
-   ["text"]="Woman judge: dark skin tone",
-   ["image_path"]="1f469-1f3ff-2696",
+   ["subText"]=":baby_chick:, baby, bird, chick",
+   ["order"]=872,
+   ["image_path"]="1f424",
+   ["text"]="Baby chick",
+   ["char"]={2423},
 },
 -- Table: {644}
 {
-   ["subText"]="justice, man, scales, :man_judge:",
-   ["order"]=643,
-   ["char"]={3310},
-   ["text"]="Man judge",
-   ["image_path"]="1f468-2696",
+   ["subText"]=":hatching_chick:, baby, bird, chick, hatching",
+   ["order"]=873,
+   ["image_path"]="1f423",
+   ["text"]="Hatching chick",
+   ["char"]={2424},
 },
 -- Table: {645}
 {
-   ["subText"]="justice, light skin tone, man, scales, :man_judge_tone1:",
-   ["order"]=644,
-   ["char"]={3311},
-   ["text"]="Man judge: light skin tone",
-   ["image_path"]="1f468-1f3fb-2696",
+   ["subText"]=":hatched_chick:, baby, bird, chick",
+   ["order"]=874,
+   ["image_path"]="1f425",
+   ["text"]="Front-facing baby chick",
+   ["char"]={2425},
 },
 -- Table: {646}
 {
-   ["subText"]="justice, man, medium-light skin tone, scales, :man_judge_tone2:",
-   ["order"]=645,
-   ["char"]={3312},
-   ["text"]="Man judge: medium-light skin tone",
-   ["image_path"]="1f468-1f3fc-2696",
+   ["subText"]=":duck:, bird",
+   ["order"]=875,
+   ["image_path"]="1f986",
+   ["text"]="Duck",
+   ["char"]={2426},
 },
 -- Table: {647}
 {
-   ["subText"]="justice, man, medium skin tone, scales, :man_judge_tone3:",
-   ["order"]=646,
-   ["char"]={3313},
-   ["text"]="Man judge: medium skin tone",
-   ["image_path"]="1f468-1f3fd-2696",
+   ["subText"]=":eagle:, bird",
+   ["order"]=876,
+   ["image_path"]="1f985",
+   ["text"]="Eagle",
+   ["char"]={2427},
 },
 -- Table: {648}
 {
-   ["subText"]="justice, man, medium-dark skin tone, scales, :man_judge_tone4:",
-   ["order"]=647,
-   ["char"]={3314},
-   ["text"]="Man judge: medium-dark skin tone",
-   ["image_path"]="1f468-1f3fe-2696",
+   ["subText"]=":owl:, bird, wise",
+   ["order"]=877,
+   ["image_path"]="1f989",
+   ["text"]="Owl",
+   ["char"]={2428},
 },
 -- Table: {649}
 {
-   ["subText"]="dark skin tone, justice, man, scales, :man_judge_tone5:",
-   ["order"]=648,
-   ["char"]={3315},
-   ["text"]="Man judge: dark skin tone",
-   ["image_path"]="1f468-1f3ff-2696",
+   ["subText"]=":bat:, vampire",
+   ["order"]=878,
+   ["image_path"]="1f987",
+   ["text"]="Bat",
+   ["char"]={2429},
 },
 -- Table: {650}
 {
-   ["subText"]="Christmas, Mrs., celebration, claus, mother, :mrs_claus:",
-   ["order"]=649,
-   ["char"]={3316},
-   ["text"]="Mrs. Claus",
-   ["image_path"]="1f936",
+   ["subText"]=":wolf:, face",
+   ["order"]=879,
+   ["image_path"]="1f43a",
+   ["text"]="Wolf",
+   ["char"]={2430},
 },
 -- Table: {651}
 {
-   ["subText"]="Christmas, Mrs., celebration, claus, light skin tone, mother, :mrs_claus_tone1:",
-   ["order"]=650,
-   ["char"]={3317},
-   ["text"]="Mrs. Claus: light skin tone",
-   ["image_path"]="1f936-1f3fb",
+   ["subText"]=":boar:, pig",
+   ["order"]=880,
+   ["image_path"]="1f417",
+   ["text"]="Boar",
+   ["char"]={2431},
 },
 -- Table: {652}
 {
-   ["subText"]="Christmas, Mrs., celebration, claus, medium-light skin tone, mother, :mrs_claus_tone2:",
-   ["order"]=651,
-   ["char"]={3318},
-   ["text"]="Mrs. Claus: medium-light skin tone",
-   ["image_path"]="1f936-1f3fc",
+   ["subText"]=":horse:, face",
+   ["order"]=881,
+   ["image_path"]="1f434",
+   ["text"]="Horse face",
+   ["char"]={2432},
 },
 -- Table: {653}
 {
-   ["subText"]="Christmas, Mrs., celebration, claus, medium skin tone, mother, :mrs_claus_tone3:",
-   ["order"]=652,
-   ["char"]={3319},
-   ["text"]="Mrs. Claus: medium skin tone",
-   ["image_path"]="1f936-1f3fd",
+   ["subText"]=":unicorn:, face",
+   ["order"]=882,
+   ["image_path"]="1f984",
+   ["text"]="Unicorn",
+   ["char"]={2433},
 },
 -- Table: {654}
 {
-   ["subText"]="Christmas, Mrs., celebration, claus, medium-dark skin tone, mother, :mrs_claus_tone4:",
-   ["order"]=653,
-   ["char"]={3320},
-   ["text"]="Mrs. Claus: medium-dark skin tone",
-   ["image_path"]="1f936-1f3fe",
+   ["subText"]=":bee:, insect",
+   ["order"]=883,
+   ["image_path"]="1f41d",
+   ["text"]="Honeybee",
+   ["char"]={2434},
 },
 -- Table: {655}
 {
-   ["subText"]="Christmas, Mrs., celebration, claus, dark skin tone, mother, :mrs_claus_tone5:",
-   ["order"]=654,
-   ["char"]={3321},
-   ["text"]="Mrs. Claus: dark skin tone",
-   ["image_path"]="1f936-1f3ff",
+   ["subText"]=":bug:, insect",
+   ["order"]=884,
+   ["image_path"]="1f41b",
+   ["text"]="Bug",
+   ["char"]={2435},
 },
 -- Table: {656}
 {
-   ["subText"]="Christmas, celebration, claus, father, santa, :santa:",
-   ["order"]=655,
-   ["char"]={3322},
-   ["text"]="Santa Claus",
-   ["image_path"]="1f385",
+   ["subText"]=":butterfly:, insect, pretty",
+   ["order"]=885,
+   ["image_path"]="1f98b",
+   ["text"]="Butterfly",
+   ["char"]={2436},
 },
 -- Table: {657}
 {
-   ["subText"]="Christmas, celebration, claus, father, light skin tone, santa, :santa_tone1:",
-   ["order"]=656,
-   ["char"]={3323},
-   ["text"]="Santa Claus: light skin tone",
-   ["image_path"]="1f385-1f3fb",
+   ["subText"]=":snail:",
+   ["order"]=886,
+   ["image_path"]="1f40c",
+   ["text"]="Snail",
+   ["char"]={2437},
 },
 -- Table: {658}
 {
-   ["subText"]="Christmas, celebration, claus, father, medium-light skin tone, santa, :santa_tone2:",
-   ["order"]=657,
-   ["char"]={3324},
-   ["text"]="Santa Claus: medium-light skin tone",
-   ["image_path"]="1f385-1f3fc",
+   ["subText"]=":shell:, spiral",
+   ["order"]=887,
+   ["image_path"]="1f41a",
+   ["text"]="Spiral shell",
+   ["char"]={2438},
 },
 -- Table: {659}
 {
-   ["subText"]="Christmas, celebration, claus, father, medium skin tone, santa, :santa_tone3:",
-   ["order"]=658,
-   ["char"]={3325},
-   ["text"]="Santa Claus: medium skin tone",
-   ["image_path"]="1f385-1f3fd",
+   ["subText"]=":beetle:, insect, ladybird, ladybug",
+   ["order"]=888,
+   ["image_path"]="1f41e",
+   ["text"]="Lady beetle",
+   ["char"]={2439},
 },
 -- Table: {660}
 {
-   ["subText"]="Christmas, celebration, claus, father, medium-dark skin tone, santa, :santa_tone4:",
-   ["order"]=659,
-   ["char"]={3326},
-   ["text"]="Santa Claus: medium-dark skin tone",
-   ["image_path"]="1f385-1f3fe",
+   ["subText"]=":ant:, insect",
+   ["order"]=889,
+   ["image_path"]="1f41c",
+   ["text"]="Ant",
+   ["char"]={2440},
 },
 -- Table: {661}
 {
-   ["subText"]="Christmas, celebration, claus, dark skin tone, father, santa, :santa_tone5:",
-   ["order"]=660,
-   ["char"]={3327},
-   ["text"]="Santa Claus: dark skin tone",
-   ["image_path"]="1f385-1f3ff",
+   ["subText"]=":mosquito:",
+   ["order"]=890,
+   ["image_path"]="1f99f",
+   ["text"]="Mosquito",
+   ["char"]={2441},
 },
 -- Table: {662}
 {
-   ["subText"]="fairy tale, fantasy, :princess:",
-   ["order"]=661,
-   ["char"]={3328},
-   ["text"]="Princess",
-   ["image_path"]="1f478",
+   ["subText"]=":cricket:",
+   ["order"]=891,
+   ["image_path"]="1f997",
+   ["text"]="Cricket",
+   ["char"]={2442},
 },
 -- Table: {663}
 {
-   ["subText"]="fairy tale, fantasy, light skin tone, :princess_tone1:",
-   ["order"]=662,
-   ["char"]={3329},
-   ["text"]="Princess: light skin tone",
-   ["image_path"]="1f478-1f3fb",
+   ["subText"]=":spider:, insect",
+   ["order"]=892,
+   ["image_path"]="1f577",
+   ["text"]="Spider",
+   ["char"]={2443},
 },
 -- Table: {664}
 {
-   ["subText"]="fairy tale, fantasy, medium-light skin tone, :princess_tone2:",
-   ["order"]=663,
-   ["char"]={3330},
-   ["text"]="Princess: medium-light skin tone",
-   ["image_path"]="1f478-1f3fc",
+   ["subText"]=":spider_web:, spider, web",
+   ["order"]=893,
+   ["image_path"]="1f578",
+   ["text"]="Spider web",
+   ["char"]={2444},
 },
 -- Table: {665}
 {
-   ["subText"]="fairy tale, fantasy, medium skin tone, :princess_tone3:",
-   ["order"]=664,
-   ["char"]={3331},
-   ["text"]="Princess: medium skin tone",
-   ["image_path"]="1f478-1f3fd",
+   ["subText"]=":scorpion:, Scorpius, scorpio, zodiac",
+   ["order"]=894,
+   ["image_path"]="1f982",
+   ["text"]="Scorpion",
+   ["char"]={2445},
 },
 -- Table: {666}
 {
-   ["subText"]="fairy tale, fantasy, medium-dark skin tone, :princess_tone4:",
-   ["order"]=665,
-   ["char"]={3332},
-   ["text"]="Princess: medium-dark skin tone",
-   ["image_path"]="1f478-1f3fe",
+   ["subText"]=":turtle:, terrapin, tortoise",
+   ["order"]=895,
+   ["image_path"]="1f422",
+   ["text"]="Turtle",
+   ["char"]={2446},
 },
 -- Table: {667}
 {
-   ["subText"]="dark skin tone, fairy tale, fantasy, :princess_tone5:",
-   ["order"]=666,
-   ["char"]={3333},
-   ["text"]="Princess: dark skin tone",
-   ["image_path"]="1f478-1f3ff",
+   ["subText"]=":snake:, Ophiuchus, bearer, serpent, zodiac",
+   ["order"]=896,
+   ["image_path"]="1f40d",
+   ["text"]="Snake",
+   ["char"]={2447},
 },
 -- Table: {668}
 {
-   ["subText"]="prince, :prince:",
-   ["order"]=667,
-   ["char"]={3334},
-   ["text"]="Prince",
-   ["image_path"]="1f934",
+   ["subText"]=":lizard:, reptile",
+   ["order"]=897,
+   ["image_path"]="1f98e",
+   ["text"]="Lizard",
+   ["char"]={2448},
 },
 -- Table: {669}
 {
-   ["subText"]="light skin tone, prince, :prince_tone1:",
-   ["order"]=668,
-   ["char"]={3335},
-   ["text"]="Prince: light skin tone",
-   ["image_path"]="1f934-1f3fb",
+   ["subText"]=":t_rex:, Tyrannosaurus Rex",
+   ["order"]=898,
+   ["image_path"]="1f996",
+   ["text"]="T-Rex",
+   ["char"]={2449},
 },
 -- Table: {670}
 {
-   ["subText"]="medium-light skin tone, prince, :prince_tone2:",
-   ["order"]=669,
-   ["char"]={3336},
-   ["text"]="Prince: medium-light skin tone",
-   ["image_path"]="1f934-1f3fc",
+   ["subText"]=":sauropod:, brachiosaurus, brontosaurus, diplodocus",
+   ["order"]=899,
+   ["image_path"]="1f995",
+   ["text"]="Sauropod",
+   ["char"]={2450},
 },
 -- Table: {671}
 {
-   ["subText"]="medium skin tone, prince, :prince_tone3:",
-   ["order"]=670,
-   ["char"]={3337},
-   ["text"]="Prince: medium skin tone",
-   ["image_path"]="1f934-1f3fd",
+   ["subText"]=":octopus:",
+   ["order"]=900,
+   ["image_path"]="1f419",
+   ["text"]="Octopus",
+   ["char"]={2451},
 },
 -- Table: {672}
 {
-   ["subText"]="medium-dark skin tone, prince, :prince_tone4:",
-   ["order"]=671,
-   ["char"]={3338},
-   ["text"]="Prince: medium-dark skin tone",
-   ["image_path"]="1f934-1f3fe",
+   ["subText"]=":squid:, food, molusc",
+   ["order"]=901,
+   ["image_path"]="1f991",
+   ["text"]="Squid",
+   ["char"]={2452},
 },
 -- Table: {673}
 {
-   ["subText"]="dark skin tone, prince, :prince_tone5:",
-   ["order"]=672,
-   ["char"]={3339},
-   ["text"]="Prince: dark skin tone",
-   ["image_path"]="1f934-1f3ff",
+   ["subText"]=":shrimp:, food, shellfish, small",
+   ["order"]=902,
+   ["image_path"]="1f990",
+   ["text"]="Shrimp",
+   ["char"]={2453},
 },
 -- Table: {674}
 {
-   ["subText"]="bride, veil, wedding, :bride_with_veil:",
-   ["order"]=673,
-   ["char"]={3340},
-   ["text"]="Bride with veil",
-   ["image_path"]="1f470",
+   ["subText"]=":lobster:",
+   ["order"]=903,
+   ["image_path"]="1f99e",
+   ["text"]="Lobster",
+   ["char"]={2454},
 },
 -- Table: {675}
 {
-   ["subText"]="bride, light skin tone, veil, wedding, :bride_with_veil_tone1:",
-   ["order"]=674,
-   ["char"]={3341},
-   ["text"]="Bride with veil: light skin tone",
-   ["image_path"]="1f470-1f3fb",
+   ["subText"]=":oyster:",
+   ["order"]=904,
+   ["image_path"]="1f9aa",
+   ["text"]="Oyster",
+   ["char"]={2455},
 },
 -- Table: {676}
 {
-   ["subText"]="bride, medium-light skin tone, veil, wedding, :bride_with_veil_tone2:",
-   ["order"]=675,
-   ["char"]={3342},
-   ["text"]="Bride with veil: medium-light skin tone",
-   ["image_path"]="1f470-1f3fc",
+   ["subText"]=":crab:, Cancer, zodiac",
+   ["order"]=905,
+   ["image_path"]="1f980",
+   ["text"]="Crab",
+   ["char"]={2456},
 },
 -- Table: {677}
 {
-   ["subText"]="bride, medium skin tone, veil, wedding, :bride_with_veil_tone3:",
-   ["order"]=676,
-   ["char"]={3343},
-   ["text"]="Bride with veil: medium skin tone",
-   ["image_path"]="1f470-1f3fd",
+   ["subText"]=":blowfish:, fish",
+   ["order"]=906,
+   ["image_path"]="1f421",
+   ["text"]="Blowfish",
+   ["char"]={2457},
 },
 -- Table: {678}
 {
-   ["subText"]="bride, medium-dark skin tone, veil, wedding, :bride_with_veil_tone4:",
-   ["order"]=677,
-   ["char"]={3344},
-   ["text"]="Bride with veil: medium-dark skin tone",
-   ["image_path"]="1f470-1f3fe",
+   ["subText"]=":tropical_fish:, fish, tropical",
+   ["order"]=907,
+   ["image_path"]="1f420",
+   ["text"]="Tropical fish",
+   ["char"]={2458},
 },
 -- Table: {679}
 {
-   ["subText"]="bride, dark skin tone, veil, wedding, :bride_with_veil_tone5:",
-   ["order"]=678,
-   ["char"]={3345},
-   ["text"]="Bride with veil: dark skin tone",
-   ["image_path"]="1f470-1f3ff",
+   ["subText"]=":fish:, Pisces, zodiac",
+   ["order"]=908,
+   ["image_path"]="1f41f",
+   ["text"]="Fish",
+   ["char"]={2459},
 },
 -- Table: {680}
 {
-   ["subText"]="groom, man, tuxedo, :man_in_tuxedo:",
-   ["order"]=679,
-   ["char"]={3346},
-   ["text"]="Man in tuxedo",
-   ["image_path"]="1f935",
+   ["subText"]=":dolphin:, flipper",
+   ["order"]=909,
+   ["image_path"]="1f42c",
+   ["text"]="Dolphin",
+   ["char"]={2460},
 },
 -- Table: {681}
 {
-   ["subText"]="groom, light skin tone, man, tuxedo, :man_in_tuxedo_tone1:",
-   ["order"]=680,
-   ["char"]={3347},
-   ["text"]="Man in tuxedo: light skin tone",
-   ["image_path"]="1f935-1f3fb",
+   ["subText"]=":whale:, face, spouting",
+   ["order"]=910,
+   ["image_path"]="1f433",
+   ["text"]="Spouting whale",
+   ["char"]={2461},
 },
 -- Table: {682}
 {
-   ["subText"]="groom, man, medium-light skin tone, tuxedo, :man_in_tuxedo_tone2:",
-   ["order"]=681,
-   ["char"]={3348},
-   ["text"]="Man in tuxedo: medium-light skin tone",
-   ["image_path"]="1f935-1f3fc",
+   ["subText"]=":whale2:, whale",
+   ["order"]=911,
+   ["image_path"]="1f40b",
+   ["text"]="Whale",
+   ["char"]={2462},
 },
 -- Table: {683}
 {
-   ["subText"]="groom, man, medium skin tone, tuxedo, :man_in_tuxedo_tone3:",
-   ["order"]=682,
-   ["char"]={3349},
-   ["text"]="Man in tuxedo: medium skin tone",
-   ["image_path"]="1f935-1f3fd",
+   ["subText"]=":shark:, fish",
+   ["order"]=912,
+   ["image_path"]="1f988",
+   ["text"]="Shark",
+   ["char"]={2463},
 },
 -- Table: {684}
 {
-   ["subText"]="groom, man, medium-dark skin tone, tuxedo, :man_in_tuxedo_tone4:",
-   ["order"]=683,
-   ["char"]={3350},
-   ["text"]="Man in tuxedo: medium-dark skin tone",
-   ["image_path"]="1f935-1f3fe",
+   ["subText"]=":crocodile:",
+   ["order"]=913,
+   ["image_path"]="1f40a",
+   ["text"]="Crocodile",
+   ["char"]={2464},
 },
 -- Table: {685}
 {
-   ["subText"]="dark skin tone, groom, man, tuxedo, :man_in_tuxedo_tone5:",
-   ["order"]=684,
-   ["char"]={3351},
-   ["text"]="Man in tuxedo: dark skin tone",
-   ["image_path"]="1f935-1f3ff",
+   ["subText"]=":tiger2:, tiger",
+   ["order"]=914,
+   ["image_path"]="1f405",
+   ["text"]="Tiger",
+   ["char"]={2465},
 },
 -- Table: {686}
 {
-   ["subText"]="angel, baby, face, fairy tale, fantasy, :angel:",
-   ["order"]=685,
-   ["char"]={3352},
-   ["text"]="Baby angel",
-   ["image_path"]="1f47c",
+   ["subText"]=":leopard:",
+   ["order"]=915,
+   ["image_path"]="1f406",
+   ["text"]="Leopard",
+   ["char"]={2466},
 },
 -- Table: {687}
 {
-   ["subText"]="angel, baby, face, fairy tale, fantasy, light skin tone, :angel_tone1:",
-   ["order"]=686,
-   ["char"]={3353},
-   ["text"]="Baby angel: light skin tone",
-   ["image_path"]="1f47c-1f3fb",
+   ["subText"]=":zebra:, stripe",
+   ["order"]=916,
+   ["image_path"]="1f993",
+   ["text"]="Zebra",
+   ["char"]={2467},
 },
 -- Table: {688}
 {
-   ["subText"]="angel, baby, face, fairy tale, fantasy, medium-light skin tone, :angel_tone2:",
-   ["order"]=687,
-   ["char"]={3354},
-   ["text"]="Baby angel: medium-light skin tone",
-   ["image_path"]="1f47c-1f3fc",
+   ["subText"]=":gorilla:",
+   ["order"]=917,
+   ["image_path"]="1f98d",
+   ["text"]="Gorilla",
+   ["char"]={2468},
 },
 -- Table: {689}
 {
-   ["subText"]="angel, baby, face, fairy tale, fantasy, medium skin tone, :angel_tone3:",
-   ["order"]=688,
-   ["char"]={3355},
-   ["text"]="Baby angel: medium skin tone",
-   ["image_path"]="1f47c-1f3fd",
+   ["subText"]=":orangutan:",
+   ["order"]=918,
+   ["image_path"]="1f9a7",
+   ["text"]="Orangutan",
+   ["char"]={2469},
 },
 -- Table: {690}
 {
-   ["subText"]="angel, baby, face, fairy tale, fantasy, medium-dark skin tone, :angel_tone4:",
-   ["order"]=689,
-   ["char"]={3356},
-   ["text"]="Baby angel: medium-dark skin tone",
-   ["image_path"]="1f47c-1f3fe",
+   ["subText"]=":elephant:",
+   ["order"]=919,
+   ["image_path"]="1f418",
+   ["text"]="Elephant",
+   ["char"]={2470},
 },
 -- Table: {691}
 {
-   ["subText"]="angel, baby, dark skin tone, face, fairy tale, fantasy, :angel_tone5:",
-   ["order"]=690,
-   ["char"]={3357},
-   ["text"]="Baby angel: dark skin tone",
-   ["image_path"]="1f47c-1f3ff",
+   ["subText"]=":hippopotamus:",
+   ["order"]=920,
+   ["image_path"]="1f99b",
+   ["text"]="Hippopotamus",
+   ["char"]={2471},
 },
 -- Table: {692}
 {
-   ["subText"]="pregnant, woman, :pregnant_woman:",
-   ["order"]=691,
-   ["char"]={3358},
-   ["text"]="Pregnant woman",
-   ["image_path"]="1f930",
+   ["subText"]=":rhino:, rhinoceros",
+   ["order"]=921,
+   ["image_path"]="1f98f",
+   ["text"]="Rhinoceros",
+   ["char"]={2472},
 },
 -- Table: {693}
 {
-   ["subText"]="light skin tone, pregnant, woman, :pregnant_woman_tone1:",
-   ["order"]=692,
-   ["char"]={3359},
-   ["text"]="Pregnant woman: light skin tone",
-   ["image_path"]="1f930-1f3fb",
+   ["subText"]=":dromedary_camel:, dromedary, hump",
+   ["order"]=922,
+   ["image_path"]="1f42a",
+   ["text"]="Camel",
+   ["char"]={2473},
 },
 -- Table: {694}
 {
-   ["subText"]="medium-light skin tone, pregnant, woman, :pregnant_woman_tone2:",
-   ["order"]=693,
-   ["char"]={3360},
-   ["text"]="Pregnant woman: medium-light skin tone",
-   ["image_path"]="1f930-1f3fc",
+   ["subText"]=":camel:, bactrian, hump",
+   ["order"]=923,
+   ["image_path"]="1f42b",
+   ["text"]="Two-hump camel",
+   ["char"]={2474},
 },
 -- Table: {695}
 {
-   ["subText"]="medium skin tone, pregnant, woman, :pregnant_woman_tone3:",
-   ["order"]=694,
-   ["char"]={3361},
-   ["text"]="Pregnant woman: medium skin tone",
-   ["image_path"]="1f930-1f3fd",
+   ["subText"]=":giraffe:, spots",
+   ["order"]=924,
+   ["image_path"]="1f992",
+   ["text"]="Giraffe",
+   ["char"]={2475},
 },
 -- Table: {696}
 {
-   ["subText"]="medium-dark skin tone, pregnant, woman, :pregnant_woman_tone4:",
-   ["order"]=695,
-   ["char"]={3362},
-   ["text"]="Pregnant woman: medium-dark skin tone",
-   ["image_path"]="1f930-1f3fe",
+   ["subText"]=":kangaroo:",
+   ["order"]=925,
+   ["image_path"]="1f998",
+   ["text"]="Kangaroo",
+   ["char"]={2476},
 },
 -- Table: {697}
 {
-   ["subText"]="dark skin tone, pregnant, woman, :pregnant_woman_tone5:",
-   ["order"]=696,
-   ["char"]={3363},
-   ["text"]="Pregnant woman: dark skin tone",
-   ["image_path"]="1f930-1f3ff",
+   ["subText"]=":water_buffalo:, buffalo, water",
+   ["order"]=926,
+   ["image_path"]="1f403",
+   ["text"]="Water buffalo",
+   ["char"]={2477},
 },
 -- Table: {698}
 {
-   ["subText"]="apology, bowing, favor, gesture, sorry, woman, :woman_bowing:",
-   ["order"]=697,
-   ["char"]={3364},
-   ["text"]="Woman bowing",
-   ["image_path"]="1f647-2640",
+   ["subText"]=":ox:, Taurus, bull, zodiac",
+   ["order"]=927,
+   ["image_path"]="1f402",
+   ["text"]="Ox",
+   ["char"]={2478},
 },
 -- Table: {699}
 {
-   ["subText"]="apology, bowing, favor, gesture, light skin tone, sorry, woman, :woman_bowing_tone1:",
-   ["order"]=698,
-   ["char"]={3365},
-   ["text"]="Woman bowing: light skin tone",
-   ["image_path"]="1f647-1f3fb-2640",
+   ["subText"]=":cow2:, cow",
+   ["order"]=928,
+   ["image_path"]="1f404",
+   ["text"]="Cow",
+   ["char"]={2479},
 },
 -- Table: {700}
 {
-   ["subText"]="apology, bowing, favor, gesture, medium-light skin tone, sorry, woman, :woman_bowing_tone2:",
-   ["order"]=699,
-   ["char"]={3366},
-   ["text"]="Woman bowing: medium-light skin tone",
-   ["image_path"]="1f647-1f3fc-2640",
+   ["subText"]=":racehorse:, equestrian, racing",
+   ["order"]=929,
+   ["image_path"]="1f40e",
+   ["text"]="Horse",
+   ["char"]={2480},
 },
 -- Table: {701}
 {
-   ["subText"]="apology, bowing, favor, gesture, medium skin tone, sorry, woman, :woman_bowing_tone3:",
-   ["order"]=700,
-   ["char"]={3367},
-   ["text"]="Woman bowing: medium skin tone",
-   ["image_path"]="1f647-1f3fd-2640",
+   ["subText"]=":pig2:, sow",
+   ["order"]=930,
+   ["image_path"]="1f416",
+   ["text"]="Pig",
+   ["char"]={2481},
 },
 -- Table: {702}
 {
-   ["subText"]="apology, bowing, favor, gesture, medium-dark skin tone, sorry, woman, :woman_bowing_tone4:",
-   ["order"]=701,
-   ["char"]={3368},
-   ["text"]="Woman bowing: medium-dark skin tone",
-   ["image_path"]="1f647-1f3fe-2640",
+   ["subText"]=":ram:, Aries, male, sheep, zodiac",
+   ["order"]=931,
+   ["image_path"]="1f40f",
+   ["text"]="Ram",
+   ["char"]={2482},
 },
 -- Table: {703}
 {
-   ["subText"]="apology, bowing, dark skin tone, favor, gesture, sorry, woman, :woman_bowing_tone5:",
-   ["order"]=702,
-   ["char"]={3369},
-   ["text"]="Woman bowing: dark skin tone",
-   ["image_path"]="1f647-1f3ff-2640",
+   ["subText"]=":llama:",
+   ["order"]=932,
+   ["image_path"]="1f999",
+   ["text"]="Llama",
+   ["char"]={2483},
 },
 -- Table: {704}
 {
-   ["subText"]="apology, bow, gesture, sorry, :person_bowing:",
-   ["order"]=703,
-   ["char"]={3370},
-   ["text"]="Person bowing",
-   ["image_path"]="1f647",
+   ["subText"]=":sheep:, female",
+   ["order"]=933,
+   ["image_path"]="1f411",
+   ["text"]="Ewe",
+   ["char"]={2484},
 },
 -- Table: {705}
 {
-   ["subText"]="apology, bow, gesture, light skin tone, sorry, :person_bowing_tone1:",
-   ["order"]=704,
-   ["char"]={3371},
-   ["text"]="Person bowing: light skin tone",
-   ["image_path"]="1f647-1f3fb",
+   ["subText"]=":goat:, Capricorn, zodiac",
+   ["order"]=934,
+   ["image_path"]="1f410",
+   ["text"]="Goat",
+   ["char"]={2485},
 },
 -- Table: {706}
 {
-   ["subText"]="apology, bow, gesture, medium-light skin tone, sorry, :person_bowing_tone2:",
-   ["order"]=705,
-   ["char"]={3372},
-   ["text"]="Person bowing: medium-light skin tone",
-   ["image_path"]="1f647-1f3fc",
+   ["subText"]=":deer:",
+   ["order"]=935,
+   ["image_path"]="1f98c",
+   ["text"]="Deer",
+   ["char"]={2486},
 },
 -- Table: {707}
 {
-   ["subText"]="apology, bow, gesture, medium skin tone, sorry, :person_bowing_tone3:",
-   ["order"]=706,
-   ["char"]={3373},
-   ["text"]="Person bowing: medium skin tone",
-   ["image_path"]="1f647-1f3fd",
+   ["subText"]=":dog2:, pet",
+   ["order"]=936,
+   ["image_path"]="1f415",
+   ["text"]="Dog",
+   ["char"]={2487},
 },
 -- Table: {708}
 {
-   ["subText"]="apology, bow, gesture, medium-dark skin tone, sorry, :person_bowing_tone4:",
-   ["order"]=707,
-   ["char"]={3374},
-   ["text"]="Person bowing: medium-dark skin tone",
-   ["image_path"]="1f647-1f3fe",
+   ["subText"]=":guide_dog:",
+   ["order"]=937,
+   ["image_path"]="1f9ae",
+   ["text"]="Guide dog",
+   ["char"]={2488},
 },
 -- Table: {709}
 {
-   ["subText"]="apology, bow, dark skin tone, gesture, sorry, :person_bowing_tone5:",
-   ["order"]=708,
-   ["char"]={3375},
-   ["text"]="Person bowing: dark skin tone",
-   ["image_path"]="1f647-1f3ff",
+   ["subText"]=":service_dog:",
+   ["order"]=938,
+   ["image_path"]="1f415-1f9ba",
+   ["text"]="Service dog",
+   ["char"]={2489},
 },
 -- Table: {710}
 {
-   ["subText"]="apology, bowing, favor, gesture, man, sorry, :man_bowing:",
-   ["order"]=709,
-   ["char"]={3376},
-   ["text"]="Man bowing",
-   ["image_path"]="1f647-2642",
+   ["subText"]=":poodle:, dog",
+   ["order"]=939,
+   ["image_path"]="1f429",
+   ["text"]="Poodle",
+   ["char"]={2490},
 },
 -- Table: {711}
 {
-   ["subText"]="apology, bowing, dark skin tone, favor, gesture, man, sorry, :man_bowing_tone5:",
-   ["order"]=710,
-   ["char"]={3377},
-   ["text"]="Man bowing: dark skin tone",
-   ["image_path"]="1f647-1f3ff-2642",
+   ["subText"]=":cat2:, pet",
+   ["order"]=940,
+   ["image_path"]="1f408",
+   ["text"]="Cat",
+   ["char"]={2491},
 },
 -- Table: {712}
 {
-   ["subText"]="apology, bowing, favor, gesture, man, medium-dark skin tone, sorry, :man_bowing_tone4:",
-   ["order"]=711,
-   ["char"]={3378},
-   ["text"]="Man bowing: medium-dark skin tone",
-   ["image_path"]="1f647-1f3fe-2642",
+   ["subText"]=":rooster:, bird",
+   ["order"]=941,
+   ["image_path"]="1f413",
+   ["text"]="Rooster",
+   ["char"]={2492},
 },
 -- Table: {713}
 {
-   ["subText"]="apology, bowing, favor, gesture, man, medium skin tone, sorry, :man_bowing_tone3:",
-   ["order"]=712,
-   ["char"]={3379},
-   ["text"]="Man bowing: medium skin tone",
-   ["image_path"]="1f647-1f3fd-2642",
+   ["subText"]=":turkey:, bird",
+   ["order"]=942,
+   ["image_path"]="1f983",
+   ["text"]="Turkey",
+   ["char"]={2493},
 },
 -- Table: {714}
 {
-   ["subText"]="apology, bowing, favor, gesture, man, medium-light skin tone, sorry, :man_bowing_tone2:",
-   ["order"]=713,
-   ["char"]={3380},
-   ["text"]="Man bowing: medium-light skin tone",
-   ["image_path"]="1f647-1f3fc-2642",
+   ["subText"]=":peacock:",
+   ["order"]=943,
+   ["image_path"]="1f99a",
+   ["text"]="Peacock",
+   ["char"]={2494},
 },
 -- Table: {715}
 {
-   ["subText"]="apology, bowing, favor, gesture, light skin tone, man, sorry, :man_bowing_tone1:",
-   ["order"]=714,
-   ["char"]={3381},
-   ["text"]="Man bowing: light skin tone",
-   ["image_path"]="1f647-1f3fb-2642",
+   ["subText"]=":parrot:",
+   ["order"]=944,
+   ["image_path"]="1f99c",
+   ["text"]="Parrot",
+   ["char"]={2495},
 },
 -- Table: {716}
 {
-   ["subText"]="hand, help, information, sassy, tipping, :person_tipping_hand:",
-   ["order"]=715,
-   ["char"]={3382},
-   ["text"]="Person tipping hand",
-   ["image_path"]="1f481",
+   ["subText"]=":swan:",
+   ["order"]=945,
+   ["image_path"]="1f9a2",
+   ["text"]="Swan",
+   ["char"]={2496},
 },
 -- Table: {717}
 {
-   ["subText"]="hand, help, information, light skin tone, sassy, tipping, :person_tipping_hand_tone1:",
-   ["order"]=716,
-   ["char"]={3383},
-   ["text"]="Person tipping hand: light skin tone",
-   ["image_path"]="1f481-1f3fb",
+   ["subText"]=":flamingo:",
+   ["order"]=946,
+   ["image_path"]="1f9a9",
+   ["text"]="Flamingo",
+   ["char"]={2497},
 },
 -- Table: {718}
 {
-   ["subText"]="hand, help, information, medium-light skin tone, sassy, tipping, :person_tipping_hand_tone2:",
-   ["order"]=717,
-   ["char"]={3384},
-   ["text"]="Person tipping hand: medium-light skin tone",
-   ["image_path"]="1f481-1f3fc",
+   ["subText"]=":dove:, bird, fly, peace",
+   ["order"]=947,
+   ["image_path"]="1f54a",
+   ["text"]="Dove",
+   ["char"]={2498},
 },
 -- Table: {719}
 {
-   ["subText"]="hand, help, information, medium skin tone, sassy, tipping, :person_tipping_hand_tone3:",
-   ["order"]=718,
-   ["char"]={3385},
-   ["text"]="Person tipping hand: medium skin tone",
-   ["image_path"]="1f481-1f3fd",
+   ["subText"]=":rabbit2:, bunny, pet",
+   ["order"]=948,
+   ["image_path"]="1f407",
+   ["text"]="Rabbit",
+   ["char"]={2499},
 },
 -- Table: {720}
 {
-   ["subText"]="hand, help, information, medium-dark skin tone, sassy, tipping, :person_tipping_hand_tone4:",
-   ["order"]=719,
-   ["char"]={3386},
-   ["text"]="Person tipping hand: medium-dark skin tone",
-   ["image_path"]="1f481-1f3fe",
+   ["subText"]=":sloth:",
+   ["order"]=949,
+   ["image_path"]="1f9a5",
+   ["text"]="Sloth",
+   ["char"]={2500},
 },
 -- Table: {721}
 {
-   ["subText"]="dark skin tone, hand, help, information, sassy, tipping, :person_tipping_hand_tone5:",
-   ["order"]=720,
-   ["char"]={3387},
-   ["text"]="Person tipping hand: dark skin tone",
-   ["image_path"]="1f481-1f3ff",
+   ["subText"]=":otter:",
+   ["order"]=950,
+   ["image_path"]="1f9a6",
+   ["text"]="Otter",
+   ["char"]={2501},
 },
 -- Table: {722}
 {
-   ["subText"]="man, sassy, tipping hand, :man_tipping_hand:",
-   ["order"]=721,
-   ["char"]={3388},
-   ["text"]="Man tipping hand",
-   ["image_path"]="1f481-2642",
+   ["subText"]=":skunk:",
+   ["order"]=951,
+   ["image_path"]="1f9a8",
+   ["text"]="Skunk",
+   ["char"]={2502},
 },
 -- Table: {723}
 {
-   ["subText"]="light skin tone, man, sassy, tipping hand, :man_tipping_hand_tone1:",
-   ["order"]=722,
-   ["char"]={3389},
-   ["text"]="Man tipping hand: light skin tone",
-   ["image_path"]="1f481-1f3fb-2642",
+   ["subText"]=":raccoon:",
+   ["order"]=952,
+   ["image_path"]="1f99d",
+   ["text"]="Raccoon",
+   ["char"]={2503},
 },
 -- Table: {724}
 {
-   ["subText"]="man, medium-light skin tone, sassy, tipping hand, :man_tipping_hand_tone2:",
-   ["order"]=723,
-   ["char"]={3390},
-   ["text"]="Man tipping hand: medium-light skin tone",
-   ["image_path"]="1f481-1f3fc-2642",
+   ["subText"]=":badger:",
+   ["order"]=953,
+   ["image_path"]="1f9a1",
+   ["text"]="Badger",
+   ["char"]={2504},
 },
 -- Table: {725}
 {
-   ["subText"]="man, medium skin tone, sassy, tipping hand, :man_tipping_hand_tone3:",
-   ["order"]=724,
-   ["char"]={3391},
-   ["text"]="Man tipping hand: medium skin tone",
-   ["image_path"]="1f481-1f3fd-2642",
+   ["subText"]=":mouse2:, mouse",
+   ["order"]=954,
+   ["image_path"]="1f401",
+   ["text"]="Mouse",
+   ["char"]={2505},
 },
 -- Table: {726}
 {
-   ["subText"]="man, medium-dark skin tone, sassy, tipping hand, :man_tipping_hand_tone4:",
-   ["order"]=725,
-   ["char"]={3392},
-   ["text"]="Man tipping hand: medium-dark skin tone",
-   ["image_path"]="1f481-1f3fe-2642",
+   ["subText"]=":rat:",
+   ["order"]=955,
+   ["image_path"]="1f400",
+   ["text"]="Rat",
+   ["char"]={2506},
 },
 -- Table: {727}
 {
-   ["subText"]="dark skin tone, man, sassy, tipping hand, :man_tipping_hand_tone5:",
-   ["order"]=726,
-   ["char"]={3393},
-   ["text"]="Man tipping hand: dark skin tone",
-   ["image_path"]="1f481-1f3ff-2642",
+   ["subText"]=":chipmunk:",
+   ["order"]=956,
+   ["image_path"]="1f43f",
+   ["text"]="Chipmunk",
+   ["char"]={2507},
 },
 -- Table: {728}
 {
-   ["subText"]="sassy, tipping hand, woman, :woman_tipping_hand:",
-   ["order"]=727,
-   ["char"]={3394},
-   ["text"]="Woman tipping hand",
-   ["image_path"]="1f481-2640",
+   ["subText"]=":hedgehog:, spiny",
+   ["order"]=957,
+   ["image_path"]="1f994",
+   ["text"]="Hedgehog",
+   ["char"]={2508},
 },
 -- Table: {729}
 {
-   ["subText"]="dark skin tone, sassy, tipping hand, woman, :woman_tipping_hand_tone5:",
-   ["order"]=728,
-   ["char"]={3395},
-   ["text"]="Woman tipping hand: dark skin tone",
-   ["image_path"]="1f481-1f3ff-2640",
+   ["subText"]=":feet:, paw, print",
+   ["order"]=958,
+   ["image_path"]="1f43e",
+   ["text"]="Paw prints",
+   ["char"]={2509},
 },
 -- Table: {730}
 {
-   ["subText"]="medium-dark skin tone, sassy, tipping hand, woman, :woman_tipping_hand_tone4:",
-   ["order"]=729,
-   ["char"]={3396},
-   ["text"]="Woman tipping hand: medium-dark skin tone",
-   ["image_path"]="1f481-1f3fe-2640",
+   ["subText"]=":dragon:, fairy tale",
+   ["order"]=959,
+   ["image_path"]="1f409",
+   ["text"]="Dragon",
+   ["char"]={2510},
 },
 -- Table: {731}
 {
-   ["subText"]="medium skin tone, sassy, tipping hand, woman, :woman_tipping_hand_tone3:",
-   ["order"]=730,
-   ["char"]={3397},
-   ["text"]="Woman tipping hand: medium skin tone",
-   ["image_path"]="1f481-1f3fd-2640",
+   ["subText"]=":dragon_face:, dragon, face, fairy tale",
+   ["order"]=960,
+   ["image_path"]="1f432",
+   ["text"]="Dragon face",
+   ["char"]={2511},
 },
 -- Table: {732}
 {
-   ["subText"]="medium-light skin tone, sassy, tipping hand, woman, :woman_tipping_hand_tone2:",
-   ["order"]=731,
-   ["char"]={3398},
-   ["text"]="Woman tipping hand: medium-light skin tone",
-   ["image_path"]="1f481-1f3fc-2640",
+   ["subText"]=":cactus:, plant",
+   ["order"]=961,
+   ["image_path"]="1f335",
+   ["text"]="Cactus",
+   ["char"]={2512},
 },
 -- Table: {733}
 {
-   ["subText"]="light skin tone, sassy, tipping hand, woman, :woman_tipping_hand_tone1:",
-   ["order"]=732,
-   ["char"]={3399},
-   ["text"]="Woman tipping hand: light skin tone",
-   ["image_path"]="1f481-1f3fb-2640",
+   ["subText"]=":christmas_tree:, Christmas, celebration, tree",
+   ["order"]=962,
+   ["image_path"]="1f384",
+   ["text"]="Christmas tree",
+   ["char"]={2513},
 },
 -- Table: {734}
 {
-   ["subText"]="forbidden, gesture, hand, no, not, prohibited, :person_gesturing_no:",
-   ["order"]=733,
-   ["char"]={3400},
-   ["text"]="Person gesturing NO",
-   ["image_path"]="1f645",
+   ["subText"]=":evergreen_tree:, tree",
+   ["order"]=963,
+   ["image_path"]="1f332",
+   ["text"]="Evergreen tree",
+   ["char"]={2514},
 },
 -- Table: {735}
 {
-   ["subText"]="forbidden, gesture, hand, light skin tone, no, not, prohibited, :person_gesturing_no_tone1:",
-   ["order"]=734,
-   ["char"]={3401},
-   ["text"]="Person gesturing NO: light skin tone",
-   ["image_path"]="1f645-1f3fb",
+   ["subText"]=":deciduous_tree:, deciduous, shedding, tree",
+   ["order"]=964,
+   ["image_path"]="1f333",
+   ["text"]="Deciduous tree",
+   ["char"]={2515},
 },
 -- Table: {736}
 {
-   ["subText"]="forbidden, gesture, hand, medium-light skin tone, no, not, prohibited, :person_gesturing_no_tone2:",
-   ["order"]=735,
-   ["char"]={3402},
-   ["text"]="Person gesturing NO: medium-light skin tone",
-   ["image_path"]="1f645-1f3fc",
+   ["subText"]=":palm_tree:, palm, tree",
+   ["order"]=965,
+   ["image_path"]="1f334",
+   ["text"]="Palm tree",
+   ["char"]={2516},
 },
 -- Table: {737}
 {
-   ["subText"]="forbidden, gesture, hand, medium skin tone, no, not, prohibited, :person_gesturing_no_tone3:",
-   ["order"]=736,
-   ["char"]={3403},
-   ["text"]="Person gesturing NO: medium skin tone",
-   ["image_path"]="1f645-1f3fd",
+   ["subText"]=":seedling:, young",
+   ["order"]=966,
+   ["image_path"]="1f331",
+   ["text"]="Seedling",
+   ["char"]={2517},
 },
 -- Table: {738}
 {
-   ["subText"]="forbidden, gesture, hand, medium-dark skin tone, no, not, prohibited, :person_gesturing_no_tone4:",
-   ["order"]=737,
-   ["char"]={3404},
-   ["text"]="Person gesturing NO: medium-dark skin tone",
-   ["image_path"]="1f645-1f3fe",
+   ["subText"]=":herb:, leaf",
+   ["order"]=967,
+   ["image_path"]="1f33f",
+   ["text"]="Herb",
+   ["char"]={2518},
 },
 -- Table: {739}
 {
-   ["subText"]="dark skin tone, forbidden, gesture, hand, no, not, prohibited, :person_gesturing_no_tone5:",
-   ["order"]=738,
-   ["char"]={3405},
-   ["text"]="Person gesturing NO: dark skin tone",
-   ["image_path"]="1f645-1f3ff",
+   ["subText"]=":shamrock:, plant",
+   ["order"]=968,
+   ["image_path"]="2618",
+   ["text"]="Shamrock",
+   ["char"]={2519},
 },
 -- Table: {740}
 {
-   ["subText"]="forbidden, gesture, hand, man, no, prohibited, :man_gesturing_no:",
-   ["order"]=739,
-   ["char"]={3406},
-   ["text"]="Man gesturing NO",
-   ["image_path"]="1f645-2642",
+   ["subText"]=":four_leaf_clover:, 4, clover, four, leaf",
+   ["order"]=969,
+   ["image_path"]="1f340",
+   ["text"]="Four leaf clover",
+   ["char"]={2520},
 },
 -- Table: {741}
 {
-   ["subText"]="forbidden, gesture, hand, light skin tone, man, no, prohibited, :man_gesturing_no_tone1:",
-   ["order"]=740,
-   ["char"]={3407},
-   ["text"]="Man gesturing NO: light skin tone",
-   ["image_path"]="1f645-1f3fb-2642",
+   ["subText"]=":bamboo:, Japanese, celebration, pine",
+   ["order"]=970,
+   ["image_path"]="1f38d",
+   ["text"]="Pine decoration",
+   ["char"]={2521},
 },
 -- Table: {742}
 {
-   ["subText"]="forbidden, gesture, hand, man, medium-light skin tone, no, prohibited, :man_gesturing_no_tone2:",
-   ["order"]=741,
-   ["char"]={3408},
-   ["text"]="Man gesturing NO: medium-light skin tone",
-   ["image_path"]="1f645-1f3fc-2642",
+   ["subText"]=":tanabata_tree:, Japanese, banner, celebration, tree",
+   ["order"]=971,
+   ["image_path"]="1f38b",
+   ["text"]="Tanabata tree",
+   ["char"]={2522},
 },
 -- Table: {743}
 {
-   ["subText"]="forbidden, gesture, hand, man, medium skin tone, no, prohibited, :man_gesturing_no_tone3:",
-   ["order"]=742,
-   ["char"]={3409},
-   ["text"]="Man gesturing NO: medium skin tone",
-   ["image_path"]="1f645-1f3fd-2642",
+   ["subText"]=":leaves:, blow, flutter, leaf, wind",
+   ["order"]=972,
+   ["image_path"]="1f343",
+   ["text"]="Leaf fluttering in wind",
+   ["char"]={2523},
 },
 -- Table: {744}
 {
-   ["subText"]="forbidden, gesture, hand, man, medium-dark skin tone, no, prohibited, :man_gesturing_no_tone4:",
-   ["order"]=743,
-   ["char"]={3410},
-   ["text"]="Man gesturing NO: medium-dark skin tone",
-   ["image_path"]="1f645-1f3fe-2642",
+   ["subText"]=":fallen_leaf:, falling, leaf",
+   ["order"]=973,
+   ["image_path"]="1f342",
+   ["text"]="Fallen leaf",
+   ["char"]={2524},
 },
 -- Table: {745}
 {
-   ["subText"]="dark skin tone, forbidden, gesture, hand, man, no, prohibited, :man_gesturing_no_tone5:",
-   ["order"]=744,
-   ["char"]={3411},
-   ["text"]="Man gesturing NO: dark skin tone",
-   ["image_path"]="1f645-1f3ff-2642",
+   ["subText"]=":maple_leaf:, falling, leaf, maple",
+   ["order"]=974,
+   ["image_path"]="1f341",
+   ["text"]="Maple leaf",
+   ["char"]={2525},
 },
 -- Table: {746}
 {
-   ["subText"]="forbidden, gesture, hand, no, prohibited, woman, :woman_gesturing_no:",
-   ["order"]=745,
-   ["char"]={3412},
-   ["text"]="Woman gesturing NO",
-   ["image_path"]="1f645-2640",
+   ["subText"]=":mushroom:, toadstool",
+   ["order"]=975,
+   ["image_path"]="1f344",
+   ["text"]="Mushroom",
+   ["char"]={2526},
 },
 -- Table: {747}
 {
-   ["subText"]="dark skin tone, forbidden, gesture, hand, no, prohibited, woman, :woman_gesturing_no_tone5:",
-   ["order"]=746,
-   ["char"]={3413},
-   ["text"]="Woman gesturing NO: dark skin tone",
-   ["image_path"]="1f645-1f3ff-2640",
+   ["subText"]=":ear_of_rice:, ear, grain, rice",
+   ["order"]=976,
+   ["image_path"]="1f33e",
+   ["text"]="Sheaf of rice",
+   ["char"]={2527},
 },
 -- Table: {748}
 {
-   ["subText"]="forbidden, gesture, hand, medium-dark skin tone, no, prohibited, woman, :woman_gesturing_no_tone4:",
-   ["order"]=747,
-   ["char"]={3414},
-   ["text"]="Woman gesturing NO: medium-dark skin tone",
-   ["image_path"]="1f645-1f3fe-2640",
+   ["subText"]=":bouquet:, flower",
+   ["order"]=977,
+   ["image_path"]="1f490",
+   ["text"]="Bouquet",
+   ["char"]={2528},
 },
 -- Table: {749}
 {
-   ["subText"]="forbidden, gesture, hand, medium skin tone, no, prohibited, woman, :woman_gesturing_no_tone3:",
-   ["order"]=748,
-   ["char"]={3415},
-   ["text"]="Woman gesturing NO: medium skin tone",
-   ["image_path"]="1f645-1f3fd-2640",
+   ["subText"]=":tulip:, flower",
+   ["order"]=978,
+   ["image_path"]="1f337",
+   ["text"]="Tulip",
+   ["char"]={2529},
 },
 -- Table: {750}
 {
-   ["subText"]="forbidden, gesture, hand, medium-light skin tone, no, prohibited, woman, :woman_gesturing_no_tone2:",
-   ["order"]=749,
-   ["char"]={3416},
-   ["text"]="Woman gesturing NO: medium-light skin tone",
-   ["image_path"]="1f645-1f3fc-2640",
+   ["subText"]=":rose:, flower",
+   ["order"]=979,
+   ["image_path"]="1f339",
+   ["text"]="Rose",
+   ["char"]={2530},
 },
 -- Table: {751}
 {
-   ["subText"]="forbidden, gesture, hand, light skin tone, no, prohibited, woman, :woman_gesturing_no_tone1:",
-   ["order"]=750,
-   ["char"]={3417},
-   ["text"]="Woman gesturing NO: light skin tone",
-   ["image_path"]="1f645-1f3fb-2640",
+   ["subText"]=":wilted_rose:, flower, wilted",
+   ["order"]=980,
+   ["image_path"]="1f940",
+   ["text"]="Wilted flower",
+   ["char"]={2531},
 },
 -- Table: {752}
 {
-   ["subText"]="OK, gesture, hand, :person_gesturing_ok:",
-   ["order"]=751,
-   ["char"]={3418},
-   ["text"]="Person gesturing OK",
-   ["image_path"]="1f646",
+   ["subText"]=":hibiscus:, flower",
+   ["order"]=981,
+   ["image_path"]="1f33a",
+   ["text"]="Hibiscus",
+   ["char"]={2532},
 },
 -- Table: {753}
 {
-   ["subText"]="OK, gesture, hand, light skin tone, :person_gesturing_ok_tone1:",
-   ["order"]=752,
-   ["char"]={3419},
-   ["text"]="Person gesturing OK: light skin tone",
-   ["image_path"]="1f646-1f3fb",
+   ["subText"]=":cherry_blossom:, blossom, cherry, flower",
+   ["order"]=982,
+   ["image_path"]="1f338",
+   ["text"]="Cherry blossom",
+   ["char"]={2533},
 },
 -- Table: {754}
 {
-   ["subText"]="OK, gesture, hand, medium-light skin tone, :person_gesturing_ok_tone2:",
-   ["order"]=753,
-   ["char"]={3420},
-   ["text"]="Person gesturing OK: medium-light skin tone",
-   ["image_path"]="1f646-1f3fc",
+   ["subText"]=":blossom:, flower",
+   ["order"]=983,
+   ["image_path"]="1f33c",
+   ["text"]="Blossom",
+   ["char"]={2534},
 },
 -- Table: {755}
 {
-   ["subText"]="OK, gesture, hand, medium skin tone, :person_gesturing_ok_tone3:",
-   ["order"]=754,
-   ["char"]={3421},
-   ["text"]="Person gesturing OK: medium skin tone",
-   ["image_path"]="1f646-1f3fd",
+   ["subText"]=":sunflower:, flower, sun",
+   ["order"]=984,
+   ["image_path"]="1f33b",
+   ["text"]="Sunflower",
+   ["char"]={2535},
 },
 -- Table: {756}
 {
-   ["subText"]="OK, gesture, hand, medium-dark skin tone, :person_gesturing_ok_tone4:",
-   ["order"]=755,
-   ["char"]={3422},
-   ["text"]="Person gesturing OK: medium-dark skin tone",
-   ["image_path"]="1f646-1f3fe",
+   ["subText"]=":sun_with_face:, bright, face, sun",
+   ["order"]=985,
+   ["image_path"]="1f31e",
+   ["text"]="Sun with face",
+   ["char"]={2536},
 },
 -- Table: {757}
 {
-   ["subText"]="OK, dark skin tone, gesture, hand, :person_gesturing_ok_tone5:",
-   ["order"]=756,
-   ["char"]={3423},
-   ["text"]="Person gesturing OK: dark skin tone",
-   ["image_path"]="1f646-1f3ff",
+   ["subText"]=":full_moon_with_face:, bright, face, full, moon",
+   ["order"]=986,
+   ["image_path"]="1f31d",
+   ["text"]="Full moon face",
+   ["char"]={2537},
 },
 -- Table: {758}
 {
-   ["subText"]="OK, gesture, hand, man, :man_gesturing_ok:",
-   ["order"]=757,
-   ["char"]={3424},
-   ["text"]="Man gesturing OK",
-   ["image_path"]="1f646-2642",
+   ["subText"]=":first_quarter_moon_with_face:, face, moon, quarter",
+   ["order"]=987,
+   ["image_path"]="1f31b",
+   ["text"]="First quarter moon face",
+   ["char"]={2538},
 },
 -- Table: {759}
 {
-   ["subText"]="OK, gesture, hand, light skin tone, man, :man_gesturing_ok_tone1:",
-   ["order"]=758,
-   ["char"]={3425},
-   ["text"]="Man gesturing OK: light skin tone",
-   ["image_path"]="1f646-1f3fb-2642",
+   ["subText"]=":last_quarter_moon_with_face:, face, moon, quarter",
+   ["order"]=988,
+   ["image_path"]="1f31c",
+   ["text"]="Last quarter moon face",
+   ["char"]={2539},
 },
 -- Table: {760}
 {
-   ["subText"]="OK, gesture, hand, man, medium-light skin tone, :man_gesturing_ok_tone2:",
-   ["order"]=759,
-   ["char"]={3426},
-   ["text"]="Man gesturing OK: medium-light skin tone",
-   ["image_path"]="1f646-1f3fc-2642",
+   ["subText"]=":new_moon_with_face:, face, moon",
+   ["order"]=989,
+   ["image_path"]="1f31a",
+   ["text"]="New moon face",
+   ["char"]={2540},
 },
 -- Table: {761}
 {
-   ["subText"]="OK, gesture, hand, man, medium skin tone, :man_gesturing_ok_tone3:",
-   ["order"]=760,
-   ["char"]={3427},
-   ["text"]="Man gesturing OK: medium skin tone",
-   ["image_path"]="1f646-1f3fd-2642",
+   ["subText"]=":full_moon:, full, moon",
+   ["order"]=990,
+   ["image_path"]="1f315",
+   ["text"]="Full moon",
+   ["char"]={2541},
 },
 -- Table: {762}
 {
-   ["subText"]="OK, gesture, hand, man, medium-dark skin tone, :man_gesturing_ok_tone4:",
-   ["order"]=761,
-   ["char"]={3428},
-   ["text"]="Man gesturing OK: medium-dark skin tone",
-   ["image_path"]="1f646-1f3fe-2642",
+   ["subText"]=":waning_gibbous_moon:, gibbous, moon, waning",
+   ["order"]=991,
+   ["image_path"]="1f316",
+   ["text"]="Waning gibbous moon",
+   ["char"]={2542},
 },
 -- Table: {763}
 {
-   ["subText"]="OK, dark skin tone, gesture, hand, man, :man_gesturing_ok_tone5:",
-   ["order"]=762,
-   ["char"]={3429},
-   ["text"]="Man gesturing OK: dark skin tone",
-   ["image_path"]="1f646-1f3ff-2642",
+   ["subText"]=":last_quarter_moon:, moon, quarter",
+   ["order"]=992,
+   ["image_path"]="1f317",
+   ["text"]="Last quarter moon",
+   ["char"]={2543},
 },
 -- Table: {764}
 {
-   ["subText"]="OK, gesture, hand, woman, :woman_gesturing_ok:",
-   ["order"]=763,
-   ["char"]={3430},
-   ["text"]="Woman gesturing OK",
-   ["image_path"]="1f646-2640",
+   ["subText"]=":waning_crescent_moon:, crescent, moon, waning",
+   ["order"]=993,
+   ["image_path"]="1f318",
+   ["text"]="Waning crescent moon",
+   ["char"]={2544},
 },
 -- Table: {765}
 {
-   ["subText"]="OK, dark skin tone, gesture, hand, woman, :woman_gesturing_ok_tone5:",
-   ["order"]=764,
-   ["char"]={3431},
-   ["text"]="Woman gesturing OK: dark skin tone",
-   ["image_path"]="1f646-1f3ff-2640",
+   ["subText"]=":new_moon:, dark, moon",
+   ["order"]=994,
+   ["image_path"]="1f311",
+   ["text"]="New moon",
+   ["char"]={2545},
 },
 -- Table: {766}
 {
-   ["subText"]="OK, gesture, hand, medium-dark skin tone, woman, :woman_gesturing_ok_tone4:",
-   ["order"]=765,
-   ["char"]={3432},
-   ["text"]="Woman gesturing OK: medium-dark skin tone",
-   ["image_path"]="1f646-1f3fe-2640",
+   ["subText"]=":waxing_crescent_moon:, crescent, moon, waxing",
+   ["order"]=995,
+   ["image_path"]="1f312",
+   ["text"]="Waxing crescent moon",
+   ["char"]={2546},
 },
 -- Table: {767}
 {
-   ["subText"]="OK, gesture, hand, medium skin tone, woman, :woman_gesturing_ok_tone3:",
-   ["order"]=766,
-   ["char"]={3433},
-   ["text"]="Woman gesturing OK: medium skin tone",
-   ["image_path"]="1f646-1f3fd-2640",
+   ["subText"]=":first_quarter_moon:, moon, quarter",
+   ["order"]=996,
+   ["image_path"]="1f313",
+   ["text"]="First quarter moon",
+   ["char"]={2547},
 },
 -- Table: {768}
 {
-   ["subText"]="OK, gesture, hand, medium-light skin tone, woman, :woman_gesturing_ok_tone2:",
-   ["order"]=767,
-   ["char"]={3434},
-   ["text"]="Woman gesturing OK: medium-light skin tone",
-   ["image_path"]="1f646-1f3fc-2640",
+   ["subText"]=":waxing_gibbous_moon:, gibbous, moon, waxing",
+   ["order"]=997,
+   ["image_path"]="1f314",
+   ["text"]="Waxing gibbous moon",
+   ["char"]={2548},
 },
 -- Table: {769}
 {
-   ["subText"]="OK, gesture, hand, light skin tone, woman, :woman_gesturing_ok_tone1:",
-   ["order"]=768,
-   ["char"]={3435},
-   ["text"]="Woman gesturing OK: light skin tone",
-   ["image_path"]="1f646-1f3fb-2640",
+   ["subText"]=":crescent_moon:, crescent, moon",
+   ["order"]=998,
+   ["image_path"]="1f319",
+   ["text"]="Crescent moon",
+   ["char"]={2549},
 },
 -- Table: {770}
 {
-   ["subText"]="gesture, hand, happy, raised, :person_raising_hand:",
-   ["order"]=769,
-   ["char"]={3436},
-   ["text"]="Person raising hand",
-   ["image_path"]="1f64b",
+   ["subText"]=":earth_americas:, Americas, earth, globe, world",
+   ["order"]=999,
+   ["image_path"]="1f30e",
+   ["text"]="Globe showing Americas",
+   ["char"]={2550},
 },
 -- Table: {771}
 {
-   ["subText"]="gesture, hand, happy, light skin tone, raised, :person_raising_hand_tone1:",
-   ["order"]=770,
-   ["char"]={3437},
-   ["text"]="Person raising hand: light skin tone",
-   ["image_path"]="1f64b-1f3fb",
+   ["subText"]=":earth_africa:, Africa, Europe, earth, globe, world",
+   ["order"]=1000,
+   ["image_path"]="1f30d",
+   ["text"]="Globe showing Europe-Africa",
+   ["char"]={2551},
 },
 -- Table: {772}
 {
-   ["subText"]="gesture, hand, happy, medium-light skin tone, raised, :person_raising_hand_tone2:",
-   ["order"]=771,
-   ["char"]={3438},
-   ["text"]="Person raising hand: medium-light skin tone",
-   ["image_path"]="1f64b-1f3fc",
+   ["subText"]=":earth_asia:, Asia, Australia, earth, globe, world",
+   ["order"]=1001,
+   ["image_path"]="1f30f",
+   ["text"]="Globe showing Asia-Australia",
+   ["char"]={2552},
 },
 -- Table: {773}
 {
-   ["subText"]="gesture, hand, happy, medium skin tone, raised, :person_raising_hand_tone3:",
-   ["order"]=772,
-   ["char"]={3439},
-   ["text"]="Person raising hand: medium skin tone",
-   ["image_path"]="1f64b-1f3fd",
+   ["subText"]=":ringed_planet:",
+   ["order"]=1002,
+   ["image_path"]="1fa90",
+   ["text"]="Ringed planet",
+   ["char"]={2553},
 },
 -- Table: {774}
 {
-   ["subText"]="gesture, hand, happy, medium-dark skin tone, raised, :person_raising_hand_tone4:",
-   ["order"]=773,
-   ["char"]={3440},
-   ["text"]="Person raising hand: medium-dark skin tone",
-   ["image_path"]="1f64b-1f3fe",
+   ["subText"]=":dizzy:, comic, star",
+   ["order"]=1003,
+   ["image_path"]="1f4ab",
+   ["text"]="Dizzy",
+   ["char"]={2554},
 },
 -- Table: {775}
 {
-   ["subText"]="dark skin tone, gesture, hand, happy, raised, :person_raising_hand_tone5:",
-   ["order"]=774,
-   ["char"]={3441},
-   ["text"]="Person raising hand: dark skin tone",
-   ["image_path"]="1f64b-1f3ff",
+   ["subText"]=":star:",
+   ["order"]=1004,
+   ["image_path"]="2b50",
+   ["text"]="Star",
+   ["char"]={2555},
 },
 -- Table: {776}
 {
-   ["subText"]="gesture, man, raising hand, :man_raising_hand:",
-   ["order"]=775,
-   ["char"]={3442},
-   ["text"]="Man raising hand",
-   ["image_path"]="1f64b-2642",
+   ["subText"]=":star2:, glittery, glow, shining, sparkle, star",
+   ["order"]=1005,
+   ["image_path"]="1f31f",
+   ["text"]="Glowing star",
+   ["char"]={2556},
 },
 -- Table: {777}
 {
-   ["subText"]="gesture, light skin tone, man, raising hand, :man_raising_hand_tone1:",
-   ["order"]=776,
-   ["char"]={3443},
-   ["text"]="Man raising hand: light skin tone",
-   ["image_path"]="1f64b-1f3fb-2642",
+   ["subText"]=":sparkles:, sparkle, star",
+   ["order"]=1006,
+   ["image_path"]="2728",
+   ["text"]="Sparkles",
+   ["char"]={2557},
 },
 -- Table: {778}
 {
-   ["subText"]="gesture, man, medium-light skin tone, raising hand, :man_raising_hand_tone2:",
-   ["order"]=777,
-   ["char"]={3444},
-   ["text"]="Man raising hand: medium-light skin tone",
-   ["image_path"]="1f64b-1f3fc-2642",
+   ["subText"]=":zap:, danger, electric, electricity, lightning, voltage",
+   ["order"]=1007,
+   ["image_path"]="26a1",
+   ["text"]="High voltage",
+   ["char"]={2558},
 },
 -- Table: {779}
 {
-   ["subText"]="gesture, man, medium skin tone, raising hand, :man_raising_hand_tone3:",
-   ["order"]=778,
-   ["char"]={3445},
-   ["text"]="Man raising hand: medium skin tone",
-   ["image_path"]="1f64b-1f3fd-2642",
+   ["subText"]=":comet:, space",
+   ["order"]=1008,
+   ["image_path"]="2604",
+   ["text"]="Comet",
+   ["char"]={2559},
 },
 -- Table: {780}
 {
-   ["subText"]="gesture, man, medium-dark skin tone, raising hand, :man_raising_hand_tone4:",
-   ["order"]=779,
-   ["char"]={3446},
-   ["text"]="Man raising hand: medium-dark skin tone",
-   ["image_path"]="1f64b-1f3fe-2642",
+   ["subText"]=":boom:, comic",
+   ["order"]=1009,
+   ["image_path"]="1f4a5",
+   ["text"]="Collision",
+   ["char"]={2560},
 },
 -- Table: {781}
 {
-   ["subText"]="dark skin tone, gesture, man, raising hand, :man_raising_hand_tone5:",
-   ["order"]=780,
-   ["char"]={3447},
-   ["text"]="Man raising hand: dark skin tone",
-   ["image_path"]="1f64b-1f3ff-2642",
+   ["subText"]=":fire:, flame, tool",
+   ["order"]=1010,
+   ["image_path"]="1f525",
+   ["text"]="Fire",
+   ["char"]={2561},
 },
 -- Table: {782}
 {
-   ["subText"]="gesture, raising hand, woman, :woman_raising_hand:",
-   ["order"]=781,
-   ["char"]={3448},
-   ["text"]="Woman raising hand",
-   ["image_path"]="1f64b-2640",
+   ["subText"]=":cloud_tornado:, cloud, whirlwind",
+   ["order"]=1011,
+   ["image_path"]="1f32a",
+   ["text"]="Tornado",
+   ["char"]={2562},
 },
 -- Table: {783}
 {
-   ["subText"]="dark skin tone, gesture, raising hand, woman, :woman_raising_hand_tone5:",
-   ["order"]=782,
-   ["char"]={3449},
-   ["text"]="Woman raising hand: dark skin tone",
-   ["image_path"]="1f64b-1f3ff-2640",
+   ["subText"]=":rainbow:, rain",
+   ["order"]=1012,
+   ["image_path"]="1f308",
+   ["text"]="Rainbow",
+   ["char"]={2563},
 },
 -- Table: {784}
 {
-   ["subText"]="gesture, medium-dark skin tone, raising hand, woman, :woman_raising_hand_tone4:",
-   ["order"]=783,
-   ["char"]={3450},
-   ["text"]="Woman raising hand: medium-dark skin tone",
-   ["image_path"]="1f64b-1f3fe-2640",
+   ["subText"]=":sunny:, bright, rays",
+   ["order"]=1013,
+   ["image_path"]="2600",
+   ["text"]="Sun",
+   ["char"]={2564},
 },
 -- Table: {785}
 {
-   ["subText"]="gesture, medium skin tone, raising hand, woman, :woman_raising_hand_tone3:",
-   ["order"]=784,
-   ["char"]={3451},
-   ["text"]="Woman raising hand: medium skin tone",
-   ["image_path"]="1f64b-1f3fd-2640",
+   ["subText"]=":white_sun_small_cloud:, cloud, sun",
+   ["order"]=1014,
+   ["image_path"]="1f324",
+   ["text"]="Sun behind small cloud",
+   ["char"]={2565},
 },
 -- Table: {786}
 {
-   ["subText"]="gesture, medium-light skin tone, raising hand, woman, :woman_raising_hand_tone2:",
-   ["order"]=785,
-   ["char"]={3452},
-   ["text"]="Woman raising hand: medium-light skin tone",
-   ["image_path"]="1f64b-1f3fc-2640",
+   ["subText"]=":partly_sunny:, cloud, sun",
+   ["order"]=1015,
+   ["image_path"]="26c5",
+   ["text"]="Sun behind cloud",
+   ["char"]={2566},
 },
 -- Table: {787}
 {
-   ["subText"]="gesture, light skin tone, raising hand, woman, :woman_raising_hand_tone1:",
-   ["order"]=786,
-   ["char"]={3453},
-   ["text"]="Woman raising hand: light skin tone",
-   ["image_path"]="1f64b-1f3fb-2640",
+   ["subText"]=":white_sun_cloud:, cloud, sun",
+   ["order"]=1016,
+   ["image_path"]="1f325",
+   ["text"]="Sun behind large cloud",
+   ["char"]={2567},
 },
 -- Table: {788}
 {
-   ["subText"]="disbelief, exasperation, facepalm, woman, :woman_facepalming:",
-   ["order"]=787,
-   ["char"]={3454},
-   ["text"]="Woman facepalming",
-   ["image_path"]="1f926-2640",
+   ["subText"]=":cloud:, weather",
+   ["order"]=1017,
+   ["image_path"]="2601",
+   ["text"]="Cloud",
+   ["char"]={2568},
 },
 -- Table: {789}
 {
-   ["subText"]="disbelief, exasperation, facepalm, light skin tone, woman, :woman_facepalming_tone1:",
-   ["order"]=788,
-   ["char"]={3455},
-   ["text"]="Woman facepalming: light skin tone",
-   ["image_path"]="1f926-1f3fb-2640",
+   ["subText"]=":white_sun_rain_cloud:, cloud, rain, sun",
+   ["order"]=1018,
+   ["image_path"]="1f326",
+   ["text"]="Sun behind rain cloud",
+   ["char"]={2569},
 },
 -- Table: {790}
 {
-   ["subText"]="disbelief, exasperation, facepalm, medium-light skin tone, woman, :woman_facepalming_tone2:",
-   ["order"]=789,
-   ["char"]={3456},
-   ["text"]="Woman facepalming: medium-light skin tone",
-   ["image_path"]="1f926-1f3fc-2640",
+   ["subText"]=":cloud_rain:, cloud, rain",
+   ["order"]=1019,
+   ["image_path"]="1f327",
+   ["text"]="Cloud with rain",
+   ["char"]={2570},
 },
 -- Table: {791}
 {
-   ["subText"]="disbelief, exasperation, facepalm, medium skin tone, woman, :woman_facepalming_tone3:",
-   ["order"]=790,
-   ["char"]={3457},
-   ["text"]="Woman facepalming: medium skin tone",
-   ["image_path"]="1f926-1f3fd-2640",
+   ["subText"]=":thunder_cloud_rain:, cloud, rain, thunder",
+   ["order"]=1020,
+   ["image_path"]="26c8",
+   ["text"]="Cloud with lightning and rain",
+   ["char"]={2571},
 },
 -- Table: {792}
 {
-   ["subText"]="disbelief, exasperation, facepalm, medium-dark skin tone, woman, :woman_facepalming_tone4:",
-   ["order"]=791,
-   ["char"]={3458},
-   ["text"]="Woman facepalming: medium-dark skin tone",
-   ["image_path"]="1f926-1f3fe-2640",
+   ["subText"]=":cloud_lightning:, cloud, lightning",
+   ["order"]=1021,
+   ["image_path"]="1f329",
+   ["text"]="Cloud with lightning",
+   ["char"]={2572},
 },
 -- Table: {793}
 {
-   ["subText"]="dark skin tone, disbelief, exasperation, facepalm, woman, :woman_facepalming_tone5:",
-   ["order"]=792,
-   ["char"]={3459},
-   ["text"]="Woman facepalming: dark skin tone",
-   ["image_path"]="1f926-1f3ff-2640",
+   ["subText"]=":cloud_snow:, cloud, cold, snow",
+   ["order"]=1022,
+   ["image_path"]="1f328",
+   ["text"]="Cloud with snow",
+   ["char"]={2573},
 },
 -- Table: {794}
 {
-   ["subText"]="disbelief, exasperation, facepalm, man, :man_facepalming:",
-   ["order"]=793,
-   ["char"]={3460},
-   ["text"]="Man facepalming",
-   ["image_path"]="1f926-2642",
+   ["subText"]=":snowflake:, cold, snow",
+   ["order"]=1023,
+   ["image_path"]="2744",
+   ["text"]="Snowflake",
+   ["char"]={2574},
 },
 -- Table: {795}
 {
-   ["subText"]="disbelief, exasperation, facepalm, light skin tone, man, :man_facepalming_tone1:",
-   ["order"]=794,
-   ["char"]={3461},
-   ["text"]="Man facepalming: light skin tone",
-   ["image_path"]="1f926-1f3fb-2642",
+   ["subText"]=":snowman2:, cold, snow",
+   ["order"]=1024,
+   ["image_path"]="2603",
+   ["text"]="Snowman",
+   ["char"]={2575},
 },
 -- Table: {796}
 {
-   ["subText"]="disbelief, exasperation, facepalm, man, medium-light skin tone, :man_facepalming_tone2:",
-   ["order"]=795,
-   ["char"]={3462},
-   ["text"]="Man facepalming: medium-light skin tone",
-   ["image_path"]="1f926-1f3fc-2642",
+   ["subText"]=":snowman:, cold, snow",
+   ["order"]=1025,
+   ["image_path"]="26c4",
+   ["text"]="Snowman without snow",
+   ["char"]={2576},
 },
 -- Table: {797}
 {
-   ["subText"]="disbelief, exasperation, facepalm, man, medium skin tone, :man_facepalming_tone3:",
-   ["order"]=796,
-   ["char"]={3463},
-   ["text"]="Man facepalming: medium skin tone",
-   ["image_path"]="1f926-1f3fd-2642",
+   ["subText"]=":wind_blowing_face:, blow, cloud, face, wind",
+   ["order"]=1026,
+   ["image_path"]="1f32c",
+   ["text"]="Wind face",
+   ["char"]={2577},
 },
 -- Table: {798}
 {
-   ["subText"]="disbelief, exasperation, facepalm, man, medium-dark skin tone, :man_facepalming_tone4:",
-   ["order"]=797,
-   ["char"]={3464},
-   ["text"]="Man facepalming: medium-dark skin tone",
-   ["image_path"]="1f926-1f3fe-2642",
+   ["subText"]=":dash:, comic, running",
+   ["order"]=1027,
+   ["image_path"]="1f4a8",
+   ["text"]="Dashing away",
+   ["char"]={2578},
 },
 -- Table: {799}
 {
-   ["subText"]="dark skin tone, disbelief, exasperation, facepalm, man, :man_facepalming_tone5:",
-   ["order"]=798,
-   ["char"]={3465},
-   ["text"]="Man facepalming: dark skin tone",
-   ["image_path"]="1f926-1f3ff-2642",
+   ["subText"]=":droplet:, cold, comic, drop, sweat",
+   ["order"]=1028,
+   ["image_path"]="1f4a7",
+   ["text"]="Droplet",
+   ["char"]={2579},
 },
 -- Table: {800}
 {
-   ["subText"]="disbelief, exasperation, face, palm, :person_facepalming:",
-   ["order"]=799,
-   ["char"]={3466},
-   ["text"]="Person facepalming",
-   ["image_path"]="1f926",
+   ["subText"]=":sweat_drops:, comic, splashing, sweat",
+   ["order"]=1029,
+   ["image_path"]="1f4a6",
+   ["text"]="Sweat droplets",
+   ["char"]={2580},
 },
 -- Table: {801}
 {
-   ["subText"]="disbelief, exasperation, face, light skin tone, palm, :person_facepalming_tone1:",
-   ["order"]=800,
-   ["char"]={3467},
-   ["text"]="Person facepalming: light skin tone",
-   ["image_path"]="1f926-1f3fb",
+   ["subText"]=":umbrella:, clothing, drop, rain",
+   ["order"]=1030,
+   ["image_path"]="2614",
+   ["text"]="Umbrella with rain drops",
+   ["char"]={2581},
 },
 -- Table: {802}
 {
-   ["subText"]="disbelief, exasperation, face, medium-light skin tone, palm, :person_facepalming_tone2:",
-   ["order"]=801,
-   ["char"]={3468},
-   ["text"]="Person facepalming: medium-light skin tone",
-   ["image_path"]="1f926-1f3fc",
+   ["subText"]=":umbrella2:, clothing, rain",
+   ["order"]=1031,
+   ["image_path"]="2602",
+   ["text"]="Umbrella",
+   ["char"]={2582},
 },
 -- Table: {803}
 {
-   ["subText"]="disbelief, exasperation, face, medium skin tone, palm, :person_facepalming_tone3:",
-   ["order"]=802,
-   ["char"]={3469},
-   ["text"]="Person facepalming: medium skin tone",
-   ["image_path"]="1f926-1f3fd",
+   ["subText"]=":ocean:, water, wave",
+   ["order"]=1032,
+   ["image_path"]="1f30a",
+   ["text"]="Water wave",
+   ["char"]={2583},
 },
 -- Table: {804}
 {
-   ["subText"]="disbelief, exasperation, face, medium-dark skin tone, palm, :person_facepalming_tone4:",
-   ["order"]=803,
-   ["char"]={3470},
-   ["text"]="Person facepalming: medium-dark skin tone",
-   ["image_path"]="1f926-1f3fe",
+   ["subText"]=":fog:, cloud",
+   ["order"]=1033,
+   ["image_path"]="1f32b",
+   ["text"]="Fog",
+   ["char"]={2584},
 },
 -- Table: {805}
 {
-   ["subText"]="dark skin tone, disbelief, exasperation, face, palm, :person_facepalming_tone5:",
-   ["order"]=804,
-   ["char"]={3471},
-   ["text"]="Person facepalming: dark skin tone",
-   ["image_path"]="1f926-1f3ff",
+   ["subText"]=":green_apple:, apple, fruit, green",
+   ["order"]=1034,
+   ["image_path"]="1f34f",
+   ["text"]="Green apple",
+   ["char"]={2585},
 },
 -- Table: {806}
 {
-   ["subText"]="doubt, ignorance, indifference, shrug, woman, :woman_shrugging:",
-   ["order"]=805,
-   ["char"]={3472},
-   ["text"]="Woman shrugging",
-   ["image_path"]="1f937-2640",
+   ["subText"]=":apple:, fruit, red",
+   ["order"]=1035,
+   ["image_path"]="1f34e",
+   ["text"]="Red apple",
+   ["char"]={2586},
 },
 -- Table: {807}
 {
-   ["subText"]="doubt, ignorance, indifference, light skin tone, shrug, woman, :woman_shrugging_tone1:",
-   ["order"]=806,
-   ["char"]={3473},
-   ["text"]="Woman shrugging: light skin tone",
-   ["image_path"]="1f937-1f3fb-2640",
+   ["subText"]=":pear:, fruit",
+   ["order"]=1036,
+   ["image_path"]="1f350",
+   ["text"]="Pear",
+   ["char"]={2587},
 },
 -- Table: {808}
 {
-   ["subText"]="doubt, ignorance, indifference, medium-light skin tone, shrug, woman, :woman_shrugging_tone2:",
-   ["order"]=807,
-   ["char"]={3474},
-   ["text"]="Woman shrugging: medium-light skin tone",
-   ["image_path"]="1f937-1f3fc-2640",
+   ["subText"]=":tangerine:, fruit, orange",
+   ["order"]=1037,
+   ["image_path"]="1f34a",
+   ["text"]="Tangerine",
+   ["char"]={2588},
 },
 -- Table: {809}
 {
-   ["subText"]="doubt, ignorance, indifference, medium skin tone, shrug, woman, :woman_shrugging_tone3:",
-   ["order"]=808,
-   ["char"]={3475},
-   ["text"]="Woman shrugging: medium skin tone",
-   ["image_path"]="1f937-1f3fd-2640",
+   ["subText"]=":lemon:, citrus, fruit",
+   ["order"]=1038,
+   ["image_path"]="1f34b",
+   ["text"]="Lemon",
+   ["char"]={2589},
 },
 -- Table: {810}
 {
-   ["subText"]="doubt, ignorance, indifference, medium-dark skin tone, shrug, woman, :woman_shrugging_tone4:",
-   ["order"]=809,
-   ["char"]={3476},
-   ["text"]="Woman shrugging: medium-dark skin tone",
-   ["image_path"]="1f937-1f3fe-2640",
+   ["subText"]=":banana:, fruit",
+   ["order"]=1039,
+   ["image_path"]="1f34c",
+   ["text"]="Banana",
+   ["char"]={2590},
 },
 -- Table: {811}
 {
-   ["subText"]="dark skin tone, doubt, ignorance, indifference, shrug, woman, :woman_shrugging_tone5:",
-   ["order"]=810,
-   ["char"]={3477},
-   ["text"]="Woman shrugging: dark skin tone",
-   ["image_path"]="1f937-1f3ff-2640",
+   ["subText"]=":watermelon:, fruit",
+   ["order"]=1040,
+   ["image_path"]="1f349",
+   ["text"]="Watermelon",
+   ["char"]={2591},
 },
 -- Table: {812}
 {
-   ["subText"]="doubt, ignorance, indifference, man, shrug, :man_shrugging:",
-   ["order"]=811,
-   ["char"]={3478},
-   ["text"]="Man shrugging",
-   ["image_path"]="1f937-2642",
+   ["subText"]=":grapes:, fruit, grape",
+   ["order"]=1041,
+   ["image_path"]="1f347",
+   ["text"]="Grapes",
+   ["char"]={2592},
 },
 -- Table: {813}
 {
-   ["subText"]="doubt, ignorance, indifference, light skin tone, man, shrug, :man_shrugging_tone1:",
-   ["order"]=812,
-   ["char"]={3479},
-   ["text"]="Man shrugging: light skin tone",
-   ["image_path"]="1f937-1f3fb-2642",
+   ["subText"]=":strawberry:, berry, fruit",
+   ["order"]=1042,
+   ["image_path"]="1f353",
+   ["text"]="Strawberry",
+   ["char"]={2593},
 },
 -- Table: {814}
 {
-   ["subText"]="doubt, ignorance, indifference, man, medium-light skin tone, shrug, :man_shrugging_tone2:",
-   ["order"]=813,
-   ["char"]={3480},
-   ["text"]="Man shrugging: medium-light skin tone",
-   ["image_path"]="1f937-1f3fc-2642",
+   ["subText"]=":melon:, fruit",
+   ["order"]=1043,
+   ["image_path"]="1f348",
+   ["text"]="Melon",
+   ["char"]={2594},
 },
 -- Table: {815}
 {
-   ["subText"]="doubt, ignorance, indifference, man, medium skin tone, shrug, :man_shrugging_tone3:",
-   ["order"]=814,
-   ["char"]={3481},
-   ["text"]="Man shrugging: medium skin tone",
-   ["image_path"]="1f937-1f3fd-2642",
+   ["subText"]=":cherries:, cherry, fruit",
+   ["order"]=1044,
+   ["image_path"]="1f352",
+   ["text"]="Cherries",
+   ["char"]={2595},
 },
 -- Table: {816}
 {
-   ["subText"]="doubt, ignorance, indifference, man, medium-dark skin tone, shrug, :man_shrugging_tone4:",
-   ["order"]=815,
-   ["char"]={3482},
-   ["text"]="Man shrugging: medium-dark skin tone",
-   ["image_path"]="1f937-1f3fe-2642",
+   ["subText"]=":peach:, fruit",
+   ["order"]=1045,
+   ["image_path"]="1f351",
+   ["text"]="Peach",
+   ["char"]={2596},
 },
 -- Table: {817}
 {
-   ["subText"]="dark skin tone, doubt, ignorance, indifference, man, shrug, :man_shrugging_tone5:",
-   ["order"]=816,
-   ["char"]={3483},
-   ["text"]="Man shrugging: dark skin tone",
-   ["image_path"]="1f937-1f3ff-2642",
+   ["subText"]=":mango:",
+   ["order"]=1046,
+   ["image_path"]="1f96d",
+   ["text"]="Mango",
+   ["char"]={2597},
 },
 -- Table: {818}
 {
-   ["subText"]="doubt, ignorance, indifference, shrug, :person_shrugging:",
-   ["order"]=817,
-   ["char"]={3484},
-   ["text"]="Person shrugging",
-   ["image_path"]="1f937",
+   ["subText"]=":pineapple:, fruit",
+   ["order"]=1047,
+   ["image_path"]="1f34d",
+   ["text"]="Pineapple",
+   ["char"]={2598},
 },
 -- Table: {819}
 {
-   ["subText"]="doubt, ignorance, indifference, light skin tone, shrug, :person_shrugging_tone1:",
-   ["order"]=818,
-   ["char"]={3485},
-   ["text"]="Person shrugging: light skin tone",
-   ["image_path"]="1f937-1f3fb",
+   ["subText"]=":coconut:, palm, piña colada",
+   ["order"]=1048,
+   ["image_path"]="1f965",
+   ["text"]="Coconut",
+   ["char"]={2599},
 },
 -- Table: {820}
 {
-   ["subText"]="doubt, ignorance, indifference, medium-light skin tone, shrug, :person_shrugging_tone2:",
-   ["order"]=819,
-   ["char"]={3486},
-   ["text"]="Person shrugging: medium-light skin tone",
-   ["image_path"]="1f937-1f3fc",
+   ["subText"]=":kiwi:, food, fruit",
+   ["order"]=1049,
+   ["image_path"]="1f95d",
+   ["text"]="Kiwi fruit",
+   ["char"]={2600},
 },
 -- Table: {821}
 {
-   ["subText"]="doubt, ignorance, indifference, medium skin tone, shrug, :person_shrugging_tone3:",
-   ["order"]=820,
-   ["char"]={3487},
-   ["text"]="Person shrugging: medium skin tone",
-   ["image_path"]="1f937-1f3fd",
+   ["subText"]=":tomato:, fruit, vegetable",
+   ["order"]=1050,
+   ["image_path"]="1f345",
+   ["text"]="Tomato",
+   ["char"]={2601},
 },
 -- Table: {822}
 {
-   ["subText"]="doubt, ignorance, indifference, medium-dark skin tone, shrug, :person_shrugging_tone4:",
-   ["order"]=821,
-   ["char"]={3488},
-   ["text"]="Person shrugging: medium-dark skin tone",
-   ["image_path"]="1f937-1f3fe",
+   ["subText"]=":eggplant:, aubergine, vegetable",
+   ["order"]=1051,
+   ["image_path"]="1f346",
+   ["text"]="Eggplant",
+   ["char"]={2602},
 },
 -- Table: {823}
 {
-   ["subText"]="dark skin tone, doubt, ignorance, indifference, shrug, :person_shrugging_tone5:",
-   ["order"]=822,
-   ["char"]={3489},
-   ["text"]="Person shrugging: dark skin tone",
-   ["image_path"]="1f937-1f3ff",
+   ["subText"]=":avocado:, food, fruit",
+   ["order"]=1052,
+   ["image_path"]="1f951",
+   ["text"]="Avocado",
+   ["char"]={2603},
 },
 -- Table: {824}
 {
-   ["subText"]="gesture, pouting, :person_pouting:",
-   ["order"]=823,
-   ["char"]={3490},
-   ["text"]="Person pouting",
-   ["image_path"]="1f64e",
+   ["subText"]=":broccoli:, wild cabbage",
+   ["order"]=1053,
+   ["image_path"]="1f966",
+   ["text"]="Broccoli",
+   ["char"]={2604},
 },
 -- Table: {825}
 {
-   ["subText"]="gesture, light skin tone, pouting, :person_pouting_tone1:",
-   ["order"]=824,
-   ["char"]={3491},
-   ["text"]="Person pouting: light skin tone",
-   ["image_path"]="1f64e-1f3fb",
+   ["subText"]=":leafy_green:",
+   ["order"]=1054,
+   ["image_path"]="1f96c",
+   ["text"]="Leafy green",
+   ["char"]={2605},
 },
 -- Table: {826}
 {
-   ["subText"]="gesture, medium-light skin tone, pouting, :person_pouting_tone2:",
-   ["order"]=825,
-   ["char"]={3492},
-   ["text"]="Person pouting: medium-light skin tone",
-   ["image_path"]="1f64e-1f3fc",
+   ["subText"]=":cucumber:, food, pickle, vegetable",
+   ["order"]=1055,
+   ["image_path"]="1f952",
+   ["text"]="Cucumber",
+   ["char"]={2606},
 },
 -- Table: {827}
 {
-   ["subText"]="gesture, medium skin tone, pouting, :person_pouting_tone3:",
-   ["order"]=826,
-   ["char"]={3493},
-   ["text"]="Person pouting: medium skin tone",
-   ["image_path"]="1f64e-1f3fd",
+   ["subText"]=":hot_pepper:, hot, pepper",
+   ["order"]=1056,
+   ["image_path"]="1f336",
+   ["text"]="Hot pepper",
+   ["char"]={2607},
 },
 -- Table: {828}
 {
-   ["subText"]="gesture, medium-dark skin tone, pouting, :person_pouting_tone4:",
-   ["order"]=827,
-   ["char"]={3494},
-   ["text"]="Person pouting: medium-dark skin tone",
-   ["image_path"]="1f64e-1f3fe",
+   ["subText"]=":corn:, ear, maize, maze",
+   ["order"]=1057,
+   ["image_path"]="1f33d",
+   ["text"]="Ear of corn",
+   ["char"]={2608},
 },
 -- Table: {829}
 {
-   ["subText"]="dark skin tone, gesture, pouting, :person_pouting_tone5:",
-   ["order"]=828,
-   ["char"]={3495},
-   ["text"]="Person pouting: dark skin tone",
-   ["image_path"]="1f64e-1f3ff",
+   ["subText"]=":carrot:, food, vegetable",
+   ["order"]=1058,
+   ["image_path"]="1f955",
+   ["text"]="Carrot",
+   ["char"]={2609},
 },
 -- Table: {830}
 {
-   ["subText"]="gesture, man, pouting, :man_pouting:",
-   ["order"]=829,
-   ["char"]={3496},
-   ["text"]="Man pouting",
-   ["image_path"]="1f64e-2642",
+   ["subText"]=":onion:",
+   ["order"]=1059,
+   ["image_path"]="1f9c5",
+   ["text"]="Onion",
+   ["char"]={2610},
 },
 -- Table: {831}
 {
-   ["subText"]="gesture, light skin tone, man, pouting, :man_pouting_tone1:",
-   ["order"]=830,
-   ["char"]={3497},
-   ["text"]="Man pouting: light skin tone",
-   ["image_path"]="1f64e-1f3fb-2642",
+   ["subText"]=":garlic:",
+   ["order"]=1060,
+   ["image_path"]="1f9c4",
+   ["text"]="Garlic",
+   ["char"]={2611},
 },
 -- Table: {832}
 {
-   ["subText"]="gesture, man, medium-light skin tone, pouting, :man_pouting_tone2:",
-   ["order"]=831,
-   ["char"]={3498},
-   ["text"]="Man pouting: medium-light skin tone",
-   ["image_path"]="1f64e-1f3fc-2642",
+   ["subText"]=":potato:, food, vegetable",
+   ["order"]=1061,
+   ["image_path"]="1f954",
+   ["text"]="Potato",
+   ["char"]={2612},
 },
 -- Table: {833}
 {
-   ["subText"]="gesture, man, medium skin tone, pouting, :man_pouting_tone3:",
-   ["order"]=832,
-   ["char"]={3499},
-   ["text"]="Man pouting: medium skin tone",
-   ["image_path"]="1f64e-1f3fd-2642",
+   ["subText"]=":sweet_potato:, potato, roasted, sweet",
+   ["order"]=1062,
+   ["image_path"]="1f360",
+   ["text"]="Roasted sweet potato",
+   ["char"]={2613},
 },
 -- Table: {834}
 {
-   ["subText"]="gesture, man, medium-dark skin tone, pouting, :man_pouting_tone4:",
-   ["order"]=833,
-   ["char"]={3500},
-   ["text"]="Man pouting: medium-dark skin tone",
-   ["image_path"]="1f64e-1f3fe-2642",
+   ["subText"]=":croissant:, bread, crescent roll, food, french",
+   ["order"]=1063,
+   ["image_path"]="1f950",
+   ["text"]="Croissant",
+   ["char"]={2614},
 },
 -- Table: {835}
 {
-   ["subText"]="dark skin tone, gesture, man, pouting, :man_pouting_tone5:",
-   ["order"]=834,
-   ["char"]={3501},
-   ["text"]="Man pouting: dark skin tone",
-   ["image_path"]="1f64e-1f3ff-2642",
+   ["subText"]=":bagel:",
+   ["order"]=1064,
+   ["image_path"]="1f96f",
+   ["text"]="Bagel",
+   ["char"]={2615},
 },
 -- Table: {836}
 {
-   ["subText"]="gesture, pouting, woman, :woman_pouting:",
-   ["order"]=835,
-   ["char"]={3502},
-   ["text"]="Woman pouting",
-   ["image_path"]="1f64e-2640",
+   ["subText"]=":bread:, loaf",
+   ["order"]=1065,
+   ["image_path"]="1f35e",
+   ["text"]="Bread",
+   ["char"]={2616},
 },
 -- Table: {837}
 {
-   ["subText"]="dark skin tone, gesture, pouting, woman, :woman_pouting_tone5:",
-   ["order"]=836,
-   ["char"]={3503},
-   ["text"]="Woman pouting: dark skin tone",
-   ["image_path"]="1f64e-1f3ff-2640",
+   ["subText"]=":french_bread:, baguette, bread, food, french",
+   ["order"]=1066,
+   ["image_path"]="1f956",
+   ["text"]="Baguette bread",
+   ["char"]={2617},
 },
 -- Table: {838}
 {
-   ["subText"]="gesture, medium-dark skin tone, pouting, woman, :woman_pouting_tone4:",
-   ["order"]=837,
-   ["char"]={3504},
-   ["text"]="Woman pouting: medium-dark skin tone",
-   ["image_path"]="1f64e-1f3fe-2640",
+   ["subText"]=":pretzel:",
+   ["order"]=1067,
+   ["image_path"]="1f968",
+   ["text"]="Pretzel",
+   ["char"]={2618},
 },
 -- Table: {839}
 {
-   ["subText"]="gesture, medium skin tone, pouting, woman, :woman_pouting_tone3:",
-   ["order"]=838,
-   ["char"]={3505},
-   ["text"]="Woman pouting: medium skin tone",
-   ["image_path"]="1f64e-1f3fd-2640",
+   ["subText"]=":cheese:",
+   ["order"]=1068,
+   ["image_path"]="1f9c0",
+   ["text"]="Cheese wedge",
+   ["char"]={2619},
 },
 -- Table: {840}
 {
-   ["subText"]="gesture, medium-light skin tone, pouting, woman, :woman_pouting_tone2:",
-   ["order"]=839,
-   ["char"]={3506},
-   ["text"]="Woman pouting: medium-light skin tone",
-   ["image_path"]="1f64e-1f3fc-2640",
+   ["subText"]=":egg:, food",
+   ["order"]=1069,
+   ["image_path"]="1f95a",
+   ["text"]="Egg",
+   ["char"]={2620},
 },
 -- Table: {841}
 {
-   ["subText"]="gesture, light skin tone, pouting, woman, :woman_pouting_tone1:",
-   ["order"]=840,
-   ["char"]={3507},
-   ["text"]="Woman pouting: light skin tone",
-   ["image_path"]="1f64e-1f3fb-2640",
+   ["subText"]=":cooking:, egg, frying, pan",
+   ["order"]=1070,
+   ["image_path"]="1f373",
+   ["text"]="Cooking",
+   ["char"]={2621},
 },
 -- Table: {842}
 {
-   ["subText"]="frown, gesture, :person_frowning:",
-   ["order"]=841,
-   ["char"]={3508},
-   ["text"]="Person frowning",
-   ["image_path"]="1f64d",
+   ["subText"]=":pancakes:, crêpe, food, hotcake, pancake",
+   ["order"]=1071,
+   ["image_path"]="1f95e",
+   ["text"]="Pancakes",
+   ["char"]={2622},
 },
 -- Table: {843}
 {
-   ["subText"]="frown, gesture, light skin tone, :person_frowning_tone1:",
-   ["order"]=842,
-   ["char"]={3509},
-   ["text"]="Person frowning: light skin tone",
-   ["image_path"]="1f64d-1f3fb",
+   ["subText"]=":waffle:",
+   ["order"]=1072,
+   ["image_path"]="1f9c7",
+   ["text"]="Waffle",
+   ["char"]={2623},
 },
 -- Table: {844}
 {
-   ["subText"]="frown, gesture, medium-light skin tone, :person_frowning_tone2:",
-   ["order"]=843,
-   ["char"]={3510},
-   ["text"]="Person frowning: medium-light skin tone",
-   ["image_path"]="1f64d-1f3fc",
+   ["subText"]=":bacon:, food, meat",
+   ["order"]=1073,
+   ["image_path"]="1f953",
+   ["text"]="Bacon",
+   ["char"]={2624},
 },
 -- Table: {845}
 {
-   ["subText"]="frown, gesture, medium skin tone, :person_frowning_tone3:",
-   ["order"]=844,
-   ["char"]={3511},
-   ["text"]="Person frowning: medium skin tone",
-   ["image_path"]="1f64d-1f3fd",
+   ["subText"]=":cut_of_meat:, chop, lambchop, porkchop, steak",
+   ["order"]=1074,
+   ["image_path"]="1f969",
+   ["text"]="Cut of meat",
+   ["char"]={2625},
 },
 -- Table: {846}
 {
-   ["subText"]="frown, gesture, medium-dark skin tone, :person_frowning_tone4:",
-   ["order"]=845,
-   ["char"]={3512},
-   ["text"]="Person frowning: medium-dark skin tone",
-   ["image_path"]="1f64d-1f3fe",
+   ["subText"]=":poultry_leg:, bone, chicken, leg, poultry",
+   ["order"]=1075,
+   ["image_path"]="1f357",
+   ["text"]="Poultry leg",
+   ["char"]={2626},
 },
 -- Table: {847}
 {
-   ["subText"]="dark skin tone, frown, gesture, :person_frowning_tone5:",
-   ["order"]=846,
-   ["char"]={3513},
-   ["text"]="Person frowning: dark skin tone",
-   ["image_path"]="1f64d-1f3ff",
+   ["subText"]=":meat_on_bone:, bone, meat",
+   ["order"]=1076,
+   ["image_path"]="1f356",
+   ["text"]="Meat on bone",
+   ["char"]={2627},
 },
 -- Table: {848}
 {
-   ["subText"]="frowning, gesture, man, :man_frowning:",
-   ["order"]=847,
-   ["char"]={3514},
-   ["text"]="Man frowning",
-   ["image_path"]="1f64d-2642",
+   ["subText"]=":hotdog:, frankfurter, sausage",
+   ["order"]=1077,
+   ["image_path"]="1f32d",
+   ["text"]="Hot dog",
+   ["char"]={2628},
 },
 -- Table: {849}
 {
-   ["subText"]="frowning, gesture, light skin tone, man, :man_frowning_tone1:",
-   ["order"]=848,
-   ["char"]={3515},
-   ["text"]="Man frowning: light skin tone",
-   ["image_path"]="1f64d-1f3fb-2642",
+   ["subText"]=":hamburger:, burger",
+   ["order"]=1078,
+   ["image_path"]="1f354",
+   ["text"]="Hamburger",
+   ["char"]={2629},
 },
 -- Table: {850}
 {
-   ["subText"]="frowning, gesture, man, medium-light skin tone, :man_frowning_tone2:",
-   ["order"]=849,
-   ["char"]={3516},
-   ["text"]="Man frowning: medium-light skin tone",
-   ["image_path"]="1f64d-1f3fc-2642",
+   ["subText"]=":fries:, french",
+   ["order"]=1079,
+   ["image_path"]="1f35f",
+   ["text"]="French fries",
+   ["char"]={2630},
 },
 -- Table: {851}
 {
-   ["subText"]="frowning, gesture, man, medium skin tone, :man_frowning_tone3:",
-   ["order"]=850,
-   ["char"]={3517},
-   ["text"]="Man frowning: medium skin tone",
-   ["image_path"]="1f64d-1f3fd-2642",
+   ["subText"]=":pizza:, cheese, slice",
+   ["order"]=1080,
+   ["image_path"]="1f355",
+   ["text"]="Pizza",
+   ["char"]={2631},
 },
 -- Table: {852}
 {
-   ["subText"]="frowning, gesture, man, medium-dark skin tone, :man_frowning_tone4:",
-   ["order"]=851,
-   ["char"]={3518},
-   ["text"]="Man frowning: medium-dark skin tone",
-   ["image_path"]="1f64d-1f3fe-2642",
+   ["subText"]=":sandwich:, bread",
+   ["order"]=1081,
+   ["image_path"]="1f96a",
+   ["text"]="Sandwich",
+   ["char"]={2632},
 },
 -- Table: {853}
 {
-   ["subText"]="dark skin tone, frowning, gesture, man, :man_frowning_tone5:",
-   ["order"]=852,
-   ["char"]={3519},
-   ["text"]="Man frowning: dark skin tone",
-   ["image_path"]="1f64d-1f3ff-2642",
+   ["subText"]=":falafel:",
+   ["order"]=1082,
+   ["image_path"]="1f9c6",
+   ["text"]="Falafel",
+   ["char"]={2633},
 },
 -- Table: {854}
 {
-   ["subText"]="frowning, gesture, woman, :woman_frowning:",
-   ["order"]=853,
-   ["char"]={3520},
-   ["text"]="Woman frowning",
-   ["image_path"]="1f64d-2640",
+   ["subText"]=":stuffed_flatbread:, falafel, flatbread, food, gyro, kebab, stuffed",
+   ["order"]=1083,
+   ["image_path"]="1f959",
+   ["text"]="Stuffed flatbread",
+   ["char"]={2634},
 },
 -- Table: {855}
 {
-   ["subText"]="dark skin tone, frowning, gesture, woman, :woman_frowning_tone5:",
-   ["order"]=854,
-   ["char"]={3521},
-   ["text"]="Woman frowning: dark skin tone",
-   ["image_path"]="1f64d-1f3ff-2640",
+   ["subText"]=":taco:, mexican",
+   ["order"]=1084,
+   ["image_path"]="1f32e",
+   ["text"]="Taco",
+   ["char"]={2635},
 },
 -- Table: {856}
 {
-   ["subText"]="frowning, gesture, medium-dark skin tone, woman, :woman_frowning_tone4:",
-   ["order"]=855,
-   ["char"]={3522},
-   ["text"]="Woman frowning: medium-dark skin tone",
-   ["image_path"]="1f64d-1f3fe-2640",
+   ["subText"]=":burrito:, mexican, wrap",
+   ["order"]=1085,
+   ["image_path"]="1f32f",
+   ["text"]="Burrito",
+   ["char"]={2636},
 },
 -- Table: {857}
 {
-   ["subText"]="frowning, gesture, medium skin tone, woman, :woman_frowning_tone3:",
-   ["order"]=856,
-   ["char"]={3523},
-   ["text"]="Woman frowning: medium skin tone",
-   ["image_path"]="1f64d-1f3fd-2640",
+   ["subText"]=":salad:, food, green",
+   ["order"]=1086,
+   ["image_path"]="1f957",
+   ["text"]="Green salad",
+   ["char"]={2637},
 },
 -- Table: {858}
 {
-   ["subText"]="frowning, gesture, medium-light skin tone, woman, :woman_frowning_tone2:",
-   ["order"]=857,
-   ["char"]={3524},
-   ["text"]="Woman frowning: medium-light skin tone",
-   ["image_path"]="1f64d-1f3fc-2640",
+   ["subText"]=":shallow_pan_of_food:, casserole, food, paella, pan, shallow",
+   ["order"]=1087,
+   ["image_path"]="1f958",
+   ["text"]="Shallow pan of food",
+   ["char"]={2638},
 },
 -- Table: {859}
 {
-   ["subText"]="frowning, gesture, light skin tone, woman, :woman_frowning_tone1:",
-   ["order"]=858,
-   ["char"]={3525},
-   ["text"]="Woman frowning: light skin tone",
-   ["image_path"]="1f64d-1f3fb-2640",
+   ["subText"]=":canned_food:, can",
+   ["order"]=1088,
+   ["image_path"]="1f96b",
+   ["text"]="Canned food",
+   ["char"]={2639},
 },
 -- Table: {860}
 {
-   ["subText"]="barber, beauty, haircut, parlor, :person_getting_haircut:",
-   ["order"]=859,
-   ["char"]={3526},
-   ["text"]="Person getting haircut",
-   ["image_path"]="1f487",
+   ["subText"]=":spaghetti:, pasta",
+   ["order"]=1089,
+   ["image_path"]="1f35d",
+   ["text"]="Spaghetti",
+   ["char"]={2640},
 },
 -- Table: {861}
 {
-   ["subText"]="barber, beauty, haircut, light skin tone, parlor, :person_getting_haircut_tone1:",
-   ["order"]=860,
-   ["char"]={3527},
-   ["text"]="Person getting haircut: light skin tone",
-   ["image_path"]="1f487-1f3fb",
+   ["subText"]=":ramen:, bowl, noodle, steaming",
+   ["order"]=1090,
+   ["image_path"]="1f35c",
+   ["text"]="Steaming bowl",
+   ["char"]={2641},
 },
 -- Table: {862}
 {
-   ["subText"]="barber, beauty, haircut, medium-light skin tone, parlor, :person_getting_haircut_tone2:",
-   ["order"]=861,
-   ["char"]={3528},
-   ["text"]="Person getting haircut: medium-light skin tone",
-   ["image_path"]="1f487-1f3fc",
+   ["subText"]=":stew:, pot",
+   ["order"]=1091,
+   ["image_path"]="1f372",
+   ["text"]="Pot of food",
+   ["char"]={2642},
 },
 -- Table: {863}
 {
-   ["subText"]="barber, beauty, haircut, medium skin tone, parlor, :person_getting_haircut_tone3:",
-   ["order"]=862,
-   ["char"]={3529},
-   ["text"]="Person getting haircut: medium skin tone",
-   ["image_path"]="1f487-1f3fd",
+   ["subText"]=":curry:, rice",
+   ["order"]=1092,
+   ["image_path"]="1f35b",
+   ["text"]="Curry rice",
+   ["char"]={2643},
 },
 -- Table: {864}
 {
-   ["subText"]="barber, beauty, haircut, medium-dark skin tone, parlor, :person_getting_haircut_tone4:",
-   ["order"]=863,
-   ["char"]={3530},
-   ["text"]="Person getting haircut: medium-dark skin tone",
-   ["image_path"]="1f487-1f3fe",
+   ["subText"]=":sushi:",
+   ["order"]=1093,
+   ["image_path"]="1f363",
+   ["text"]="Sushi",
+   ["char"]={2644},
 },
 -- Table: {865}
 {
-   ["subText"]="barber, beauty, dark skin tone, haircut, parlor, :person_getting_haircut_tone5:",
-   ["order"]=864,
-   ["char"]={3531},
-   ["text"]="Person getting haircut: dark skin tone",
-   ["image_path"]="1f487-1f3ff",
+   ["subText"]=":bento:, box",
+   ["order"]=1094,
+   ["image_path"]="1f371",
+   ["text"]="Bento box",
+   ["char"]={2645},
 },
 -- Table: {866}
 {
-   ["subText"]="haircut, man, :man_getting_haircut:",
-   ["order"]=865,
-   ["char"]={3532},
-   ["text"]="Man getting haircut",
-   ["image_path"]="1f487-2642",
+   ["subText"]=":dumpling:, empanada, gyōza, jiaozi, pierogi, potsticker",
+   ["order"]=1095,
+   ["image_path"]="1f95f",
+   ["text"]="Dumpling",
+   ["char"]={2646},
 },
 -- Table: {867}
 {
-   ["subText"]="haircut, light skin tone, man, :man_getting_haircut_tone1:",
-   ["order"]=866,
-   ["char"]={3533},
-   ["text"]="Man getting haircut: light skin tone",
-   ["image_path"]="1f487-1f3fb-2642",
+   ["subText"]=":fried_shrimp:, fried, prawn, shrimp, tempura",
+   ["order"]=1096,
+   ["image_path"]="1f364",
+   ["text"]="Fried shrimp",
+   ["char"]={2647},
 },
 -- Table: {868}
 {
-   ["subText"]="haircut, man, medium-light skin tone, :man_getting_haircut_tone2:",
-   ["order"]=867,
-   ["char"]={3534},
-   ["text"]="Man getting haircut: medium-light skin tone",
-   ["image_path"]="1f487-1f3fc-2642",
+   ["subText"]=":rice_ball:, Japanese, ball, rice",
+   ["order"]=1097,
+   ["image_path"]="1f359",
+   ["text"]="Rice ball",
+   ["char"]={2648},
 },
 -- Table: {869}
 {
-   ["subText"]="haircut, man, medium skin tone, :man_getting_haircut_tone3:",
-   ["order"]=868,
-   ["char"]={3535},
-   ["text"]="Man getting haircut: medium skin tone",
-   ["image_path"]="1f487-1f3fd-2642",
+   ["subText"]=":rice:, cooked",
+   ["order"]=1098,
+   ["image_path"]="1f35a",
+   ["text"]="Cooked rice",
+   ["char"]={2649},
 },
 -- Table: {870}
 {
-   ["subText"]="haircut, man, medium-dark skin tone, :man_getting_haircut_tone4:",
-   ["order"]=869,
-   ["char"]={3536},
-   ["text"]="Man getting haircut: medium-dark skin tone",
-   ["image_path"]="1f487-1f3fe-2642",
+   ["subText"]=":rice_cracker:, cracker, rice",
+   ["order"]=1099,
+   ["image_path"]="1f358",
+   ["text"]="Rice cracker",
+   ["char"]={2650},
 },
 -- Table: {871}
 {
-   ["subText"]="dark skin tone, haircut, man, :man_getting_haircut_tone5:",
-   ["order"]=870,
-   ["char"]={3537},
-   ["text"]="Man getting haircut: dark skin tone",
-   ["image_path"]="1f487-1f3ff-2642",
+   ["subText"]=":fish_cake:, cake, fish, pastry, swirl",
+   ["order"]=1100,
+   ["image_path"]="1f365",
+   ["text"]="Fish cake with swirl",
+   ["char"]={2651},
 },
 -- Table: {872}
 {
-   ["subText"]="haircut, woman, :woman_getting_haircut:",
-   ["order"]=871,
-   ["char"]={3538},
-   ["text"]="Woman getting haircut",
-   ["image_path"]="1f487-2640",
+   ["subText"]=":fortune_cookie:, prophecy",
+   ["order"]=1101,
+   ["image_path"]="1f960",
+   ["text"]="Fortune cookie",
+   ["char"]={2652},
 },
 -- Table: {873}
 {
-   ["subText"]="dark skin tone, haircut, woman, :woman_getting_haircut_tone5:",
-   ["order"]=872,
-   ["char"]={3539},
-   ["text"]="Woman getting haircut: dark skin tone",
-   ["image_path"]="1f487-1f3ff-2640",
+   ["subText"]=":moon_cake:",
+   ["order"]=1102,
+   ["image_path"]="1f96e",
+   ["text"]="Moon cake",
+   ["char"]={2653},
 },
 -- Table: {874}
 {
-   ["subText"]="haircut, medium-dark skin tone, woman, :woman_getting_haircut_tone4:",
-   ["order"]=873,
-   ["char"]={3540},
-   ["text"]="Woman getting haircut: medium-dark skin tone",
-   ["image_path"]="1f487-1f3fe-2640",
+   ["subText"]=":oden:, kebab, seafood, skewer, stick",
+   ["order"]=1103,
+   ["image_path"]="1f362",
+   ["text"]="Oden",
+   ["char"]={2654},
 },
 -- Table: {875}
 {
-   ["subText"]="haircut, medium skin tone, woman, :woman_getting_haircut_tone3:",
-   ["order"]=874,
-   ["char"]={3541},
-   ["text"]="Woman getting haircut: medium skin tone",
-   ["image_path"]="1f487-1f3fd-2640",
+   ["subText"]=":dango:, Japanese, dessert, skewer, stick, sweet",
+   ["order"]=1104,
+   ["image_path"]="1f361",
+   ["text"]="Dango",
+   ["char"]={2655},
 },
 -- Table: {876}
 {
-   ["subText"]="haircut, medium-light skin tone, woman, :woman_getting_haircut_tone2:",
-   ["order"]=875,
-   ["char"]={3542},
-   ["text"]="Woman getting haircut: medium-light skin tone",
-   ["image_path"]="1f487-1f3fc-2640",
+   ["subText"]=":shaved_ice:, dessert, ice, shaved, sweet",
+   ["order"]=1105,
+   ["image_path"]="1f367",
+   ["text"]="Shaved ice",
+   ["char"]={2656},
 },
 -- Table: {877}
 {
-   ["subText"]="haircut, light skin tone, woman, :woman_getting_haircut_tone1:",
-   ["order"]=876,
-   ["char"]={3543},
-   ["text"]="Woman getting haircut: light skin tone",
-   ["image_path"]="1f487-1f3fb-2640",
+   ["subText"]=":ice_cream:, cream, dessert, ice, sweet",
+   ["order"]=1106,
+   ["image_path"]="1f368",
+   ["text"]="Ice cream",
+   ["char"]={2657},
 },
 -- Table: {878}
 {
-   ["subText"]="face, massage, salon, :person_getting_massage:",
-   ["order"]=877,
-   ["char"]={3544},
-   ["text"]="Person getting massage",
-   ["image_path"]="1f486",
+   ["subText"]=":icecream:, cream, dessert, ice, soft, sweet",
+   ["order"]=1107,
+   ["image_path"]="1f366",
+   ["text"]="Soft ice cream",
+   ["char"]={2658},
 },
 -- Table: {879}
 {
-   ["subText"]="face, light skin tone, massage, salon, :person_getting_massage_tone1:",
-   ["order"]=878,
-   ["char"]={3545},
-   ["text"]="Person getting massage: light skin tone",
-   ["image_path"]="1f486-1f3fb",
+   ["subText"]=":pie:",
+   ["order"]=1108,
+   ["image_path"]="1f967",
+   ["text"]="Pie",
+   ["char"]={2659},
 },
 -- Table: {880}
 {
-   ["subText"]="face, massage, medium-light skin tone, salon, :person_getting_massage_tone2:",
-   ["order"]=879,
-   ["char"]={3546},
-   ["text"]="Person getting massage: medium-light skin tone",
-   ["image_path"]="1f486-1f3fc",
+   ["subText"]=":cupcake:",
+   ["order"]=1109,
+   ["image_path"]="1f9c1",
+   ["text"]="Cupcake",
+   ["char"]={2660},
 },
 -- Table: {881}
 {
-   ["subText"]="face, massage, medium skin tone, salon, :person_getting_massage_tone3:",
-   ["order"]=880,
-   ["char"]={3547},
-   ["text"]="Person getting massage: medium skin tone",
-   ["image_path"]="1f486-1f3fd",
+   ["subText"]=":cake:, dessert, pastry, slice, sweet",
+   ["order"]=1110,
+   ["image_path"]="1f370",
+   ["text"]="Shortcake",
+   ["char"]={2661},
 },
 -- Table: {882}
 {
-   ["subText"]="face, massage, medium-dark skin tone, salon, :person_getting_massage_tone4:",
-   ["order"]=881,
-   ["char"]={3548},
-   ["text"]="Person getting massage: medium-dark skin tone",
-   ["image_path"]="1f486-1f3fe",
+   ["subText"]=":birthday:, cake, celebration, dessert, pastry, sweet",
+   ["order"]=1111,
+   ["image_path"]="1f382",
+   ["text"]="Birthday cake",
+   ["char"]={2662},
 },
 -- Table: {883}
 {
-   ["subText"]="dark skin tone, face, massage, salon, :person_getting_massage_tone5:",
-   ["order"]=882,
-   ["char"]={3549},
-   ["text"]="Person getting massage: dark skin tone",
-   ["image_path"]="1f486-1f3ff",
+   ["subText"]=":custard:, dessert, pudding, sweet",
+   ["order"]=1112,
+   ["image_path"]="1f36e",
+   ["text"]="Custard",
+   ["char"]={2663},
 },
 -- Table: {884}
 {
-   ["subText"]="face, man, massage, :man_getting_face_massage:",
-   ["order"]=883,
-   ["char"]={3550},
-   ["text"]="Man getting massage",
-   ["image_path"]="1f486-2642",
+   ["subText"]=":lollipop:, candy, dessert, sweet",
+   ["order"]=1113,
+   ["image_path"]="1f36d",
+   ["text"]="Lollipop",
+   ["char"]={2664},
 },
 -- Table: {885}
 {
-   ["subText"]="face, light skin tone, man, massage, :man_getting_face_massage_tone1:",
-   ["order"]=884,
-   ["char"]={3551},
-   ["text"]="Man getting massage: light skin tone",
-   ["image_path"]="1f486-1f3fb-2642",
+   ["subText"]=":candy:, dessert, sweet",
+   ["order"]=1114,
+   ["image_path"]="1f36c",
+   ["text"]="Candy",
+   ["char"]={2665},
 },
 -- Table: {886}
 {
-   ["subText"]="face, man, massage, medium-light skin tone, :man_getting_face_massage_tone2:",
-   ["order"]=885,
-   ["char"]={3552},
-   ["text"]="Man getting massage: medium-light skin tone",
-   ["image_path"]="1f486-1f3fc-2642",
+   ["subText"]=":chocolate_bar:, bar, chocolate, dessert, sweet",
+   ["order"]=1115,
+   ["image_path"]="1f36b",
+   ["text"]="Chocolate bar",
+   ["char"]={2666},
 },
 -- Table: {887}
 {
-   ["subText"]="face, man, massage, medium skin tone, :man_getting_face_massage_tone3:",
-   ["order"]=886,
-   ["char"]={3553},
-   ["text"]="Man getting massage: medium skin tone",
-   ["image_path"]="1f486-1f3fd-2642",
+   ["subText"]=":popcorn:",
+   ["order"]=1116,
+   ["image_path"]="1f37f",
+   ["text"]="Popcorn",
+   ["char"]={2667},
 },
 -- Table: {888}
 {
-   ["subText"]="face, man, massage, medium-dark skin tone, :man_getting_face_massage_tone4:",
-   ["order"]=887,
-   ["char"]={3554},
-   ["text"]="Man getting massage: medium-dark skin tone",
-   ["image_path"]="1f486-1f3fe-2642",
+   ["subText"]=":doughnut:, dessert, donut, sweet",
+   ["order"]=1117,
+   ["image_path"]="1f369",
+   ["text"]="Doughnut",
+   ["char"]={2668},
 },
 -- Table: {889}
 {
-   ["subText"]="dark skin tone, face, man, massage, :man_getting_face_massage_tone5:",
-   ["order"]=888,
-   ["char"]={3555},
-   ["text"]="Man getting massage: dark skin tone",
-   ["image_path"]="1f486-1f3ff-2642",
+   ["subText"]=":cookie:, dessert, sweet",
+   ["order"]=1118,
+   ["image_path"]="1f36a",
+   ["text"]="Cookie",
+   ["char"]={2669},
 },
 -- Table: {890}
 {
-   ["subText"]="face, massage, woman, :woman_getting_face_massage:",
-   ["order"]=889,
-   ["char"]={3556},
-   ["text"]="Woman getting massage",
-   ["image_path"]="1f486-2640",
+   ["subText"]=":chestnut:, plant",
+   ["order"]=1119,
+   ["image_path"]="1f330",
+   ["text"]="Chestnut",
+   ["char"]={2670},
 },
 -- Table: {891}
 {
-   ["subText"]="dark skin tone, face, massage, woman, :woman_getting_face_massage_tone5:",
-   ["order"]=890,
-   ["char"]={3557},
-   ["text"]="Woman getting massage: dark skin tone",
-   ["image_path"]="1f486-1f3ff-2640",
+   ["subText"]=":peanuts:, food, nut, peanut, vegetable",
+   ["order"]=1120,
+   ["image_path"]="1f95c",
+   ["text"]="Peanuts",
+   ["char"]={2671},
 },
 -- Table: {892}
 {
-   ["subText"]="face, massage, medium-dark skin tone, woman, :woman_getting_face_massage_tone4:",
-   ["order"]=891,
-   ["char"]={3558},
-   ["text"]="Woman getting massage: medium-dark skin tone",
-   ["image_path"]="1f486-1f3fe-2640",
+   ["subText"]=":honey_pot:, honey, honeypot, pot, sweet",
+   ["order"]=1121,
+   ["image_path"]="1f36f",
+   ["text"]="Honey pot",
+   ["char"]={2672},
 },
 -- Table: {893}
 {
-   ["subText"]="face, massage, medium skin tone, woman, :woman_getting_face_massage_tone3:",
-   ["order"]=892,
-   ["char"]={3559},
-   ["text"]="Woman getting massage: medium skin tone",
-   ["image_path"]="1f486-1f3fd-2640",
+   ["subText"]=":butter:",
+   ["order"]=1122,
+   ["image_path"]="1f9c8",
+   ["text"]="Butter",
+   ["char"]={2673},
 },
 -- Table: {894}
 {
-   ["subText"]="face, massage, medium-light skin tone, woman, :woman_getting_face_massage_tone2:",
-   ["order"]=893,
-   ["char"]={3560},
-   ["text"]="Woman getting massage: medium-light skin tone",
-   ["image_path"]="1f486-1f3fc-2640",
+   ["subText"]=":milk:, drink, glass",
+   ["order"]=1123,
+   ["image_path"]="1f95b",
+   ["text"]="Glass of milk",
+   ["char"]={2674},
 },
 -- Table: {895}
 {
-   ["subText"]="face, light skin tone, massage, woman, :woman_getting_face_massage_tone1:",
-   ["order"]=894,
-   ["char"]={3561},
-   ["text"]="Woman getting massage: light skin tone",
-   ["image_path"]="1f486-1f3fb-2640",
+   ["subText"]=":baby_bottle:, baby, bottle, drink, milk",
+   ["order"]=1124,
+   ["image_path"]="1f37c",
+   ["text"]="Baby bottle",
+   ["char"]={2675},
 },
 -- Table: {896}
 {
-   ["subText"]="business, man, suit, :levitate:",
-   ["order"]=895,
-   ["char"]={3562},
-   ["text"]="Man in business suit levitating",
-   ["image_path"]="1f574",
+   ["subText"]=":coffee:, beverage, drink, hot, steaming, tea",
+   ["order"]=1125,
+   ["image_path"]="2615",
+   ["text"]="Hot beverage",
+   ["char"]={2676},
 },
 -- Table: {897}
 {
-   ["subText"]="business, light skin tone, man, suit, :man_in_business_suit_levitating_tone1:",
-   ["order"]=896,
-   ["char"]={3563},
-   ["text"]="Man in business suit levitating: light skin tone",
-   ["image_path"]="1f574-1f3fb",
+   ["subText"]=":tea:, beverage, cup, drink, teacup",
+   ["order"]=1126,
+   ["image_path"]="1f375",
+   ["text"]="Teacup without handle",
+   ["char"]={2677},
 },
 -- Table: {898}
 {
-   ["subText"]="business, man, medium-light skin tone, suit, :man_in_business_suit_levitating_tone2:",
-   ["order"]=897,
-   ["char"]={3564},
-   ["text"]="Man in business suit levitating: medium-light skin tone",
-   ["image_path"]="1f574-1f3fc",
+   ["subText"]=":mate:",
+   ["order"]=1127,
+   ["image_path"]="1f9c9",
+   ["text"]="Mate",
+   ["char"]={2678},
 },
 -- Table: {899}
 {
-   ["subText"]="business, man, medium skin tone, suit, :man_in_business_suit_levitating_tone3:",
-   ["order"]=898,
-   ["char"]={3565},
-   ["text"]="Man in business suit levitating: medium skin tone",
-   ["image_path"]="1f574-1f3fd",
+   ["subText"]=":cup_with_straw:",
+   ["order"]=1128,
+   ["image_path"]="1f964",
+   ["text"]="Cup with straw",
+   ["char"]={2679},
 },
 -- Table: {900}
 {
-   ["subText"]="business, man, medium-dark skin tone, suit, :man_in_business_suit_levitating_tone4:",
-   ["order"]=899,
-   ["char"]={3566},
-   ["text"]="Man in business suit levitating: medium-dark skin tone",
-   ["image_path"]="1f574-1f3fe",
+   ["subText"]=":beverage_box:",
+   ["order"]=1129,
+   ["image_path"]="1f9c3",
+   ["text"]="Beverage box",
+   ["char"]={2680},
 },
 -- Table: {901}
 {
-   ["subText"]="business, dark skin tone, man, suit, :man_in_business_suit_levitating_tone5:",
-   ["order"]=900,
-   ["char"]={3567},
-   ["text"]="Man in business suit levitating: dark skin tone",
-   ["image_path"]="1f574-1f3ff",
+   ["subText"]=":ice_cube:",
+   ["order"]=1130,
+   ["image_path"]="1f9ca",
+   ["text"]="Ice cube",
+   ["char"]={2681},
 },
 -- Table: {902}
 {
-   ["subText"]="dancing, woman, :dancer:",
-   ["order"]=901,
-   ["char"]={3568},
-   ["text"]="Woman dancing",
-   ["image_path"]="1f483",
+   ["subText"]=":sake:, bar, beverage, bottle, cup, drink",
+   ["order"]=1131,
+   ["image_path"]="1f376",
+   ["text"]="Sake",
+   ["char"]={2682},
 },
 -- Table: {903}
 {
-   ["subText"]="dancing, light skin tone, woman, :dancer_tone1:",
-   ["order"]=902,
-   ["char"]={3569},
-   ["text"]="Woman dancing: light skin tone",
-   ["image_path"]="1f483-1f3fb",
+   ["subText"]=":beer:, bar, drink, mug",
+   ["order"]=1132,
+   ["image_path"]="1f37a",
+   ["text"]="Beer mug",
+   ["char"]={2683},
 },
 -- Table: {904}
 {
-   ["subText"]="dancing, medium-light skin tone, woman, :dancer_tone2:",
-   ["order"]=903,
-   ["char"]={3570},
-   ["text"]="Woman dancing: medium-light skin tone",
-   ["image_path"]="1f483-1f3fc",
+   ["subText"]=":beers:, bar, beer, clink, drink, mug",
+   ["order"]=1133,
+   ["image_path"]="1f37b",
+   ["text"]="Clinking beer mugs",
+   ["char"]={2684},
 },
 -- Table: {905}
 {
-   ["subText"]="dancing, medium skin tone, woman, :dancer_tone3:",
-   ["order"]=904,
-   ["char"]={3571},
-   ["text"]="Woman dancing: medium skin tone",
-   ["image_path"]="1f483-1f3fd",
+   ["subText"]=":champagne_glass:, celebrate, clink, drink, glass",
+   ["order"]=1134,
+   ["image_path"]="1f942",
+   ["text"]="Clinking glasses",
+   ["char"]={2685},
 },
 -- Table: {906}
 {
-   ["subText"]="dancing, medium-dark skin tone, woman, :dancer_tone4:",
-   ["order"]=905,
-   ["char"]={3572},
-   ["text"]="Woman dancing: medium-dark skin tone",
-   ["image_path"]="1f483-1f3fe",
+   ["subText"]=":wine_glass:, bar, beverage, drink, glass, wine",
+   ["order"]=1135,
+   ["image_path"]="1f377",
+   ["text"]="Wine glass",
+   ["char"]={2686},
 },
 -- Table: {907}
 {
-   ["subText"]="dancing, dark skin tone, woman, :dancer_tone5:",
-   ["order"]=906,
-   ["char"]={3573},
-   ["text"]="Woman dancing: dark skin tone",
-   ["image_path"]="1f483-1f3ff",
+   ["subText"]=":tumbler_glass:, glass, liquor, shot, tumbler, whisky",
+   ["order"]=1136,
+   ["image_path"]="1f943",
+   ["text"]="Tumbler glass",
+   ["char"]={2687},
 },
 -- Table: {908}
 {
-   ["subText"]="dance, man, :man_dancing:",
-   ["order"]=907,
-   ["char"]={3574},
-   ["text"]="Man dancing",
-   ["image_path"]="1f57a",
+   ["subText"]=":cocktail:, bar, drink, glass",
+   ["order"]=1137,
+   ["image_path"]="1f378",
+   ["text"]="Cocktail glass",
+   ["char"]={2688},
 },
 -- Table: {909}
 {
-   ["subText"]="dance, light skin tone, man, :man_dancing_tone1:",
-   ["order"]=908,
-   ["char"]={3575},
-   ["text"]="Man dancing: light skin tone",
-   ["image_path"]="1f57a-1f3fb",
+   ["subText"]=":tropical_drink:, bar, drink, tropical",
+   ["order"]=1138,
+   ["image_path"]="1f379",
+   ["text"]="Tropical drink",
+   ["char"]={2689},
 },
 -- Table: {910}
 {
-   ["subText"]="dance, man, medium-light skin tone, :man_dancing_tone2:",
-   ["order"]=909,
-   ["char"]={3576},
-   ["text"]="Man dancing: medium-light skin tone",
-   ["image_path"]="1f57a-1f3fc",
+   ["subText"]=":champagne:, bar, bottle, cork, drink, popping",
+   ["order"]=1139,
+   ["image_path"]="1f37e",
+   ["text"]="Bottle with popping cork",
+   ["char"]={2690},
 },
 -- Table: {911}
 {
-   ["subText"]="dance, man, medium skin tone, :man_dancing_tone3:",
-   ["order"]=910,
-   ["char"]={3577},
-   ["text"]="Man dancing: medium skin tone",
-   ["image_path"]="1f57a-1f3fd",
+   ["subText"]=":spoon:, tableware",
+   ["order"]=1140,
+   ["image_path"]="1f944",
+   ["text"]="Spoon",
+   ["char"]={2691},
 },
 -- Table: {912}
 {
-   ["subText"]="dance, man, medium-dark skin tone, :man_dancing_tone4:",
-   ["order"]=911,
-   ["char"]={3578},
-   ["text"]="Man dancing: medium-dark skin tone",
-   ["image_path"]="1f57a-1f3fe",
+   ["subText"]=":fork_and_knife:, cooking, fork, knife",
+   ["order"]=1141,
+   ["image_path"]="1f374",
+   ["text"]="Fork and knife",
+   ["char"]={2692},
 },
 -- Table: {913}
 {
-   ["subText"]="dance, dark skin tone, man, :man_dancing_tone5:",
-   ["order"]=912,
-   ["char"]={3579},
-   ["text"]="Man dancing: dark skin tone",
-   ["image_path"]="1f57a-1f3ff",
+   ["subText"]=":fork_knife_plate:, cooking, fork, knife, plate",
+   ["order"]=1142,
+   ["image_path"]="1f37d",
+   ["text"]="Fork and knife with plate",
+   ["char"]={2693},
 },
 -- Table: {914}
 {
-   ["subText"]="bunny ear, dancer, partying, :people_with_bunny_ears_partying:",
-   ["order"]=913,
-   ["char"]={3580},
-   ["text"]="People with bunny ears partying",
-   ["image_path"]="1f46f",
+   ["subText"]=":bowl_with_spoon:",
+   ["order"]=1143,
+   ["image_path"]="1f963",
+   ["text"]="Bowl with spoon",
+   ["char"]={2694},
 },
 -- Table: {915}
 {
-   ["subText"]="bunny ear, dancer, men, partying, :men_with_bunny_ears_partying:",
-   ["order"]=914,
-   ["char"]={3581},
-   ["text"]="Men with bunny ears partying",
-   ["image_path"]="1f46f-2642",
+   ["subText"]=":takeout_box:, oyster pail",
+   ["order"]=1144,
+   ["image_path"]="1f961",
+   ["text"]="Takeout box",
+   ["char"]={2695},
 },
 -- Table: {916}
 {
-   ["subText"]="bunny ear, dancer, partying, women, :women_with_bunny_ears_partying:",
-   ["order"]=915,
-   ["char"]={3582},
-   ["text"]="Women with bunny ears partying",
-   ["image_path"]="1f46f-2640",
+   ["subText"]=":chopsticks:",
+   ["order"]=1145,
+   ["image_path"]="1f962",
+   ["text"]="Chopsticks",
+   ["char"]={2696},
 },
 -- Table: {917}
 {
-   ["subText"]="hike, walk, woman, :woman_walking:",
-   ["order"]=916,
-   ["char"]={3583},
-   ["text"]="Woman walking",
-   ["image_path"]="1f6b6-2640",
+   ["subText"]=":salt:",
+   ["order"]=1146,
+   ["image_path"]="1f9c2",
+   ["text"]="Salt",
+   ["char"]={2697},
 },
 -- Table: {918}
 {
-   ["subText"]="hike, light skin tone, walk, woman, :woman_walking_tone1:",
-   ["order"]=917,
-   ["char"]={3584},
-   ["text"]="Woman walking: light skin tone",
-   ["image_path"]="1f6b6-1f3fb-2640",
+   ["subText"]=":grinning:, face, grin",
+   ["order"]=1147,
+   ["image_path"]="1f600",
+   ["text"]="Grinning face",
+   ["char"]={2698},
 },
 -- Table: {919}
 {
-   ["subText"]="hike, medium-light skin tone, walk, woman, :woman_walking_tone2:",
-   ["order"]=918,
-   ["char"]={3585},
-   ["text"]="Woman walking: medium-light skin tone",
-   ["image_path"]="1f6b6-1f3fc-2640",
+   ["subText"]=":smiley:, face, mouth, open, smile",
+   ["order"]=1148,
+   ["image_path"]="1f603",
+   ["text"]="Grinning face with big eyes",
+   ["char"]={2699},
 },
 -- Table: {920}
 {
-   ["subText"]="hike, medium skin tone, walk, woman, :woman_walking_tone3:",
-   ["order"]=919,
-   ["char"]={3586},
-   ["text"]="Woman walking: medium skin tone",
-   ["image_path"]="1f6b6-1f3fd-2640",
+   ["subText"]=":smile:, eye, face, mouth, open",
+   ["order"]=1149,
+   ["image_path"]="1f604",
+   ["text"]="Grinning face with smiling eyes",
+   ["char"]={2700},
 },
 -- Table: {921}
 {
-   ["subText"]="hike, medium-dark skin tone, walk, woman, :woman_walking_tone4:",
-   ["order"]=920,
-   ["char"]={3587},
-   ["text"]="Woman walking: medium-dark skin tone",
-   ["image_path"]="1f6b6-1f3fe-2640",
+   ["subText"]=":grin:, eye, face, smile",
+   ["order"]=1150,
+   ["image_path"]="1f601",
+   ["text"]="Beaming face with smiling eyes",
+   ["char"]={2701},
 },
 -- Table: {922}
 {
-   ["subText"]="dark skin tone, hike, walk, woman, :woman_walking_tone5:",
-   ["order"]=921,
-   ["char"]={3588},
-   ["text"]="Woman walking: dark skin tone",
-   ["image_path"]="1f6b6-1f3ff-2640",
+   ["subText"]=":laughing:, face, laugh, mouth, open, satisfied, smile",
+   ["order"]=1151,
+   ["image_path"]="1f606",
+   ["text"]="Grinning squinting face",
+   ["char"]={2702},
 },
 -- Table: {923}
 {
-   ["subText"]="hike, walk, walking, :person_walking:",
-   ["order"]=922,
-   ["char"]={3589},
-   ["text"]="Person walking",
-   ["image_path"]="1f6b6",
+   ["subText"]=":sweat_smile:, cold, face, open, smile, sweat",
+   ["order"]=1152,
+   ["image_path"]="1f605",
+   ["text"]="Grinning face with sweat",
+   ["char"]={2703},
 },
 -- Table: {924}
 {
-   ["subText"]="hike, light skin tone, walk, walking, :person_walking_tone1:",
-   ["order"]=923,
-   ["char"]={3590},
-   ["text"]="Person walking: light skin tone",
-   ["image_path"]="1f6b6-1f3fb",
+   ["subText"]=":joy:, face, laugh, tear",
+   ["order"]=1153,
+   ["image_path"]="1f602",
+   ["text"]="Face with tears of joy",
+   ["char"]={2704},
 },
 -- Table: {925}
 {
-   ["subText"]="hike, medium-light skin tone, walk, walking, :person_walking_tone2:",
-   ["order"]=924,
-   ["char"]={3591},
-   ["text"]="Person walking: medium-light skin tone",
-   ["image_path"]="1f6b6-1f3fc",
+   ["subText"]=":rofl:, face, floor, laugh, rolling",
+   ["order"]=1154,
+   ["image_path"]="1f923",
+   ["text"]="Rolling on the floor laughing",
+   ["char"]={2705},
 },
 -- Table: {926}
 {
-   ["subText"]="hike, medium skin tone, walk, walking, :person_walking_tone3:",
-   ["order"]=925,
-   ["char"]={3592},
-   ["text"]="Person walking: medium skin tone",
-   ["image_path"]="1f6b6-1f3fd",
+   ["subText"]=":relaxed:, face, outlined, smile",
+   ["order"]=1155,
+   ["image_path"]="263a",
+   ["text"]="Smiling face",
+   ["char"]={2706},
 },
 -- Table: {927}
 {
-   ["subText"]="hike, medium-dark skin tone, walk, walking, :person_walking_tone4:",
-   ["order"]=926,
-   ["char"]={3593},
-   ["text"]="Person walking: medium-dark skin tone",
-   ["image_path"]="1f6b6-1f3fe",
+   ["subText"]=":blush:, eye, face, smile",
+   ["order"]=1156,
+   ["image_path"]="1f60a",
+   ["text"]="Smiling face with smiling eyes",
+   ["char"]={2707},
 },
 -- Table: {928}
 {
-   ["subText"]="dark skin tone, hike, walk, walking, :person_walking_tone5:",
-   ["order"]=927,
-   ["char"]={3594},
-   ["text"]="Person walking: dark skin tone",
-   ["image_path"]="1f6b6-1f3ff",
+   ["subText"]=":innocent:, angel, face, fairy tale, fantasy, halo, smile",
+   ["order"]=1157,
+   ["image_path"]="1f607",
+   ["text"]="Smiling face with halo",
+   ["char"]={2708},
 },
 -- Table: {929}
 {
-   ["subText"]="hike, man, walk, :man_walking:",
-   ["order"]=928,
-   ["char"]={3595},
-   ["text"]="Man walking",
-   ["image_path"]="1f6b6-2642",
+   ["subText"]=":slight_smile:, face, smile",
+   ["order"]=1158,
+   ["image_path"]="1f642",
+   ["text"]="Slightly smiling face",
+   ["char"]={2709},
 },
 -- Table: {930}
 {
-   ["subText"]="dark skin tone, hike, man, walk, :man_walking_tone5:",
-   ["order"]=929,
-   ["char"]={3596},
-   ["text"]="Man walking: dark skin tone",
-   ["image_path"]="1f6b6-1f3ff-2642",
+   ["subText"]=":upside_down:, face, upside-down",
+   ["order"]=1159,
+   ["image_path"]="1f643",
+   ["text"]="Upside-down face",
+   ["char"]={2710},
 },
 -- Table: {931}
 {
-   ["subText"]="hike, man, medium-dark skin tone, walk, :man_walking_tone4:",
-   ["order"]=930,
-   ["char"]={3597},
-   ["text"]="Man walking: medium-dark skin tone",
-   ["image_path"]="1f6b6-1f3fe-2642",
+   ["subText"]=":wink:, face",
+   ["order"]=1160,
+   ["image_path"]="1f609",
+   ["text"]="Winking face",
+   ["char"]={2711},
 },
 -- Table: {932}
 {
-   ["subText"]="hike, man, medium skin tone, walk, :man_walking_tone3:",
-   ["order"]=931,
-   ["char"]={3598},
-   ["text"]="Man walking: medium skin tone",
-   ["image_path"]="1f6b6-1f3fd-2642",
+   ["subText"]=":relieved:, face",
+   ["order"]=1161,
+   ["image_path"]="1f60c",
+   ["text"]="Relieved face",
+   ["char"]={2712},
 },
 -- Table: {933}
 {
-   ["subText"]="hike, man, medium-light skin tone, walk, :man_walking_tone2:",
-   ["order"]=932,
-   ["char"]={3599},
-   ["text"]="Man walking: medium-light skin tone",
-   ["image_path"]="1f6b6-1f3fc-2642",
+   ["subText"]=":heart_eyes:, eye, face, love, smile",
+   ["order"]=1162,
+   ["image_path"]="1f60d",
+   ["text"]="Smiling face with heart-eyes",
+   ["char"]={2713},
 },
 -- Table: {934}
 {
-   ["subText"]="hike, light skin tone, man, walk, :man_walking_tone1:",
-   ["order"]=933,
-   ["char"]={3600},
-   ["text"]="Man walking: light skin tone",
-   ["image_path"]="1f6b6-1f3fb-2642",
+   ["subText"]=":smiling_face_with_3_hearts:",
+   ["order"]=1163,
+   ["image_path"]="1f970",
+   ["text"]="Smiling face with hearts",
+   ["char"]={2714},
 },
 -- Table: {935}
 {
-   ["subText"]="marathon, racing, running, woman, :woman_running:",
-   ["order"]=934,
-   ["char"]={3601},
-   ["text"]="Woman running",
-   ["image_path"]="1f3c3-2640",
+   ["subText"]=":kissing_heart:, face, kiss",
+   ["order"]=1164,
+   ["image_path"]="1f618",
+   ["text"]="Face blowing a kiss",
+   ["char"]={2715},
 },
 -- Table: {936}
 {
-   ["subText"]="light skin tone, marathon, racing, running, woman, :woman_running_tone1:",
-   ["order"]=935,
-   ["char"]={3602},
-   ["text"]="Woman running: light skin tone",
-   ["image_path"]="1f3c3-1f3fb-2640",
+   ["subText"]=":kissing:, face, kiss",
+   ["order"]=1165,
+   ["image_path"]="1f617",
+   ["text"]="Kissing face",
+   ["char"]={2716},
 },
 -- Table: {937}
 {
-   ["subText"]="marathon, medium-light skin tone, racing, running, woman, :woman_running_tone2:",
-   ["order"]=936,
-   ["char"]={3603},
-   ["text"]="Woman running: medium-light skin tone",
-   ["image_path"]="1f3c3-1f3fc-2640",
+   ["subText"]=":kissing_smiling_eyes:, eye, face, kiss, smile",
+   ["order"]=1166,
+   ["image_path"]="1f619",
+   ["text"]="Kissing face with smiling eyes",
+   ["char"]={2717},
 },
 -- Table: {938}
 {
-   ["subText"]="marathon, medium skin tone, racing, running, woman, :woman_running_tone3:",
-   ["order"]=937,
-   ["char"]={3604},
-   ["text"]="Woman running: medium skin tone",
-   ["image_path"]="1f3c3-1f3fd-2640",
+   ["subText"]=":kissing_closed_eyes:, closed, eye, face, kiss",
+   ["order"]=1167,
+   ["image_path"]="1f61a",
+   ["text"]="Kissing face with closed eyes",
+   ["char"]={2718},
 },
 -- Table: {939}
 {
-   ["subText"]="marathon, medium-dark skin tone, racing, running, woman, :woman_running_tone4:",
-   ["order"]=938,
-   ["char"]={3605},
-   ["text"]="Woman running: medium-dark skin tone",
-   ["image_path"]="1f3c3-1f3fe-2640",
+   ["subText"]=":yum:, delicious, face, savouring, smile, um",
+   ["order"]=1168,
+   ["image_path"]="1f60b",
+   ["text"]="Face savoring food",
+   ["char"]={2719},
 },
 -- Table: {940}
 {
-   ["subText"]="dark skin tone, marathon, racing, running, woman, :woman_running_tone5:",
-   ["order"]=939,
-   ["char"]={3606},
-   ["text"]="Woman running: dark skin tone",
-   ["image_path"]="1f3c3-1f3ff-2640",
+   ["subText"]=":stuck_out_tongue:, face, tongue",
+   ["order"]=1169,
+   ["image_path"]="1f61b",
+   ["text"]="Face with tongue",
+   ["char"]={2720},
 },
 -- Table: {941}
 {
-   ["subText"]="marathon, running, :person_running:",
-   ["order"]=940,
-   ["char"]={3607},
-   ["text"]="Person running",
-   ["image_path"]="1f3c3",
+   ["subText"]=":stuck_out_tongue_closed_eyes:, eye, face, horrible, taste, tongue",
+   ["order"]=1170,
+   ["image_path"]="1f61d",
+   ["text"]="Squinting face with tongue",
+   ["char"]={2721},
 },
 -- Table: {942}
 {
-   ["subText"]="light skin tone, marathon, running, :person_running_tone1:",
-   ["order"]=941,
-   ["char"]={3608},
-   ["text"]="Person running: light skin tone",
-   ["image_path"]="1f3c3-1f3fb",
+   ["subText"]=":stuck_out_tongue_winking_eye:, eye, face, joke, tongue, wink",
+   ["order"]=1171,
+   ["image_path"]="1f61c",
+   ["text"]="Winking face with tongue",
+   ["char"]={2722},
 },
 -- Table: {943}
 {
-   ["subText"]="marathon, medium-light skin tone, running, :person_running_tone2:",
-   ["order"]=942,
-   ["char"]={3609},
-   ["text"]="Person running: medium-light skin tone",
-   ["image_path"]="1f3c3-1f3fc",
+   ["subText"]=":zany_face:, eye, large, small",
+   ["order"]=1172,
+   ["image_path"]="1f92a",
+   ["text"]="Zany face",
+   ["char"]={2723},
 },
 -- Table: {944}
 {
-   ["subText"]="marathon, medium skin tone, running, :person_running_tone3:",
-   ["order"]=943,
-   ["char"]={3610},
-   ["text"]="Person running: medium skin tone",
-   ["image_path"]="1f3c3-1f3fd",
+   ["subText"]=":face_with_raised_eyebrow:",
+   ["order"]=1173,
+   ["image_path"]="1f928",
+   ["text"]="Face with raised eyebrow",
+   ["char"]={2724},
 },
 -- Table: {945}
 {
-   ["subText"]="marathon, medium-dark skin tone, running, :person_running_tone4:",
-   ["order"]=944,
-   ["char"]={3611},
-   ["text"]="Person running: medium-dark skin tone",
-   ["image_path"]="1f3c3-1f3fe",
+   ["subText"]=":face_with_monocle:",
+   ["order"]=1174,
+   ["image_path"]="1f9d0",
+   ["text"]="Face with monocle",
+   ["char"]={2725},
 },
 -- Table: {946}
 {
-   ["subText"]="dark skin tone, marathon, running, :person_running_tone5:",
-   ["order"]=945,
-   ["char"]={3612},
-   ["text"]="Person running: dark skin tone",
-   ["image_path"]="1f3c3-1f3ff",
+   ["subText"]=":nerd:, face, geek",
+   ["order"]=1175,
+   ["image_path"]="1f913",
+   ["text"]="Nerd face",
+   ["char"]={2726},
 },
 -- Table: {947}
 {
-   ["subText"]="man, marathon, racing, running, :man_running:",
-   ["order"]=946,
-   ["char"]={3613},
-   ["text"]="Man running",
-   ["image_path"]="1f3c3-2642",
+   ["subText"]=":sunglasses:, bright, cool, eye, eyewear, face, glasses, smile, sun",
+   ["order"]=1176,
+   ["image_path"]="1f60e",
+   ["text"]="Smiling face with sunglasses",
+   ["char"]={2727},
 },
 -- Table: {948}
 {
-   ["subText"]="dark skin tone, man, marathon, racing, running, :man_running_tone5:",
-   ["order"]=947,
-   ["char"]={3614},
-   ["text"]="Man running: dark skin tone",
-   ["image_path"]="1f3c3-1f3ff-2642",
+   ["subText"]=":star_struck:",
+   ["order"]=1177,
+   ["image_path"]="1f929",
+   ["text"]="Star-struck",
+   ["char"]={2728},
 },
 -- Table: {949}
 {
-   ["subText"]="man, marathon, medium-dark skin tone, racing, running, :man_running_tone4:",
-   ["order"]=948,
-   ["char"]={3615},
-   ["text"]="Man running: medium-dark skin tone",
-   ["image_path"]="1f3c3-1f3fe-2642",
+   ["subText"]=":partying_face:",
+   ["order"]=1178,
+   ["image_path"]="1f973",
+   ["text"]="Partying face",
+   ["char"]={2729},
 },
 -- Table: {950}
 {
-   ["subText"]="man, marathon, medium skin tone, racing, running, :man_running_tone3:",
-   ["order"]=949,
-   ["char"]={3616},
-   ["text"]="Man running: medium skin tone",
-   ["image_path"]="1f3c3-1f3fd-2642",
+   ["subText"]=":smirk:, face",
+   ["order"]=1179,
+   ["image_path"]="1f60f",
+   ["text"]="Smirking face",
+   ["char"]={2730},
 },
 -- Table: {951}
 {
-   ["subText"]="man, marathon, medium-light skin tone, racing, running, :man_running_tone2:",
-   ["order"]=950,
-   ["char"]={3617},
-   ["text"]="Man running: medium-light skin tone",
-   ["image_path"]="1f3c3-1f3fc-2642",
+   ["subText"]=":unamused:, face, unhappy",
+   ["order"]=1180,
+   ["image_path"]="1f612",
+   ["text"]="Unamused face",
+   ["char"]={2731},
 },
 -- Table: {952}
 {
-   ["subText"]="light skin tone, man, marathon, racing, running, :man_running_tone1:",
-   ["order"]=951,
-   ["char"]={3618},
-   ["text"]="Man running: light skin tone",
-   ["image_path"]="1f3c3-1f3fb-2642",
+   ["subText"]=":disappointed:, face",
+   ["order"]=1181,
+   ["image_path"]="1f61e",
+   ["text"]="Disappointed face",
+   ["char"]={2732},
 },
 -- Table: {953}
 {
-   ["subText"]="couple, hand, hold, man, woman, :couple:",
-   ["order"]=952,
-   ["char"]={3619},
-   ["text"]="Man and woman holding hands",
-   ["image_path"]="1f46b",
+   ["subText"]=":pensive:, dejected, face",
+   ["order"]=1182,
+   ["image_path"]="1f614",
+   ["text"]="Pensive face",
+   ["char"]={2733},
 },
 -- Table: {954}
 {
-   ["subText"]="couple, hand, hold, woman, :two_women_holding_hands:",
-   ["order"]=953,
-   ["char"]={3620},
-   ["text"]="Two women holding hands",
-   ["image_path"]="1f46d",
+   ["subText"]=":worried:, face",
+   ["order"]=1183,
+   ["image_path"]="1f61f",
+   ["text"]="Worried face",
+   ["char"]={2734},
 },
 -- Table: {955}
 {
-   ["subText"]="Gemini, couple, hand, hold, man, twins, zodiac, :two_men_holding_hands:",
-   ["order"]=954,
-   ["char"]={3621},
-   ["text"]="Two men holding hands",
-   ["image_path"]="1f46c",
+   ["subText"]=":confused:, face",
+   ["order"]=1184,
+   ["image_path"]="1f615",
+   ["text"]="Confused face",
+   ["char"]={2735},
 },
 -- Table: {956}
 {
-   ["subText"]="couple, love, :couple_with_heart:",
-   ["order"]=955,
-   ["char"]={3622},
-   ["text"]="Couple with heart",
-   ["image_path"]="1f491",
+   ["subText"]=":slight_frown:, face, frown",
+   ["order"]=1185,
+   ["image_path"]="1f641",
+   ["text"]="Slightly frowning face",
+   ["char"]={2736},
 },
 -- Table: {957}
 {
-   ["subText"]="couple, love, woman, :couple_ww:",
-   ["order"]=956,
-   ["char"]={3623},
-   ["text"]="Couple with heart: woman, woman",
-   ["image_path"]="1f469-2764-1f469",
+   ["subText"]=":frowning2:, face, frown",
+   ["order"]=1186,
+   ["image_path"]="2639",
+   ["text"]="Frowning face",
+   ["char"]={2737},
 },
 -- Table: {958}
 {
-   ["subText"]="couple, love, man, :couple_mm:",
-   ["order"]=957,
-   ["char"]={3624},
-   ["text"]="Couple with heart: man, man",
-   ["image_path"]="1f468-2764-1f468",
+   ["subText"]=":persevere:, face",
+   ["order"]=1187,
+   ["image_path"]="1f623",
+   ["text"]="Persevering face",
+   ["char"]={2738},
 },
 -- Table: {959}
 {
-   ["subText"]="couple, :couplekiss:",
-   ["order"]=958,
-   ["char"]={3625},
-   ["text"]="Kiss",
-   ["image_path"]="1f48f",
+   ["subText"]=":confounded:, face",
+   ["order"]=1188,
+   ["image_path"]="1f616",
+   ["text"]="Confounded face",
+   ["char"]={2739},
 },
 -- Table: {960}
 {
-   ["subText"]="couple, woman, :kiss_ww:",
-   ["order"]=959,
-   ["char"]={3626},
-   ["text"]="Kiss: woman, woman",
-   ["image_path"]="1f469-2764-1f48b-1f469",
+   ["subText"]=":tired_face:, face, tired",
+   ["order"]=1189,
+   ["image_path"]="1f62b",
+   ["text"]="Tired face",
+   ["char"]={2740},
 },
 -- Table: {961}
 {
-   ["subText"]="couple, man, :kiss_mm:",
-   ["order"]=960,
-   ["char"]={3627},
-   ["text"]="Kiss: man, man",
-   ["image_path"]="1f468-2764-1f48b-1f468",
+   ["subText"]=":weary:, face, tired",
+   ["order"]=1190,
+   ["image_path"]="1f629",
+   ["text"]="Weary face",
+   ["char"]={2741},
 },
 -- Table: {962}
 {
-   ["subText"]="family, :family:",
-   ["order"]=961,
-   ["char"]={3628},
-   ["text"]="Family",
-   ["image_path"]="1f46a",
+   ["subText"]=":pleading_face:",
+   ["order"]=1191,
+   ["image_path"]="1f97a",
+   ["text"]="Pleading face",
+   ["char"]={2742},
 },
 -- Table: {963}
 {
-   ["subText"]="family, girl, man, woman, :family_mwg:",
-   ["order"]=962,
-   ["char"]={3629},
-   ["text"]="Family: man, woman, girl",
-   ["image_path"]="1f468-1f469-1f467",
+   ["subText"]=":cry:, face, sad, tear",
+   ["order"]=1192,
+   ["image_path"]="1f622",
+   ["text"]="Crying face",
+   ["char"]={2743},
 },
 -- Table: {964}
 {
-   ["subText"]="boy, family, girl, man, woman, :family_mwgb:",
-   ["order"]=963,
-   ["char"]={3630},
-   ["text"]="Family: man, woman, girl, boy",
-   ["image_path"]="1f468-1f469-1f467-1f466",
+   ["subText"]=":sob:, cry, face, sad, tear",
+   ["order"]=1193,
+   ["image_path"]="1f62d",
+   ["text"]="Loudly crying face",
+   ["char"]={2744},
 },
 -- Table: {965}
 {
-   ["subText"]="boy, family, man, woman, :family_mwbb:",
-   ["order"]=964,
-   ["char"]={3631},
-   ["text"]="Family: man, woman, boy, boy",
-   ["image_path"]="1f468-1f469-1f466-1f466",
+   ["subText"]=":triumph:, face, won",
+   ["order"]=1194,
+   ["image_path"]="1f624",
+   ["text"]="Face with steam from nose",
+   ["char"]={2745},
 },
 -- Table: {966}
 {
-   ["subText"]="family, girl, man, woman, :family_mwgg:",
-   ["order"]=965,
-   ["char"]={3632},
-   ["text"]="Family: man, woman, girl, girl",
-   ["image_path"]="1f468-1f469-1f467-1f467",
+   ["subText"]=":angry:, face, mad",
+   ["order"]=1195,
+   ["image_path"]="1f620",
+   ["text"]="Angry face",
+   ["char"]={2746},
 },
 -- Table: {967}
 {
-   ["subText"]="boy, family, woman, :family_wwb:",
-   ["order"]=966,
-   ["char"]={3633},
-   ["text"]="Family: woman, woman, boy",
-   ["image_path"]="1f469-1f469-1f466",
+   ["subText"]=":rage:, angry, face, mad, pouting, red",
+   ["order"]=1196,
+   ["image_path"]="1f621",
+   ["text"]="Pouting face",
+   ["char"]={2747},
 },
 -- Table: {968}
 {
-   ["subText"]="family, girl, woman, :family_wwg:",
-   ["order"]=967,
-   ["char"]={3634},
-   ["text"]="Family: woman, woman, girl",
-   ["image_path"]="1f469-1f469-1f467",
+   ["subText"]=":face_with_symbols_over_mouth:",
+   ["order"]=1197,
+   ["image_path"]="1f92c",
+   ["text"]="Face with symbols on mouth",
+   ["char"]={2748},
 },
 -- Table: {969}
 {
-   ["subText"]="boy, family, girl, woman, :family_wwgb:",
-   ["order"]=968,
-   ["char"]={3635},
-   ["text"]="Family: woman, woman, girl, boy",
-   ["image_path"]="1f469-1f469-1f467-1f466",
+   ["subText"]=":exploding_head:, shocked",
+   ["order"]=1198,
+   ["image_path"]="1f92f",
+   ["text"]="Exploding head",
+   ["char"]={2749},
 },
 -- Table: {970}
 {
-   ["subText"]="boy, family, woman, :family_wwbb:",
-   ["order"]=969,
-   ["char"]={3636},
-   ["text"]="Family: woman, woman, boy, boy",
-   ["image_path"]="1f469-1f469-1f466-1f466",
+   ["subText"]=":flushed:, dazed, face",
+   ["order"]=1199,
+   ["image_path"]="1f633",
+   ["text"]="Flushed face",
+   ["char"]={2750},
 },
 -- Table: {971}
 {
-   ["subText"]="family, girl, woman, :family_wwgg:",
-   ["order"]=970,
-   ["char"]={3637},
-   ["text"]="Family: woman, woman, girl, girl",
-   ["image_path"]="1f469-1f469-1f467-1f467",
+   ["subText"]=":hot_face:",
+   ["order"]=1200,
+   ["image_path"]="1f975",
+   ["text"]="Hot face",
+   ["char"]={2751},
 },
 -- Table: {972}
 {
-   ["subText"]="boy, family, man, :family_mmb:",
-   ["order"]=971,
-   ["char"]={3638},
-   ["text"]="Family: man, man, boy",
-   ["image_path"]="1f468-1f468-1f466",
+   ["subText"]=":cold_face:",
+   ["order"]=1201,
+   ["image_path"]="1f976",
+   ["text"]="Cold face",
+   ["char"]={2752},
 },
 -- Table: {973}
 {
-   ["subText"]="family, girl, man, :family_mmg:",
-   ["order"]=972,
-   ["char"]={3639},
-   ["text"]="Family: man, man, girl",
-   ["image_path"]="1f468-1f468-1f467",
+   ["subText"]=":scream:, face, fear, fearful, munch, scared",
+   ["order"]=1202,
+   ["image_path"]="1f631",
+   ["text"]="Face screaming in fear",
+   ["char"]={2753},
 },
 -- Table: {974}
 {
-   ["subText"]="boy, family, girl, man, :family_mmgb:",
-   ["order"]=973,
-   ["char"]={3640},
-   ["text"]="Family: man, man, girl, boy",
-   ["image_path"]="1f468-1f468-1f467-1f466",
+   ["subText"]=":fearful:, face, fear, scared",
+   ["order"]=1203,
+   ["image_path"]="1f628",
+   ["text"]="Fearful face",
+   ["char"]={2754},
 },
 -- Table: {975}
 {
-   ["subText"]="boy, family, man, :family_mmbb:",
-   ["order"]=974,
-   ["char"]={3641},
-   ["text"]="Family: man, man, boy, boy",
-   ["image_path"]="1f468-1f468-1f466-1f466",
+   ["subText"]=":cold_sweat:, blue, cold, face, mouth, open, rushed, sweat",
+   ["order"]=1204,
+   ["image_path"]="1f630",
+   ["text"]="Anxious face with sweat",
+   ["char"]={2755},
 },
 -- Table: {976}
 {
-   ["subText"]="family, girl, man, :family_mmgg:",
-   ["order"]=975,
-   ["char"]={3642},
-   ["text"]="Family: man, man, girl, girl",
-   ["image_path"]="1f468-1f468-1f467-1f467",
+   ["subText"]=":disappointed_relieved:, disappointed, face, relieved, whew",
+   ["order"]=1205,
+   ["image_path"]="1f625",
+   ["text"]="Sad but relieved face",
+   ["char"]={2756},
 },
 -- Table: {977}
 {
-   ["subText"]="boy, family, woman, :family_woman_boy:",
-   ["order"]=976,
-   ["char"]={3643},
-   ["text"]="Family: woman, boy",
-   ["image_path"]="1f469-1f466",
+   ["subText"]=":sweat:, cold, face",
+   ["order"]=1206,
+   ["image_path"]="1f613",
+   ["text"]="Downcast face with sweat",
+   ["char"]={2757},
 },
 -- Table: {978}
 {
-   ["subText"]="family, girl, woman, :family_woman_girl:",
-   ["order"]=977,
-   ["char"]={3644},
-   ["text"]="Family: woman, girl",
-   ["image_path"]="1f469-1f467",
+   ["subText"]=":hugging:, face, hug",
+   ["order"]=1207,
+   ["image_path"]="1f917",
+   ["text"]="Hugging face",
+   ["char"]={2758},
 },
 -- Table: {979}
 {
-   ["subText"]="boy, family, girl, woman, :family_woman_girl_boy:",
-   ["order"]=978,
-   ["char"]={3645},
-   ["text"]="Family: woman, girl, boy",
-   ["image_path"]="1f469-1f467-1f466",
+   ["subText"]=":thinking:, face",
+   ["order"]=1208,
+   ["image_path"]="1f914",
+   ["text"]="Thinking face",
+   ["char"]={2759},
 },
 -- Table: {980}
 {
-   ["subText"]="boy, family, woman, :family_woman_boy_boy:",
-   ["order"]=979,
-   ["char"]={3646},
-   ["text"]="Family: woman, boy, boy",
-   ["image_path"]="1f469-1f466-1f466",
+   ["subText"]=":face_with_hand_over_mouth:",
+   ["order"]=1209,
+   ["image_path"]="1f92d",
+   ["text"]="Face with hand over mouth",
+   ["char"]={2760},
 },
 -- Table: {981}
 {
-   ["subText"]="family, girl, woman, :family_woman_girl_girl:",
-   ["order"]=980,
-   ["char"]={3647},
-   ["text"]="Family: woman, girl, girl",
-   ["image_path"]="1f469-1f467-1f467",
+   ["subText"]=":yawning_face:",
+   ["order"]=1210,
+   ["image_path"]="1f971",
+   ["text"]="Yawning face",
+   ["char"]={2761},
 },
 -- Table: {982}
 {
-   ["subText"]="boy, family, man, :family_man_boy:",
-   ["order"]=981,
-   ["char"]={3648},
-   ["text"]="Family: man, boy",
-   ["image_path"]="1f468-1f466",
+   ["subText"]=":shushing_face:, quiet, shush",
+   ["order"]=1211,
+   ["image_path"]="1f92b",
+   ["text"]="Shushing face",
+   ["char"]={2762},
 },
 -- Table: {983}
 {
-   ["subText"]="family, girl, man, :family_man_girl:",
-   ["order"]=982,
-   ["char"]={3649},
-   ["text"]="Family: man, girl",
-   ["image_path"]="1f468-1f467",
+   ["subText"]=":lying_face:, face, lie, pinocchio",
+   ["order"]=1212,
+   ["image_path"]="1f925",
+   ["text"]="Lying face",
+   ["char"]={2763},
 },
 -- Table: {984}
 {
-   ["subText"]="boy, family, girl, man, :family_man_girl_boy:",
-   ["order"]=983,
-   ["char"]={3650},
-   ["text"]="Family: man, girl, boy",
-   ["image_path"]="1f468-1f467-1f466",
+   ["subText"]=":no_mouth:, face, mouth, quiet, silent",
+   ["order"]=1213,
+   ["image_path"]="1f636",
+   ["text"]="Face without mouth",
+   ["char"]={2764},
 },
 -- Table: {985}
 {
-   ["subText"]="boy, family, man, :family_man_boy_boy:",
-   ["order"]=984,
-   ["char"]={3651},
-   ["text"]="Family: man, boy, boy",
-   ["image_path"]="1f468-1f466-1f466",
+   ["subText"]=":neutral_face:, deadpan, face, neutral",
+   ["order"]=1214,
+   ["image_path"]="1f610",
+   ["text"]="Neutral face",
+   ["char"]={2765},
 },
 -- Table: {986}
 {
-   ["subText"]="family, girl, man, :family_man_girl_girl:",
-   ["order"]=985,
-   ["char"]={3652},
-   ["text"]="Family: man, girl, girl",
-   ["image_path"]="1f468-1f467-1f467",
+   ["subText"]=":expressionless:, face, inexpressive, unexpressive",
+   ["order"]=1215,
+   ["image_path"]="1f611",
+   ["text"]="Expressionless face",
+   ["char"]={2766},
 },
 -- Table: {987}
 {
-   ["subText"]="clothing, woman, :womans_clothes:",
-   ["order"]=986,
-   ["char"]={3653},
-   ["text"]="Woman’s clothes",
-   ["image_path"]="1f45a",
+   ["subText"]=":grimacing:, face, grimace",
+   ["order"]=1216,
+   ["image_path"]="1f62c",
+   ["text"]="Grimacing face",
+   ["char"]={2767},
 },
 -- Table: {988}
 {
-   ["subText"]="clothing, shirt, tshirt, :shirt:",
-   ["order"]=987,
-   ["char"]={3654},
-   ["text"]="T-shirt",
-   ["image_path"]="1f455",
+   ["subText"]=":rolling_eyes:, eyes, face, rolling",
+   ["order"]=1217,
+   ["image_path"]="1f644",
+   ["text"]="Face with rolling eyes",
+   ["char"]={2768},
 },
 -- Table: {989}
 {
-   ["subText"]="clothing, pants, trousers, :jeans:",
-   ["order"]=988,
-   ["char"]={3655},
-   ["text"]="Jeans",
-   ["image_path"]="1f456",
+   ["subText"]=":hushed:, face, stunned, surprised",
+   ["order"]=1218,
+   ["image_path"]="1f62f",
+   ["text"]="Hushed face",
+   ["char"]={2769},
 },
 -- Table: {990}
 {
-   ["subText"]="clothing, :necktie:",
-   ["order"]=989,
-   ["char"]={3656},
-   ["text"]="Necktie",
-   ["image_path"]="1f454",
+   ["subText"]=":frowning:, face, frown, mouth, open",
+   ["order"]=1219,
+   ["image_path"]="1f626",
+   ["text"]="Frowning face with open mouth",
+   ["char"]={2770},
 },
 -- Table: {991}
 {
-   ["subText"]="clothing, :dress:",
-   ["order"]=990,
-   ["char"]={3657},
-   ["text"]="Dress",
-   ["image_path"]="1f457",
+   ["subText"]=":anguished:, face",
+   ["order"]=1220,
+   ["image_path"]="1f627",
+   ["text"]="Anguished face",
+   ["char"]={2771},
 },
 -- Table: {992}
 {
-   ["subText"]="clothing, swim, :bikini:",
-   ["order"]=991,
-   ["char"]={3658},
-   ["text"]="Bikini",
-   ["image_path"]="1f459",
+   ["subText"]=":open_mouth:, face, mouth, open, sympathy",
+   ["order"]=1221,
+   ["image_path"]="1f62e",
+   ["text"]="Face with open mouth",
+   ["char"]={2772},
 },
 -- Table: {993}
 {
-   ["subText"]="clothing, :kimono:",
-   ["order"]=992,
-   ["char"]={3659},
-   ["text"]="Kimono",
-   ["image_path"]="1f458",
+   ["subText"]=":astonished:, face, shocked, totally",
+   ["order"]=1222,
+   ["image_path"]="1f632",
+   ["text"]="Astonished face",
+   ["char"]={2773},
 },
 -- Table: {994}
 {
-   ["subText"]="clothing, heel, shoe, woman, :high_heel:",
-   ["order"]=993,
-   ["char"]={3660},
-   ["text"]="High-heeled shoe",
-   ["image_path"]="1f460",
+   ["subText"]=":sleeping:, face, sleep, zzz",
+   ["order"]=1223,
+   ["image_path"]="1f634",
+   ["text"]="Sleeping face",
+   ["char"]={2774},
 },
 -- Table: {995}
 {
-   ["subText"]="clothing, sandal, shoe, woman, :sandal:",
-   ["order"]=994,
-   ["char"]={3661},
-   ["text"]="Woman’s sandal",
-   ["image_path"]="1f461",
+   ["subText"]=":drooling_face:, drooling, face",
+   ["order"]=1224,
+   ["image_path"]="1f924",
+   ["text"]="Drooling face",
+   ["char"]={2775},
 },
 -- Table: {996}
 {
-   ["subText"]="boot, clothing, shoe, woman, :boot:",
-   ["order"]=995,
-   ["char"]={3662},
-   ["text"]="Woman’s boot",
-   ["image_path"]="1f462",
+   ["subText"]=":sleepy:, face, sleep",
+   ["order"]=1225,
+   ["image_path"]="1f62a",
+   ["text"]="Sleepy face",
+   ["char"]={2776},
 },
 -- Table: {997}
 {
-   ["subText"]="clothing, man, shoe, :mans_shoe:",
-   ["order"]=996,
-   ["char"]={3663},
-   ["text"]="Man’s shoe",
-   ["image_path"]="1f45e",
+   ["subText"]=":dizzy_face:, dizzy, face",
+   ["order"]=1226,
+   ["image_path"]="1f635",
+   ["text"]="Dizzy face",
+   ["char"]={2777},
 },
 -- Table: {998}
 {
-   ["subText"]="athletic, clothing, shoe, sneaker, :athletic_shoe:",
-   ["order"]=997,
-   ["char"]={3664},
-   ["text"]="Running shoe",
-   ["image_path"]="1f45f",
+   ["subText"]=":zipper_mouth:, face, mouth, zipper",
+   ["order"]=1227,
+   ["image_path"]="1f910",
+   ["text"]="Zipper-mouth face",
+   ["char"]={2778},
 },
 -- Table: {999}
 {
-   ["subText"]="clothing, hat, woman, :womans_hat:",
-   ["order"]=998,
-   ["char"]={3665},
-   ["text"]="Woman’s hat",
-   ["image_path"]="1f452",
+   ["subText"]=":woozy_face:",
+   ["order"]=1228,
+   ["image_path"]="1f974",
+   ["text"]="Woozy face",
+   ["char"]={2779},
 },
 -- Table: {1000}
 {
-   ["subText"]="clothing, hat, top, tophat, :tophat:",
-   ["order"]=999,
-   ["char"]={3666},
-   ["text"]="Top hat",
-   ["image_path"]="1f3a9",
+   ["subText"]=":nauseated_face:, face, nauseated, vomit",
+   ["order"]=1229,
+   ["image_path"]="1f922",
+   ["text"]="Nauseated face",
+   ["char"]={2780},
 },
 -- Table: {1001}
 {
-   ["subText"]="cap, celebration, clothing, graduation, hat, :mortar_board:",
-   ["order"]=1000,
-   ["char"]={3667},
-   ["text"]="Graduation cap",
-   ["image_path"]="1f393",
+   ["subText"]=":face_vomiting:, sick, vomit",
+   ["order"]=1230,
+   ["image_path"]="1f92e",
+   ["text"]="Face vomiting",
+   ["char"]={2781},
 },
 -- Table: {1002}
 {
-   ["subText"]="clothing, king, queen, :crown:",
-   ["order"]=1001,
-   ["char"]={3668},
-   ["text"]="Crown",
-   ["image_path"]="1f451",
+   ["subText"]=":sneezing_face:, face, gesundheit, sneeze",
+   ["order"]=1231,
+   ["image_path"]="1f927",
+   ["text"]="Sneezing face",
+   ["char"]={2782},
 },
 -- Table: {1003}
 {
-   ["subText"]="aid, cross, face, hat, helmet, :helmet_with_cross:",
-   ["order"]=1002,
-   ["char"]={3669},
-   ["text"]="Rescue worker’s helmet",
-   ["image_path"]="26d1",
+   ["subText"]=":mask:, cold, doctor, face, medicine, sick",
+   ["order"]=1232,
+   ["image_path"]="1f637",
+   ["text"]="Face with medical mask",
+   ["char"]={2783},
 },
 -- Table: {1004}
 {
-   ["subText"]="bag, satchel, school, :school_satchel:",
-   ["order"]=1003,
-   ["char"]={3670},
-   ["text"]="School backpack",
-   ["image_path"]="1f392",
+   ["subText"]=":thermometer_face:, face, ill, sick, thermometer",
+   ["order"]=1233,
+   ["image_path"]="1f912",
+   ["text"]="Face with thermometer",
+   ["char"]={2784},
 },
 -- Table: {1005}
 {
-   ["subText"]="bag, clothing, pouch, :pouch:",
-   ["order"]=1004,
-   ["char"]={3671},
-   ["text"]="Clutch bag",
-   ["image_path"]="1f45d",
+   ["subText"]=":head_bandage:, bandage, face, hurt, injury",
+   ["order"]=1234,
+   ["image_path"]="1f915",
+   ["text"]="Face with head-bandage",
+   ["char"]={2785},
 },
 -- Table: {1006}
 {
-   ["subText"]="clothing, coin, :purse:",
-   ["order"]=1005,
-   ["char"]={3672},
-   ["text"]="Purse",
-   ["image_path"]="1f45b",
+   ["subText"]=":money_mouth:, face, money, mouth",
+   ["order"]=1235,
+   ["image_path"]="1f911",
+   ["text"]="Money-mouth face",
+   ["char"]={2786},
 },
 -- Table: {1007}
 {
-   ["subText"]="bag, clothing, purse, :handbag:",
-   ["order"]=1006,
-   ["char"]={3673},
-   ["text"]="Handbag",
-   ["image_path"]="1f45c",
+   ["subText"]=":cowboy:, cowgirl, face, hat",
+   ["order"]=1236,
+   ["image_path"]="1f920",
+   ["text"]="Cowboy hat face",
+   ["char"]={2787},
 },
 -- Table: {1008}
 {
-   ["subText"]="briefcase, :briefcase:",
-   ["order"]=1007,
-   ["char"]={3674},
-   ["text"]="Briefcase",
-   ["image_path"]="1f4bc",
+   ["subText"]=":smiling_imp:, face, fairy tale, fantasy, horns, smile",
+   ["order"]=1237,
+   ["image_path"]="1f608",
+   ["text"]="Smiling face with horns",
+   ["char"]={2788},
 },
 -- Table: {1009}
 {
-   ["subText"]="clothing, eye, eyeglasses, eyewear, :eyeglasses:",
-   ["order"]=1008,
-   ["char"]={3675},
-   ["text"]="Glasses",
-   ["image_path"]="1f453",
+   ["subText"]=":imp:, demon, devil, face, fairy tale, fantasy",
+   ["order"]=1238,
+   ["image_path"]="1f47f",
+   ["text"]="Angry face with horns",
+   ["char"]={2789},
 },
 -- Table: {1010}
 {
-   ["subText"]="dark, eye, eyewear, glasses, :dark_sunglasses:",
-   ["order"]=1009,
-   ["char"]={3676},
-   ["text"]="Sunglasses",
-   ["image_path"]="1f576",
+   ["subText"]=":japanese_ogre:",
+   ["order"]=1239,
+   ["image_path"]="1f479",
+   ["text"]="Ogre",
+   ["char"]={2790},
 },
 -- Table: {1011}
 {
-   ["subText"]="clothing, rain, umbrella, :closed_umbrella:",
-   ["order"]=1010,
-   ["char"]={3677},
-   ["text"]="Closed umbrella",
-   ["image_path"]="1f302",
+   ["subText"]=":japanese_goblin:, creature, face, fairy tale, fantasy, monster",
+   ["order"]=1240,
+   ["image_path"]="1f47a",
+   ["text"]="Goblin",
+   ["char"]={2791},
 },
 -- Table: {1012}
 {
-   ["subText"]="clothing, rain, :umbrella2:",
-   ["order"]=1011,
-   ["char"]={3678},
-   ["text"]="Umbrella",
-   ["image_path"]="2602",
+   ["subText"]=":clown:, face",
+   ["order"]=1241,
+   ["image_path"]="1f921",
+   ["text"]="Clown face",
+   ["char"]={2792},
 },
 -- Table: {1013}
 {
-   ["subText"]="dog, face, pet, :dog:",
-   ["order"]=1012,
-   ["char"]={3679},
-   ["text"]="Dog face",
-   ["image_path"]="1f436",
+   ["subText"]=":poop:, comic, dung, face, monster, poo",
+   ["order"]=1242,
+   ["image_path"]="1f4a9",
+   ["text"]="Pile of poo",
+   ["char"]={2793},
 },
 -- Table: {1014}
 {
-   ["subText"]="cat, face, pet, :cat:",
-   ["order"]=1013,
-   ["char"]={3680},
-   ["text"]="Cat face",
-   ["image_path"]="1f431",
+   ["subText"]=":ghost:, creature, face, fairy tale, fantasy, monster",
+   ["order"]=1243,
+   ["image_path"]="1f47b",
+   ["text"]="Ghost",
+   ["char"]={2794},
 },
 -- Table: {1015}
 {
-   ["subText"]="face, mouse, :mouse:",
-   ["order"]=1014,
-   ["char"]={3681},
-   ["text"]="Mouse face",
-   ["image_path"]="1f42d",
+   ["subText"]=":skull:, death, face, fairy tale, monster",
+   ["order"]=1244,
+   ["image_path"]="1f480",
+   ["text"]="Skull",
+   ["char"]={2795},
 },
 -- Table: {1016}
 {
-   ["subText"]="face, hamster, pet, :hamster:",
-   ["order"]=1015,
-   ["char"]={3682},
-   ["text"]="Hamster face",
-   ["image_path"]="1f439",
+   ["subText"]=":skull_crossbones:, crossbones, death, face, monster, skull",
+   ["order"]=1245,
+   ["image_path"]="2620",
+   ["text"]="Skull and crossbones",
+   ["char"]={2796},
 },
 -- Table: {1017}
 {
-   ["subText"]="bunny, face, pet, rabbit, :rabbit:",
-   ["order"]=1016,
-   ["char"]={3683},
-   ["text"]="Rabbit face",
-   ["image_path"]="1f430",
+   ["subText"]=":alien:, creature, extraterrestrial, face, fairy tale, fantasy, monster, ufo",
+   ["order"]=1246,
+   ["image_path"]="1f47d",
+   ["text"]="Alien",
+   ["char"]={2797},
 },
 -- Table: {1018}
 {
-   ["subText"]="face, fox, :fox:",
-   ["order"]=1017,
-   ["char"]={3684},
-   ["text"]="Fox face",
-   ["image_path"]="1f98a",
+   ["subText"]=":space_invader:, alien, creature, extraterrestrial, face, fairy tale, fantasy, monster, ufo",
+   ["order"]=1247,
+   ["image_path"]="1f47e",
+   ["text"]="Alien monster",
+   ["char"]={2798},
 },
 -- Table: {1019}
 {
-   ["subText"]="bear, face, :bear:",
-   ["order"]=1018,
-   ["char"]={3685},
-   ["text"]="Bear face",
-   ["image_path"]="1f43b",
+   ["subText"]=":robot:, face, monster",
+   ["order"]=1248,
+   ["image_path"]="1f916",
+   ["text"]="Robot",
+   ["char"]={2799},
 },
 -- Table: {1020}
 {
-   ["subText"]="face, panda, :panda_face:",
-   ["order"]=1019,
-   ["char"]={3686},
-   ["text"]="Panda face",
-   ["image_path"]="1f43c",
+   ["subText"]=":jack_o_lantern:, celebration, halloween, jack, lantern",
+   ["order"]=1249,
+   ["image_path"]="1f383",
+   ["text"]="Jack-o-lantern",
+   ["char"]={2800},
 },
 -- Table: {1021}
 {
-   ["subText"]="bear, :koala:",
-   ["order"]=1020,
-   ["char"]={3687},
-   ["text"]="Koala",
-   ["image_path"]="1f428",
+   ["subText"]=":smiley_cat:, cat, face, mouth, open, smile",
+   ["order"]=1250,
+   ["image_path"]="1f63a",
+   ["text"]="Grinning cat",
+   ["char"]={2801},
 },
 -- Table: {1022}
 {
-   ["subText"]="face, tiger, :tiger:",
-   ["order"]=1021,
-   ["char"]={3688},
-   ["text"]="Tiger face",
-   ["image_path"]="1f42f",
+   ["subText"]=":smile_cat:, cat, eye, face, grin, smile",
+   ["order"]=1251,
+   ["image_path"]="1f638",
+   ["text"]="Grinning cat with smiling eyes",
+   ["char"]={2802},
 },
 -- Table: {1023}
 {
-   ["subText"]="Leo, face, lion, zodiac, :lion_face:",
-   ["order"]=1022,
-   ["char"]={3689},
-   ["text"]="Lion face",
-   ["image_path"]="1f981",
+   ["subText"]=":joy_cat:, cat, face, joy, tear",
+   ["order"]=1252,
+   ["image_path"]="1f639",
+   ["text"]="Cat with tears of joy",
+   ["char"]={2803},
 },
 -- Table: {1024}
 {
-   ["subText"]="cow, face, :cow:",
-   ["order"]=1023,
-   ["char"]={3690},
-   ["text"]="Cow face",
-   ["image_path"]="1f42e",
+   ["subText"]=":heart_eyes_cat:, cat, eye, face, love, smile",
+   ["order"]=1253,
+   ["image_path"]="1f63b",
+   ["text"]="Smiling cat with heart-eyes",
+   ["char"]={2804},
 },
 -- Table: {1025}
 {
-   ["subText"]="face, pig, :pig:",
-   ["order"]=1024,
-   ["char"]={3691},
-   ["text"]="Pig face",
-   ["image_path"]="1f437",
+   ["subText"]=":smirk_cat:, cat, face, ironic, smile, wry",
+   ["order"]=1254,
+   ["image_path"]="1f63c",
+   ["text"]="Cat with wry smile",
+   ["char"]={2805},
 },
 -- Table: {1026}
 {
-   ["subText"]="face, nose, pig, :pig_nose:",
-   ["order"]=1025,
-   ["char"]={3692},
-   ["text"]="Pig nose",
-   ["image_path"]="1f43d",
+   ["subText"]=":kissing_cat:, cat, eye, face, kiss",
+   ["order"]=1255,
+   ["image_path"]="1f63d",
+   ["text"]="Kissing cat",
+   ["char"]={2806},
 },
 -- Table: {1027}
 {
-   ["subText"]="face, frog, :frog:",
-   ["order"]=1026,
-   ["char"]={3693},
-   ["text"]="Frog face",
-   ["image_path"]="1f438",
+   ["subText"]=":scream_cat:, cat, face, oh, surprised, weary",
+   ["order"]=1256,
+   ["image_path"]="1f640",
+   ["text"]="Weary cat",
+   ["char"]={2807},
 },
 -- Table: {1028}
 {
-   ["subText"]="face, monkey, :monkey_face:",
-   ["order"]=1027,
-   ["char"]={3694},
-   ["text"]="Monkey face",
-   ["image_path"]="1f435",
+   ["subText"]=":crying_cat_face:, cat, cry, face, sad, tear",
+   ["order"]=1257,
+   ["image_path"]="1f63f",
+   ["text"]="Crying cat",
+   ["char"]={2808},
 },
 -- Table: {1029}
 {
-   ["subText"]="evil, face, forbidden, gesture, monkey, no, not, prohibited, see, :see_no_evil:",
-   ["order"]=1028,
-   ["char"]={3695},
-   ["text"]="See-no-evil monkey",
-   ["image_path"]="1f648",
+   ["subText"]=":pouting_cat:, cat, face, pouting",
+   ["order"]=1258,
+   ["image_path"]="1f63e",
+   ["text"]="Pouting cat",
+   ["char"]={2809},
 },
 -- Table: {1030}
 {
-   ["subText"]="evil, face, forbidden, gesture, hear, monkey, no, not, prohibited, :hear_no_evil:",
-   ["order"]=1029,
-   ["char"]={3696},
-   ["text"]="Hear-no-evil monkey",
-   ["image_path"]="1f649",
+   ["subText"]=":palms_up_together:",
+   ["order"]=1259,
+   ["image_path"]="1f932",
+   ["text"]="Palms up together",
+   ["char"]={2810},
 },
 -- Table: {1031}
 {
-   ["subText"]="evil, face, forbidden, gesture, monkey, no, not, prohibited, speak, :speak_no_evil:",
-   ["order"]=1030,
-   ["char"]={3697},
-   ["text"]="Speak-no-evil monkey",
-   ["image_path"]="1f64a",
+   ["subText"]=":open_hands:, hand, open",
+   ["order"]=1265,
+   ["image_path"]="1f450",
+   ["text"]="Open hands",
+   ["char"]={2811},
 },
 -- Table: {1032}
 {
-   ["subText"]="monkey, :monkey:",
-   ["order"]=1031,
-   ["char"]={3698},
-   ["text"]="Monkey",
-   ["image_path"]="1f412",
+   ["subText"]=":raised_hands:, celebration, gesture, hand, hooray, raised",
+   ["order"]=1271,
+   ["image_path"]="1f64c",
+   ["text"]="Raising hands",
+   ["char"]={2812},
 },
 -- Table: {1033}
 {
-   ["subText"]="bird, chicken, :chicken:",
-   ["order"]=1032,
-   ["char"]={3699},
-   ["text"]="Chicken",
-   ["image_path"]="1f414",
+   ["subText"]=":clap:, hand",
+   ["order"]=1277,
+   ["image_path"]="1f44f",
+   ["text"]="Clapping hands",
+   ["char"]={2813},
 },
 -- Table: {1034}
 {
-   ["subText"]="bird, penguin, :penguin:",
-   ["order"]=1033,
-   ["char"]={3700},
-   ["text"]="Penguin",
-   ["image_path"]="1f427",
+   ["subText"]=":handshake:, agreement, hand, meeting, shake",
+   ["order"]=1283,
+   ["image_path"]="1f91d",
+   ["text"]="Handshake",
+   ["char"]={2814},
 },
 -- Table: {1035}
 {
-   ["subText"]="bird, :bird:",
-   ["order"]=1034,
-   ["char"]={3701},
-   ["text"]="Bird",
-   ["image_path"]="1f426",
+   ["subText"]=":thumbsup:, +1, hand, thumb, up",
+   ["order"]=1284,
+   ["image_path"]="1f44d",
+   ["text"]="Thumbs up",
+   ["char"]={2815},
 },
 -- Table: {1036}
 {
-   ["subText"]="baby, bird, chick, :baby_chick:",
-   ["order"]=1035,
-   ["char"]={3702},
-   ["text"]="Baby chick",
-   ["image_path"]="1f424",
+   ["subText"]=":thumbsdown:, -1, down, hand, thumb",
+   ["order"]=1290,
+   ["image_path"]="1f44e",
+   ["text"]="Thumbs down",
+   ["char"]={2816},
 },
 -- Table: {1037}
 {
-   ["subText"]="baby, bird, chick, hatching, :hatching_chick:",
-   ["order"]=1036,
-   ["char"]={3703},
-   ["text"]="Hatching chick",
-   ["image_path"]="1f423",
+   ["subText"]=":punch:, clenched, fist, hand",
+   ["order"]=1296,
+   ["image_path"]="1f44a",
+   ["text"]="Oncoming fist",
+   ["char"]={2817},
 },
 -- Table: {1038}
 {
-   ["subText"]="baby, bird, chick, :hatched_chick:",
-   ["order"]=1037,
-   ["char"]={3704},
-   ["text"]="Front-facing baby chick",
-   ["image_path"]="1f425",
+   ["subText"]=":fist:, clenched, hand, punch",
+   ["order"]=1302,
+   ["image_path"]="270a",
+   ["text"]="Raised fist",
+   ["char"]={2818},
 },
 -- Table: {1039}
 {
-   ["subText"]="bird, duck, :duck:",
-   ["order"]=1038,
-   ["char"]={3705},
-   ["text"]="Duck",
-   ["image_path"]="1f986",
+   ["subText"]=":left_facing_fist:, fist, leftwards",
+   ["order"]=1308,
+   ["image_path"]="1f91b",
+   ["text"]="Left-facing fist",
+   ["char"]={2819},
 },
 -- Table: {1040}
 {
-   ["subText"]="bird, eagle, :eagle:",
-   ["order"]=1039,
-   ["char"]={3706},
-   ["text"]="Eagle",
-   ["image_path"]="1f985",
+   ["subText"]=":right_facing_fist:, fist, rightwards",
+   ["order"]=1314,
+   ["image_path"]="1f91c",
+   ["text"]="Right-facing fist",
+   ["char"]={2820},
 },
 -- Table: {1041}
 {
-   ["subText"]="bird, owl, wise, :owl:",
-   ["order"]=1040,
-   ["char"]={3707},
-   ["text"]="Owl",
-   ["image_path"]="1f989",
+   ["subText"]=":fingers_crossed:, cross, finger, hand, luck",
+   ["order"]=1320,
+   ["image_path"]="1f91e",
+   ["text"]="Crossed fingers",
+   ["char"]={2821},
 },
 -- Table: {1042}
 {
-   ["subText"]="bat, vampire, :bat:",
-   ["order"]=1041,
-   ["char"]={3708},
-   ["text"]="Bat",
-   ["image_path"]="1f987",
+   ["subText"]=":v:, hand, victory",
+   ["order"]=1326,
+   ["image_path"]="270c",
+   ["text"]="Victory hand",
+   ["char"]={2822},
 },
 -- Table: {1043}
 {
-   ["subText"]="face, wolf, :wolf:",
-   ["order"]=1042,
-   ["char"]={3709},
-   ["text"]="Wolf face",
-   ["image_path"]="1f43a",
+   ["subText"]=":love_you_gesture:, ILY, hand",
+   ["order"]=1332,
+   ["image_path"]="1f91f",
+   ["text"]="Love-you gesture",
+   ["char"]={2823},
 },
 -- Table: {1044}
 {
-   ["subText"]="pig, :boar:",
-   ["order"]=1043,
-   ["char"]={3710},
-   ["text"]="Boar",
-   ["image_path"]="1f417",
+   ["subText"]=":metal:, finger, hand, horns, rock-on",
+   ["order"]=1338,
+   ["image_path"]="1f918",
+   ["text"]="Sign of the horns",
+   ["char"]={2824},
 },
 -- Table: {1045}
 {
-   ["subText"]="face, horse, :horse:",
-   ["order"]=1044,
-   ["char"]={3711},
-   ["text"]="Horse face",
-   ["image_path"]="1f434",
+   ["subText"]=":ok_hand:, OK, hand",
+   ["order"]=1344,
+   ["image_path"]="1f44c",
+   ["text"]="OK hand",
+   ["char"]={2825},
 },
 -- Table: {1046}
 {
-   ["subText"]="face, unicorn, :unicorn:",
-   ["order"]=1045,
-   ["char"]={3712},
-   ["text"]="Unicorn face",
-   ["image_path"]="1f984",
+   ["subText"]=":pinching_hand:",
+   ["order"]=1350,
+   ["image_path"]="1f90f",
+   ["text"]="Pinching hand",
+   ["char"]={2826},
 },
 -- Table: {1047}
 {
-   ["subText"]="bee, insect, :bee:",
-   ["order"]=1046,
-   ["char"]={3713},
-   ["text"]="Honeybee",
-   ["image_path"]="1f41d",
+   ["subText"]=":point_left:, backhand, finger, hand, index, point",
+   ["order"]=1356,
+   ["image_path"]="1f448",
+   ["text"]="Backhand index pointing left",
+   ["char"]={2827},
 },
 -- Table: {1048}
 {
-   ["subText"]="insect, :bug:",
-   ["order"]=1047,
-   ["char"]={3714},
-   ["text"]="Bug",
-   ["image_path"]="1f41b",
+   ["subText"]=":point_right:, backhand, finger, hand, index, point",
+   ["order"]=1362,
+   ["image_path"]="1f449",
+   ["text"]="Backhand index pointing right",
+   ["char"]={2828},
 },
 -- Table: {1049}
 {
-   ["subText"]="butterfly, insect, pretty, :butterfly:",
-   ["order"]=1048,
-   ["char"]={3715},
-   ["text"]="Butterfly",
-   ["image_path"]="1f98b",
+   ["subText"]=":point_up_2:, backhand, finger, hand, index, point, up",
+   ["order"]=1368,
+   ["image_path"]="1f446",
+   ["text"]="Backhand index pointing up",
+   ["char"]={2829},
 },
 -- Table: {1050}
 {
-   ["subText"]="snail, :snail:",
-   ["order"]=1049,
-   ["char"]={3716},
-   ["text"]="Snail",
-   ["image_path"]="1f40c",
+   ["subText"]=":point_down:, backhand, down, finger, hand, index, point",
+   ["order"]=1374,
+   ["image_path"]="1f447",
+   ["text"]="Backhand index pointing down",
+   ["char"]={2830},
 },
 -- Table: {1051}
 {
-   ["subText"]="shell, spiral, :shell:",
-   ["order"]=1050,
-   ["char"]={3717},
-   ["text"]="Spiral shell",
-   ["image_path"]="1f41a",
+   ["subText"]=":point_up:, finger, hand, index, point, up",
+   ["order"]=1380,
+   ["image_path"]="261d",
+   ["text"]="Index pointing up",
+   ["char"]={2831},
 },
 -- Table: {1052}
 {
-   ["subText"]="beetle, insect, ladybird, ladybug, :beetle:",
-   ["order"]=1051,
-   ["char"]={3718},
-   ["text"]="Lady beetle",
-   ["image_path"]="1f41e",
+   ["subText"]=":raised_hand:, hand",
+   ["order"]=1386,
+   ["image_path"]="270b",
+   ["text"]="Raised hand",
+   ["char"]={2832},
 },
 -- Table: {1053}
 {
-   ["subText"]="insect, :ant:",
-   ["order"]=1052,
-   ["char"]={3719},
-   ["text"]="Ant",
-   ["image_path"]="1f41c",
+   ["subText"]=":raised_back_of_hand:, backhand, raised",
+   ["order"]=1392,
+   ["image_path"]="1f91a",
+   ["text"]="Raised back of hand",
+   ["char"]={2833},
 },
 -- Table: {1054}
 {
-   ["subText"]="insect, :spider:",
-   ["order"]=1053,
-   ["char"]={3720},
-   ["text"]="Spider",
-   ["image_path"]="1f577",
+   ["subText"]=":hand_splayed:, finger, hand, splayed",
+   ["order"]=1398,
+   ["image_path"]="1f590",
+   ["text"]="Hand with fingers splayed",
+   ["char"]={2834},
 },
 -- Table: {1055}
 {
-   ["subText"]="spider, web, :spider_web:",
-   ["order"]=1054,
-   ["char"]={3721},
-   ["text"]="Spider web",
-   ["image_path"]="1f578",
+   ["subText"]=":vulcan:, finger, hand, spock",
+   ["order"]=1404,
+   ["image_path"]="1f596",
+   ["text"]="Vulcan salute",
+   ["char"]={2835},
 },
 -- Table: {1056}
 {
-   ["subText"]="terrapin, tortoise, turtle, :turtle:",
-   ["order"]=1055,
-   ["char"]={3722},
-   ["text"]="Turtle",
-   ["image_path"]="1f422",
+   ["subText"]=":wave:, hand, waving",
+   ["order"]=1410,
+   ["image_path"]="1f44b",
+   ["text"]="Waving hand",
+   ["char"]={2836},
 },
 -- Table: {1057}
 {
-   ["subText"]="Ophiuchus, bearer, serpent, zodiac, :snake:",
-   ["order"]=1056,
-   ["char"]={3723},
-   ["text"]="Snake",
-   ["image_path"]="1f40d",
+   ["subText"]=":call_me:, call, hand",
+   ["order"]=1416,
+   ["image_path"]="1f919",
+   ["text"]="Call me hand",
+   ["char"]={2837},
 },
 -- Table: {1058}
 {
-   ["subText"]="lizard, reptile, :lizard:",
-   ["order"]=1057,
-   ["char"]={3724},
-   ["text"]="Lizard",
-   ["image_path"]="1f98e",
+   ["subText"]=":muscle:, biceps, comic, flex",
+   ["order"]=1422,
+   ["image_path"]="1f4aa",
+   ["text"]="Flexed biceps",
+   ["char"]={2838},
 },
 -- Table: {1059}
 {
-   ["subText"]="Scorpius, scorpio, zodiac, :scorpion:",
-   ["order"]=1058,
-   ["char"]={3725},
-   ["text"]="Scorpion",
-   ["image_path"]="1f982",
+   ["subText"]=":mechanical_arm:",
+   ["order"]=1428,
+   ["image_path"]="1f9be",
+   ["text"]="Mechanical arm",
+   ["char"]={2839},
 },
 -- Table: {1060}
 {
-   ["subText"]="Cancer, zodiac, :crab:",
-   ["order"]=1059,
-   ["char"]={3726},
-   ["text"]="Crab",
-   ["image_path"]="1f980",
+   ["subText"]=":middle_finger:, finger, hand",
+   ["order"]=1429,
+   ["image_path"]="1f595",
+   ["text"]="Middle finger",
+   ["char"]={2840},
 },
 -- Table: {1061}
 {
-   ["subText"]="food, molusc, squid, :squid:",
-   ["order"]=1060,
-   ["char"]={3727},
-   ["text"]="Squid",
-   ["image_path"]="1f991",
+   ["subText"]=":writing_hand:, hand, write",
+   ["order"]=1435,
+   ["image_path"]="270d",
+   ["text"]="Writing hand",
+   ["char"]={2841},
 },
 -- Table: {1062}
 {
-   ["subText"]="octopus, :octopus:",
-   ["order"]=1061,
-   ["char"]={3728},
-   ["text"]="Octopus",
-   ["image_path"]="1f419",
+   ["subText"]=":pray:, ask, bow, folded, gesture, hand, please, thanks",
+   ["order"]=1441,
+   ["image_path"]="1f64f",
+   ["text"]="Folded hands",
+   ["char"]={2842},
 },
 -- Table: {1063}
 {
-   ["subText"]="food, shellfish, shrimp, small, :shrimp:",
-   ["order"]=1062,
-   ["char"]={3729},
-   ["text"]="Shrimp",
-   ["image_path"]="1f990",
+   ["subText"]=":foot:",
+   ["order"]=1447,
+   ["image_path"]="1f9b6",
+   ["text"]="Foot",
+   ["char"]={2843},
 },
 -- Table: {1064}
 {
-   ["subText"]="fish, tropical, :tropical_fish:",
-   ["order"]=1063,
-   ["char"]={3730},
-   ["text"]="Tropical fish",
-   ["image_path"]="1f420",
+   ["subText"]=":leg:",
+   ["order"]=1453,
+   ["image_path"]="1f9b5",
+   ["text"]="Leg",
+   ["char"]={2844},
 },
 -- Table: {1065}
 {
-   ["subText"]="Pisces, zodiac, :fish:",
-   ["order"]=1064,
-   ["char"]={3731},
-   ["text"]="Fish",
-   ["image_path"]="1f41f",
+   ["subText"]=":mechanical_leg:",
+   ["order"]=1459,
+   ["image_path"]="1f9bf",
+   ["text"]="Mechanical leg",
+   ["char"]={2845},
 },
 -- Table: {1066}
 {
-   ["subText"]="fish, :blowfish:",
-   ["order"]=1065,
-   ["char"]={3732},
-   ["text"]="Blowfish",
-   ["image_path"]="1f421",
+   ["subText"]=":lipstick:, cosmetics, makeup",
+   ["order"]=1460,
+   ["image_path"]="1f484",
+   ["text"]="Lipstick",
+   ["char"]={2846},
 },
 -- Table: {1067}
 {
-   ["subText"]="flipper, :dolphin:",
-   ["order"]=1066,
-   ["char"]={3733},
-   ["text"]="Dolphin",
-   ["image_path"]="1f42c",
+   ["subText"]=":kiss:, lips",
+   ["order"]=1461,
+   ["image_path"]="1f48b",
+   ["text"]="Kiss mark",
+   ["char"]={2847},
 },
 -- Table: {1068}
 {
-   ["subText"]="fish, shark, :shark:",
-   ["order"]=1067,
-   ["char"]={3734},
-   ["text"]="Shark",
-   ["image_path"]="1f988",
+   ["subText"]=":lips:",
+   ["order"]=1462,
+   ["image_path"]="1f444",
+   ["text"]="Mouth",
+   ["char"]={2848},
 },
 -- Table: {1069}
 {
-   ["subText"]="face, spouting, whale, :whale:",
-   ["order"]=1068,
-   ["char"]={3735},
-   ["text"]="Spouting whale",
-   ["image_path"]="1f433",
+   ["subText"]=":tooth:",
+   ["order"]=1463,
+   ["image_path"]="1f9b7",
+   ["text"]="Tooth",
+   ["char"]={2849},
 },
 -- Table: {1070}
 {
-   ["subText"]="whale, :whale2:",
-   ["order"]=1069,
-   ["char"]={3736},
-   ["text"]="Whale",
-   ["image_path"]="1f40b",
+   ["subText"]=":bone:",
+   ["order"]=1464,
+   ["image_path"]="1f9b4",
+   ["text"]="Bone",
+   ["char"]={2850},
 },
 -- Table: {1071}
 {
-   ["subText"]="crocodile, :crocodile:",
-   ["order"]=1070,
-   ["char"]={3737},
-   ["text"]="Crocodile",
-   ["image_path"]="1f40a",
+   ["subText"]=":tongue:, body",
+   ["order"]=1465,
+   ["image_path"]="1f445",
+   ["text"]="Tongue",
+   ["char"]={2851},
 },
 -- Table: {1072}
 {
-   ["subText"]="leopard, :leopard:",
-   ["order"]=1071,
-   ["char"]={3738},
-   ["text"]="Leopard",
-   ["image_path"]="1f406",
+   ["subText"]=":ear:, body",
+   ["order"]=1466,
+   ["image_path"]="1f442",
+   ["text"]="Ear",
+   ["char"]={2852},
 },
 -- Table: {1073}
 {
-   ["subText"]="tiger, :tiger2:",
-   ["order"]=1072,
-   ["char"]={3739},
-   ["text"]="Tiger",
-   ["image_path"]="1f405",
+   ["subText"]=":ear_with_hearing_aid:",
+   ["order"]=1472,
+   ["image_path"]="1f9bb",
+   ["text"]="Ear with hearing aid",
+   ["char"]={2853},
 },
 -- Table: {1074}
 {
-   ["subText"]="buffalo, water, :water_buffalo:",
-   ["order"]=1073,
-   ["char"]={3740},
-   ["text"]="Water buffalo",
-   ["image_path"]="1f403",
+   ["subText"]=":nose:, body",
+   ["order"]=1478,
+   ["image_path"]="1f443",
+   ["text"]="Nose",
+   ["char"]={2854},
 },
 -- Table: {1075}
 {
-   ["subText"]="Taurus, bull, zodiac, :ox:",
-   ["order"]=1074,
-   ["char"]={3741},
-   ["text"]="Ox",
-   ["image_path"]="1f402",
+   ["subText"]=":footprints:, clothing, footprint, print",
+   ["order"]=1484,
+   ["image_path"]="1f463",
+   ["text"]="Footprints",
+   ["char"]={2855},
 },
 -- Table: {1076}
 {
-   ["subText"]="cow, :cow2:",
-   ["order"]=1075,
-   ["char"]={3742},
-   ["text"]="Cow",
-   ["image_path"]="1f404",
+   ["subText"]=":eye:, body",
+   ["order"]=1485,
+   ["image_path"]="1f441",
+   ["text"]="Eye",
+   ["char"]={2856},
 },
 -- Table: {1077}
 {
-   ["subText"]="deer, :deer:",
-   ["order"]=1076,
-   ["char"]={3743},
-   ["text"]="Deer",
-   ["image_path"]="1f98c",
+   ["subText"]=":eyes:, eye, face",
+   ["order"]=1486,
+   ["image_path"]="1f440",
+   ["text"]="Eyes",
+   ["char"]={2857},
 },
 -- Table: {1078}
 {
-   ["subText"]="dromedary, hump, :dromedary_camel:",
-   ["order"]=1077,
-   ["char"]={3744},
-   ["text"]="Camel",
-   ["image_path"]="1f42a",
+   ["subText"]=":brain:, intelligent",
+   ["order"]=1487,
+   ["image_path"]="1f9e0",
+   ["text"]="Brain",
+   ["char"]={2858},
 },
 -- Table: {1079}
 {
-   ["subText"]="bactrian, camel, hump, :camel:",
-   ["order"]=1078,
-   ["char"]={3745},
-   ["text"]="Two-hump camel",
-   ["image_path"]="1f42b",
+   ["subText"]=":speaking_head:, face, head, silhouette, speak, speaking",
+   ["order"]=1488,
+   ["image_path"]="1f5e3",
+   ["text"]="Speaking head",
+   ["char"]={2859},
 },
 -- Table: {1080}
 {
-   ["subText"]="elephant, :elephant:",
-   ["order"]=1079,
-   ["char"]={3746},
-   ["text"]="Elephant",
-   ["image_path"]="1f418",
+   ["subText"]=":bust_in_silhouette:, bust, silhouette",
+   ["order"]=1489,
+   ["image_path"]="1f464",
+   ["text"]="Bust in silhouette",
+   ["char"]={2860},
 },
 -- Table: {1081}
 {
-   ["subText"]="rhinoceros, :rhino:",
-   ["order"]=1080,
-   ["char"]={3747},
-   ["text"]="Rhinoceros",
-   ["image_path"]="1f98f",
+   ["subText"]=":busts_in_silhouette:, bust, silhouette",
+   ["order"]=1490,
+   ["image_path"]="1f465",
+   ["text"]="Busts in silhouette",
+   ["char"]={2861},
 },
 -- Table: {1082}
 {
-   ["subText"]="gorilla, :gorilla:",
-   ["order"]=1081,
-   ["char"]={3748},
-   ["text"]="Gorilla",
-   ["image_path"]="1f98d",
+   ["subText"]=":baby:, young",
+   ["order"]=1491,
+   ["image_path"]="1f476",
+   ["text"]="Baby",
+   ["char"]={2862},
 },
 -- Table: {1083}
 {
-   ["subText"]="equestrian, racehorse, racing, :racehorse:",
-   ["order"]=1082,
-   ["char"]={3749},
-   ["text"]="Horse",
-   ["image_path"]="1f40e",
+   ["subText"]=":girl:, Virgo, young, zodiac",
+   ["order"]=1497,
+   ["image_path"]="1f467",
+   ["text"]="Girl",
+   ["char"]={2863},
 },
 -- Table: {1084}
 {
-   ["subText"]="sow, :pig2:",
-   ["order"]=1083,
-   ["char"]={3750},
-   ["text"]="Pig",
-   ["image_path"]="1f416",
+   ["subText"]=":child:",
+   ["order"]=1503,
+   ["image_path"]="1f9d2",
+   ["text"]="Child",
+   ["char"]={2864},
 },
 -- Table: {1085}
 {
-   ["subText"]="Capricorn, zodiac, :goat:",
-   ["order"]=1084,
-   ["char"]={3751},
-   ["text"]="Goat",
-   ["image_path"]="1f410",
+   ["subText"]=":boy:, young",
+   ["order"]=1509,
+   ["image_path"]="1f466",
+   ["text"]="Boy",
+   ["char"]={2865},
 },
 -- Table: {1086}
 {
-   ["subText"]="Aries, male, sheep, zodiac, :ram:",
-   ["order"]=1085,
-   ["char"]={3752},
-   ["text"]="Ram",
-   ["image_path"]="1f40f",
+   ["subText"]=":woman:",
+   ["order"]=1515,
+   ["image_path"]="1f469",
+   ["text"]="Woman",
+   ["char"]={2866},
 },
 -- Table: {1087}
 {
-   ["subText"]="female, sheep, :sheep:",
-   ["order"]=1086,
-   ["char"]={3753},
-   ["text"]="Ewe",
-   ["image_path"]="1f411",
+   ["subText"]=":adult:",
+   ["order"]=1521,
+   ["image_path"]="1f9d1",
+   ["text"]="Person",
+   ["char"]={2867},
 },
 -- Table: {1088}
 {
-   ["subText"]="pet, :dog2:",
-   ["order"]=1087,
-   ["char"]={3754},
-   ["text"]="Dog",
-   ["image_path"]="1f415",
+   ["subText"]=":man:",
+   ["order"]=1527,
+   ["image_path"]="1f468",
+   ["text"]="Man",
+   ["char"]={2868},
 },
 -- Table: {1089}
 {
-   ["subText"]="dog, :poodle:",
-   ["order"]=1088,
-   ["char"]={3755},
-   ["text"]="Poodle",
-   ["image_path"]="1f429",
+   ["subText"]=":person_curly_hair:",
+   ["order"]=1533,
+   ["image_path"]="1f9d1-1f9b1",
+   ["text"]="Person: curly hair",
+   ["char"]={2869},
 },
 -- Table: {1090}
 {
-   ["subText"]="pet, :cat2:",
-   ["order"]=1089,
-   ["char"]={3756},
-   ["text"]="Cat",
-   ["image_path"]="1f408",
+   ["subText"]=":woman_curly_haired:",
+   ["order"]=1539,
+   ["image_path"]="1f469-1f9b1",
+   ["text"]="Woman: curly hair",
+   ["char"]={2870},
 },
 -- Table: {1091}
 {
-   ["subText"]="bird, rooster, :rooster:",
-   ["order"]=1090,
-   ["char"]={3757},
-   ["text"]="Rooster",
-   ["image_path"]="1f413",
+   ["subText"]=":man_curly_haired:",
+   ["order"]=1545,
+   ["image_path"]="1f468-1f9b1",
+   ["text"]="Man: curly hair",
+   ["char"]={2871},
 },
 -- Table: {1092}
 {
-   ["subText"]="bird, turkey, :turkey:",
-   ["order"]=1091,
-   ["char"]={3758},
-   ["text"]="Turkey",
-   ["image_path"]="1f983",
+   ["subText"]=":person_red_hair:",
+   ["order"]=1551,
+   ["image_path"]="1f9d1-1f9b0",
+   ["text"]="Person: red hair",
+   ["char"]={2872},
 },
 -- Table: {1093}
 {
-   ["subText"]="bird, fly, peace, :dove:",
-   ["order"]=1092,
-   ["char"]={3759},
-   ["text"]="Dove",
-   ["image_path"]="1f54a",
+   ["subText"]=":woman_red_haired:",
+   ["order"]=1557,
+   ["image_path"]="1f469-1f9b0",
+   ["text"]="Woman: red hair",
+   ["char"]={2873},
 },
 -- Table: {1094}
 {
-   ["subText"]="bunny, pet, :rabbit2:",
-   ["order"]=1093,
-   ["char"]={3760},
-   ["text"]="Rabbit",
-   ["image_path"]="1f407",
+   ["subText"]=":man_red_haired:",
+   ["order"]=1563,
+   ["image_path"]="1f468-1f9b0",
+   ["text"]="Man: red hair",
+   ["char"]={2874},
 },
 -- Table: {1095}
 {
-   ["subText"]="mouse, :mouse2:",
-   ["order"]=1094,
-   ["char"]={3761},
-   ["text"]="Mouse",
-   ["image_path"]="1f401",
+   ["subText"]=":blond-haired_woman:, blonde, woman",
+   ["order"]=1569,
+   ["image_path"]="1f471-2640",
+   ["text"]="Woman: blond hair",
+   ["char"]={2875},
 },
 -- Table: {1096}
 {
-   ["subText"]="rat, :rat:",
-   ["order"]=1095,
-   ["char"]={3762},
-   ["text"]="Rat",
-   ["image_path"]="1f400",
+   ["subText"]=":blond_haired_person:, blond",
+   ["order"]=1575,
+   ["image_path"]="1f471",
+   ["text"]="Person: blond hair",
+   ["char"]={2876},
 },
 -- Table: {1097}
 {
-   ["subText"]="chipmunk, :chipmunk:",
-   ["order"]=1096,
-   ["char"]={3763},
-   ["text"]="Chipmunk",
-   ["image_path"]="1f43f",
+   ["subText"]=":blond-haired_man:, blond, man",
+   ["order"]=1581,
+   ["image_path"]="1f471-2642",
+   ["text"]="Man: blond hair",
+   ["char"]={2877},
 },
 -- Table: {1098}
 {
-   ["subText"]="feet, paw, print, :feet:",
-   ["order"]=1097,
-   ["char"]={3764},
-   ["text"]="Paw prints",
-   ["image_path"]="1f43e",
+   ["subText"]=":person_white_hair:",
+   ["order"]=1587,
+   ["image_path"]="1f9d1-1f9b3",
+   ["text"]="Person: white hair",
+   ["char"]={2878},
 },
 -- Table: {1099}
 {
-   ["subText"]="fairy tale, :dragon:",
-   ["order"]=1098,
-   ["char"]={3765},
-   ["text"]="Dragon",
-   ["image_path"]="1f409",
+   ["subText"]=":woman_white_haired:",
+   ["order"]=1593,
+   ["image_path"]="1f469-1f9b3",
+   ["text"]="Woman: white hair",
+   ["char"]={2879},
 },
 -- Table: {1100}
 {
-   ["subText"]="dragon, face, fairy tale, :dragon_face:",
-   ["order"]=1099,
-   ["char"]={3766},
-   ["text"]="Dragon face",
-   ["image_path"]="1f432",
+   ["subText"]=":man_white_haired:",
+   ["order"]=1599,
+   ["image_path"]="1f468-1f9b3",
+   ["text"]="Man: white hair",
+   ["char"]={2880},
 },
 -- Table: {1101}
 {
-   ["subText"]="plant, :cactus:",
-   ["order"]=1100,
-   ["char"]={3767},
-   ["text"]="Cactus",
-   ["image_path"]="1f335",
+   ["subText"]=":person_bald:",
+   ["order"]=1605,
+   ["image_path"]="1f9d1-1f9b2",
+   ["text"]="Person: bald",
+   ["char"]={2881},
 },
 -- Table: {1102}
 {
-   ["subText"]="Christmas, celebration, tree, :christmas_tree:",
-   ["order"]=1101,
-   ["char"]={3768},
-   ["text"]="Christmas tree",
-   ["image_path"]="1f384",
+   ["subText"]=":woman_bald:",
+   ["order"]=1611,
+   ["image_path"]="1f469-1f9b2",
+   ["text"]="Woman: bald",
+   ["char"]={2882},
 },
 -- Table: {1103}
 {
-   ["subText"]="tree, :evergreen_tree:",
-   ["order"]=1102,
-   ["char"]={3769},
-   ["text"]="Evergreen tree",
-   ["image_path"]="1f332",
+   ["subText"]=":man_bald:",
+   ["order"]=1617,
+   ["image_path"]="1f468-1f9b2",
+   ["text"]="Man: bald",
+   ["char"]={2883},
 },
 -- Table: {1104}
 {
-   ["subText"]="deciduous, shedding, tree, :deciduous_tree:",
-   ["order"]=1103,
-   ["char"]={3770},
-   ["text"]="Deciduous tree",
-   ["image_path"]="1f333",
+   ["subText"]=":bearded_person:",
+   ["order"]=1623,
+   ["image_path"]="1f9d4",
+   ["text"]="Man: beard",
+   ["char"]={2884},
 },
 -- Table: {1105}
 {
-   ["subText"]="palm, tree, :palm_tree:",
-   ["order"]=1104,
-   ["char"]={3771},
-   ["text"]="Palm tree",
-   ["image_path"]="1f334",
+   ["subText"]=":older_woman:, old, woman",
+   ["order"]=1629,
+   ["image_path"]="1f475",
+   ["text"]="Old woman",
+   ["char"]={2885},
 },
 -- Table: {1106}
 {
-   ["subText"]="young, :seedling:",
-   ["order"]=1105,
-   ["char"]={3772},
-   ["text"]="Seedling",
-   ["image_path"]="1f331",
+   ["subText"]=":older_adult:",
+   ["order"]=1635,
+   ["image_path"]="1f9d3",
+   ["text"]="Older person",
+   ["char"]={2886},
 },
 -- Table: {1107}
 {
-   ["subText"]="leaf, :herb:",
-   ["order"]=1106,
-   ["char"]={3773},
-   ["text"]="Herb",
-   ["image_path"]="1f33f",
+   ["subText"]=":older_man:, man, old",
+   ["order"]=1641,
+   ["image_path"]="1f474",
+   ["text"]="Old man",
+   ["char"]={2887},
 },
 -- Table: {1108}
 {
-   ["subText"]="plant, :shamrock:",
-   ["order"]=1107,
-   ["char"]={3774},
-   ["text"]="Shamrock",
-   ["image_path"]="2618",
+   ["subText"]=":man_with_chinese_cap:, gua pi mao, hat, man",
+   ["order"]=1647,
+   ["image_path"]="1f472",
+   ["text"]="Man with Chinese cap",
+   ["char"]={2888},
 },
 -- Table: {1109}
 {
-   ["subText"]="4, clover, four, leaf, :four_leaf_clover:",
-   ["order"]=1108,
-   ["char"]={3775},
-   ["text"]="Four leaf clover",
-   ["image_path"]="1f340",
+   ["subText"]=":person_wearing_turban:, turban",
+   ["order"]=1653,
+   ["image_path"]="1f473",
+   ["text"]="Person wearing turban",
+   ["char"]={2889},
 },
 -- Table: {1110}
 {
-   ["subText"]="Japanese, bamboo, celebration, pine, :bamboo:",
-   ["order"]=1109,
-   ["char"]={3776},
-   ["text"]="Pine decoration",
-   ["image_path"]="1f38d",
+   ["subText"]=":woman_wearing_turban:, turban, woman",
+   ["order"]=1659,
+   ["image_path"]="1f473-2640",
+   ["text"]="Woman wearing turban",
+   ["char"]={2890},
 },
 -- Table: {1111}
 {
-   ["subText"]="Japanese, banner, celebration, tree, :tanabata_tree:",
-   ["order"]=1110,
-   ["char"]={3777},
-   ["text"]="Tanabata tree",
-   ["image_path"]="1f38b",
+   ["subText"]=":man_wearing_turban:, man, turban",
+   ["order"]=1665,
+   ["image_path"]="1f473-2642",
+   ["text"]="Man wearing turban",
+   ["char"]={2891},
 },
 -- Table: {1112}
 {
-   ["subText"]="blow, flutter, leaf, wind, :leaves:",
-   ["order"]=1111,
-   ["char"]={3778},
-   ["text"]="Leaf fluttering in wind",
-   ["image_path"]="1f343",
+   ["subText"]=":woman_with_headscarf:",
+   ["order"]=1671,
+   ["image_path"]="1f9d5",
+   ["text"]="Woman with headscarf",
+   ["char"]={2892},
 },
 -- Table: {1113}
 {
-   ["subText"]="falling, leaf, :fallen_leaf:",
-   ["order"]=1112,
-   ["char"]={3779},
-   ["text"]="Fallen leaf",
-   ["image_path"]="1f342",
+   ["subText"]=":police_officer:, cop, officer, police",
+   ["order"]=1677,
+   ["image_path"]="1f46e",
+   ["text"]="Police officer",
+   ["char"]={2893},
 },
 -- Table: {1114}
 {
-   ["subText"]="falling, leaf, maple, :maple_leaf:",
-   ["order"]=1113,
-   ["char"]={3780},
-   ["text"]="Maple leaf",
-   ["image_path"]="1f341",
+   ["subText"]=":woman_police_officer:, cop, officer, police, woman",
+   ["order"]=1683,
+   ["image_path"]="1f46e-2640",
+   ["text"]="Woman police officer",
+   ["char"]={2894},
 },
 -- Table: {1115}
 {
-   ["subText"]="toadstool, :mushroom:",
-   ["order"]=1114,
-   ["char"]={3781},
-   ["text"]="Mushroom",
-   ["image_path"]="1f344",
+   ["subText"]=":man_police_officer:, cop, man, officer, police",
+   ["order"]=1689,
+   ["image_path"]="1f46e-2642",
+   ["text"]="Man police officer",
+   ["char"]={2895},
 },
 -- Table: {1116}
 {
-   ["subText"]="ear, grain, rice, :ear_of_rice:",
-   ["order"]=1115,
-   ["char"]={3782},
-   ["text"]="Sheaf of rice",
-   ["image_path"]="1f33e",
+   ["subText"]=":construction_worker:, construction, hat, worker",
+   ["order"]=1695,
+   ["image_path"]="1f477",
+   ["text"]="Construction worker",
+   ["char"]={2896},
 },
 -- Table: {1117}
 {
-   ["subText"]="flower, :bouquet:",
-   ["order"]=1116,
-   ["char"]={3783},
-   ["text"]="Bouquet",
-   ["image_path"]="1f490",
+   ["subText"]=":woman_construction_worker:, construction, woman, worker",
+   ["order"]=1701,
+   ["image_path"]="1f477-2640",
+   ["text"]="Woman construction worker",
+   ["char"]={2897},
 },
 -- Table: {1118}
 {
-   ["subText"]="flower, :tulip:",
-   ["order"]=1117,
-   ["char"]={3784},
-   ["text"]="Tulip",
-   ["image_path"]="1f337",
+   ["subText"]=":man_construction_worker:, construction, man, worker",
+   ["order"]=1707,
+   ["image_path"]="1f477-2642",
+   ["text"]="Man construction worker",
+   ["char"]={2898},
 },
 -- Table: {1119}
 {
-   ["subText"]="flower, :rose:",
-   ["order"]=1118,
-   ["char"]={3785},
-   ["text"]="Rose",
-   ["image_path"]="1f339",
+   ["subText"]=":guard:",
+   ["order"]=1713,
+   ["image_path"]="1f482",
+   ["text"]="Guard",
+   ["char"]={2899},
 },
 -- Table: {1120}
 {
-   ["subText"]="flower, wilted, :wilted_rose:",
-   ["order"]=1119,
-   ["char"]={3786},
-   ["text"]="Wilted flower",
-   ["image_path"]="1f940",
+   ["subText"]=":woman_guard:, guard, woman",
+   ["order"]=1719,
+   ["image_path"]="1f482-2640",
+   ["text"]="Woman guard",
+   ["char"]={2900},
 },
 -- Table: {1121}
 {
-   ["subText"]="flower, sun, :sunflower:",
-   ["order"]=1120,
-   ["char"]={3787},
-   ["text"]="Sunflower",
-   ["image_path"]="1f33b",
+   ["subText"]=":man_guard:, guard, man",
+   ["order"]=1725,
+   ["image_path"]="1f482-2642",
+   ["text"]="Man guard",
+   ["char"]={2901},
 },
 -- Table: {1122}
 {
-   ["subText"]="flower, :blossom:",
-   ["order"]=1121,
-   ["char"]={3788},
-   ["text"]="Blossom",
-   ["image_path"]="1f33c",
+   ["subText"]=":detective:, sleuth, spy",
+   ["order"]=1731,
+   ["image_path"]="1f575",
+   ["text"]="Detective",
+   ["char"]={2902},
 },
 -- Table: {1123}
 {
-   ["subText"]="blossom, cherry, flower, :cherry_blossom:",
-   ["order"]=1122,
-   ["char"]={3789},
-   ["text"]="Cherry blossom",
-   ["image_path"]="1f338",
+   ["subText"]=":woman_detective:, detective, sleuth, spy, woman",
+   ["order"]=1737,
+   ["image_path"]="1f575-2640",
+   ["text"]="Woman detective",
+   ["char"]={2903},
 },
 -- Table: {1124}
 {
-   ["subText"]="flower, :hibiscus:",
-   ["order"]=1123,
-   ["char"]={3790},
-   ["text"]="Hibiscus",
-   ["image_path"]="1f33a",
+   ["subText"]=":man_detective:, detective, man, sleuth, spy",
+   ["order"]=1743,
+   ["image_path"]="1f575-2642",
+   ["text"]="Man detective",
+   ["char"]={2904},
 },
 -- Table: {1125}
 {
-   ["subText"]="Americas, earth, globe, world, :earth_americas:",
-   ["order"]=1124,
-   ["char"]={3791},
-   ["text"]="Globe showing Americas",
-   ["image_path"]="1f30e",
+   ["subText"]=":health_worker:",
+   ["order"]=1749,
+   ["image_path"]="1f9d1-2695",
+   ["text"]="Health worker",
+   ["char"]={2905},
 },
 -- Table: {1126}
 {
-   ["subText"]="Africa, Europe, earth, globe, world, :earth_africa:",
-   ["order"]=1125,
-   ["char"]={3792},
-   ["text"]="Globe showing Europe-Africa",
-   ["image_path"]="1f30d",
+   ["subText"]=":woman_health_worker:, doctor, healthcare, nurse, therapist, woman",
+   ["order"]=1755,
+   ["image_path"]="1f469-2695",
+   ["text"]="Woman health worker",
+   ["char"]={2906},
 },
 -- Table: {1127}
 {
-   ["subText"]="Asia, Australia, earth, globe, world, :earth_asia:",
-   ["order"]=1126,
-   ["char"]={3793},
-   ["text"]="Globe showing Asia-Australia",
-   ["image_path"]="1f30f",
+   ["subText"]=":man_health_worker:, doctor, healthcare, man, nurse, therapist",
+   ["order"]=1761,
+   ["image_path"]="1f468-2695",
+   ["text"]="Man health worker",
+   ["char"]={2907},
 },
 -- Table: {1128}
 {
-   ["subText"]="full, moon, :full_moon:",
-   ["order"]=1127,
-   ["char"]={3794},
-   ["text"]="Full moon",
-   ["image_path"]="1f315",
+   ["subText"]=":farmer:",
+   ["order"]=1767,
+   ["image_path"]="1f9d1-1f33e",
+   ["text"]="Farmer",
+   ["char"]={2908},
 },
 -- Table: {1129}
 {
-   ["subText"]="gibbous, moon, waning, :waning_gibbous_moon:",
-   ["order"]=1128,
-   ["char"]={3795},
-   ["text"]="Waning gibbous moon",
-   ["image_path"]="1f316",
+   ["subText"]=":woman_farmer:, farmer, gardener, rancher, woman",
+   ["order"]=1773,
+   ["image_path"]="1f469-1f33e",
+   ["text"]="Woman farmer",
+   ["char"]={2909},
 },
 -- Table: {1130}
 {
-   ["subText"]="moon, quarter, :last_quarter_moon:",
-   ["order"]=1129,
-   ["char"]={3796},
-   ["text"]="Last quarter moon",
-   ["image_path"]="1f317",
+   ["subText"]=":man_farmer:, farmer, gardener, man, rancher",
+   ["order"]=1779,
+   ["image_path"]="1f468-1f33e",
+   ["text"]="Man farmer",
+   ["char"]={2910},
 },
 -- Table: {1131}
 {
-   ["subText"]="crescent, moon, waning, :waning_crescent_moon:",
-   ["order"]=1130,
-   ["char"]={3797},
-   ["text"]="Waning crescent moon",
-   ["image_path"]="1f318",
+   ["subText"]=":cook:",
+   ["order"]=1785,
+   ["image_path"]="1f9d1-1f373",
+   ["text"]="Cook",
+   ["char"]={2911},
 },
 -- Table: {1132}
 {
-   ["subText"]="dark, moon, :new_moon:",
-   ["order"]=1131,
-   ["char"]={3798},
-   ["text"]="New moon",
-   ["image_path"]="1f311",
+   ["subText"]=":woman_cook:, chef, cook, woman",
+   ["order"]=1791,
+   ["image_path"]="1f469-1f373",
+   ["text"]="Woman cook",
+   ["char"]={2912},
 },
 -- Table: {1133}
 {
-   ["subText"]="crescent, moon, waxing, :waxing_crescent_moon:",
-   ["order"]=1132,
-   ["char"]={3799},
-   ["text"]="Waxing crescent moon",
-   ["image_path"]="1f312",
+   ["subText"]=":man_cook:, chef, cook, man",
+   ["order"]=1797,
+   ["image_path"]="1f468-1f373",
+   ["text"]="Man cook",
+   ["char"]={2913},
 },
 -- Table: {1134}
 {
-   ["subText"]="moon, quarter, :first_quarter_moon:",
-   ["order"]=1133,
-   ["char"]={3800},
-   ["text"]="First quarter moon",
-   ["image_path"]="1f313",
+   ["subText"]=":student:",
+   ["order"]=1803,
+   ["image_path"]="1f9d1-1f393",
+   ["text"]="Student",
+   ["char"]={2914},
 },
 -- Table: {1135}
 {
-   ["subText"]="gibbous, moon, waxing, :waxing_gibbous_moon:",
-   ["order"]=1134,
-   ["char"]={3801},
-   ["text"]="Waxing gibbous moon",
-   ["image_path"]="1f314",
+   ["subText"]=":woman_student:, graduate, student, woman",
+   ["order"]=1809,
+   ["image_path"]="1f469-1f393",
+   ["text"]="Woman student",
+   ["char"]={2915},
 },
 -- Table: {1136}
 {
-   ["subText"]="face, moon, :new_moon_with_face:",
-   ["order"]=1135,
-   ["char"]={3802},
-   ["text"]="New moon face",
-   ["image_path"]="1f31a",
+   ["subText"]=":man_student:, graduate, man, student",
+   ["order"]=1815,
+   ["image_path"]="1f468-1f393",
+   ["text"]="Man student",
+   ["char"]={2916},
 },
 -- Table: {1137}
 {
-   ["subText"]="bright, face, full, moon, :full_moon_with_face:",
-   ["order"]=1136,
-   ["char"]={3803},
-   ["text"]="Full moon with face",
-   ["image_path"]="1f31d",
+   ["subText"]=":singer:",
+   ["order"]=1821,
+   ["image_path"]="1f9d1-1f3a4",
+   ["text"]="Singer",
+   ["char"]={2917},
 },
 -- Table: {1138}
 {
-   ["subText"]="bright, face, sun, :sun_with_face:",
-   ["order"]=1137,
-   ["char"]={3804},
-   ["text"]="Sun with face",
-   ["image_path"]="1f31e",
+   ["subText"]=":woman_singer:, actor, entertainer, rock, singer, star, woman",
+   ["order"]=1827,
+   ["image_path"]="1f469-1f3a4",
+   ["text"]="Woman singer",
+   ["char"]={2918},
 },
 -- Table: {1139}
 {
-   ["subText"]="face, moon, quarter, :first_quarter_moon_with_face:",
-   ["order"]=1138,
-   ["char"]={3805},
-   ["text"]="First quarter moon with face",
-   ["image_path"]="1f31b",
+   ["subText"]=":man_singer:, actor, entertainer, man, rock, singer, star",
+   ["order"]=1833,
+   ["image_path"]="1f468-1f3a4",
+   ["text"]="Man singer",
+   ["char"]={2919},
 },
 -- Table: {1140}
 {
-   ["subText"]="face, moon, quarter, :last_quarter_moon_with_face:",
-   ["order"]=1139,
-   ["char"]={3806},
-   ["text"]="Last quarter moon with face",
-   ["image_path"]="1f31c",
+   ["subText"]=":teacher:",
+   ["order"]=1839,
+   ["image_path"]="1f9d1-1f3eb",
+   ["text"]="Teacher",
+   ["char"]={2920},
 },
 -- Table: {1141}
 {
-   ["subText"]="crescent, moon, :crescent_moon:",
-   ["order"]=1140,
-   ["char"]={3807},
-   ["text"]="Crescent moon",
-   ["image_path"]="1f319",
+   ["subText"]=":woman_teacher:, instructor, professor, teacher, woman",
+   ["order"]=1845,
+   ["image_path"]="1f469-1f3eb",
+   ["text"]="Woman teacher",
+   ["char"]={2921},
 },
 -- Table: {1142}
 {
-   ["subText"]="comic, star, :dizzy:",
-   ["order"]=1141,
-   ["char"]={3808},
-   ["text"]="Dizzy",
-   ["image_path"]="1f4ab",
+   ["subText"]=":man_teacher:, instructor, man, professor, teacher",
+   ["order"]=1851,
+   ["image_path"]="1f468-1f3eb",
+   ["text"]="Man teacher",
+   ["char"]={2922},
 },
 -- Table: {1143}
 {
-   ["subText"]="star, :star:",
-   ["order"]=1142,
-   ["char"]={3809},
-   ["text"]="White medium star",
-   ["image_path"]="2b50",
+   ["subText"]=":factory_worker:",
+   ["order"]=1857,
+   ["image_path"]="1f9d1-1f3ed",
+   ["text"]="Factory worker",
+   ["char"]={2923},
 },
 -- Table: {1144}
 {
-   ["subText"]="glittery, glow, shining, sparkle, star, :star2:",
-   ["order"]=1143,
-   ["char"]={3810},
-   ["text"]="Glowing star",
-   ["image_path"]="1f31f",
+   ["subText"]=":woman_factory_worker:, assembly, factory, industrial, woman, worker",
+   ["order"]=1863,
+   ["image_path"]="1f469-1f3ed",
+   ["text"]="Woman factory worker",
+   ["char"]={2924},
 },
 -- Table: {1145}
 {
-   ["subText"]="sparkle, star, :sparkles:",
-   ["order"]=1144,
-   ["char"]={3811},
-   ["text"]="Sparkles",
-   ["image_path"]="2728",
+   ["subText"]=":man_factory_worker:, assembly, factory, industrial, man, worker",
+   ["order"]=1869,
+   ["image_path"]="1f468-1f3ed",
+   ["text"]="Man factory worker",
+   ["char"]={2925},
 },
 -- Table: {1146}
 {
-   ["subText"]="danger, electric, electricity, lightning, voltage, zap, :zap:",
-   ["order"]=1145,
-   ["char"]={3812},
-   ["text"]="High voltage",
-   ["image_path"]="26a1",
+   ["subText"]=":technologist:",
+   ["order"]=1875,
+   ["image_path"]="1f9d1-1f4bb",
+   ["text"]="Technologist",
+   ["char"]={2926},
 },
 -- Table: {1147}
 {
-   ["subText"]="flame, tool, :fire:",
-   ["order"]=1146,
-   ["char"]={3813},
-   ["text"]="Fire",
-   ["image_path"]="1f525",
+   ["subText"]=":woman_technologist:, coder, developer, inventor, software, technologist, woman",
+   ["order"]=1881,
+   ["image_path"]="1f469-1f4bb",
+   ["text"]="Woman technologist",
+   ["char"]={2927},
 },
 -- Table: {1148}
 {
-   ["subText"]="boom, comic, :boom:",
-   ["order"]=1147,
-   ["char"]={3814},
-   ["text"]="Collision",
-   ["image_path"]="1f4a5",
+   ["subText"]=":man_technologist:, coder, developer, inventor, man, software, technologist",
+   ["order"]=1887,
+   ["image_path"]="1f468-1f4bb",
+   ["text"]="Man technologist",
+   ["char"]={2928},
 },
 -- Table: {1149}
 {
-   ["subText"]="space, :comet:",
-   ["order"]=1148,
-   ["char"]={3815},
-   ["text"]="Comet",
-   ["image_path"]="2604",
+   ["subText"]=":office_worker:",
+   ["order"]=1893,
+   ["image_path"]="1f9d1-1f4bc",
+   ["text"]="Office worker",
+   ["char"]={2929},
 },
 -- Table: {1150}
 {
-   ["subText"]="bright, rays, sunny, :sunny:",
-   ["order"]=1149,
-   ["char"]={3816},
-   ["text"]="Sun",
-   ["image_path"]="2600",
+   ["subText"]=":woman_office_worker:, architect, business, manager, office, white-collar, woman",
+   ["order"]=1899,
+   ["image_path"]="1f469-1f4bc",
+   ["text"]="Woman office worker",
+   ["char"]={2930},
 },
 -- Table: {1151}
 {
-   ["subText"]="cloud, sun, :white_sun_small_cloud:",
-   ["order"]=1150,
-   ["char"]={3817},
-   ["text"]="Sun behind small cloud",
-   ["image_path"]="1f324",
+   ["subText"]=":man_office_worker:, architect, business, man, manager, office, white-collar",
+   ["order"]=1905,
+   ["image_path"]="1f468-1f4bc",
+   ["text"]="Man office worker",
+   ["char"]={2931},
 },
 -- Table: {1152}
 {
-   ["subText"]="cloud, sun, :partly_sunny:",
-   ["order"]=1151,
-   ["char"]={3818},
-   ["text"]="Sun behind cloud",
-   ["image_path"]="26c5",
+   ["subText"]=":mechanic:",
+   ["order"]=1911,
+   ["image_path"]="1f9d1-1f527",
+   ["text"]="Mechanic",
+   ["char"]={2932},
 },
 -- Table: {1153}
 {
-   ["subText"]="cloud, sun, :white_sun_cloud:",
-   ["order"]=1152,
-   ["char"]={3819},
-   ["text"]="Sun behind large cloud",
-   ["image_path"]="1f325",
+   ["subText"]=":woman_mechanic:, electrician, mechanic, plumber, tradesperson, woman",
+   ["order"]=1917,
+   ["image_path"]="1f469-1f527",
+   ["text"]="Woman mechanic",
+   ["char"]={2933},
 },
 -- Table: {1154}
 {
-   ["subText"]="cloud, rain, sun, :white_sun_rain_cloud:",
-   ["order"]=1153,
-   ["char"]={3820},
-   ["text"]="Sun behind rain cloud",
-   ["image_path"]="1f326",
+   ["subText"]=":man_mechanic:, electrician, man, mechanic, plumber, tradesperson",
+   ["order"]=1923,
+   ["image_path"]="1f468-1f527",
+   ["text"]="Man mechanic",
+   ["char"]={2934},
 },
 -- Table: {1155}
 {
-   ["subText"]="rain, :rainbow:",
-   ["order"]=1154,
-   ["char"]={3821},
-   ["text"]="Rainbow",
-   ["image_path"]="1f308",
+   ["subText"]=":scientist:",
+   ["order"]=1929,
+   ["image_path"]="1f9d1-1f52c",
+   ["text"]="Scientist",
+   ["char"]={2935},
 },
 -- Table: {1156}
 {
-   ["subText"]="weather, :cloud:",
-   ["order"]=1155,
-   ["char"]={3822},
-   ["text"]="Cloud",
-   ["image_path"]="2601",
+   ["subText"]=":woman_scientist:, biologist, chemist, engineer, mathematician, physicist, scientist, woman",
+   ["order"]=1935,
+   ["image_path"]="1f469-1f52c",
+   ["text"]="Woman scientist",
+   ["char"]={2936},
 },
 -- Table: {1157}
 {
-   ["subText"]="cloud, rain, :cloud_rain:",
-   ["order"]=1156,
-   ["char"]={3823},
-   ["text"]="Cloud with rain",
-   ["image_path"]="1f327",
+   ["subText"]=":man_scientist:, biologist, chemist, engineer, man, mathematician, physicist, scientist",
+   ["order"]=1941,
+   ["image_path"]="1f468-1f52c",
+   ["text"]="Man scientist",
+   ["char"]={2937},
 },
 -- Table: {1158}
 {
-   ["subText"]="cloud, rain, thunder, :thunder_cloud_rain:",
-   ["order"]=1157,
-   ["char"]={3824},
-   ["text"]="Cloud with lightning and rain",
-   ["image_path"]="26c8",
+   ["subText"]=":artist:",
+   ["order"]=1947,
+   ["image_path"]="1f9d1-1f3a8",
+   ["text"]="Artist",
+   ["char"]={2938},
 },
 -- Table: {1159}
 {
-   ["subText"]="cloud, lightning, :cloud_lightning:",
-   ["order"]=1158,
-   ["char"]={3825},
-   ["text"]="Cloud with lightning",
-   ["image_path"]="1f329",
+   ["subText"]=":woman_artist:, artist, palette, woman",
+   ["order"]=1953,
+   ["image_path"]="1f469-1f3a8",
+   ["text"]="Woman artist",
+   ["char"]={2939},
 },
 -- Table: {1160}
 {
-   ["subText"]="cloud, cold, snow, :cloud_snow:",
-   ["order"]=1159,
-   ["char"]={3826},
-   ["text"]="Cloud with snow",
-   ["image_path"]="1f328",
+   ["subText"]=":man_artist:, artist, man, palette",
+   ["order"]=1959,
+   ["image_path"]="1f468-1f3a8",
+   ["text"]="Man artist",
+   ["char"]={2940},
 },
 -- Table: {1161}
 {
-   ["subText"]="cold, snow, :snowman2:",
-   ["order"]=1160,
-   ["char"]={3827},
-   ["text"]="Snowman",
-   ["image_path"]="2603",
+   ["subText"]=":firefighter:",
+   ["order"]=1965,
+   ["image_path"]="1f9d1-1f692",
+   ["text"]="Firefighter",
+   ["char"]={2941},
 },
 -- Table: {1162}
 {
-   ["subText"]="cold, snow, snowman, :snowman:",
-   ["order"]=1161,
-   ["char"]={3828},
-   ["text"]="Snowman without snow",
-   ["image_path"]="26c4",
+   ["subText"]=":woman_firefighter:, firefighter, firetruck, woman",
+   ["order"]=1971,
+   ["image_path"]="1f469-1f692",
+   ["text"]="Woman firefighter",
+   ["char"]={2942},
 },
 -- Table: {1163}
 {
-   ["subText"]="cold, snow, :snowflake:",
-   ["order"]=1162,
-   ["char"]={3829},
-   ["text"]="Snowflake",
-   ["image_path"]="2744",
+   ["subText"]=":man_firefighter:, firefighter, firetruck, man",
+   ["order"]=1977,
+   ["image_path"]="1f468-1f692",
+   ["text"]="Man firefighter",
+   ["char"]={2943},
 },
 -- Table: {1164}
 {
-   ["subText"]="blow, cloud, face, wind, :wind_blowing_face:",
-   ["order"]=1163,
-   ["char"]={3830},
-   ["text"]="Wind face",
-   ["image_path"]="1f32c",
+   ["subText"]=":pilot:",
+   ["order"]=1983,
+   ["image_path"]="1f9d1-2708",
+   ["text"]="Pilot",
+   ["char"]={2944},
 },
 -- Table: {1165}
 {
-   ["subText"]="comic, dash, running, :dash:",
-   ["order"]=1164,
-   ["char"]={3831},
-   ["text"]="Dashing away",
-   ["image_path"]="1f4a8",
+   ["subText"]=":woman_pilot:, pilot, plane, woman",
+   ["order"]=1989,
+   ["image_path"]="1f469-2708",
+   ["text"]="Woman pilot",
+   ["char"]={2945},
 },
 -- Table: {1166}
 {
-   ["subText"]="cloud, whirlwind, :cloud_tornado:",
-   ["order"]=1165,
-   ["char"]={3832},
-   ["text"]="Tornado",
-   ["image_path"]="1f32a",
+   ["subText"]=":man_pilot:, man, pilot, plane",
+   ["order"]=1995,
+   ["image_path"]="1f468-2708",
+   ["text"]="Man pilot",
+   ["char"]={2946},
 },
 -- Table: {1167}
 {
-   ["subText"]="cloud, :fog:",
-   ["order"]=1166,
-   ["char"]={3833},
-   ["text"]="Fog",
-   ["image_path"]="1f32b",
+   ["subText"]=":astronaut:",
+   ["order"]=2001,
+   ["image_path"]="1f9d1-1f680",
+   ["text"]="Astronaut",
+   ["char"]={2947},
 },
 -- Table: {1168}
 {
-   ["subText"]="ocean, water, wave, :ocean:",
-   ["order"]=1167,
-   ["char"]={3834},
-   ["text"]="Water wave",
-   ["image_path"]="1f30a",
+   ["subText"]=":woman_astronaut:, astronaut, rocket, woman",
+   ["order"]=2007,
+   ["image_path"]="1f469-1f680",
+   ["text"]="Woman astronaut",
+   ["char"]={2948},
 },
 -- Table: {1169}
 {
-   ["subText"]="cold, comic, drop, sweat, :droplet:",
-   ["order"]=1168,
-   ["char"]={3835},
-   ["text"]="Droplet",
-   ["image_path"]="1f4a7",
+   ["subText"]=":man_astronaut:, astronaut, man, rocket",
+   ["order"]=2013,
+   ["image_path"]="1f468-1f680",
+   ["text"]="Man astronaut",
+   ["char"]={2949},
 },
 -- Table: {1170}
 {
-   ["subText"]="comic, splashing, sweat, :sweat_drops:",
-   ["order"]=1169,
-   ["char"]={3836},
-   ["text"]="Sweat droplets",
-   ["image_path"]="1f4a6",
+   ["subText"]=":judge:",
+   ["order"]=2019,
+   ["image_path"]="1f9d1-2696",
+   ["text"]="Judge",
+   ["char"]={2950},
 },
 -- Table: {1171}
 {
-   ["subText"]="clothing, drop, rain, umbrella, :umbrella:",
-   ["order"]=1170,
-   ["char"]={3837},
-   ["text"]="Umbrella with rain drops",
-   ["image_path"]="2614",
+   ["subText"]=":woman_judge:, judge, scales, woman",
+   ["order"]=2025,
+   ["image_path"]="1f469-2696",
+   ["text"]="Woman judge",
+   ["char"]={2951},
 },
 -- Table: {1172}
 {
-   ["subText"]="spots, :giraffe:",
-   ["order"]=1171,
-   ["char"]={3838},
-   ["text"]="Giraffe",
-   ["image_path"]="1f992",
+   ["subText"]=":man_judge:, justice, man, scales",
+   ["order"]=2031,
+   ["image_path"]="1f468-2696",
+   ["text"]="Man judge",
+   ["char"]={2952},
 },
 -- Table: {1173}
 {
-   ["subText"]="stripe, :zebra:",
-   ["order"]=1172,
-   ["char"]={3839},
-   ["text"]="Zebra",
-   ["image_path"]="1f993",
+   ["subText"]=":bride_with_veil:, bride, veil, wedding",
+   ["order"]=2037,
+   ["image_path"]="1f470",
+   ["text"]="Bride with veil",
+   ["char"]={2953},
 },
 -- Table: {1174}
 {
-   ["subText"]="spiny, :hedgehog:",
-   ["order"]=1173,
-   ["char"]={3840},
-   ["text"]="Hedgehog",
-   ["image_path"]="1f994",
+   ["subText"]=":man_in_tuxedo:, groom, man, tuxedo",
+   ["order"]=2043,
+   ["image_path"]="1f935",
+   ["text"]="Man in tuxedo",
+   ["char"]={2954},
 },
 -- Table: {1175}
 {
-   ["subText"]="brachiosaurus, brontosaurus, diplodocus, :sauropod:",
-   ["order"]=1174,
-   ["char"]={3841},
-   ["text"]="Sauropod",
-   ["image_path"]="1f995",
+   ["subText"]=":princess:, fairy tale, fantasy",
+   ["order"]=2049,
+   ["image_path"]="1f478",
+   ["text"]="Princess",
+   ["char"]={2955},
 },
 -- Table: {1176}
 {
-   ["subText"]="Tyrannosaurus Rex, :t_rex:",
-   ["order"]=1175,
-   ["char"]={3842},
-   ["text"]="T-Rex",
-   ["image_path"]="1f996",
+   ["subText"]=":prince:",
+   ["order"]=2055,
+   ["image_path"]="1f934",
+   ["text"]="Prince",
+   ["char"]={2956},
 },
 -- Table: {1177}
 {
-   ["subText"]=", :cricket:",
-   ["order"]=1176,
-   ["char"]={3843},
-   ["text"]="Cricket",
-   ["image_path"]="1f997",
+   ["subText"]=":superhero:",
+   ["order"]=2061,
+   ["image_path"]="1f9b8",
+   ["text"]="Superhero",
+   ["char"]={2957},
 },
 -- Table: {1178}
 {
-   ["subText"]="apple, fruit, green, :green_apple:",
-   ["order"]=1177,
-   ["char"]={3844},
-   ["text"]="Green apple",
-   ["image_path"]="1f34f",
+   ["subText"]=":woman_superhero:",
+   ["order"]=2067,
+   ["image_path"]="1f9b8-2640",
+   ["text"]="Woman superhero",
+   ["char"]={2958},
 },
 -- Table: {1179}
 {
-   ["subText"]="apple, fruit, red, :apple:",
-   ["order"]=1178,
-   ["char"]={3845},
-   ["text"]="Red apple",
-   ["image_path"]="1f34e",
+   ["subText"]=":man_superhero:",
+   ["order"]=2073,
+   ["image_path"]="1f9b8-2642",
+   ["text"]="Man superhero",
+   ["char"]={2959},
 },
 -- Table: {1180}
 {
-   ["subText"]="fruit, :pear:",
-   ["order"]=1179,
-   ["char"]={3846},
-   ["text"]="Pear",
-   ["image_path"]="1f350",
+   ["subText"]=":supervillain:",
+   ["order"]=2079,
+   ["image_path"]="1f9b9",
+   ["text"]="Supervillain",
+   ["char"]={2960},
 },
 -- Table: {1181}
 {
-   ["subText"]="fruit, orange, :tangerine:",
-   ["order"]=1180,
-   ["char"]={3847},
-   ["text"]="Tangerine",
-   ["image_path"]="1f34a",
+   ["subText"]=":woman_supervillain:",
+   ["order"]=2086,
+   ["image_path"]="1f9b9-2640",
+   ["text"]="Woman supervillain",
+   ["char"]={2961},
 },
 -- Table: {1182}
 {
-   ["subText"]="citrus, fruit, :lemon:",
-   ["order"]=1181,
-   ["char"]={3848},
-   ["text"]="Lemon",
-   ["image_path"]="1f34b",
+   ["subText"]=":man_supervillain:",
+   ["order"]=2091,
+   ["image_path"]="1f9b9-2642",
+   ["text"]="Man supervillain",
+   ["char"]={2962},
 },
 -- Table: {1183}
 {
-   ["subText"]="fruit, :banana:",
-   ["order"]=1182,
-   ["char"]={3849},
-   ["text"]="Banana",
-   ["image_path"]="1f34c",
+   ["subText"]=":mrs_claus:, Christmas, Mrs., celebration, claus, mother",
+   ["order"]=2097,
+   ["image_path"]="1f936",
+   ["text"]="Mrs. Claus",
+   ["char"]={2963},
 },
 -- Table: {1184}
 {
-   ["subText"]="fruit, :watermelon:",
-   ["order"]=1183,
-   ["char"]={3850},
-   ["text"]="Watermelon",
-   ["image_path"]="1f349",
+   ["subText"]=":santa:, Christmas, celebration, claus, father",
+   ["order"]=2103,
+   ["image_path"]="1f385",
+   ["text"]="Santa Claus",
+   ["char"]={2964},
 },
 -- Table: {1185}
 {
-   ["subText"]="fruit, grape, :grapes:",
-   ["order"]=1184,
-   ["char"]={3851},
-   ["text"]="Grapes",
-   ["image_path"]="1f347",
+   ["subText"]=":mage:, sorcerer, sorceress, witch, wizard",
+   ["order"]=2109,
+   ["image_path"]="1f9d9",
+   ["text"]="Mage",
+   ["char"]={2965},
 },
 -- Table: {1186}
 {
-   ["subText"]="berry, fruit, :strawberry:",
-   ["order"]=1185,
-   ["char"]={3852},
-   ["text"]="Strawberry",
-   ["image_path"]="1f353",
+   ["subText"]=":woman_mage:, sorceress, witch",
+   ["order"]=2115,
+   ["image_path"]="1f9d9-2640",
+   ["text"]="Woman mage",
+   ["char"]={2966},
 },
 -- Table: {1187}
 {
-   ["subText"]="fruit, :melon:",
-   ["order"]=1186,
-   ["char"]={3853},
-   ["text"]="Melon",
-   ["image_path"]="1f348",
+   ["subText"]=":man_mage:, sorcerer, wizard",
+   ["order"]=2121,
+   ["image_path"]="1f9d9-2642",
+   ["text"]="Man mage",
+   ["char"]={2967},
 },
 -- Table: {1188}
 {
-   ["subText"]="cherry, fruit, :cherries:",
-   ["order"]=1187,
-   ["char"]={3854},
-   ["text"]="Cherries",
-   ["image_path"]="1f352",
+   ["subText"]=":elf:",
+   ["order"]=2127,
+   ["image_path"]="1f9dd",
+   ["text"]="Elf",
+   ["char"]={2968},
 },
 -- Table: {1189}
 {
-   ["subText"]="fruit, :peach:",
-   ["order"]=1188,
-   ["char"]={3855},
-   ["text"]="Peach",
-   ["image_path"]="1f351",
+   ["subText"]=":woman_elf:, magical",
+   ["order"]=2133,
+   ["image_path"]="1f9dd-2640",
+   ["text"]="Woman elf",
+   ["char"]={2969},
 },
 -- Table: {1190}
 {
-   ["subText"]="fruit, :pineapple:",
-   ["order"]=1189,
-   ["char"]={3856},
-   ["text"]="Pineapple",
-   ["image_path"]="1f34d",
+   ["subText"]=":man_elf:, magical",
+   ["order"]=2139,
+   ["image_path"]="1f9dd-2642",
+   ["text"]="Man elf",
+   ["char"]={2970},
 },
 -- Table: {1191}
 {
-   ["subText"]="food, fruit, kiwi, :kiwi:",
-   ["order"]=1190,
-   ["char"]={3857},
-   ["text"]="Kiwi fruit",
-   ["image_path"]="1f95d",
+   ["subText"]=":vampire:, Dracula, undead",
+   ["order"]=2145,
+   ["image_path"]="1f9db",
+   ["text"]="Vampire",
+   ["char"]={2971},
 },
 -- Table: {1192}
 {
-   ["subText"]="avocado, food, fruit, :avocado:",
-   ["order"]=1191,
-   ["char"]={3858},
-   ["text"]="Avocado",
-   ["image_path"]="1f951",
+   ["subText"]=":woman_vampire:, undead",
+   ["order"]=2151,
+   ["image_path"]="1f9db-2640",
+   ["text"]="Woman vampire",
+   ["char"]={2972},
 },
 -- Table: {1193}
 {
-   ["subText"]="fruit, vegetable, :tomato:",
-   ["order"]=1192,
-   ["char"]={3859},
-   ["text"]="Tomato",
-   ["image_path"]="1f345",
+   ["subText"]=":man_vampire:, Dracula, undead",
+   ["order"]=2157,
+   ["image_path"]="1f9db-2642",
+   ["text"]="Man vampire",
+   ["char"]={2973},
 },
 -- Table: {1194}
 {
-   ["subText"]="aubergine, vegetable, :eggplant:",
-   ["order"]=1193,
-   ["char"]={3860},
-   ["text"]="Eggplant",
-   ["image_path"]="1f346",
+   ["subText"]=":zombie:",
+   ["order"]=2163,
+   ["image_path"]="1f9df",
+   ["text"]="Zombie",
+   ["char"]={2974},
 },
 -- Table: {1195}
 {
-   ["subText"]="cucumber, food, pickle, vegetable, :cucumber:",
-   ["order"]=1194,
-   ["char"]={3861},
-   ["text"]="Cucumber",
-   ["image_path"]="1f952",
+   ["subText"]=":woman_zombie:, undead, walking dead",
+   ["order"]=2164,
+   ["image_path"]="1f9df-2640",
+   ["text"]="Woman zombie",
+   ["char"]={2975},
 },
 -- Table: {1196}
 {
-   ["subText"]="carrot, food, vegetable, :carrot:",
-   ["order"]=1195,
-   ["char"]={3862},
-   ["text"]="Carrot",
-   ["image_path"]="1f955",
+   ["subText"]=":man_zombie:, undead, walking dead",
+   ["order"]=2165,
+   ["image_path"]="1f9df-2642",
+   ["text"]="Man zombie",
+   ["char"]={2976},
 },
 -- Table: {1197}
 {
-   ["subText"]="corn, ear, maize, maze, :corn:",
-   ["order"]=1196,
-   ["char"]={3863},
-   ["text"]="Ear of corn",
-   ["image_path"]="1f33d",
+   ["subText"]=":genie:",
+   ["order"]=2166,
+   ["image_path"]="1f9de",
+   ["text"]="Genie",
+   ["char"]={2977},
 },
 -- Table: {1198}
 {
-   ["subText"]="hot, pepper, :hot_pepper:",
-   ["order"]=1197,
-   ["char"]={3864},
-   ["text"]="Hot pepper",
-   ["image_path"]="1f336",
+   ["subText"]=":woman_genie:, djinn",
+   ["order"]=2167,
+   ["image_path"]="1f9de-2640",
+   ["text"]="Woman genie",
+   ["char"]={2978},
 },
 -- Table: {1199}
 {
-   ["subText"]="food, potato, vegetable, :potato:",
-   ["order"]=1198,
-   ["char"]={3865},
-   ["text"]="Potato",
-   ["image_path"]="1f954",
+   ["subText"]=":man_genie:, djinn",
+   ["order"]=2168,
+   ["image_path"]="1f9de-2642",
+   ["text"]="Man genie",
+   ["char"]={2979},
 },
 -- Table: {1200}
 {
-   ["subText"]="potato, roasted, sweet, :sweet_potato:",
-   ["order"]=1199,
-   ["char"]={3866},
-   ["text"]="Roasted sweet potato",
-   ["image_path"]="1f360",
+   ["subText"]=":merperson:, mermaid, merman, merwoman",
+   ["order"]=2169,
+   ["image_path"]="1f9dc",
+   ["text"]="Merperson",
+   ["char"]={2980},
 },
 -- Table: {1201}
 {
-   ["subText"]="plant, :chestnut:",
-   ["order"]=1200,
-   ["char"]={3867},
-   ["text"]="Chestnut",
-   ["image_path"]="1f330",
+   ["subText"]=":mermaid:, merwoman",
+   ["order"]=2175,
+   ["image_path"]="1f9dc-2640",
+   ["text"]="Mermaid",
+   ["char"]={2981},
 },
 -- Table: {1202}
 {
-   ["subText"]="food, nut, peanut, vegetable, :peanuts:",
-   ["order"]=1201,
-   ["char"]={3868},
-   ["text"]="Peanuts",
-   ["image_path"]="1f95c",
+   ["subText"]=":merman:, Triton",
+   ["order"]=2181,
+   ["image_path"]="1f9dc-2642",
+   ["text"]="Merman",
+   ["char"]={2982},
 },
 -- Table: {1203}
 {
-   ["subText"]="honey, honeypot, pot, sweet, :honey_pot:",
-   ["order"]=1202,
-   ["char"]={3869},
-   ["text"]="Honey pot",
-   ["image_path"]="1f36f",
+   ["subText"]=":fairy:, Oberon, Puck, Titania",
+   ["order"]=2187,
+   ["image_path"]="1f9da",
+   ["text"]="Fairy",
+   ["char"]={2983},
 },
 -- Table: {1204}
 {
-   ["subText"]="bread, crescent roll, croissant, food, french, :croissant:",
-   ["order"]=1203,
-   ["char"]={3870},
-   ["text"]="Croissant",
-   ["image_path"]="1f950",
+   ["subText"]=":woman_fairy:, Titania",
+   ["order"]=2193,
+   ["image_path"]="1f9da-2640",
+   ["text"]="Woman fairy",
+   ["char"]={2984},
 },
 -- Table: {1205}
 {
-   ["subText"]="loaf, :bread:",
-   ["order"]=1204,
-   ["char"]={3871},
-   ["text"]="Bread",
-   ["image_path"]="1f35e",
+   ["subText"]=":man_fairy:, Oberon, Puck",
+   ["order"]=2199,
+   ["image_path"]="1f9da-2642",
+   ["text"]="Man fairy",
+   ["char"]={2985},
 },
 -- Table: {1206}
 {
-   ["subText"]="baguette, bread, food, french, :french_bread:",
-   ["order"]=1205,
-   ["char"]={3872},
-   ["text"]="Baguette bread",
-   ["image_path"]="1f956",
+   ["subText"]=":angel:, baby, face, fairy tale, fantasy",
+   ["order"]=2205,
+   ["image_path"]="1f47c",
+   ["text"]="Baby angel",
+   ["char"]={2986},
 },
 -- Table: {1207}
 {
-   ["subText"]="cheese, :cheese:",
-   ["order"]=1206,
-   ["char"]={3873},
-   ["text"]="Cheese wedge",
-   ["image_path"]="1f9c0",
+   ["subText"]=":pregnant_woman:, pregnant, woman",
+   ["order"]=2211,
+   ["image_path"]="1f930",
+   ["text"]="Pregnant woman",
+   ["char"]={2987},
 },
 -- Table: {1208}
 {
-   ["subText"]="egg, food, :egg:",
-   ["order"]=1207,
-   ["char"]={3874},
-   ["text"]="Egg",
-   ["image_path"]="1f95a",
+   ["subText"]=":breast_feeding:, baby, breast, nursing",
+   ["order"]=2217,
+   ["image_path"]="1f931",
+   ["text"]="Breast-feeding",
+   ["char"]={2988},
 },
 -- Table: {1209}
 {
-   ["subText"]="egg, frying, pan, :cooking:",
-   ["order"]=1208,
-   ["char"]={3875},
-   ["text"]="Cooking",
-   ["image_path"]="1f373",
+   ["subText"]=":person_bowing:, apology, bow, gesture, sorry",
+   ["order"]=2223,
+   ["image_path"]="1f647",
+   ["text"]="Person bowing",
+   ["char"]={2989},
 },
 -- Table: {1210}
 {
-   ["subText"]="bacon, food, meat, :bacon:",
-   ["order"]=1209,
-   ["char"]={3876},
-   ["text"]="Bacon",
-   ["image_path"]="1f953",
+   ["subText"]=":woman_bowing:, apology, bowing, favor, gesture, sorry, woman",
+   ["order"]=2229,
+   ["image_path"]="1f647-2640",
+   ["text"]="Woman bowing",
+   ["char"]={2990},
 },
 -- Table: {1211}
 {
-   ["subText"]="crêpe, food, hotcake, pancake, :pancakes:",
-   ["order"]=1210,
-   ["char"]={3877},
-   ["text"]="Pancakes",
-   ["image_path"]="1f95e",
+   ["subText"]=":man_bowing:, apology, bowing, favor, gesture, man, sorry",
+   ["order"]=2235,
+   ["image_path"]="1f647-2642",
+   ["text"]="Man bowing",
+   ["char"]={2991},
 },
 -- Table: {1212}
 {
-   ["subText"]="fried, prawn, shrimp, tempura, :fried_shrimp:",
-   ["order"]=1211,
-   ["char"]={3878},
-   ["text"]="Fried shrimp",
-   ["image_path"]="1f364",
+   ["subText"]=":person_tipping_hand:, hand, help, information, sassy, tipping",
+   ["order"]=2241,
+   ["image_path"]="1f481",
+   ["text"]="Person tipping hand",
+   ["char"]={2992},
 },
 -- Table: {1213}
 {
-   ["subText"]="bone, chicken, leg, poultry, :poultry_leg:",
-   ["order"]=1212,
-   ["char"]={3879},
-   ["text"]="Poultry leg",
-   ["image_path"]="1f357",
+   ["subText"]=":woman_tipping_hand:, sassy, tipping hand, woman",
+   ["order"]=2247,
+   ["image_path"]="1f481-2640",
+   ["text"]="Woman tipping hand",
+   ["char"]={2993},
 },
 -- Table: {1214}
 {
-   ["subText"]="bone, meat, :meat_on_bone:",
-   ["order"]=1213,
-   ["char"]={3880},
-   ["text"]="Meat on bone",
-   ["image_path"]="1f356",
+   ["subText"]=":man_tipping_hand:, man, sassy, tipping hand",
+   ["order"]=2253,
+   ["image_path"]="1f481-2642",
+   ["text"]="Man tipping hand",
+   ["char"]={2994},
 },
 -- Table: {1215}
 {
-   ["subText"]="cheese, slice, :pizza:",
-   ["order"]=1214,
-   ["char"]={3881},
-   ["text"]="Pizza",
-   ["image_path"]="1f355",
+   ["subText"]=":person_gesturing_no:, forbidden, gesture, hand, no, not, prohibited",
+   ["order"]=2259,
+   ["image_path"]="1f645",
+   ["text"]="Person gesturing NO",
+   ["char"]={2995},
 },
 -- Table: {1216}
 {
-   ["subText"]="frankfurter, hotdog, sausage, :hotdog:",
-   ["order"]=1215,
-   ["char"]={3882},
-   ["text"]="Hot dog",
-   ["image_path"]="1f32d",
+   ["subText"]=":woman_gesturing_no:, forbidden, gesture, hand, no, prohibited, woman",
+   ["order"]=2265,
+   ["image_path"]="1f645-2640",
+   ["text"]="Woman gesturing NO",
+   ["char"]={2996},
 },
 -- Table: {1217}
 {
-   ["subText"]="burger, :hamburger:",
-   ["order"]=1216,
-   ["char"]={3883},
-   ["text"]="Hamburger",
-   ["image_path"]="1f354",
+   ["subText"]=":man_gesturing_no:, forbidden, gesture, hand, man, no, prohibited",
+   ["order"]=2271,
+   ["image_path"]="1f645-2642",
+   ["text"]="Man gesturing NO",
+   ["char"]={2997},
 },
 -- Table: {1218}
 {
-   ["subText"]="french, fries, :fries:",
-   ["order"]=1217,
-   ["char"]={3884},
-   ["text"]="French fries",
-   ["image_path"]="1f35f",
+   ["subText"]=":person_gesturing_ok:, OK, gesture, hand",
+   ["order"]=2277,
+   ["image_path"]="1f646",
+   ["text"]="Person gesturing OK",
+   ["char"]={2998},
 },
 -- Table: {1219}
 {
-   ["subText"]="falafel, flatbread, food, gyro, kebab, stuffed, :stuffed_flatbread:",
-   ["order"]=1218,
-   ["char"]={3885},
-   ["text"]="Stuffed flatbread",
-   ["image_path"]="1f959",
+   ["subText"]=":woman_gesturing_ok:, OK, gesture, hand, woman",
+   ["order"]=2283,
+   ["image_path"]="1f646-2640",
+   ["text"]="Woman gesturing OK",
+   ["char"]={2999},
 },
 -- Table: {1220}
 {
-   ["subText"]="mexican, :taco:",
-   ["order"]=1219,
-   ["char"]={3886},
-   ["text"]="Taco",
-   ["image_path"]="1f32e",
+   ["subText"]=":man_gesturing_ok:, OK, gesture, hand, man",
+   ["order"]=2289,
+   ["image_path"]="1f646-2642",
+   ["text"]="Man gesturing OK",
+   ["char"]={3000},
 },
 -- Table: {1221}
 {
-   ["subText"]="mexican, wrap, :burrito:",
-   ["order"]=1220,
-   ["char"]={3887},
-   ["text"]="Burrito",
-   ["image_path"]="1f32f",
+   ["subText"]=":person_raising_hand:, gesture, hand, happy, raised",
+   ["order"]=2295,
+   ["image_path"]="1f64b",
+   ["text"]="Person raising hand",
+   ["char"]={3001},
 },
 -- Table: {1222}
 {
-   ["subText"]="food, green, salad, :salad:",
-   ["order"]=1221,
-   ["char"]={3888},
-   ["text"]="Green salad",
-   ["image_path"]="1f957",
+   ["subText"]=":woman_raising_hand:, gesture, raising hand, woman",
+   ["order"]=2301,
+   ["image_path"]="1f64b-2640",
+   ["text"]="Woman raising hand",
+   ["char"]={3002},
 },
 -- Table: {1223}
 {
-   ["subText"]="casserole, food, paella, pan, shallow, :shallow_pan_of_food:",
-   ["order"]=1222,
-   ["char"]={3889},
-   ["text"]="Shallow pan of food",
-   ["image_path"]="1f958",
+   ["subText"]=":man_raising_hand:, gesture, man, raising hand",
+   ["order"]=2307,
+   ["image_path"]="1f64b-2642",
+   ["text"]="Man raising hand",
+   ["char"]={3003},
 },
 -- Table: {1224}
 {
-   ["subText"]="pasta, :spaghetti:",
-   ["order"]=1223,
-   ["char"]={3890},
-   ["text"]="Spaghetti",
-   ["image_path"]="1f35d",
+   ["subText"]=":deaf_person:",
+   ["order"]=2313,
+   ["image_path"]="1f9cf",
+   ["text"]="Deaf person",
+   ["char"]={3004},
 },
 -- Table: {1225}
 {
-   ["subText"]="bowl, noodle, ramen, steaming, :ramen:",
-   ["order"]=1224,
-   ["char"]={3891},
-   ["text"]="Steaming bowl",
-   ["image_path"]="1f35c",
+   ["subText"]=":deaf_woman:",
+   ["order"]=2319,
+   ["image_path"]="1f9cf-2640",
+   ["text"]="Deaf woman",
+   ["char"]={3005},
 },
 -- Table: {1226}
 {
-   ["subText"]="pot, stew, :stew:",
-   ["order"]=1225,
-   ["char"]={3892},
-   ["text"]="Pot of food",
-   ["image_path"]="1f372",
+   ["subText"]=":deaf_man:",
+   ["order"]=2325,
+   ["image_path"]="1f9cf-2642",
+   ["text"]="Deaf man",
+   ["char"]={3006},
 },
 -- Table: {1227}
 {
-   ["subText"]="cake, fish, pastry, swirl, :fish_cake:",
-   ["order"]=1226,
-   ["char"]={3893},
-   ["text"]="Fish cake with swirl",
-   ["image_path"]="1f365",
+   ["subText"]=":person_facepalming:, disbelief, exasperation, face, palm",
+   ["order"]=2331,
+   ["image_path"]="1f926",
+   ["text"]="Person facepalming",
+   ["char"]={3007},
 },
 -- Table: {1228}
 {
-   ["subText"]="sushi, :sushi:",
-   ["order"]=1227,
-   ["char"]={3894},
-   ["text"]="Sushi",
-   ["image_path"]="1f363",
+   ["subText"]=":woman_facepalming:, disbelief, exasperation, facepalm, woman",
+   ["order"]=2337,
+   ["image_path"]="1f926-2640",
+   ["text"]="Woman facepalming",
+   ["char"]={3008},
 },
 -- Table: {1229}
 {
-   ["subText"]="bento, box, :bento:",
-   ["order"]=1228,
-   ["char"]={3895},
-   ["text"]="Bento box",
-   ["image_path"]="1f371",
+   ["subText"]=":man_facepalming:, disbelief, exasperation, facepalm, man",
+   ["order"]=2343,
+   ["image_path"]="1f926-2642",
+   ["text"]="Man facepalming",
+   ["char"]={3009},
 },
 -- Table: {1230}
 {
-   ["subText"]="curry, rice, :curry:",
-   ["order"]=1229,
-   ["char"]={3896},
-   ["text"]="Curry rice",
-   ["image_path"]="1f35b",
+   ["subText"]=":person_shrugging:, doubt, ignorance, indifference, shrug",
+   ["order"]=2349,
+   ["image_path"]="1f937",
+   ["text"]="Person shrugging",
+   ["char"]={3010},
 },
 -- Table: {1231}
 {
-   ["subText"]="Japanese, ball, rice, :rice_ball:",
-   ["order"]=1230,
-   ["char"]={3897},
-   ["text"]="Rice ball",
-   ["image_path"]="1f359",
+   ["subText"]=":woman_shrugging:, doubt, ignorance, indifference, shrug, woman",
+   ["order"]=2355,
+   ["image_path"]="1f937-2640",
+   ["text"]="Woman shrugging",
+   ["char"]={3011},
 },
 -- Table: {1232}
 {
-   ["subText"]="cooked, rice, :rice:",
-   ["order"]=1231,
-   ["char"]={3898},
-   ["text"]="Cooked rice",
-   ["image_path"]="1f35a",
+   ["subText"]=":man_shrugging:, doubt, ignorance, indifference, man, shrug",
+   ["order"]=2361,
+   ["image_path"]="1f937-2642",
+   ["text"]="Man shrugging",
+   ["char"]={3012},
 },
 -- Table: {1233}
 {
-   ["subText"]="cracker, rice, :rice_cracker:",
-   ["order"]=1232,
-   ["char"]={3899},
-   ["text"]="Rice cracker",
-   ["image_path"]="1f358",
+   ["subText"]=":person_pouting:, gesture, pouting",
+   ["order"]=2367,
+   ["image_path"]="1f64e",
+   ["text"]="Person pouting",
+   ["char"]={3013},
 },
 -- Table: {1234}
 {
-   ["subText"]="kebab, seafood, skewer, stick, :oden:",
-   ["order"]=1233,
-   ["char"]={3900},
-   ["text"]="Oden",
-   ["image_path"]="1f362",
+   ["subText"]=":woman_pouting:, gesture, pouting, woman",
+   ["order"]=2373,
+   ["image_path"]="1f64e-2640",
+   ["text"]="Woman pouting",
+   ["char"]={3014},
 },
 -- Table: {1235}
 {
-   ["subText"]="Japanese, dessert, skewer, stick, sweet, :dango:",
-   ["order"]=1234,
-   ["char"]={3901},
-   ["text"]="Dango",
-   ["image_path"]="1f361",
+   ["subText"]=":man_pouting:, gesture, man, pouting",
+   ["order"]=2379,
+   ["image_path"]="1f64e-2642",
+   ["text"]="Man pouting",
+   ["char"]={3015},
 },
 -- Table: {1236}
 {
-   ["subText"]="dessert, ice, shaved, sweet, :shaved_ice:",
-   ["order"]=1235,
-   ["char"]={3902},
-   ["text"]="Shaved ice",
-   ["image_path"]="1f367",
+   ["subText"]=":person_frowning:, frown, gesture",
+   ["order"]=2385,
+   ["image_path"]="1f64d",
+   ["text"]="Person frowning",
+   ["char"]={3016},
 },
 -- Table: {1237}
 {
-   ["subText"]="cream, dessert, ice, sweet, :ice_cream:",
-   ["order"]=1236,
-   ["char"]={3903},
-   ["text"]="Ice cream",
-   ["image_path"]="1f368",
+   ["subText"]=":woman_frowning:, frowning, gesture, woman",
+   ["order"]=2391,
+   ["image_path"]="1f64d-2640",
+   ["text"]="Woman frowning",
+   ["char"]={3017},
 },
 -- Table: {1238}
 {
-   ["subText"]="cream, dessert, ice, icecream, soft, sweet, :icecream:",
-   ["order"]=1237,
-   ["char"]={3904},
-   ["text"]="Soft ice cream",
-   ["image_path"]="1f366",
+   ["subText"]=":man_frowning:, frowning, gesture, man",
+   ["order"]=2397,
+   ["image_path"]="1f64d-2642",
+   ["text"]="Man frowning",
+   ["char"]={3018},
 },
 -- Table: {1239}
 {
-   ["subText"]="cake, dessert, pastry, slice, sweet, :cake:",
-   ["order"]=1238,
-   ["char"]={3905},
-   ["text"]="Shortcake",
-   ["image_path"]="1f370",
+   ["subText"]=":person_getting_haircut:, barber, beauty, haircut, parlor",
+   ["order"]=2403,
+   ["image_path"]="1f487",
+   ["text"]="Person getting haircut",
+   ["char"]={3019},
 },
 -- Table: {1240}
 {
-   ["subText"]="birthday, cake, celebration, dessert, pastry, sweet, :birthday:",
-   ["order"]=1239,
-   ["char"]={3906},
-   ["text"]="Birthday cake",
-   ["image_path"]="1f382",
+   ["subText"]=":woman_getting_haircut:, haircut, woman",
+   ["order"]=2409,
+   ["image_path"]="1f487-2640",
+   ["text"]="Woman getting haircut",
+   ["char"]={3020},
 },
 -- Table: {1241}
 {
-   ["subText"]="dessert, pudding, sweet, :custard:",
-   ["order"]=1240,
-   ["char"]={3907},
-   ["text"]="Custard",
-   ["image_path"]="1f36e",
+   ["subText"]=":man_getting_haircut:, haircut, man",
+   ["order"]=2415,
+   ["image_path"]="1f487-2642",
+   ["text"]="Man getting haircut",
+   ["char"]={3021},
 },
 -- Table: {1242}
 {
-   ["subText"]="candy, dessert, sweet, :lollipop:",
-   ["order"]=1241,
-   ["char"]={3908},
-   ["text"]="Lollipop",
-   ["image_path"]="1f36d",
+   ["subText"]=":person_getting_massage:, face, massage, salon",
+   ["order"]=2421,
+   ["image_path"]="1f486",
+   ["text"]="Person getting massage",
+   ["char"]={3022},
 },
 -- Table: {1243}
 {
-   ["subText"]="dessert, sweet, :candy:",
-   ["order"]=1242,
-   ["char"]={3909},
-   ["text"]="Candy",
-   ["image_path"]="1f36c",
+   ["subText"]=":woman_getting_face_massage:, face, massage, woman",
+   ["order"]=2427,
+   ["image_path"]="1f486-2640",
+   ["text"]="Woman getting massage",
+   ["char"]={3023},
 },
 -- Table: {1244}
 {
-   ["subText"]="bar, chocolate, dessert, sweet, :chocolate_bar:",
-   ["order"]=1243,
-   ["char"]={3910},
-   ["text"]="Chocolate bar",
-   ["image_path"]="1f36b",
+   ["subText"]=":man_getting_face_massage:, face, man, massage",
+   ["order"]=2433,
+   ["image_path"]="1f486-2642",
+   ["text"]="Man getting massage",
+   ["char"]={3024},
 },
 -- Table: {1245}
 {
-   ["subText"]="popcorn, :popcorn:",
-   ["order"]=1244,
-   ["char"]={3911},
-   ["text"]="Popcorn",
-   ["image_path"]="1f37f",
+   ["subText"]=":person_in_steamy_room:",
+   ["order"]=2439,
+   ["image_path"]="1f9d6",
+   ["text"]="Person in steamy room",
+   ["char"]={3025},
 },
 -- Table: {1246}
 {
-   ["subText"]="dessert, donut, sweet, :doughnut:",
-   ["order"]=1245,
-   ["char"]={3912},
-   ["text"]="Doughnut",
-   ["image_path"]="1f369",
+   ["subText"]=":woman_in_steamy_room:, sauna, steam room",
+   ["order"]=2445,
+   ["image_path"]="1f9d6-2640",
+   ["text"]="Woman in steamy room",
+   ["char"]={3026},
 },
 -- Table: {1247}
 {
-   ["subText"]="dessert, sweet, :cookie:",
-   ["order"]=1246,
-   ["char"]={3913},
-   ["text"]="Cookie",
-   ["image_path"]="1f36a",
+   ["subText"]=":man_in_steamy_room:, sauna, steam room",
+   ["order"]=2451,
+   ["image_path"]="1f9d6-2642",
+   ["text"]="Man in steamy room",
+   ["char"]={3027},
 },
 -- Table: {1248}
 {
-   ["subText"]="drink, glass, milk, :milk:",
-   ["order"]=1247,
-   ["char"]={3914},
-   ["text"]="Glass of milk",
-   ["image_path"]="1f95b",
+   ["subText"]=":nail_care:, care, cosmetics, manicure, nail, polish",
+   ["order"]=2457,
+   ["image_path"]="1f485",
+   ["text"]="Nail polish",
+   ["char"]={3028},
 },
 -- Table: {1249}
 {
-   ["subText"]="baby, bottle, drink, milk, :baby_bottle:",
-   ["order"]=1248,
-   ["char"]={3915},
-   ["text"]="Baby bottle",
-   ["image_path"]="1f37c",
+   ["subText"]=":selfie:, camera, phone",
+   ["order"]=2463,
+   ["image_path"]="1f933",
+   ["text"]="Selfie",
+   ["char"]={3029},
 },
 -- Table: {1250}
 {
-   ["subText"]="beverage, coffee, drink, hot, steaming, tea, :coffee:",
-   ["order"]=1249,
-   ["char"]={3916},
-   ["text"]="Hot beverage",
-   ["image_path"]="2615",
+   ["subText"]=":dancer:, dancing, woman",
+   ["order"]=2469,
+   ["image_path"]="1f483",
+   ["text"]="Woman dancing",
+   ["char"]={3030},
 },
 -- Table: {1251}
 {
-   ["subText"]="beverage, cup, drink, tea, teacup, :tea:",
-   ["order"]=1250,
-   ["char"]={3917},
-   ["text"]="Teacup without handle",
-   ["image_path"]="1f375",
+   ["subText"]=":man_dancing:, dance, man",
+   ["order"]=2475,
+   ["image_path"]="1f57a",
+   ["text"]="Man dancing",
+   ["char"]={3031},
 },
 -- Table: {1252}
 {
-   ["subText"]="bar, beverage, bottle, cup, drink, :sake:",
-   ["order"]=1251,
-   ["char"]={3918},
-   ["text"]="Sake",
-   ["image_path"]="1f376",
+   ["subText"]=":people_with_bunny_ears_partying:, bunny ear, dancer, partying",
+   ["order"]=2481,
+   ["image_path"]="1f46f",
+   ["text"]="People with bunny ears",
+   ["char"]={3032},
 },
 -- Table: {1253}
 {
-   ["subText"]="bar, beer, drink, mug, :beer:",
-   ["order"]=1252,
-   ["char"]={3919},
-   ["text"]="Beer mug",
-   ["image_path"]="1f37a",
+   ["subText"]=":women_with_bunny_ears_partying:, bunny ear, dancer, partying, women",
+   ["order"]=2482,
+   ["image_path"]="1f46f-2640",
+   ["text"]="Women with bunny ears",
+   ["char"]={3033},
 },
 -- Table: {1254}
 {
-   ["subText"]="bar, beer, clink, drink, mug, :beers:",
-   ["order"]=1253,
-   ["char"]={3920},
-   ["text"]="Clinking beer mugs",
-   ["image_path"]="1f37b",
+   ["subText"]=":men_with_bunny_ears_partying:, bunny ear, dancer, men, partying",
+   ["order"]=2483,
+   ["image_path"]="1f46f-2642",
+   ["text"]="Men with bunny ears",
+   ["char"]={3034},
 },
 -- Table: {1255}
 {
-   ["subText"]="celebrate, clink, drink, glass, :champagne_glass:",
-   ["order"]=1254,
-   ["char"]={3921},
-   ["text"]="Clinking glasses",
-   ["image_path"]="1f942",
+   ["subText"]=":levitate:, business, man, suit",
+   ["order"]=2484,
+   ["image_path"]="1f574",
+   ["text"]="Man in suit levitating",
+   ["char"]={3035},
 },
 -- Table: {1256}
 {
-   ["subText"]="bar, beverage, drink, glass, wine, :wine_glass:",
-   ["order"]=1255,
-   ["char"]={3922},
-   ["text"]="Wine glass",
-   ["image_path"]="1f377",
+   ["subText"]=":person_walking:, hike, walk, walking",
+   ["order"]=2490,
+   ["image_path"]="1f6b6",
+   ["text"]="Person walking",
+   ["char"]={3036},
 },
 -- Table: {1257}
 {
-   ["subText"]="glass, liquor, shot, tumbler, whisky, :tumbler_glass:",
-   ["order"]=1256,
-   ["char"]={3923},
-   ["text"]="Tumbler glass",
-   ["image_path"]="1f943",
+   ["subText"]=":woman_walking:, hike, walk, woman",
+   ["order"]=2496,
+   ["image_path"]="1f6b6-2640",
+   ["text"]="Woman walking",
+   ["char"]={3037},
 },
 -- Table: {1258}
 {
-   ["subText"]="bar, cocktail, drink, glass, :cocktail:",
-   ["order"]=1257,
-   ["char"]={3924},
-   ["text"]="Cocktail glass",
-   ["image_path"]="1f378",
+   ["subText"]=":man_walking:, hike, man, walk",
+   ["order"]=2502,
+   ["image_path"]="1f6b6-2642",
+   ["text"]="Man walking",
+   ["char"]={3038},
 },
 -- Table: {1259}
 {
-   ["subText"]="bar, drink, tropical, :tropical_drink:",
-   ["order"]=1258,
-   ["char"]={3925},
-   ["text"]="Tropical drink",
-   ["image_path"]="1f379",
+   ["subText"]=":person_running:, marathon, running",
+   ["order"]=2508,
+   ["image_path"]="1f3c3",
+   ["text"]="Person running",
+   ["char"]={3039},
 },
 -- Table: {1260}
 {
-   ["subText"]="bar, bottle, cork, drink, popping, :champagne:",
-   ["order"]=1259,
-   ["char"]={3926},
-   ["text"]="Bottle with popping cork",
-   ["image_path"]="1f37e",
+   ["subText"]=":woman_running:, marathon, racing, running, woman",
+   ["order"]=2514,
+   ["image_path"]="1f3c3-2640",
+   ["text"]="Woman running",
+   ["char"]={3040},
 },
 -- Table: {1261}
 {
-   ["subText"]="spoon, tableware, :spoon:",
-   ["order"]=1260,
-   ["char"]={3927},
-   ["text"]="Spoon",
-   ["image_path"]="1f944",
+   ["subText"]=":man_running:, man, marathon, racing, running",
+   ["order"]=2520,
+   ["image_path"]="1f3c3-2642",
+   ["text"]="Man running",
+   ["char"]={3041},
 },
 -- Table: {1262}
 {
-   ["subText"]="cooking, fork, knife, :fork_and_knife:",
-   ["order"]=1261,
-   ["char"]={3928},
-   ["text"]="Fork and knife",
-   ["image_path"]="1f374",
+   ["subText"]=":person_standing:",
+   ["order"]=2526,
+   ["image_path"]="1f9cd",
+   ["text"]="Person standing",
+   ["char"]={3042},
 },
 -- Table: {1263}
 {
-   ["subText"]="cooking, fork, knife, plate, :fork_knife_plate:",
-   ["order"]=1262,
-   ["char"]={3929},
-   ["text"]="Fork and knife with plate",
-   ["image_path"]="1f37d",
+   ["subText"]=":woman_standing:",
+   ["order"]=2532,
+   ["image_path"]="1f9cd-2640",
+   ["text"]="Woman standing",
+   ["char"]={3043},
 },
 -- Table: {1264}
 {
-   ["subText"]="empanada, gyōza, jiaozi, pierogi, potsticker, :dumpling:",
-   ["order"]=1263,
-   ["char"]={3930},
-   ["text"]="Dumpling",
-   ["image_path"]="1f95f",
+   ["subText"]=":man_standing:",
+   ["order"]=2538,
+   ["image_path"]="1f9cd-2642",
+   ["text"]="Man standing",
+   ["char"]={3044},
 },
 -- Table: {1265}
 {
-   ["subText"]="prophecy, :fortune_cookie:",
-   ["order"]=1264,
-   ["char"]={3931},
-   ["text"]="Fortune cookie",
-   ["image_path"]="1f960",
+   ["subText"]=":person_kneeling:",
+   ["order"]=2544,
+   ["image_path"]="1f9ce",
+   ["text"]="Person kneeling",
+   ["char"]={3045},
 },
 -- Table: {1266}
 {
-   ["subText"]="oyster pail, :takeout_box:",
-   ["order"]=1265,
-   ["char"]={3932},
-   ["text"]="Takeout box",
-   ["image_path"]="1f961",
+   ["subText"]=":woman_kneeling:",
+   ["order"]=2550,
+   ["image_path"]="1f9ce-2640",
+   ["text"]="Woman kneeling",
+   ["char"]={3046},
 },
 -- Table: {1267}
 {
-   ["subText"]=", :chopsticks:",
-   ["order"]=1266,
-   ["char"]={3933},
-   ["text"]="Chopsticks",
-   ["image_path"]="1f962",
+   ["subText"]=":man_kneeling:",
+   ["order"]=2556,
+   ["image_path"]="1f9ce-2642",
+   ["text"]="Man kneeling",
+   ["char"]={3047},
 },
 -- Table: {1268}
 {
-   ["subText"]=", :bowl_with_spoon:",
-   ["order"]=1267,
-   ["char"]={3934},
-   ["text"]="Bowl with spoon",
-   ["image_path"]="1f963",
+   ["subText"]=":person_with_probing_cane:",
+   ["order"]=2562,
+   ["image_path"]="1f9d1-1f9af",
+   ["text"]="Person with probing cane",
+   ["char"]={3048},
 },
 -- Table: {1269}
 {
-   ["subText"]=", :cup_with_straw:",
-   ["order"]=1268,
-   ["char"]={3935},
-   ["text"]="Cup with straw",
-   ["image_path"]="1f964",
+   ["subText"]=":woman_with_probing_cane:",
+   ["order"]=2568,
+   ["image_path"]="1f469-1f9af",
+   ["text"]="Woman with probing cane",
+   ["char"]={3049},
 },
 -- Table: {1270}
 {
-   ["subText"]="palm, piña colada, :coconut:",
-   ["order"]=1269,
-   ["char"]={3936},
-   ["text"]="Coconut",
-   ["image_path"]="1f965",
+   ["subText"]=":man_with_probing_cane:",
+   ["order"]=2574,
+   ["image_path"]="1f468-1f9af",
+   ["text"]="Man with probing cane",
+   ["char"]={3050},
 },
 -- Table: {1271}
 {
-   ["subText"]="wild cabbage, :broccoli:",
-   ["order"]=1270,
-   ["char"]={3937},
-   ["text"]="Broccoli",
-   ["image_path"]="1f966",
+   ["subText"]=":person_in_motorized_wheelchair:",
+   ["order"]=2580,
+   ["image_path"]="1f9d1-1f9bc",
+   ["text"]="Person in motorized wheelchair",
+   ["char"]={3051},
 },
 -- Table: {1272}
 {
-   ["subText"]=", :pie:",
-   ["order"]=1271,
-   ["char"]={3938},
-   ["text"]="Pie",
-   ["image_path"]="1f967",
+   ["subText"]=":woman_in_motorized_wheelchair:",
+   ["order"]=2586,
+   ["image_path"]="1f469-1f9bc",
+   ["text"]="Woman in motorized wheelchair",
+   ["char"]={3052},
 },
 -- Table: {1273}
 {
-   ["subText"]=", :pretzel:",
-   ["order"]=1272,
-   ["char"]={3939},
-   ["text"]="Pretzel",
-   ["image_path"]="1f968",
+   ["subText"]=":man_in_motorized_wheelchair:",
+   ["order"]=2592,
+   ["image_path"]="1f468-1f9bc",
+   ["text"]="Man in motorized wheelchair",
+   ["char"]={3053},
 },
 -- Table: {1274}
 {
-   ["subText"]="chop, lambchop, porkchop, steak, :cut_of_meat:",
-   ["order"]=1273,
-   ["char"]={3940},
-   ["text"]="Cut of meat",
-   ["image_path"]="1f969",
+   ["subText"]=":person_in_manual_wheelchair:",
+   ["order"]=2598,
+   ["image_path"]="1f9d1-1f9bd",
+   ["text"]="Person in manual wheelchair",
+   ["char"]={3054},
 },
 -- Table: {1275}
 {
-   ["subText"]="bread, :sandwich:",
-   ["order"]=1274,
-   ["char"]={3941},
-   ["text"]="Sandwich",
-   ["image_path"]="1f96a",
+   ["subText"]=":woman_in_manual_wheelchair:",
+   ["order"]=2604,
+   ["image_path"]="1f469-1f9bd",
+   ["text"]="Woman in manual wheelchair",
+   ["char"]={3055},
 },
 -- Table: {1276}
 {
-   ["subText"]="can, :canned_food:",
-   ["order"]=1275,
-   ["char"]={3942},
-   ["text"]="Canned food",
-   ["image_path"]="1f96b",
+   ["subText"]=":man_in_manual_wheelchair:",
+   ["order"]=2610,
+   ["image_path"]="1f468-1f9bd",
+   ["text"]="Man in manual wheelchair",
+   ["char"]={3056},
 },
 -- Table: {1277}
 {
-   ["subText"]="ball, football, soccer, :soccer:",
-   ["order"]=1276,
-   ["char"]={3943},
-   ["text"]="Soccer ball",
-   ["image_path"]="26bd",
+   ["subText"]=":people_holding_hands:",
+   ["order"]=2616,
+   ["image_path"]="1f9d1-1f91d-1f9d1",
+   ["text"]="People holding hands",
+   ["char"]={3057},
 },
 -- Table: {1278}
 {
-   ["subText"]="ball, hoop, :basketball:",
-   ["order"]=1277,
-   ["char"]={3944},
-   ["text"]="Basketball",
-   ["image_path"]="1f3c0",
+   ["subText"]=":couple:, hand, hold, man, woman",
+   ["order"]=2642,
+   ["image_path"]="1f46b",
+   ["text"]="Woman and man holding hands",
+   ["char"]={3058},
 },
 -- Table: {1279}
 {
-   ["subText"]="american, ball, football, :football:",
-   ["order"]=1278,
-   ["char"]={3945},
-   ["text"]="American football",
-   ["image_path"]="1f3c8",
+   ["subText"]=":two_women_holding_hands:, couple, hand, hold, woman",
+   ["order"]=2668,
+   ["image_path"]="1f46d",
+   ["text"]="Women holding hands",
+   ["char"]={3059},
 },
 -- Table: {1280}
 {
-   ["subText"]="ball, :baseball:",
-   ["order"]=1279,
-   ["char"]={3946},
-   ["text"]="Baseball",
-   ["image_path"]="26be",
+   ["subText"]=":two_men_holding_hands:, Gemini, couple, hand, hold, man, twins, zodiac",
+   ["order"]=2694,
+   ["image_path"]="1f46c",
+   ["text"]="Men holding hands",
+   ["char"]={3060},
 },
 -- Table: {1281}
 {
-   ["subText"]="ball, racquet, :tennis:",
-   ["order"]=1280,
-   ["char"]={3947},
-   ["text"]="Tennis",
-   ["image_path"]="1f3be",
+   ["subText"]=":couple_with_heart:, couple, love",
+   ["order"]=2720,
+   ["image_path"]="1f491",
+   ["text"]="Couple with heart",
+   ["char"]={3061},
 },
 -- Table: {1282}
 {
-   ["subText"]="ball, game, :volleyball:",
-   ["order"]=1281,
-   ["char"]={3948},
-   ["text"]="Volleyball",
-   ["image_path"]="1f3d0",
+   ["subText"]=":couple_with_heart_woman_man:, couple, love, man, woman",
+   ["order"]=2721,
+   ["image_path"]="1f469-2764-1f468",
+   ["text"]="Couple with heart: woman, man",
+   ["char"]={3062},
 },
 -- Table: {1283}
 {
-   ["subText"]="ball, football, rugby, :rugby_football:",
-   ["order"]=1282,
-   ["char"]={3949},
-   ["text"]="Rugby football",
-   ["image_path"]="1f3c9",
+   ["subText"]=":couple_ww:, couple, love, woman",
+   ["order"]=2722,
+   ["image_path"]="1f469-2764-1f469",
+   ["text"]="Couple with heart: woman, woman",
+   ["char"]={3063},
 },
 -- Table: {1284}
 {
-   ["subText"]="8, 8 ball, ball, billiard, eight, game, :8ball:",
-   ["order"]=1283,
-   ["char"]={3950},
-   ["text"]="Pool 8 ball",
-   ["image_path"]="1f3b1",
+   ["subText"]=":couple_mm:, couple, love, man",
+   ["order"]=2723,
+   ["image_path"]="1f468-2764-1f468",
+   ["text"]="Couple with heart: man, man",
+   ["char"]={3064},
 },
 -- Table: {1285}
 {
-   ["subText"]="ball, bat, game, paddle, ping pong, table tennis, :ping_pong:",
-   ["order"]=1284,
-   ["char"]={3951},
-   ["text"]="Ping pong",
-   ["image_path"]="1f3d3",
+   ["subText"]=":couplekiss:, couple",
+   ["order"]=2724,
+   ["image_path"]="1f48f",
+   ["text"]="Kiss",
+   ["char"]={3065},
 },
 -- Table: {1286}
 {
-   ["subText"]="birdie, game, racquet, shuttlecock, :badminton:",
-   ["order"]=1285,
-   ["char"]={3952},
-   ["text"]="Badminton",
-   ["image_path"]="1f3f8",
+   ["subText"]=":kiss_woman_man:, couple, man, woman",
+   ["order"]=2725,
+   ["image_path"]="1f469-2764-1f48b-1f468",
+   ["text"]="Kiss: woman, man",
+   ["char"]={3066},
 },
 -- Table: {1287}
 {
-   ["subText"]="goal, net, :goal:",
-   ["order"]=1286,
-   ["char"]={3953},
-   ["text"]="Goal net",
-   ["image_path"]="1f945",
+   ["subText"]=":kiss_ww:, couple, woman",
+   ["order"]=2726,
+   ["image_path"]="1f469-2764-1f48b-1f469",
+   ["text"]="Kiss: woman, woman",
+   ["char"]={3067},
 },
 -- Table: {1288}
 {
-   ["subText"]="game, hockey, ice, puck, stick, :hockey:",
-   ["order"]=1287,
-   ["char"]={3954},
-   ["text"]="Ice hockey",
-   ["image_path"]="1f3d2",
+   ["subText"]=":kiss_mm:, couple, man",
+   ["order"]=2727,
+   ["image_path"]="1f468-2764-1f48b-1f468",
+   ["text"]="Kiss: man, man",
+   ["char"]={3068},
 },
 -- Table: {1289}
 {
-   ["subText"]="ball, field, game, hockey, stick, :field_hockey:",
-   ["order"]=1288,
-   ["char"]={3955},
-   ["text"]="Field hockey",
-   ["image_path"]="1f3d1",
+   ["subText"]=":family:",
+   ["order"]=2728,
+   ["image_path"]="1f46a",
+   ["text"]="Family",
+   ["char"]={3069},
 },
 -- Table: {1290}
 {
-   ["subText"]="ball, bat, game, :cricket_game:",
-   ["order"]=1289,
-   ["char"]={3956},
-   ["text"]="Cricket game",
-   ["image_path"]="1f3cf",
+   ["subText"]=":family_man_woman_boy:, boy, family, man, woman",
+   ["order"]=2729,
+   ["image_path"]="1f468-1f469-1f466",
+   ["text"]="Family: man, woman, boy",
+   ["char"]={3070},
 },
 -- Table: {1291}
 {
-   ["subText"]="golf, hole, :golf:",
-   ["order"]=1290,
-   ["char"]={3957},
-   ["text"]="Flag in hole",
-   ["image_path"]="26f3",
+   ["subText"]=":family_mwg:, family, girl, man, woman",
+   ["order"]=2730,
+   ["image_path"]="1f468-1f469-1f467",
+   ["text"]="Family: man, woman, girl",
+   ["char"]={3071},
 },
 -- Table: {1292}
 {
-   ["subText"]="Sagittarius, archer, archery, arrow, bow, tool, weapon, zodiac, :bow_and_arrow:",
-   ["order"]=1291,
-   ["char"]={3958},
-   ["text"]="Bow and arrow",
-   ["image_path"]="1f3f9",
+   ["subText"]=":family_mwgb:, boy, family, girl, man, woman",
+   ["order"]=2731,
+   ["image_path"]="1f468-1f469-1f467-1f466",
+   ["text"]="Family: man, woman, girl, boy",
+   ["char"]={3072},
 },
 -- Table: {1293}
 {
-   ["subText"]="fish, pole, :fishing_pole_and_fish:",
-   ["order"]=1292,
-   ["char"]={3959},
-   ["text"]="Fishing pole",
-   ["image_path"]="1f3a3",
+   ["subText"]=":family_mwbb:, boy, family, man, woman",
+   ["order"]=2732,
+   ["image_path"]="1f468-1f469-1f466-1f466",
+   ["text"]="Family: man, woman, boy, boy",
+   ["char"]={3073},
 },
 -- Table: {1294}
 {
-   ["subText"]="boxing, glove, :boxing_glove:",
-   ["order"]=1293,
-   ["char"]={3960},
-   ["text"]="Boxing glove",
-   ["image_path"]="1f94a",
+   ["subText"]=":family_mwgg:, family, girl, man, woman",
+   ["order"]=2733,
+   ["image_path"]="1f468-1f469-1f467-1f467",
+   ["text"]="Family: man, woman, girl, girl",
+   ["char"]={3074},
 },
 -- Table: {1295}
 {
-   ["subText"]="judo, karate, martial arts, taekwondo, uniform, :martial_arts_uniform:",
-   ["order"]=1294,
-   ["char"]={3961},
-   ["text"]="Martial arts uniform",
-   ["image_path"]="1f94b",
+   ["subText"]=":family_wwb:, boy, family, woman",
+   ["order"]=2734,
+   ["image_path"]="1f469-1f469-1f466",
+   ["text"]="Family: woman, woman, boy",
+   ["char"]={3075},
 },
 -- Table: {1296}
 {
-   ["subText"]="ice, skate, :ice_skate:",
-   ["order"]=1295,
-   ["char"]={3962},
-   ["text"]="Ice skate",
-   ["image_path"]="26f8",
+   ["subText"]=":family_wwg:, family, girl, woman",
+   ["order"]=2735,
+   ["image_path"]="1f469-1f469-1f467",
+   ["text"]="Family: woman, woman, girl",
+   ["char"]={3076},
 },
 -- Table: {1297}
 {
-   ["subText"]="ski, snow, :ski:",
-   ["order"]=1296,
-   ["char"]={3963},
-   ["text"]="Skis",
-   ["image_path"]="1f3bf",
+   ["subText"]=":family_wwgb:, boy, family, girl, woman",
+   ["order"]=2736,
+   ["image_path"]="1f469-1f469-1f467-1f466",
+   ["text"]="Family: woman, woman, girl, boy",
+   ["char"]={3077},
 },
 -- Table: {1298}
 {
-   ["subText"]="ski, snow, :skier:",
-   ["order"]=1297,
-   ["char"]={3964},
-   ["text"]="Skier",
-   ["image_path"]="26f7",
+   ["subText"]=":family_wwbb:, boy, family, woman",
+   ["order"]=2737,
+   ["image_path"]="1f469-1f469-1f466-1f466",
+   ["text"]="Family: woman, woman, boy, boy",
+   ["char"]={3078},
 },
 -- Table: {1299}
 {
-   ["subText"]="ski, snow, snowboard, :snowboarder:",
-   ["order"]=1298,
-   ["char"]={3965},
-   ["text"]="Snowboarder",
-   ["image_path"]="1f3c2",
+   ["subText"]=":family_wwgg:, family, girl, woman",
+   ["order"]=2738,
+   ["image_path"]="1f469-1f469-1f467-1f467",
+   ["text"]="Family: woman, woman, girl, girl",
+   ["char"]={3079},
 },
 -- Table: {1300}
 {
-   ["subText"]="light skin tone, ski, snow, snowboard, :snowboarder_tone1:",
-   ["order"]=1299,
-   ["char"]={3966},
-   ["text"]="Snowboarder: light skin tone",
-   ["image_path"]="1f3c2-1f3fb",
+   ["subText"]=":family_mmb:, boy, family, man",
+   ["order"]=2739,
+   ["image_path"]="1f468-1f468-1f466",
+   ["text"]="Family: man, man, boy",
+   ["char"]={3080},
 },
 -- Table: {1301}
 {
-   ["subText"]="medium-light skin tone, ski, snow, snowboard, :snowboarder_tone2:",
-   ["order"]=1300,
-   ["char"]={3967},
-   ["text"]="Snowboarder: medium-light skin tone",
-   ["image_path"]="1f3c2-1f3fc",
+   ["subText"]=":family_mmg:, family, girl, man",
+   ["order"]=2740,
+   ["image_path"]="1f468-1f468-1f467",
+   ["text"]="Family: man, man, girl",
+   ["char"]={3081},
 },
 -- Table: {1302}
 {
-   ["subText"]="medium skin tone, ski, snow, snowboard, :snowboarder_tone3:",
-   ["order"]=1301,
-   ["char"]={3968},
-   ["text"]="Snowboarder: medium skin tone",
-   ["image_path"]="1f3c2-1f3fd",
+   ["subText"]=":family_mmgb:, boy, family, girl, man",
+   ["order"]=2741,
+   ["image_path"]="1f468-1f468-1f467-1f466",
+   ["text"]="Family: man, man, girl, boy",
+   ["char"]={3082},
 },
 -- Table: {1303}
 {
-   ["subText"]="medium-dark skin tone, ski, snow, snowboard, :snowboarder_tone4:",
-   ["order"]=1302,
-   ["char"]={3969},
-   ["text"]="Snowboarder: medium-dark skin tone",
-   ["image_path"]="1f3c2-1f3fe",
+   ["subText"]=":family_mmbb:, boy, family, man",
+   ["order"]=2742,
+   ["image_path"]="1f468-1f468-1f466-1f466",
+   ["text"]="Family: man, man, boy, boy",
+   ["char"]={3083},
 },
 -- Table: {1304}
 {
-   ["subText"]="dark skin tone, ski, snow, snowboard, :snowboarder_tone5:",
-   ["order"]=1303,
-   ["char"]={3970},
-   ["text"]="Snowboarder: dark skin tone",
-   ["image_path"]="1f3c2-1f3ff",
+   ["subText"]=":family_mmgg:, family, girl, man",
+   ["order"]=2743,
+   ["image_path"]="1f468-1f468-1f467-1f467",
+   ["text"]="Family: man, man, girl, girl",
+   ["char"]={3084},
 },
 -- Table: {1305}
 {
-   ["subText"]="weight lifter, woman, :woman_lifting_weights:",
-   ["order"]=1304,
-   ["char"]={3971},
-   ["text"]="Woman lifting weights",
-   ["image_path"]="1f3cb-2640",
+   ["subText"]=":family_woman_boy:, boy, family, woman",
+   ["order"]=2744,
+   ["image_path"]="1f469-1f466",
+   ["text"]="Family: woman, boy",
+   ["char"]={3085},
 },
 -- Table: {1306}
 {
-   ["subText"]="light skin tone, weight lifter, woman, :woman_lifting_weights_tone1:",
-   ["order"]=1305,
-   ["char"]={3972},
-   ["text"]="Woman lifting weights: light skin tone",
-   ["image_path"]="1f3cb-1f3fb-2640",
+   ["subText"]=":family_woman_girl:, family, girl, woman",
+   ["order"]=2745,
+   ["image_path"]="1f469-1f467",
+   ["text"]="Family: woman, girl",
+   ["char"]={3086},
 },
 -- Table: {1307}
 {
-   ["subText"]="medium-light skin tone, weight lifter, woman, :woman_lifting_weights_tone2:",
-   ["order"]=1306,
-   ["char"]={3973},
-   ["text"]="Woman lifting weights: medium-light skin tone",
-   ["image_path"]="1f3cb-1f3fc-2640",
+   ["subText"]=":family_woman_girl_boy:, boy, family, girl, woman",
+   ["order"]=2746,
+   ["image_path"]="1f469-1f467-1f466",
+   ["text"]="Family: woman, girl, boy",
+   ["char"]={3087},
 },
 -- Table: {1308}
 {
-   ["subText"]="medium skin tone, weight lifter, woman, :woman_lifting_weights_tone3:",
-   ["order"]=1307,
-   ["char"]={3974},
-   ["text"]="Woman lifting weights: medium skin tone",
-   ["image_path"]="1f3cb-1f3fd-2640",
+   ["subText"]=":family_woman_boy_boy:, boy, family, woman",
+   ["order"]=2747,
+   ["image_path"]="1f469-1f466-1f466",
+   ["text"]="Family: woman, boy, boy",
+   ["char"]={3088},
 },
 -- Table: {1309}
 {
-   ["subText"]="medium-dark skin tone, weight lifter, woman, :woman_lifting_weights_tone4:",
-   ["order"]=1308,
-   ["char"]={3975},
-   ["text"]="Woman lifting weights: medium-dark skin tone",
-   ["image_path"]="1f3cb-1f3fe-2640",
+   ["subText"]=":family_woman_girl_girl:, family, girl, woman",
+   ["order"]=2748,
+   ["image_path"]="1f469-1f467-1f467",
+   ["text"]="Family: woman, girl, girl",
+   ["char"]={3089},
 },
 -- Table: {1310}
 {
-   ["subText"]="dark skin tone, weight lifter, woman, :woman_lifting_weights_tone5:",
-   ["order"]=1309,
-   ["char"]={3976},
-   ["text"]="Woman lifting weights: dark skin tone",
-   ["image_path"]="1f3cb-1f3ff-2640",
+   ["subText"]=":family_man_boy:, boy, family, man",
+   ["order"]=2749,
+   ["image_path"]="1f468-1f466",
+   ["text"]="Family: man, boy",
+   ["char"]={3090},
 },
 -- Table: {1311}
 {
-   ["subText"]="lifter, weight, :person_lifting_weights:",
-   ["order"]=1310,
-   ["char"]={3977},
-   ["text"]="Person lifting weights",
-   ["image_path"]="1f3cb",
+   ["subText"]=":family_man_girl:, family, girl, man",
+   ["order"]=2750,
+   ["image_path"]="1f468-1f467",
+   ["text"]="Family: man, girl",
+   ["char"]={3091},
 },
 -- Table: {1312}
 {
-   ["subText"]="lifter, light skin tone, weight, :person_lifting_weights_tone1:",
-   ["order"]=1311,
-   ["char"]={3978},
-   ["text"]="Person lifting weights: light skin tone",
-   ["image_path"]="1f3cb-1f3fb",
+   ["subText"]=":family_man_girl_boy:, boy, family, girl, man",
+   ["order"]=2751,
+   ["image_path"]="1f468-1f467-1f466",
+   ["text"]="Family: man, girl, boy",
+   ["char"]={3092},
 },
 -- Table: {1313}
 {
-   ["subText"]="lifter, medium-light skin tone, weight, :person_lifting_weights_tone2:",
-   ["order"]=1312,
-   ["char"]={3979},
-   ["text"]="Person lifting weights: medium-light skin tone",
-   ["image_path"]="1f3cb-1f3fc",
+   ["subText"]=":family_man_boy_boy:, boy, family, man",
+   ["order"]=2752,
+   ["image_path"]="1f468-1f466-1f466",
+   ["text"]="Family: man, boy, boy",
+   ["char"]={3093},
 },
 -- Table: {1314}
 {
-   ["subText"]="lifter, medium skin tone, weight, :person_lifting_weights_tone3:",
-   ["order"]=1313,
-   ["char"]={3980},
-   ["text"]="Person lifting weights: medium skin tone",
-   ["image_path"]="1f3cb-1f3fd",
+   ["subText"]=":family_man_girl_girl:, family, girl, man",
+   ["order"]=2753,
+   ["image_path"]="1f468-1f467-1f467",
+   ["text"]="Family: man, girl, girl",
+   ["char"]={3094},
 },
 -- Table: {1315}
 {
-   ["subText"]="lifter, medium-dark skin tone, weight, :person_lifting_weights_tone4:",
-   ["order"]=1314,
-   ["char"]={3981},
-   ["text"]="Person lifting weights: medium-dark skin tone",
-   ["image_path"]="1f3cb-1f3fe",
+   ["subText"]=":yarn:",
+   ["order"]=2754,
+   ["image_path"]="1f9f6",
+   ["text"]="Yarn",
+   ["char"]={3095},
 },
 -- Table: {1316}
 {
-   ["subText"]="dark skin tone, lifter, weight, :person_lifting_weights_tone5:",
-   ["order"]=1315,
-   ["char"]={3982},
-   ["text"]="Person lifting weights: dark skin tone",
-   ["image_path"]="1f3cb-1f3ff",
+   ["subText"]=":thread:",
+   ["order"]=2755,
+   ["image_path"]="1f9f5",
+   ["text"]="Thread",
+   ["char"]={3096},
 },
 -- Table: {1317}
 {
-   ["subText"]="man, weight lifter, :man_lifting_weights:",
-   ["order"]=1316,
-   ["char"]={3983},
-   ["text"]="Man lifting weights",
-   ["image_path"]="1f3cb-2642",
+   ["subText"]=":coat:, jacket",
+   ["order"]=2756,
+   ["image_path"]="1f9e5",
+   ["text"]="Coat",
+   ["char"]={3097},
 },
 -- Table: {1318}
 {
-   ["subText"]="dark skin tone, man, weight lifter, :man_lifting_weights_tone5:",
-   ["order"]=1317,
-   ["char"]={3984},
-   ["text"]="Man lifting weights: dark skin tone",
-   ["image_path"]="1f3cb-1f3ff-2642",
+   ["subText"]=":lab_coat:",
+   ["order"]=2757,
+   ["image_path"]="1f97c",
+   ["text"]="Lab coat",
+   ["char"]={3098},
 },
 -- Table: {1319}
 {
-   ["subText"]="man, medium-dark skin tone, weight lifter, :man_lifting_weights_tone4:",
-   ["order"]=1318,
-   ["char"]={3985},
-   ["text"]="Man lifting weights: medium-dark skin tone",
-   ["image_path"]="1f3cb-1f3fe-2642",
+   ["subText"]=":safety_vest:",
+   ["order"]=2758,
+   ["image_path"]="1f9ba",
+   ["text"]="Safety vest",
+   ["char"]={3099},
 },
 -- Table: {1320}
 {
-   ["subText"]="man, medium skin tone, weight lifter, :man_lifting_weights_tone3:",
-   ["order"]=1319,
-   ["char"]={3986},
-   ["text"]="Man lifting weights: medium skin tone",
-   ["image_path"]="1f3cb-1f3fd-2642",
+   ["subText"]=":womans_clothes:, clothing, woman",
+   ["order"]=2759,
+   ["image_path"]="1f45a",
+   ["text"]="Woman’s clothes",
+   ["char"]={3100},
 },
 -- Table: {1321}
 {
-   ["subText"]="man, medium-light skin tone, weight lifter, :man_lifting_weights_tone2:",
-   ["order"]=1320,
-   ["char"]={3987},
-   ["text"]="Man lifting weights: medium-light skin tone",
-   ["image_path"]="1f3cb-1f3fc-2642",
+   ["subText"]=":shirt:, clothing, tshirt",
+   ["order"]=2760,
+   ["image_path"]="1f455",
+   ["text"]="T-shirt",
+   ["char"]={3101},
 },
 -- Table: {1322}
 {
-   ["subText"]="light skin tone, man, weight lifter, :man_lifting_weights_tone1:",
-   ["order"]=1321,
-   ["char"]={3988},
-   ["text"]="Man lifting weights: light skin tone",
-   ["image_path"]="1f3cb-1f3fb-2642",
+   ["subText"]=":jeans:, clothing, pants, trousers",
+   ["order"]=2761,
+   ["image_path"]="1f456",
+   ["text"]="Jeans",
+   ["char"]={3102},
 },
 -- Table: {1323}
 {
-   ["subText"]="fencer, fencing, sword, :person_fencing:",
-   ["order"]=1322,
-   ["char"]={3989},
-   ["text"]="Person fencing",
-   ["image_path"]="1f93a",
+   ["subText"]=":shorts:",
+   ["order"]=2762,
+   ["image_path"]="1fa73",
+   ["text"]="Shorts",
+   ["char"]={3103},
 },
 -- Table: {1324}
 {
-   ["subText"]="women, wrestle, :women_wrestling:",
-   ["order"]=1323,
-   ["char"]={3990},
-   ["text"]="Women wrestling",
-   ["image_path"]="1f93c-2640",
+   ["subText"]=":necktie:, clothing",
+   ["order"]=2763,
+   ["image_path"]="1f454",
+   ["text"]="Necktie",
+   ["char"]={3104},
 },
 -- Table: {1325}
 {
-   ["subText"]="men, wrestle, :men_wrestling:",
-   ["order"]=1324,
-   ["char"]={3991},
-   ["text"]="Men wrestling",
-   ["image_path"]="1f93c-2642",
+   ["subText"]=":dress:, clothing",
+   ["order"]=2764,
+   ["image_path"]="1f457",
+   ["text"]="Dress",
+   ["char"]={3105},
 },
 -- Table: {1326}
 {
-   ["subText"]="wrestle, wrestler, :people_wrestling:",
-   ["order"]=1325,
-   ["char"]={3992},
-   ["text"]="People wrestling",
-   ["image_path"]="1f93c",
+   ["subText"]=":bikini:, clothing, swim",
+   ["order"]=2765,
+   ["image_path"]="1f459",
+   ["text"]="Bikini",
+   ["char"]={3106},
 },
 -- Table: {1327}
 {
-   ["subText"]="cartwheel, gymnastics, woman, :woman_cartwheeling:",
-   ["order"]=1326,
-   ["char"]={3993},
-   ["text"]="Woman cartwheeling",
-   ["image_path"]="1f938-2640",
+   ["subText"]=":one_piece_swimsuit:",
+   ["order"]=2766,
+   ["image_path"]="1fa71",
+   ["text"]="One-piece swimsuit",
+   ["char"]={3107},
 },
 -- Table: {1328}
 {
-   ["subText"]="cartwheel, gymnastics, light skin tone, woman, :woman_cartwheeling_tone1:",
-   ["order"]=1327,
-   ["char"]={3994},
-   ["text"]="Woman cartwheeling: light skin tone",
-   ["image_path"]="1f938-1f3fb-2640",
+   ["subText"]=":kimono:, clothing",
+   ["order"]=2767,
+   ["image_path"]="1f458",
+   ["text"]="Kimono",
+   ["char"]={3108},
 },
 -- Table: {1329}
 {
-   ["subText"]="cartwheel, gymnastics, medium-light skin tone, woman, :woman_cartwheeling_tone2:",
-   ["order"]=1328,
-   ["char"]={3995},
-   ["text"]="Woman cartwheeling: medium-light skin tone",
-   ["image_path"]="1f938-1f3fc-2640",
+   ["subText"]=":sari:",
+   ["order"]=2768,
+   ["image_path"]="1f97b",
+   ["text"]="Sari",
+   ["char"]={3109},
 },
 -- Table: {1330}
 {
-   ["subText"]="cartwheel, gymnastics, medium skin tone, woman, :woman_cartwheeling_tone3:",
-   ["order"]=1329,
-   ["char"]={3996},
-   ["text"]="Woman cartwheeling: medium skin tone",
-   ["image_path"]="1f938-1f3fd-2640",
+   ["subText"]=":womans_flat_shoe:",
+   ["order"]=2769,
+   ["image_path"]="1f97f",
+   ["text"]="Flat shoe",
+   ["char"]={3110},
 },
 -- Table: {1331}
 {
-   ["subText"]="cartwheel, gymnastics, medium-dark skin tone, woman, :woman_cartwheeling_tone4:",
-   ["order"]=1330,
-   ["char"]={3997},
-   ["text"]="Woman cartwheeling: medium-dark skin tone",
-   ["image_path"]="1f938-1f3fe-2640",
+   ["subText"]=":high_heel:, clothing, heel, shoe, woman",
+   ["order"]=2770,
+   ["image_path"]="1f460",
+   ["text"]="High-heeled shoe",
+   ["char"]={3111},
 },
 -- Table: {1332}
 {
-   ["subText"]="cartwheel, dark skin tone, gymnastics, woman, :woman_cartwheeling_tone5:",
-   ["order"]=1331,
-   ["char"]={3998},
-   ["text"]="Woman cartwheeling: dark skin tone",
-   ["image_path"]="1f938-1f3ff-2640",
+   ["subText"]=":sandal:, clothing, shoe, woman",
+   ["order"]=2771,
+   ["image_path"]="1f461",
+   ["text"]="Woman’s sandal",
+   ["char"]={3112},
 },
 -- Table: {1333}
 {
-   ["subText"]="cartwheel, gymnastics, man, :man_cartwheeling:",
-   ["order"]=1332,
-   ["char"]={3999},
-   ["text"]="Man cartwheeling",
-   ["image_path"]="1f938-2642",
+   ["subText"]=":boot:, clothing, shoe, woman",
+   ["order"]=2772,
+   ["image_path"]="1f462",
+   ["text"]="Woman’s boot",
+   ["char"]={3113},
 },
 -- Table: {1334}
 {
-   ["subText"]="cartwheel, gymnastics, light skin tone, man, :man_cartwheeling_tone1:",
-   ["order"]=1333,
-   ["char"]={4000},
-   ["text"]="Man cartwheeling: light skin tone",
-   ["image_path"]="1f938-1f3fb-2642",
+   ["subText"]=":ballet_shoes:",
+   ["order"]=2773,
+   ["image_path"]="1fa70",
+   ["text"]="Ballet shoes",
+   ["char"]={3114},
 },
 -- Table: {1335}
 {
-   ["subText"]="cartwheel, gymnastics, man, medium-light skin tone, :man_cartwheeling_tone2:",
-   ["order"]=1334,
-   ["char"]={4001},
-   ["text"]="Man cartwheeling: medium-light skin tone",
-   ["image_path"]="1f938-1f3fc-2642",
+   ["subText"]=":mans_shoe:, clothing, man, shoe",
+   ["order"]=2774,
+   ["image_path"]="1f45e",
+   ["text"]="Man’s shoe",
+   ["char"]={3115},
 },
 -- Table: {1336}
 {
-   ["subText"]="cartwheel, gymnastics, man, medium skin tone, :man_cartwheeling_tone3:",
-   ["order"]=1335,
-   ["char"]={4002},
-   ["text"]="Man cartwheeling: medium skin tone",
-   ["image_path"]="1f938-1f3fd-2642",
+   ["subText"]=":athletic_shoe:, athletic, clothing, shoe, sneaker",
+   ["order"]=2775,
+   ["image_path"]="1f45f",
+   ["text"]="Running shoe",
+   ["char"]={3116},
 },
 -- Table: {1337}
 {
-   ["subText"]="cartwheel, gymnastics, man, medium-dark skin tone, :man_cartwheeling_tone4:",
-   ["order"]=1336,
-   ["char"]={4003},
-   ["text"]="Man cartwheeling: medium-dark skin tone",
-   ["image_path"]="1f938-1f3fe-2642",
+   ["subText"]=":hiking_boot:",
+   ["order"]=2776,
+   ["image_path"]="1f97e",
+   ["text"]="Hiking boot",
+   ["char"]={3117},
 },
 -- Table: {1338}
 {
-   ["subText"]="cartwheel, dark skin tone, gymnastics, man, :man_cartwheeling_tone5:",
-   ["order"]=1337,
-   ["char"]={4004},
-   ["text"]="Man cartwheeling: dark skin tone",
-   ["image_path"]="1f938-1f3ff-2642",
+   ["subText"]=":briefs:",
+   ["order"]=2777,
+   ["image_path"]="1fa72",
+   ["text"]="Briefs",
+   ["char"]={3118},
 },
 -- Table: {1339}
 {
-   ["subText"]="cartwheel, gymnastics, :person_doing_cartwheel:",
-   ["order"]=1338,
-   ["char"]={4005},
-   ["text"]="Person cartwheeling",
-   ["image_path"]="1f938",
+   ["subText"]=":socks:, stocking",
+   ["order"]=2778,
+   ["image_path"]="1f9e6",
+   ["text"]="Socks",
+   ["char"]={3119},
 },
 -- Table: {1340}
 {
-   ["subText"]="cartwheel, gymnastics, light skin tone, :person_doing_cartwheel_tone1:",
-   ["order"]=1339,
-   ["char"]={4006},
-   ["text"]="Person cartwheeling: light skin tone",
-   ["image_path"]="1f938-1f3fb",
+   ["subText"]=":gloves:, hand",
+   ["order"]=2779,
+   ["image_path"]="1f9e4",
+   ["text"]="Gloves",
+   ["char"]={3120},
 },
 -- Table: {1341}
 {
-   ["subText"]="cartwheel, gymnastics, medium-light skin tone, :person_doing_cartwheel_tone2:",
-   ["order"]=1340,
-   ["char"]={4007},
-   ["text"]="Person cartwheeling: medium-light skin tone",
-   ["image_path"]="1f938-1f3fc",
+   ["subText"]=":scarf:, neck",
+   ["order"]=2780,
+   ["image_path"]="1f9e3",
+   ["text"]="Scarf",
+   ["char"]={3121},
 },
 -- Table: {1342}
 {
-   ["subText"]="cartwheel, gymnastics, medium skin tone, :person_doing_cartwheel_tone3:",
-   ["order"]=1341,
-   ["char"]={4008},
-   ["text"]="Person cartwheeling: medium skin tone",
-   ["image_path"]="1f938-1f3fd",
+   ["subText"]=":tophat:, clothing, hat, top",
+   ["order"]=2781,
+   ["image_path"]="1f3a9",
+   ["text"]="Top hat",
+   ["char"]={3122},
 },
 -- Table: {1343}
 {
-   ["subText"]="cartwheel, gymnastics, medium-dark skin tone, :person_doing_cartwheel_tone4:",
-   ["order"]=1342,
-   ["char"]={4009},
-   ["text"]="Person cartwheeling: medium-dark skin tone",
-   ["image_path"]="1f938-1f3fe",
+   ["subText"]=":billed_cap:, baseball cap",
+   ["order"]=2782,
+   ["image_path"]="1f9e2",
+   ["text"]="Billed cap",
+   ["char"]={3123},
 },
 -- Table: {1344}
 {
-   ["subText"]="cartwheel, dark skin tone, gymnastics, :person_doing_cartwheel_tone5:",
-   ["order"]=1343,
-   ["char"]={4010},
-   ["text"]="Person cartwheeling: dark skin tone",
-   ["image_path"]="1f938-1f3ff",
+   ["subText"]=":womans_hat:, clothing, hat, woman",
+   ["order"]=2783,
+   ["image_path"]="1f452",
+   ["text"]="Woman’s hat",
+   ["char"]={3124},
 },
 -- Table: {1345}
 {
-   ["subText"]="ball, woman, :woman_bouncing_ball:",
-   ["order"]=1344,
-   ["char"]={4011},
-   ["text"]="Woman bouncing ball",
-   ["image_path"]="26f9-2640",
+   ["subText"]=":mortar_board:, cap, celebration, clothing, graduation, hat",
+   ["order"]=2784,
+   ["image_path"]="1f393",
+   ["text"]="Graduation cap",
+   ["char"]={3125},
 },
 -- Table: {1346}
 {
-   ["subText"]="ball, light skin tone, woman, :woman_bouncing_ball_tone1:",
-   ["order"]=1345,
-   ["char"]={4012},
-   ["text"]="Woman bouncing ball: light skin tone",
-   ["image_path"]="26f9-1f3fb-2640",
+   ["subText"]=":helmet_with_cross:, aid, cross, face, hat, helmet",
+   ["order"]=2785,
+   ["image_path"]="26d1",
+   ["text"]="Rescue worker’s helmet",
+   ["char"]={3126},
 },
 -- Table: {1347}
 {
-   ["subText"]="ball, medium-light skin tone, woman, :woman_bouncing_ball_tone2:",
-   ["order"]=1346,
-   ["char"]={4013},
-   ["text"]="Woman bouncing ball: medium-light skin tone",
-   ["image_path"]="26f9-1f3fc-2640",
+   ["subText"]=":crown:, clothing, king, queen",
+   ["order"]=2786,
+   ["image_path"]="1f451",
+   ["text"]="Crown",
+   ["char"]={3127},
 },
 -- Table: {1348}
 {
-   ["subText"]="ball, medium skin tone, woman, :woman_bouncing_ball_tone3:",
-   ["order"]=1347,
-   ["char"]={4014},
-   ["text"]="Woman bouncing ball: medium skin tone",
-   ["image_path"]="26f9-1f3fd-2640",
+   ["subText"]=":ring:, diamond",
+   ["order"]=2787,
+   ["image_path"]="1f48d",
+   ["text"]="Ring",
+   ["char"]={3128},
 },
 -- Table: {1349}
 {
-   ["subText"]="ball, medium-dark skin tone, woman, :woman_bouncing_ball_tone4:",
-   ["order"]=1348,
-   ["char"]={4015},
-   ["text"]="Woman bouncing ball: medium-dark skin tone",
-   ["image_path"]="26f9-1f3fe-2640",
+   ["subText"]=":pouch:, bag, clothing",
+   ["order"]=2788,
+   ["image_path"]="1f45d",
+   ["text"]="Clutch bag",
+   ["char"]={3129},
 },
 -- Table: {1350}
 {
-   ["subText"]="ball, dark skin tone, woman, :woman_bouncing_ball_tone5:",
-   ["order"]=1349,
-   ["char"]={4016},
-   ["text"]="Woman bouncing ball: dark skin tone",
-   ["image_path"]="26f9-1f3ff-2640",
+   ["subText"]=":purse:, clothing, coin",
+   ["order"]=2789,
+   ["image_path"]="1f45b",
+   ["text"]="Purse",
+   ["char"]={3130},
 },
 -- Table: {1351}
 {
-   ["subText"]="ball, :person_bouncing_ball:",
-   ["order"]=1350,
-   ["char"]={4017},
-   ["text"]="Person bouncing ball",
-   ["image_path"]="26f9",
+   ["subText"]=":handbag:, bag, clothing, purse",
+   ["order"]=2790,
+   ["image_path"]="1f45c",
+   ["text"]="Handbag",
+   ["char"]={3131},
 },
 -- Table: {1352}
 {
-   ["subText"]="ball, light skin tone, :person_bouncing_ball_tone1:",
-   ["order"]=1351,
-   ["char"]={4018},
-   ["text"]="Person bouncing ball: light skin tone",
-   ["image_path"]="26f9-1f3fb",
+   ["subText"]=":briefcase:",
+   ["order"]=2791,
+   ["image_path"]="1f4bc",
+   ["text"]="Briefcase",
+   ["char"]={3132},
 },
 -- Table: {1353}
 {
-   ["subText"]="ball, medium-light skin tone, :person_bouncing_ball_tone2:",
-   ["order"]=1352,
-   ["char"]={4019},
-   ["text"]="Person bouncing ball: medium-light skin tone",
-   ["image_path"]="26f9-1f3fc",
+   ["subText"]=":school_satchel:, bag, satchel, school",
+   ["order"]=2792,
+   ["image_path"]="1f392",
+   ["text"]="Backpack",
+   ["char"]={3133},
 },
 -- Table: {1354}
 {
-   ["subText"]="ball, medium skin tone, :person_bouncing_ball_tone3:",
-   ["order"]=1353,
-   ["char"]={4020},
-   ["text"]="Person bouncing ball: medium skin tone",
-   ["image_path"]="26f9-1f3fd",
+   ["subText"]=":luggage:",
+   ["order"]=2793,
+   ["image_path"]="1f9f3",
+   ["text"]="Luggage",
+   ["char"]={3134},
 },
 -- Table: {1355}
 {
-   ["subText"]="ball, medium-dark skin tone, :person_bouncing_ball_tone4:",
-   ["order"]=1354,
-   ["char"]={4021},
-   ["text"]="Person bouncing ball: medium-dark skin tone",
-   ["image_path"]="26f9-1f3fe",
+   ["subText"]=":eyeglasses:, clothing, eye, eyewear",
+   ["order"]=2794,
+   ["image_path"]="1f453",
+   ["text"]="Glasses",
+   ["char"]={3135},
 },
 -- Table: {1356}
 {
-   ["subText"]="ball, dark skin tone, :person_bouncing_ball_tone5:",
-   ["order"]=1355,
-   ["char"]={4022},
-   ["text"]="Person bouncing ball: dark skin tone",
-   ["image_path"]="26f9-1f3ff",
+   ["subText"]=":dark_sunglasses:, dark, eye, eyewear, glasses",
+   ["order"]=2795,
+   ["image_path"]="1f576",
+   ["text"]="Sunglasses",
+   ["char"]={3136},
 },
 -- Table: {1357}
 {
-   ["subText"]="ball, man, :man_bouncing_ball:",
-   ["order"]=1356,
-   ["char"]={4023},
-   ["text"]="Man bouncing ball",
-   ["image_path"]="26f9-2642",
+   ["subText"]=":goggles:",
+   ["order"]=2796,
+   ["image_path"]="1f97d",
+   ["text"]="Goggles",
+   ["char"]={3137},
 },
 -- Table: {1358}
 {
-   ["subText"]="ball, dark skin tone, man, :man_bouncing_ball_tone5:",
-   ["order"]=1357,
-   ["char"]={4024},
-   ["text"]="Man bouncing ball: dark skin tone",
-   ["image_path"]="26f9-1f3ff-2642",
+   ["subText"]=":diving_mask:",
+   ["order"]=2797,
+   ["image_path"]="1f93f",
+   ["text"]="Diving mask",
+   ["char"]={3138},
 },
 -- Table: {1359}
 {
-   ["subText"]="ball, man, medium-dark skin tone, :man_bouncing_ball_tone4:",
-   ["order"]=1358,
-   ["char"]={4025},
-   ["text"]="Man bouncing ball: medium-dark skin tone",
-   ["image_path"]="26f9-1f3fe-2642",
+   ["subText"]=":closed_umbrella:, clothing, rain, umbrella",
+   ["order"]=2798,
+   ["image_path"]="1f302",
+   ["text"]="Closed umbrella",
+   ["char"]={3139},
 },
 -- Table: {1360}
 {
-   ["subText"]="ball, man, medium skin tone, :man_bouncing_ball_tone3:",
-   ["order"]=1359,
-   ["char"]={4026},
-   ["text"]="Man bouncing ball: medium skin tone",
-   ["image_path"]="26f9-1f3fd-2642",
+   ["subText"]=":curly_haired:",
+   ["order"]=2799,
+   ["image_path"]="1f9b1",
+   ["text"]="Curly hair",
+   ["char"]={3140},
 },
 -- Table: {1361}
 {
-   ["subText"]="ball, man, medium-light skin tone, :man_bouncing_ball_tone2:",
-   ["order"]=1360,
-   ["char"]={4027},
-   ["text"]="Man bouncing ball: medium-light skin tone",
-   ["image_path"]="26f9-1f3fc-2642",
+   ["subText"]=":red_haired:",
+   ["order"]=2800,
+   ["image_path"]="1f9b0",
+   ["text"]="Red hair",
+   ["char"]={3141},
 },
 -- Table: {1362}
 {
-   ["subText"]="ball, light skin tone, man, :man_bouncing_ball_tone1:",
-   ["order"]=1361,
-   ["char"]={4028},
-   ["text"]="Man bouncing ball: light skin tone",
-   ["image_path"]="26f9-1f3fb-2642",
+   ["subText"]=":white_haired:",
+   ["order"]=2801,
+   ["image_path"]="1f9b3",
+   ["text"]="White hair",
+   ["char"]={3142},
 },
 -- Table: {1363}
 {
-   ["subText"]="handball, woman, :woman_playing_handball:",
-   ["order"]=1362,
-   ["char"]={4029},
-   ["text"]="Woman playing handball",
-   ["image_path"]="1f93e-2640",
+   ["subText"]=":bald:",
+   ["order"]=2802,
+   ["image_path"]="1f9b2",
+   ["text"]="Bald",
+   ["char"]={3143},
 },
 -- Table: {1364}
 {
-   ["subText"]="handball, light skin tone, woman, :woman_playing_handball_tone1:",
-   ["order"]=1363,
-   ["char"]={4030},
-   ["text"]="Woman playing handball: light skin tone",
-   ["image_path"]="1f93e-1f3fb-2640",
+   ["subText"]=":red_car:, car",
+   ["order"]=2803,
+   ["image_path"]="1f697",
+   ["text"]="Automobile",
+   ["char"]={3144},
 },
 -- Table: {1365}
 {
-   ["subText"]="handball, medium-light skin tone, woman, :woman_playing_handball_tone2:",
-   ["order"]=1364,
-   ["char"]={4031},
-   ["text"]="Woman playing handball: medium-light skin tone",
-   ["image_path"]="1f93e-1f3fc-2640",
+   ["subText"]=":taxi:, vehicle",
+   ["order"]=2804,
+   ["image_path"]="1f695",
+   ["text"]="Taxi",
+   ["char"]={3145},
 },
 -- Table: {1366}
 {
-   ["subText"]="handball, medium skin tone, woman, :woman_playing_handball_tone3:",
-   ["order"]=1365,
-   ["char"]={4032},
-   ["text"]="Woman playing handball: medium skin tone",
-   ["image_path"]="1f93e-1f3fd-2640",
+   ["subText"]=":blue_car:, recreational, sport utility",
+   ["order"]=2805,
+   ["image_path"]="1f699",
+   ["text"]="Sport utility vehicle",
+   ["char"]={3146},
 },
 -- Table: {1367}
 {
-   ["subText"]="handball, medium-dark skin tone, woman, :woman_playing_handball_tone4:",
-   ["order"]=1366,
-   ["char"]={4033},
-   ["text"]="Woman playing handball: medium-dark skin tone",
-   ["image_path"]="1f93e-1f3fe-2640",
+   ["subText"]=":bus:, vehicle",
+   ["order"]=2806,
+   ["image_path"]="1f68c",
+   ["text"]="Bus",
+   ["char"]={3147},
 },
 -- Table: {1368}
 {
-   ["subText"]="dark skin tone, handball, woman, :woman_playing_handball_tone5:",
-   ["order"]=1367,
-   ["char"]={4034},
-   ["text"]="Woman playing handball: dark skin tone",
-   ["image_path"]="1f93e-1f3ff-2640",
+   ["subText"]=":trolleybus:, bus, tram, trolley",
+   ["order"]=2807,
+   ["image_path"]="1f68e",
+   ["text"]="Trolleybus",
+   ["char"]={3148},
 },
 -- Table: {1369}
 {
-   ["subText"]="handball, man, :man_playing_handball:",
-   ["order"]=1368,
-   ["char"]={4035},
-   ["text"]="Man playing handball",
-   ["image_path"]="1f93e-2642",
+   ["subText"]=":race_car:, car, racing",
+   ["order"]=2808,
+   ["image_path"]="1f3ce",
+   ["text"]="Racing car",
+   ["char"]={3149},
 },
 -- Table: {1370}
 {
-   ["subText"]="handball, light skin tone, man, :man_playing_handball_tone1:",
-   ["order"]=1369,
-   ["char"]={4036},
-   ["text"]="Man playing handball: light skin tone",
-   ["image_path"]="1f93e-1f3fb-2642",
+   ["subText"]=":police_car:, car, patrol, police",
+   ["order"]=2809,
+   ["image_path"]="1f693",
+   ["text"]="Police car",
+   ["char"]={3150},
 },
 -- Table: {1371}
 {
-   ["subText"]="handball, man, medium-light skin tone, :man_playing_handball_tone2:",
-   ["order"]=1370,
-   ["char"]={4037},
-   ["text"]="Man playing handball: medium-light skin tone",
-   ["image_path"]="1f93e-1f3fc-2642",
+   ["subText"]=":ambulance:, vehicle",
+   ["order"]=2810,
+   ["image_path"]="1f691",
+   ["text"]="Ambulance",
+   ["char"]={3151},
 },
 -- Table: {1372}
 {
-   ["subText"]="handball, man, medium skin tone, :man_playing_handball_tone3:",
-   ["order"]=1371,
-   ["char"]={4038},
-   ["text"]="Man playing handball: medium skin tone",
-   ["image_path"]="1f93e-1f3fd-2642",
+   ["subText"]=":fire_engine:, engine, fire, truck",
+   ["order"]=2811,
+   ["image_path"]="1f692",
+   ["text"]="Fire engine",
+   ["char"]={3152},
 },
 -- Table: {1373}
 {
-   ["subText"]="handball, man, medium-dark skin tone, :man_playing_handball_tone4:",
-   ["order"]=1372,
-   ["char"]={4039},
-   ["text"]="Man playing handball: medium-dark skin tone",
-   ["image_path"]="1f93e-1f3fe-2642",
+   ["subText"]=":minibus:, bus",
+   ["order"]=2812,
+   ["image_path"]="1f690",
+   ["text"]="Minibus",
+   ["char"]={3153},
 },
 -- Table: {1374}
 {
-   ["subText"]="dark skin tone, handball, man, :man_playing_handball_tone5:",
-   ["order"]=1373,
-   ["char"]={4040},
-   ["text"]="Man playing handball: dark skin tone",
-   ["image_path"]="1f93e-1f3ff-2642",
+   ["subText"]=":truck:, delivery",
+   ["order"]=2813,
+   ["image_path"]="1f69a",
+   ["text"]="Delivery truck",
+   ["char"]={3154},
 },
 -- Table: {1375}
 {
-   ["subText"]="ball, handball, :person_playing_handball:",
-   ["order"]=1374,
-   ["char"]={4041},
-   ["text"]="Person playing handball",
-   ["image_path"]="1f93e",
+   ["subText"]=":articulated_lorry:, lorry, semi, truck",
+   ["order"]=2814,
+   ["image_path"]="1f69b",
+   ["text"]="Articulated lorry",
+   ["char"]={3155},
 },
 -- Table: {1376}
 {
-   ["subText"]="ball, handball, light skin tone, :person_playing_handball_tone1:",
-   ["order"]=1375,
-   ["char"]={4042},
-   ["text"]="Person playing handball: light skin tone",
-   ["image_path"]="1f93e-1f3fb",
+   ["subText"]=":tractor:, vehicle",
+   ["order"]=2815,
+   ["image_path"]="1f69c",
+   ["text"]="Tractor",
+   ["char"]={3156},
 },
 -- Table: {1377}
 {
-   ["subText"]="ball, handball, medium-light skin tone, :person_playing_handball_tone2:",
-   ["order"]=1376,
-   ["char"]={4043},
-   ["text"]="Person playing handball: medium-light skin tone",
-   ["image_path"]="1f93e-1f3fc",
+   ["subText"]=":auto_rickshaw:",
+   ["order"]=2816,
+   ["image_path"]="1f6fa",
+   ["text"]="Auto rickshaw",
+   ["char"]={3157},
 },
 -- Table: {1378}
 {
-   ["subText"]="ball, handball, medium skin tone, :person_playing_handball_tone3:",
-   ["order"]=1377,
-   ["char"]={4044},
-   ["text"]="Person playing handball: medium skin tone",
-   ["image_path"]="1f93e-1f3fd",
+   ["subText"]=":motor_scooter:, motor, scooter",
+   ["order"]=2817,
+   ["image_path"]="1f6f5",
+   ["text"]="Motor scooter",
+   ["char"]={3158},
 },
 -- Table: {1379}
 {
-   ["subText"]="ball, handball, medium-dark skin tone, :person_playing_handball_tone4:",
-   ["order"]=1378,
-   ["char"]={4045},
-   ["text"]="Person playing handball: medium-dark skin tone",
-   ["image_path"]="1f93e-1f3fe",
+   ["subText"]=":motorcycle:, racing",
+   ["order"]=2818,
+   ["image_path"]="1f3cd",
+   ["text"]="Motorcycle",
+   ["char"]={3159},
 },
 -- Table: {1380}
 {
-   ["subText"]="ball, dark skin tone, handball, :person_playing_handball_tone5:",
-   ["order"]=1379,
-   ["char"]={4046},
-   ["text"]="Person playing handball: dark skin tone",
-   ["image_path"]="1f93e-1f3ff",
+   ["subText"]=":scooter:, kick",
+   ["order"]=2819,
+   ["image_path"]="1f6f4",
+   ["text"]="Kick scooter",
+   ["char"]={3160},
 },
 -- Table: {1381}
 {
-   ["subText"]="golf, woman, :woman_golfing:",
-   ["order"]=1380,
-   ["char"]={4047},
-   ["text"]="Woman golfing",
-   ["image_path"]="1f3cc-2640",
+   ["subText"]=":bike:",
+   ["order"]=2820,
+   ["image_path"]="1f6b2",
+   ["text"]="Bicycle",
+   ["char"]={3161},
 },
 -- Table: {1382}
 {
-   ["subText"]="golf, light skin tone, woman, :woman_golfing_tone1:",
-   ["order"]=1381,
-   ["char"]={4048},
-   ["text"]="Woman golfing: light skin tone",
-   ["image_path"]="1f3cc-1f3fb-2640",
+   ["subText"]=":motorized_wheelchair:",
+   ["order"]=2821,
+   ["image_path"]="1f9bc",
+   ["text"]="Motorized wheelchair",
+   ["char"]={3162},
 },
 -- Table: {1383}
 {
-   ["subText"]="golf, medium-light skin tone, woman, :woman_golfing_tone2:",
-   ["order"]=1382,
-   ["char"]={4049},
-   ["text"]="Woman golfing: medium-light skin tone",
-   ["image_path"]="1f3cc-1f3fc-2640",
+   ["subText"]=":manual_wheelchair:",
+   ["order"]=2822,
+   ["image_path"]="1f9bd",
+   ["text"]="Manual wheelchair",
+   ["char"]={3163},
 },
 -- Table: {1384}
 {
-   ["subText"]="golf, medium skin tone, woman, :woman_golfing_tone3:",
-   ["order"]=1383,
-   ["char"]={4050},
-   ["text"]="Woman golfing: medium skin tone",
-   ["image_path"]="1f3cc-1f3fd-2640",
+   ["subText"]=":rotating_light:, beacon, car, light, police, revolving",
+   ["order"]=2823,
+   ["image_path"]="1f6a8",
+   ["text"]="Police car light",
+   ["char"]={3164},
 },
 -- Table: {1385}
 {
-   ["subText"]="golf, medium-dark skin tone, woman, :woman_golfing_tone4:",
-   ["order"]=1384,
-   ["char"]={4051},
-   ["text"]="Woman golfing: medium-dark skin tone",
-   ["image_path"]="1f3cc-1f3fe-2640",
+   ["subText"]=":oncoming_police_car:, car, oncoming, police",
+   ["order"]=2824,
+   ["image_path"]="1f694",
+   ["text"]="Oncoming police car",
+   ["char"]={3165},
 },
 -- Table: {1386}
 {
-   ["subText"]="dark skin tone, golf, woman, :woman_golfing_tone5:",
-   ["order"]=1385,
-   ["char"]={4052},
-   ["text"]="Woman golfing: dark skin tone",
-   ["image_path"]="1f3cc-1f3ff-2640",
+   ["subText"]=":oncoming_bus:, bus, oncoming",
+   ["order"]=2825,
+   ["image_path"]="1f68d",
+   ["text"]="Oncoming bus",
+   ["char"]={3166},
 },
 -- Table: {1387}
 {
-   ["subText"]="ball, golf, :person_golfing:",
-   ["order"]=1386,
-   ["char"]={4053},
-   ["text"]="Person golfing",
-   ["image_path"]="1f3cc",
+   ["subText"]=":oncoming_automobile:, automobile, car, oncoming",
+   ["order"]=2826,
+   ["image_path"]="1f698",
+   ["text"]="Oncoming automobile",
+   ["char"]={3167},
 },
 -- Table: {1388}
 {
-   ["subText"]="ball, golf, light skin tone, :person_golfing_tone1:",
-   ["order"]=1387,
-   ["char"]={4054},
-   ["text"]="Person golfing: light skin tone",
-   ["image_path"]="1f3cc-1f3fb",
+   ["subText"]=":oncoming_taxi:, oncoming, taxi",
+   ["order"]=2827,
+   ["image_path"]="1f696",
+   ["text"]="Oncoming taxi",
+   ["char"]={3168},
 },
 -- Table: {1389}
 {
-   ["subText"]="ball, golf, medium-light skin tone, :person_golfing_tone2:",
-   ["order"]=1388,
-   ["char"]={4055},
-   ["text"]="Person golfing: medium-light skin tone",
-   ["image_path"]="1f3cc-1f3fc",
+   ["subText"]=":aerial_tramway:, aerial, cable, car, gondola, tramway",
+   ["order"]=2828,
+   ["image_path"]="1f6a1",
+   ["text"]="Aerial tramway",
+   ["char"]={3169},
 },
 -- Table: {1390}
 {
-   ["subText"]="ball, golf, medium skin tone, :person_golfing_tone3:",
-   ["order"]=1389,
-   ["char"]={4056},
-   ["text"]="Person golfing: medium skin tone",
-   ["image_path"]="1f3cc-1f3fd",
+   ["subText"]=":mountain_cableway:, cable, gondola, mountain",
+   ["order"]=2829,
+   ["image_path"]="1f6a0",
+   ["text"]="Mountain cableway",
+   ["char"]={3170},
 },
 -- Table: {1391}
 {
-   ["subText"]="ball, golf, medium-dark skin tone, :person_golfing_tone4:",
-   ["order"]=1390,
-   ["char"]={4057},
-   ["text"]="Person golfing: medium-dark skin tone",
-   ["image_path"]="1f3cc-1f3fe",
+   ["subText"]=":suspension_railway:, railway, suspension",
+   ["order"]=2830,
+   ["image_path"]="1f69f",
+   ["text"]="Suspension railway",
+   ["char"]={3171},
 },
 -- Table: {1392}
 {
-   ["subText"]="ball, dark skin tone, golf, :person_golfing_tone5:",
-   ["order"]=1391,
-   ["char"]={4058},
-   ["text"]="Person golfing: dark skin tone",
-   ["image_path"]="1f3cc-1f3ff",
+   ["subText"]=":railway_car:, car, electric, railway, train, tram, trolleybus",
+   ["order"]=2831,
+   ["image_path"]="1f683",
+   ["text"]="Railway car",
+   ["char"]={3172},
 },
 -- Table: {1393}
 {
-   ["subText"]="golf, man, :man_golfing:",
-   ["order"]=1392,
-   ["char"]={4059},
-   ["text"]="Man golfing",
-   ["image_path"]="1f3cc-2642",
+   ["subText"]=":train:, car, tram, trolleybus",
+   ["order"]=2832,
+   ["image_path"]="1f68b",
+   ["text"]="Tram car",
+   ["char"]={3173},
 },
 -- Table: {1394}
 {
-   ["subText"]="golf, light skin tone, man, :man_golfing_tone1:",
-   ["order"]=1393,
-   ["char"]={4060},
-   ["text"]="Man golfing: light skin tone",
-   ["image_path"]="1f3cc-1f3fb-2642",
+   ["subText"]=":mountain_railway:, car, mountain, railway",
+   ["order"]=2833,
+   ["image_path"]="1f69e",
+   ["text"]="Mountain railway",
+   ["char"]={3174},
 },
 -- Table: {1395}
 {
-   ["subText"]="golf, man, medium-light skin tone, :man_golfing_tone2:",
-   ["order"]=1394,
-   ["char"]={4061},
-   ["text"]="Man golfing: medium-light skin tone",
-   ["image_path"]="1f3cc-1f3fc-2642",
+   ["subText"]=":monorail:, vehicle",
+   ["order"]=2834,
+   ["image_path"]="1f69d",
+   ["text"]="Monorail",
+   ["char"]={3175},
 },
 -- Table: {1396}
 {
-   ["subText"]="golf, man, medium skin tone, :man_golfing_tone3:",
-   ["order"]=1395,
-   ["char"]={4062},
-   ["text"]="Man golfing: medium skin tone",
-   ["image_path"]="1f3cc-1f3fd-2642",
+   ["subText"]=":bullettrain_side:, railway, shinkansen, speed, train",
+   ["order"]=2835,
+   ["image_path"]="1f684",
+   ["text"]="High-speed train",
+   ["char"]={3176},
 },
 -- Table: {1397}
 {
-   ["subText"]="golf, man, medium-dark skin tone, :man_golfing_tone4:",
-   ["order"]=1396,
-   ["char"]={4063},
-   ["text"]="Man golfing: medium-dark skin tone",
-   ["image_path"]="1f3cc-1f3fe-2642",
+   ["subText"]=":bullettrain_front:, bullet, railway, shinkansen, speed, train",
+   ["order"]=2836,
+   ["image_path"]="1f685",
+   ["text"]="Bullet train",
+   ["char"]={3177},
 },
 -- Table: {1398}
 {
-   ["subText"]="dark skin tone, golf, man, :man_golfing_tone5:",
-   ["order"]=1397,
-   ["char"]={4064},
-   ["text"]="Man golfing: dark skin tone",
-   ["image_path"]="1f3cc-1f3ff-2642",
+   ["subText"]=":light_rail:, railway",
+   ["order"]=2837,
+   ["image_path"]="1f688",
+   ["text"]="Light rail",
+   ["char"]={3178},
 },
 -- Table: {1399}
 {
-   ["subText"]="surfing, woman, :woman_surfing:",
-   ["order"]=1398,
-   ["char"]={4065},
-   ["text"]="Woman surfing",
-   ["image_path"]="1f3c4-2640",
+   ["subText"]=":steam_locomotive:, engine, railway, steam, train",
+   ["order"]=2838,
+   ["image_path"]="1f682",
+   ["text"]="Locomotive",
+   ["char"]={3179},
 },
 -- Table: {1400}
 {
-   ["subText"]="light skin tone, surfing, woman, :woman_surfing_tone1:",
-   ["order"]=1399,
-   ["char"]={4066},
-   ["text"]="Woman surfing: light skin tone",
-   ["image_path"]="1f3c4-1f3fb-2640",
+   ["subText"]=":train2:, railway",
+   ["order"]=2839,
+   ["image_path"]="1f686",
+   ["text"]="Train",
+   ["char"]={3180},
 },
 -- Table: {1401}
 {
-   ["subText"]="medium-light skin tone, surfing, woman, :woman_surfing_tone2:",
-   ["order"]=1400,
-   ["char"]={4067},
-   ["text"]="Woman surfing: medium-light skin tone",
-   ["image_path"]="1f3c4-1f3fc-2640",
+   ["subText"]=":metro:, subway",
+   ["order"]=2840,
+   ["image_path"]="1f687",
+   ["text"]="Metro",
+   ["char"]={3181},
 },
 -- Table: {1402}
 {
-   ["subText"]="medium skin tone, surfing, woman, :woman_surfing_tone3:",
-   ["order"]=1401,
-   ["char"]={4068},
-   ["text"]="Woman surfing: medium skin tone",
-   ["image_path"]="1f3c4-1f3fd-2640",
+   ["subText"]=":tram:, trolleybus",
+   ["order"]=2841,
+   ["image_path"]="1f68a",
+   ["text"]="Tram",
+   ["char"]={3182},
 },
 -- Table: {1403}
 {
-   ["subText"]="medium-dark skin tone, surfing, woman, :woman_surfing_tone4:",
-   ["order"]=1402,
-   ["char"]={4069},
-   ["text"]="Woman surfing: medium-dark skin tone",
-   ["image_path"]="1f3c4-1f3fe-2640",
+   ["subText"]=":station:, railway, train",
+   ["order"]=2842,
+   ["image_path"]="1f689",
+   ["text"]="Station",
+   ["char"]={3183},
 },
 -- Table: {1404}
 {
-   ["subText"]="dark skin tone, surfing, woman, :woman_surfing_tone5:",
-   ["order"]=1403,
-   ["char"]={4070},
-   ["text"]="Woman surfing: dark skin tone",
-   ["image_path"]="1f3c4-1f3ff-2640",
+   ["subText"]=":airplane:, aeroplane",
+   ["order"]=2843,
+   ["image_path"]="2708",
+   ["text"]="Airplane",
+   ["char"]={3184},
 },
 -- Table: {1405}
 {
-   ["subText"]="surfing, :person_surfing:",
-   ["order"]=1404,
-   ["char"]={4071},
-   ["text"]="Person surfing",
-   ["image_path"]="1f3c4",
+   ["subText"]=":airplane_departure:, aeroplane, airplane, check-in, departure, departures",
+   ["order"]=2844,
+   ["image_path"]="1f6eb",
+   ["text"]="Airplane departure",
+   ["char"]={3185},
 },
 -- Table: {1406}
 {
-   ["subText"]="light skin tone, surfing, :person_surfing_tone1:",
-   ["order"]=1405,
-   ["char"]={4072},
-   ["text"]="Person surfing: light skin tone",
-   ["image_path"]="1f3c4-1f3fb",
+   ["subText"]=":airplane_arriving:, aeroplane, airplane, arrivals, arriving, landing",
+   ["order"]=2845,
+   ["image_path"]="1f6ec",
+   ["text"]="Airplane arrival",
+   ["char"]={3186},
 },
 -- Table: {1407}
 {
-   ["subText"]="medium-light skin tone, surfing, :person_surfing_tone2:",
-   ["order"]=1406,
-   ["char"]={4073},
-   ["text"]="Person surfing: medium-light skin tone",
-   ["image_path"]="1f3c4-1f3fc",
+   ["subText"]=":airplane_small:, aeroplane, airplane",
+   ["order"]=2846,
+   ["image_path"]="1f6e9",
+   ["text"]="Small airplane",
+   ["char"]={3187},
 },
 -- Table: {1408}
 {
-   ["subText"]="medium skin tone, surfing, :person_surfing_tone3:",
-   ["order"]=1407,
-   ["char"]={4074},
-   ["text"]="Person surfing: medium skin tone",
-   ["image_path"]="1f3c4-1f3fd",
+   ["subText"]=":seat:, chair",
+   ["order"]=2847,
+   ["image_path"]="1f4ba",
+   ["text"]="Seat",
+   ["char"]={3188},
 },
 -- Table: {1409}
 {
-   ["subText"]="medium-dark skin tone, surfing, :person_surfing_tone4:",
-   ["order"]=1408,
-   ["char"]={4075},
-   ["text"]="Person surfing: medium-dark skin tone",
-   ["image_path"]="1f3c4-1f3fe",
+   ["subText"]=":satellite_orbital:, space",
+   ["order"]=2848,
+   ["image_path"]="1f6f0",
+   ["text"]="Satellite",
+   ["char"]={3189},
 },
 -- Table: {1410}
 {
-   ["subText"]="dark skin tone, surfing, :person_surfing_tone5:",
-   ["order"]=1409,
-   ["char"]={4076},
-   ["text"]="Person surfing: dark skin tone",
-   ["image_path"]="1f3c4-1f3ff",
+   ["subText"]=":rocket:, space",
+   ["order"]=2849,
+   ["image_path"]="1f680",
+   ["text"]="Rocket",
+   ["char"]={3190},
 },
 -- Table: {1411}
 {
-   ["subText"]="man, surfing, :man_surfing:",
-   ["order"]=1410,
-   ["char"]={4077},
-   ["text"]="Man surfing",
-   ["image_path"]="1f3c4-2642",
+   ["subText"]=":flying_saucer:, UFO",
+   ["order"]=2850,
+   ["image_path"]="1f6f8",
+   ["text"]="Flying saucer",
+   ["char"]={3191},
 },
 -- Table: {1412}
 {
-   ["subText"]="dark skin tone, man, surfing, :man_surfing_tone5:",
-   ["order"]=1411,
-   ["char"]={4078},
-   ["text"]="Man surfing: dark skin tone",
-   ["image_path"]="1f3c4-1f3ff-2642",
+   ["subText"]=":helicopter:, vehicle",
+   ["order"]=2851,
+   ["image_path"]="1f681",
+   ["text"]="Helicopter",
+   ["char"]={3192},
 },
 -- Table: {1413}
 {
-   ["subText"]="man, medium-dark skin tone, surfing, :man_surfing_tone4:",
-   ["order"]=1412,
-   ["char"]={4079},
-   ["text"]="Man surfing: medium-dark skin tone",
-   ["image_path"]="1f3c4-1f3fe-2642",
+   ["subText"]=":canoe:, boat",
+   ["order"]=2852,
+   ["image_path"]="1f6f6",
+   ["text"]="Canoe",
+   ["char"]={3193},
 },
 -- Table: {1414}
 {
-   ["subText"]="man, medium skin tone, surfing, :man_surfing_tone3:",
-   ["order"]=1413,
-   ["char"]={4080},
-   ["text"]="Man surfing: medium skin tone",
-   ["image_path"]="1f3c4-1f3fd-2642",
+   ["subText"]=":sailboat:, boat, resort, sea, yacht",
+   ["order"]=2853,
+   ["image_path"]="26f5",
+   ["text"]="Sailboat",
+   ["char"]={3194},
 },
 -- Table: {1415}
 {
-   ["subText"]="man, medium-light skin tone, surfing, :man_surfing_tone2:",
-   ["order"]=1414,
-   ["char"]={4081},
-   ["text"]="Man surfing: medium-light skin tone",
-   ["image_path"]="1f3c4-1f3fc-2642",
+   ["subText"]=":speedboat:, boat",
+   ["order"]=2854,
+   ["image_path"]="1f6a4",
+   ["text"]="Speedboat",
+   ["char"]={3195},
 },
 -- Table: {1416}
 {
-   ["subText"]="light skin tone, man, surfing, :man_surfing_tone1:",
-   ["order"]=1415,
-   ["char"]={4082},
-   ["text"]="Man surfing: light skin tone",
-   ["image_path"]="1f3c4-1f3fb-2642",
+   ["subText"]=":motorboat:, boat",
+   ["order"]=2855,
+   ["image_path"]="1f6e5",
+   ["text"]="Motor boat",
+   ["char"]={3196},
 },
 -- Table: {1417}
 {
-   ["subText"]="swim, woman, :woman_swimming:",
-   ["order"]=1416,
-   ["char"]={4083},
-   ["text"]="Woman swimming",
-   ["image_path"]="1f3ca-2640",
+   ["subText"]=":cruise_ship:, passenger, ship",
+   ["order"]=2856,
+   ["image_path"]="1f6f3",
+   ["text"]="Passenger ship",
+   ["char"]={3197},
 },
 -- Table: {1418}
 {
-   ["subText"]="light skin tone, swim, woman, :woman_swimming_tone1:",
-   ["order"]=1417,
-   ["char"]={4084},
-   ["text"]="Woman swimming: light skin tone",
-   ["image_path"]="1f3ca-1f3fb-2640",
+   ["subText"]=":ferry:, boat, passenger",
+   ["order"]=2857,
+   ["image_path"]="26f4",
+   ["text"]="Ferry",
+   ["char"]={3198},
 },
 -- Table: {1419}
 {
-   ["subText"]="medium-light skin tone, swim, woman, :woman_swimming_tone2:",
-   ["order"]=1418,
-   ["char"]={4085},
-   ["text"]="Woman swimming: medium-light skin tone",
-   ["image_path"]="1f3ca-1f3fc-2640",
+   ["subText"]=":ship:, boat, passenger",
+   ["order"]=2858,
+   ["image_path"]="1f6a2",
+   ["text"]="Ship",
+   ["char"]={3199},
 },
 -- Table: {1420}
 {
-   ["subText"]="medium skin tone, swim, woman, :woman_swimming_tone3:",
-   ["order"]=1419,
-   ["char"]={4086},
-   ["text"]="Woman swimming: medium skin tone",
-   ["image_path"]="1f3ca-1f3fd-2640",
+   ["subText"]=":anchor:, ship, tool",
+   ["order"]=2859,
+   ["image_path"]="2693",
+   ["text"]="Anchor",
+   ["char"]={3200},
 },
 -- Table: {1421}
 {
-   ["subText"]="medium-dark skin tone, swim, woman, :woman_swimming_tone4:",
-   ["order"]=1420,
-   ["char"]={4087},
-   ["text"]="Woman swimming: medium-dark skin tone",
-   ["image_path"]="1f3ca-1f3fe-2640",
+   ["subText"]=":fuelpump:, fuel, gas, pump, station",
+   ["order"]=2860,
+   ["image_path"]="26fd",
+   ["text"]="Fuel pump",
+   ["char"]={3201},
 },
 -- Table: {1422}
 {
-   ["subText"]="dark skin tone, swim, woman, :woman_swimming_tone5:",
-   ["order"]=1421,
-   ["char"]={4088},
-   ["text"]="Woman swimming: dark skin tone",
-   ["image_path"]="1f3ca-1f3ff-2640",
+   ["subText"]=":construction:, barrier",
+   ["order"]=2861,
+   ["image_path"]="1f6a7",
+   ["text"]="Construction",
+   ["char"]={3202},
 },
 -- Table: {1423}
 {
-   ["subText"]="swim, :person_swimming:",
-   ["order"]=1422,
-   ["char"]={4089},
-   ["text"]="Person swimming",
-   ["image_path"]="1f3ca",
+   ["subText"]=":vertical_traffic_light:, light, signal, traffic",
+   ["order"]=2862,
+   ["image_path"]="1f6a6",
+   ["text"]="Vertical traffic light",
+   ["char"]={3203},
 },
 -- Table: {1424}
 {
-   ["subText"]="light skin tone, swim, :person_swimming_tone1:",
-   ["order"]=1423,
-   ["char"]={4090},
-   ["text"]="Person swimming: light skin tone",
-   ["image_path"]="1f3ca-1f3fb",
+   ["subText"]=":traffic_light:, light, signal, traffic",
+   ["order"]=2863,
+   ["image_path"]="1f6a5",
+   ["text"]="Horizontal traffic light",
+   ["char"]={3204},
 },
 -- Table: {1425}
 {
-   ["subText"]="medium-light skin tone, swim, :person_swimming_tone2:",
-   ["order"]=1424,
-   ["char"]={4091},
-   ["text"]="Person swimming: medium-light skin tone",
-   ["image_path"]="1f3ca-1f3fc",
+   ["subText"]=":busstop:, bus, stop",
+   ["order"]=2864,
+   ["image_path"]="1f68f",
+   ["text"]="Bus stop",
+   ["char"]={3205},
 },
 -- Table: {1426}
 {
-   ["subText"]="medium skin tone, swim, :person_swimming_tone3:",
-   ["order"]=1425,
-   ["char"]={4092},
-   ["text"]="Person swimming: medium skin tone",
-   ["image_path"]="1f3ca-1f3fd",
+   ["subText"]=":map:, world",
+   ["order"]=2865,
+   ["image_path"]="1f5fa",
+   ["text"]="World map",
+   ["char"]={3206},
 },
 -- Table: {1427}
 {
-   ["subText"]="medium-dark skin tone, swim, :person_swimming_tone4:",
-   ["order"]=1426,
-   ["char"]={4093},
-   ["text"]="Person swimming: medium-dark skin tone",
-   ["image_path"]="1f3ca-1f3fe",
+   ["subText"]=":moyai:, face, statue",
+   ["order"]=2866,
+   ["image_path"]="1f5ff",
+   ["text"]="Moai",
+   ["char"]={3207},
 },
 -- Table: {1428}
 {
-   ["subText"]="dark skin tone, swim, :person_swimming_tone5:",
-   ["order"]=1427,
-   ["char"]={4094},
-   ["text"]="Person swimming: dark skin tone",
-   ["image_path"]="1f3ca-1f3ff",
+   ["subText"]=":statue_of_liberty:, liberty, statue",
+   ["order"]=2867,
+   ["image_path"]="1f5fd",
+   ["text"]="Statue of Liberty",
+   ["char"]={3208},
 },
 -- Table: {1429}
 {
-   ["subText"]="man, swim, :man_swimming:",
-   ["order"]=1428,
-   ["char"]={4095},
-   ["text"]="Man swimming",
-   ["image_path"]="1f3ca-2642",
+   ["subText"]=":tokyo_tower:, Tokyo, tower",
+   ["order"]=2868,
+   ["image_path"]="1f5fc",
+   ["text"]="Tokyo tower",
+   ["char"]={3209},
 },
 -- Table: {1430}
 {
-   ["subText"]="dark skin tone, man, swim, :man_swimming_tone5:",
-   ["order"]=1429,
-   ["char"]={4096},
-   ["text"]="Man swimming: dark skin tone",
-   ["image_path"]="1f3ca-1f3ff-2642",
+   ["subText"]=":european_castle:, European",
+   ["order"]=2869,
+   ["image_path"]="1f3f0",
+   ["text"]="Castle",
+   ["char"]={3210},
 },
 -- Table: {1431}
 {
-   ["subText"]="man, medium-dark skin tone, swim, :man_swimming_tone4:",
-   ["order"]=1430,
-   ["char"]={4097},
-   ["text"]="Man swimming: medium-dark skin tone",
-   ["image_path"]="1f3ca-1f3fe-2642",
+   ["subText"]=":japanese_castle:, Japanese, castle",
+   ["order"]=2870,
+   ["image_path"]="1f3ef",
+   ["text"]="Japanese castle",
+   ["char"]={3211},
 },
 -- Table: {1432}
 {
-   ["subText"]="man, medium skin tone, swim, :man_swimming_tone3:",
-   ["order"]=1431,
-   ["char"]={4098},
-   ["text"]="Man swimming: medium skin tone",
-   ["image_path"]="1f3ca-1f3fd-2642",
+   ["subText"]=":stadium:",
+   ["order"]=2871,
+   ["image_path"]="1f3df",
+   ["text"]="Stadium",
+   ["char"]={3212},
 },
 -- Table: {1433}
 {
-   ["subText"]="man, medium-light skin tone, swim, :man_swimming_tone2:",
-   ["order"]=1432,
-   ["char"]={4099},
-   ["text"]="Man swimming: medium-light skin tone",
-   ["image_path"]="1f3ca-1f3fc-2642",
+   ["subText"]=":ferris_wheel:, amusement park, ferris, wheel",
+   ["order"]=2872,
+   ["image_path"]="1f3a1",
+   ["text"]="Ferris wheel",
+   ["char"]={3213},
 },
 -- Table: {1434}
 {
-   ["subText"]="light skin tone, man, swim, :man_swimming_tone1:",
-   ["order"]=1433,
-   ["char"]={4100},
-   ["text"]="Man swimming: light skin tone",
-   ["image_path"]="1f3ca-1f3fb-2642",
+   ["subText"]=":roller_coaster:, amusement park, coaster, roller",
+   ["order"]=2873,
+   ["image_path"]="1f3a2",
+   ["text"]="Roller coaster",
+   ["char"]={3214},
 },
 -- Table: {1435}
 {
-   ["subText"]="water polo, woman, :woman_playing_water_polo:",
-   ["order"]=1434,
-   ["char"]={4101},
-   ["text"]="Woman playing water polo",
-   ["image_path"]="1f93d-2640",
+   ["subText"]=":carousel_horse:, carousel, horse",
+   ["order"]=2874,
+   ["image_path"]="1f3a0",
+   ["text"]="Carousel horse",
+   ["char"]={3215},
 },
 -- Table: {1436}
 {
-   ["subText"]="light skin tone, water polo, woman, :woman_playing_water_polo_tone1:",
-   ["order"]=1435,
-   ["char"]={4102},
-   ["text"]="Woman playing water polo: light skin tone",
-   ["image_path"]="1f93d-1f3fb-2640",
+   ["subText"]=":fountain:",
+   ["order"]=2875,
+   ["image_path"]="26f2",
+   ["text"]="Fountain",
+   ["char"]={3216},
 },
 -- Table: {1437}
 {
-   ["subText"]="medium-light skin tone, water polo, woman, :woman_playing_water_polo_tone2:",
-   ["order"]=1436,
-   ["char"]={4103},
-   ["text"]="Woman playing water polo: medium-light skin tone",
-   ["image_path"]="1f93d-1f3fc-2640",
+   ["subText"]=":beach_umbrella:, rain, sun, umbrella",
+   ["order"]=2876,
+   ["image_path"]="26f1",
+   ["text"]="Umbrella on ground",
+   ["char"]={3217},
 },
 -- Table: {1438}
 {
-   ["subText"]="medium skin tone, water polo, woman, :woman_playing_water_polo_tone3:",
-   ["order"]=1437,
-   ["char"]={4104},
-   ["text"]="Woman playing water polo: medium skin tone",
-   ["image_path"]="1f93d-1f3fd-2640",
+   ["subText"]=":beach:, umbrella",
+   ["order"]=2877,
+   ["image_path"]="1f3d6",
+   ["text"]="Beach with umbrella",
+   ["char"]={3218},
 },
 -- Table: {1439}
 {
-   ["subText"]="medium-dark skin tone, water polo, woman, :woman_playing_water_polo_tone4:",
-   ["order"]=1438,
-   ["char"]={4105},
-   ["text"]="Woman playing water polo: medium-dark skin tone",
-   ["image_path"]="1f93d-1f3fe-2640",
+   ["subText"]=":island:, desert",
+   ["order"]=2878,
+   ["image_path"]="1f3dd",
+   ["text"]="Desert island",
+   ["char"]={3219},
 },
 -- Table: {1440}
 {
-   ["subText"]="dark skin tone, water polo, woman, :woman_playing_water_polo_tone5:",
-   ["order"]=1439,
-   ["char"]={4106},
-   ["text"]="Woman playing water polo: dark skin tone",
-   ["image_path"]="1f93d-1f3ff-2640",
+   ["subText"]=":desert:",
+   ["order"]=2879,
+   ["image_path"]="1f3dc",
+   ["text"]="Desert",
+   ["char"]={3220},
 },
 -- Table: {1441}
 {
-   ["subText"]="man, water polo, :man_playing_water_polo:",
-   ["order"]=1440,
-   ["char"]={4107},
-   ["text"]="Man playing water polo",
-   ["image_path"]="1f93d-2642",
+   ["subText"]=":volcano:, eruption, mountain",
+   ["order"]=2880,
+   ["image_path"]="1f30b",
+   ["text"]="Volcano",
+   ["char"]={3221},
 },
 -- Table: {1442}
 {
-   ["subText"]="light skin tone, man, water polo, :man_playing_water_polo_tone1:",
-   ["order"]=1441,
-   ["char"]={4108},
-   ["text"]="Man playing water polo: light skin tone",
-   ["image_path"]="1f93d-1f3fb-2642",
+   ["subText"]=":mountain:",
+   ["order"]=2881,
+   ["image_path"]="26f0",
+   ["text"]="Mountain",
+   ["char"]={3222},
 },
 -- Table: {1443}
 {
-   ["subText"]="man, medium-light skin tone, water polo, :man_playing_water_polo_tone2:",
-   ["order"]=1442,
-   ["char"]={4109},
-   ["text"]="Man playing water polo: medium-light skin tone",
-   ["image_path"]="1f93d-1f3fc-2642",
+   ["subText"]=":mountain_snow:, cold, mountain, snow",
+   ["order"]=2882,
+   ["image_path"]="1f3d4",
+   ["text"]="Snow-capped mountain",
+   ["char"]={3223},
 },
 -- Table: {1444}
 {
-   ["subText"]="man, medium skin tone, water polo, :man_playing_water_polo_tone3:",
-   ["order"]=1443,
-   ["char"]={4110},
-   ["text"]="Man playing water polo: medium skin tone",
-   ["image_path"]="1f93d-1f3fd-2642",
+   ["subText"]=":mount_fuji:, fuji, mountain",
+   ["order"]=2883,
+   ["image_path"]="1f5fb",
+   ["text"]="Mount fuji",
+   ["char"]={3224},
 },
 -- Table: {1445}
 {
-   ["subText"]="man, medium-dark skin tone, water polo, :man_playing_water_polo_tone4:",
-   ["order"]=1444,
-   ["char"]={4111},
-   ["text"]="Man playing water polo: medium-dark skin tone",
-   ["image_path"]="1f93d-1f3fe-2642",
+   ["subText"]=":camping:",
+   ["order"]=2884,
+   ["image_path"]="1f3d5",
+   ["text"]="Camping",
+   ["char"]={3225},
 },
 -- Table: {1446}
 {
-   ["subText"]="dark skin tone, man, water polo, :man_playing_water_polo_tone5:",
-   ["order"]=1445,
-   ["char"]={4112},
-   ["text"]="Man playing water polo: dark skin tone",
-   ["image_path"]="1f93d-1f3ff-2642",
+   ["subText"]=":tent:, camping",
+   ["order"]=2885,
+   ["image_path"]="26fa",
+   ["text"]="Tent",
+   ["char"]={3226},
 },
 -- Table: {1447}
 {
-   ["subText"]="polo, water, :person_playing_water_polo:",
-   ["order"]=1446,
-   ["char"]={4113},
-   ["text"]="Person playing water polo",
-   ["image_path"]="1f93d",
+   ["subText"]=":house:, home",
+   ["order"]=2886,
+   ["image_path"]="1f3e0",
+   ["text"]="House",
+   ["char"]={3227},
 },
 -- Table: {1448}
 {
-   ["subText"]="light skin tone, polo, water, :person_playing_water_polo_tone1:",
-   ["order"]=1447,
-   ["char"]={4114},
-   ["text"]="Person playing water polo: light skin tone",
-   ["image_path"]="1f93d-1f3fb",
+   ["subText"]=":house_with_garden:, garden, home, house",
+   ["order"]=2887,
+   ["image_path"]="1f3e1",
+   ["text"]="House with garden",
+   ["char"]={3228},
 },
 -- Table: {1449}
 {
-   ["subText"]="medium-light skin tone, polo, water, :person_playing_water_polo_tone2:",
-   ["order"]=1448,
-   ["char"]={4115},
-   ["text"]="Person playing water polo: medium-light skin tone",
-   ["image_path"]="1f93d-1f3fc",
+   ["subText"]=":homes:, houses",
+   ["order"]=2888,
+   ["image_path"]="1f3d8",
+   ["text"]="Houses",
+   ["char"]={3229},
 },
 -- Table: {1450}
 {
-   ["subText"]="medium skin tone, polo, water, :person_playing_water_polo_tone3:",
-   ["order"]=1449,
-   ["char"]={4116},
-   ["text"]="Person playing water polo: medium skin tone",
-   ["image_path"]="1f93d-1f3fd",
+   ["subText"]=":house_abandoned:, derelict, house",
+   ["order"]=2889,
+   ["image_path"]="1f3da",
+   ["text"]="Derelict house",
+   ["char"]={3230},
 },
 -- Table: {1451}
 {
-   ["subText"]="medium-dark skin tone, polo, water, :person_playing_water_polo_tone4:",
-   ["order"]=1450,
-   ["char"]={4117},
-   ["text"]="Person playing water polo: medium-dark skin tone",
-   ["image_path"]="1f93d-1f3fe",
+   ["subText"]=":construction_site:, construction",
+   ["order"]=2890,
+   ["image_path"]="1f3d7",
+   ["text"]="Building construction",
+   ["char"]={3231},
 },
 -- Table: {1452}
 {
-   ["subText"]="dark skin tone, polo, water, :person_playing_water_polo_tone5:",
-   ["order"]=1451,
-   ["char"]={4118},
-   ["text"]="Person playing water polo: dark skin tone",
-   ["image_path"]="1f93d-1f3ff",
+   ["subText"]=":factory:, building",
+   ["order"]=2891,
+   ["image_path"]="1f3ed",
+   ["text"]="Factory",
+   ["char"]={3232},
 },
 -- Table: {1453}
 {
-   ["subText"]="boat, rowboat, woman, :woman_rowing_boat:",
-   ["order"]=1452,
-   ["char"]={4119},
-   ["text"]="Woman rowing boat",
-   ["image_path"]="1f6a3-2640",
+   ["subText"]=":office:, building",
+   ["order"]=2892,
+   ["image_path"]="1f3e2",
+   ["text"]="Office building",
+   ["char"]={3233},
 },
 -- Table: {1454}
 {
-   ["subText"]="boat, light skin tone, rowboat, woman, :woman_rowing_boat_tone1:",
-   ["order"]=1453,
-   ["char"]={4120},
-   ["text"]="Woman rowing boat: light skin tone",
-   ["image_path"]="1f6a3-1f3fb-2640",
+   ["subText"]=":department_store:, department, store",
+   ["order"]=2893,
+   ["image_path"]="1f3ec",
+   ["text"]="Department store",
+   ["char"]={3234},
 },
 -- Table: {1455}
 {
-   ["subText"]="boat, medium-light skin tone, rowboat, woman, :woman_rowing_boat_tone2:",
-   ["order"]=1454,
-   ["char"]={4121},
-   ["text"]="Woman rowing boat: medium-light skin tone",
-   ["image_path"]="1f6a3-1f3fc-2640",
+   ["subText"]=":post_office:, Japanese, post",
+   ["order"]=2894,
+   ["image_path"]="1f3e3",
+   ["text"]="Japanese post office",
+   ["char"]={3235},
 },
 -- Table: {1456}
 {
-   ["subText"]="boat, medium skin tone, rowboat, woman, :woman_rowing_boat_tone3:",
-   ["order"]=1455,
-   ["char"]={4122},
-   ["text"]="Woman rowing boat: medium skin tone",
-   ["image_path"]="1f6a3-1f3fd-2640",
+   ["subText"]=":european_post_office:, European, post",
+   ["order"]=2895,
+   ["image_path"]="1f3e4",
+   ["text"]="Post office",
+   ["char"]={3236},
 },
 -- Table: {1457}
 {
-   ["subText"]="boat, medium-dark skin tone, rowboat, woman, :woman_rowing_boat_tone4:",
-   ["order"]=1456,
-   ["char"]={4123},
-   ["text"]="Woman rowing boat: medium-dark skin tone",
-   ["image_path"]="1f6a3-1f3fe-2640",
+   ["subText"]=":hospital:, doctor, medicine",
+   ["order"]=2896,
+   ["image_path"]="1f3e5",
+   ["text"]="Hospital",
+   ["char"]={3237},
 },
 -- Table: {1458}
 {
-   ["subText"]="boat, dark skin tone, rowboat, woman, :woman_rowing_boat_tone5:",
-   ["order"]=1457,
-   ["char"]={4124},
-   ["text"]="Woman rowing boat: dark skin tone",
-   ["image_path"]="1f6a3-1f3ff-2640",
+   ["subText"]=":bank:, building",
+   ["order"]=2897,
+   ["image_path"]="1f3e6",
+   ["text"]="Bank",
+   ["char"]={3238},
 },
 -- Table: {1459}
 {
-   ["subText"]="boat, rowboat, :person_rowing_boat:",
-   ["order"]=1458,
-   ["char"]={4125},
-   ["text"]="Person rowing boat",
-   ["image_path"]="1f6a3",
+   ["subText"]=":hotel:, building",
+   ["order"]=2898,
+   ["image_path"]="1f3e8",
+   ["text"]="Hotel",
+   ["char"]={3239},
 },
 -- Table: {1460}
 {
-   ["subText"]="boat, light skin tone, rowboat, :person_rowing_boat_tone1:",
-   ["order"]=1459,
-   ["char"]={4126},
-   ["text"]="Person rowing boat: light skin tone",
-   ["image_path"]="1f6a3-1f3fb",
+   ["subText"]=":convenience_store:, convenience, store",
+   ["order"]=2899,
+   ["image_path"]="1f3ea",
+   ["text"]="Convenience store",
+   ["char"]={3240},
 },
 -- Table: {1461}
 {
-   ["subText"]="boat, medium-light skin tone, rowboat, :person_rowing_boat_tone2:",
-   ["order"]=1460,
-   ["char"]={4127},
-   ["text"]="Person rowing boat: medium-light skin tone",
-   ["image_path"]="1f6a3-1f3fc",
+   ["subText"]=":school:, building",
+   ["order"]=2900,
+   ["image_path"]="1f3eb",
+   ["text"]="School",
+   ["char"]={3241},
 },
 -- Table: {1462}
 {
-   ["subText"]="boat, medium skin tone, rowboat, :person_rowing_boat_tone3:",
-   ["order"]=1461,
-   ["char"]={4128},
-   ["text"]="Person rowing boat: medium skin tone",
-   ["image_path"]="1f6a3-1f3fd",
+   ["subText"]=":love_hotel:, hotel, love",
+   ["order"]=2901,
+   ["image_path"]="1f3e9",
+   ["text"]="Love hotel",
+   ["char"]={3242},
 },
 -- Table: {1463}
 {
-   ["subText"]="boat, medium-dark skin tone, rowboat, :person_rowing_boat_tone4:",
-   ["order"]=1462,
-   ["char"]={4129},
-   ["text"]="Person rowing boat: medium-dark skin tone",
-   ["image_path"]="1f6a3-1f3fe",
+   ["subText"]=":wedding:, chapel, romance",
+   ["order"]=2902,
+   ["image_path"]="1f492",
+   ["text"]="Wedding",
+   ["char"]={3243},
 },
 -- Table: {1464}
 {
-   ["subText"]="boat, dark skin tone, rowboat, :person_rowing_boat_tone5:",
-   ["order"]=1463,
-   ["char"]={4130},
-   ["text"]="Person rowing boat: dark skin tone",
-   ["image_path"]="1f6a3-1f3ff",
+   ["subText"]=":classical_building:, classical",
+   ["order"]=2903,
+   ["image_path"]="1f3db",
+   ["text"]="Classical building",
+   ["char"]={3244},
 },
 -- Table: {1465}
 {
-   ["subText"]="boat, man, rowboat, :man_rowing_boat:",
-   ["order"]=1464,
-   ["char"]={4131},
-   ["text"]="Man rowing boat",
-   ["image_path"]="1f6a3-2642",
+   ["subText"]=":church:, Christian, cross, religion",
+   ["order"]=2904,
+   ["image_path"]="26ea",
+   ["text"]="Church",
+   ["char"]={3245},
 },
 -- Table: {1466}
 {
-   ["subText"]="boat, dark skin tone, man, rowboat, :man_rowing_boat_tone5:",
-   ["order"]=1465,
-   ["char"]={4132},
-   ["text"]="Man rowing boat: dark skin tone",
-   ["image_path"]="1f6a3-1f3ff-2642",
+   ["subText"]=":mosque:, Muslim, islam, religion",
+   ["order"]=2905,
+   ["image_path"]="1f54c",
+   ["text"]="Mosque",
+   ["char"]={3246},
 },
 -- Table: {1467}
 {
-   ["subText"]="boat, man, medium-dark skin tone, rowboat, :man_rowing_boat_tone4:",
-   ["order"]=1466,
-   ["char"]={4133},
-   ["text"]="Man rowing boat: medium-dark skin tone",
-   ["image_path"]="1f6a3-1f3fe-2642",
+   ["subText"]=":hindu_temple:",
+   ["order"]=2906,
+   ["image_path"]="1f6d5",
+   ["text"]="Hindu temple",
+   ["char"]={3247},
 },
 -- Table: {1468}
 {
-   ["subText"]="boat, man, medium skin tone, rowboat, :man_rowing_boat_tone3:",
-   ["order"]=1467,
-   ["char"]={4134},
-   ["text"]="Man rowing boat: medium skin tone",
-   ["image_path"]="1f6a3-1f3fd-2642",
+   ["subText"]=":synagogue:, Jew, Jewish, religion, temple",
+   ["order"]=2907,
+   ["image_path"]="1f54d",
+   ["text"]="Synagogue",
+   ["char"]={3248},
 },
 -- Table: {1469}
 {
-   ["subText"]="boat, man, medium-light skin tone, rowboat, :man_rowing_boat_tone2:",
-   ["order"]=1468,
-   ["char"]={4135},
-   ["text"]="Man rowing boat: medium-light skin tone",
-   ["image_path"]="1f6a3-1f3fc-2642",
+   ["subText"]=":kaaba:, Muslim, islam, religion",
+   ["order"]=2908,
+   ["image_path"]="1f54b",
+   ["text"]="Kaaba",
+   ["char"]={3249},
 },
 -- Table: {1470}
 {
-   ["subText"]="boat, light skin tone, man, rowboat, :man_rowing_boat_tone1:",
-   ["order"]=1469,
-   ["char"]={4136},
-   ["text"]="Man rowing boat: light skin tone",
-   ["image_path"]="1f6a3-1f3fb-2642",
+   ["subText"]=":shinto_shrine:, religion, shinto, shrine",
+   ["order"]=2909,
+   ["image_path"]="26e9",
+   ["text"]="Shinto shrine",
+   ["char"]={3250},
 },
 -- Table: {1471}
 {
-   ["subText"]="horse, jockey, racehorse, racing, :horse_racing:",
-   ["order"]=1470,
-   ["char"]={4137},
-   ["text"]="Horse racing",
-   ["image_path"]="1f3c7",
+   ["subText"]=":railway_track:, railway, train",
+   ["order"]=2910,
+   ["image_path"]="1f6e4",
+   ["text"]="Railway track",
+   ["char"]={3251},
 },
 -- Table: {1472}
 {
-   ["subText"]="horse, jockey, light skin tone, racehorse, racing, :horse_racing_tone1:",
-   ["order"]=1471,
-   ["char"]={4138},
-   ["text"]="Horse racing: light skin tone",
-   ["image_path"]="1f3c7-1f3fb",
+   ["subText"]=":motorway:, highway, road",
+   ["order"]=2911,
+   ["image_path"]="1f6e3",
+   ["text"]="Motorway",
+   ["char"]={3252},
 },
 -- Table: {1473}
 {
-   ["subText"]="horse, jockey, medium-light skin tone, racehorse, racing, :horse_racing_tone2:",
-   ["order"]=1472,
-   ["char"]={4139},
-   ["text"]="Horse racing: medium-light skin tone",
-   ["image_path"]="1f3c7-1f3fc",
+   ["subText"]=":japan:, Japan, map",
+   ["order"]=2912,
+   ["image_path"]="1f5fe",
+   ["text"]="Map of Japan",
+   ["char"]={3253},
 },
 -- Table: {1474}
 {
-   ["subText"]="horse, jockey, medium skin tone, racehorse, racing, :horse_racing_tone3:",
-   ["order"]=1473,
-   ["char"]={4140},
-   ["text"]="Horse racing: medium skin tone",
-   ["image_path"]="1f3c7-1f3fd",
+   ["subText"]=":rice_scene:, celebration, ceremony, moon",
+   ["order"]=2913,
+   ["image_path"]="1f391",
+   ["text"]="Moon viewing ceremony",
+   ["char"]={3254},
 },
 -- Table: {1475}
 {
-   ["subText"]="horse, jockey, medium-dark skin tone, racehorse, racing, :horse_racing_tone4:",
-   ["order"]=1474,
-   ["char"]={4141},
-   ["text"]="Horse racing: medium-dark skin tone",
-   ["image_path"]="1f3c7-1f3fe",
+   ["subText"]=":park:",
+   ["order"]=2914,
+   ["image_path"]="1f3de",
+   ["text"]="National park",
+   ["char"]={3255},
 },
 -- Table: {1476}
 {
-   ["subText"]="dark skin tone, horse, jockey, racehorse, racing, :horse_racing_tone5:",
-   ["order"]=1475,
-   ["char"]={4142},
-   ["text"]="Horse racing: dark skin tone",
-   ["image_path"]="1f3c7-1f3ff",
+   ["subText"]=":sunrise:, morning, sun",
+   ["order"]=2915,
+   ["image_path"]="1f305",
+   ["text"]="Sunrise",
+   ["char"]={3256},
 },
 -- Table: {1477}
 {
-   ["subText"]="bicycle, biking, cyclist, woman, :woman_biking:",
-   ["order"]=1476,
-   ["char"]={4143},
-   ["text"]="Woman biking",
-   ["image_path"]="1f6b4-2640",
+   ["subText"]=":sunrise_over_mountains:, morning, mountain, sun, sunrise",
+   ["order"]=2916,
+   ["image_path"]="1f304",
+   ["text"]="Sunrise over mountains",
+   ["char"]={3257},
 },
 -- Table: {1478}
 {
-   ["subText"]="bicycle, biking, cyclist, light skin tone, woman, :woman_biking_tone1:",
-   ["order"]=1477,
-   ["char"]={4144},
-   ["text"]="Woman biking: light skin tone",
-   ["image_path"]="1f6b4-1f3fb-2640",
+   ["subText"]=":stars:, falling, shooting, star",
+   ["order"]=2917,
+   ["image_path"]="1f320",
+   ["text"]="Shooting star",
+   ["char"]={3258},
 },
 -- Table: {1479}
 {
-   ["subText"]="bicycle, biking, cyclist, medium-light skin tone, woman, :woman_biking_tone2:",
-   ["order"]=1478,
-   ["char"]={4145},
-   ["text"]="Woman biking: medium-light skin tone",
-   ["image_path"]="1f6b4-1f3fc-2640",
+   ["subText"]=":sparkler:, celebration, fireworks, sparkle",
+   ["order"]=2918,
+   ["image_path"]="1f387",
+   ["text"]="Sparkler",
+   ["char"]={3259},
 },
 -- Table: {1480}
 {
-   ["subText"]="bicycle, biking, cyclist, medium skin tone, woman, :woman_biking_tone3:",
-   ["order"]=1479,
-   ["char"]={4146},
-   ["text"]="Woman biking: medium skin tone",
-   ["image_path"]="1f6b4-1f3fd-2640",
+   ["subText"]=":fireworks:, celebration",
+   ["order"]=2919,
+   ["image_path"]="1f386",
+   ["text"]="Fireworks",
+   ["char"]={3260},
 },
 -- Table: {1481}
 {
-   ["subText"]="bicycle, biking, cyclist, medium-dark skin tone, woman, :woman_biking_tone4:",
-   ["order"]=1480,
-   ["char"]={4147},
-   ["text"]="Woman biking: medium-dark skin tone",
-   ["image_path"]="1f6b4-1f3fe-2640",
+   ["subText"]=":city_sunset:, dusk, sun",
+   ["order"]=2920,
+   ["image_path"]="1f307",
+   ["text"]="Sunset",
+   ["char"]={3261},
 },
 -- Table: {1482}
 {
-   ["subText"]="bicycle, biking, cyclist, dark skin tone, woman, :woman_biking_tone5:",
-   ["order"]=1481,
-   ["char"]={4148},
-   ["text"]="Woman biking: dark skin tone",
-   ["image_path"]="1f6b4-1f3ff-2640",
+   ["subText"]=":city_dusk:, city, dusk, evening, landscape, sun, sunset",
+   ["order"]=2921,
+   ["image_path"]="1f306",
+   ["text"]="Cityscape at dusk",
+   ["char"]={3262},
 },
 -- Table: {1483}
 {
-   ["subText"]="bicycle, biking, cyclist, :person_biking:",
-   ["order"]=1482,
-   ["char"]={4149},
-   ["text"]="Person biking",
-   ["image_path"]="1f6b4",
+   ["subText"]=":cityscape:, city",
+   ["order"]=2922,
+   ["image_path"]="1f3d9",
+   ["text"]="Cityscape",
+   ["char"]={3263},
 },
 -- Table: {1484}
 {
-   ["subText"]="bicycle, biking, cyclist, light skin tone, :person_biking_tone1:",
-   ["order"]=1483,
-   ["char"]={4150},
-   ["text"]="Person biking: light skin tone",
-   ["image_path"]="1f6b4-1f3fb",
+   ["subText"]=":night_with_stars:, night, star",
+   ["order"]=2923,
+   ["image_path"]="1f303",
+   ["text"]="Night with stars",
+   ["char"]={3264},
 },
 -- Table: {1485}
 {
-   ["subText"]="bicycle, biking, cyclist, medium-light skin tone, :person_biking_tone2:",
-   ["order"]=1484,
-   ["char"]={4151},
-   ["text"]="Person biking: medium-light skin tone",
-   ["image_path"]="1f6b4-1f3fc",
+   ["subText"]=":milky_way:, space",
+   ["order"]=2924,
+   ["image_path"]="1f30c",
+   ["text"]="Milky way",
+   ["char"]={3265},
 },
 -- Table: {1486}
 {
-   ["subText"]="bicycle, biking, cyclist, medium skin tone, :person_biking_tone3:",
-   ["order"]=1485,
-   ["char"]={4152},
-   ["text"]="Person biking: medium skin tone",
-   ["image_path"]="1f6b4-1f3fd",
+   ["subText"]=":bridge_at_night:, bridge, night",
+   ["order"]=2925,
+   ["image_path"]="1f309",
+   ["text"]="Bridge at night",
+   ["char"]={3266},
 },
 -- Table: {1487}
 {
-   ["subText"]="bicycle, biking, cyclist, medium-dark skin tone, :person_biking_tone4:",
-   ["order"]=1486,
-   ["char"]={4153},
-   ["text"]="Person biking: medium-dark skin tone",
-   ["image_path"]="1f6b4-1f3fe",
+   ["subText"]=":foggy:, fog",
+   ["order"]=2926,
+   ["image_path"]="1f301",
+   ["text"]="Foggy",
+   ["char"]={3267},
 },
 -- Table: {1488}
 {
-   ["subText"]="bicycle, biking, cyclist, dark skin tone, :person_biking_tone5:",
-   ["order"]=1487,
-   ["char"]={4154},
-   ["text"]="Person biking: dark skin tone",
-   ["image_path"]="1f6b4-1f3ff",
+   ["subText"]=":regional_indicator_z:",
+   ["order"]=2927,
+   ["image_path"]="1f1ff",
+   ["text"]="Regional indicator symbol letter z",
+   ["char"]={3268},
 },
 -- Table: {1489}
 {
-   ["subText"]="bicycle, biking, cyclist, man, :man_biking:",
-   ["order"]=1488,
-   ["char"]={4155},
-   ["text"]="Man biking",
-   ["image_path"]="1f6b4-2642",
+   ["subText"]=":regional_indicator_y:",
+   ["order"]=2928,
+   ["image_path"]="1f1fe",
+   ["text"]="Regional indicator symbol letter y",
+   ["char"]={3269},
 },
 -- Table: {1490}
 {
-   ["subText"]="bicycle, biking, cyclist, dark skin tone, man, :man_biking_tone5:",
-   ["order"]=1489,
-   ["char"]={4156},
-   ["text"]="Man biking: dark skin tone",
-   ["image_path"]="1f6b4-1f3ff-2642",
+   ["subText"]=":regional_indicator_x:",
+   ["order"]=2929,
+   ["image_path"]="1f1fd",
+   ["text"]="Regional indicator symbol letter x",
+   ["char"]={3270},
 },
 -- Table: {1491}
 {
-   ["subText"]="bicycle, biking, cyclist, man, medium-dark skin tone, :man_biking_tone4:",
-   ["order"]=1490,
-   ["char"]={4157},
-   ["text"]="Man biking: medium-dark skin tone",
-   ["image_path"]="1f6b4-1f3fe-2642",
+   ["subText"]=":regional_indicator_w:",
+   ["order"]=2930,
+   ["image_path"]="1f1fc",
+   ["text"]="Regional indicator symbol letter w",
+   ["char"]={3271},
 },
 -- Table: {1492}
 {
-   ["subText"]="bicycle, biking, cyclist, man, medium skin tone, :man_biking_tone3:",
-   ["order"]=1491,
-   ["char"]={4158},
-   ["text"]="Man biking: medium skin tone",
-   ["image_path"]="1f6b4-1f3fd-2642",
+   ["subText"]=":regional_indicator_v:",
+   ["order"]=2931,
+   ["image_path"]="1f1fb",
+   ["text"]="Regional indicator symbol letter v",
+   ["char"]={3272},
 },
 -- Table: {1493}
 {
-   ["subText"]="bicycle, biking, cyclist, man, medium-light skin tone, :man_biking_tone2:",
-   ["order"]=1492,
-   ["char"]={4159},
-   ["text"]="Man biking: medium-light skin tone",
-   ["image_path"]="1f6b4-1f3fc-2642",
+   ["subText"]=":regional_indicator_u:",
+   ["order"]=2932,
+   ["image_path"]="1f1fa",
+   ["text"]="Regional indicator symbol letter u",
+   ["char"]={3273},
 },
 -- Table: {1494}
 {
-   ["subText"]="bicycle, biking, cyclist, light skin tone, man, :man_biking_tone1:",
-   ["order"]=1493,
-   ["char"]={4160},
-   ["text"]="Man biking: light skin tone",
-   ["image_path"]="1f6b4-1f3fb-2642",
+   ["subText"]=":regional_indicator_t:",
+   ["order"]=2933,
+   ["image_path"]="1f1f9",
+   ["text"]="Regional indicator symbol letter t",
+   ["char"]={3274},
 },
 -- Table: {1495}
 {
-   ["subText"]="bicycle, bike, biking, cyclist, mountain, woman, :woman_mountain_biking:",
-   ["order"]=1494,
-   ["char"]={4161},
-   ["text"]="Woman mountain biking",
-   ["image_path"]="1f6b5-2640",
+   ["subText"]=":regional_indicator_s:",
+   ["order"]=2934,
+   ["image_path"]="1f1f8",
+   ["text"]="Regional indicator symbol letter s",
+   ["char"]={3275},
 },
 -- Table: {1496}
 {
-   ["subText"]="bicycle, bike, biking, cyclist, light skin tone, mountain, woman, :woman_mountain_biking_tone1:",
-   ["order"]=1495,
-   ["char"]={4162},
-   ["text"]="Woman mountain biking: light skin tone",
-   ["image_path"]="1f6b5-1f3fb-2640",
+   ["subText"]=":regional_indicator_r:",
+   ["order"]=2935,
+   ["image_path"]="1f1f7",
+   ["text"]="Regional indicator symbol letter r",
+   ["char"]={3276},
 },
 -- Table: {1497}
 {
-   ["subText"]="bicycle, bike, biking, cyclist, medium-light skin tone, mountain, woman, :woman_mountain_biking_tone2:",
-   ["order"]=1496,
-   ["char"]={4163},
-   ["text"]="Woman mountain biking: medium-light skin tone",
-   ["image_path"]="1f6b5-1f3fc-2640",
+   ["subText"]=":regional_indicator_q:",
+   ["order"]=2936,
+   ["image_path"]="1f1f6",
+   ["text"]="Regional indicator symbol letter q",
+   ["char"]={3277},
 },
 -- Table: {1498}
 {
-   ["subText"]="bicycle, bike, biking, cyclist, medium skin tone, mountain, woman, :woman_mountain_biking_tone3:",
-   ["order"]=1497,
-   ["char"]={4164},
-   ["text"]="Woman mountain biking: medium skin tone",
-   ["image_path"]="1f6b5-1f3fd-2640",
+   ["subText"]=":regional_indicator_p:",
+   ["order"]=2937,
+   ["image_path"]="1f1f5",
+   ["text"]="Regional indicator symbol letter p",
+   ["char"]={3278},
 },
 -- Table: {1499}
 {
-   ["subText"]="bicycle, bike, biking, cyclist, medium-dark skin tone, mountain, woman, :woman_mountain_biking_tone4:",
-   ["order"]=1498,
-   ["char"]={4165},
-   ["text"]="Woman mountain biking: medium-dark skin tone",
-   ["image_path"]="1f6b5-1f3fe-2640",
+   ["subText"]=":regional_indicator_o:",
+   ["order"]=2938,
+   ["image_path"]="1f1f4",
+   ["text"]="Regional indicator symbol letter o",
+   ["char"]={3279},
 },
 -- Table: {1500}
 {
-   ["subText"]="bicycle, bike, biking, cyclist, dark skin tone, mountain, woman, :woman_mountain_biking_tone5:",
-   ["order"]=1499,
-   ["char"]={4166},
-   ["text"]="Woman mountain biking: dark skin tone",
-   ["image_path"]="1f6b5-1f3ff-2640",
+   ["subText"]=":regional_indicator_n:",
+   ["order"]=2939,
+   ["image_path"]="1f1f3",
+   ["text"]="Regional indicator symbol letter n",
+   ["char"]={3280},
 },
 -- Table: {1501}
 {
-   ["subText"]="bicycle, bicyclist, bike, cyclist, mountain, :person_mountain_biking:",
-   ["order"]=1500,
-   ["char"]={4167},
-   ["text"]="Person mountain biking",
-   ["image_path"]="1f6b5",
+   ["subText"]=":regional_indicator_m:",
+   ["order"]=2940,
+   ["image_path"]="1f1f2",
+   ["text"]="Regional indicator symbol letter m",
+   ["char"]={3281},
 },
 -- Table: {1502}
 {
-   ["subText"]="bicycle, bicyclist, bike, cyclist, light skin tone, mountain, :person_mountain_biking_tone1:",
-   ["order"]=1501,
-   ["char"]={4168},
-   ["text"]="Person mountain biking: light skin tone",
-   ["image_path"]="1f6b5-1f3fb",
+   ["subText"]=":regional_indicator_l:",
+   ["order"]=2941,
+   ["image_path"]="1f1f1",
+   ["text"]="Regional indicator symbol letter l",
+   ["char"]={3282},
 },
 -- Table: {1503}
 {
-   ["subText"]="bicycle, bicyclist, bike, cyclist, medium-light skin tone, mountain, :person_mountain_biking_tone2:",
-   ["order"]=1502,
-   ["char"]={4169},
-   ["text"]="Person mountain biking: medium-light skin tone",
-   ["image_path"]="1f6b5-1f3fc",
+   ["subText"]=":regional_indicator_k:",
+   ["order"]=2942,
+   ["image_path"]="1f1f0",
+   ["text"]="Regional indicator symbol letter k",
+   ["char"]={3283},
 },
 -- Table: {1504}
 {
-   ["subText"]="bicycle, bicyclist, bike, cyclist, medium skin tone, mountain, :person_mountain_biking_tone3:",
-   ["order"]=1503,
-   ["char"]={4170},
-   ["text"]="Person mountain biking: medium skin tone",
-   ["image_path"]="1f6b5-1f3fd",
+   ["subText"]=":regional_indicator_j:",
+   ["order"]=2943,
+   ["image_path"]="1f1ef",
+   ["text"]="Regional indicator symbol letter j",
+   ["char"]={3284},
 },
 -- Table: {1505}
 {
-   ["subText"]="bicycle, bicyclist, bike, cyclist, medium-dark skin tone, mountain, :person_mountain_biking_tone4:",
-   ["order"]=1504,
-   ["char"]={4171},
-   ["text"]="Person mountain biking: medium-dark skin tone",
-   ["image_path"]="1f6b5-1f3fe",
+   ["subText"]=":regional_indicator_i:",
+   ["order"]=2944,
+   ["image_path"]="1f1ee",
+   ["text"]="Regional indicator symbol letter i",
+   ["char"]={3285},
 },
 -- Table: {1506}
 {
-   ["subText"]="bicycle, bicyclist, bike, cyclist, dark skin tone, mountain, :person_mountain_biking_tone5:",
-   ["order"]=1505,
-   ["char"]={4172},
-   ["text"]="Person mountain biking: dark skin tone",
-   ["image_path"]="1f6b5-1f3ff",
+   ["subText"]=":regional_indicator_h:",
+   ["order"]=2945,
+   ["image_path"]="1f1ed",
+   ["text"]="Regional indicator symbol letter h",
+   ["char"]={3286},
 },
 -- Table: {1507}
 {
-   ["subText"]="bicycle, bike, cyclist, man, mountain, :man_mountain_biking:",
-   ["order"]=1506,
-   ["char"]={4173},
-   ["text"]="Man mountain biking",
-   ["image_path"]="1f6b5-2642",
+   ["subText"]=":regional_indicator_g:",
+   ["order"]=2946,
+   ["image_path"]="1f1ec",
+   ["text"]="Regional indicator symbol letter g",
+   ["char"]={3287},
 },
 -- Table: {1508}
 {
-   ["subText"]="bicycle, bike, cyclist, dark skin tone, man, mountain, :man_mountain_biking_tone5:",
-   ["order"]=1507,
-   ["char"]={4174},
-   ["text"]="Man mountain biking: dark skin tone",
-   ["image_path"]="1f6b5-1f3ff-2642",
+   ["subText"]=":regional_indicator_f:",
+   ["order"]=2947,
+   ["image_path"]="1f1eb",
+   ["text"]="Regional indicator symbol letter f",
+   ["char"]={3288},
 },
 -- Table: {1509}
 {
-   ["subText"]="bicycle, bike, cyclist, man, medium-dark skin tone, mountain, :man_mountain_biking_tone4:",
-   ["order"]=1508,
-   ["char"]={4175},
-   ["text"]="Man mountain biking: medium-dark skin tone",
-   ["image_path"]="1f6b5-1f3fe-2642",
+   ["subText"]=":regional_indicator_e:",
+   ["order"]=2948,
+   ["image_path"]="1f1ea",
+   ["text"]="Regional indicator symbol letter e",
+   ["char"]={3289},
 },
 -- Table: {1510}
 {
-   ["subText"]="bicycle, bike, cyclist, man, medium skin tone, mountain, :man_mountain_biking_tone3:",
-   ["order"]=1509,
-   ["char"]={4176},
-   ["text"]="Man mountain biking: medium skin tone",
-   ["image_path"]="1f6b5-1f3fd-2642",
+   ["subText"]=":regional_indicator_d:",
+   ["order"]=2949,
+   ["image_path"]="1f1e9",
+   ["text"]="Regional indicator symbol letter d",
+   ["char"]={3290},
 },
 -- Table: {1511}
 {
-   ["subText"]="bicycle, bike, cyclist, man, medium-light skin tone, mountain, :man_mountain_biking_tone2:",
-   ["order"]=1510,
-   ["char"]={4177},
-   ["text"]="Man mountain biking: medium-light skin tone",
-   ["image_path"]="1f6b5-1f3fc-2642",
+   ["subText"]=":regional_indicator_c:",
+   ["order"]=2950,
+   ["image_path"]="1f1e8",
+   ["text"]="Regional indicator symbol letter c",
+   ["char"]={3291},
 },
 -- Table: {1512}
 {
-   ["subText"]="bicycle, bike, cyclist, light skin tone, man, mountain, :man_mountain_biking_tone1:",
-   ["order"]=1511,
-   ["char"]={4178},
-   ["text"]="Man mountain biking: light skin tone",
-   ["image_path"]="1f6b5-1f3fb-2642",
+   ["subText"]=":regional_indicator_b:",
+   ["order"]=2951,
+   ["image_path"]="1f1e7",
+   ["text"]="Regional indicator symbol letter b",
+   ["char"]={3292},
 },
 -- Table: {1513}
 {
-   ["subText"]="athletics, running, sash, shirt, :running_shirt_with_sash:",
-   ["order"]=1512,
-   ["char"]={4179},
-   ["text"]="Running shirt",
-   ["image_path"]="1f3bd",
+   ["subText"]=":regional_indicator_a:",
+   ["order"]=2952,
+   ["image_path"]="1f1e6",
+   ["text"]="Regional indicator symbol letter a",
+   ["char"]={3293},
 },
 -- Table: {1514}
 {
-   ["subText"]="medal, :medal:",
-   ["order"]=1513,
-   ["char"]={4180},
-   ["text"]="Sports medal",
-   ["image_path"]="1f3c5",
+   ["subText"]=":flag_white:, waving",
+   ["order"]=2953,
+   ["image_path"]="1f3f3",
+   ["text"]="White flag",
+   ["char"]={3294},
 },
 -- Table: {1515}
 {
-   ["subText"]="celebration, medal, military, :military_medal:",
-   ["order"]=1514,
-   ["char"]={4181},
-   ["text"]="Military medal",
-   ["image_path"]="1f396",
+   ["subText"]=":flag_black:, waving",
+   ["order"]=2954,
+   ["image_path"]="1f3f4",
+   ["text"]="Black flag",
+   ["char"]={3295},
 },
 -- Table: {1516}
 {
-   ["subText"]="first, gold, medal, :first_place:",
-   ["order"]=1515,
-   ["char"]={4182},
-   ["text"]="1st place medal",
-   ["image_path"]="1f947",
+   ["subText"]=":checkered_flag:, checkered, chequered, racing",
+   ["order"]=2955,
+   ["image_path"]="1f3c1",
+   ["text"]="Chequered flag",
+   ["char"]={3296},
 },
 -- Table: {1517}
 {
-   ["subText"]="medal, second, silver, :second_place:",
-   ["order"]=1516,
-   ["char"]={4183},
-   ["text"]="2nd place medal",
-   ["image_path"]="1f948",
+   ["subText"]=":triangular_flag_on_post:, post",
+   ["order"]=2956,
+   ["image_path"]="1f6a9",
+   ["text"]="Triangular flag",
+   ["char"]={3297},
 },
 -- Table: {1518}
 {
-   ["subText"]="bronze, medal, third, :third_place:",
-   ["order"]=1517,
-   ["char"]={4184},
-   ["text"]="3rd place medal",
-   ["image_path"]="1f949",
+   ["subText"]=":rainbow_flag:, rainbow",
+   ["order"]=2957,
+   ["image_path"]="1f3f3-1f308",
+   ["text"]="Rainbow flag",
+   ["char"]={3298},
 },
 -- Table: {1519}
 {
-   ["subText"]="prize, :trophy:",
-   ["order"]=1518,
-   ["char"]={4185},
-   ["text"]="Trophy",
-   ["image_path"]="1f3c6",
+   ["subText"]=":pirate_flag:",
+   ["order"]=2958,
+   ["image_path"]="1f3f4-2620",
+   ["text"]="Pirate flag",
+   ["char"]={3299},
 },
 -- Table: {1520}
 {
-   ["subText"]="plant, :rosette:",
-   ["order"]=1519,
-   ["char"]={4186},
-   ["text"]="Rosette",
-   ["image_path"]="1f3f5",
+   ["subText"]=":flag_af:, flag",
+   ["order"]=2959,
+   ["image_path"]="1f1e6-1f1eb",
+   ["text"]="Flag: Afghanistan",
+   ["char"]={3300},
 },
 -- Table: {1521}
 {
-   ["subText"]="celebration, reminder, ribbon, :reminder_ribbon:",
-   ["order"]=1520,
-   ["char"]={4187},
-   ["text"]="Reminder ribbon",
-   ["image_path"]="1f397",
+   ["subText"]=":flag_ax:, flag",
+   ["order"]=2960,
+   ["image_path"]="1f1e6-1f1fd",
+   ["text"]="Flag: Åland Islands",
+   ["char"]={3301},
 },
 -- Table: {1522}
 {
-   ["subText"]="admission, :ticket:",
-   ["order"]=1521,
-   ["char"]={4188},
-   ["text"]="Ticket",
-   ["image_path"]="1f3ab",
+   ["subText"]=":flag_al:, flag",
+   ["order"]=2961,
+   ["image_path"]="1f1e6-1f1f1",
+   ["text"]="Flag: Albania",
+   ["char"]={3302},
 },
 -- Table: {1523}
 {
-   ["subText"]="admission, ticket, :tickets:",
-   ["order"]=1522,
-   ["char"]={4189},
-   ["text"]="Admission tickets",
-   ["image_path"]="1f39f",
+   ["subText"]=":flag_dz:, flag",
+   ["order"]=2962,
+   ["image_path"]="1f1e9-1f1ff",
+   ["text"]="Flag: Algeria",
+   ["char"]={3303},
 },
 -- Table: {1524}
 {
-   ["subText"]="circus, tent, :circus_tent:",
-   ["order"]=1523,
-   ["char"]={4190},
-   ["text"]="Circus tent",
-   ["image_path"]="1f3aa",
+   ["subText"]=":flag_as:, flag",
+   ["order"]=2963,
+   ["image_path"]="1f1e6-1f1f8",
+   ["text"]="Flag: American Samoa",
+   ["char"]={3304},
 },
 -- Table: {1525}
 {
-   ["subText"]="juggling, multitask, woman, :woman_juggling:",
-   ["order"]=1524,
-   ["char"]={4191},
-   ["text"]="Woman juggling",
-   ["image_path"]="1f939-2640",
+   ["subText"]=":flag_ad:, flag",
+   ["order"]=2964,
+   ["image_path"]="1f1e6-1f1e9",
+   ["text"]="Flag: Andorra",
+   ["char"]={3305},
 },
 -- Table: {1526}
 {
-   ["subText"]="juggling, light skin tone, multitask, woman, :woman_juggling_tone1:",
-   ["order"]=1525,
-   ["char"]={4192},
-   ["text"]="Woman juggling: light skin tone",
-   ["image_path"]="1f939-1f3fb-2640",
+   ["subText"]=":flag_ao:, flag",
+   ["order"]=2965,
+   ["image_path"]="1f1e6-1f1f4",
+   ["text"]="Flag: Angola",
+   ["char"]={3306},
 },
 -- Table: {1527}
 {
-   ["subText"]="juggling, medium-light skin tone, multitask, woman, :woman_juggling_tone2:",
-   ["order"]=1526,
-   ["char"]={4193},
-   ["text"]="Woman juggling: medium-light skin tone",
-   ["image_path"]="1f939-1f3fc-2640",
+   ["subText"]=":flag_ai:, flag",
+   ["order"]=2966,
+   ["image_path"]="1f1e6-1f1ee",
+   ["text"]="Flag: Anguilla",
+   ["char"]={3307},
 },
 -- Table: {1528}
 {
-   ["subText"]="juggling, medium skin tone, multitask, woman, :woman_juggling_tone3:",
-   ["order"]=1527,
-   ["char"]={4194},
-   ["text"]="Woman juggling: medium skin tone",
-   ["image_path"]="1f939-1f3fd-2640",
+   ["subText"]=":flag_aq:, flag",
+   ["order"]=2967,
+   ["image_path"]="1f1e6-1f1f6",
+   ["text"]="Flag: Antarctica",
+   ["char"]={3308},
 },
 -- Table: {1529}
 {
-   ["subText"]="juggling, medium-dark skin tone, multitask, woman, :woman_juggling_tone4:",
-   ["order"]=1528,
-   ["char"]={4195},
-   ["text"]="Woman juggling: medium-dark skin tone",
-   ["image_path"]="1f939-1f3fe-2640",
+   ["subText"]=":flag_ag:, flag",
+   ["order"]=2968,
+   ["image_path"]="1f1e6-1f1ec",
+   ["text"]="Flag: Antigua &amp; Barbuda",
+   ["char"]={3309},
 },
 -- Table: {1530}
 {
-   ["subText"]="dark skin tone, juggling, multitask, woman, :woman_juggling_tone5:",
-   ["order"]=1529,
-   ["char"]={4196},
-   ["text"]="Woman juggling: dark skin tone",
-   ["image_path"]="1f939-1f3ff-2640",
+   ["subText"]=":flag_ar:, flag",
+   ["order"]=2969,
+   ["image_path"]="1f1e6-1f1f7",
+   ["text"]="Flag: Argentina",
+   ["char"]={3310},
 },
 -- Table: {1531}
 {
-   ["subText"]="juggling, man, multitask, :man_juggling:",
-   ["order"]=1530,
-   ["char"]={4197},
-   ["text"]="Man juggling",
-   ["image_path"]="1f939-2642",
+   ["subText"]=":flag_am:, flag",
+   ["order"]=2970,
+   ["image_path"]="1f1e6-1f1f2",
+   ["text"]="Flag: Armenia",
+   ["char"]={3311},
 },
 -- Table: {1532}
 {
-   ["subText"]="juggling, light skin tone, man, multitask, :man_juggling_tone1:",
-   ["order"]=1531,
-   ["char"]={4198},
-   ["text"]="Man juggling: light skin tone",
-   ["image_path"]="1f939-1f3fb-2642",
+   ["subText"]=":flag_aw:, flag",
+   ["order"]=2971,
+   ["image_path"]="1f1e6-1f1fc",
+   ["text"]="Flag: Aruba",
+   ["char"]={3312},
 },
 -- Table: {1533}
 {
-   ["subText"]="juggling, man, medium-light skin tone, multitask, :man_juggling_tone2:",
-   ["order"]=1532,
-   ["char"]={4199},
-   ["text"]="Man juggling: medium-light skin tone",
-   ["image_path"]="1f939-1f3fc-2642",
+   ["subText"]=":flag_au:, flag",
+   ["order"]=2972,
+   ["image_path"]="1f1e6-1f1fa",
+   ["text"]="Flag: Australia",
+   ["char"]={3313},
 },
 -- Table: {1534}
 {
-   ["subText"]="juggling, man, medium skin tone, multitask, :man_juggling_tone3:",
-   ["order"]=1533,
-   ["char"]={4200},
-   ["text"]="Man juggling: medium skin tone",
-   ["image_path"]="1f939-1f3fd-2642",
+   ["subText"]=":flag_at:, flag",
+   ["order"]=2973,
+   ["image_path"]="1f1e6-1f1f9",
+   ["text"]="Flag: Austria",
+   ["char"]={3314},
 },
 -- Table: {1535}
 {
-   ["subText"]="juggling, man, medium-dark skin tone, multitask, :man_juggling_tone4:",
-   ["order"]=1534,
-   ["char"]={4201},
-   ["text"]="Man juggling: medium-dark skin tone",
-   ["image_path"]="1f939-1f3fe-2642",
+   ["subText"]=":flag_az:, flag",
+   ["order"]=2974,
+   ["image_path"]="1f1e6-1f1ff",
+   ["text"]="Flag: Azerbaijan",
+   ["char"]={3315},
 },
 -- Table: {1536}
 {
-   ["subText"]="dark skin tone, juggling, man, multitask, :man_juggling_tone5:",
-   ["order"]=1535,
-   ["char"]={4202},
-   ["text"]="Man juggling: dark skin tone",
-   ["image_path"]="1f939-1f3ff-2642",
+   ["subText"]=":flag_bs:, flag",
+   ["order"]=2975,
+   ["image_path"]="1f1e7-1f1f8",
+   ["text"]="Flag: Bahamas",
+   ["char"]={3316},
 },
 -- Table: {1537}
 {
-   ["subText"]="balance, juggle, multitask, skill, :person_juggling:",
-   ["order"]=1536,
-   ["char"]={4203},
-   ["text"]="Person juggling",
-   ["image_path"]="1f939",
+   ["subText"]=":flag_bh:, flag",
+   ["order"]=2976,
+   ["image_path"]="1f1e7-1f1ed",
+   ["text"]="Flag: Bahrain",
+   ["char"]={3317},
 },
 -- Table: {1538}
 {
-   ["subText"]="balance, juggle, light skin tone, multitask, skill, :person_juggling_tone1:",
-   ["order"]=1537,
-   ["char"]={4204},
-   ["text"]="Person juggling: light skin tone",
-   ["image_path"]="1f939-1f3fb",
+   ["subText"]=":flag_bd:, flag",
+   ["order"]=2977,
+   ["image_path"]="1f1e7-1f1e9",
+   ["text"]="Flag: Bangladesh",
+   ["char"]={3318},
 },
 -- Table: {1539}
 {
-   ["subText"]="balance, juggle, medium-light skin tone, multitask, skill, :person_juggling_tone2:",
-   ["order"]=1538,
-   ["char"]={4205},
-   ["text"]="Person juggling: medium-light skin tone",
-   ["image_path"]="1f939-1f3fc",
+   ["subText"]=":flag_bb:, flag",
+   ["order"]=2978,
+   ["image_path"]="1f1e7-1f1e7",
+   ["text"]="Flag: Barbados",
+   ["char"]={3319},
 },
 -- Table: {1540}
 {
-   ["subText"]="balance, juggle, medium skin tone, multitask, skill, :person_juggling_tone3:",
-   ["order"]=1539,
-   ["char"]={4206},
-   ["text"]="Person juggling: medium skin tone",
-   ["image_path"]="1f939-1f3fd",
+   ["subText"]=":flag_by:, flag",
+   ["order"]=2979,
+   ["image_path"]="1f1e7-1f1fe",
+   ["text"]="Flag: Belarus",
+   ["char"]={3320},
 },
 -- Table: {1541}
 {
-   ["subText"]="balance, juggle, medium-dark skin tone, multitask, skill, :person_juggling_tone4:",
-   ["order"]=1540,
-   ["char"]={4207},
-   ["text"]="Person juggling: medium-dark skin tone",
-   ["image_path"]="1f939-1f3fe",
+   ["subText"]=":flag_be:, flag",
+   ["order"]=2980,
+   ["image_path"]="1f1e7-1f1ea",
+   ["text"]="Flag: Belgium",
+   ["char"]={3321},
 },
 -- Table: {1542}
 {
-   ["subText"]="balance, dark skin tone, juggle, multitask, skill, :person_juggling_tone5:",
-   ["order"]=1541,
-   ["char"]={4208},
-   ["text"]="Person juggling: dark skin tone",
-   ["image_path"]="1f939-1f3ff",
+   ["subText"]=":flag_bz:, flag",
+   ["order"]=2981,
+   ["image_path"]="1f1e7-1f1ff",
+   ["text"]="Flag: Belize",
+   ["char"]={3322},
 },
 -- Table: {1543}
 {
-   ["subText"]="art, mask, performing, theater, theatre, :performing_arts:",
-   ["order"]=1542,
-   ["char"]={4209},
-   ["text"]="Performing arts",
-   ["image_path"]="1f3ad",
+   ["subText"]=":flag_bj:, flag",
+   ["order"]=2982,
+   ["image_path"]="1f1e7-1f1ef",
+   ["text"]="Flag: Benin",
+   ["char"]={3323},
 },
 -- Table: {1544}
 {
-   ["subText"]="art, museum, painting, palette, :art:",
-   ["order"]=1543,
-   ["char"]={4210},
-   ["text"]="Artist palette",
-   ["image_path"]="1f3a8",
+   ["subText"]=":flag_bm:, flag",
+   ["order"]=2983,
+   ["image_path"]="1f1e7-1f1f2",
+   ["text"]="Flag: Bermuda",
+   ["char"]={3324},
 },
 -- Table: {1545}
 {
-   ["subText"]="clapper, movie, :clapper:",
-   ["order"]=1544,
-   ["char"]={4211},
-   ["text"]="Clapper board",
-   ["image_path"]="1f3ac",
+   ["subText"]=":flag_bt:, flag",
+   ["order"]=2984,
+   ["image_path"]="1f1e7-1f1f9",
+   ["text"]="Flag: Bhutan",
+   ["char"]={3325},
 },
 -- Table: {1546}
 {
-   ["subText"]="karaoke, mic, :microphone:",
-   ["order"]=1545,
-   ["char"]={4212},
-   ["text"]="Microphone",
-   ["image_path"]="1f3a4",
+   ["subText"]=":flag_bo:, flag",
+   ["order"]=2985,
+   ["image_path"]="1f1e7-1f1f4",
+   ["text"]="Flag: Bolivia",
+   ["char"]={3326},
 },
 -- Table: {1547}
 {
-   ["subText"]="earbud, :headphones:",
-   ["order"]=1546,
-   ["char"]={4213},
-   ["text"]="Headphone",
-   ["image_path"]="1f3a7",
+   ["subText"]=":flag_ba:, flag",
+   ["order"]=2986,
+   ["image_path"]="1f1e7-1f1e6",
+   ["text"]="Flag: Bosnia &amp; Herzegovina",
+   ["char"]={3327},
 },
 -- Table: {1548}
 {
-   ["subText"]="music, score, :musical_score:",
-   ["order"]=1547,
-   ["char"]={4214},
-   ["text"]="Musical score",
-   ["image_path"]="1f3bc",
+   ["subText"]=":flag_bw:, flag",
+   ["order"]=2987,
+   ["image_path"]="1f1e7-1f1fc",
+   ["text"]="Flag: Botswana",
+   ["char"]={3328},
 },
 -- Table: {1549}
 {
-   ["subText"]="instrument, keyboard, music, piano, :musical_keyboard:",
-   ["order"]=1548,
-   ["char"]={4215},
-   ["text"]="Musical keyboard",
-   ["image_path"]="1f3b9",
+   ["subText"]=":flag_br:, flag",
+   ["order"]=2988,
+   ["image_path"]="1f1e7-1f1f7",
+   ["text"]="Flag: Brazil",
+   ["char"]={3329},
 },
 -- Table: {1550}
 {
-   ["subText"]="drum, drumsticks, music, :drum:",
-   ["order"]=1549,
-   ["char"]={4216},
-   ["text"]="Drum",
-   ["image_path"]="1f941",
+   ["subText"]=":flag_io:, flag",
+   ["order"]=2989,
+   ["image_path"]="1f1ee-1f1f4",
+   ["text"]="Flag: British Indian Ocean Territory",
+   ["char"]={3330},
 },
 -- Table: {1551}
 {
-   ["subText"]="instrument, music, sax, :saxophone:",
-   ["order"]=1550,
-   ["char"]={4217},
-   ["text"]="Saxophone",
-   ["image_path"]="1f3b7",
+   ["subText"]=":flag_vg:, flag",
+   ["order"]=2990,
+   ["image_path"]="1f1fb-1f1ec",
+   ["text"]="Flag: British Virgin Islands",
+   ["char"]={3331},
 },
 -- Table: {1552}
 {
-   ["subText"]="instrument, music, :trumpet:",
-   ["order"]=1551,
-   ["char"]={4218},
-   ["text"]="Trumpet",
-   ["image_path"]="1f3ba",
+   ["subText"]=":flag_bn:, flag",
+   ["order"]=2991,
+   ["image_path"]="1f1e7-1f1f3",
+   ["text"]="Flag: Brunei",
+   ["char"]={3332},
 },
 -- Table: {1553}
 {
-   ["subText"]="instrument, music, :guitar:",
-   ["order"]=1552,
-   ["char"]={4219},
-   ["text"]="Guitar",
-   ["image_path"]="1f3b8",
+   ["subText"]=":flag_bg:, flag",
+   ["order"]=2992,
+   ["image_path"]="1f1e7-1f1ec",
+   ["text"]="Flag: Bulgaria",
+   ["char"]={3333},
 },
 -- Table: {1554}
 {
-   ["subText"]="instrument, music, :violin:",
-   ["order"]=1553,
-   ["char"]={4220},
-   ["text"]="Violin",
-   ["image_path"]="1f3bb",
+   ["subText"]=":flag_bf:, flag",
+   ["order"]=2993,
+   ["image_path"]="1f1e7-1f1eb",
+   ["text"]="Flag: Burkina Faso",
+   ["char"]={3334},
 },
 -- Table: {1555}
 {
-   ["subText"]="dice, die, game, :game_die:",
-   ["order"]=1554,
-   ["char"]={4221},
-   ["text"]="Game die",
-   ["image_path"]="1f3b2",
+   ["subText"]=":flag_bi:, flag",
+   ["order"]=2994,
+   ["image_path"]="1f1e7-1f1ee",
+   ["text"]="Flag: Burundi",
+   ["char"]={3335},
 },
 -- Table: {1556}
 {
-   ["subText"]="bull, bullseye, dart, eye, game, hit, target, :dart:",
-   ["order"]=1555,
-   ["char"]={4222},
-   ["text"]="Direct hit",
-   ["image_path"]="1f3af",
+   ["subText"]=":flag_kh:, flag",
+   ["order"]=2995,
+   ["image_path"]="1f1f0-1f1ed",
+   ["text"]="Flag: Cambodia",
+   ["char"]={3336},
 },
 -- Table: {1557}
 {
-   ["subText"]="ball, game, :bowling:",
-   ["order"]=1556,
-   ["char"]={4223},
-   ["text"]="Bowling",
-   ["image_path"]="1f3b3",
+   ["subText"]=":flag_cm:, flag",
+   ["order"]=2996,
+   ["image_path"]="1f1e8-1f1f2",
+   ["text"]="Flag: Cameroon",
+   ["char"]={3337},
 },
 -- Table: {1558}
 {
-   ["subText"]="controller, game, :video_game:",
-   ["order"]=1557,
-   ["char"]={4224},
-   ["text"]="Video game",
-   ["image_path"]="1f3ae",
+   ["subText"]=":flag_ca:, flag",
+   ["order"]=2997,
+   ["image_path"]="1f1e8-1f1e6",
+   ["text"]="Flag: Canada",
+   ["char"]={3338},
 },
 -- Table: {1559}
 {
-   ["subText"]="game, slot, :slot_machine:",
-   ["order"]=1558,
-   ["char"]={4225},
-   ["text"]="Slot machine",
-   ["image_path"]="1f3b0",
+   ["subText"]=":flag_ic:, flag",
+   ["order"]=2998,
+   ["image_path"]="1f1ee-1f1e8",
+   ["text"]="Flag: Canary Islands",
+   ["char"]={3339},
 },
 -- Table: {1560}
 {
-   ["subText"]=", :sled:",
-   ["order"]=1559,
-   ["char"]={4226},
-   ["text"]="Sled",
-   ["image_path"]="1f6f7",
+   ["subText"]=":flag_cv:, flag",
+   ["order"]=2999,
+   ["image_path"]="1f1e8-1f1fb",
+   ["text"]="Flag: Cape Verde",
+   ["char"]={3340},
 },
 -- Table: {1561}
 {
-   ["subText"]="baby, breast, nursing, :breast_feeding:",
-   ["order"]=1560,
-   ["char"]={4227},
-   ["text"]="Breast-feeding",
-   ["image_path"]="1f931",
+   ["subText"]=":flag_bq:, flag",
+   ["order"]=3000,
+   ["image_path"]="1f1e7-1f1f6",
+   ["text"]="Flag: Caribbean Netherlands",
+   ["char"]={3341},
 },
 -- Table: {1562}
 {
-   ["subText"]="game, rock, :curling_stone:",
-   ["order"]=1561,
-   ["char"]={4228},
-   ["text"]="Curling stone",
-   ["image_path"]="1f94c",
+   ["subText"]=":flag_ky:, flag",
+   ["order"]=3001,
+   ["image_path"]="1f1f0-1f1fe",
+   ["text"]="Flag: Cayman Islands",
+   ["char"]={3342},
 },
 -- Table: {1563}
 {
-   ["subText"]=", :person_in_steamy_room:",
-   ["order"]=1562,
-   ["char"]={4229},
-   ["text"]="Person in steamy room",
-   ["image_path"]="1f9d6",
+   ["subText"]=":flag_cf:, flag",
+   ["order"]=3002,
+   ["image_path"]="1f1e8-1f1eb",
+   ["text"]="Flag: Central African Republic",
+   ["char"]={3343},
 },
 -- Table: {1564}
 {
-   ["subText"]="climber, :person_climbing:",
-   ["order"]=1563,
-   ["char"]={4230},
-   ["text"]="Person climbing",
-   ["image_path"]="1f9d7",
+   ["subText"]=":flag_td:, flag",
+   ["order"]=3003,
+   ["image_path"]="1f1f9-1f1e9",
+   ["text"]="Flag: Chad",
+   ["char"]={3344},
 },
 -- Table: {1565}
 {
-   ["subText"]=", :person_in_lotus_position:",
-   ["order"]=1564,
-   ["char"]={4231},
-   ["text"]="Person in lotus position",
-   ["image_path"]="1f9d8",
+   ["subText"]=":flag_cl:, flag",
+   ["order"]=3004,
+   ["image_path"]="1f1e8-1f1f1",
+   ["text"]="Flag: Chile",
+   ["char"]={3345},
 },
 -- Table: {1566}
 {
-   ["subText"]="baby, breast, light skin tone, nursing, :breast_feeding_tone1:",
-   ["order"]=1565,
-   ["char"]={4232},
-   ["text"]="Breast-feeding: light skin tone",
-   ["image_path"]="1f931-1f3fb",
+   ["subText"]=":flag_cn:, flag",
+   ["order"]=3005,
+   ["image_path"]="1f1e8-1f1f3",
+   ["text"]="Flag: China",
+   ["char"]={3346},
 },
 -- Table: {1567}
 {
-   ["subText"]="baby, breast, medium-light skin tone, nursing, :breast_feeding_tone2:",
-   ["order"]=1566,
-   ["char"]={4233},
-   ["text"]="Breast-feeding: medium-light skin tone",
-   ["image_path"]="1f931-1f3fc",
+   ["subText"]=":flag_cx:, flag",
+   ["order"]=3006,
+   ["image_path"]="1f1e8-1f1fd",
+   ["text"]="Flag: Christmas Island",
+   ["char"]={3347},
 },
 -- Table: {1568}
 {
-   ["subText"]="baby, breast, medium skin tone, nursing, :breast_feeding_tone3:",
-   ["order"]=1567,
-   ["char"]={4234},
-   ["text"]="Breast-feeding: medium skin tone",
-   ["image_path"]="1f931-1f3fd",
+   ["subText"]=":flag_cc:, flag",
+   ["order"]=3007,
+   ["image_path"]="1f1e8-1f1e8",
+   ["text"]="Flag: Cocos (Keeling) Islands",
+   ["char"]={3348},
 },
 -- Table: {1569}
 {
-   ["subText"]="baby, breast, medium-dark skin tone, nursing, :breast_feeding_tone4:",
-   ["order"]=1568,
-   ["char"]={4235},
-   ["text"]="Breast-feeding: medium-dark skin tone",
-   ["image_path"]="1f931-1f3fe",
+   ["subText"]=":flag_co:, flag",
+   ["order"]=3008,
+   ["image_path"]="1f1e8-1f1f4",
+   ["text"]="Flag: Colombia",
+   ["char"]={3349},
 },
 -- Table: {1570}
 {
-   ["subText"]="baby, breast, dark skin tone, nursing, :breast_feeding_tone5:",
-   ["order"]=1569,
-   ["char"]={4236},
-   ["text"]="Breast-feeding: dark skin tone",
-   ["image_path"]="1f931-1f3ff",
+   ["subText"]=":flag_km:, flag",
+   ["order"]=3009,
+   ["image_path"]="1f1f0-1f1f2",
+   ["text"]="Flag: Comoros",
+   ["char"]={3350},
 },
 -- Table: {1571}
 {
-   ["subText"]="light skin tone, sauna, steam room, :person_in_steamy_room_tone1:",
-   ["order"]=1570,
-   ["char"]={4237},
-   ["text"]="Person in steamy room: light skin tone",
-   ["image_path"]="1f9d6-1f3fb",
+   ["subText"]=":flag_cg:, flag",
+   ["order"]=3010,
+   ["image_path"]="1f1e8-1f1ec",
+   ["text"]="Flag: Congo - Brazzaville",
+   ["char"]={3351},
 },
 -- Table: {1572}
 {
-   ["subText"]="medium-light skin tone, sauna, steam room, :person_in_steamy_room_tone2:",
-   ["order"]=1571,
-   ["char"]={4238},
-   ["text"]="Person in steamy room: medium-light skin tone",
-   ["image_path"]="1f9d6-1f3fc",
+   ["subText"]=":flag_cd:, flag",
+   ["order"]=3011,
+   ["image_path"]="1f1e8-1f1e9",
+   ["text"]="Flag: Congo - Kinshasa",
+   ["char"]={3352},
 },
 -- Table: {1573}
 {
-   ["subText"]="medium skin tone, sauna, steam room, :person_in_steamy_room_tone3:",
-   ["order"]=1572,
-   ["char"]={4239},
-   ["text"]="Person in steamy room: medium skin tone",
-   ["image_path"]="1f9d6-1f3fd",
+   ["subText"]=":flag_ck:, flag",
+   ["order"]=3012,
+   ["image_path"]="1f1e8-1f1f0",
+   ["text"]="Flag: Cook Islands",
+   ["char"]={3353},
 },
 -- Table: {1574}
 {
-   ["subText"]="medium-dark skin tone, sauna, steam room, :person_in_steamy_room_tone4:",
-   ["order"]=1573,
-   ["char"]={4240},
-   ["text"]="Person in steamy room: medium-dark skin tone",
-   ["image_path"]="1f9d6-1f3fe",
+   ["subText"]=":flag_cr:, flag",
+   ["order"]=3013,
+   ["image_path"]="1f1e8-1f1f7",
+   ["text"]="Flag: Costa Rica",
+   ["char"]={3354},
 },
 -- Table: {1575}
 {
-   ["subText"]="dark skin tone, sauna, steam room, :person_in_steamy_room_tone5:",
-   ["order"]=1574,
-   ["char"]={4241},
-   ["text"]="Person in steamy room: dark skin tone",
-   ["image_path"]="1f9d6-1f3ff",
+   ["subText"]=":flag_ci:, flag",
+   ["order"]=3014,
+   ["image_path"]="1f1e8-1f1ee",
+   ["text"]="Flag: Côte d’Ivoire",
+   ["char"]={3355},
 },
 -- Table: {1576}
 {
-   ["subText"]="climber, light skin tone, :person_climbing_tone1:",
-   ["order"]=1575,
-   ["char"]={4242},
-   ["text"]="Person climbing: light skin tone",
-   ["image_path"]="1f9d7-1f3fb",
+   ["subText"]=":flag_hr:, flag",
+   ["order"]=3015,
+   ["image_path"]="1f1ed-1f1f7",
+   ["text"]="Flag: Croatia",
+   ["char"]={3356},
 },
 -- Table: {1577}
 {
-   ["subText"]="climber, medium-light skin tone, :person_climbing_tone2:",
-   ["order"]=1576,
-   ["char"]={4243},
-   ["text"]="Person climbing: medium-light skin tone",
-   ["image_path"]="1f9d7-1f3fc",
+   ["subText"]=":flag_cu:, flag",
+   ["order"]=3016,
+   ["image_path"]="1f1e8-1f1fa",
+   ["text"]="Flag: Cuba",
+   ["char"]={3357},
 },
 -- Table: {1578}
 {
-   ["subText"]="climber, medium skin tone, :person_climbing_tone3:",
-   ["order"]=1577,
-   ["char"]={4244},
-   ["text"]="Person climbing: medium skin tone",
-   ["image_path"]="1f9d7-1f3fd",
+   ["subText"]=":flag_cw:, flag",
+   ["order"]=3017,
+   ["image_path"]="1f1e8-1f1fc",
+   ["text"]="Flag: Curaçao",
+   ["char"]={3358},
 },
 -- Table: {1579}
 {
-   ["subText"]="climber, medium-dark skin tone, :person_climbing_tone4:",
-   ["order"]=1578,
-   ["char"]={4245},
-   ["text"]="Person climbing: medium-dark skin tone",
-   ["image_path"]="1f9d7-1f3fe",
+   ["subText"]=":flag_cy:, flag",
+   ["order"]=3018,
+   ["image_path"]="1f1e8-1f1fe",
+   ["text"]="Flag: Cyprus",
+   ["char"]={3359},
 },
 -- Table: {1580}
 {
-   ["subText"]="climber, dark skin tone, :person_climbing_tone5:",
-   ["order"]=1579,
-   ["char"]={4246},
-   ["text"]="Person climbing: dark skin tone",
-   ["image_path"]="1f9d7-1f3ff",
+   ["subText"]=":flag_cz:, flag",
+   ["order"]=3019,
+   ["image_path"]="1f1e8-1f1ff",
+   ["text"]="Flag: Czechia",
+   ["char"]={3360},
 },
 -- Table: {1581}
 {
-   ["subText"]="light skin tone, meditation, yoga, :person_in_lotus_position_tone1:",
-   ["order"]=1580,
-   ["char"]={4247},
-   ["text"]="Person in lotus position: light skin tone",
-   ["image_path"]="1f9d8-1f3fb",
+   ["subText"]=":flag_dk:, flag",
+   ["order"]=3020,
+   ["image_path"]="1f1e9-1f1f0",
+   ["text"]="Flag: Denmark",
+   ["char"]={3361},
 },
 -- Table: {1582}
 {
-   ["subText"]="meditation, medium-light skin tone, yoga, :person_in_lotus_position_tone2:",
-   ["order"]=1581,
-   ["char"]={4248},
-   ["text"]="Person in lotus position: medium-light skin tone",
-   ["image_path"]="1f9d8-1f3fc",
+   ["subText"]=":flag_dj:, flag",
+   ["order"]=3021,
+   ["image_path"]="1f1e9-1f1ef",
+   ["text"]="Flag: Djibouti",
+   ["char"]={3362},
 },
 -- Table: {1583}
 {
-   ["subText"]="meditation, medium skin tone, yoga, :person_in_lotus_position_tone3:",
-   ["order"]=1582,
-   ["char"]={4249},
-   ["text"]="Person in lotus position: medium skin tone",
-   ["image_path"]="1f9d8-1f3fd",
+   ["subText"]=":flag_dm:, flag",
+   ["order"]=3022,
+   ["image_path"]="1f1e9-1f1f2",
+   ["text"]="Flag: Dominica",
+   ["char"]={3363},
 },
 -- Table: {1584}
 {
-   ["subText"]="meditation, medium-dark skin tone, yoga, :person_in_lotus_position_tone4:",
-   ["order"]=1583,
-   ["char"]={4250},
-   ["text"]="Person in lotus position: medium-dark skin tone",
-   ["image_path"]="1f9d8-1f3fe",
+   ["subText"]=":flag_do:, flag",
+   ["order"]=3023,
+   ["image_path"]="1f1e9-1f1f4",
+   ["text"]="Flag: Dominican Republic",
+   ["char"]={3364},
 },
 -- Table: {1585}
 {
-   ["subText"]="dark skin tone, meditation, yoga, :person_in_lotus_position_tone5:",
-   ["order"]=1584,
-   ["char"]={4251},
-   ["text"]="Person in lotus position: dark skin tone",
-   ["image_path"]="1f9d8-1f3ff",
+   ["subText"]=":flag_ec:, flag",
+   ["order"]=3024,
+   ["image_path"]="1f1ea-1f1e8",
+   ["text"]="Flag: Ecuador",
+   ["char"]={3365},
 },
 -- Table: {1586}
 {
-   ["subText"]="sauna, steam room, :woman_in_steamy_room:",
-   ["order"]=1585,
-   ["char"]={4252},
-   ["text"]="Woman in steamy room",
-   ["image_path"]="1f9d6-2640",
+   ["subText"]=":flag_eg:, flag",
+   ["order"]=3025,
+   ["image_path"]="1f1ea-1f1ec",
+   ["text"]="Flag: Egypt",
+   ["char"]={3366},
 },
 -- Table: {1587}
 {
-   ["subText"]="sauna, steam room, :man_in_steamy_room:",
-   ["order"]=1586,
-   ["char"]={4253},
-   ["text"]="Man in steamy room",
-   ["image_path"]="1f9d6-2642",
+   ["subText"]=":flag_sv:, flag",
+   ["order"]=3026,
+   ["image_path"]="1f1f8-1f1fb",
+   ["text"]="Flag: El Salvador",
+   ["char"]={3367},
 },
 -- Table: {1588}
 {
-   ["subText"]="light skin tone, sauna, steam room, :woman_in_steamy_room_tone1:",
-   ["order"]=1587,
-   ["char"]={4254},
-   ["text"]="Woman in steamy room: light skin tone",
-   ["image_path"]="1f9d6-1f3fb-2640",
+   ["subText"]=":flag_gq:, flag",
+   ["order"]=3027,
+   ["image_path"]="1f1ec-1f1f6",
+   ["text"]="Flag: Equatorial Guinea",
+   ["char"]={3368},
 },
 -- Table: {1589}
 {
-   ["subText"]="light skin tone, sauna, steam room, :man_in_steamy_room_tone1:",
-   ["order"]=1588,
-   ["char"]={4255},
-   ["text"]="Man in steamy room: light skin tone",
-   ["image_path"]="1f9d6-1f3fb-2642",
+   ["subText"]=":flag_er:, flag",
+   ["order"]=3028,
+   ["image_path"]="1f1ea-1f1f7",
+   ["text"]="Flag: Eritrea",
+   ["char"]={3369},
 },
 -- Table: {1590}
 {
-   ["subText"]="medium-light skin tone, sauna, steam room, :woman_in_steamy_room_tone2:",
-   ["order"]=1589,
-   ["char"]={4256},
-   ["text"]="Woman in steamy room: medium-light skin tone",
-   ["image_path"]="1f9d6-1f3fc-2640",
+   ["subText"]=":flag_ee:, flag",
+   ["order"]=3029,
+   ["image_path"]="1f1ea-1f1ea",
+   ["text"]="Flag: Estonia",
+   ["char"]={3370},
 },
 -- Table: {1591}
 {
-   ["subText"]="medium-light skin tone, sauna, steam room, :man_in_steamy_room_tone2:",
-   ["order"]=1590,
-   ["char"]={4257},
-   ["text"]="Man in steamy room: medium-light skin tone",
-   ["image_path"]="1f9d6-1f3fc-2642",
+   ["subText"]=":flag_et:, flag",
+   ["order"]=3030,
+   ["image_path"]="1f1ea-1f1f9",
+   ["text"]="Flag: Ethiopia",
+   ["char"]={3371},
 },
 -- Table: {1592}
 {
-   ["subText"]="medium skin tone, sauna, steam room, :woman_in_steamy_room_tone3:",
-   ["order"]=1591,
-   ["char"]={4258},
-   ["text"]="Woman in steamy room: medium skin tone",
-   ["image_path"]="1f9d6-1f3fd-2640",
+   ["subText"]=":flag_eu:, flag",
+   ["order"]=3031,
+   ["image_path"]="1f1ea-1f1fa",
+   ["text"]="Flag: European Union",
+   ["char"]={3372},
 },
 -- Table: {1593}
 {
-   ["subText"]="medium skin tone, sauna, steam room, :man_in_steamy_room_tone3:",
-   ["order"]=1592,
-   ["char"]={4259},
-   ["text"]="Man in steamy room: medium skin tone",
-   ["image_path"]="1f9d6-1f3fd-2642",
+   ["subText"]=":flag_fk:, flag",
+   ["order"]=3032,
+   ["image_path"]="1f1eb-1f1f0",
+   ["text"]="Flag: Falkland Islands",
+   ["char"]={3373},
 },
 -- Table: {1594}
 {
-   ["subText"]="medium-dark skin tone, sauna, steam room, :woman_in_steamy_room_tone4:",
-   ["order"]=1593,
-   ["char"]={4260},
-   ["text"]="Woman in steamy room: medium-dark skin tone",
-   ["image_path"]="1f9d6-1f3fe-2640",
+   ["subText"]=":flag_fo:, flag",
+   ["order"]=3033,
+   ["image_path"]="1f1eb-1f1f4",
+   ["text"]="Flag: Faroe Islands",
+   ["char"]={3374},
 },
 -- Table: {1595}
 {
-   ["subText"]="medium-dark skin tone, sauna, steam room, :man_in_steamy_room_tone4:",
-   ["order"]=1594,
-   ["char"]={4261},
-   ["text"]="Man in steamy room: medium-dark skin tone",
-   ["image_path"]="1f9d6-1f3fe-2642",
+   ["subText"]=":flag_fj:, flag",
+   ["order"]=3034,
+   ["image_path"]="1f1eb-1f1ef",
+   ["text"]="Flag: Fiji",
+   ["char"]={3375},
 },
 -- Table: {1596}
 {
-   ["subText"]="dark skin tone, sauna, steam room, :woman_in_steamy_room_tone5:",
-   ["order"]=1595,
-   ["char"]={4262},
-   ["text"]="Woman in steamy room: dark skin tone",
-   ["image_path"]="1f9d6-1f3ff-2640",
+   ["subText"]=":flag_fi:, flag",
+   ["order"]=3035,
+   ["image_path"]="1f1eb-1f1ee",
+   ["text"]="Flag: Finland",
+   ["char"]={3376},
 },
 -- Table: {1597}
 {
-   ["subText"]="dark skin tone, sauna, steam room, :man_in_steamy_room_tone5:",
-   ["order"]=1596,
-   ["char"]={4263},
-   ["text"]="Man in steamy room: dark skin tone",
-   ["image_path"]="1f9d6-1f3ff-2642",
+   ["subText"]=":flag_fr:, flag",
+   ["order"]=3036,
+   ["image_path"]="1f1eb-1f1f7",
+   ["text"]="Flag: France",
+   ["char"]={3377},
 },
 -- Table: {1598}
 {
-   ["subText"]="climber, :woman_climbing:",
-   ["order"]=1597,
-   ["char"]={4264},
-   ["text"]="Woman climbing",
-   ["image_path"]="1f9d7-2640",
+   ["subText"]=":flag_gf:, flag",
+   ["order"]=3037,
+   ["image_path"]="1f1ec-1f1eb",
+   ["text"]="Flag: French Guiana",
+   ["char"]={3378},
 },
 -- Table: {1599}
 {
-   ["subText"]="climber, :man_climbing:",
-   ["order"]=1598,
-   ["char"]={4265},
-   ["text"]="Man climbing",
-   ["image_path"]="1f9d7-2642",
+   ["subText"]=":flag_pf:, flag",
+   ["order"]=3038,
+   ["image_path"]="1f1f5-1f1eb",
+   ["text"]="Flag: French Polynesia",
+   ["char"]={3379},
 },
 -- Table: {1600}
 {
-   ["subText"]="climber, light skin tone, :woman_climbing_tone1:",
-   ["order"]=1599,
-   ["char"]={4266},
-   ["text"]="Woman climbing: light skin tone",
-   ["image_path"]="1f9d7-1f3fb-2640",
+   ["subText"]=":flag_tf:, flag",
+   ["order"]=3039,
+   ["image_path"]="1f1f9-1f1eb",
+   ["text"]="Flag: French Southern Territories",
+   ["char"]={3380},
 },
 -- Table: {1601}
 {
-   ["subText"]="climber, light skin tone, :man_climbing_tone1:",
-   ["order"]=1600,
-   ["char"]={4267},
-   ["text"]="Man climbing: light skin tone",
-   ["image_path"]="1f9d7-1f3fb-2642",
+   ["subText"]=":flag_ga:, flag",
+   ["order"]=3040,
+   ["image_path"]="1f1ec-1f1e6",
+   ["text"]="Flag: Gabon",
+   ["char"]={3381},
 },
 -- Table: {1602}
 {
-   ["subText"]="climber, medium-light skin tone, :woman_climbing_tone2:",
-   ["order"]=1601,
-   ["char"]={4268},
-   ["text"]="Woman climbing: medium-light skin tone",
-   ["image_path"]="1f9d7-1f3fc-2640",
+   ["subText"]=":flag_gm:, flag",
+   ["order"]=3041,
+   ["image_path"]="1f1ec-1f1f2",
+   ["text"]="Flag: Gambia",
+   ["char"]={3382},
 },
 -- Table: {1603}
 {
-   ["subText"]="climber, medium-light skin tone, :man_climbing_tone2:",
-   ["order"]=1602,
-   ["char"]={4269},
-   ["text"]="Man climbing: medium-light skin tone",
-   ["image_path"]="1f9d7-1f3fc-2642",
+   ["subText"]=":flag_ge:, flag",
+   ["order"]=3042,
+   ["image_path"]="1f1ec-1f1ea",
+   ["text"]="Flag: Georgia",
+   ["char"]={3383},
 },
 -- Table: {1604}
 {
-   ["subText"]="climber, medium skin tone, :woman_climbing_tone3:",
-   ["order"]=1603,
-   ["char"]={4270},
-   ["text"]="Woman climbing: medium skin tone",
-   ["image_path"]="1f9d7-1f3fd-2640",
+   ["subText"]=":flag_de:, flag",
+   ["order"]=3043,
+   ["image_path"]="1f1e9-1f1ea",
+   ["text"]="Flag: Germany",
+   ["char"]={3384},
 },
 -- Table: {1605}
 {
-   ["subText"]="climber, medium skin tone, :man_climbing_tone3:",
-   ["order"]=1604,
-   ["char"]={4271},
-   ["text"]="Man climbing: medium skin tone",
-   ["image_path"]="1f9d7-1f3fd-2642",
+   ["subText"]=":flag_gh:, flag",
+   ["order"]=3044,
+   ["image_path"]="1f1ec-1f1ed",
+   ["text"]="Flag: Ghana",
+   ["char"]={3385},
 },
 -- Table: {1606}
 {
-   ["subText"]="climber, medium-dark skin tone, :woman_climbing_tone4:",
-   ["order"]=1605,
-   ["char"]={4272},
-   ["text"]="Woman climbing: medium-dark skin tone",
-   ["image_path"]="1f9d7-1f3fe-2640",
+   ["subText"]=":flag_gi:, flag",
+   ["order"]=3045,
+   ["image_path"]="1f1ec-1f1ee",
+   ["text"]="Flag: Gibraltar",
+   ["char"]={3386},
 },
 -- Table: {1607}
 {
-   ["subText"]="climber, medium-dark skin tone, :man_climbing_tone4:",
-   ["order"]=1606,
-   ["char"]={4273},
-   ["text"]="Man climbing: medium-dark skin tone",
-   ["image_path"]="1f9d7-1f3fe-2642",
+   ["subText"]=":flag_gr:, flag",
+   ["order"]=3046,
+   ["image_path"]="1f1ec-1f1f7",
+   ["text"]="Flag: Greece",
+   ["char"]={3387},
 },
 -- Table: {1608}
 {
-   ["subText"]="climber, dark skin tone, :woman_climbing_tone5:",
-   ["order"]=1607,
-   ["char"]={4274},
-   ["text"]="Woman climbing: dark skin tone",
-   ["image_path"]="1f9d7-1f3ff-2640",
+   ["subText"]=":flag_gl:, flag",
+   ["order"]=3047,
+   ["image_path"]="1f1ec-1f1f1",
+   ["text"]="Flag: Greenland",
+   ["char"]={3388},
 },
 -- Table: {1609}
 {
-   ["subText"]="climber, dark skin tone, :man_climbing_tone5:",
-   ["order"]=1608,
-   ["char"]={4275},
-   ["text"]="Man climbing: dark skin tone",
-   ["image_path"]="1f9d7-1f3ff-2642",
+   ["subText"]=":flag_gd:, flag",
+   ["order"]=3048,
+   ["image_path"]="1f1ec-1f1e9",
+   ["text"]="Flag: Grenada",
+   ["char"]={3389},
 },
 -- Table: {1610}
 {
-   ["subText"]="meditation, yoga, :woman_in_lotus_position:",
-   ["order"]=1609,
-   ["char"]={4276},
-   ["text"]="Woman in lotus position",
-   ["image_path"]="1f9d8-2640",
+   ["subText"]=":flag_gp:, flag",
+   ["order"]=3049,
+   ["image_path"]="1f1ec-1f1f5",
+   ["text"]="Flag: Guadeloupe",
+   ["char"]={3390},
 },
 -- Table: {1611}
 {
-   ["subText"]="meditation, yoga, :man_in_lotus_position:",
-   ["order"]=1610,
-   ["char"]={4277},
-   ["text"]="Man in lotus position",
-   ["image_path"]="1f9d8-2642",
+   ["subText"]=":flag_gu:, flag",
+   ["order"]=3050,
+   ["image_path"]="1f1ec-1f1fa",
+   ["text"]="Flag: Guam",
+   ["char"]={3391},
 },
 -- Table: {1612}
 {
-   ["subText"]="light skin tone, meditation, yoga, :woman_in_lotus_position_tone1:",
-   ["order"]=1611,
-   ["char"]={4278},
-   ["text"]="Woman in lotus position: light skin tone",
-   ["image_path"]="1f9d8-1f3fb-2640",
+   ["subText"]=":flag_gt:, flag",
+   ["order"]=3051,
+   ["image_path"]="1f1ec-1f1f9",
+   ["text"]="Flag: Guatemala",
+   ["char"]={3392},
 },
 -- Table: {1613}
 {
-   ["subText"]="light skin tone, meditation, yoga, :man_in_lotus_position_tone1:",
-   ["order"]=1612,
-   ["char"]={4279},
-   ["text"]="Man in lotus position: light skin tone",
-   ["image_path"]="1f9d8-1f3fb-2642",
+   ["subText"]=":flag_gg:, flag",
+   ["order"]=3052,
+   ["image_path"]="1f1ec-1f1ec",
+   ["text"]="Flag: Guernsey",
+   ["char"]={3393},
 },
 -- Table: {1614}
 {
-   ["subText"]="meditation, medium-light skin tone, yoga, :woman_in_lotus_position_tone2:",
-   ["order"]=1613,
-   ["char"]={4280},
-   ["text"]="Woman in lotus position: medium-light skin tone",
-   ["image_path"]="1f9d8-1f3fc-2640",
+   ["subText"]=":flag_gn:, flag",
+   ["order"]=3053,
+   ["image_path"]="1f1ec-1f1f3",
+   ["text"]="Flag: Guinea",
+   ["char"]={3394},
 },
 -- Table: {1615}
 {
-   ["subText"]="meditation, medium-light skin tone, yoga, :man_in_lotus_position_tone2:",
-   ["order"]=1614,
-   ["char"]={4281},
-   ["text"]="Man in lotus position: medium-light skin tone",
-   ["image_path"]="1f9d8-1f3fc-2642",
+   ["subText"]=":flag_gw:, flag",
+   ["order"]=3054,
+   ["image_path"]="1f1ec-1f1fc",
+   ["text"]="Flag: Guinea-Bissau",
+   ["char"]={3395},
 },
 -- Table: {1616}
 {
-   ["subText"]="meditation, medium skin tone, yoga, :woman_in_lotus_position_tone3:",
-   ["order"]=1615,
-   ["char"]={4282},
-   ["text"]="Woman in lotus position: medium skin tone",
-   ["image_path"]="1f9d8-1f3fd-2640",
+   ["subText"]=":flag_gy:, flag",
+   ["order"]=3055,
+   ["image_path"]="1f1ec-1f1fe",
+   ["text"]="Flag: Guyana",
+   ["char"]={3396},
 },
 -- Table: {1617}
 {
-   ["subText"]="meditation, medium skin tone, yoga, :man_in_lotus_position_tone3:",
-   ["order"]=1616,
-   ["char"]={4283},
-   ["text"]="Man in lotus position: medium skin tone",
-   ["image_path"]="1f9d8-1f3fd-2642",
+   ["subText"]=":flag_ht:, flag",
+   ["order"]=3056,
+   ["image_path"]="1f1ed-1f1f9",
+   ["text"]="Flag: Haiti",
+   ["char"]={3397},
 },
 -- Table: {1618}
 {
-   ["subText"]="meditation, medium-dark skin tone, yoga, :woman_in_lotus_position_tone4:",
-   ["order"]=1617,
-   ["char"]={4284},
-   ["text"]="Woman in lotus position: medium-dark skin tone",
-   ["image_path"]="1f9d8-1f3fe-2640",
+   ["subText"]=":flag_hn:, flag",
+   ["order"]=3057,
+   ["image_path"]="1f1ed-1f1f3",
+   ["text"]="Flag: Honduras",
+   ["char"]={3398},
 },
 -- Table: {1619}
 {
-   ["subText"]="meditation, medium-dark skin tone, yoga, :man_in_lotus_position_tone4:",
-   ["order"]=1618,
-   ["char"]={4285},
-   ["text"]="Man in lotus position: medium-dark skin tone",
-   ["image_path"]="1f9d8-1f3fe-2642",
+   ["subText"]=":flag_hk:, flag",
+   ["order"]=3058,
+   ["image_path"]="1f1ed-1f1f0",
+   ["text"]="Flag: Hong Kong SAR China",
+   ["char"]={3399},
 },
 -- Table: {1620}
 {
-   ["subText"]="dark skin tone, meditation, yoga, :woman_in_lotus_position_tone5:",
-   ["order"]=1619,
-   ["char"]={4286},
-   ["text"]="Woman in lotus position: dark skin tone",
-   ["image_path"]="1f9d8-1f3ff-2640",
+   ["subText"]=":flag_hu:, flag",
+   ["order"]=3059,
+   ["image_path"]="1f1ed-1f1fa",
+   ["text"]="Flag: Hungary",
+   ["char"]={3400},
 },
 -- Table: {1621}
 {
-   ["subText"]="dark skin tone, meditation, yoga, :man_in_lotus_position_tone5:",
-   ["order"]=1620,
-   ["char"]={4287},
-   ["text"]="Man in lotus position: dark skin tone",
-   ["image_path"]="1f9d8-1f3ff-2642",
+   ["subText"]=":flag_is:, flag",
+   ["order"]=3060,
+   ["image_path"]="1f1ee-1f1f8",
+   ["text"]="Flag: Iceland",
+   ["char"]={3401},
 },
 -- Table: {1622}
 {
-   ["subText"]="car, :red_car:",
-   ["order"]=1621,
-   ["char"]={4288},
-   ["text"]="Automobile",
-   ["image_path"]="1f697",
+   ["subText"]=":flag_in:, flag",
+   ["order"]=3061,
+   ["image_path"]="1f1ee-1f1f3",
+   ["text"]="Flag: India",
+   ["char"]={3402},
 },
 -- Table: {1623}
 {
-   ["subText"]="vehicle, :taxi:",
-   ["order"]=1622,
-   ["char"]={4289},
-   ["text"]="Taxi",
-   ["image_path"]="1f695",
+   ["subText"]=":flag_id:, flag",
+   ["order"]=3062,
+   ["image_path"]="1f1ee-1f1e9",
+   ["text"]="Flag: Indonesia",
+   ["char"]={3403},
 },
 -- Table: {1624}
 {
-   ["subText"]="recreational, sport utility, :blue_car:",
-   ["order"]=1623,
-   ["char"]={4290},
-   ["text"]="Sport utility vehicle",
-   ["image_path"]="1f699",
+   ["subText"]=":flag_ir:, flag",
+   ["order"]=3063,
+   ["image_path"]="1f1ee-1f1f7",
+   ["text"]="Flag: Iran",
+   ["char"]={3404},
 },
 -- Table: {1625}
 {
-   ["subText"]="vehicle, :bus:",
-   ["order"]=1624,
-   ["char"]={4291},
-   ["text"]="Bus",
-   ["image_path"]="1f68c",
+   ["subText"]=":flag_iq:, flag",
+   ["order"]=3064,
+   ["image_path"]="1f1ee-1f1f6",
+   ["text"]="Flag: Iraq",
+   ["char"]={3405},
 },
 -- Table: {1626}
 {
-   ["subText"]="bus, tram, trolley, :trolleybus:",
-   ["order"]=1625,
-   ["char"]={4292},
-   ["text"]="Trolleybus",
-   ["image_path"]="1f68e",
+   ["subText"]=":flag_ie:, flag",
+   ["order"]=3065,
+   ["image_path"]="1f1ee-1f1ea",
+   ["text"]="Flag: Ireland",
+   ["char"]={3406},
 },
 -- Table: {1627}
 {
-   ["subText"]="car, racing, :race_car:",
-   ["order"]=1626,
-   ["char"]={4293},
-   ["text"]="Racing car",
-   ["image_path"]="1f3ce",
+   ["subText"]=":flag_im:, flag",
+   ["order"]=3066,
+   ["image_path"]="1f1ee-1f1f2",
+   ["text"]="Flag: Isle of Man",
+   ["char"]={3407},
 },
 -- Table: {1628}
 {
-   ["subText"]="car, patrol, police, :police_car:",
-   ["order"]=1627,
-   ["char"]={4294},
-   ["text"]="Police car",
-   ["image_path"]="1f693",
+   ["subText"]=":flag_il:, flag",
+   ["order"]=3067,
+   ["image_path"]="1f1ee-1f1f1",
+   ["text"]="Flag: Israel",
+   ["char"]={3408},
 },
 -- Table: {1629}
 {
-   ["subText"]="vehicle, :ambulance:",
-   ["order"]=1628,
-   ["char"]={4295},
-   ["text"]="Ambulance",
-   ["image_path"]="1f691",
+   ["subText"]=":flag_it:, flag",
+   ["order"]=3068,
+   ["image_path"]="1f1ee-1f1f9",
+   ["text"]="Flag: Italy",
+   ["char"]={3409},
 },
 -- Table: {1630}
 {
-   ["subText"]="engine, fire, truck, :fire_engine:",
-   ["order"]=1629,
-   ["char"]={4296},
-   ["text"]="Fire engine",
-   ["image_path"]="1f692",
+   ["subText"]=":flag_jm:, flag",
+   ["order"]=3069,
+   ["image_path"]="1f1ef-1f1f2",
+   ["text"]="Flag: Jamaica",
+   ["char"]={3410},
 },
 -- Table: {1631}
 {
-   ["subText"]="bus, :minibus:",
-   ["order"]=1630,
-   ["char"]={4297},
-   ["text"]="Minibus",
-   ["image_path"]="1f690",
+   ["subText"]=":flag_jp:, flag",
+   ["order"]=3070,
+   ["image_path"]="1f1ef-1f1f5",
+   ["text"]="Flag: Japan",
+   ["char"]={3411},
 },
 -- Table: {1632}
 {
-   ["subText"]="delivery, truck, :truck:",
-   ["order"]=1631,
-   ["char"]={4298},
-   ["text"]="Delivery truck",
-   ["image_path"]="1f69a",
+   ["subText"]=":crossed_flags:, Japanese, celebration, cross, crossed",
+   ["order"]=3071,
+   ["image_path"]="1f38c",
+   ["text"]="Crossed flags",
+   ["char"]={3412},
 },
 -- Table: {1633}
 {
-   ["subText"]="lorry, semi, truck, :articulated_lorry:",
-   ["order"]=1632,
-   ["char"]={4299},
-   ["text"]="Articulated lorry",
-   ["image_path"]="1f69b",
+   ["subText"]=":flag_je:, flag",
+   ["order"]=3072,
+   ["image_path"]="1f1ef-1f1ea",
+   ["text"]="Flag: Jersey",
+   ["char"]={3413},
 },
 -- Table: {1634}
 {
-   ["subText"]="vehicle, :tractor:",
-   ["order"]=1633,
-   ["char"]={4300},
-   ["text"]="Tractor",
-   ["image_path"]="1f69c",
+   ["subText"]=":flag_jo:, flag",
+   ["order"]=3073,
+   ["image_path"]="1f1ef-1f1f4",
+   ["text"]="Flag: Jordan",
+   ["char"]={3414},
 },
 -- Table: {1635}
 {
-   ["subText"]="kick, scooter, :scooter:",
-   ["order"]=1634,
-   ["char"]={4301},
-   ["text"]="Kick scooter",
-   ["image_path"]="1f6f4",
+   ["subText"]=":flag_kz:, flag",
+   ["order"]=3074,
+   ["image_path"]="1f1f0-1f1ff",
+   ["text"]="Flag: Kazakhstan",
+   ["char"]={3415},
 },
 -- Table: {1636}
 {
-   ["subText"]="bike, :bike:",
-   ["order"]=1635,
-   ["char"]={4302},
-   ["text"]="Bicycle",
-   ["image_path"]="1f6b2",
+   ["subText"]=":flag_ke:, flag",
+   ["order"]=3075,
+   ["image_path"]="1f1f0-1f1ea",
+   ["text"]="Flag: Kenya",
+   ["char"]={3416},
 },
 -- Table: {1637}
 {
-   ["subText"]="motor, scooter, :motor_scooter:",
-   ["order"]=1636,
-   ["char"]={4303},
-   ["text"]="Motor scooter",
-   ["image_path"]="1f6f5",
+   ["subText"]=":flag_ki:, flag",
+   ["order"]=3076,
+   ["image_path"]="1f1f0-1f1ee",
+   ["text"]="Flag: Kiribati",
+   ["char"]={3417},
 },
 -- Table: {1638}
 {
-   ["subText"]="racing, :motorcycle:",
-   ["order"]=1637,
-   ["char"]={4304},
-   ["text"]="Motorcycle",
-   ["image_path"]="1f3cd",
+   ["subText"]=":flag_xk:, flag",
+   ["order"]=3077,
+   ["image_path"]="1f1fd-1f1f0",
+   ["text"]="Flag: Kosovo",
+   ["char"]={3418},
 },
 -- Table: {1639}
 {
-   ["subText"]="beacon, car, light, police, revolving, :rotating_light:",
-   ["order"]=1638,
-   ["char"]={4305},
-   ["text"]="Police car light",
-   ["image_path"]="1f6a8",
+   ["subText"]=":flag_kw:, flag",
+   ["order"]=3078,
+   ["image_path"]="1f1f0-1f1fc",
+   ["text"]="Flag: Kuwait",
+   ["char"]={3419},
 },
 -- Table: {1640}
 {
-   ["subText"]="car, oncoming, police, :oncoming_police_car:",
-   ["order"]=1639,
-   ["char"]={4306},
-   ["text"]="Oncoming police car",
-   ["image_path"]="1f694",
+   ["subText"]=":flag_kg:, flag",
+   ["order"]=3079,
+   ["image_path"]="1f1f0-1f1ec",
+   ["text"]="Flag: Kyrgyzstan",
+   ["char"]={3420},
 },
 -- Table: {1641}
 {
-   ["subText"]="bus, oncoming, :oncoming_bus:",
-   ["order"]=1640,
-   ["char"]={4307},
-   ["text"]="Oncoming bus",
-   ["image_path"]="1f68d",
+   ["subText"]=":flag_la:, flag",
+   ["order"]=3080,
+   ["image_path"]="1f1f1-1f1e6",
+   ["text"]="Flag: Laos",
+   ["char"]={3421},
 },
 -- Table: {1642}
 {
-   ["subText"]="automobile, car, oncoming, :oncoming_automobile:",
-   ["order"]=1641,
-   ["char"]={4308},
-   ["text"]="Oncoming automobile",
-   ["image_path"]="1f698",
+   ["subText"]=":flag_lv:, flag",
+   ["order"]=3081,
+   ["image_path"]="1f1f1-1f1fb",
+   ["text"]="Flag: Latvia",
+   ["char"]={3422},
 },
 -- Table: {1643}
 {
-   ["subText"]="oncoming, taxi, :oncoming_taxi:",
-   ["order"]=1642,
-   ["char"]={4309},
-   ["text"]="Oncoming taxi",
-   ["image_path"]="1f696",
+   ["subText"]=":flag_lb:, flag",
+   ["order"]=3082,
+   ["image_path"]="1f1f1-1f1e7",
+   ["text"]="Flag: Lebanon",
+   ["char"]={3423},
 },
 -- Table: {1644}
 {
-   ["subText"]="aerial, cable, car, gondola, tramway, :aerial_tramway:",
-   ["order"]=1643,
-   ["char"]={4310},
-   ["text"]="Aerial tramway",
-   ["image_path"]="1f6a1",
+   ["subText"]=":flag_ls:, flag",
+   ["order"]=3083,
+   ["image_path"]="1f1f1-1f1f8",
+   ["text"]="Flag: Lesotho",
+   ["char"]={3424},
 },
 -- Table: {1645}
 {
-   ["subText"]="cable, gondola, mountain, :mountain_cableway:",
-   ["order"]=1644,
-   ["char"]={4311},
-   ["text"]="Mountain cableway",
-   ["image_path"]="1f6a0",
+   ["subText"]=":flag_lr:, flag",
+   ["order"]=3084,
+   ["image_path"]="1f1f1-1f1f7",
+   ["text"]="Flag: Liberia",
+   ["char"]={3425},
 },
 -- Table: {1646}
 {
-   ["subText"]="railway, suspension, :suspension_railway:",
-   ["order"]=1645,
-   ["char"]={4312},
-   ["text"]="Suspension railway",
-   ["image_path"]="1f69f",
+   ["subText"]=":flag_ly:, flag",
+   ["order"]=3085,
+   ["image_path"]="1f1f1-1f1fe",
+   ["text"]="Flag: Libya",
+   ["char"]={3426},
 },
 -- Table: {1647}
 {
-   ["subText"]="car, electric, railway, train, tram, trolleybus, :railway_car:",
-   ["order"]=1646,
-   ["char"]={4313},
-   ["text"]="Railway car",
-   ["image_path"]="1f683",
+   ["subText"]=":flag_li:, flag",
+   ["order"]=3086,
+   ["image_path"]="1f1f1-1f1ee",
+   ["text"]="Flag: Liechtenstein",
+   ["char"]={3427},
 },
 -- Table: {1648}
 {
-   ["subText"]="car, tram, trolleybus, :train:",
-   ["order"]=1647,
-   ["char"]={4314},
-   ["text"]="Tram car",
-   ["image_path"]="1f68b",
+   ["subText"]=":flag_lt:, flag",
+   ["order"]=3087,
+   ["image_path"]="1f1f1-1f1f9",
+   ["text"]="Flag: Lithuania",
+   ["char"]={3428},
 },
 -- Table: {1649}
 {
-   ["subText"]="car, mountain, railway, :mountain_railway:",
-   ["order"]=1648,
-   ["char"]={4315},
-   ["text"]="Mountain railway",
-   ["image_path"]="1f69e",
+   ["subText"]=":flag_lu:, flag",
+   ["order"]=3088,
+   ["image_path"]="1f1f1-1f1fa",
+   ["text"]="Flag: Luxembourg",
+   ["char"]={3429},
 },
 -- Table: {1650}
 {
-   ["subText"]="vehicle, :monorail:",
-   ["order"]=1649,
-   ["char"]={4316},
-   ["text"]="Monorail",
-   ["image_path"]="1f69d",
+   ["subText"]=":flag_mo:, flag",
+   ["order"]=3089,
+   ["image_path"]="1f1f2-1f1f4",
+   ["text"]="Flag: Macao SAR China",
+   ["char"]={3430},
 },
 -- Table: {1651}
 {
-   ["subText"]="railway, shinkansen, speed, train, :bullettrain_side:",
-   ["order"]=1650,
-   ["char"]={4317},
-   ["text"]="High-speed train",
-   ["image_path"]="1f684",
+   ["subText"]=":flag_mk:, flag",
+   ["order"]=3090,
+   ["image_path"]="1f1f2-1f1f0",
+   ["text"]="Flag: Macedonia",
+   ["char"]={3431},
 },
 -- Table: {1652}
 {
-   ["subText"]="bullet, railway, shinkansen, speed, train, :bullettrain_front:",
-   ["order"]=1651,
-   ["char"]={4318},
-   ["text"]="High-speed train with bullet nose",
-   ["image_path"]="1f685",
+   ["subText"]=":flag_mg:, flag",
+   ["order"]=3091,
+   ["image_path"]="1f1f2-1f1ec",
+   ["text"]="Flag: Madagascar",
+   ["char"]={3432},
 },
 -- Table: {1653}
 {
-   ["subText"]="railway, :light_rail:",
-   ["order"]=1652,
-   ["char"]={4319},
-   ["text"]="Light rail",
-   ["image_path"]="1f688",
+   ["subText"]=":flag_mw:, flag",
+   ["order"]=3092,
+   ["image_path"]="1f1f2-1f1fc",
+   ["text"]="Flag: Malawi",
+   ["char"]={3433},
 },
 -- Table: {1654}
 {
-   ["subText"]="engine, railway, steam, train, :steam_locomotive:",
-   ["order"]=1653,
-   ["char"]={4320},
-   ["text"]="Locomotive",
-   ["image_path"]="1f682",
+   ["subText"]=":flag_my:, flag",
+   ["order"]=3093,
+   ["image_path"]="1f1f2-1f1fe",
+   ["text"]="Flag: Malaysia",
+   ["char"]={3434},
 },
 -- Table: {1655}
 {
-   ["subText"]="railway, :train2:",
-   ["order"]=1654,
-   ["char"]={4321},
-   ["text"]="Train",
-   ["image_path"]="1f686",
+   ["subText"]=":flag_mv:, flag",
+   ["order"]=3094,
+   ["image_path"]="1f1f2-1f1fb",
+   ["text"]="Flag: Maldives",
+   ["char"]={3435},
 },
 -- Table: {1656}
 {
-   ["subText"]="subway, :metro:",
-   ["order"]=1655,
-   ["char"]={4322},
-   ["text"]="Metro",
-   ["image_path"]="1f687",
+   ["subText"]=":flag_ml:, flag",
+   ["order"]=3095,
+   ["image_path"]="1f1f2-1f1f1",
+   ["text"]="Flag: Mali",
+   ["char"]={3436},
 },
 -- Table: {1657}
 {
-   ["subText"]="trolleybus, :tram:",
-   ["order"]=1656,
-   ["char"]={4323},
-   ["text"]="Tram",
-   ["image_path"]="1f68a",
+   ["subText"]=":flag_mt:, flag",
+   ["order"]=3096,
+   ["image_path"]="1f1f2-1f1f9",
+   ["text"]="Flag: Malta",
+   ["char"]={3437},
 },
 -- Table: {1658}
 {
-   ["subText"]="railway, train, :station:",
-   ["order"]=1657,
-   ["char"]={4324},
-   ["text"]="Station",
-   ["image_path"]="1f689",
+   ["subText"]=":flag_mh:, flag",
+   ["order"]=3097,
+   ["image_path"]="1f1f2-1f1ed",
+   ["text"]="Flag: Marshall Islands",
+   ["char"]={3438},
 },
 -- Table: {1659}
 {
-   ["subText"]="vehicle, :helicopter:",
-   ["order"]=1658,
-   ["char"]={4325},
-   ["text"]="Helicopter",
-   ["image_path"]="1f681",
+   ["subText"]=":flag_mq:, flag",
+   ["order"]=3098,
+   ["image_path"]="1f1f2-1f1f6",
+   ["text"]="Flag: Martinique",
+   ["char"]={3439},
 },
 -- Table: {1660}
 {
-   ["subText"]="aeroplane, airplane, :airplane_small:",
-   ["order"]=1659,
-   ["char"]={4326},
-   ["text"]="Small airplane",
-   ["image_path"]="1f6e9",
+   ["subText"]=":flag_mr:, flag",
+   ["order"]=3099,
+   ["image_path"]="1f1f2-1f1f7",
+   ["text"]="Flag: Mauritania",
+   ["char"]={3440},
 },
 -- Table: {1661}
 {
-   ["subText"]="aeroplane, airplane, :airplane:",
-   ["order"]=1660,
-   ["char"]={4327},
-   ["text"]="Airplane",
-   ["image_path"]="2708",
+   ["subText"]=":flag_mu:, flag",
+   ["order"]=3100,
+   ["image_path"]="1f1f2-1f1fa",
+   ["text"]="Flag: Mauritius",
+   ["char"]={3441},
 },
 -- Table: {1662}
 {
-   ["subText"]="aeroplane, airplane, check-in, departure, departures, :airplane_departure:",
-   ["order"]=1661,
-   ["char"]={4328},
-   ["text"]="Airplane departure",
-   ["image_path"]="1f6eb",
+   ["subText"]=":flag_yt:, flag",
+   ["order"]=3101,
+   ["image_path"]="1f1fe-1f1f9",
+   ["text"]="Flag: Mayotte",
+   ["char"]={3442},
 },
 -- Table: {1663}
 {
-   ["subText"]="aeroplane, airplane, arrivals, arriving, landing, :airplane_arriving:",
-   ["order"]=1662,
-   ["char"]={4329},
-   ["text"]="Airplane arrival",
-   ["image_path"]="1f6ec",
+   ["subText"]=":flag_mx:, flag",
+   ["order"]=3102,
+   ["image_path"]="1f1f2-1f1fd",
+   ["text"]="Flag: Mexico",
+   ["char"]={3443},
 },
 -- Table: {1664}
 {
-   ["subText"]="space, :rocket:",
-   ["order"]=1663,
-   ["char"]={4330},
-   ["text"]="Rocket",
-   ["image_path"]="1f680",
+   ["subText"]=":flag_fm:, flag",
+   ["order"]=3103,
+   ["image_path"]="1f1eb-1f1f2",
+   ["text"]="Flag: Micronesia",
+   ["char"]={3444},
 },
 -- Table: {1665}
 {
-   ["subText"]="space, :satellite_orbital:",
-   ["order"]=1664,
-   ["char"]={4331},
-   ["text"]="Satellite",
-   ["image_path"]="1f6f0",
+   ["subText"]=":flag_md:, flag",
+   ["order"]=3104,
+   ["image_path"]="1f1f2-1f1e9",
+   ["text"]="Flag: Moldova",
+   ["char"]={3445},
 },
 -- Table: {1666}
 {
-   ["subText"]="chair, :seat:",
-   ["order"]=1665,
-   ["char"]={4332},
-   ["text"]="Seat",
-   ["image_path"]="1f4ba",
+   ["subText"]=":flag_mc:, flag",
+   ["order"]=3105,
+   ["image_path"]="1f1f2-1f1e8",
+   ["text"]="Flag: Monaco",
+   ["char"]={3446},
 },
 -- Table: {1667}
 {
-   ["subText"]="boat, canoe, :canoe:",
-   ["order"]=1666,
-   ["char"]={4333},
-   ["text"]="Canoe",
-   ["image_path"]="1f6f6",
+   ["subText"]=":flag_mn:, flag",
+   ["order"]=3106,
+   ["image_path"]="1f1f2-1f1f3",
+   ["text"]="Flag: Mongolia",
+   ["char"]={3447},
 },
 -- Table: {1668}
 {
-   ["subText"]="boat, resort, sea, yacht, :sailboat:",
-   ["order"]=1667,
-   ["char"]={4334},
-   ["text"]="Sailboat",
-   ["image_path"]="26f5",
+   ["subText"]=":flag_me:, flag",
+   ["order"]=3107,
+   ["image_path"]="1f1f2-1f1ea",
+   ["text"]="Flag: Montenegro",
+   ["char"]={3448},
 },
 -- Table: {1669}
 {
-   ["subText"]="boat, motorboat, :motorboat:",
-   ["order"]=1668,
-   ["char"]={4335},
-   ["text"]="Motor boat",
-   ["image_path"]="1f6e5",
+   ["subText"]=":flag_ms:, flag",
+   ["order"]=3108,
+   ["image_path"]="1f1f2-1f1f8",
+   ["text"]="Flag: Montserrat",
+   ["char"]={3449},
 },
 -- Table: {1670}
 {
-   ["subText"]="boat, :speedboat:",
-   ["order"]=1669,
-   ["char"]={4336},
-   ["text"]="Speedboat",
-   ["image_path"]="1f6a4",
+   ["subText"]=":flag_ma:, flag",
+   ["order"]=3109,
+   ["image_path"]="1f1f2-1f1e6",
+   ["text"]="Flag: Morocco",
+   ["char"]={3450},
 },
 -- Table: {1671}
 {
-   ["subText"]="passenger, ship, :cruise_ship:",
-   ["order"]=1670,
-   ["char"]={4337},
-   ["text"]="Passenger ship",
-   ["image_path"]="1f6f3",
+   ["subText"]=":flag_mz:, flag",
+   ["order"]=3110,
+   ["image_path"]="1f1f2-1f1ff",
+   ["text"]="Flag: Mozambique",
+   ["char"]={3451},
 },
 -- Table: {1672}
 {
-   ["subText"]="boat, passenger, :ferry:",
-   ["order"]=1671,
-   ["char"]={4338},
-   ["text"]="Ferry",
-   ["image_path"]="26f4",
+   ["subText"]=":flag_mm:, flag",
+   ["order"]=3111,
+   ["image_path"]="1f1f2-1f1f2",
+   ["text"]="Flag: Myanmar (Burma)",
+   ["char"]={3452},
 },
 -- Table: {1673}
 {
-   ["subText"]="boat, passenger, :ship:",
-   ["order"]=1672,
-   ["char"]={4339},
-   ["text"]="Ship",
-   ["image_path"]="1f6a2",
+   ["subText"]=":flag_na:, flag",
+   ["order"]=3112,
+   ["image_path"]="1f1f3-1f1e6",
+   ["text"]="Flag: Namibia",
+   ["char"]={3453},
 },
 -- Table: {1674}
 {
-   ["subText"]="ship, tool, :anchor:",
-   ["order"]=1673,
-   ["char"]={4340},
-   ["text"]="Anchor",
-   ["image_path"]="2693",
+   ["subText"]=":flag_nr:, flag",
+   ["order"]=3113,
+   ["image_path"]="1f1f3-1f1f7",
+   ["text"]="Flag: Nauru",
+   ["char"]={3454},
 },
 -- Table: {1675}
 {
-   ["subText"]="barrier, :construction:",
-   ["order"]=1674,
-   ["char"]={4341},
-   ["text"]="Construction",
-   ["image_path"]="1f6a7",
+   ["subText"]=":flag_np:, flag",
+   ["order"]=3114,
+   ["image_path"]="1f1f3-1f1f5",
+   ["text"]="Flag: Nepal",
+   ["char"]={3455},
 },
 -- Table: {1676}
 {
-   ["subText"]="fuel, fuelpump, gas, pump, station, :fuelpump:",
-   ["order"]=1675,
-   ["char"]={4342},
-   ["text"]="Fuel pump",
-   ["image_path"]="26fd",
+   ["subText"]=":flag_nl:, flag",
+   ["order"]=3115,
+   ["image_path"]="1f1f3-1f1f1",
+   ["text"]="Flag: Netherlands",
+   ["char"]={3456},
 },
 -- Table: {1677}
 {
-   ["subText"]="bus, busstop, stop, :busstop:",
-   ["order"]=1676,
-   ["char"]={4343},
-   ["text"]="Bus stop",
-   ["image_path"]="1f68f",
+   ["subText"]=":flag_nc:, flag",
+   ["order"]=3116,
+   ["image_path"]="1f1f3-1f1e8",
+   ["text"]="Flag: New Caledonia",
+   ["char"]={3457},
 },
 -- Table: {1678}
 {
-   ["subText"]="light, signal, traffic, :vertical_traffic_light:",
-   ["order"]=1677,
-   ["char"]={4344},
-   ["text"]="Vertical traffic light",
-   ["image_path"]="1f6a6",
+   ["subText"]=":flag_nz:, flag",
+   ["order"]=3117,
+   ["image_path"]="1f1f3-1f1ff",
+   ["text"]="Flag: New Zealand",
+   ["char"]={3458},
 },
 -- Table: {1679}
 {
-   ["subText"]="light, signal, traffic, :traffic_light:",
-   ["order"]=1678,
-   ["char"]={4345},
-   ["text"]="Horizontal traffic light",
-   ["image_path"]="1f6a5",
+   ["subText"]=":flag_ni:, flag",
+   ["order"]=3118,
+   ["image_path"]="1f1f3-1f1ee",
+   ["text"]="Flag: Nicaragua",
+   ["char"]={3459},
 },
 -- Table: {1680}
 {
-   ["subText"]="map, world, :map:",
-   ["order"]=1679,
-   ["char"]={4346},
-   ["text"]="World map",
-   ["image_path"]="1f5fa",
+   ["subText"]=":flag_ne:, flag",
+   ["order"]=3119,
+   ["image_path"]="1f1f3-1f1ea",
+   ["text"]="Flag: Niger",
+   ["char"]={3460},
 },
 -- Table: {1681}
 {
-   ["subText"]="face, moyai, statue, :moyai:",
-   ["order"]=1680,
-   ["char"]={4347},
-   ["text"]="Moai",
-   ["image_path"]="1f5ff",
+   ["subText"]=":flag_ng:, flag",
+   ["order"]=3120,
+   ["image_path"]="1f1f3-1f1ec",
+   ["text"]="Flag: Nigeria",
+   ["char"]={3461},
 },
 -- Table: {1682}
 {
-   ["subText"]="liberty, statue, :statue_of_liberty:",
-   ["order"]=1681,
-   ["char"]={4348},
-   ["text"]="Statue of Liberty",
-   ["image_path"]="1f5fd",
+   ["subText"]=":flag_nu:, flag",
+   ["order"]=3121,
+   ["image_path"]="1f1f3-1f1fa",
+   ["text"]="Flag: Niue",
+   ["char"]={3462},
 },
 -- Table: {1683}
 {
-   ["subText"]="fountain, :fountain:",
-   ["order"]=1682,
-   ["char"]={4349},
-   ["text"]="Fountain",
-   ["image_path"]="26f2",
+   ["subText"]=":flag_nf:, flag",
+   ["order"]=3122,
+   ["image_path"]="1f1f3-1f1eb",
+   ["text"]="Flag: Norfolk Island",
+   ["char"]={3463},
 },
 -- Table: {1684}
 {
-   ["subText"]="Tokyo, tower, :tokyo_tower:",
-   ["order"]=1683,
-   ["char"]={4350},
-   ["text"]="Tokyo tower",
-   ["image_path"]="1f5fc",
+   ["subText"]=":flag_kp:, flag",
+   ["order"]=3123,
+   ["image_path"]="1f1f0-1f1f5",
+   ["text"]="Flag: North Korea",
+   ["char"]={3464},
 },
 -- Table: {1685}
 {
-   ["subText"]="European, :european_castle:",
-   ["order"]=1684,
-   ["char"]={4351},
-   ["text"]="Castle",
-   ["image_path"]="1f3f0",
+   ["subText"]=":flag_mp:, flag",
+   ["order"]=3124,
+   ["image_path"]="1f1f2-1f1f5",
+   ["text"]="Flag: Northern Mariana Islands",
+   ["char"]={3465},
 },
 -- Table: {1686}
 {
-   ["subText"]="Japanese, castle, :japanese_castle:",
-   ["order"]=1685,
-   ["char"]={4352},
-   ["text"]="Japanese castle",
-   ["image_path"]="1f3ef",
+   ["subText"]=":flag_no:, flag",
+   ["order"]=3125,
+   ["image_path"]="1f1f3-1f1f4",
+   ["text"]="Flag: Norway",
+   ["char"]={3466},
 },
 -- Table: {1687}
 {
-   ["subText"]="stadium, :stadium:",
-   ["order"]=1686,
-   ["char"]={4353},
-   ["text"]="Stadium",
-   ["image_path"]="1f3df",
+   ["subText"]=":flag_om:, flag",
+   ["order"]=3126,
+   ["image_path"]="1f1f4-1f1f2",
+   ["text"]="Flag: Oman",
+   ["char"]={3467},
 },
 -- Table: {1688}
 {
-   ["subText"]="amusement park, ferris, wheel, :ferris_wheel:",
-   ["order"]=1687,
-   ["char"]={4354},
-   ["text"]="Ferris wheel",
-   ["image_path"]="1f3a1",
+   ["subText"]=":flag_pk:, flag",
+   ["order"]=3127,
+   ["image_path"]="1f1f5-1f1f0",
+   ["text"]="Flag: Pakistan",
+   ["char"]={3468},
 },
 -- Table: {1689}
 {
-   ["subText"]="amusement park, coaster, roller, :roller_coaster:",
-   ["order"]=1688,
-   ["char"]={4355},
-   ["text"]="Roller coaster",
-   ["image_path"]="1f3a2",
+   ["subText"]=":flag_pw:, flag",
+   ["order"]=3128,
+   ["image_path"]="1f1f5-1f1fc",
+   ["text"]="Flag: Palau",
+   ["char"]={3469},
 },
 -- Table: {1690}
 {
-   ["subText"]="carousel, horse, :carousel_horse:",
-   ["order"]=1689,
-   ["char"]={4356},
-   ["text"]="Carousel horse",
-   ["image_path"]="1f3a0",
+   ["subText"]=":flag_ps:, flag",
+   ["order"]=3129,
+   ["image_path"]="1f1f5-1f1f8",
+   ["text"]="Flag: Palestinian Territories",
+   ["char"]={3470},
 },
 -- Table: {1691}
 {
-   ["subText"]="rain, sun, umbrella, :beach_umbrella:",
-   ["order"]=1690,
-   ["char"]={4357},
-   ["text"]="Umbrella on ground",
-   ["image_path"]="26f1",
+   ["subText"]=":flag_pa:, flag",
+   ["order"]=3130,
+   ["image_path"]="1f1f5-1f1e6",
+   ["text"]="Flag: Panama",
+   ["char"]={3471},
 },
 -- Table: {1692}
 {
-   ["subText"]="beach, umbrella, :beach:",
-   ["order"]=1691,
-   ["char"]={4358},
-   ["text"]="Beach with umbrella",
-   ["image_path"]="1f3d6",
+   ["subText"]=":flag_pg:, flag",
+   ["order"]=3131,
+   ["image_path"]="1f1f5-1f1ec",
+   ["text"]="Flag: Papua New Guinea",
+   ["char"]={3472},
 },
 -- Table: {1693}
 {
-   ["subText"]="desert, island, :island:",
-   ["order"]=1692,
-   ["char"]={4359},
-   ["text"]="Desert island",
-   ["image_path"]="1f3dd",
+   ["subText"]=":flag_py:, flag",
+   ["order"]=3132,
+   ["image_path"]="1f1f5-1f1fe",
+   ["text"]="Flag: Paraguay",
+   ["char"]={3473},
 },
 -- Table: {1694}
 {
-   ["subText"]="mountain, :mountain:",
-   ["order"]=1693,
-   ["char"]={4360},
-   ["text"]="Mountain",
-   ["image_path"]="26f0",
+   ["subText"]=":flag_pe:, flag",
+   ["order"]=3133,
+   ["image_path"]="1f1f5-1f1ea",
+   ["text"]="Flag: Peru",
+   ["char"]={3474},
 },
 -- Table: {1695}
 {
-   ["subText"]="cold, mountain, snow, :mountain_snow:",
-   ["order"]=1694,
-   ["char"]={4361},
-   ["text"]="Snow-capped mountain",
-   ["image_path"]="1f3d4",
+   ["subText"]=":flag_ph:, flag",
+   ["order"]=3134,
+   ["image_path"]="1f1f5-1f1ed",
+   ["text"]="Flag: Philippines",
+   ["char"]={3475},
 },
 -- Table: {1696}
 {
-   ["subText"]="fuji, mountain, :mount_fuji:",
-   ["order"]=1695,
-   ["char"]={4362},
-   ["text"]="Mount fuji",
-   ["image_path"]="1f5fb",
+   ["subText"]=":flag_pn:, flag",
+   ["order"]=3135,
+   ["image_path"]="1f1f5-1f1f3",
+   ["text"]="Flag: Pitcairn Islands",
+   ["char"]={3476},
 },
 -- Table: {1697}
 {
-   ["subText"]="eruption, mountain, :volcano:",
-   ["order"]=1696,
-   ["char"]={4363},
-   ["text"]="Volcano",
-   ["image_path"]="1f30b",
+   ["subText"]=":flag_pl:, flag",
+   ["order"]=3136,
+   ["image_path"]="1f1f5-1f1f1",
+   ["text"]="Flag: Poland",
+   ["char"]={3477},
 },
 -- Table: {1698}
 {
-   ["subText"]="desert, :desert:",
-   ["order"]=1697,
-   ["char"]={4364},
-   ["text"]="Desert",
-   ["image_path"]="1f3dc",
+   ["subText"]=":flag_pt:, flag",
+   ["order"]=3137,
+   ["image_path"]="1f1f5-1f1f9",
+   ["text"]="Flag: Portugal",
+   ["char"]={3478},
 },
 -- Table: {1699}
 {
-   ["subText"]="camping, :camping:",
-   ["order"]=1698,
-   ["char"]={4365},
-   ["text"]="Camping",
-   ["image_path"]="1f3d5",
+   ["subText"]=":flag_pr:, flag",
+   ["order"]=3138,
+   ["image_path"]="1f1f5-1f1f7",
+   ["text"]="Flag: Puerto Rico",
+   ["char"]={3479},
 },
 -- Table: {1700}
 {
-   ["subText"]="camping, :tent:",
-   ["order"]=1699,
-   ["char"]={4366},
-   ["text"]="Tent",
-   ["image_path"]="26fa",
+   ["subText"]=":flag_qa:, flag",
+   ["order"]=3139,
+   ["image_path"]="1f1f6-1f1e6",
+   ["text"]="Flag: Qatar",
+   ["char"]={3480},
 },
 -- Table: {1701}
 {
-   ["subText"]="railway, train, :railway_track:",
-   ["order"]=1700,
-   ["char"]={4367},
-   ["text"]="Railway track",
-   ["image_path"]="1f6e4",
+   ["subText"]=":flag_re:, flag",
+   ["order"]=3140,
+   ["image_path"]="1f1f7-1f1ea",
+   ["text"]="Flag: Réunion",
+   ["char"]={3481},
 },
 -- Table: {1702}
 {
-   ["subText"]="highway, road, :motorway:",
-   ["order"]=1701,
-   ["char"]={4368},
-   ["text"]="Motorway",
-   ["image_path"]="1f6e3",
+   ["subText"]=":flag_ro:, flag",
+   ["order"]=3141,
+   ["image_path"]="1f1f7-1f1f4",
+   ["text"]="Flag: Romania",
+   ["char"]={3482},
 },
 -- Table: {1703}
 {
-   ["subText"]="construction, :construction_site:",
-   ["order"]=1702,
-   ["char"]={4369},
-   ["text"]="Building construction",
-   ["image_path"]="1f3d7",
+   ["subText"]=":flag_ru:, flag",
+   ["order"]=3142,
+   ["image_path"]="1f1f7-1f1fa",
+   ["text"]="Flag: Russia",
+   ["char"]={3483},
 },
 -- Table: {1704}
 {
-   ["subText"]="building, :factory:",
-   ["order"]=1703,
-   ["char"]={4370},
-   ["text"]="Factory",
-   ["image_path"]="1f3ed",
+   ["subText"]=":flag_rw:, flag",
+   ["order"]=3143,
+   ["image_path"]="1f1f7-1f1fc",
+   ["text"]="Flag: Rwanda",
+   ["char"]={3484},
 },
 -- Table: {1705}
 {
-   ["subText"]="home, house, :house:",
-   ["order"]=1704,
-   ["char"]={4371},
-   ["text"]="House",
-   ["image_path"]="1f3e0",
+   ["subText"]=":flag_ws:, flag",
+   ["order"]=3144,
+   ["image_path"]="1f1fc-1f1f8",
+   ["text"]="Flag: Samoa",
+   ["char"]={3485},
 },
 -- Table: {1706}
 {
-   ["subText"]="garden, home, house, :house_with_garden:",
-   ["order"]=1705,
-   ["char"]={4372},
-   ["text"]="House with garden",
-   ["image_path"]="1f3e1",
+   ["subText"]=":flag_sm:, flag",
+   ["order"]=3145,
+   ["image_path"]="1f1f8-1f1f2",
+   ["text"]="Flag: San Marino",
+   ["char"]={3486},
 },
 -- Table: {1707}
 {
-   ["subText"]="houses, :homes:",
-   ["order"]=1706,
-   ["char"]={4373},
-   ["text"]="Houses",
-   ["image_path"]="1f3d8",
+   ["subText"]=":flag_st:, flag",
+   ["order"]=3146,
+   ["image_path"]="1f1f8-1f1f9",
+   ["text"]="Flag: São Tomé &amp; Príncipe",
+   ["char"]={3487},
 },
 -- Table: {1708}
 {
-   ["subText"]="derelict, house, :house_abandoned:",
-   ["order"]=1707,
-   ["char"]={4374},
-   ["text"]="Derelict house",
-   ["image_path"]="1f3da",
+   ["subText"]=":flag_sa:, flag",
+   ["order"]=3147,
+   ["image_path"]="1f1f8-1f1e6",
+   ["text"]="Flag: Saudi Arabia",
+   ["char"]={3488},
 },
 -- Table: {1709}
 {
-   ["subText"]="building, :office:",
-   ["order"]=1708,
-   ["char"]={4375},
-   ["text"]="Office building",
-   ["image_path"]="1f3e2",
+   ["subText"]=":flag_sn:, flag",
+   ["order"]=3148,
+   ["image_path"]="1f1f8-1f1f3",
+   ["text"]="Flag: Senegal",
+   ["char"]={3489},
 },
 -- Table: {1710}
 {
-   ["subText"]="department, store, :department_store:",
-   ["order"]=1709,
-   ["char"]={4376},
-   ["text"]="Department store",
-   ["image_path"]="1f3ec",
+   ["subText"]=":flag_rs:, flag",
+   ["order"]=3149,
+   ["image_path"]="1f1f7-1f1f8",
+   ["text"]="Flag: Serbia",
+   ["char"]={3490},
 },
 -- Table: {1711}
 {
-   ["subText"]="Japanese, post, :post_office:",
-   ["order"]=1710,
-   ["char"]={4377},
-   ["text"]="Japanese post office",
-   ["image_path"]="1f3e3",
+   ["subText"]=":flag_sc:, flag",
+   ["order"]=3150,
+   ["image_path"]="1f1f8-1f1e8",
+   ["text"]="Flag: Seychelles",
+   ["char"]={3491},
 },
 -- Table: {1712}
 {
-   ["subText"]="European, post, :european_post_office:",
-   ["order"]=1711,
-   ["char"]={4378},
-   ["text"]="Post office",
-   ["image_path"]="1f3e4",
+   ["subText"]=":flag_sl:, flag",
+   ["order"]=3151,
+   ["image_path"]="1f1f8-1f1f1",
+   ["text"]="Flag: Sierra Leone",
+   ["char"]={3492},
 },
 -- Table: {1713}
 {
-   ["subText"]="doctor, medicine, :hospital:",
-   ["order"]=1712,
-   ["char"]={4379},
-   ["text"]="Hospital",
-   ["image_path"]="1f3e5",
+   ["subText"]=":flag_sg:, flag",
+   ["order"]=3152,
+   ["image_path"]="1f1f8-1f1ec",
+   ["text"]="Flag: Singapore",
+   ["char"]={3493},
 },
 -- Table: {1714}
 {
-   ["subText"]="building, :bank:",
-   ["order"]=1713,
-   ["char"]={4380},
-   ["text"]="Bank",
-   ["image_path"]="1f3e6",
+   ["subText"]=":flag_sx:, flag",
+   ["order"]=3153,
+   ["image_path"]="1f1f8-1f1fd",
+   ["text"]="Flag: Sint Maarten",
+   ["char"]={3494},
 },
 -- Table: {1715}
 {
-   ["subText"]="building, :hotel:",
-   ["order"]=1714,
-   ["char"]={4381},
-   ["text"]="Hotel",
-   ["image_path"]="1f3e8",
+   ["subText"]=":flag_sk:, flag",
+   ["order"]=3154,
+   ["image_path"]="1f1f8-1f1f0",
+   ["text"]="Flag: Slovakia",
+   ["char"]={3495},
 },
 -- Table: {1716}
 {
-   ["subText"]="convenience, store, :convenience_store:",
-   ["order"]=1715,
-   ["char"]={4382},
-   ["text"]="Convenience store",
-   ["image_path"]="1f3ea",
+   ["subText"]=":flag_si:, flag",
+   ["order"]=3155,
+   ["image_path"]="1f1f8-1f1ee",
+   ["text"]="Flag: Slovenia",
+   ["char"]={3496},
 },
 -- Table: {1717}
 {
-   ["subText"]="building, :school:",
-   ["order"]=1716,
-   ["char"]={4383},
-   ["text"]="School",
-   ["image_path"]="1f3eb",
+   ["subText"]=":flag_gs:, flag",
+   ["order"]=3156,
+   ["image_path"]="1f1ec-1f1f8",
+   ["text"]="Flag: South Georgia &amp; South Sandwich Islands",
+   ["char"]={3497},
 },
 -- Table: {1718}
 {
-   ["subText"]="hotel, love, :love_hotel:",
-   ["order"]=1717,
-   ["char"]={4384},
-   ["text"]="Love hotel",
-   ["image_path"]="1f3e9",
+   ["subText"]=":flag_sb:, flag",
+   ["order"]=3157,
+   ["image_path"]="1f1f8-1f1e7",
+   ["text"]="Flag: Solomon Islands",
+   ["char"]={3498},
 },
 -- Table: {1719}
 {
-   ["subText"]="chapel, romance, :wedding:",
-   ["order"]=1718,
-   ["char"]={4385},
-   ["text"]="Wedding",
-   ["image_path"]="1f492",
+   ["subText"]=":flag_so:, flag",
+   ["order"]=3158,
+   ["image_path"]="1f1f8-1f1f4",
+   ["text"]="Flag: Somalia",
+   ["char"]={3499},
 },
 -- Table: {1720}
 {
-   ["subText"]="classical, :classical_building:",
-   ["order"]=1719,
-   ["char"]={4386},
-   ["text"]="Classical building",
-   ["image_path"]="1f3db",
+   ["subText"]=":flag_za:, flag",
+   ["order"]=3159,
+   ["image_path"]="1f1ff-1f1e6",
+   ["text"]="Flag: South Africa",
+   ["char"]={3500},
 },
 -- Table: {1721}
 {
-   ["subText"]="Christian, cross, religion, :church:",
-   ["order"]=1720,
-   ["char"]={4387},
-   ["text"]="Church",
-   ["image_path"]="26ea",
+   ["subText"]=":flag_kr:, flag",
+   ["order"]=3160,
+   ["image_path"]="1f1f0-1f1f7",
+   ["text"]="Flag: South Korea",
+   ["char"]={3501},
 },
 -- Table: {1722}
 {
-   ["subText"]="Muslim, islam, religion, :mosque:",
-   ["order"]=1721,
-   ["char"]={4388},
-   ["text"]="Mosque",
-   ["image_path"]="1f54c",
+   ["subText"]=":flag_ss:, flag",
+   ["order"]=3161,
+   ["image_path"]="1f1f8-1f1f8",
+   ["text"]="Flag: South Sudan",
+   ["char"]={3502},
 },
 -- Table: {1723}
 {
-   ["subText"]="Jew, Jewish, religion, temple, :synagogue:",
-   ["order"]=1722,
-   ["char"]={4389},
-   ["text"]="Synagogue",
-   ["image_path"]="1f54d",
+   ["subText"]=":flag_es:, flag",
+   ["order"]=3162,
+   ["image_path"]="1f1ea-1f1f8",
+   ["text"]="Flag: Spain",
+   ["char"]={3503},
 },
 -- Table: {1724}
 {
-   ["subText"]="Muslim, islam, religion, :kaaba:",
-   ["order"]=1723,
-   ["char"]={4390},
-   ["text"]="Kaaba",
-   ["image_path"]="1f54b",
+   ["subText"]=":flag_lk:, flag",
+   ["order"]=3163,
+   ["image_path"]="1f1f1-1f1f0",
+   ["text"]="Flag: Sri Lanka",
+   ["char"]={3504},
 },
 -- Table: {1725}
 {
-   ["subText"]="religion, shinto, shrine, :shinto_shrine:",
-   ["order"]=1724,
-   ["char"]={4391},
-   ["text"]="Shinto shrine",
-   ["image_path"]="26e9",
+   ["subText"]=":flag_bl:, flag",
+   ["order"]=3164,
+   ["image_path"]="1f1e7-1f1f1",
+   ["text"]="Flag: St. Barthélemy",
+   ["char"]={3505},
 },
 -- Table: {1726}
 {
-   ["subText"]="Japan, map, :japan:",
-   ["order"]=1725,
-   ["char"]={4392},
-   ["text"]="Map of Japan",
-   ["image_path"]="1f5fe",
+   ["subText"]=":flag_sh:, flag",
+   ["order"]=3165,
+   ["image_path"]="1f1f8-1f1ed",
+   ["text"]="Flag: St. Helena",
+   ["char"]={3506},
 },
 -- Table: {1727}
 {
-   ["subText"]="celebration, ceremony, moon, :rice_scene:",
-   ["order"]=1726,
-   ["char"]={4393},
-   ["text"]="Moon viewing ceremony",
-   ["image_path"]="1f391",
+   ["subText"]=":flag_kn:, flag",
+   ["order"]=3166,
+   ["image_path"]="1f1f0-1f1f3",
+   ["text"]="Flag: St. Kitts &amp; Nevis",
+   ["char"]={3507},
 },
 -- Table: {1728}
 {
-   ["subText"]="park, :park:",
-   ["order"]=1727,
-   ["char"]={4394},
-   ["text"]="National park",
-   ["image_path"]="1f3de",
+   ["subText"]=":flag_lc:, flag",
+   ["order"]=3167,
+   ["image_path"]="1f1f1-1f1e8",
+   ["text"]="Flag: St. Lucia",
+   ["char"]={3508},
 },
 -- Table: {1729}
 {
-   ["subText"]="morning, sun, :sunrise:",
-   ["order"]=1728,
-   ["char"]={4395},
-   ["text"]="Sunrise",
-   ["image_path"]="1f305",
+   ["subText"]=":flag_pm:, flag",
+   ["order"]=3168,
+   ["image_path"]="1f1f5-1f1f2",
+   ["text"]="Flag: St. Pierre &amp; Miquelon",
+   ["char"]={3509},
 },
 -- Table: {1730}
 {
-   ["subText"]="morning, mountain, sun, sunrise, :sunrise_over_mountains:",
-   ["order"]=1729,
-   ["char"]={4396},
-   ["text"]="Sunrise over mountains",
-   ["image_path"]="1f304",
+   ["subText"]=":flag_vc:, flag",
+   ["order"]=3169,
+   ["image_path"]="1f1fb-1f1e8",
+   ["text"]="Flag: St. Vincent &amp; Grenadines",
+   ["char"]={3510},
 },
 -- Table: {1731}
 {
-   ["subText"]="falling, shooting, star, :stars:",
-   ["order"]=1730,
-   ["char"]={4397},
-   ["text"]="Shooting star",
-   ["image_path"]="1f320",
+   ["subText"]=":flag_sd:, flag",
+   ["order"]=3170,
+   ["image_path"]="1f1f8-1f1e9",
+   ["text"]="Flag: Sudan",
+   ["char"]={3511},
 },
 -- Table: {1732}
 {
-   ["subText"]="celebration, fireworks, sparkle, :sparkler:",
-   ["order"]=1731,
-   ["char"]={4398},
-   ["text"]="Sparkler",
-   ["image_path"]="1f387",
+   ["subText"]=":flag_sr:, flag",
+   ["order"]=3171,
+   ["image_path"]="1f1f8-1f1f7",
+   ["text"]="Flag: Suriname",
+   ["char"]={3512},
 },
 -- Table: {1733}
 {
-   ["subText"]="celebration, :fireworks:",
-   ["order"]=1732,
-   ["char"]={4399},
-   ["text"]="Fireworks",
-   ["image_path"]="1f386",
+   ["subText"]=":flag_sz:, flag",
+   ["order"]=3172,
+   ["image_path"]="1f1f8-1f1ff",
+   ["text"]="Flag: Eswatini",
+   ["char"]={3513},
 },
 -- Table: {1734}
 {
-   ["subText"]="dusk, sun, :city_sunset:",
-   ["order"]=1733,
-   ["char"]={4400},
-   ["text"]="Sunset",
-   ["image_path"]="1f307",
+   ["subText"]=":flag_se:, flag",
+   ["order"]=3173,
+   ["image_path"]="1f1f8-1f1ea",
+   ["text"]="Flag: Sweden",
+   ["char"]={3514},
 },
 -- Table: {1735}
 {
-   ["subText"]="city, dusk, evening, landscape, sun, sunset, :city_dusk:",
-   ["order"]=1734,
-   ["char"]={4401},
-   ["text"]="Cityscape at dusk",
-   ["image_path"]="1f306",
+   ["subText"]=":flag_ch:, flag",
+   ["order"]=3174,
+   ["image_path"]="1f1e8-1f1ed",
+   ["text"]="Flag: Switzerland",
+   ["char"]={3515},
 },
 -- Table: {1736}
 {
-   ["subText"]="city, :cityscape:",
-   ["order"]=1735,
-   ["char"]={4402},
-   ["text"]="Cityscape",
-   ["image_path"]="1f3d9",
+   ["subText"]=":flag_sy:, flag",
+   ["order"]=3175,
+   ["image_path"]="1f1f8-1f1fe",
+   ["text"]="Flag: Syria",
+   ["char"]={3516},
 },
 -- Table: {1737}
 {
-   ["subText"]="night, star, :night_with_stars:",
-   ["order"]=1736,
-   ["char"]={4403},
-   ["text"]="Night with stars",
-   ["image_path"]="1f303",
+   ["subText"]=":flag_tw:, flag",
+   ["order"]=3176,
+   ["image_path"]="1f1f9-1f1fc",
+   ["text"]="Flag: Taiwan",
+   ["char"]={3517},
 },
 -- Table: {1738}
 {
-   ["subText"]="space, :milky_way:",
-   ["order"]=1737,
-   ["char"]={4404},
-   ["text"]="Milky way",
-   ["image_path"]="1f30c",
+   ["subText"]=":flag_tj:, flag",
+   ["order"]=3177,
+   ["image_path"]="1f1f9-1f1ef",
+   ["text"]="Flag: Tajikistan",
+   ["char"]={3518},
 },
 -- Table: {1739}
 {
-   ["subText"]="bridge, night, :bridge_at_night:",
-   ["order"]=1738,
-   ["char"]={4405},
-   ["text"]="Bridge at night",
-   ["image_path"]="1f309",
+   ["subText"]=":flag_tz:, flag",
+   ["order"]=3178,
+   ["image_path"]="1f1f9-1f1ff",
+   ["text"]="Flag: Tanzania",
+   ["char"]={3519},
 },
 -- Table: {1740}
 {
-   ["subText"]="fog, :foggy:",
-   ["order"]=1739,
-   ["char"]={4406},
-   ["text"]="Foggy",
-   ["image_path"]="1f301",
+   ["subText"]=":flag_th:, flag",
+   ["order"]=3179,
+   ["image_path"]="1f1f9-1f1ed",
+   ["text"]="Flag: Thailand",
+   ["char"]={3520},
 },
 -- Table: {1741}
 {
-   ["subText"]="UFO, :flying_saucer:",
-   ["order"]=1740,
-   ["char"]={4407},
-   ["text"]="Flying saucer",
-   ["image_path"]="1f6f8",
+   ["subText"]=":flag_tl:, flag",
+   ["order"]=3180,
+   ["image_path"]="1f1f9-1f1f1",
+   ["text"]="Flag: Timor-Leste",
+   ["char"]={3521},
 },
 -- Table: {1742}
 {
-   ["subText"]="clock, :watch:",
-   ["order"]=1741,
-   ["char"]={4408},
-   ["text"]="Watch",
-   ["image_path"]="231a",
+   ["subText"]=":flag_tg:, flag",
+   ["order"]=3181,
+   ["image_path"]="1f1f9-1f1ec",
+   ["text"]="Flag: Togo",
+   ["char"]={3522},
 },
 -- Table: {1743}
 {
-   ["subText"]="cell, mobile, phone, telephone, :iphone:",
-   ["order"]=1742,
-   ["char"]={4409},
-   ["text"]="Mobile phone",
-   ["image_path"]="1f4f1",
+   ["subText"]=":flag_tk:, flag",
+   ["order"]=3182,
+   ["image_path"]="1f1f9-1f1f0",
+   ["text"]="Flag: Tokelau",
+   ["char"]={3523},
 },
 -- Table: {1744}
 {
-   ["subText"]="arrow, call, cell, mobile, phone, receive, telephone, :calling:",
-   ["order"]=1743,
-   ["char"]={4410},
-   ["text"]="Mobile phone with arrow",
-   ["image_path"]="1f4f2",
+   ["subText"]=":flag_to:, flag",
+   ["order"]=3183,
+   ["image_path"]="1f1f9-1f1f4",
+   ["text"]="Flag: Tonga",
+   ["char"]={3524},
 },
 -- Table: {1745}
 {
-   ["subText"]="computer, pc, personal, :computer:",
-   ["order"]=1744,
-   ["char"]={4411},
-   ["text"]="Laptop computer",
-   ["image_path"]="1f4bb",
+   ["subText"]=":flag_tt:, flag",
+   ["order"]=3184,
+   ["image_path"]="1f1f9-1f1f9",
+   ["text"]="Flag: Trinidad &amp; Tobago",
+   ["char"]={3525},
 },
 -- Table: {1746}
 {
-   ["subText"]="computer, :keyboard:",
-   ["order"]=1745,
-   ["char"]={4412},
-   ["text"]="Keyboard",
-   ["image_path"]="2328",
+   ["subText"]=":flag_tn:, flag",
+   ["order"]=3185,
+   ["image_path"]="1f1f9-1f1f3",
+   ["text"]="Flag: Tunisia",
+   ["char"]={3526},
 },
 -- Table: {1747}
 {
-   ["subText"]="computer, desktop, :desktop:",
-   ["order"]=1746,
-   ["char"]={4413},
-   ["text"]="Desktop computer",
-   ["image_path"]="1f5a5",
+   ["subText"]=":flag_tr:, flag",
+   ["order"]=3186,
+   ["image_path"]="1f1f9-1f1f7",
+   ["text"]="Flag: Turkey",
+   ["char"]={3527},
 },
 -- Table: {1748}
 {
-   ["subText"]="computer, :printer:",
-   ["order"]=1747,
-   ["char"]={4414},
-   ["text"]="Printer",
-   ["image_path"]="1f5a8",
+   ["subText"]=":flag_tm:, flag",
+   ["order"]=3187,
+   ["image_path"]="1f1f9-1f1f2",
+   ["text"]="Flag: Turkmenistan",
+   ["char"]={3528},
 },
 -- Table: {1749}
 {
-   ["subText"]="computer, :mouse_three_button:",
-   ["order"]=1748,
-   ["char"]={4415},
-   ["text"]="Computer mouse",
-   ["image_path"]="1f5b1",
+   ["subText"]=":flag_tc:, flag",
+   ["order"]=3188,
+   ["image_path"]="1f1f9-1f1e8",
+   ["text"]="Flag: Turks &amp; Caicos Islands",
+   ["char"]={3529},
 },
 -- Table: {1750}
 {
-   ["subText"]="computer, :trackball:",
-   ["order"]=1749,
-   ["char"]={4416},
-   ["text"]="Trackball",
-   ["image_path"]="1f5b2",
+   ["subText"]=":flag_vi:, flag",
+   ["order"]=3189,
+   ["image_path"]="1f1fb-1f1ee",
+   ["text"]="Flag: U.S. Virgin Islands",
+   ["char"]={3530},
 },
 -- Table: {1751}
 {
-   ["subText"]="game, video game, :joystick:",
-   ["order"]=1750,
-   ["char"]={4417},
-   ["text"]="Joystick",
-   ["image_path"]="1f579",
+   ["subText"]=":flag_tv:, flag",
+   ["order"]=3190,
+   ["image_path"]="1f1f9-1f1fb",
+   ["text"]="Flag: Tuvalu",
+   ["char"]={3531},
 },
 -- Table: {1752}
 {
-   ["subText"]="compress, tool, vice, :compression:",
-   ["order"]=1751,
-   ["char"]={4418},
-   ["text"]="Clamp",
-   ["image_path"]="1f5dc",
+   ["subText"]=":flag_ug:, flag",
+   ["order"]=3191,
+   ["image_path"]="1f1fa-1f1ec",
+   ["text"]="Flag: Uganda",
+   ["char"]={3532},
 },
 -- Table: {1753}
 {
-   ["subText"]="computer, disk, minidisk, optical, :minidisc:",
-   ["order"]=1752,
-   ["char"]={4419},
-   ["text"]="Computer disk",
-   ["image_path"]="1f4bd",
+   ["subText"]=":flag_ua:, flag",
+   ["order"]=3192,
+   ["image_path"]="1f1fa-1f1e6",
+   ["text"]="Flag: Ukraine",
+   ["char"]={3533},
 },
 -- Table: {1754}
 {
-   ["subText"]="computer, disk, floppy, :floppy_disk:",
-   ["order"]=1753,
-   ["char"]={4420},
-   ["text"]="Floppy disk",
-   ["image_path"]="1f4be",
+   ["subText"]=":flag_ae:, flag",
+   ["order"]=3193,
+   ["image_path"]="1f1e6-1f1ea",
+   ["text"]="Flag: United Arab Emirates",
+   ["char"]={3534},
 },
 -- Table: {1755}
 {
-   ["subText"]="cd, computer, disk, optical, :cd:",
-   ["order"]=1754,
-   ["char"]={4421},
-   ["text"]="Optical disk",
-   ["image_path"]="1f4bf",
+   ["subText"]=":flag_gb:, flag",
+   ["order"]=3194,
+   ["image_path"]="1f1ec-1f1e7",
+   ["text"]="Flag: United Kingdom",
+   ["char"]={3535},
 },
 -- Table: {1756}
 {
-   ["subText"]="blu-ray, computer, disk, dvd, optical, :dvd:",
-   ["order"]=1755,
-   ["char"]={4422},
-   ["text"]="Dvd",
-   ["image_path"]="1f4c0",
+   ["subText"]=":england:, flag",
+   ["order"]=3195,
+   ["image_path"]="1f3f4-e0067-e0062-e0065-e006e-e0067-e007f",
+   ["text"]="Flag: England",
+   ["char"]={3536},
 },
 -- Table: {1757}
 {
-   ["subText"]="tape, vhs, video, :vhs:",
-   ["order"]=1756,
-   ["char"]={4423},
-   ["text"]="Videocassette",
-   ["image_path"]="1f4fc",
+   ["subText"]=":scotland:, flag",
+   ["order"]=3196,
+   ["image_path"]="1f3f4-e0067-e0062-e0073-e0063-e0074-e007f",
+   ["text"]="Flag: Scotland",
+   ["char"]={3537},
 },
 -- Table: {1758}
 {
-   ["subText"]="video, :camera:",
-   ["order"]=1757,
-   ["char"]={4424},
-   ["text"]="Camera",
-   ["image_path"]="1f4f7",
+   ["subText"]=":wales:, flag",
+   ["order"]=3197,
+   ["image_path"]="1f3f4-e0067-e0062-e0077-e006c-e0073-e007f",
+   ["text"]="Flag: Wales",
+   ["char"]={3538},
 },
 -- Table: {1759}
 {
-   ["subText"]="camera, flash, video, :camera_with_flash:",
-   ["order"]=1758,
-   ["char"]={4425},
-   ["text"]="Camera with flash",
-   ["image_path"]="1f4f8",
+   ["subText"]=":flag_us:, flag",
+   ["order"]=3198,
+   ["image_path"]="1f1fa-1f1f8",
+   ["text"]="Flag: United States",
+   ["char"]={3539},
 },
 -- Table: {1760}
 {
-   ["subText"]="camera, video, :video_camera:",
-   ["order"]=1759,
-   ["char"]={4426},
-   ["text"]="Video camera",
-   ["image_path"]="1f4f9",
+   ["subText"]=":flag_uy:, flag",
+   ["order"]=3199,
+   ["image_path"]="1f1fa-1f1fe",
+   ["text"]="Flag: Uruguay",
+   ["char"]={3540},
 },
 -- Table: {1761}
 {
-   ["subText"]="camera, cinema, movie, :movie_camera:",
-   ["order"]=1760,
-   ["char"]={4427},
-   ["text"]="Movie camera",
-   ["image_path"]="1f3a5",
+   ["subText"]=":flag_uz:, flag",
+   ["order"]=3200,
+   ["image_path"]="1f1fa-1f1ff",
+   ["text"]="Flag: Uzbekistan",
+   ["char"]={3541},
 },
 -- Table: {1762}
 {
-   ["subText"]="cinema, film, movie, projector, video, :projector:",
-   ["order"]=1761,
-   ["char"]={4428},
-   ["text"]="Film projector",
-   ["image_path"]="1f4fd",
+   ["subText"]=":flag_vu:, flag",
+   ["order"]=3201,
+   ["image_path"]="1f1fb-1f1fa",
+   ["text"]="Flag: Vanuatu",
+   ["char"]={3542},
 },
 -- Table: {1763}
 {
-   ["subText"]="cinema, film, frames, movie, :film_frames:",
-   ["order"]=1762,
-   ["char"]={4429},
-   ["text"]="Film frames",
-   ["image_path"]="1f39e",
+   ["subText"]=":flag_va:, flag",
+   ["order"]=3202,
+   ["image_path"]="1f1fb-1f1e6",
+   ["text"]="Flag: Vatican City",
+   ["char"]={3543},
 },
 -- Table: {1764}
 {
-   ["subText"]="phone, receiver, telephone, :telephone_receiver:",
-   ["order"]=1763,
-   ["char"]={4430},
-   ["text"]="Telephone receiver",
-   ["image_path"]="1f4de",
+   ["subText"]=":flag_ve:, flag",
+   ["order"]=3203,
+   ["image_path"]="1f1fb-1f1ea",
+   ["text"]="Flag: Venezuela",
+   ["char"]={3544},
 },
 -- Table: {1765}
 {
-   ["subText"]="phone, :telephone:",
-   ["order"]=1764,
-   ["char"]={4431},
-   ["text"]="Telephone",
-   ["image_path"]="260e",
+   ["subText"]=":flag_vn:, flag",
+   ["order"]=3204,
+   ["image_path"]="1f1fb-1f1f3",
+   ["text"]="Flag: Vietnam",
+   ["char"]={3545},
 },
 -- Table: {1766}
 {
-   ["subText"]="pager, :pager:",
-   ["order"]=1765,
-   ["char"]={4432},
-   ["text"]="Pager",
-   ["image_path"]="1f4df",
+   ["subText"]=":flag_wf:, flag",
+   ["order"]=3205,
+   ["image_path"]="1f1fc-1f1eb",
+   ["text"]="Flag: Wallis &amp; Futuna",
+   ["char"]={3546},
 },
 -- Table: {1767}
 {
-   ["subText"]="fax, :fax:",
-   ["order"]=1766,
-   ["char"]={4433},
-   ["text"]="Fax machine",
-   ["image_path"]="1f4e0",
+   ["subText"]=":flag_eh:, flag",
+   ["order"]=3206,
+   ["image_path"]="1f1ea-1f1ed",
+   ["text"]="Flag: Western Sahara",
+   ["char"]={3547},
 },
 -- Table: {1768}
 {
-   ["subText"]="tv, video, :tv:",
-   ["order"]=1767,
-   ["char"]={4434},
-   ["text"]="Television",
-   ["image_path"]="1f4fa",
+   ["subText"]=":flag_ye:, flag",
+   ["order"]=3207,
+   ["image_path"]="1f1fe-1f1ea",
+   ["text"]="Flag: Yemen",
+   ["char"]={3548},
 },
 -- Table: {1769}
 {
-   ["subText"]="video, :radio:",
-   ["order"]=1768,
-   ["char"]={4435},
-   ["text"]="Radio",
-   ["image_path"]="1f4fb",
+   ["subText"]=":flag_zm:, flag",
+   ["order"]=3208,
+   ["image_path"]="1f1ff-1f1f2",
+   ["text"]="Flag: Zambia",
+   ["char"]={3549},
 },
 -- Table: {1770}
 {
-   ["subText"]="mic, microphone, music, studio, :microphone2:",
-   ["order"]=1769,
-   ["char"]={4436},
-   ["text"]="Studio microphone",
-   ["image_path"]="1f399",
+   ["subText"]=":flag_zw:, flag",
+   ["order"]=3209,
+   ["image_path"]="1f1ff-1f1fc",
+   ["text"]="Flag: Zimbabwe",
+   ["char"]={3550},
 },
 -- Table: {1771}
 {
-   ["subText"]="level, music, slider, :level_slider:",
-   ["order"]=1770,
-   ["char"]={4437},
-   ["text"]="Level slider",
-   ["image_path"]="1f39a",
+   ["subText"]=":flag_ac:, flag",
+   ["order"]=3210,
+   ["image_path"]="1f1e6-1f1e8",
+   ["text"]="Flag: Ascension Island",
+   ["char"]={3551},
 },
 -- Table: {1772}
 {
-   ["subText"]="control, knobs, music, :control_knobs:",
-   ["order"]=1771,
-   ["char"]={4438},
-   ["text"]="Control knobs",
-   ["image_path"]="1f39b",
+   ["subText"]=":flag_bv:, flag",
+   ["order"]=3211,
+   ["image_path"]="1f1e7-1f1fb",
+   ["text"]="Flag: Bouvet Island",
+   ["char"]={3552},
 },
 -- Table: {1773}
 {
-   ["subText"]="clock, :stopwatch:",
-   ["order"]=1772,
-   ["char"]={4439},
-   ["text"]="Stopwatch",
-   ["image_path"]="23f1",
+   ["subText"]=":flag_cp:, flag",
+   ["order"]=3212,
+   ["image_path"]="1f1e8-1f1f5",
+   ["text"]="Flag: Clipperton Island",
+   ["char"]={3553},
 },
 -- Table: {1774}
 {
-   ["subText"]="clock, timer, :timer:",
-   ["order"]=1773,
-   ["char"]={4440},
-   ["text"]="Timer clock",
-   ["image_path"]="23f2",
+   ["subText"]=":flag_ea:, flag",
+   ["order"]=3213,
+   ["image_path"]="1f1ea-1f1e6",
+   ["text"]="Flag: Ceuta &amp; Melilla",
+   ["char"]={3554},
 },
 -- Table: {1775}
 {
-   ["subText"]="alarm, clock, :alarm_clock:",
-   ["order"]=1774,
-   ["char"]={4441},
-   ["text"]="Alarm clock",
-   ["image_path"]="23f0",
+   ["subText"]=":flag_dg:, flag",
+   ["order"]=3214,
+   ["image_path"]="1f1e9-1f1ec",
+   ["text"]="Flag: Diego Garcia",
+   ["char"]={3555},
 },
 -- Table: {1776}
 {
-   ["subText"]="clock, :clock:",
-   ["order"]=1775,
-   ["char"]={4442},
-   ["text"]="Mantelpiece clock",
-   ["image_path"]="1f570",
+   ["subText"]=":flag_hm:, flag",
+   ["order"]=3215,
+   ["image_path"]="1f1ed-1f1f2",
+   ["text"]="Flag: Heard &amp; McDonald Islands",
+   ["char"]={3556},
 },
 -- Table: {1777}
 {
-   ["subText"]="sand, timer, :hourglass:",
-   ["order"]=1776,
-   ["char"]={4443},
-   ["text"]="Hourglass",
-   ["image_path"]="231b",
+   ["subText"]=":flag_mf:, flag",
+   ["order"]=3216,
+   ["image_path"]="1f1f2-1f1eb",
+   ["text"]="Flag: St. Martin",
+   ["char"]={3557},
 },
 -- Table: {1778}
 {
-   ["subText"]="hourglass, sand, timer, :hourglass_flowing_sand:",
-   ["order"]=1777,
-   ["char"]={4444},
-   ["text"]="Hourglass with flowing sand",
-   ["image_path"]="23f3",
+   ["subText"]=":flag_sj:, flag",
+   ["order"]=3217,
+   ["image_path"]="1f1f8-1f1ef",
+   ["text"]="Flag: Svalbard &amp; Jan Mayen",
+   ["char"]={3558},
 },
 -- Table: {1779}
 {
-   ["subText"]="antenna, dish, satellite, :satellite:",
-   ["order"]=1778,
-   ["char"]={4445},
-   ["text"]="Satellite antenna",
-   ["image_path"]="1f4e1",
+   ["subText"]=":flag_ta:, flag",
+   ["order"]=3218,
+   ["image_path"]="1f1f9-1f1e6",
+   ["text"]="Flag: Tristan da Cunha",
+   ["char"]={3559},
 },
 -- Table: {1780}
 {
-   ["subText"]="battery, :battery:",
-   ["order"]=1779,
-   ["char"]={4446},
-   ["text"]="Battery",
-   ["image_path"]="1f50b",
+   ["subText"]=":flag_um:, flag",
+   ["order"]=3219,
+   ["image_path"]="1f1fa-1f1f2",
+   ["text"]="Flag: U.S. Outlying Islands",
+   ["char"]={3560},
 },
 -- Table: {1781}
 {
-   ["subText"]="electric, electricity, plug, :electric_plug:",
-   ["order"]=1780,
-   ["char"]={4447},
-   ["text"]="Electric plug",
-   ["image_path"]="1f50c",
+   ["subText"]=":united_nations:, flag",
+   ["order"]=3220,
+   ["image_path"]="1f1fa-1f1f3",
+   ["text"]="Flag: United Nations",
+   ["char"]={3561},
 },
 -- Table: {1782}
 {
-   ["subText"]="bulb, comic, electric, idea, light, :bulb:",
-   ["order"]=1781,
-   ["char"]={4448},
-   ["text"]="Light bulb",
-   ["image_path"]="1f4a1",
+   10084,
 },
 -- Table: {1783}
 {
-   ["subText"]="electric, light, tool, torch, :flashlight:",
-   ["order"]=1782,
-   ["char"]={4449},
-   ["text"]="Flashlight",
-   ["image_path"]="1f526",
+   129505,
 },
 -- Table: {1784}
 {
-   ["subText"]="light, :candle:",
-   ["order"]=1783,
-   ["char"]={4450},
-   ["text"]="Candle",
-   ["image_path"]="1f56f",
+   128155,
 },
 -- Table: {1785}
 {
-   ["subText"]="wastebasket, :wastebasket:",
-   ["order"]=1784,
-   ["char"]={4451},
-   ["text"]="Wastebasket",
-   ["image_path"]="1f5d1",
+   128154,
 },
 -- Table: {1786}
 {
-   ["subText"]="drum, oil, :oil:",
-   ["order"]=1785,
-   ["char"]={4452},
-   ["text"]="Oil drum",
-   ["image_path"]="1f6e2",
+   128153,
 },
 -- Table: {1787}
 {
-   ["subText"]="bank, banknote, bill, dollar, fly, money, note, wings, :money_with_wings:",
-   ["order"]=1786,
-   ["char"]={4453},
-   ["text"]="Money with wings",
-   ["image_path"]="1f4b8",
+   128156,
 },
 -- Table: {1788}
 {
-   ["subText"]="bank, banknote, bill, currency, dollar, money, note, :dollar:",
-   ["order"]=1787,
-   ["char"]={4454},
-   ["text"]="Dollar banknote",
-   ["image_path"]="1f4b5",
+   128420,
 },
 -- Table: {1789}
 {
-   ["subText"]="bank, banknote, bill, currency, money, note, yen, :yen:",
-   ["order"]=1788,
-   ["char"]={4455},
-   ["text"]="Yen banknote",
-   ["image_path"]="1f4b4",
+   129294,
 },
 -- Table: {1790}
 {
-   ["subText"]="bank, banknote, bill, currency, euro, money, note, :euro:",
-   ["order"]=1789,
-   ["char"]={4456},
-   ["text"]="Euro banknote",
-   ["image_path"]="1f4b6",
+   129293,
 },
 -- Table: {1791}
 {
-   ["subText"]="bank, banknote, bill, currency, money, note, pound, :pound:",
-   ["order"]=1790,
-   ["char"]={4457},
-   ["text"]="Pound banknote",
-   ["image_path"]="1f4b7",
+   128148,
 },
 -- Table: {1792}
 {
-   ["subText"]="bag, dollar, money, moneybag, :moneybag:",
-   ["order"]=1791,
-   ["char"]={4458},
-   ["text"]="Money bag",
-   ["image_path"]="1f4b0",
+   10083,
 },
 -- Table: {1793}
 {
-   ["subText"]="bank, card, credit, money, :credit_card:",
-   ["order"]=1792,
-   ["char"]={4459},
-   ["text"]="Credit card",
-   ["image_path"]="1f4b3",
+   128149,
 },
 -- Table: {1794}
 {
-   ["subText"]="diamond, gem, jewel, :gem:",
-   ["order"]=1793,
-   ["char"]={4460},
-   ["text"]="Gem stone",
-   ["image_path"]="1f48e",
+   128158,
 },
 -- Table: {1795}
 {
-   ["subText"]="Libra, balance, justice, scales, tool, weight, zodiac, :scales:",
-   ["order"]=1794,
-   ["char"]={4461},
-   ["text"]="Balance scale",
-   ["image_path"]="2696",
+   128147,
 },
 -- Table: {1796}
 {
-   ["subText"]="spanner, tool, wrench, :wrench:",
-   ["order"]=1795,
-   ["char"]={4462},
-   ["text"]="Wrench",
-   ["image_path"]="1f527",
+   128151,
 },
 -- Table: {1797}
 {
-   ["subText"]="tool, :hammer:",
-   ["order"]=1796,
-   ["char"]={4463},
-   ["text"]="Hammer",
-   ["image_path"]="1f528",
+   128150,
 },
 -- Table: {1798}
 {
-   ["subText"]="hammer, pick, tool, :hammer_pick:",
-   ["order"]=1797,
-   ["char"]={4464},
-   ["text"]="Hammer and pick",
-   ["image_path"]="2692",
+   128152,
 },
 -- Table: {1799}
 {
-   ["subText"]="hammer, spanner, tool, wrench, :tools:",
-   ["order"]=1798,
-   ["char"]={4465},
-   ["text"]="Hammer and wrench",
-   ["image_path"]="1f6e0",
+   128157,
 },
 -- Table: {1800}
 {
-   ["subText"]="mining, tool, :pick:",
-   ["order"]=1799,
-   ["char"]={4466},
-   ["text"]="Pick",
-   ["image_path"]="26cf",
+   128159,
 },
 -- Table: {1801}
 {
-   ["subText"]="bolt, nut, tool, :nut_and_bolt:",
-   ["order"]=1800,
-   ["char"]={4467},
-   ["text"]="Nut and bolt",
-   ["image_path"]="1f529",
+   9774,
 },
 -- Table: {1802}
 {
-   ["subText"]="tool, :gear:",
-   ["order"]=1801,
-   ["char"]={4468},
-   ["text"]="Gear",
-   ["image_path"]="2699",
+   10013,
 },
 -- Table: {1803}
 {
-   ["subText"]="chain, :chains:",
-   ["order"]=1802,
-   ["char"]={4469},
-   ["text"]="Chains",
-   ["image_path"]="26d3",
+   9770,
 },
 -- Table: {1804}
 {
-   ["subText"]="gun, handgun, revolver, tool, weapon, :gun:",
-   ["order"]=1803,
-   ["char"]={4470},
-   ["text"]="Pistol",
-   ["image_path"]="1f52b",
+   128329,
 },
 -- Table: {1805}
 {
-   ["subText"]="comic, :bomb:",
-   ["order"]=1804,
-   ["char"]={4471},
-   ["text"]="Bomb",
-   ["image_path"]="1f4a3",
+   9784,
 },
 -- Table: {1806}
 {
-   ["subText"]="cooking, hocho, knife, tool, weapon, :knife:",
-   ["order"]=1805,
-   ["char"]={4472},
-   ["text"]="Kitchen knife",
-   ["image_path"]="1f52a",
+   10017,
 },
 -- Table: {1807}
 {
-   ["subText"]="knife, weapon, :dagger:",
-   ["order"]=1806,
-   ["char"]={4473},
-   ["text"]="Dagger",
-   ["image_path"]="1f5e1",
+   128303,
 },
 -- Table: {1808}
 {
-   ["subText"]="crossed, swords, weapon, :crossed_swords:",
-   ["order"]=1807,
-   ["char"]={4474},
-   ["text"]="Crossed swords",
-   ["image_path"]="2694",
+   128334,
 },
 -- Table: {1809}
 {
-   ["subText"]="weapon, :shield:",
-   ["order"]=1808,
-   ["char"]={4475},
-   ["text"]="Shield",
-   ["image_path"]="1f6e1",
+   9775,
 },
 -- Table: {1810}
 {
-   ["subText"]="smoking, :smoking:",
-   ["order"]=1809,
-   ["char"]={4476},
-   ["text"]="Cigarette",
-   ["image_path"]="1f6ac",
+   9766,
 },
 -- Table: {1811}
 {
-   ["subText"]="death, :coffin:",
-   ["order"]=1810,
-   ["char"]={4477},
-   ["text"]="Coffin",
-   ["image_path"]="26b0",
+   128720,
 },
 -- Table: {1812}
 {
-   ["subText"]="ashes, death, funeral, urn, :urn:",
-   ["order"]=1811,
-   ["char"]={4478},
-   ["text"]="Funeral urn",
-   ["image_path"]="26b1",
+   9934,
 },
 -- Table: {1813}
 {
-   ["subText"]="Aquarius, cooking, drink, jug, tool, weapon, zodiac, :amphora:",
-   ["order"]=1812,
-   ["char"]={4479},
-   ["text"]="Amphora",
-   ["image_path"]="1f3fa",
+   9800,
 },
 -- Table: {1814}
 {
-   ["subText"]="ball, crystal, fairy tale, fantasy, fortune, tool, :crystal_ball:",
-   ["order"]=1813,
-   ["char"]={4480},
-   ["text"]="Crystal ball",
-   ["image_path"]="1f52e",
+   9801,
 },
 -- Table: {1815}
 {
-   ["subText"]="beads, clothing, necklace, prayer, religion, :prayer_beads:",
-   ["order"]=1814,
-   ["char"]={4481},
-   ["text"]="Prayer beads",
-   ["image_path"]="1f4ff",
+   9802,
 },
 -- Table: {1816}
 {
-   ["subText"]="barber, haircut, pole, :barber:",
-   ["order"]=1815,
-   ["char"]={4482},
-   ["text"]="Barber pole",
-   ["image_path"]="1f488",
+   9803,
 },
 -- Table: {1817}
 {
-   ["subText"]="chemistry, tool, :alembic:",
-   ["order"]=1816,
-   ["char"]={4483},
-   ["text"]="Alembic",
-   ["image_path"]="2697",
+   9804,
 },
 -- Table: {1818}
 {
-   ["subText"]="science, tool, :telescope:",
-   ["order"]=1817,
-   ["char"]={4484},
-   ["text"]="Telescope",
-   ["image_path"]="1f52d",
+   9805,
 },
 -- Table: {1819}
 {
-   ["subText"]="science, tool, :microscope:",
-   ["order"]=1818,
-   ["char"]={4485},
-   ["text"]="Microscope",
-   ["image_path"]="1f52c",
+   9806,
 },
 -- Table: {1820}
 {
-   ["subText"]="hole, :hole:",
-   ["order"]=1819,
-   ["char"]={4486},
-   ["text"]="Hole",
-   ["image_path"]="1f573",
+   9807,
 },
 -- Table: {1821}
 {
-   ["subText"]="doctor, medicine, sick, :pill:",
-   ["order"]=1820,
-   ["char"]={4487},
-   ["text"]="Pill",
-   ["image_path"]="1f48a",
+   9808,
 },
 -- Table: {1822}
 {
-   ["subText"]="doctor, medicine, needle, shot, sick, tool, :syringe:",
-   ["order"]=1821,
-   ["char"]={4488},
-   ["text"]="Syringe",
-   ["image_path"]="1f489",
+   9809,
 },
 -- Table: {1823}
 {
-   ["subText"]="weather, :thermometer:",
-   ["order"]=1822,
-   ["char"]={4489},
-   ["text"]="Thermometer",
-   ["image_path"]="1f321",
+   9810,
 },
 -- Table: {1824}
 {
-   ["subText"]="toilet, :toilet:",
-   ["order"]=1823,
-   ["char"]={4490},
-   ["text"]="Toilet",
-   ["image_path"]="1f6bd",
+   9811,
 },
 -- Table: {1825}
 {
-   ["subText"]="drinking, potable, water, :potable_water:",
-   ["order"]=1824,
-   ["char"]={4491},
-   ["text"]="Potable water",
-   ["image_path"]="1f6b0",
+   127380,
 },
 -- Table: {1826}
 {
-   ["subText"]="water, :shower:",
-   ["order"]=1825,
-   ["char"]={4492},
-   ["text"]="Shower",
-   ["image_path"]="1f6bf",
+   9883,
 },
 -- Table: {1827}
 {
-   ["subText"]="bath, :bathtub:",
-   ["order"]=1826,
-   ["char"]={4493},
-   ["text"]="Bathtub",
-   ["image_path"]="1f6c1",
+   127569,
 },
 -- Table: {1828}
 {
-   ["subText"]="bath, bathtub, :bath:",
-   ["order"]=1827,
-   ["char"]={4494},
-   ["text"]="Person taking bath",
-   ["image_path"]="1f6c0",
+   9762,
 },
 -- Table: {1829}
 {
-   ["subText"]="bath, bathtub, light skin tone, :bath_tone1:",
-   ["order"]=1828,
-   ["char"]={4495},
-   ["text"]="Person taking bath: light skin tone",
-   ["image_path"]="1f6c0-1f3fb",
+   9763,
 },
 -- Table: {1830}
 {
-   ["subText"]="bath, bathtub, medium-light skin tone, :bath_tone2:",
-   ["order"]=1829,
-   ["char"]={4496},
-   ["text"]="Person taking bath: medium-light skin tone",
-   ["image_path"]="1f6c0-1f3fc",
+   128244,
 },
 -- Table: {1831}
 {
-   ["subText"]="bath, bathtub, medium skin tone, :bath_tone3:",
-   ["order"]=1830,
-   ["char"]={4497},
-   ["text"]="Person taking bath: medium skin tone",
-   ["image_path"]="1f6c0-1f3fd",
+   128243,
 },
 -- Table: {1832}
 {
-   ["subText"]="bath, bathtub, medium-dark skin tone, :bath_tone4:",
-   ["order"]=1831,
-   ["char"]={4498},
-   ["text"]="Person taking bath: medium-dark skin tone",
-   ["image_path"]="1f6c0-1f3fe",
+   127542,
 },
 -- Table: {1833}
 {
-   ["subText"]="bath, bathtub, dark skin tone, :bath_tone5:",
-   ["order"]=1832,
-   ["char"]={4499},
-   ["text"]="Person taking bath: dark skin tone",
-   ["image_path"]="1f6c0-1f3ff",
+   127514,
 },
 -- Table: {1834}
 {
-   ["subText"]="bell, bellhop, hotel, :bellhop:",
-   ["order"]=1833,
-   ["char"]={4500},
-   ["text"]="Bellhop bell",
-   ["image_path"]="1f6ce",
+   127544,
 },
 -- Table: {1835}
 {
-   ["subText"]="lock, password, :key:",
-   ["order"]=1834,
-   ["char"]={4501},
-   ["text"]="Key",
-   ["image_path"]="1f511",
+   127546,
 },
 -- Table: {1836}
 {
-   ["subText"]="clue, key, lock, old, :key2:",
-   ["order"]=1835,
-   ["char"]={4502},
-   ["text"]="Old key",
-   ["image_path"]="1f5dd",
+   127543,
 },
 -- Table: {1837}
 {
-   ["subText"]="door, :door:",
-   ["order"]=1836,
-   ["char"]={4503},
-   ["text"]="Door",
-   ["image_path"]="1f6aa",
+   10036,
 },
 -- Table: {1838}
 {
-   ["subText"]="couch, hotel, lamp, :couch:",
-   ["order"]=1837,
-   ["char"]={4504},
-   ["text"]="Couch and lamp",
-   ["image_path"]="1f6cb",
+   127386,
 },
 -- Table: {1839}
 {
-   ["subText"]="hotel, sleep, :bed:",
-   ["order"]=1838,
-   ["char"]={4505},
-   ["text"]="Bed",
-   ["image_path"]="1f6cf",
+   128174,
 },
 -- Table: {1840}
 {
-   ["subText"]="hotel, sleep, :sleeping_accommodation:",
-   ["order"]=1839,
-   ["char"]={4506},
-   ["text"]="Person in bed",
-   ["image_path"]="1f6cc",
+   127568,
 },
 -- Table: {1841}
 {
-   ["subText"]="hotel, light skin tone, sleep, :person_in_bed_tone1:",
-   ["order"]=1840,
-   ["char"]={4507},
-   ["text"]="Person in bed: light skin tone",
-   ["image_path"]="1f6cc-1f3fb",
+   12953,
 },
 -- Table: {1842}
 {
-   ["subText"]="hotel, medium-light skin tone, sleep, :person_in_bed_tone2:",
-   ["order"]=1841,
-   ["char"]={4508},
-   ["text"]="Person in bed: medium-light skin tone",
-   ["image_path"]="1f6cc-1f3fc",
+   12951,
 },
 -- Table: {1843}
 {
-   ["subText"]="hotel, medium skin tone, sleep, :person_in_bed_tone3:",
-   ["order"]=1842,
-   ["char"]={4509},
-   ["text"]="Person in bed: medium skin tone",
-   ["image_path"]="1f6cc-1f3fd",
+   127540,
 },
 -- Table: {1844}
 {
-   ["subText"]="hotel, medium-dark skin tone, sleep, :person_in_bed_tone4:",
-   ["order"]=1843,
-   ["char"]={4510},
-   ["text"]="Person in bed: medium-dark skin tone",
-   ["image_path"]="1f6cc-1f3fe",
+   127541,
 },
 -- Table: {1845}
 {
-   ["subText"]="dark skin tone, hotel, sleep, :person_in_bed_tone5:",
-   ["order"]=1844,
-   ["char"]={4511},
-   ["text"]="Person in bed: dark skin tone",
-   ["image_path"]="1f6cc-1f3ff",
+   127545,
 },
 -- Table: {1846}
 {
-   ["subText"]="art, frame, museum, painting, picture, :frame_photo:",
-   ["order"]=1845,
-   ["char"]={4512},
-   ["text"]="Framed picture",
-   ["image_path"]="1f5bc",
+   127538,
 },
 -- Table: {1847}
 {
-   ["subText"]="bag, hotel, shopping, :shopping_bags:",
-   ["order"]=1846,
-   ["char"]={4513},
-   ["text"]="Shopping bags",
-   ["image_path"]="1f6cd",
+   127344,
 },
 -- Table: {1848}
 {
-   ["subText"]="cart, shopping, trolley, :shopping_cart:",
-   ["order"]=1847,
-   ["char"]={4514},
-   ["text"]="Shopping cart",
-   ["image_path"]="1f6d2",
+   127345,
 },
 -- Table: {1849}
 {
-   ["subText"]="box, celebration, gift, present, wrapped, :gift:",
-   ["order"]=1848,
-   ["char"]={4515},
-   ["text"]="Wrapped gift",
-   ["image_path"]="1f381",
+   127374,
 },
 -- Table: {1850}
 {
-   ["subText"]="celebration, :balloon:",
-   ["order"]=1849,
-   ["char"]={4516},
-   ["text"]="Balloon",
-   ["image_path"]="1f388",
+   127377,
 },
 -- Table: {1851}
 {
-   ["subText"]="carp, celebration, streamer, :flags:",
-   ["order"]=1850,
-   ["char"]={4517},
-   ["text"]="Carp streamer",
-   ["image_path"]="1f38f",
+   127358,
 },
 -- Table: {1852}
 {
-   ["subText"]="celebration, :ribbon:",
-   ["order"]=1851,
-   ["char"]={4518},
-   ["text"]="Ribbon",
-   ["image_path"]="1f380",
+   127384,
 },
 -- Table: {1853}
 {
-   ["subText"]="ball, celebration, confetti, :confetti_ball:",
-   ["order"]=1852,
-   ["char"]={4519},
-   ["text"]="Confetti ball",
-   ["image_path"]="1f38a",
+   10060,
 },
 -- Table: {1854}
 {
-   ["subText"]="celebration, party, popper, tada, :tada:",
-   ["order"]=1853,
-   ["char"]={4520},
-   ["text"]="Party popper",
-   ["image_path"]="1f389",
+   11093,
 },
 -- Table: {1855}
 {
-   ["subText"]="Japanese, celebration, doll, festival, :dolls:",
-   ["order"]=1854,
-   ["char"]={4521},
-   ["text"]="Japanese dolls",
-   ["image_path"]="1f38e",
+   128721,
 },
 -- Table: {1856}
 {
-   ["subText"]="bar, lantern, light, red, :izakaya_lantern:",
-   ["order"]=1855,
-   ["char"]={4522},
-   ["text"]="Red paper lantern",
-   ["image_path"]="1f3ee",
+   9940,
 },
 -- Table: {1857}
 {
-   ["subText"]="bell, celebration, chime, wind, :wind_chime:",
-   ["order"]=1856,
-   ["char"]={4523},
-   ["text"]="Wind chime",
-   ["image_path"]="1f390",
+   128219,
 },
 -- Table: {1858}
 {
-   ["subText"]="email, letter, :envelope:",
-   ["order"]=1857,
-   ["char"]={4524},
-   ["text"]="Envelope",
-   ["image_path"]="2709",
+   128683,
 },
 -- Table: {1859}
 {
-   ["subText"]="arrow, down, e-mail, email, envelope, letter, mail, outgoing, sent, :envelope_with_arrow:",
-   ["order"]=1858,
-   ["char"]={4525},
-   ["text"]="Envelope with arrow",
-   ["image_path"]="1f4e9",
+   128175,
 },
 -- Table: {1860}
 {
-   ["subText"]="e-mail, email, envelope, incoming, letter, mail, receive, :incoming_envelope:",
-   ["order"]=1859,
-   ["char"]={4526},
-   ["text"]="Incoming envelope",
-   ["image_path"]="1f4e8",
+   128162,
 },
 -- Table: {1861}
 {
-   ["subText"]="email, letter, mail, :e-mail:",
-   ["order"]=1860,
-   ["char"]={4527},
-   ["text"]="E-mail",
-   ["image_path"]="1f4e7",
+   9832,
 },
 -- Table: {1862}
 {
-   ["subText"]="heart, letter, love, mail, :love_letter:",
-   ["order"]=1861,
-   ["char"]={4528},
-   ["text"]="Love letter",
-   ["image_path"]="1f48c",
+   128695,
 },
 -- Table: {1863}
 {
-   ["subText"]="box, inbox, letter, mail, receive, tray, :inbox_tray:",
-   ["order"]=1862,
-   ["char"]={4529},
-   ["text"]="Inbox tray",
-   ["image_path"]="1f4e5",
+   128687,
 },
 -- Table: {1864}
 {
-   ["subText"]="box, letter, mail, outbox, sent, tray, :outbox_tray:",
-   ["order"]=1863,
-   ["char"]={4530},
-   ["text"]="Outbox tray",
-   ["image_path"]="1f4e4",
+   128691,
 },
 -- Table: {1865}
 {
-   ["subText"]="box, parcel, :package:",
-   ["order"]=1864,
-   ["char"]={4531},
-   ["text"]="Package",
-   ["image_path"]="1f4e6",
+   128689,
 },
 -- Table: {1866}
 {
-   ["subText"]="label, :label:",
-   ["order"]=1865,
-   ["char"]={4532},
-   ["text"]="Label",
-   ["image_path"]="1f3f7",
+   128286,
 },
 -- Table: {1867}
 {
-   ["subText"]="closed, lowered, mail, mailbox, postbox, :mailbox_closed:",
-   ["order"]=1866,
-   ["char"]={4533},
-   ["text"]="Closed mailbox with lowered flag",
-   ["image_path"]="1f4ea",
+   128245,
 },
 -- Table: {1868}
 {
-   ["subText"]="closed, mail, mailbox, postbox, :mailbox:",
-   ["order"]=1867,
-   ["char"]={4534},
-   ["text"]="Closed mailbox with raised flag",
-   ["image_path"]="1f4eb",
+   128685,
 },
 -- Table: {1869}
 {
-   ["subText"]="mail, mailbox, open, postbox, :mailbox_with_mail:",
-   ["order"]=1868,
-   ["char"]={4535},
-   ["text"]="Open mailbox with raised flag",
-   ["image_path"]="1f4ec",
+   10071,
 },
 -- Table: {1870}
 {
-   ["subText"]="lowered, mail, mailbox, open, postbox, :mailbox_with_no_mail:",
-   ["order"]=1869,
-   ["char"]={4536},
-   ["text"]="Open mailbox with lowered flag",
-   ["image_path"]="1f4ed",
+   10069,
 },
 -- Table: {1871}
 {
-   ["subText"]="mail, mailbox, :postbox:",
-   ["order"]=1870,
-   ["char"]={4537},
-   ["text"]="Postbox",
-   ["image_path"]="1f4ee",
+   10067,
 },
 -- Table: {1872}
 {
-   ["subText"]="horn, post, postal, :postal_horn:",
-   ["order"]=1871,
-   ["char"]={4538},
-   ["text"]="Postal horn",
-   ["image_path"]="1f4ef",
+   10068,
 },
 -- Table: {1873}
 {
-   ["subText"]="paper, :scroll:",
-   ["order"]=1872,
-   ["char"]={4539},
-   ["text"]="Scroll",
-   ["image_path"]="1f4dc",
+   8252,
 },
 -- Table: {1874}
 {
-   ["subText"]="curl, document, page, :page_with_curl:",
-   ["order"]=1873,
-   ["char"]={4540},
-   ["text"]="Page with curl",
-   ["image_path"]="1f4c3",
+   8265,
 },
 -- Table: {1875}
 {
-   ["subText"]="document, page, :page_facing_up:",
-   ["order"]=1874,
-   ["char"]={4541},
-   ["text"]="Page facing up",
-   ["image_path"]="1f4c4",
+   128261,
 },
 -- Table: {1876}
 {
-   ["subText"]="bookmark, mark, marker, tabs, :bookmark_tabs:",
-   ["order"]=1875,
-   ["char"]={4542},
-   ["text"]="Bookmark tabs",
-   ["image_path"]="1f4d1",
+   128262,
 },
 -- Table: {1877}
 {
-   ["subText"]="bar, chart, graph, :bar_chart:",
-   ["order"]=1876,
-   ["char"]={4543},
-   ["text"]="Bar chart",
-   ["image_path"]="1f4ca",
+   12349,
 },
 -- Table: {1878}
 {
-   ["subText"]="chart, graph, growth, trend, upward, :chart_with_upwards_trend:",
-   ["order"]=1877,
-   ["char"]={4544},
-   ["text"]="Chart increasing",
-   ["image_path"]="1f4c8",
+   9888,
 },
 -- Table: {1879}
 {
-   ["subText"]="chart, down, graph, trend, :chart_with_downwards_trend:",
-   ["order"]=1878,
-   ["char"]={4545},
-   ["text"]="Chart decreasing",
-   ["image_path"]="1f4c9",
+   128696,
 },
 -- Table: {1880}
 {
-   ["subText"]="note, pad, spiral, :notepad_spiral:",
-   ["order"]=1879,
-   ["char"]={4546},
-   ["text"]="Spiral notepad",
-   ["image_path"]="1f5d2",
+   128305,
 },
 -- Table: {1881}
 {
-   ["subText"]="calendar, pad, spiral, :calendar_spiral:",
-   ["order"]=1880,
-   ["char"]={4547},
-   ["text"]="Spiral calendar",
-   ["image_path"]="1f5d3",
+   9884,
 },
 -- Table: {1882}
 {
-   ["subText"]="calendar, :calendar:",
-   ["order"]=1881,
-   ["char"]={4548},
-   ["text"]="Tear-off calendar",
-   ["image_path"]="1f4c6",
+   128304,
 },
 -- Table: {1883}
 {
-   ["subText"]="date, :date:",
-   ["order"]=1882,
-   ["char"]={4549},
-   ["text"]="Calendar",
-   ["image_path"]="1f4c5",
+   9851,
 },
 -- Table: {1884}
 {
-   ["subText"]="card, index, rolodex, :card_index:",
-   ["order"]=1883,
-   ["char"]={4550},
-   ["text"]="Card index",
-   ["image_path"]="1f4c7",
+   9989,
 },
 -- Table: {1885}
 {
-   ["subText"]="box, card, file, :card_box:",
-   ["order"]=1884,
-   ["char"]={4551},
-   ["text"]="Card file box",
-   ["image_path"]="1f5c3",
+   127535,
 },
 -- Table: {1886}
 {
-   ["subText"]="ballot, box, :ballot_box:",
-   ["order"]=1885,
-   ["char"]={4552},
-   ["text"]="Ballot box with ballot",
-   ["image_path"]="1f5f3",
+   128185,
 },
 -- Table: {1887}
 {
-   ["subText"]="cabinet, file, filing, :file_cabinet:",
-   ["order"]=1886,
-   ["char"]={4553},
-   ["text"]="File cabinet",
-   ["image_path"]="1f5c4",
+   10055,
 },
 -- Table: {1888}
 {
-   ["subText"]="clipboard, :clipboard:",
-   ["order"]=1887,
-   ["char"]={4554},
-   ["text"]="Clipboard",
-   ["image_path"]="1f4cb",
+   10035,
 },
 -- Table: {1889}
 {
-   ["subText"]="file, folder, :file_folder:",
-   ["order"]=1888,
-   ["char"]={4555},
-   ["text"]="File folder",
-   ["image_path"]="1f4c1",
+   10062,
 },
 -- Table: {1890}
 {
-   ["subText"]="file, folder, open, :open_file_folder:",
-   ["order"]=1889,
-   ["char"]={4556},
-   ["text"]="Open file folder",
-   ["image_path"]="1f4c2",
+   127760,
 },
 -- Table: {1891}
 {
-   ["subText"]="card, dividers, index, :dividers:",
-   ["order"]=1890,
-   ["char"]={4557},
-   ["text"]="Card index dividers",
-   ["image_path"]="1f5c2",
+   128160,
 },
 -- Table: {1892}
 {
-   ["subText"]="news, newspaper, paper, rolled, :newspaper2:",
-   ["order"]=1891,
-   ["char"]={4558},
-   ["text"]="Rolled-up newspaper",
-   ["image_path"]="1f5de",
+   9410,
 },
 -- Table: {1893}
 {
-   ["subText"]="news, paper, :newspaper:",
-   ["order"]=1892,
-   ["char"]={4559},
-   ["text"]="Newspaper",
-   ["image_path"]="1f4f0",
+   127744,
 },
 -- Table: {1894}
 {
-   ["subText"]="notebook, :notebook:",
-   ["order"]=1893,
-   ["char"]={4560},
-   ["text"]="Notebook",
-   ["image_path"]="1f4d3",
+   128164,
 },
 -- Table: {1895}
 {
-   ["subText"]="book, cover, decorated, notebook, :notebook_with_decorative_cover:",
-   ["order"]=1894,
-   ["char"]={4561},
-   ["text"]="Notebook with decorative cover",
-   ["image_path"]="1f4d4",
+   127975,
 },
 -- Table: {1896}
 {
-   ["subText"]="notebook, :ledger:",
-   ["order"]=1895,
-   ["char"]={4562},
-   ["text"]="Ledger",
-   ["image_path"]="1f4d2",
+   128702,
 },
 -- Table: {1897}
 {
-   ["subText"]="book, closed, :closed_book:",
-   ["order"]=1896,
-   ["char"]={4563},
-   ["text"]="Closed book",
-   ["image_path"]="1f4d5",
+   9855,
 },
 -- Table: {1898}
 {
-   ["subText"]="book, green, :green_book:",
-   ["order"]=1897,
-   ["char"]={4564},
-   ["text"]="Green book",
-   ["image_path"]="1f4d7",
+   127359,
 },
 -- Table: {1899}
 {
-   ["subText"]="blue, book, :blue_book:",
-   ["order"]=1898,
-   ["char"]={4565},
-   ["text"]="Blue book",
-   ["image_path"]="1f4d8",
+   127539,
 },
 -- Table: {1900}
 {
-   ["subText"]="book, orange, :orange_book:",
-   ["order"]=1899,
-   ["char"]={4566},
-   ["text"]="Orange book",
-   ["image_path"]="1f4d9",
+   127490,
 },
 -- Table: {1901}
 {
-   ["subText"]="book, :books:",
-   ["order"]=1900,
-   ["char"]={4567},
-   ["text"]="Books",
-   ["image_path"]="1f4da",
+   128706,
 },
 -- Table: {1902}
 {
-   ["subText"]="book, open, :book:",
-   ["order"]=1901,
-   ["char"]={4568},
-   ["text"]="Open book",
-   ["image_path"]="1f4d6",
+   128707,
 },
 -- Table: {1903}
 {
-   ["subText"]="mark, :bookmark:",
-   ["order"]=1902,
-   ["char"]={4569},
-   ["text"]="Bookmark",
-   ["image_path"]="1f516",
+   128708,
 },
 -- Table: {1904}
 {
-   ["subText"]="link, :link:",
-   ["order"]=1903,
-   ["char"]={4570},
-   ["text"]="Link",
-   ["image_path"]="1f517",
+   128709,
 },
 -- Table: {1905}
 {
-   ["subText"]="paperclip, :paperclip:",
-   ["order"]=1904,
-   ["char"]={4571},
-   ["text"]="Paperclip",
-   ["image_path"]="1f4ce",
+   128697,
 },
 -- Table: {1906}
 {
-   ["subText"]="link, paperclip, :paperclips:",
-   ["order"]=1905,
-   ["char"]={4572},
-   ["text"]="Linked paperclips",
-   ["image_path"]="1f587",
+   128698,
 },
 -- Table: {1907}
 {
-   ["subText"]="ruler, set, triangle, :triangular_ruler:",
-   ["order"]=1906,
-   ["char"]={4573},
-   ["text"]="Triangular ruler",
-   ["image_path"]="1f4d0",
+   128700,
 },
 -- Table: {1908}
 {
-   ["subText"]="ruler, straight edge, :straight_ruler:",
-   ["order"]=1907,
-   ["char"]={4574},
-   ["text"]="Straight ruler",
-   ["image_path"]="1f4cf",
+   128699,
 },
 -- Table: {1909}
 {
-   ["subText"]="pin, :pushpin:",
-   ["order"]=1908,
-   ["char"]={4575},
-   ["text"]="Pushpin",
-   ["image_path"]="1f4cc",
+   128686,
 },
 -- Table: {1910}
 {
-   ["subText"]="pin, pushpin, :round_pushpin:",
-   ["order"]=1909,
-   ["char"]={4576},
-   ["text"]="Round pushpin",
-   ["image_path"]="1f4cd",
+   127910,
 },
 -- Table: {1911}
 {
-   ["subText"]="cutting, tool, :scissors:",
-   ["order"]=1910,
-   ["char"]={4577},
-   ["text"]="Scissors",
-   ["image_path"]="2702",
+   128246,
 },
 -- Table: {1912}
 {
-   ["subText"]="ballpoint, :pen_ballpoint:",
-   ["order"]=1911,
-   ["char"]={4578},
-   ["text"]="Pen",
-   ["image_path"]="1f58a",
+   127489,
 },
 -- Table: {1913}
 {
-   ["subText"]="fountain, pen, :pen_fountain:",
-   ["order"]=1912,
-   ["char"]={4579},
-   ["text"]="Fountain pen",
-   ["image_path"]="1f58b",
+   128291,
 },
 -- Table: {1914}
 {
-   ["subText"]="nib, pen, :black_nib:",
-   ["order"]=1913,
-   ["char"]={4580},
-   ["text"]="Black nib",
-   ["image_path"]="2712",
+   8505,
 },
 -- Table: {1915}
 {
-   ["subText"]="painting, :paintbrush:",
-   ["order"]=1914,
-   ["char"]={4581},
-   ["text"]="Paintbrush",
-   ["image_path"]="1f58c",
+   128292,
 },
 -- Table: {1916}
 {
-   ["subText"]="crayon, :crayon:",
-   ["order"]=1915,
-   ["char"]={4582},
-   ["text"]="Crayon",
-   ["image_path"]="1f58d",
+   128289,
 },
 -- Table: {1917}
 {
-   ["subText"]="pencil, :pencil:",
-   ["order"]=1916,
-   ["char"]={4583},
-   ["text"]="Memo",
-   ["image_path"]="1f4dd",
+   128288,
 },
 -- Table: {1918}
 {
-   ["subText"]="pencil, :pencil2:",
-   ["order"]=1917,
-   ["char"]={4584},
-   ["text"]="Pencil",
-   ["image_path"]="270f",
+   127382,
 },
 -- Table: {1919}
 {
-   ["subText"]="glass, magnifying, search, tool, :mag:",
-   ["order"]=1918,
-   ["char"]={4585},
-   ["text"]="Left-pointing magnifying glass",
-   ["image_path"]="1f50d",
+   127383,
 },
 -- Table: {1920}
 {
-   ["subText"]="glass, magnifying, search, tool, :mag_right:",
-   ["order"]=1919,
-   ["char"]={4586},
-   ["text"]="Right-pointing magnifying glass",
-   ["image_path"]="1f50e",
+   127385,
 },
 -- Table: {1921}
 {
-   ["subText"]="ink, lock, nib, pen, privacy, :lock_with_ink_pen:",
-   ["order"]=1920,
-   ["char"]={4587},
-   ["text"]="Locked with pen",
-   ["image_path"]="1f50f",
+   127378,
 },
 -- Table: {1922}
 {
-   ["subText"]="closed, key, lock, secure, :closed_lock_with_key:",
-   ["order"]=1921,
-   ["char"]={4588},
-   ["text"]="Locked with key",
-   ["image_path"]="1f510",
+   127381,
 },
 -- Table: {1923}
 {
-   ["subText"]="closed, :lock:",
-   ["order"]=1922,
-   ["char"]={4589},
-   ["text"]="Locked",
-   ["image_path"]="1f512",
+   127379,
 },
 -- Table: {1924}
 {
-   ["subText"]="lock, open, unlock, :unlock:",
-   ["order"]=1923,
-   ["char"]={4590},
-   ["text"]="Unlocked",
-   ["image_path"]="1f513",
+   48,
+   8419,
 },
 -- Table: {1925}
 {
-   ["subText"]="orange, :orange_heart:",
-   ["order"]=1924,
-   ["char"]={4591},
-   ["text"]="Orange heart",
-   ["image_path"]="1f9e1",
+   49,
+   8419,
 },
 -- Table: {1926}
 {
-   ["subText"]="heart, :heart:",
-   ["order"]=1925,
-   ["char"]={4592},
-   ["text"]="Red heart",
-   ["image_path"]="2764",
+   50,
+   8419,
 },
 -- Table: {1927}
 {
-   ["subText"]="yellow, :yellow_heart:",
-   ["order"]=1926,
-   ["char"]={4593},
-   ["text"]="Yellow heart",
-   ["image_path"]="1f49b",
+   51,
+   8419,
 },
 -- Table: {1928}
 {
-   ["subText"]="green, :green_heart:",
-   ["order"]=1927,
-   ["char"]={4594},
-   ["text"]="Green heart",
-   ["image_path"]="1f49a",
+   52,
+   8419,
 },
 -- Table: {1929}
 {
-   ["subText"]="blue, :blue_heart:",
-   ["order"]=1928,
-   ["char"]={4595},
-   ["text"]="Blue heart",
-   ["image_path"]="1f499",
+   53,
+   8419,
 },
 -- Table: {1930}
 {
-   ["subText"]="purple, :purple_heart:",
-   ["order"]=1929,
-   ["char"]={4596},
-   ["text"]="Purple heart",
-   ["image_path"]="1f49c",
+   54,
+   8419,
 },
 -- Table: {1931}
 {
-   ["subText"]="black, evil, wicked, :black_heart:",
-   ["order"]=1930,
-   ["char"]={4597},
-   ["text"]="Black heart",
-   ["image_path"]="1f5a4",
+   55,
+   8419,
 },
 -- Table: {1932}
 {
-   ["subText"]="break, broken, :broken_heart:",
-   ["order"]=1931,
-   ["char"]={4598},
-   ["text"]="Broken heart",
-   ["image_path"]="1f494",
+   56,
+   8419,
 },
 -- Table: {1933}
 {
-   ["subText"]="exclamation, mark, punctuation, :heart_exclamation:",
-   ["order"]=1932,
-   ["char"]={4599},
-   ["text"]="Heavy heart exclamation",
-   ["image_path"]="2763",
+   57,
+   8419,
 },
 -- Table: {1934}
 {
-   ["subText"]="love, :two_hearts:",
-   ["order"]=1933,
-   ["char"]={4600},
-   ["text"]="Two hearts",
-   ["image_path"]="1f495",
+   128287,
 },
 -- Table: {1935}
 {
-   ["subText"]="revolving, :revolving_hearts:",
-   ["order"]=1934,
-   ["char"]={4601},
-   ["text"]="Revolving hearts",
-   ["image_path"]="1f49e",
+   128290,
 },
 -- Table: {1936}
 {
-   ["subText"]="beating, heartbeat, pulsating, :heartbeat:",
-   ["order"]=1935,
-   ["char"]={4602},
-   ["text"]="Beating heart",
-   ["image_path"]="1f493",
+   35,
+   8419,
 },
 -- Table: {1937}
 {
-   ["subText"]="excited, growing, nervous, pulse, :heartpulse:",
-   ["order"]=1936,
-   ["char"]={4603},
-   ["text"]="Growing heart",
-   ["image_path"]="1f497",
+   42,
+   8419,
 },
 -- Table: {1938}
 {
-   ["subText"]="excited, sparkle, :sparkling_heart:",
-   ["order"]=1937,
-   ["char"]={4604},
-   ["text"]="Sparkling heart",
-   ["image_path"]="1f496",
+   9167,
 },
 -- Table: {1939}
 {
-   ["subText"]="arrow, cupid, :cupid:",
-   ["order"]=1938,
-   ["char"]={4605},
-   ["text"]="Heart with arrow",
-   ["image_path"]="1f498",
+   9654,
 },
 -- Table: {1940}
 {
-   ["subText"]="ribbon, valentine, :gift_heart:",
-   ["order"]=1939,
-   ["char"]={4606},
-   ["text"]="Heart with ribbon",
-   ["image_path"]="1f49d",
+   9208,
 },
 -- Table: {1941}
 {
-   ["subText"]="heart, :heart_decoration:",
-   ["order"]=1940,
-   ["char"]={4607},
-   ["text"]="Heart decoration",
-   ["image_path"]="1f49f",
+   9199,
 },
 -- Table: {1942}
 {
-   ["subText"]="peace, :peace:",
-   ["order"]=1941,
-   ["char"]={4608},
-   ["text"]="Peace symbol",
-   ["image_path"]="262e",
+   9209,
 },
 -- Table: {1943}
 {
-   ["subText"]="Christian, cross, religion, :cross:",
-   ["order"]=1942,
-   ["char"]={4609},
-   ["text"]="Latin cross",
-   ["image_path"]="271d",
+   9210,
 },
 -- Table: {1944}
 {
-   ["subText"]="Muslim, islam, religion, :star_and_crescent:",
-   ["order"]=1943,
-   ["char"]={4610},
-   ["text"]="Star and crescent",
-   ["image_path"]="262a",
+   9197,
 },
 -- Table: {1945}
 {
-   ["subText"]="Hindu, religion, :om_symbol:",
-   ["order"]=1944,
-   ["char"]={4611},
-   ["text"]="Om",
-   ["image_path"]="1f549",
+   9198,
 },
 -- Table: {1946}
 {
-   ["subText"]="Buddhist, dharma, religion, wheel, :wheel_of_dharma:",
-   ["order"]=1945,
-   ["char"]={4612},
-   ["text"]="Wheel of dharma",
-   ["image_path"]="2638",
+   9193,
 },
 -- Table: {1947}
 {
-   ["subText"]="David, Jew, Jewish, religion, star, :star_of_david:",
-   ["order"]=1946,
-   ["char"]={4613},
-   ["text"]="Star of David",
-   ["image_path"]="2721",
+   9194,
 },
 -- Table: {1948}
 {
-   ["subText"]="fortune, star, :six_pointed_star:",
-   ["order"]=1947,
-   ["char"]={4614},
-   ["text"]="Dotted six-pointed star",
-   ["image_path"]="1f52f",
+   9195,
 },
 -- Table: {1949}
 {
-   ["subText"]="candelabrum, candlestick, religion, :menorah:",
-   ["order"]=1948,
-   ["char"]={4615},
-   ["text"]="Menorah",
-   ["image_path"]="1f54e",
+   9196,
 },
 -- Table: {1950}
 {
-   ["subText"]="religion, tao, taoist, yang, yin, :yin_yang:",
-   ["order"]=1949,
-   ["char"]={4616},
-   ["text"]="Yin yang",
-   ["image_path"]="262f",
+   9664,
 },
 -- Table: {1951}
 {
-   ["subText"]="Christian, cross, religion, :orthodox_cross:",
-   ["order"]=1950,
-   ["char"]={4617},
-   ["text"]="Orthodox cross",
-   ["image_path"]="2626",
+   128316,
 },
 -- Table: {1952}
 {
-   ["subText"]="religion, worship, :place_of_worship:",
-   ["order"]=1951,
-   ["char"]={4618},
-   ["text"]="Place of worship",
-   ["image_path"]="1f6d0",
+   128317,
 },
 -- Table: {1953}
 {
-   ["subText"]="bearer, serpent, snake, zodiac, :ophiuchus:",
-   ["order"]=1952,
-   ["char"]={4619},
-   ["text"]="Ophiuchus",
-   ["image_path"]="26ce",
+   10145,
 },
 -- Table: {1954}
 {
-   ["subText"]="ram, zodiac, :aries:",
-   ["order"]=1953,
-   ["char"]={4620},
-   ["text"]="Aries",
-   ["image_path"]="2648",
+   11013,
 },
 -- Table: {1955}
 {
-   ["subText"]="bull, ox, zodiac, :taurus:",
-   ["order"]=1954,
-   ["char"]={4621},
-   ["text"]="Taurus",
-   ["image_path"]="2649",
+   11014,
 },
 -- Table: {1956}
 {
-   ["subText"]="twins, zodiac, :gemini:",
-   ["order"]=1955,
-   ["char"]={4622},
-   ["text"]="Gemini",
-   ["image_path"]="264a",
+   11015,
 },
 -- Table: {1957}
 {
-   ["subText"]="crab, zodiac, :cancer:",
-   ["order"]=1956,
-   ["char"]={4623},
-   ["text"]="Cancer",
-   ["image_path"]="264b",
+   8599,
 },
 -- Table: {1958}
 {
-   ["subText"]="lion, zodiac, :leo:",
-   ["order"]=1957,
-   ["char"]={4624},
-   ["text"]="Leo",
-   ["image_path"]="264c",
+   8600,
 },
 -- Table: {1959}
 {
-   ["subText"]="zodiac, :virgo:",
-   ["order"]=1958,
-   ["char"]={4625},
-   ["text"]="Virgo",
-   ["image_path"]="264d",
+   8601,
 },
 -- Table: {1960}
 {
-   ["subText"]="balance, justice, scales, zodiac, :libra:",
-   ["order"]=1959,
-   ["char"]={4626},
-   ["text"]="Libra",
-   ["image_path"]="264e",
+   8598,
 },
 -- Table: {1961}
 {
-   ["subText"]="scorpio, scorpion, zodiac, :scorpius:",
-   ["order"]=1960,
-   ["char"]={4627},
-   ["text"]="Scorpius",
-   ["image_path"]="264f",
+   8597,
 },
 -- Table: {1962}
 {
-   ["subText"]="archer, zodiac, :sagittarius:",
-   ["order"]=1961,
-   ["char"]={4628},
-   ["text"]="Sagittarius",
-   ["image_path"]="2650",
+   8596,
 },
 -- Table: {1963}
 {
-   ["subText"]="goat, zodiac, :capricorn:",
-   ["order"]=1962,
-   ["char"]={4629},
-   ["text"]="Capricorn",
-   ["image_path"]="2651",
+   8618,
 },
 -- Table: {1964}
 {
-   ["subText"]="bearer, water, zodiac, :aquarius:",
-   ["order"]=1963,
-   ["char"]={4630},
-   ["text"]="Aquarius",
-   ["image_path"]="2652",
+   8617,
 },
 -- Table: {1965}
 {
-   ["subText"]="fish, zodiac, :pisces:",
-   ["order"]=1964,
-   ["char"]={4631},
-   ["text"]="Pisces",
-   ["image_path"]="2653",
+   10548,
 },
 -- Table: {1966}
 {
-   ["subText"]="id, identity, :id:",
-   ["order"]=1965,
-   ["char"]={4632},
-   ["text"]="ID button",
-   ["image_path"]="1f194",
+   10549,
 },
 -- Table: {1967}
 {
-   ["subText"]="atheist, atom, :atom:",
-   ["order"]=1966,
-   ["char"]={4633},
-   ["text"]="Atom symbol",
-   ["image_path"]="269b",
+   128256,
 },
 -- Table: {1968}
 {
-   ["subText"]="Japanese, ideograph, “acceptable”, 可, :accept:",
-   ["order"]=1967,
-   ["char"]={4634},
-   ["text"]="Japanese “acceptable” button",
-   ["image_path"]="1f251",
+   128257,
 },
 -- Table: {1969}
 {
-   ["subText"]="radioactive, sign, :radioactive:",
-   ["order"]=1968,
-   ["char"]={4635},
-   ["text"]="Radioactive",
-   ["image_path"]="2622",
+   128258,
 },
 -- Table: {1970}
 {
-   ["subText"]="biohazard, sign, :biohazard:",
-   ["order"]=1969,
-   ["char"]={4636},
-   ["text"]="Biohazard",
-   ["image_path"]="2623",
+   128260,
 },
 -- Table: {1971}
 {
-   ["subText"]="cell, mobile, off, phone, telephone, :mobile_phone_off:",
-   ["order"]=1970,
-   ["char"]={4637},
-   ["text"]="Mobile phone off",
-   ["image_path"]="1f4f4",
+   128259,
 },
 -- Table: {1972}
 {
-   ["subText"]="cell, mobile, mode, phone, telephone, vibration, :vibration_mode:",
-   ["order"]=1971,
-   ["char"]={4638},
-   ["text"]="Vibration mode",
-   ["image_path"]="1f4f3",
+   127925,
 },
 -- Table: {1973}
 {
-   ["subText"]="Japanese, ideograph, “not free of charge”, 有, :u6709:",
-   ["order"]=1972,
-   ["char"]={4639},
-   ["text"]="Japanese “not free of charge” button",
-   ["image_path"]="1f236",
+   127926,
 },
 -- Table: {1974}
 {
-   ["subText"]="Japanese, ideograph, “free of charge”, 無, :u7121:",
-   ["order"]=1973,
-   ["char"]={4640},
-   ["text"]="Japanese “free of charge” button",
-   ["image_path"]="1f21a",
+   10133,
 },
 -- Table: {1975}
 {
-   ["subText"]="Japanese, ideograph, “application”, 申, :u7533:",
-   ["order"]=1974,
-   ["char"]={4641},
-   ["text"]="Japanese “application” button",
-   ["image_path"]="1f238",
+   10134,
 },
 -- Table: {1976}
 {
-   ["subText"]="Japanese, ideograph, “open for business”, 営, :u55b6:",
-   ["order"]=1975,
-   ["char"]={4642},
-   ["text"]="Japanese “open for business” button",
-   ["image_path"]="1f23a",
+   10135,
 },
 -- Table: {1977}
 {
-   ["subText"]="Japanese, ideograph, “monthly amount”, 月, :u6708:",
-   ["order"]=1976,
-   ["char"]={4643},
-   ["text"]="Japanese “monthly amount” button",
-   ["image_path"]="1f237",
+   10006,
 },
 -- Table: {1978}
 {
-   ["subText"]="star, :eight_pointed_black_star:",
-   ["order"]=1977,
-   ["char"]={4644},
-   ["text"]="Eight-pointed star",
-   ["image_path"]="2734",
+   9854,
 },
 -- Table: {1979}
 {
-   ["subText"]="versus, vs, :vs:",
-   ["order"]=1978,
-   ["char"]={4645},
-   ["text"]="VS button",
-   ["image_path"]="1f19a",
+   128178,
 },
 -- Table: {1980}
 {
-   ["subText"]="flower, :white_flower:",
-   ["order"]=1979,
-   ["char"]={4646},
-   ["text"]="White flower",
-   ["image_path"]="1f4ae",
+   128177,
 },
 -- Table: {1981}
 {
-   ["subText"]="Japanese, ideograph, “bargain”, 得, :ideograph_advantage:",
-   ["order"]=1980,
-   ["char"]={4647},
-   ["text"]="Japanese “bargain” button",
-   ["image_path"]="1f250",
+   8482,
 },
 -- Table: {1982}
 {
-   ["subText"]="Japanese, ideograph, “secret”, 秘, :secret:",
-   ["order"]=1981,
-   ["char"]={4648},
-   ["text"]="Japanese “secret” button",
-   ["image_path"]="3299",
+   169,
 },
 -- Table: {1983}
 {
-   ["subText"]="Japanese, ideograph, “congratulations”, 祝, :congratulations:",
-   ["order"]=1982,
-   ["char"]={4649},
-   ["text"]="Japanese “congratulations” button",
-   ["image_path"]="3297",
+   174,
 },
 -- Table: {1984}
 {
-   ["subText"]="Japanese, ideograph, “passing grade”, 合, :u5408:",
-   ["order"]=1983,
-   ["char"]={4650},
-   ["text"]="Japanese “passing grade” button",
-   ["image_path"]="1f234",
+   12336,
 },
 -- Table: {1985}
 {
-   ["subText"]="Japanese, ideograph, “no vacancy”, 満, :u6e80:",
-   ["order"]=1984,
-   ["char"]={4651},
-   ["text"]="Japanese “no vacancy” button",
-   ["image_path"]="1f235",
+   10160,
 },
 -- Table: {1986}
 {
-   ["subText"]="Japanese, ideograph, “discount”, 割, :u5272:",
-   ["order"]=1985,
-   ["char"]={4652},
-   ["text"]="Japanese “discount” button",
-   ["image_path"]="1f239",
+   10175,
 },
 -- Table: {1987}
 {
-   ["subText"]="Japanese, ideograph, “prohibited”, 禁, :u7981:",
-   ["order"]=1986,
-   ["char"]={4653},
-   ["text"]="Japanese “prohibited” button",
-   ["image_path"]="1f232",
+   128282,
 },
 -- Table: {1988}
 {
-   ["subText"]="a, blood type, :a:",
-   ["order"]=1987,
-   ["char"]={4654},
-   ["text"]="A button (blood type)",
-   ["image_path"]="1f170",
+   128281,
 },
 -- Table: {1989}
 {
-   ["subText"]="b, blood type, :b:",
-   ["order"]=1988,
-   ["char"]={4655},
-   ["text"]="B button (blood type)",
-   ["image_path"]="1f171",
+   128283,
 },
 -- Table: {1990}
 {
-   ["subText"]="ab, blood type, :ab:",
-   ["order"]=1989,
-   ["char"]={4656},
-   ["text"]="AB button (blood type)",
-   ["image_path"]="1f18e",
+   128285,
 },
 -- Table: {1991}
 {
-   ["subText"]="cl, :cl:",
-   ["order"]=1990,
-   ["char"]={4657},
-   ["text"]="CL button",
-   ["image_path"]="1f191",
+   128284,
 },
 -- Table: {1992}
 {
-   ["subText"]="blood type, o, :o2:",
-   ["order"]=1991,
-   ["char"]={4658},
-   ["text"]="O button (blood type)",
-   ["image_path"]="1f17e",
+   10004,
 },
 -- Table: {1993}
 {
-   ["subText"]="help, sos, :sos:",
-   ["order"]=1992,
-   ["char"]={4659},
-   ["text"]="SOS button",
-   ["image_path"]="1f198",
+   9745,
 },
 -- Table: {1994}
 {
-   ["subText"]="cancel, mark, multiplication, multiply, x, :x:",
-   ["order"]=1993,
-   ["char"]={4660},
-   ["text"]="Cross mark",
-   ["image_path"]="274c",
+   128280,
 },
 -- Table: {1995}
 {
-   ["subText"]="circle, o, :o:",
-   ["order"]=1994,
-   ["char"]={4661},
-   ["text"]="Heavy large circle",
-   ["image_path"]="2b55",
+   9898,
 },
 -- Table: {1996}
 {
-   ["subText"]="octagonal, sign, stop, :octagonal_sign:",
-   ["order"]=1995,
-   ["char"]={4662},
-   ["text"]="Stop sign",
-   ["image_path"]="1f6d1",
+   9899,
 },
 -- Table: {1997}
 {
-   ["subText"]="entry, forbidden, no, not, prohibited, traffic, :no_entry:",
-   ["order"]=1996,
-   ["char"]={4663},
-   ["text"]="No entry",
-   ["image_path"]="26d4",
+   128308,
 },
 -- Table: {1998}
 {
-   ["subText"]="badge, name, :name_badge:",
-   ["order"]=1997,
-   ["char"]={4664},
-   ["text"]="Name badge",
-   ["image_path"]="1f4db",
+   128309,
 },
 -- Table: {1999}
 {
-   ["subText"]="entry, forbidden, no, not, :no_entry_sign:",
-   ["order"]=1998,
-   ["char"]={4665},
-   ["text"]="Prohibited",
-   ["image_path"]="1f6ab",
+   128996,
 },
 -- Table: {2000}
 {
-   ["subText"]="100, full, hundred, score, :100:",
-   ["order"]=1999,
-   ["char"]={4666},
-   ["text"]="Hundred points",
-   ["image_path"]="1f4af",
+   128995,
 },
 -- Table: {2001}
 {
-   ["subText"]="angry, comic, mad, :anger:",
-   ["order"]=2000,
-   ["char"]={4667},
-   ["text"]="Anger symbol",
-   ["image_path"]="1f4a2",
+   128994,
 },
 -- Table: {2002}
 {
-   ["subText"]="hot, hotsprings, springs, steaming, :hotsprings:",
-   ["order"]=2001,
-   ["char"]={4668},
-   ["text"]="Hot springs",
-   ["image_path"]="2668",
+   128993,
 },
 -- Table: {2003}
 {
-   ["subText"]="forbidden, no, not, pedestrian, prohibited, :no_pedestrians:",
-   ["order"]=2002,
-   ["char"]={4669},
-   ["text"]="No pedestrians",
-   ["image_path"]="1f6b7",
+   128992,
 },
 -- Table: {2004}
 {
-   ["subText"]="forbidden, litter, no, not, prohibited, :do_not_litter:",
-   ["order"]=2003,
-   ["char"]={4670},
-   ["text"]="No littering",
-   ["image_path"]="1f6af",
+   128314,
 },
 -- Table: {2005}
 {
-   ["subText"]="bicycle, bike, forbidden, no, not, prohibited, :no_bicycles:",
-   ["order"]=2004,
-   ["char"]={4671},
-   ["text"]="No bicycles",
-   ["image_path"]="1f6b3",
+   128315,
 },
 -- Table: {2006}
 {
-   ["subText"]="non-drinking, non-potable, water, :non-potable_water:",
-   ["order"]=2005,
-   ["char"]={4672},
-   ["text"]="Non-potable water",
-   ["image_path"]="1f6b1",
+   128312,
 },
 -- Table: {2007}
 {
-   ["subText"]="18, age restriction, eighteen, forbidden, no, not, prohibited, underage, :underage:",
-   ["order"]=2006,
-   ["char"]={4673},
-   ["text"]="No one under eighteen",
-   ["image_path"]="1f51e",
+   128313,
 },
 -- Table: {2008}
 {
-   ["subText"]="cell, forbidden, mobile, no, not, phone, prohibited, telephone, :no_mobile_phones:",
-   ["order"]=2007,
-   ["char"]={4674},
-   ["text"]="No mobile phones",
-   ["image_path"]="1f4f5",
+   128310,
 },
 -- Table: {2009}
 {
-   ["subText"]="forbidden, no, not, prohibited, smoking, :no_smoking:",
-   ["order"]=2008,
-   ["char"]={4675},
-   ["text"]="No smoking",
-   ["image_path"]="1f6ad",
+   128311,
 },
 -- Table: {2010}
 {
-   ["subText"]="exclamation, mark, punctuation, :exclamation:",
-   ["order"]=2009,
-   ["char"]={4676},
-   ["text"]="Exclamation mark",
-   ["image_path"]="2757",
+   128307,
 },
 -- Table: {2011}
 {
-   ["subText"]="exclamation, mark, outlined, punctuation, :grey_exclamation:",
-   ["order"]=2010,
-   ["char"]={4677},
-   ["text"]="White exclamation mark",
-   ["image_path"]="2755",
+   128306,
 },
 -- Table: {2012}
 {
-   ["subText"]="mark, punctuation, question, :question:",
-   ["order"]=2011,
-   ["char"]={4678},
-   ["text"]="Question mark",
-   ["image_path"]="2753",
+   9642,
 },
 -- Table: {2013}
 {
-   ["subText"]="mark, outlined, punctuation, question, :grey_question:",
-   ["order"]=2012,
-   ["char"]={4679},
-   ["text"]="White question mark",
-   ["image_path"]="2754",
+   9643,
 },
 -- Table: {2014}
 {
-   ["subText"]="bangbang, exclamation, mark, punctuation, :bangbang:",
-   ["order"]=2013,
-   ["char"]={4680},
-   ["text"]="Double exclamation mark",
-   ["image_path"]="203c",
+   9726,
 },
 -- Table: {2015}
 {
-   ["subText"]="exclamation, interrobang, mark, punctuation, question, :interrobang:",
-   ["order"]=2014,
-   ["char"]={4681},
-   ["text"]="Exclamation question mark",
-   ["image_path"]="2049",
+   9725,
 },
 -- Table: {2016}
 {
-   ["subText"]="brightness, dim, low, :low_brightness:",
-   ["order"]=2015,
-   ["char"]={4682},
-   ["text"]="Dim button",
-   ["image_path"]="1f505",
+   9724,
 },
 -- Table: {2017}
 {
-   ["subText"]="bright, brightness, :high_brightness:",
-   ["order"]=2016,
-   ["char"]={4683},
-   ["text"]="Bright button",
-   ["image_path"]="1f506",
+   9723,
 },
 -- Table: {2018}
 {
-   ["subText"]="mark, part, :part_alternation_mark:",
-   ["order"]=2017,
-   ["char"]={4684},
-   ["text"]="Part alternation mark",
-   ["image_path"]="303d",
+   11035,
 },
 -- Table: {2019}
 {
-   ["subText"]="warning, :warning:",
-   ["order"]=2018,
-   ["char"]={4685},
-   ["text"]="Warning",
-   ["image_path"]="26a0",
+   11036,
 },
 -- Table: {2020}
 {
-   ["subText"]="child, crossing, pedestrian, traffic, :children_crossing:",
-   ["order"]=2019,
-   ["char"]={4686},
-   ["text"]="Children crossing",
-   ["image_path"]="1f6b8",
+   128999,
 },
 -- Table: {2021}
 {
-   ["subText"]="anchor, emblem, ship, tool, trident, :trident:",
-   ["order"]=2020,
-   ["char"]={4687},
-   ["text"]="Trident emblem",
-   ["image_path"]="1f531",
+   128998,
 },
 -- Table: {2022}
 {
-   ["subText"]="fleur-de-lis, :fleur-de-lis:",
-   ["order"]=2021,
-   ["char"]={4688},
-   ["text"]="Fleur-de-lis",
-   ["image_path"]="269c",
+   128997,
 },
 -- Table: {2023}
 {
-   ["subText"]="Japanese, beginner, chevron, green, leaf, tool, yellow, :beginner:",
-   ["order"]=2022,
-   ["char"]={4689},
-   ["text"]="Japanese symbol for beginner",
-   ["image_path"]="1f530",
+   129003,
 },
 -- Table: {2024}
 {
-   ["subText"]="recycle, :recycle:",
-   ["order"]=2023,
-   ["char"]={4690},
-   ["text"]="Recycling symbol",
-   ["image_path"]="267b",
+   129002,
 },
 -- Table: {2025}
 {
-   ["subText"]="check, mark, :white_check_mark:",
-   ["order"]=2024,
-   ["char"]={4691},
-   ["text"]="White heavy check mark",
-   ["image_path"]="2705",
+   129001,
 },
 -- Table: {2026}
 {
-   ["subText"]="Japanese, ideograph, “reserved”, 指, :u6307:",
-   ["order"]=2025,
-   ["char"]={4692},
-   ["text"]="Japanese “reserved” button",
-   ["image_path"]="1f22f",
+   129000,
 },
 -- Table: {2027}
 {
-   ["subText"]="bank, chart, currency, graph, growth, market, money, rise, trend, upward, yen, :chart:",
-   ["order"]=2026,
-   ["char"]={4693},
-   ["text"]="Chart increasing with yen",
-   ["image_path"]="1f4b9",
+   128264,
 },
 -- Table: {2028}
 {
-   ["subText"]="sparkle, :sparkle:",
-   ["order"]=2027,
-   ["char"]={4694},
-   ["text"]="Sparkle",
-   ["image_path"]="2747",
+   128263,
 },
 -- Table: {2029}
 {
-   ["subText"]="asterisk, :eight_spoked_asterisk:",
-   ["order"]=2028,
-   ["char"]={4695},
-   ["text"]="Eight-spoked asterisk",
-   ["image_path"]="2733",
+   128265,
 },
 -- Table: {2030}
 {
-   ["subText"]="mark, square, :negative_squared_cross_mark:",
-   ["order"]=2029,
-   ["char"]={4696},
-   ["text"]="Cross mark button",
-   ["image_path"]="274e",
+   128266,
 },
 -- Table: {2031}
 {
-   ["subText"]="earth, globe, meridians, world, :globe_with_meridians:",
-   ["order"]=2030,
-   ["char"]={4697},
-   ["text"]="Globe with meridians",
-   ["image_path"]="1f310",
+   128276,
 },
 -- Table: {2032}
 {
-   ["subText"]="comic, diamond, geometric, inside, :diamond_shape_with_a_dot_inside:",
-   ["order"]=2031,
-   ["char"]={4698},
-   ["text"]="Diamond with a dot",
-   ["image_path"]="1f4a0",
+   128277,
 },
 -- Table: {2033}
 {
-   ["subText"]="circle, m, :m:",
-   ["order"]=2032,
-   ["char"]={4699},
-   ["text"]="Circled M",
-   ["image_path"]="24c2",
+   128227,
 },
 -- Table: {2034}
 {
-   ["subText"]="dizzy, twister, typhoon, :cyclone:",
-   ["order"]=2033,
-   ["char"]={4700},
-   ["text"]="Cyclone",
-   ["image_path"]="1f300",
+   128226,
 },
 -- Table: {2035}
 {
-   ["subText"]="comic, sleep, :zzz:",
-   ["order"]=2034,
-   ["char"]={4701},
-   ["text"]="Zzz",
-   ["image_path"]="1f4a4",
+   128488,
 },
 -- Table: {2036}
 {
-   ["subText"]="atm, automated, bank, teller, :atm:",
-   ["order"]=2035,
-   ["char"]={4702},
-   ["text"]="ATM sign",
-   ["image_path"]="1f3e7",
+   128065,
+   128488,
 },
 -- Table: {2037}
 {
-   ["subText"]="closet, lavatory, restroom, water, wc, :wc:",
-   ["order"]=2036,
-   ["char"]={4703},
-   ["text"]="Water closet",
-   ["image_path"]="1f6be",
+   128172,
 },
 -- Table: {2038}
 {
-   ["subText"]="access, :wheelchair:",
-   ["order"]=2037,
-   ["char"]={4704},
-   ["text"]="Wheelchair symbol",
-   ["image_path"]="267f",
+   128173,
 },
 -- Table: {2039}
 {
-   ["subText"]="parking, :parking:",
-   ["order"]=2038,
-   ["char"]={4705},
-   ["text"]="P button",
-   ["image_path"]="1f17f",
+   128495,
 },
 -- Table: {2040}
 {
-   ["subText"]="Japanese, ideograph, “vacancy”, 空, :u7a7a:",
-   ["order"]=2039,
-   ["char"]={4706},
-   ["text"]="Japanese “vacancy” button",
-   ["image_path"]="1f233",
+   9824,
 },
 -- Table: {2041}
 {
-   ["subText"]="Japanese, katakana, “service charge”, サ, :sa:",
-   ["order"]=2040,
-   ["char"]={4707},
-   ["text"]="Japanese “service charge” button",
-   ["image_path"]="1f202",
+   9827,
 },
 -- Table: {2042}
 {
-   ["subText"]="control, passport, :passport_control:",
-   ["order"]=2041,
-   ["char"]={4708},
-   ["text"]="Passport control",
-   ["image_path"]="1f6c2",
+   9829,
 },
 -- Table: {2043}
 {
-   ["subText"]="customs, :customs:",
-   ["order"]=2042,
-   ["char"]={4709},
-   ["text"]="Customs",
-   ["image_path"]="1f6c3",
+   9830,
 },
 -- Table: {2044}
 {
-   ["subText"]="baggage, claim, :baggage_claim:",
-   ["order"]=2043,
-   ["char"]={4710},
-   ["text"]="Baggage claim",
-   ["image_path"]="1f6c4",
+   127183,
 },
 -- Table: {2045}
 {
-   ["subText"]="baggage, locker, luggage, :left_luggage:",
-   ["order"]=2044,
-   ["char"]={4711},
-   ["text"]="Left luggage",
-   ["image_path"]="1f6c5",
+   127924,
 },
 -- Table: {2046}
 {
-   ["subText"]="lavatory, man, restroom, wc, :mens:",
-   ["order"]=2045,
-   ["char"]={4712},
-   ["text"]="Men’s room",
-   ["image_path"]="1f6b9",
+   126980,
 },
 -- Table: {2047}
 {
-   ["subText"]="lavatory, restroom, wc, woman, :womens:",
-   ["order"]=2046,
-   ["char"]={4713},
-   ["text"]="Women’s room",
-   ["image_path"]="1f6ba",
+   128336,
 },
 -- Table: {2048}
 {
-   ["subText"]="baby, changing, :baby_symbol:",
-   ["order"]=2047,
-   ["char"]={4714},
-   ["text"]="Baby symbol",
-   ["image_path"]="1f6bc",
+   128337,
 },
 -- Table: {2049}
 {
-   ["subText"]="WC, lavatory, restroom, :restroom:",
-   ["order"]=2048,
-   ["char"]={4715},
-   ["text"]="Restroom",
-   ["image_path"]="1f6bb",
+   128338,
 },
 -- Table: {2050}
 {
-   ["subText"]="litter, litter bin, :put_litter_in_its_place:",
-   ["order"]=2049,
-   ["char"]={4716},
-   ["text"]="Litter in bin sign",
-   ["image_path"]="1f6ae",
+   128339,
 },
 -- Table: {2051}
 {
-   ["subText"]="camera, film, movie, :cinema:",
-   ["order"]=2050,
-   ["char"]={4717},
-   ["text"]="Cinema",
-   ["image_path"]="1f3a6",
+   128340,
 },
 -- Table: {2052}
 {
-   ["subText"]="antenna, bar, cell, mobile, phone, signal, telephone, :signal_strength:",
-   ["order"]=2051,
-   ["char"]={4718},
-   ["text"]="Antenna bars",
-   ["image_path"]="1f4f6",
+   128341,
 },
 -- Table: {2053}
 {
-   ["subText"]="Japanese, katakana, “here”, ココ, :koko:",
-   ["order"]=2052,
-   ["char"]={4719},
-   ["text"]="Japanese “here” button",
-   ["image_path"]="1f201",
+   128342,
 },
 -- Table: {2054}
 {
-   ["subText"]="input, 〒♪&amp;%, :symbols:",
-   ["order"]=2053,
-   ["char"]={4720},
-   ["text"]="Input symbols",
-   ["image_path"]="1f523",
+   128343,
 },
 -- Table: {2055}
 {
-   ["subText"]="i, information, :information_source:",
-   ["order"]=2054,
-   ["char"]={4721},
-   ["text"]="Information",
-   ["image_path"]="2139",
+   128344,
 },
 -- Table: {2056}
 {
-   ["subText"]="abc, alphabet, input, latin, letters, :abc:",
-   ["order"]=2055,
-   ["char"]={4722},
-   ["text"]="Input latin letters",
-   ["image_path"]="1f524",
+   128345,
 },
 -- Table: {2057}
 {
-   ["subText"]="abcd, input, latin, letters, lowercase, :abcd:",
-   ["order"]=2056,
-   ["char"]={4723},
-   ["text"]="Input latin lowercase",
-   ["image_path"]="1f521",
+   128346,
 },
 -- Table: {2058}
 {
-   ["subText"]="ABCD, input, latin, letters, uppercase, :capital_abcd:",
-   ["order"]=2057,
-   ["char"]={4724},
-   ["text"]="Input latin uppercase",
-   ["image_path"]="1f520",
+   128347,
 },
 -- Table: {2059}
 {
-   ["subText"]="ng, :ng:",
-   ["order"]=2058,
-   ["char"]={4725},
-   ["text"]="NG button",
-   ["image_path"]="1f196",
+   128348,
 },
 -- Table: {2060}
 {
-   ["subText"]="OK, :ok:",
-   ["order"]=2059,
-   ["char"]={4726},
-   ["text"]="OK button",
-   ["image_path"]="1f197",
+   128349,
 },
 -- Table: {2061}
 {
-   ["subText"]="mark, up, :up:",
-   ["order"]=2060,
-   ["char"]={4727},
-   ["text"]="UP! button",
-   ["image_path"]="1f199",
+   128350,
 },
 -- Table: {2062}
 {
-   ["subText"]="cool, :cool:",
-   ["order"]=2061,
-   ["char"]={4728},
-   ["text"]="COOL button",
-   ["image_path"]="1f192",
+   128351,
 },
 -- Table: {2063}
 {
-   ["subText"]="new, :new:",
-   ["order"]=2062,
-   ["char"]={4729},
-   ["text"]="NEW button",
-   ["image_path"]="1f195",
+   128352,
 },
 -- Table: {2064}
 {
-   ["subText"]="free, :free:",
-   ["order"]=2063,
-   ["char"]={4730},
-   ["text"]="FREE button",
-   ["image_path"]="1f193",
+   128353,
 },
 -- Table: {2065}
 {
-   ["subText"]="keycap, :zero:",
-   ["order"]=2064,
-   ["char"]={4731},
-   ["text"]="Keycap: 0",
-   ["image_path"]="0030-20e3",
+   128354,
 },
 -- Table: {2066}
 {
-   ["subText"]="keycap, :one:",
-   ["order"]=2065,
-   ["char"]={4732},
-   ["text"]="Keycap: 1",
-   ["image_path"]="0031-20e3",
+   128355,
 },
 -- Table: {2067}
 {
-   ["subText"]="keycap, :two:",
-   ["order"]=2066,
-   ["char"]={4733},
-   ["text"]="Keycap: 2",
-   ["image_path"]="0032-20e3",
+   128356,
 },
 -- Table: {2068}
 {
-   ["subText"]="keycap, :three:",
-   ["order"]=2067,
-   ["char"]={4734},
-   ["text"]="Keycap: 3",
-   ["image_path"]="0033-20e3",
+   128357,
 },
 -- Table: {2069}
 {
-   ["subText"]="keycap, :four:",
-   ["order"]=2068,
-   ["char"]={4735},
-   ["text"]="Keycap: 4",
-   ["image_path"]="0034-20e3",
+   128358,
 },
 -- Table: {2070}
 {
-   ["subText"]="keycap, :five:",
-   ["order"]=2069,
-   ["char"]={4736},
-   ["text"]="Keycap: 5",
-   ["image_path"]="0035-20e3",
+   128359,
 },
 -- Table: {2071}
 {
-   ["subText"]="keycap, :six:",
-   ["order"]=2070,
-   ["char"]={4737},
-   ["text"]="Keycap: 6",
-   ["image_path"]="0036-20e3",
+   48,
 },
 -- Table: {2072}
 {
-   ["subText"]="keycap, :seven:",
-   ["order"]=2071,
-   ["char"]={4738},
-   ["text"]="Keycap: 7",
-   ["image_path"]="0037-20e3",
+   49,
 },
 -- Table: {2073}
 {
-   ["subText"]="keycap, :eight:",
-   ["order"]=2072,
-   ["char"]={4739},
-   ["text"]="Keycap: 8",
-   ["image_path"]="0038-20e3",
+   50,
 },
 -- Table: {2074}
 {
-   ["subText"]="keycap, :nine:",
-   ["order"]=2073,
-   ["char"]={4740},
-   ["text"]="Keycap: 9",
-   ["image_path"]="0039-20e3",
+   51,
 },
 -- Table: {2075}
 {
-   ["subText"]="keycap 10, :keycap_ten:",
-   ["order"]=2074,
-   ["char"]={4741},
-   ["text"]="Keycap 10",
-   ["image_path"]="1f51f",
+   52,
 },
 -- Table: {2076}
 {
-   ["subText"]="1234, input, numbers, :1234:",
-   ["order"]=2075,
-   ["char"]={4742},
-   ["text"]="Input numbers",
-   ["image_path"]="1f522",
+   53,
 },
 -- Table: {2077}
 {
-   ["subText"]="keycap, :hash:",
-   ["order"]=2076,
-   ["char"]={4743},
-   ["text"]="Keycap: #",
-   ["image_path"]="0023-20e3",
+   54,
 },
 -- Table: {2078}
 {
-   ["subText"]="keycap, :asterisk:",
-   ["order"]=2077,
-   ["char"]={4744},
-   ["text"]="Keycap: *",
-   ["image_path"]="002a-20e3",
+   55,
 },
 -- Table: {2079}
 {
-   ["subText"]="arrow, play, right, triangle, :arrow_forward:",
-   ["order"]=2078,
-   ["char"]={4745},
-   ["text"]="Play button",
-   ["image_path"]="25b6",
+   56,
 },
 -- Table: {2080}
 {
-   ["subText"]="bar, double, pause, vertical, :pause_button:",
-   ["order"]=2079,
-   ["char"]={4746},
-   ["text"]="Pause button",
-   ["image_path"]="23f8",
+   57,
 },
 -- Table: {2081}
 {
-   ["subText"]="arrow, pause, play, right, triangle, :play_pause:",
-   ["order"]=2080,
-   ["char"]={4747},
-   ["text"]="Play or pause button",
-   ["image_path"]="23ef",
+   35,
 },
 -- Table: {2082}
 {
-   ["subText"]="square, stop, :stop_button:",
-   ["order"]=2081,
-   ["char"]={4748},
-   ["text"]="Stop button",
-   ["image_path"]="23f9",
+   42,
 },
 -- Table: {2083}
 {
-   ["subText"]="circle, record, :record_button:",
-   ["order"]=2082,
-   ["char"]={4749},
-   ["text"]="Record button",
-   ["image_path"]="23fa",
+   9792,
 },
 -- Table: {2084}
 {
-   ["subText"]="eject, :eject:",
-   ["order"]=2083,
-   ["char"]={4750},
-   ["text"]="Eject button",
-   ["image_path"]="23cf",
+   9794,
 },
 -- Table: {2085}
 {
-   ["subText"]="arrow, next scene, next track, triangle, :track_next:",
-   ["order"]=2084,
-   ["char"]={4751},
-   ["text"]="Next track button",
-   ["image_path"]="23ed",
+   9877,
 },
 -- Table: {2086}
 {
-   ["subText"]="arrow, previous scene, previous track, triangle, :track_previous:",
-   ["order"]=2085,
-   ["char"]={4752},
-   ["text"]="Last track button",
-   ["image_path"]="23ee",
+   9917,
 },
 -- Table: {2087}
 {
-   ["subText"]="arrow, double, fast, forward, :fast_forward:",
-   ["order"]=2086,
-   ["char"]={4753},
-   ["text"]="Fast-forward button",
-   ["image_path"]="23e9",
+   127936,
 },
 -- Table: {2088}
 {
-   ["subText"]="arrow, double, rewind, :rewind:",
-   ["order"]=2087,
-   ["char"]={4754},
-   ["text"]="Fast reverse button",
-   ["image_path"]="23ea",
+   127944,
 },
 -- Table: {2089}
 {
-   ["subText"]="arrow, double, :arrow_double_up:",
-   ["order"]=2088,
-   ["char"]={4755},
-   ["text"]="Fast up button",
-   ["image_path"]="23eb",
+   9918,
 },
 -- Table: {2090}
 {
-   ["subText"]="arrow, double, down, :arrow_double_down:",
-   ["order"]=2089,
-   ["char"]={4756},
-   ["text"]="Fast down button",
-   ["image_path"]="23ec",
+   129358,
 },
 -- Table: {2091}
 {
-   ["subText"]="arrow, left, reverse, triangle, :arrow_backward:",
-   ["order"]=2090,
-   ["char"]={4757},
-   ["text"]="Reverse button",
-   ["image_path"]="25c0",
+   127934,
 },
 -- Table: {2092}
 {
-   ["subText"]="arrow, button, red, :arrow_up_small:",
-   ["order"]=2091,
-   ["char"]={4758},
-   ["text"]="Up button",
-   ["image_path"]="1f53c",
+   127952,
 },
 -- Table: {2093}
 {
-   ["subText"]="arrow, button, down, red, :arrow_down_small:",
-   ["order"]=2092,
-   ["char"]={4759},
-   ["text"]="Down button",
-   ["image_path"]="1f53d",
+   127945,
 },
 -- Table: {2094}
 {
-   ["subText"]="arrow, cardinal, direction, east, :arrow_right:",
-   ["order"]=2093,
-   ["char"]={4760},
-   ["text"]="Right arrow",
-   ["image_path"]="27a1",
+   129359,
 },
 -- Table: {2095}
 {
-   ["subText"]="arrow, cardinal, direction, west, :arrow_left:",
-   ["order"]=2094,
-   ["char"]={4761},
-   ["text"]="Left arrow",
-   ["image_path"]="2b05",
+   127921,
 },
 -- Table: {2096}
 {
-   ["subText"]="arrow, cardinal, direction, north, :arrow_up:",
-   ["order"]=2095,
-   ["char"]={4762},
-   ["text"]="Up arrow",
-   ["image_path"]="2b06",
+   127955,
 },
 -- Table: {2097}
 {
-   ["subText"]="arrow, cardinal, direction, down, south, :arrow_down:",
-   ["order"]=2096,
-   ["char"]={4763},
-   ["text"]="Down arrow",
-   ["image_path"]="2b07",
+   127992,
 },
 -- Table: {2098}
 {
-   ["subText"]="arrow, direction, intercardinal, northeast, :arrow_upper_right:",
-   ["order"]=2097,
-   ["char"]={4764},
-   ["text"]="Up-right arrow",
-   ["image_path"]="2197",
+   127954,
 },
 -- Table: {2099}
 {
-   ["subText"]="arrow, direction, intercardinal, southeast, :arrow_lower_right:",
-   ["order"]=2098,
-   ["char"]={4765},
-   ["text"]="Down-right arrow",
-   ["image_path"]="2198",
+   127953,
 },
 -- Table: {2100}
 {
-   ["subText"]="arrow, direction, intercardinal, southwest, :arrow_lower_left:",
-   ["order"]=2099,
-   ["char"]={4766},
-   ["text"]="Down-left arrow",
-   ["image_path"]="2199",
+   129357,
 },
 -- Table: {2101}
 {
-   ["subText"]="arrow, direction, intercardinal, northwest, :arrow_upper_left:",
-   ["order"]=2100,
-   ["char"]={4767},
-   ["text"]="Up-left arrow",
-   ["image_path"]="2196",
+   127951,
 },
 -- Table: {2102}
 {
-   ["subText"]="arrow, :arrow_up_down:",
-   ["order"]=2101,
-   ["char"]={4768},
-   ["text"]="Up-down arrow",
-   ["image_path"]="2195",
+   129349,
 },
 -- Table: {2103}
 {
-   ["subText"]="arrow, :left_right_arrow:",
-   ["order"]=2102,
-   ["char"]={4769},
-   ["text"]="Left-right arrow",
-   ["image_path"]="2194",
+   9971,
 },
 -- Table: {2104}
 {
-   ["subText"]="arrow, :arrow_right_hook:",
-   ["order"]=2103,
-   ["char"]={4770},
-   ["text"]="Left arrow curving right",
-   ["image_path"]="21aa",
+   127993,
 },
 -- Table: {2105}
 {
-   ["subText"]="arrow, :leftwards_arrow_with_hook:",
-   ["order"]=2104,
-   ["char"]={4771},
-   ["text"]="Right arrow curving left",
-   ["image_path"]="21a9",
+   127907,
 },
 -- Table: {2106}
 {
-   ["subText"]="arrow, :arrow_heading_up:",
-   ["order"]=2105,
-   ["char"]={4772},
-   ["text"]="Right arrow curving up",
-   ["image_path"]="2934",
+   129354,
 },
 -- Table: {2107}
 {
-   ["subText"]="arrow, down, :arrow_heading_down:",
-   ["order"]=2106,
-   ["char"]={4773},
-   ["text"]="Right arrow curving down",
-   ["image_path"]="2935",
+   129355,
 },
 -- Table: {2108}
 {
-   ["subText"]="arrow, crossed, :twisted_rightwards_arrows:",
-   ["order"]=2107,
-   ["char"]={4774},
-   ["text"]="Shuffle tracks button",
-   ["image_path"]="1f500",
+   127933,
 },
 -- Table: {2109}
 {
-   ["subText"]="arrow, clockwise, repeat, :repeat:",
-   ["order"]=2108,
-   ["char"]={4775},
-   ["text"]="Repeat button",
-   ["image_path"]="1f501",
+   128761,
 },
 -- Table: {2110}
 {
-   ["subText"]="arrow, clockwise, once, :repeat_one:",
-   ["order"]=2109,
-   ["char"]={4776},
-   ["text"]="Repeat single button",
-   ["image_path"]="1f502",
+   128759,
 },
 -- Table: {2111}
 {
-   ["subText"]="anticlockwise, arrow, counterclockwise, withershins, :arrows_counterclockwise:",
-   ["order"]=2110,
-   ["char"]={4777},
-   ["text"]="Anticlockwise arrows button",
-   ["image_path"]="1f504",
+   129666,
 },
 -- Table: {2112}
 {
-   ["subText"]="arrow, clockwise, reload, :arrows_clockwise:",
-   ["order"]=2111,
-   ["char"]={4778},
-   ["text"]="Clockwise vertical arrows",
-   ["image_path"]="1f503",
+   9976,
 },
 -- Table: {2113}
 {
-   ["subText"]="music, note, :musical_note:",
-   ["order"]=2112,
-   ["char"]={4779},
-   ["text"]="Musical note",
-   ["image_path"]="1f3b5",
+   129356,
 },
 -- Table: {2114}
 {
-   ["subText"]="music, note, notes, :notes:",
-   ["order"]=2113,
-   ["char"]={4780},
-   ["text"]="Musical notes",
-   ["image_path"]="1f3b6",
+   127935,
 },
 -- Table: {2115}
 {
-   ["subText"]="math, plus, :heavy_plus_sign:",
-   ["order"]=2114,
-   ["char"]={4781},
-   ["text"]="Heavy plus sign",
-   ["image_path"]="2795",
+   9975,
 },
 -- Table: {2116}
 {
-   ["subText"]="math, minus, :heavy_minus_sign:",
-   ["order"]=2115,
-   ["char"]={4782},
-   ["text"]="Heavy minus sign",
-   ["image_path"]="2796",
+   127938,
 },
 -- Table: {2117}
 {
-   ["subText"]="division, math, :heavy_division_sign:",
-   ["order"]=2116,
-   ["char"]={4783},
-   ["text"]="Heavy division sign",
-   ["image_path"]="2797",
+   127947,
 },
 -- Table: {2118}
 {
-   ["subText"]="cancel, multiplication, multiply, x, :heavy_multiplication_x:",
-   ["order"]=2117,
-   ["char"]={4784},
-   ["text"]="Heavy multiplication x",
-   ["image_path"]="2716",
+   127947,
+   9792,
 },
 -- Table: {2119}
 {
-   ["subText"]="currency, dollar, money, :heavy_dollar_sign:",
-   ["order"]=2118,
-   ["char"]={4785},
-   ["text"]="Heavy dollar sign",
-   ["image_path"]="1f4b2",
+   127947,
+   9794,
 },
 -- Table: {2120}
 {
-   ["subText"]="bank, currency, exchange, money, :currency_exchange:",
-   ["order"]=2119,
-   ["char"]={4786},
-   ["text"]="Currency exchange",
-   ["image_path"]="1f4b1",
+   129340,
 },
 -- Table: {2121}
 {
-   ["subText"]="mark, tm, trademark, :tm:",
-   ["order"]=2120,
-   ["char"]={4787},
-   ["text"]="Trade mark",
-   ["image_path"]="2122",
+   129340,
+   9792,
 },
 -- Table: {2122}
 {
-   ["subText"]="copyright, :copyright:",
-   ["order"]=2121,
-   ["char"]={4788},
-   ["text"]="Copyright",
-   ["image_path"]="00a9",
+   129340,
+   9794,
 },
 -- Table: {2123}
 {
-   ["subText"]="registered, :registered:",
-   ["order"]=2122,
-   ["char"]={4789},
-   ["text"]="Registered",
-   ["image_path"]="00ae",
+   129336,
 },
 -- Table: {2124}
 {
-   ["subText"]="dash, punctuation, wavy, :wavy_dash:",
-   ["order"]=2123,
-   ["char"]={4790},
-   ["text"]="Wavy dash",
-   ["image_path"]="3030",
+   129336,
+   9792,
 },
 -- Table: {2125}
 {
-   ["subText"]="curl, loop, :curly_loop:",
-   ["order"]=2124,
-   ["char"]={4791},
-   ["text"]="Curly loop",
-   ["image_path"]="27b0",
+   129336,
+   9794,
 },
 -- Table: {2126}
 {
-   ["subText"]="curl, double, loop, :loop:",
-   ["order"]=2125,
-   ["char"]={4792},
-   ["text"]="Double curly loop",
-   ["image_path"]="27bf",
+   9977,
 },
 -- Table: {2127}
 {
-   ["subText"]="arrow, end, :end:",
-   ["order"]=2126,
-   ["char"]={4793},
-   ["text"]="END arrow",
-   ["image_path"]="1f51a",
+   9977,
+   9792,
 },
 -- Table: {2128}
 {
-   ["subText"]="arrow, back, :back:",
-   ["order"]=2127,
-   ["char"]={4794},
-   ["text"]="BACK arrow",
-   ["image_path"]="1f519",
+   9977,
+   9794,
 },
 -- Table: {2129}
 {
-   ["subText"]="arrow, mark, on, :on:",
-   ["order"]=2128,
-   ["char"]={4795},
-   ["text"]="ON! arrow",
-   ["image_path"]="1f51b",
+   129338,
 },
 -- Table: {2130}
 {
-   ["subText"]="arrow, top, up, :top:",
-   ["order"]=2129,
-   ["char"]={4796},
-   ["text"]="TOP arrow",
-   ["image_path"]="1f51d",
+   129342,
 },
 -- Table: {2131}
 {
-   ["subText"]="arrow, soon, :soon:",
-   ["order"]=2130,
-   ["char"]={4797},
-   ["text"]="SOON arrow",
-   ["image_path"]="1f51c",
+   129342,
+   9792,
 },
 -- Table: {2132}
 {
-   ["subText"]="check, mark, :heavy_check_mark:",
-   ["order"]=2131,
-   ["char"]={4798},
-   ["text"]="Heavy check mark",
-   ["image_path"]="2714",
+   129342,
+   9794,
 },
 -- Table: {2133}
 {
-   ["subText"]="ballot, box, check, :ballot_box_with_check:",
-   ["order"]=2132,
-   ["char"]={4799},
-   ["text"]="Ballot box with check",
-   ["image_path"]="2611",
+   127948,
 },
 -- Table: {2134}
 {
-   ["subText"]="button, geometric, radio, :radio_button:",
-   ["order"]=2133,
-   ["char"]={4800},
-   ["text"]="Radio button",
-   ["image_path"]="1f518",
+   127948,
+   9792,
 },
 -- Table: {2135}
 {
-   ["subText"]="circle, geometric, :white_circle:",
-   ["order"]=2134,
-   ["char"]={4801},
-   ["text"]="White circle",
-   ["image_path"]="26aa",
+   127948,
+   9794,
 },
 -- Table: {2136}
 {
-   ["subText"]="circle, geometric, :black_circle:",
-   ["order"]=2135,
-   ["char"]={4802},
-   ["text"]="Black circle",
-   ["image_path"]="26ab",
+   127943,
 },
 -- Table: {2137}
 {
-   ["subText"]="circle, geometric, red, :red_circle:",
-   ["order"]=2136,
-   ["char"]={4803},
-   ["text"]="Red circle",
-   ["image_path"]="1f534",
+   129496,
 },
 -- Table: {2138}
 {
-   ["subText"]="blue, circle, geometric, :blue_circle:",
-   ["order"]=2137,
-   ["char"]={4804},
-   ["text"]="Blue circle",
-   ["image_path"]="1f535",
+   129496,
+   9792,
 },
 -- Table: {2139}
 {
-   ["subText"]="geometric, red, :small_red_triangle:",
-   ["order"]=2138,
-   ["char"]={4805},
-   ["text"]="Red triangle pointed up",
-   ["image_path"]="1f53a",
+   129496,
+   9794,
 },
 -- Table: {2140}
 {
-   ["subText"]="down, geometric, red, :small_red_triangle_down:",
-   ["order"]=2139,
-   ["char"]={4806},
-   ["text"]="Red triangle pointed down",
-   ["image_path"]="1f53b",
+   127940,
 },
 -- Table: {2141}
 {
-   ["subText"]="diamond, geometric, orange, :small_orange_diamond:",
-   ["order"]=2140,
-   ["char"]={4807},
-   ["text"]="Small orange diamond",
-   ["image_path"]="1f538",
+   127940,
+   9792,
 },
 -- Table: {2142}
 {
-   ["subText"]="blue, diamond, geometric, :small_blue_diamond:",
-   ["order"]=2141,
-   ["char"]={4808},
-   ["text"]="Small blue diamond",
-   ["image_path"]="1f539",
+   127940,
+   9794,
 },
 -- Table: {2143}
 {
-   ["subText"]="diamond, geometric, orange, :large_orange_diamond:",
-   ["order"]=2142,
-   ["char"]={4809},
-   ["text"]="Large orange diamond",
-   ["image_path"]="1f536",
+   127946,
 },
 -- Table: {2144}
 {
-   ["subText"]="blue, diamond, geometric, :large_blue_diamond:",
-   ["order"]=2143,
-   ["char"]={4810},
-   ["text"]="Large blue diamond",
-   ["image_path"]="1f537",
+   127946,
+   9792,
 },
 -- Table: {2145}
 {
-   ["subText"]="button, geometric, outlined, square, :white_square_button:",
-   ["order"]=2144,
-   ["char"]={4811},
-   ["text"]="White square button",
-   ["image_path"]="1f533",
+   127946,
+   9794,
 },
 -- Table: {2146}
 {
-   ["subText"]="button, geometric, square, :black_square_button:",
-   ["order"]=2145,
-   ["char"]={4812},
-   ["text"]="Black square button",
-   ["image_path"]="1f532",
+   129341,
 },
 -- Table: {2147}
 {
-   ["subText"]="geometric, square, :black_small_square:",
-   ["order"]=2146,
-   ["char"]={4813},
-   ["text"]="Black small square",
-   ["image_path"]="25aa",
+   129341,
+   9792,
 },
 -- Table: {2148}
 {
-   ["subText"]="geometric, square, :white_small_square:",
-   ["order"]=2147,
-   ["char"]={4814},
-   ["text"]="White small square",
-   ["image_path"]="25ab",
+   129341,
+   9794,
 },
 -- Table: {2149}
 {
-   ["subText"]="geometric, square, :black_medium_small_square:",
-   ["order"]=2148,
-   ["char"]={4815},
-   ["text"]="Black medium-small square",
-   ["image_path"]="25fe",
+   128675,
 },
 -- Table: {2150}
 {
-   ["subText"]="geometric, square, :white_medium_small_square:",
-   ["order"]=2149,
-   ["char"]={4816},
-   ["text"]="White medium-small square",
-   ["image_path"]="25fd",
+   128675,
+   9792,
 },
 -- Table: {2151}
 {
-   ["subText"]="geometric, square, :black_medium_square:",
-   ["order"]=2150,
-   ["char"]={4817},
-   ["text"]="Black medium square",
-   ["image_path"]="25fc",
+   128675,
+   9794,
 },
 -- Table: {2152}
 {
-   ["subText"]="geometric, square, :white_medium_square:",
-   ["order"]=2151,
-   ["char"]={4818},
-   ["text"]="White medium square",
-   ["image_path"]="25fb",
+   129495,
 },
 -- Table: {2153}
 {
-   ["subText"]="geometric, square, :black_large_square:",
-   ["order"]=2152,
-   ["char"]={4819},
-   ["text"]="Black large square",
-   ["image_path"]="2b1b",
+   129495,
+   9792,
 },
 -- Table: {2154}
 {
-   ["subText"]="geometric, square, :white_large_square:",
-   ["order"]=2153,
-   ["char"]={4820},
-   ["text"]="White large square",
-   ["image_path"]="2b1c",
+   129495,
+   9794,
 },
 -- Table: {2155}
 {
-   ["subText"]="soft, :speaker:",
-   ["order"]=2154,
-   ["char"]={4821},
-   ["text"]="Speaker low volume",
-   ["image_path"]="1f508",
+   128693,
 },
 -- Table: {2156}
 {
-   ["subText"]="mute, quiet, silent, speaker, :mute:",
-   ["order"]=2155,
-   ["char"]={4822},
-   ["text"]="Muted speaker",
-   ["image_path"]="1f507",
+   128693,
+   9792,
 },
 -- Table: {2157}
 {
-   ["subText"]="medium, :sound:",
-   ["order"]=2156,
-   ["char"]={4823},
-   ["text"]="Speaker medium volume",
-   ["image_path"]="1f509",
+   128693,
+   9794,
 },
 -- Table: {2158}
 {
-   ["subText"]="loud, :loud_sound:",
-   ["order"]=2157,
-   ["char"]={4824},
-   ["text"]="Speaker high volume",
-   ["image_path"]="1f50a",
+   128692,
 },
 -- Table: {2159}
 {
-   ["subText"]="bell, :bell:",
-   ["order"]=2158,
-   ["char"]={4825},
-   ["text"]="Bell",
-   ["image_path"]="1f514",
+   128692,
+   9792,
 },
 -- Table: {2160}
 {
-   ["subText"]="bell, forbidden, mute, no, not, prohibited, quiet, silent, :no_bell:",
-   ["order"]=2159,
-   ["char"]={4826},
-   ["text"]="Bell with slash",
-   ["image_path"]="1f515",
+   128692,
+   9794,
 },
 -- Table: {2161}
 {
-   ["subText"]="cheering, :mega:",
-   ["order"]=2160,
-   ["char"]={4827},
-   ["text"]="Megaphone",
-   ["image_path"]="1f4e3",
+   127942,
 },
 -- Table: {2162}
 {
-   ["subText"]="loud, public address, :loudspeaker:",
-   ["order"]=2161,
-   ["char"]={4828},
-   ["text"]="Loudspeaker",
-   ["image_path"]="1f4e2",
+   129351,
 },
 -- Table: {2163}
 {
-   ["subText"]="dialog, speech, :speech_left:",
-   ["order"]=2162,
-   ["char"]={4829},
-   ["text"]="Left speech bubble",
-   ["image_path"]="1f5e8",
+   129352,
 },
 -- Table: {2164}
 {
-   ["subText"]="eye, speech bubble, witness, :eye_in_speech_bubble:",
-   ["order"]=2163,
-   ["char"]={4830},
-   ["text"]="Eye in speech bubble",
-   ["image_path"]="1f441-1f5e8",
+   129353,
 },
 -- Table: {2165}
 {
-   ["subText"]="balloon, bubble, comic, dialog, speech, :speech_balloon:",
-   ["order"]=2164,
-   ["char"]={4831},
-   ["text"]="Speech balloon",
-   ["image_path"]="1f4ac",
+   127941,
 },
 -- Table: {2166}
 {
-   ["subText"]="balloon, bubble, comic, thought, :thought_balloon:",
-   ["order"]=2165,
-   ["char"]={4832},
-   ["text"]="Thought balloon",
-   ["image_path"]="1f4ad",
+   127894,
 },
 -- Table: {2167}
 {
-   ["subText"]="angry, balloon, bubble, mad, :anger_right:",
-   ["order"]=2166,
-   ["char"]={4833},
-   ["text"]="Right anger bubble",
-   ["image_path"]="1f5ef",
+   127989,
 },
 -- Table: {2168}
 {
-   ["subText"]="card, game, :spades:",
-   ["order"]=2167,
-   ["char"]={4834},
-   ["text"]="Spade suit",
-   ["image_path"]="2660",
+   127895,
 },
 -- Table: {2169}
 {
-   ["subText"]="card, game, :clubs:",
-   ["order"]=2168,
-   ["char"]={4835},
-   ["text"]="Club suit",
-   ["image_path"]="2663",
+   127915,
 },
 -- Table: {2170}
 {
-   ["subText"]="card, game, :hearts:",
-   ["order"]=2169,
-   ["char"]={4836},
-   ["text"]="Heart suit",
-   ["image_path"]="2665",
+   127903,
 },
 -- Table: {2171}
 {
-   ["subText"]="card, game, :diamonds:",
-   ["order"]=2170,
-   ["char"]={4837},
-   ["text"]="Diamond suit",
-   ["image_path"]="2666",
+   127914,
 },
 -- Table: {2172}
 {
-   ["subText"]="card, game, wildcard, :black_joker:",
-   ["order"]=2171,
-   ["char"]={4838},
-   ["text"]="Joker",
-   ["image_path"]="1f0cf",
+   129337,
 },
 -- Table: {2173}
 {
-   ["subText"]="Japanese, card, flower, game, playing, :flower_playing_cards:",
-   ["order"]=2172,
-   ["char"]={4839},
-   ["text"]="Flower playing cards",
-   ["image_path"]="1f3b4",
+   129337,
+   9792,
 },
 -- Table: {2174}
 {
-   ["subText"]="game, mahjong, red, :mahjong:",
-   ["order"]=2173,
-   ["char"]={4840},
-   ["text"]="Mahjong red dragon",
-   ["image_path"]="1f004",
+   129337,
+   9794,
 },
 -- Table: {2175}
 {
-   ["subText"]="00, 1, 1:00, clock, one, o’clock, :clock1:",
-   ["order"]=2174,
-   ["char"]={4841},
-   ["text"]="One o’clock",
-   ["image_path"]="1f550",
+   127917,
 },
 -- Table: {2176}
 {
-   ["subText"]="00, 2, 2:00, clock, o’clock, two, :clock2:",
-   ["order"]=2175,
-   ["char"]={4842},
-   ["text"]="Two o’clock",
-   ["image_path"]="1f551",
+   127912,
 },
 -- Table: {2177}
 {
-   ["subText"]="00, 3, 3:00, clock, o’clock, three, :clock3:",
-   ["order"]=2176,
-   ["char"]={4843},
-   ["text"]="Three o’clock",
-   ["image_path"]="1f552",
+   127916,
 },
 -- Table: {2178}
 {
-   ["subText"]="00, 4, 4:00, clock, four, o’clock, :clock4:",
-   ["order"]=2177,
-   ["char"]={4844},
-   ["text"]="Four o’clock",
-   ["image_path"]="1f553",
+   127908,
 },
 -- Table: {2179}
 {
-   ["subText"]="00, 5, 5:00, clock, five, o’clock, :clock5:",
-   ["order"]=2178,
-   ["char"]={4845},
-   ["text"]="Five o’clock",
-   ["image_path"]="1f554",
+   127911,
 },
 -- Table: {2180}
 {
-   ["subText"]="00, 6, 6:00, clock, o’clock, six, :clock6:",
-   ["order"]=2179,
-   ["char"]={4846},
-   ["text"]="Six o’clock",
-   ["image_path"]="1f555",
+   127932,
 },
 -- Table: {2181}
 {
-   ["subText"]="00, 7, 7:00, clock, o’clock, seven, :clock7:",
-   ["order"]=2180,
-   ["char"]={4847},
-   ["text"]="Seven o’clock",
-   ["image_path"]="1f556",
+   127929,
 },
 -- Table: {2182}
 {
-   ["subText"]="00, 8, 8:00, clock, eight, o’clock, :clock8:",
-   ["order"]=2181,
-   ["char"]={4848},
-   ["text"]="Eight o’clock",
-   ["image_path"]="1f557",
+   129345,
 },
 -- Table: {2183}
 {
-   ["subText"]="00, 9, 9:00, clock, nine, o’clock, :clock9:",
-   ["order"]=2182,
-   ["char"]={4849},
-   ["text"]="Nine o’clock",
-   ["image_path"]="1f558",
+   127927,
 },
 -- Table: {2184}
 {
-   ["subText"]="00, 10, 10:00, clock, o’clock, ten, :clock10:",
-   ["order"]=2183,
-   ["char"]={4850},
-   ["text"]="Ten o’clock",
-   ["image_path"]="1f559",
+   127930,
 },
 -- Table: {2185}
 {
-   ["subText"]="00, 11, 11:00, clock, eleven, o’clock, :clock11:",
-   ["order"]=2184,
-   ["char"]={4851},
-   ["text"]="Eleven o’clock",
-   ["image_path"]="1f55a",
+   129685,
 },
 -- Table: {2186}
 {
-   ["subText"]="00, 12, 12:00, clock, o’clock, twelve, :clock12:",
-   ["order"]=2185,
-   ["char"]={4852},
-   ["text"]="Twelve o’clock",
-   ["image_path"]="1f55b",
+   127928,
 },
 -- Table: {2187}
 {
-   ["subText"]="1, 1:30, 30, clock, one, thirty, :clock130:",
-   ["order"]=2186,
-   ["char"]={4853},
-   ["text"]="One-thirty",
-   ["image_path"]="1f55c",
+   127931,
 },
 -- Table: {2188}
 {
-   ["subText"]="2, 2:30, 30, clock, thirty, two, :clock230:",
-   ["order"]=2187,
-   ["char"]={4854},
-   ["text"]="Two-thirty",
-   ["image_path"]="1f55d",
+   127922,
 },
 -- Table: {2189}
 {
-   ["subText"]="3, 30, 3:30, clock, thirty, three, :clock330:",
-   ["order"]=2188,
-   ["char"]={4855},
-   ["text"]="Three-thirty",
-   ["image_path"]="1f55e",
+   9823,
 },
 -- Table: {2190}
 {
-   ["subText"]="4, 30, 4:30, clock, four, thirty, :clock430:",
-   ["order"]=2189,
-   ["char"]={4856},
-   ["text"]="Four-thirty",
-   ["image_path"]="1f55f",
+   127919,
 },
 -- Table: {2191}
 {
-   ["subText"]="5, 30, 5:30, clock, five, thirty, :clock530:",
-   ["order"]=2190,
-   ["char"]={4857},
-   ["text"]="Five-thirty",
-   ["image_path"]="1f560",
+   129665,
 },
 -- Table: {2192}
 {
-   ["subText"]="6, 30, 6:30, clock, six, thirty, :clock630:",
-   ["order"]=2191,
-   ["char"]={4858},
-   ["text"]="Six-thirty",
-   ["image_path"]="1f561",
+   129664,
 },
 -- Table: {2193}
 {
-   ["subText"]="7, 30, 7:30, clock, seven, thirty, :clock730:",
-   ["order"]=2192,
-   ["char"]={4859},
-   ["text"]="Seven-thirty",
-   ["image_path"]="1f562",
+   127923,
 },
 -- Table: {2194}
 {
-   ["subText"]="8, 30, 8:30, clock, eight, thirty, :clock830:",
-   ["order"]=2193,
-   ["char"]={4860},
-   ["text"]="Eight-thirty",
-   ["image_path"]="1f563",
+   127918,
 },
 -- Table: {2195}
 {
-   ["subText"]="9, 30, 9:30, clock, nine, thirty, :clock930:",
-   ["order"]=2194,
-   ["char"]={4861},
-   ["text"]="Nine-thirty",
-   ["image_path"]="1f564",
+   127920,
 },
 -- Table: {2196}
 {
-   ["subText"]="10, 10:30, 30, clock, ten, thirty, :clock1030:",
-   ["order"]=2195,
-   ["char"]={4862},
-   ["text"]="Ten-thirty",
-   ["image_path"]="1f565",
+   129513,
 },
 -- Table: {2197}
 {
-   ["subText"]="11, 11:30, 30, clock, eleven, thirty, :clock1130:",
-   ["order"]=2196,
-   ["char"]={4863},
-   ["text"]="Eleven-thirty",
-   ["image_path"]="1f566",
+   8986,
 },
 -- Table: {2198}
 {
-   ["subText"]="12, 12:30, 30, clock, thirty, twelve, :clock1230:",
-   ["order"]=2197,
-   ["char"]={4864},
-   ["text"]="Twelve-thirty",
-   ["image_path"]="1f567",
+   128241,
 },
 -- Table: {2199}
 {
-   ["subText"]="waving, :flag_white:",
-   ["order"]=2198,
-   ["char"]={4865},
-   ["text"]="White flag",
-   ["image_path"]="1f3f3",
+   128242,
 },
 -- Table: {2200}
 {
-   ["subText"]="waving, :flag_black:",
-   ["order"]=2199,
-   ["char"]={4866},
-   ["text"]="Black flag",
-   ["image_path"]="1f3f4",
+   128187,
 },
 -- Table: {2201}
 {
-   ["subText"]="checkered, chequered, racing, :checkered_flag:",
-   ["order"]=2200,
-   ["char"]={4867},
-   ["text"]="Chequered flag",
-   ["image_path"]="1f3c1",
+   9000,
 },
 -- Table: {2202}
 {
-   ["subText"]="post, :triangular_flag_on_post:",
-   ["order"]=2201,
-   ["char"]={4868},
-   ["text"]="Triangular flag",
-   ["image_path"]="1f6a9",
+   128421,
 },
 -- Table: {2203}
 {
-   ["subText"]="rainbow, :rainbow_flag:",
-   ["order"]=2202,
-   ["char"]={4869},
-   ["text"]="Rainbow flag",
-   ["image_path"]="1f3f3-1f308",
+   128424,
 },
 -- Table: {2204}
 {
-   ["subText"]="flag, :flag_af:",
-   ["order"]=2203,
-   ["char"]={4870},
-   ["text"]="Afghanistan",
-   ["image_path"]="1f1e6-1f1eb",
+   128433,
 },
 -- Table: {2205}
 {
-   ["subText"]="flag, :flag_ax:",
-   ["order"]=2204,
-   ["char"]={4871},
-   ["text"]="Åland Islands",
-   ["image_path"]="1f1e6-1f1fd",
+   128434,
 },
 -- Table: {2206}
 {
-   ["subText"]="flag, :flag_al:",
-   ["order"]=2205,
-   ["char"]={4872},
-   ["text"]="Albania",
-   ["image_path"]="1f1e6-1f1f1",
+   128377,
 },
 -- Table: {2207}
 {
-   ["subText"]="flag, :flag_dz:",
-   ["order"]=2206,
-   ["char"]={4873},
-   ["text"]="Algeria",
-   ["image_path"]="1f1e9-1f1ff",
+   128476,
 },
 -- Table: {2208}
 {
-   ["subText"]="flag, :flag_as:",
-   ["order"]=2207,
-   ["char"]={4874},
-   ["text"]="American Samoa",
-   ["image_path"]="1f1e6-1f1f8",
+   128189,
 },
 -- Table: {2209}
 {
-   ["subText"]="flag, :flag_ad:",
-   ["order"]=2208,
-   ["char"]={4875},
-   ["text"]="Andorra",
-   ["image_path"]="1f1e6-1f1e9",
+   128190,
 },
 -- Table: {2210}
 {
-   ["subText"]="flag, :flag_ao:",
-   ["order"]=2209,
-   ["char"]={4876},
-   ["text"]="Angola",
-   ["image_path"]="1f1e6-1f1f4",
+   128191,
 },
 -- Table: {2211}
 {
-   ["subText"]="flag, :flag_ai:",
-   ["order"]=2210,
-   ["char"]={4877},
-   ["text"]="Anguilla",
-   ["image_path"]="1f1e6-1f1ee",
+   128192,
 },
 -- Table: {2212}
 {
-   ["subText"]="flag, :flag_aq:",
-   ["order"]=2211,
-   ["char"]={4878},
-   ["text"]="Antarctica",
-   ["image_path"]="1f1e6-1f1f6",
+   128252,
 },
 -- Table: {2213}
 {
-   ["subText"]="flag, :flag_ag:",
-   ["order"]=2212,
-   ["char"]={4879},
-   ["text"]="Antigua & Barbuda",
-   ["image_path"]="1f1e6-1f1ec",
+   128247,
 },
 -- Table: {2214}
 {
-   ["subText"]="flag, :flag_ar:",
-   ["order"]=2213,
-   ["char"]={4880},
-   ["text"]="Argentina",
-   ["image_path"]="1f1e6-1f1f7",
+   128248,
 },
 -- Table: {2215}
 {
-   ["subText"]="flag, :flag_am:",
-   ["order"]=2214,
-   ["char"]={4881},
-   ["text"]="Armenia",
-   ["image_path"]="1f1e6-1f1f2",
+   128249,
 },
 -- Table: {2216}
 {
-   ["subText"]="flag, :flag_aw:",
-   ["order"]=2215,
-   ["char"]={4882},
-   ["text"]="Aruba",
-   ["image_path"]="1f1e6-1f1fc",
+   127909,
 },
 -- Table: {2217}
 {
-   ["subText"]="flag, :flag_au:",
-   ["order"]=2216,
-   ["char"]={4883},
-   ["text"]="Australia",
-   ["image_path"]="1f1e6-1f1fa",
+   128253,
 },
 -- Table: {2218}
 {
-   ["subText"]="flag, :flag_at:",
-   ["order"]=2217,
-   ["char"]={4884},
-   ["text"]="Austria",
-   ["image_path"]="1f1e6-1f1f9",
+   127902,
 },
 -- Table: {2219}
 {
-   ["subText"]="flag, :flag_az:",
-   ["order"]=2218,
-   ["char"]={4885},
-   ["text"]="Azerbaijan",
-   ["image_path"]="1f1e6-1f1ff",
+   128222,
 },
 -- Table: {2220}
 {
-   ["subText"]="flag, :flag_bs:",
-   ["order"]=2219,
-   ["char"]={4886},
-   ["text"]="Bahamas",
-   ["image_path"]="1f1e7-1f1f8",
+   9742,
 },
 -- Table: {2221}
 {
-   ["subText"]="flag, :flag_bh:",
-   ["order"]=2220,
-   ["char"]={4887},
-   ["text"]="Bahrain",
-   ["image_path"]="1f1e7-1f1ed",
+   128223,
 },
 -- Table: {2222}
 {
-   ["subText"]="flag, :flag_bd:",
-   ["order"]=2221,
-   ["char"]={4888},
-   ["text"]="Bangladesh",
-   ["image_path"]="1f1e7-1f1e9",
+   128224,
 },
 -- Table: {2223}
 {
-   ["subText"]="flag, :flag_bb:",
-   ["order"]=2222,
-   ["char"]={4889},
-   ["text"]="Barbados",
-   ["image_path"]="1f1e7-1f1e7",
+   128250,
 },
 -- Table: {2224}
 {
-   ["subText"]="flag, :flag_by:",
-   ["order"]=2223,
-   ["char"]={4890},
-   ["text"]="Belarus",
-   ["image_path"]="1f1e7-1f1fe",
+   128251,
 },
 -- Table: {2225}
 {
-   ["subText"]="flag, :flag_be:",
-   ["order"]=2224,
-   ["char"]={4891},
-   ["text"]="Belgium",
-   ["image_path"]="1f1e7-1f1ea",
+   127897,
 },
 -- Table: {2226}
 {
-   ["subText"]="flag, :flag_bz:",
-   ["order"]=2225,
-   ["char"]={4892},
-   ["text"]="Belize",
-   ["image_path"]="1f1e7-1f1ff",
+   127898,
 },
 -- Table: {2227}
 {
-   ["subText"]="flag, :flag_bj:",
-   ["order"]=2226,
-   ["char"]={4893},
-   ["text"]="Benin",
-   ["image_path"]="1f1e7-1f1ef",
+   127899,
 },
 -- Table: {2228}
 {
-   ["subText"]="flag, :flag_bm:",
-   ["order"]=2227,
-   ["char"]={4894},
-   ["text"]="Bermuda",
-   ["image_path"]="1f1e7-1f1f2",
+   129517,
 },
 -- Table: {2229}
 {
-   ["subText"]="flag, :flag_bt:",
-   ["order"]=2228,
-   ["char"]={4895},
-   ["text"]="Bhutan",
-   ["image_path"]="1f1e7-1f1f9",
+   9201,
 },
 -- Table: {2230}
 {
-   ["subText"]="flag, :flag_bo:",
-   ["order"]=2229,
-   ["char"]={4896},
-   ["text"]="Bolivia",
-   ["image_path"]="1f1e7-1f1f4",
+   9202,
 },
 -- Table: {2231}
 {
-   ["subText"]="flag, :flag_ba:",
-   ["order"]=2230,
-   ["char"]={4897},
-   ["text"]="Bosnia & Herzegovina",
-   ["image_path"]="1f1e7-1f1e6",
+   9200,
 },
 -- Table: {2232}
 {
-   ["subText"]="flag, :flag_bw:",
-   ["order"]=2231,
-   ["char"]={4898},
-   ["text"]="Botswana",
-   ["image_path"]="1f1e7-1f1fc",
+   128368,
 },
 -- Table: {2233}
 {
-   ["subText"]="flag, :flag_br:",
-   ["order"]=2232,
-   ["char"]={4899},
-   ["text"]="Brazil",
-   ["image_path"]="1f1e7-1f1f7",
+   8987,
 },
 -- Table: {2234}
 {
-   ["subText"]="flag, :flag_io:",
-   ["order"]=2233,
-   ["char"]={4900},
-   ["text"]="British Indian Ocean Territory",
-   ["image_path"]="1f1ee-1f1f4",
+   9203,
 },
 -- Table: {2235}
 {
-   ["subText"]="flag, :flag_vg:",
-   ["order"]=2234,
-   ["char"]={4901},
-   ["text"]="British Virgin Islands",
-   ["image_path"]="1f1fb-1f1ec",
+   128225,
 },
 -- Table: {2236}
 {
-   ["subText"]="flag, :flag_bn:",
-   ["order"]=2235,
-   ["char"]={4902},
-   ["text"]="Brunei",
-   ["image_path"]="1f1e7-1f1f3",
+   128267,
 },
 -- Table: {2237}
 {
-   ["subText"]="flag, :flag_bg:",
-   ["order"]=2236,
-   ["char"]={4903},
-   ["text"]="Bulgaria",
-   ["image_path"]="1f1e7-1f1ec",
+   128268,
 },
 -- Table: {2238}
 {
-   ["subText"]="flag, :flag_bf:",
-   ["order"]=2237,
-   ["char"]={4904},
-   ["text"]="Burkina Faso",
-   ["image_path"]="1f1e7-1f1eb",
+   128161,
 },
 -- Table: {2239}
 {
-   ["subText"]="flag, :flag_bi:",
-   ["order"]=2238,
-   ["char"]={4905},
-   ["text"]="Burundi",
-   ["image_path"]="1f1e7-1f1ee",
+   128294,
 },
 -- Table: {2240}
 {
-   ["subText"]="flag, :flag_kh:",
-   ["order"]=2239,
-   ["char"]={4906},
-   ["text"]="Cambodia",
-   ["image_path"]="1f1f0-1f1ed",
+   128367,
 },
 -- Table: {2241}
 {
-   ["subText"]="flag, :flag_cm:",
-   ["order"]=2240,
-   ["char"]={4907},
-   ["text"]="Cameroon",
-   ["image_path"]="1f1e8-1f1f2",
+   129519,
 },
 -- Table: {2242}
 {
-   ["subText"]="flag, :flag_ca:",
-   ["order"]=2241,
-   ["char"]={4908},
-   ["text"]="Canada",
-   ["image_path"]="1f1e8-1f1e6",
+   128738,
 },
 -- Table: {2243}
 {
-   ["subText"]="flag, :flag_ic:",
-   ["order"]=2242,
-   ["char"]={4909},
-   ["text"]="Canary Islands",
-   ["image_path"]="1f1ee-1f1e8",
+   128184,
 },
 -- Table: {2244}
 {
-   ["subText"]="flag, :flag_cv:",
-   ["order"]=2243,
-   ["char"]={4910},
-   ["text"]="Cape Verde",
-   ["image_path"]="1f1e8-1f1fb",
+   128181,
 },
 -- Table: {2245}
 {
-   ["subText"]="flag, :flag_bq:",
-   ["order"]=2244,
-   ["char"]={4911},
-   ["text"]="Caribbean Netherlands",
-   ["image_path"]="1f1e7-1f1f6",
+   128180,
 },
 -- Table: {2246}
 {
-   ["subText"]="flag, :flag_ky:",
-   ["order"]=2245,
-   ["char"]={4912},
-   ["text"]="Cayman Islands",
-   ["image_path"]="1f1f0-1f1fe",
+   128182,
 },
 -- Table: {2247}
 {
-   ["subText"]="flag, :flag_cf:",
-   ["order"]=2246,
-   ["char"]={4913},
-   ["text"]="Central African Republic",
-   ["image_path"]="1f1e8-1f1eb",
+   128183,
 },
 -- Table: {2248}
 {
-   ["subText"]="flag, :flag_td:",
-   ["order"]=2247,
-   ["char"]={4914},
-   ["text"]="Chad",
-   ["image_path"]="1f1f9-1f1e9",
+   128176,
 },
 -- Table: {2249}
 {
-   ["subText"]="flag, :flag_cl:",
-   ["order"]=2248,
-   ["char"]={4915},
-   ["text"]="Chile",
-   ["image_path"]="1f1e8-1f1f1",
+   128179,
 },
 -- Table: {2250}
 {
-   ["subText"]="flag, :flag_cn:",
-   ["order"]=2249,
-   ["char"]={4916},
-   ["text"]="China",
-   ["image_path"]="1f1e8-1f1f3",
+   128142,
 },
 -- Table: {2251}
 {
-   ["subText"]="flag, :flag_cx:",
-   ["order"]=2250,
-   ["char"]={4917},
-   ["text"]="Christmas Island",
-   ["image_path"]="1f1e8-1f1fd",
+   9878,
 },
 -- Table: {2252}
 {
-   ["subText"]="flag, :flag_cc:",
-   ["order"]=2251,
-   ["char"]={4918},
-   ["text"]="Cocos (Keeling) Islands",
-   ["image_path"]="1f1e8-1f1e8",
+   129520,
 },
 -- Table: {2253}
 {
-   ["subText"]="flag, :flag_co:",
-   ["order"]=2252,
-   ["char"]={4919},
-   ["text"]="Colombia",
-   ["image_path"]="1f1e8-1f1f4",
+   128295,
 },
 -- Table: {2254}
 {
-   ["subText"]="flag, :flag_km:",
-   ["order"]=2253,
-   ["char"]={4920},
-   ["text"]="Comoros",
-   ["image_path"]="1f1f0-1f1f2",
+   128296,
 },
 -- Table: {2255}
 {
-   ["subText"]="flag, :flag_cg:",
-   ["order"]=2254,
-   ["char"]={4921},
-   ["text"]="Congo - Brazzaville",
-   ["image_path"]="1f1e8-1f1ec",
+   9874,
 },
 -- Table: {2256}
 {
-   ["subText"]="flag, :flag_cd:",
-   ["order"]=2255,
-   ["char"]={4922},
-   ["text"]="Congo - Kinshasa",
-   ["image_path"]="1f1e8-1f1e9",
+   128736,
 },
 -- Table: {2257}
 {
-   ["subText"]="flag, :flag_ck:",
-   ["order"]=2256,
-   ["char"]={4923},
-   ["text"]="Cook Islands",
-   ["image_path"]="1f1e8-1f1f0",
+   9935,
 },
 -- Table: {2258}
 {
-   ["subText"]="flag, :flag_cr:",
-   ["order"]=2257,
-   ["char"]={4924},
-   ["text"]="Costa Rica",
-   ["image_path"]="1f1e8-1f1f7",
+   128297,
 },
 -- Table: {2259}
 {
-   ["subText"]="flag, :flag_ci:",
-   ["order"]=2258,
-   ["char"]={4925},
-   ["text"]="Côte d’Ivoire",
-   ["image_path"]="1f1e8-1f1ee",
+   9881,
 },
 -- Table: {2260}
 {
-   ["subText"]="flag, :flag_hr:",
-   ["order"]=2259,
-   ["char"]={4926},
-   ["text"]="Croatia",
-   ["image_path"]="1f1ed-1f1f7",
+   129521,
 },
 -- Table: {2261}
 {
-   ["subText"]="flag, :flag_cu:",
-   ["order"]=2260,
-   ["char"]={4927},
-   ["text"]="Cuba",
-   ["image_path"]="1f1e8-1f1fa",
+   9939,
 },
 -- Table: {2262}
 {
-   ["subText"]="flag, :flag_cw:",
-   ["order"]=2261,
-   ["char"]={4928},
-   ["text"]="Curaçao",
-   ["image_path"]="1f1e8-1f1fc",
+   129522,
 },
 -- Table: {2263}
 {
-   ["subText"]="flag, :flag_cy:",
-   ["order"]=2262,
-   ["char"]={4929},
-   ["text"]="Cyprus",
-   ["image_path"]="1f1e8-1f1fe",
+   128299,
 },
 -- Table: {2264}
 {
-   ["subText"]="flag, :flag_cz:",
-   ["order"]=2263,
-   ["char"]={4930},
-   ["text"]="Czechia",
-   ["image_path"]="1f1e8-1f1ff",
+   128163,
 },
 -- Table: {2265}
 {
-   ["subText"]="flag, :flag_dk:",
-   ["order"]=2264,
-   ["char"]={4931},
-   ["text"]="Denmark",
-   ["image_path"]="1f1e9-1f1f0",
+   129512,
 },
 -- Table: {2266}
 {
-   ["subText"]="flag, :flag_dj:",
-   ["order"]=2265,
-   ["char"]={4932},
-   ["text"]="Djibouti",
-   ["image_path"]="1f1e9-1f1ef",
+   129683,
 },
 -- Table: {2267}
 {
-   ["subText"]="flag, :flag_dm:",
-   ["order"]=2266,
-   ["char"]={4933},
-   ["text"]="Dominica",
-   ["image_path"]="1f1e9-1f1f2",
+   129682,
 },
 -- Table: {2268}
 {
-   ["subText"]="flag, :flag_do:",
-   ["order"]=2267,
-   ["char"]={4934},
-   ["text"]="Dominican Republic",
-   ["image_path"]="1f1e9-1f1f4",
+   128298,
 },
 -- Table: {2269}
 {
-   ["subText"]="flag, :flag_ec:",
-   ["order"]=2268,
-   ["char"]={4935},
-   ["text"]="Ecuador",
-   ["image_path"]="1f1ea-1f1e8",
+   128481,
 },
 -- Table: {2270}
 {
-   ["subText"]="flag, :flag_eg:",
-   ["order"]=2269,
-   ["char"]={4936},
-   ["text"]="Egypt",
-   ["image_path"]="1f1ea-1f1ec",
+   9876,
 },
 -- Table: {2271}
 {
-   ["subText"]="flag, :flag_sv:",
-   ["order"]=2270,
-   ["char"]={4937},
-   ["text"]="El Salvador",
-   ["image_path"]="1f1f8-1f1fb",
+   128737,
 },
 -- Table: {2272}
 {
-   ["subText"]="flag, :flag_gq:",
-   ["order"]=2271,
-   ["char"]={4938},
-   ["text"]="Equatorial Guinea",
-   ["image_path"]="1f1ec-1f1f6",
+   128684,
 },
 -- Table: {2273}
 {
-   ["subText"]="flag, :flag_er:",
-   ["order"]=2272,
-   ["char"]={4939},
-   ["text"]="Eritrea",
-   ["image_path"]="1f1ea-1f1f7",
+   9904,
 },
 -- Table: {2274}
 {
-   ["subText"]="flag, :flag_ee:",
-   ["order"]=2273,
-   ["char"]={4940},
-   ["text"]="Estonia",
-   ["image_path"]="1f1ea-1f1ea",
+   9905,
 },
 -- Table: {2275}
 {
-   ["subText"]="flag, :flag_et:",
-   ["order"]=2274,
-   ["char"]={4941},
-   ["text"]="Ethiopia",
-   ["image_path"]="1f1ea-1f1f9",
+   127994,
 },
 -- Table: {2276}
 {
-   ["subText"]="flag, :flag_eu:",
-   ["order"]=2275,
-   ["char"]={4942},
-   ["text"]="European Union",
-   ["image_path"]="1f1ea-1f1fa",
+   129684,
 },
 -- Table: {2277}
 {
-   ["subText"]="flag, :flag_fk:",
-   ["order"]=2276,
-   ["char"]={4943},
-   ["text"]="Falkland Islands",
-   ["image_path"]="1f1eb-1f1f0",
+   128302,
 },
 -- Table: {2278}
 {
-   ["subText"]="flag, :flag_fo:",
-   ["order"]=2277,
-   ["char"]={4944},
-   ["text"]="Faroe Islands",
-   ["image_path"]="1f1eb-1f1f4",
+   128255,
 },
 -- Table: {2279}
 {
-   ["subText"]="flag, :flag_fj:",
-   ["order"]=2278,
-   ["char"]={4945},
-   ["text"]="Fiji",
-   ["image_path"]="1f1eb-1f1ef",
+   129535,
 },
 -- Table: {2280}
 {
-   ["subText"]="flag, :flag_fi:",
-   ["order"]=2279,
-   ["char"]={4946},
-   ["text"]="Finland",
-   ["image_path"]="1f1eb-1f1ee",
+   128136,
 },
 -- Table: {2281}
 {
-   ["subText"]="flag, :flag_fr:",
-   ["order"]=2280,
-   ["char"]={4947},
-   ["text"]="France",
-   ["image_path"]="1f1eb-1f1f7",
+   9879,
 },
 -- Table: {2282}
 {
-   ["subText"]="flag, :flag_gf:",
-   ["order"]=2281,
-   ["char"]={4948},
-   ["text"]="French Guiana",
-   ["image_path"]="1f1ec-1f1eb",
+   128301,
 },
 -- Table: {2283}
 {
-   ["subText"]="flag, :flag_pf:",
-   ["order"]=2282,
-   ["char"]={4949},
-   ["text"]="French Polynesia",
-   ["image_path"]="1f1f5-1f1eb",
+   128300,
 },
 -- Table: {2284}
 {
-   ["subText"]="flag, :flag_tf:",
-   ["order"]=2283,
-   ["char"]={4950},
-   ["text"]="French Southern Territories",
-   ["image_path"]="1f1f9-1f1eb",
+   128371,
 },
 -- Table: {2285}
 {
-   ["subText"]="flag, :flag_ga:",
-   ["order"]=2284,
-   ["char"]={4951},
-   ["text"]="Gabon",
-   ["image_path"]="1f1ec-1f1e6",
+   129455,
 },
 -- Table: {2286}
 {
-   ["subText"]="flag, :flag_gm:",
-   ["order"]=2285,
-   ["char"]={4952},
-   ["text"]="Gambia",
-   ["image_path"]="1f1ec-1f1f2",
+   129658,
 },
 -- Table: {2287}
 {
-   ["subText"]="flag, :flag_ge:",
-   ["order"]=2286,
-   ["char"]={4953},
-   ["text"]="Georgia",
-   ["image_path"]="1f1ec-1f1ea",
+   129657,
 },
 -- Table: {2288}
 {
-   ["subText"]="flag, :flag_de:",
-   ["order"]=2287,
-   ["char"]={4954},
-   ["text"]="Germany",
-   ["image_path"]="1f1e9-1f1ea",
+   128138,
 },
 -- Table: {2289}
 {
-   ["subText"]="flag, :flag_gh:",
-   ["order"]=2288,
-   ["char"]={4955},
-   ["text"]="Ghana",
-   ["image_path"]="1f1ec-1f1ed",
+   128137,
 },
 -- Table: {2290}
 {
-   ["subText"]="flag, :flag_gi:",
-   ["order"]=2289,
-   ["char"]={4956},
-   ["text"]="Gibraltar",
-   ["image_path"]="1f1ec-1f1ee",
+   129656,
 },
 -- Table: {2291}
 {
-   ["subText"]="flag, :flag_gr:",
-   ["order"]=2290,
-   ["char"]={4957},
-   ["text"]="Greece",
-   ["image_path"]="1f1ec-1f1f7",
+   129516,
 },
 -- Table: {2292}
 {
-   ["subText"]="flag, :flag_gl:",
-   ["order"]=2291,
-   ["char"]={4958},
-   ["text"]="Greenland",
-   ["image_path"]="1f1ec-1f1f1",
+   129440,
 },
 -- Table: {2293}
 {
-   ["subText"]="flag, :flag_gd:",
-   ["order"]=2292,
-   ["char"]={4959},
-   ["text"]="Grenada",
-   ["image_path"]="1f1ec-1f1e9",
+   129515,
 },
 -- Table: {2294}
 {
-   ["subText"]="flag, :flag_gp:",
-   ["order"]=2293,
-   ["char"]={4960},
-   ["text"]="Guadeloupe",
-   ["image_path"]="1f1ec-1f1f5",
+   129514,
 },
 -- Table: {2295}
 {
-   ["subText"]="flag, :flag_gu:",
-   ["order"]=2294,
-   ["char"]={4961},
-   ["text"]="Guam",
-   ["image_path"]="1f1ec-1f1fa",
+   127777,
 },
 -- Table: {2296}
 {
-   ["subText"]="flag, :flag_gt:",
-   ["order"]=2295,
-   ["char"]={4962},
-   ["text"]="Guatemala",
-   ["image_path"]="1f1ec-1f1f9",
+   129681,
 },
 -- Table: {2297}
 {
-   ["subText"]="flag, :flag_gg:",
-   ["order"]=2296,
-   ["char"]={4963},
-   ["text"]="Guernsey",
-   ["image_path"]="1f1ec-1f1ec",
+   129529,
 },
 -- Table: {2298}
 {
-   ["subText"]="flag, :flag_gn:",
-   ["order"]=2297,
-   ["char"]={4964},
-   ["text"]="Guinea",
-   ["image_path"]="1f1ec-1f1f3",
+   129530,
 },
 -- Table: {2299}
 {
-   ["subText"]="flag, :flag_gw:",
-   ["order"]=2298,
-   ["char"]={4965},
-   ["text"]="Guinea-Bissau",
-   ["image_path"]="1f1ec-1f1fc",
+   129531,
 },
 -- Table: {2300}
 {
-   ["subText"]="flag, :flag_gy:",
-   ["order"]=2299,
-   ["char"]={4966},
-   ["text"]="Guyana",
-   ["image_path"]="1f1ec-1f1fe",
+   128701,
 },
 -- Table: {2301}
 {
-   ["subText"]="flag, :flag_ht:",
-   ["order"]=2300,
-   ["char"]={4967},
-   ["text"]="Haiti",
-   ["image_path"]="1f1ed-1f1f9",
+   128688,
 },
 -- Table: {2302}
 {
-   ["subText"]="flag, :flag_hn:",
-   ["order"]=2301,
-   ["char"]={4968},
-   ["text"]="Honduras",
-   ["image_path"]="1f1ed-1f1f3",
+   128703,
 },
 -- Table: {2303}
 {
-   ["subText"]="flag, :flag_hk:",
-   ["order"]=2302,
-   ["char"]={4969},
-   ["text"]="Hong Kong SAR China",
-   ["image_path"]="1f1ed-1f1f0",
+   128705,
 },
 -- Table: {2304}
 {
-   ["subText"]="flag, :flag_hu:",
-   ["order"]=2303,
-   ["char"]={4970},
-   ["text"]="Hungary",
-   ["image_path"]="1f1ed-1f1fa",
+   128704,
 },
 -- Table: {2305}
 {
-   ["subText"]="flag, :flag_is:",
-   ["order"]=2304,
-   ["char"]={4971},
-   ["text"]="Iceland",
-   ["image_path"]="1f1ee-1f1f8",
+   129532,
 },
 -- Table: {2306}
 {
-   ["subText"]="flag, :flag_in:",
-   ["order"]=2305,
-   ["char"]={4972},
-   ["text"]="India",
-   ["image_path"]="1f1ee-1f1f3",
+   129533,
 },
 -- Table: {2307}
 {
-   ["subText"]="flag, :flag_id:",
-   ["order"]=2306,
-   ["char"]={4973},
-   ["text"]="Indonesia",
-   ["image_path"]="1f1ee-1f1e9",
+   129524,
 },
 -- Table: {2308}
 {
-   ["subText"]="flag, :flag_ir:",
-   ["order"]=2307,
-   ["char"]={4974},
-   ["text"]="Iran",
-   ["image_path"]="1f1ee-1f1f7",
+   128718,
 },
 -- Table: {2309}
 {
-   ["subText"]="flag, :flag_iq:",
-   ["order"]=2308,
-   ["char"]={4975},
-   ["text"]="Iraq",
-   ["image_path"]="1f1ee-1f1f6",
+   128273,
 },
 -- Table: {2310}
 {
-   ["subText"]="flag, :flag_ie:",
-   ["order"]=2309,
-   ["char"]={4976},
-   ["text"]="Ireland",
-   ["image_path"]="1f1ee-1f1ea",
+   128477,
 },
 -- Table: {2311}
 {
-   ["subText"]="flag, :flag_im:",
-   ["order"]=2310,
-   ["char"]={4977},
-   ["text"]="Isle of Man",
-   ["image_path"]="1f1ee-1f1f2",
+   128682,
 },
 -- Table: {2312}
 {
-   ["subText"]="flag, :flag_il:",
-   ["order"]=2311,
-   ["char"]={4978},
-   ["text"]="Israel",
-   ["image_path"]="1f1ee-1f1f1",
+   128715,
 },
 -- Table: {2313}
 {
-   ["subText"]="flag, :flag_it:",
-   ["order"]=2312,
-   ["char"]={4979},
-   ["text"]="Italy",
-   ["image_path"]="1f1ee-1f1f9",
+   128719,
 },
 -- Table: {2314}
 {
-   ["subText"]="flag, :flag_jm:",
-   ["order"]=2313,
-   ["char"]={4980},
-   ["text"]="Jamaica",
-   ["image_path"]="1f1ef-1f1f2",
+   128716,
 },
 -- Table: {2315}
 {
-   ["subText"]="flag, :flag_jp:",
-   ["order"]=2314,
-   ["char"]={4981},
-   ["text"]="Japan",
-   ["image_path"]="1f1ef-1f1f5",
+   129528,
 },
 -- Table: {2316}
 {
-   ["subText"]="Japanese, celebration, cross, crossed, :crossed_flags:",
-   ["order"]=2315,
-   ["char"]={4982},
-   ["text"]="Crossed flags",
-   ["image_path"]="1f38c",
+   128444,
 },
 -- Table: {2317}
 {
-   ["subText"]="flag, :flag_je:",
-   ["order"]=2316,
-   ["char"]={4983},
-   ["text"]="Jersey",
-   ["image_path"]="1f1ef-1f1ea",
+   128717,
 },
 -- Table: {2318}
 {
-   ["subText"]="flag, :flag_jo:",
-   ["order"]=2317,
-   ["char"]={4984},
-   ["text"]="Jordan",
-   ["image_path"]="1f1ef-1f1f4",
+   128722,
 },
 -- Table: {2319}
 {
-   ["subText"]="flag, :flag_kz:",
-   ["order"]=2318,
-   ["char"]={4985},
-   ["text"]="Kazakhstan",
-   ["image_path"]="1f1f0-1f1ff",
+   127873,
 },
 -- Table: {2320}
 {
-   ["subText"]="flag, :flag_ke:",
-   ["order"]=2319,
-   ["char"]={4986},
-   ["text"]="Kenya",
-   ["image_path"]="1f1f0-1f1ea",
+   127880,
 },
 -- Table: {2321}
 {
-   ["subText"]="flag, :flag_ki:",
-   ["order"]=2320,
-   ["char"]={4987},
-   ["text"]="Kiribati",
-   ["image_path"]="1f1f0-1f1ee",
+   127887,
 },
 -- Table: {2322}
 {
-   ["subText"]="flag, :flag_xk:",
-   ["order"]=2321,
-   ["char"]={4988},
-   ["text"]="Kosovo",
-   ["image_path"]="1f1fd-1f1f0",
+   127872,
 },
 -- Table: {2323}
 {
-   ["subText"]="flag, :flag_kw:",
-   ["order"]=2322,
-   ["char"]={4989},
-   ["text"]="Kuwait",
-   ["image_path"]="1f1f0-1f1fc",
+   127882,
 },
 -- Table: {2324}
 {
-   ["subText"]="flag, :flag_kg:",
-   ["order"]=2323,
-   ["char"]={4990},
-   ["text"]="Kyrgyzstan",
-   ["image_path"]="1f1f0-1f1ec",
+   127881,
 },
 -- Table: {2325}
 {
-   ["subText"]="flag, :flag_la:",
-   ["order"]=2324,
-   ["char"]={4991},
-   ["text"]="Laos",
-   ["image_path"]="1f1f1-1f1e6",
+   127886,
 },
 -- Table: {2326}
 {
-   ["subText"]="flag, :flag_lv:",
-   ["order"]=2325,
-   ["char"]={4992},
-   ["text"]="Latvia",
-   ["image_path"]="1f1f1-1f1fb",
+   127982,
 },
 -- Table: {2327}
 {
-   ["subText"]="flag, :flag_lb:",
-   ["order"]=2326,
-   ["char"]={4993},
-   ["text"]="Lebanon",
-   ["image_path"]="1f1f1-1f1e7",
+   127888,
 },
 -- Table: {2328}
 {
-   ["subText"]="flag, :flag_ls:",
-   ["order"]=2327,
-   ["char"]={4994},
-   ["text"]="Lesotho",
-   ["image_path"]="1f1f1-1f1f8",
+   129511,
 },
 -- Table: {2329}
 {
-   ["subText"]="flag, :flag_lr:",
-   ["order"]=2328,
-   ["char"]={4995},
-   ["text"]="Liberia",
-   ["image_path"]="1f1f1-1f1f7",
+   9993,
 },
 -- Table: {2330}
 {
-   ["subText"]="flag, :flag_ly:",
-   ["order"]=2329,
-   ["char"]={4996},
-   ["text"]="Libya",
-   ["image_path"]="1f1f1-1f1fe",
+   128233,
 },
 -- Table: {2331}
 {
-   ["subText"]="flag, :flag_li:",
-   ["order"]=2330,
-   ["char"]={4997},
-   ["text"]="Liechtenstein",
-   ["image_path"]="1f1f1-1f1ee",
+   128232,
 },
 -- Table: {2332}
 {
-   ["subText"]="flag, :flag_lt:",
-   ["order"]=2331,
-   ["char"]={4998},
-   ["text"]="Lithuania",
-   ["image_path"]="1f1f1-1f1f9",
+   128231,
 },
 -- Table: {2333}
 {
-   ["subText"]="flag, :flag_lu:",
-   ["order"]=2332,
-   ["char"]={4999},
-   ["text"]="Luxembourg",
-   ["image_path"]="1f1f1-1f1fa",
+   128140,
 },
 -- Table: {2334}
 {
-   ["subText"]="flag, :flag_mo:",
-   ["order"]=2333,
-   ["char"]={5000},
-   ["text"]="Macau SAR China",
-   ["image_path"]="1f1f2-1f1f4",
+   128229,
 },
 -- Table: {2335}
 {
-   ["subText"]="flag, :flag_mk:",
-   ["order"]=2334,
-   ["char"]={5001},
-   ["text"]="Macedonia",
-   ["image_path"]="1f1f2-1f1f0",
+   128228,
 },
 -- Table: {2336}
 {
-   ["subText"]="flag, :flag_mg:",
-   ["order"]=2335,
-   ["char"]={5002},
-   ["text"]="Madagascar",
-   ["image_path"]="1f1f2-1f1ec",
+   128230,
 },
 -- Table: {2337}
 {
-   ["subText"]="flag, :flag_mw:",
-   ["order"]=2336,
-   ["char"]={5003},
-   ["text"]="Malawi",
-   ["image_path"]="1f1f2-1f1fc",
+   127991,
 },
 -- Table: {2338}
 {
-   ["subText"]="flag, :flag_my:",
-   ["order"]=2337,
-   ["char"]={5004},
-   ["text"]="Malaysia",
-   ["image_path"]="1f1f2-1f1fe",
+   128234,
 },
 -- Table: {2339}
 {
-   ["subText"]="flag, :flag_mv:",
-   ["order"]=2338,
-   ["char"]={5005},
-   ["text"]="Maldives",
-   ["image_path"]="1f1f2-1f1fb",
+   128235,
 },
 -- Table: {2340}
 {
-   ["subText"]="flag, :flag_ml:",
-   ["order"]=2339,
-   ["char"]={5006},
-   ["text"]="Mali",
-   ["image_path"]="1f1f2-1f1f1",
+   128236,
 },
 -- Table: {2341}
 {
-   ["subText"]="flag, :flag_mt:",
-   ["order"]=2340,
-   ["char"]={5007},
-   ["text"]="Malta",
-   ["image_path"]="1f1f2-1f1f9",
+   128237,
 },
 -- Table: {2342}
 {
-   ["subText"]="flag, :flag_mh:",
-   ["order"]=2341,
-   ["char"]={5008},
-   ["text"]="Marshall Islands",
-   ["image_path"]="1f1f2-1f1ed",
+   128238,
 },
 -- Table: {2343}
 {
-   ["subText"]="flag, :flag_mq:",
-   ["order"]=2342,
-   ["char"]={5009},
-   ["text"]="Martinique",
-   ["image_path"]="1f1f2-1f1f6",
+   128239,
 },
 -- Table: {2344}
 {
-   ["subText"]="flag, :flag_mr:",
-   ["order"]=2343,
-   ["char"]={5010},
-   ["text"]="Mauritania",
-   ["image_path"]="1f1f2-1f1f7",
+   128220,
 },
 -- Table: {2345}
 {
-   ["subText"]="flag, :flag_mu:",
-   ["order"]=2344,
-   ["char"]={5011},
-   ["text"]="Mauritius",
-   ["image_path"]="1f1f2-1f1fa",
+   128195,
 },
 -- Table: {2346}
 {
-   ["subText"]="flag, :flag_yt:",
-   ["order"]=2345,
-   ["char"]={5012},
-   ["text"]="Mayotte",
-   ["image_path"]="1f1fe-1f1f9",
+   128196,
 },
 -- Table: {2347}
 {
-   ["subText"]="flag, :flag_mx:",
-   ["order"]=2346,
-   ["char"]={5013},
-   ["text"]="Mexico",
-   ["image_path"]="1f1f2-1f1fd",
+   128209,
 },
 -- Table: {2348}
 {
-   ["subText"]="flag, :flag_fm:",
-   ["order"]=2347,
-   ["char"]={5014},
-   ["text"]="Micronesia",
-   ["image_path"]="1f1eb-1f1f2",
+   129534,
 },
 -- Table: {2349}
 {
-   ["subText"]="flag, :flag_md:",
-   ["order"]=2348,
-   ["char"]={5015},
-   ["text"]="Moldova",
-   ["image_path"]="1f1f2-1f1e9",
+   128202,
 },
 -- Table: {2350}
 {
-   ["subText"]="flag, :flag_mc:",
-   ["order"]=2349,
-   ["char"]={5016},
-   ["text"]="Monaco",
-   ["image_path"]="1f1f2-1f1e8",
+   128200,
 },
 -- Table: {2351}
 {
-   ["subText"]="flag, :flag_mn:",
-   ["order"]=2350,
-   ["char"]={5017},
-   ["text"]="Mongolia",
-   ["image_path"]="1f1f2-1f1f3",
+   128201,
 },
 -- Table: {2352}
 {
-   ["subText"]="flag, :flag_me:",
-   ["order"]=2351,
-   ["char"]={5018},
-   ["text"]="Montenegro",
-   ["image_path"]="1f1f2-1f1ea",
+   128466,
 },
 -- Table: {2353}
 {
-   ["subText"]="flag, :flag_ms:",
-   ["order"]=2352,
-   ["char"]={5019},
-   ["text"]="Montserrat",
-   ["image_path"]="1f1f2-1f1f8",
+   128467,
 },
 -- Table: {2354}
 {
-   ["subText"]="flag, :flag_ma:",
-   ["order"]=2353,
-   ["char"]={5020},
-   ["text"]="Morocco",
-   ["image_path"]="1f1f2-1f1e6",
+   128198,
 },
 -- Table: {2355}
 {
-   ["subText"]="flag, :flag_mz:",
-   ["order"]=2354,
-   ["char"]={5021},
-   ["text"]="Mozambique",
-   ["image_path"]="1f1f2-1f1ff",
+   128197,
 },
 -- Table: {2356}
 {
-   ["subText"]="flag, :flag_mm:",
-   ["order"]=2355,
-   ["char"]={5022},
-   ["text"]="Myanmar (Burma)",
-   ["image_path"]="1f1f2-1f1f2",
+   128465,
 },
 -- Table: {2357}
 {
-   ["subText"]="flag, :flag_na:",
-   ["order"]=2356,
-   ["char"]={5023},
-   ["text"]="Namibia",
-   ["image_path"]="1f1f3-1f1e6",
+   128199,
 },
 -- Table: {2358}
 {
-   ["subText"]="flag, :flag_nr:",
-   ["order"]=2357,
-   ["char"]={5024},
-   ["text"]="Nauru",
-   ["image_path"]="1f1f3-1f1f7",
+   128451,
 },
 -- Table: {2359}
 {
-   ["subText"]="flag, :flag_np:",
-   ["order"]=2358,
-   ["char"]={5025},
-   ["text"]="Nepal",
-   ["image_path"]="1f1f3-1f1f5",
+   128499,
 },
 -- Table: {2360}
 {
-   ["subText"]="flag, :flag_nl:",
-   ["order"]=2359,
-   ["char"]={5026},
-   ["text"]="Netherlands",
-   ["image_path"]="1f1f3-1f1f1",
+   128452,
 },
 -- Table: {2361}
 {
-   ["subText"]="flag, :flag_nc:",
-   ["order"]=2360,
-   ["char"]={5027},
-   ["text"]="New Caledonia",
-   ["image_path"]="1f1f3-1f1e8",
+   128203,
 },
 -- Table: {2362}
 {
-   ["subText"]="flag, :flag_nz:",
-   ["order"]=2361,
-   ["char"]={5028},
-   ["text"]="New Zealand",
-   ["image_path"]="1f1f3-1f1ff",
+   128193,
 },
 -- Table: {2363}
 {
-   ["subText"]="flag, :flag_ni:",
-   ["order"]=2362,
-   ["char"]={5029},
-   ["text"]="Nicaragua",
-   ["image_path"]="1f1f3-1f1ee",
+   128194,
 },
 -- Table: {2364}
 {
-   ["subText"]="flag, :flag_ne:",
-   ["order"]=2363,
-   ["char"]={5030},
-   ["text"]="Niger",
-   ["image_path"]="1f1f3-1f1ea",
+   128450,
 },
 -- Table: {2365}
 {
-   ["subText"]="flag, :flag_ng:",
-   ["order"]=2364,
-   ["char"]={5031},
-   ["text"]="Nigeria",
-   ["image_path"]="1f1f3-1f1ec",
+   128478,
 },
 -- Table: {2366}
 {
-   ["subText"]="flag, :flag_nu:",
-   ["order"]=2365,
-   ["char"]={5032},
-   ["text"]="Niue",
-   ["image_path"]="1f1f3-1f1fa",
+   128240,
 },
 -- Table: {2367}
 {
-   ["subText"]="flag, :flag_nf:",
-   ["order"]=2366,
-   ["char"]={5033},
-   ["text"]="Norfolk Island",
-   ["image_path"]="1f1f3-1f1eb",
+   128211,
 },
 -- Table: {2368}
 {
-   ["subText"]="flag, :flag_kp:",
-   ["order"]=2367,
-   ["char"]={5034},
-   ["text"]="North Korea",
-   ["image_path"]="1f1f0-1f1f5",
+   128212,
 },
 -- Table: {2369}
 {
-   ["subText"]="flag, :flag_mp:",
-   ["order"]=2368,
-   ["char"]={5035},
-   ["text"]="Northern Mariana Islands",
-   ["image_path"]="1f1f2-1f1f5",
+   128210,
 },
 -- Table: {2370}
 {
-   ["subText"]="flag, :flag_no:",
-   ["order"]=2369,
-   ["char"]={5036},
-   ["text"]="Norway",
-   ["image_path"]="1f1f3-1f1f4",
+   128213,
 },
 -- Table: {2371}
 {
-   ["subText"]="flag, :flag_om:",
-   ["order"]=2370,
-   ["char"]={5037},
-   ["text"]="Oman",
-   ["image_path"]="1f1f4-1f1f2",
+   128215,
 },
 -- Table: {2372}
 {
-   ["subText"]="flag, :flag_pk:",
-   ["order"]=2371,
-   ["char"]={5038},
-   ["text"]="Pakistan",
-   ["image_path"]="1f1f5-1f1f0",
+   128216,
 },
 -- Table: {2373}
 {
-   ["subText"]="flag, :flag_pw:",
-   ["order"]=2372,
-   ["char"]={5039},
-   ["text"]="Palau",
-   ["image_path"]="1f1f5-1f1fc",
+   128217,
 },
 -- Table: {2374}
 {
-   ["subText"]="flag, :flag_ps:",
-   ["order"]=2373,
-   ["char"]={5040},
-   ["text"]="Palestinian Territories",
-   ["image_path"]="1f1f5-1f1f8",
+   128218,
 },
 -- Table: {2375}
 {
-   ["subText"]="flag, :flag_pa:",
-   ["order"]=2374,
-   ["char"]={5041},
-   ["text"]="Panama",
-   ["image_path"]="1f1f5-1f1e6",
+   128214,
 },
 -- Table: {2376}
 {
-   ["subText"]="flag, :flag_pg:",
-   ["order"]=2375,
-   ["char"]={5042},
-   ["text"]="Papua New Guinea",
-   ["image_path"]="1f1f5-1f1ec",
+   128278,
 },
 -- Table: {2377}
 {
-   ["subText"]="flag, :flag_py:",
-   ["order"]=2376,
-   ["char"]={5043},
-   ["text"]="Paraguay",
-   ["image_path"]="1f1f5-1f1fe",
+   129527,
 },
 -- Table: {2378}
 {
-   ["subText"]="flag, :flag_pe:",
-   ["order"]=2377,
-   ["char"]={5044},
-   ["text"]="Peru",
-   ["image_path"]="1f1f5-1f1ea",
+   128279,
 },
 -- Table: {2379}
 {
-   ["subText"]="flag, :flag_ph:",
-   ["order"]=2378,
-   ["char"]={5045},
-   ["text"]="Philippines",
-   ["image_path"]="1f1f5-1f1ed",
+   128206,
 },
 -- Table: {2380}
 {
-   ["subText"]="flag, :flag_pn:",
-   ["order"]=2379,
-   ["char"]={5046},
-   ["text"]="Pitcairn Islands",
-   ["image_path"]="1f1f5-1f1f3",
+   128391,
 },
 -- Table: {2381}
 {
-   ["subText"]="flag, :flag_pl:",
-   ["order"]=2380,
-   ["char"]={5047},
-   ["text"]="Poland",
-   ["image_path"]="1f1f5-1f1f1",
+   128208,
 },
 -- Table: {2382}
 {
-   ["subText"]="flag, :flag_pt:",
-   ["order"]=2381,
-   ["char"]={5048},
-   ["text"]="Portugal",
-   ["image_path"]="1f1f5-1f1f9",
+   128207,
 },
 -- Table: {2383}
 {
-   ["subText"]="flag, :flag_pr:",
-   ["order"]=2382,
-   ["char"]={5049},
-   ["text"]="Puerto Rico",
-   ["image_path"]="1f1f5-1f1f7",
+   129518,
 },
 -- Table: {2384}
 {
-   ["subText"]="flag, :flag_qa:",
-   ["order"]=2383,
-   ["char"]={5050},
-   ["text"]="Qatar",
-   ["image_path"]="1f1f6-1f1e6",
+   128204,
 },
 -- Table: {2385}
 {
-   ["subText"]="flag, :flag_re:",
-   ["order"]=2384,
-   ["char"]={5051},
-   ["text"]="Réunion",
-   ["image_path"]="1f1f7-1f1ea",
+   128205,
 },
 -- Table: {2386}
 {
-   ["subText"]="flag, :flag_ro:",
-   ["order"]=2385,
-   ["char"]={5052},
-   ["text"]="Romania",
-   ["image_path"]="1f1f7-1f1f4",
+   9986,
 },
 -- Table: {2387}
 {
-   ["subText"]="flag, :flag_ru:",
-   ["order"]=2386,
-   ["char"]={5053},
-   ["text"]="Russia",
-   ["image_path"]="1f1f7-1f1fa",
+   128394,
 },
 -- Table: {2388}
 {
-   ["subText"]="flag, :flag_rw:",
-   ["order"]=2387,
-   ["char"]={5054},
-   ["text"]="Rwanda",
-   ["image_path"]="1f1f7-1f1fc",
+   128395,
 },
 -- Table: {2389}
 {
-   ["subText"]="flag, :flag_ws:",
-   ["order"]=2388,
-   ["char"]={5055},
-   ["text"]="Samoa",
-   ["image_path"]="1f1fc-1f1f8",
+   10002,
 },
 -- Table: {2390}
 {
-   ["subText"]="flag, :flag_sm:",
-   ["order"]=2389,
-   ["char"]={5056},
-   ["text"]="San Marino",
-   ["image_path"]="1f1f8-1f1f2",
+   128396,
 },
 -- Table: {2391}
 {
-   ["subText"]="flag, :flag_st:",
-   ["order"]=2390,
-   ["char"]={5057},
-   ["text"]="São Tomé & Príncipe",
-   ["image_path"]="1f1f8-1f1f9",
+   128397,
 },
 -- Table: {2392}
 {
-   ["subText"]="flag, :flag_sa:",
-   ["order"]=2391,
-   ["char"]={5058},
-   ["text"]="Saudi Arabia",
-   ["image_path"]="1f1f8-1f1e6",
+   128221,
 },
 -- Table: {2393}
 {
-   ["subText"]="flag, :flag_sn:",
-   ["order"]=2392,
-   ["char"]={5059},
-   ["text"]="Senegal",
-   ["image_path"]="1f1f8-1f1f3",
+   9999,
 },
 -- Table: {2394}
 {
-   ["subText"]="flag, :flag_rs:",
-   ["order"]=2393,
-   ["char"]={5060},
-   ["text"]="Serbia",
-   ["image_path"]="1f1f7-1f1f8",
+   128269,
 },
 -- Table: {2395}
 {
-   ["subText"]="flag, :flag_sc:",
-   ["order"]=2394,
-   ["char"]={5061},
-   ["text"]="Seychelles",
-   ["image_path"]="1f1f8-1f1e8",
+   128270,
 },
 -- Table: {2396}
 {
-   ["subText"]="flag, :flag_sl:",
-   ["order"]=2395,
-   ["char"]={5062},
-   ["text"]="Sierra Leone",
-   ["image_path"]="1f1f8-1f1f1",
+   128271,
 },
 -- Table: {2397}
 {
-   ["subText"]="flag, :flag_sg:",
-   ["order"]=2396,
-   ["char"]={5063},
-   ["text"]="Singapore",
-   ["image_path"]="1f1f8-1f1ec",
+   128272,
 },
 -- Table: {2398}
 {
-   ["subText"]="flag, :flag_sx:",
-   ["order"]=2397,
-   ["char"]={5064},
-   ["text"]="Sint Maarten",
-   ["image_path"]="1f1f8-1f1fd",
+   128274,
 },
 -- Table: {2399}
 {
-   ["subText"]="flag, :flag_sk:",
-   ["order"]=2398,
-   ["char"]={5065},
-   ["text"]="Slovakia",
-   ["image_path"]="1f1f8-1f1f0",
+   128275,
 },
 -- Table: {2400}
 {
-   ["subText"]="flag, :flag_si:",
-   ["order"]=2399,
-   ["char"]={5066},
-   ["text"]="Slovenia",
-   ["image_path"]="1f1f8-1f1ee",
+   128054,
 },
 -- Table: {2401}
 {
-   ["subText"]="flag, :flag_gs:",
-   ["order"]=2400,
-   ["char"]={5067},
-   ["text"]="South Georgia & South Sandwich Islands",
-   ["image_path"]="1f1ec-1f1f8",
+   128049,
 },
 -- Table: {2402}
 {
-   ["subText"]="flag, :flag_sb:",
-   ["order"]=2401,
-   ["char"]={5068},
-   ["text"]="Solomon Islands",
-   ["image_path"]="1f1f8-1f1e7",
+   128045,
 },
 -- Table: {2403}
 {
-   ["subText"]="flag, :flag_so:",
-   ["order"]=2402,
-   ["char"]={5069},
-   ["text"]="Somalia",
-   ["image_path"]="1f1f8-1f1f4",
+   128057,
 },
 -- Table: {2404}
 {
-   ["subText"]="flag, :flag_za:",
-   ["order"]=2403,
-   ["char"]={5070},
-   ["text"]="South Africa",
-   ["image_path"]="1f1ff-1f1e6",
+   128048,
 },
 -- Table: {2405}
 {
-   ["subText"]="flag, :flag_kr:",
-   ["order"]=2404,
-   ["char"]={5071},
-   ["text"]="South Korea",
-   ["image_path"]="1f1f0-1f1f7",
+   129418,
 },
 -- Table: {2406}
 {
-   ["subText"]="flag, :flag_ss:",
-   ["order"]=2405,
-   ["char"]={5072},
-   ["text"]="South Sudan",
-   ["image_path"]="1f1f8-1f1f8",
+   128059,
 },
 -- Table: {2407}
 {
-   ["subText"]="flag, :flag_es:",
-   ["order"]=2406,
-   ["char"]={5073},
-   ["text"]="Spain",
-   ["image_path"]="1f1ea-1f1f8",
+   128060,
 },
 -- Table: {2408}
 {
-   ["subText"]="flag, :flag_lk:",
-   ["order"]=2407,
-   ["char"]={5074},
-   ["text"]="Sri Lanka",
-   ["image_path"]="1f1f1-1f1f0",
+   128040,
 },
 -- Table: {2409}
 {
-   ["subText"]="flag, :flag_bl:",
-   ["order"]=2408,
-   ["char"]={5075},
-   ["text"]="St. Barthélemy",
-   ["image_path"]="1f1e7-1f1f1",
+   128047,
 },
 -- Table: {2410}
 {
-   ["subText"]="flag, :flag_sh:",
-   ["order"]=2409,
-   ["char"]={5076},
-   ["text"]="St. Helena",
-   ["image_path"]="1f1f8-1f1ed",
+   129409,
 },
 -- Table: {2411}
 {
-   ["subText"]="flag, :flag_kn:",
-   ["order"]=2410,
-   ["char"]={5077},
-   ["text"]="St. Kitts & Nevis",
-   ["image_path"]="1f1f0-1f1f3",
+   128046,
 },
 -- Table: {2412}
 {
-   ["subText"]="flag, :flag_lc:",
-   ["order"]=2411,
-   ["char"]={5078},
-   ["text"]="St. Lucia",
-   ["image_path"]="1f1f1-1f1e8",
+   128055,
 },
 -- Table: {2413}
 {
-   ["subText"]="flag, :flag_pm:",
-   ["order"]=2412,
-   ["char"]={5079},
-   ["text"]="St. Pierre & Miquelon",
-   ["image_path"]="1f1f5-1f1f2",
+   128061,
 },
 -- Table: {2414}
 {
-   ["subText"]="flag, :flag_vc:",
-   ["order"]=2413,
-   ["char"]={5080},
-   ["text"]="St. Vincent & Grenadines",
-   ["image_path"]="1f1fb-1f1e8",
+   128056,
 },
 -- Table: {2415}
 {
-   ["subText"]="flag, :flag_sd:",
-   ["order"]=2414,
-   ["char"]={5081},
-   ["text"]="Sudan",
-   ["image_path"]="1f1f8-1f1e9",
+   128053,
 },
 -- Table: {2416}
 {
-   ["subText"]="flag, :flag_sr:",
-   ["order"]=2415,
-   ["char"]={5082},
-   ["text"]="Suriname",
-   ["image_path"]="1f1f8-1f1f7",
+   128584,
 },
 -- Table: {2417}
 {
-   ["subText"]="flag, :flag_sz:",
-   ["order"]=2416,
-   ["char"]={5083},
-   ["text"]="Swaziland",
-   ["image_path"]="1f1f8-1f1ff",
+   128585,
 },
 -- Table: {2418}
 {
-   ["subText"]="flag, :flag_se:",
-   ["order"]=2417,
-   ["char"]={5084},
-   ["text"]="Sweden",
-   ["image_path"]="1f1f8-1f1ea",
+   128586,
 },
 -- Table: {2419}
 {
-   ["subText"]="flag, :flag_ch:",
-   ["order"]=2418,
-   ["char"]={5085},
-   ["text"]="Switzerland",
-   ["image_path"]="1f1e8-1f1ed",
+   128018,
 },
 -- Table: {2420}
 {
-   ["subText"]="flag, :flag_sy:",
-   ["order"]=2419,
-   ["char"]={5086},
-   ["text"]="Syria",
-   ["image_path"]="1f1f8-1f1fe",
+   128020,
 },
 -- Table: {2421}
 {
-   ["subText"]="flag, :flag_tw:",
-   ["order"]=2420,
-   ["char"]={5087},
-   ["text"]="Taiwan",
-   ["image_path"]="1f1f9-1f1fc",
+   128039,
 },
 -- Table: {2422}
 {
-   ["subText"]="flag, :flag_tj:",
-   ["order"]=2421,
-   ["char"]={5088},
-   ["text"]="Tajikistan",
-   ["image_path"]="1f1f9-1f1ef",
+   128038,
 },
 -- Table: {2423}
 {
-   ["subText"]="flag, :flag_tz:",
-   ["order"]=2422,
-   ["char"]={5089},
-   ["text"]="Tanzania",
-   ["image_path"]="1f1f9-1f1ff",
+   128036,
 },
 -- Table: {2424}
 {
-   ["subText"]="flag, :flag_th:",
-   ["order"]=2423,
-   ["char"]={5090},
-   ["text"]="Thailand",
-   ["image_path"]="1f1f9-1f1ed",
+   128035,
 },
 -- Table: {2425}
 {
-   ["subText"]="flag, :flag_tl:",
-   ["order"]=2424,
-   ["char"]={5091},
-   ["text"]="Timor-Leste",
-   ["image_path"]="1f1f9-1f1f1",
+   128037,
 },
 -- Table: {2426}
 {
-   ["subText"]="flag, :flag_tg:",
-   ["order"]=2425,
-   ["char"]={5092},
-   ["text"]="Togo",
-   ["image_path"]="1f1f9-1f1ec",
+   129414,
 },
 -- Table: {2427}
 {
-   ["subText"]="flag, :flag_tk:",
-   ["order"]=2426,
-   ["char"]={5093},
-   ["text"]="Tokelau",
-   ["image_path"]="1f1f9-1f1f0",
+   129413,
 },
 -- Table: {2428}
 {
-   ["subText"]="flag, :flag_to:",
-   ["order"]=2427,
-   ["char"]={5094},
-   ["text"]="Tonga",
-   ["image_path"]="1f1f9-1f1f4",
+   129417,
 },
 -- Table: {2429}
 {
-   ["subText"]="flag, :flag_tt:",
-   ["order"]=2428,
-   ["char"]={5095},
-   ["text"]="Trinidad & Tobago",
-   ["image_path"]="1f1f9-1f1f9",
+   129415,
 },
 -- Table: {2430}
 {
-   ["subText"]="flag, :flag_tn:",
-   ["order"]=2429,
-   ["char"]={5096},
-   ["text"]="Tunisia",
-   ["image_path"]="1f1f9-1f1f3",
+   128058,
 },
 -- Table: {2431}
 {
-   ["subText"]="flag, :flag_tr:",
-   ["order"]=2430,
-   ["char"]={5097},
-   ["text"]="Turkey",
-   ["image_path"]="1f1f9-1f1f7",
+   128023,
 },
 -- Table: {2432}
 {
-   ["subText"]="flag, :flag_tm:",
-   ["order"]=2431,
-   ["char"]={5098},
-   ["text"]="Turkmenistan",
-   ["image_path"]="1f1f9-1f1f2",
+   128052,
 },
 -- Table: {2433}
 {
-   ["subText"]="flag, :flag_tc:",
-   ["order"]=2432,
-   ["char"]={5099},
-   ["text"]="Turks & Caicos Islands",
-   ["image_path"]="1f1f9-1f1e8",
+   129412,
 },
 -- Table: {2434}
 {
-   ["subText"]="flag, :flag_tv:",
-   ["order"]=2433,
-   ["char"]={5100},
-   ["text"]="Tuvalu",
-   ["image_path"]="1f1f9-1f1fb",
+   128029,
 },
 -- Table: {2435}
 {
-   ["subText"]="flag, :flag_vi:",
-   ["order"]=2434,
-   ["char"]={5101},
-   ["text"]="U.S. Virgin Islands",
-   ["image_path"]="1f1fb-1f1ee",
+   128027,
 },
 -- Table: {2436}
 {
-   ["subText"]="flag, :flag_ug:",
-   ["order"]=2435,
-   ["char"]={5102},
-   ["text"]="Uganda",
-   ["image_path"]="1f1fa-1f1ec",
+   129419,
 },
 -- Table: {2437}
 {
-   ["subText"]="flag, :flag_ua:",
-   ["order"]=2436,
-   ["char"]={5103},
-   ["text"]="Ukraine",
-   ["image_path"]="1f1fa-1f1e6",
+   128012,
 },
 -- Table: {2438}
 {
-   ["subText"]="flag, :flag_ae:",
-   ["order"]=2437,
-   ["char"]={5104},
-   ["text"]="United Arab Emirates",
-   ["image_path"]="1f1e6-1f1ea",
+   128026,
 },
 -- Table: {2439}
 {
-   ["subText"]="flag, :flag_gb:",
-   ["order"]=2438,
-   ["char"]={5105},
-   ["text"]="United Kingdom",
-   ["image_path"]="1f1ec-1f1e7",
+   128030,
 },
 -- Table: {2440}
 {
-   ["subText"]="flag, :flag_us:",
-   ["order"]=2439,
-   ["char"]={5106},
-   ["text"]="United States",
-   ["image_path"]="1f1fa-1f1f8",
+   128028,
 },
 -- Table: {2441}
 {
-   ["subText"]="flag, :flag_uy:",
-   ["order"]=2440,
-   ["char"]={5107},
-   ["text"]="Uruguay",
-   ["image_path"]="1f1fa-1f1fe",
+   129439,
 },
 -- Table: {2442}
 {
-   ["subText"]="flag, :flag_uz:",
-   ["order"]=2441,
-   ["char"]={5108},
-   ["text"]="Uzbekistan",
-   ["image_path"]="1f1fa-1f1ff",
+   129431,
 },
 -- Table: {2443}
 {
-   ["subText"]="flag, :flag_vu:",
-   ["order"]=2442,
-   ["char"]={5109},
-   ["text"]="Vanuatu",
-   ["image_path"]="1f1fb-1f1fa",
+   128375,
 },
 -- Table: {2444}
 {
-   ["subText"]="flag, :flag_va:",
-   ["order"]=2443,
-   ["char"]={5110},
-   ["text"]="Vatican City",
-   ["image_path"]="1f1fb-1f1e6",
+   128376,
 },
 -- Table: {2445}
 {
-   ["subText"]="flag, :flag_ve:",
-   ["order"]=2444,
-   ["char"]={5111},
-   ["text"]="Venezuela",
-   ["image_path"]="1f1fb-1f1ea",
+   129410,
 },
 -- Table: {2446}
 {
-   ["subText"]="flag, :flag_vn:",
-   ["order"]=2445,
-   ["char"]={5112},
-   ["text"]="Vietnam",
-   ["image_path"]="1f1fb-1f1f3",
+   128034,
 },
 -- Table: {2447}
 {
-   ["subText"]="flag, :flag_wf:",
-   ["order"]=2446,
-   ["char"]={5113},
-   ["text"]="Wallis & Futuna",
-   ["image_path"]="1f1fc-1f1eb",
+   128013,
 },
 -- Table: {2448}
 {
-   ["subText"]="flag, :flag_eh:",
-   ["order"]=2447,
-   ["char"]={5114},
-   ["text"]="Western Sahara",
-   ["image_path"]="1f1ea-1f1ed",
+   129422,
 },
 -- Table: {2449}
 {
-   ["subText"]="flag, :flag_ye:",
-   ["order"]=2448,
-   ["char"]={5115},
-   ["text"]="Yemen",
-   ["image_path"]="1f1fe-1f1ea",
+   129430,
 },
 -- Table: {2450}
 {
-   ["subText"]="flag, :flag_zm:",
-   ["order"]=2449,
-   ["char"]={5116},
-   ["text"]="Zambia",
-   ["image_path"]="1f1ff-1f1f2",
+   129429,
 },
 -- Table: {2451}
 {
-   ["subText"]="flag, :flag_zw:",
-   ["order"]=2450,
-   ["char"]={5117},
-   ["text"]="Zimbabwe",
-   ["image_path"]="1f1ff-1f1fc",
+   128025,
 },
 -- Table: {2452}
 {
-   ["subText"]="flag, :flag_ac:",
-   ["order"]=2451,
-   ["char"]={5118},
-   ["text"]="Ascension Island",
-   ["image_path"]="1f1e6-1f1e8",
+   129425,
 },
 -- Table: {2453}
 {
-   ["subText"]="flag, :flag_ta:",
-   ["order"]=2452,
-   ["char"]={5119},
-   ["text"]="Tristan da Cunha",
-   ["image_path"]="1f1f9-1f1e6",
+   129424,
 },
 -- Table: {2454}
 {
-   ["subText"]="flag, :flag_bv:",
-   ["order"]=2453,
-   ["char"]={5120},
-   ["text"]="Bouvet Island",
-   ["image_path"]="1f1e7-1f1fb",
+   129438,
 },
 -- Table: {2455}
 {
-   ["subText"]="flag, :flag_hm:",
-   ["order"]=2454,
-   ["char"]={5121},
-   ["text"]="Heard & McDonald Islands",
-   ["image_path"]="1f1ed-1f1f2",
+   129450,
 },
 -- Table: {2456}
 {
-   ["subText"]="flag, :flag_sj:",
-   ["order"]=2455,
-   ["char"]={5122},
-   ["text"]="Svalbard & Jan Mayen",
-   ["image_path"]="1f1f8-1f1ef",
+   129408,
 },
 -- Table: {2457}
 {
-   ["subText"]="flag, :flag_um:",
-   ["order"]=2456,
-   ["char"]={5123},
-   ["text"]="U.S. Outlying Islands",
-   ["image_path"]="1f1fa-1f1f2",
+   128033,
 },
 -- Table: {2458}
 {
-   ["subText"]="flag, :flag_ea:",
-   ["order"]=2457,
-   ["char"]={5124},
-   ["text"]="Ceuta & Melilla",
-   ["image_path"]="1f1ea-1f1e6",
+   128032,
 },
 -- Table: {2459}
 {
-   ["subText"]="flag, :flag_cp:",
-   ["order"]=2458,
-   ["char"]={5125},
-   ["text"]="Clipperton Island",
-   ["image_path"]="1f1e8-1f1f5",
+   128031,
 },
 -- Table: {2460}
 {
-   ["subText"]="flag, :flag_dg:",
-   ["order"]=2459,
-   ["char"]={5126},
-   ["text"]="Diego Garcia",
-   ["image_path"]="1f1e9-1f1ec",
+   128044,
 },
 -- Table: {2461}
 {
-   ["subText"]="flag, :flag_mf:",
-   ["order"]=2460,
-   ["char"]={5127},
-   ["text"]="St. Martin",
-   ["image_path"]="1f1f2-1f1eb",
+   128051,
 },
 -- Table: {2462}
 {
-   ["subText"]="flag, :united_nations:",
-   ["order"]=2461,
-   ["char"]={5128},
-   ["text"]="United Nations",
-   ["image_path"]="1f1fa-1f1f3",
+   128011,
 },
 -- Table: {2463}
 {
-   ["subText"]="flag, :england:",
-   ["order"]=2462,
-   ["char"]={5129},
-   ["text"]="England",
-   ["image_path"]="1f3f4-e0067-e0062-e0065-e006e-e0067-e007f",
+   129416,
 },
 -- Table: {2464}
 {
-   ["subText"]="flag, :scotland:",
-   ["order"]=2463,
-   ["char"]={5130},
-   ["text"]="Scotland",
-   ["image_path"]="1f3f4-e0067-e0062-e0073-e0063-e0074-e007f",
+   128010,
 },
 -- Table: {2465}
 {
-   ["subText"]="flag, :wales:",
-   ["order"]=2464,
-   ["char"]={5131},
-   ["text"]="Wales",
-   ["image_path"]="1f3f4-e0067-e0062-e0077-e006c-e0073-e007f",
+   128005,
 },
 -- Table: {2466}
 {
-   ["subText"]=", :asterisk_symbol:",
-   ["order"]=2465,
-   ["char"]={5132},
-   ["text"]="Asterisk",
-   ["image_path"]="002a",
+   128006,
 },
 -- Table: {2467}
 {
-   ["subText"]=", :regional_indicator_z:",
-   ["order"]=2466,
-   ["char"]={5133},
-   ["text"]="Regional indicator symbol letter z",
-   ["image_path"]="1f1ff",
+   129427,
 },
 -- Table: {2468}
 {
-   ["subText"]=", :regional_indicator_y:",
-   ["order"]=2467,
-   ["char"]={5134},
-   ["text"]="Regional indicator symbol letter y",
-   ["image_path"]="1f1fe",
+   129421,
 },
 -- Table: {2469}
 {
-   ["subText"]=", :regional_indicator_x:",
-   ["order"]=2468,
-   ["char"]={5135},
-   ["text"]="Regional indicator symbol letter x",
-   ["image_path"]="1f1fd",
+   129447,
 },
 -- Table: {2470}
 {
-   ["subText"]=", :pound_symbol:",
-   ["order"]=2469,
-   ["char"]={5136},
-   ["text"]="Pound symbol",
-   ["image_path"]="0023",
+   128024,
 },
 -- Table: {2471}
 {
-   ["subText"]=", :tone1:",
-   ["order"]=2470,
-   ["char"]={5137},
-   ["text"]="Light skin tone",
-   ["image_path"]="1f3fb",
+   129435,
 },
 -- Table: {2472}
 {
-   ["subText"]=", :tone2:",
-   ["order"]=2471,
-   ["char"]={5138},
-   ["text"]="Medium-light skin tone",
-   ["image_path"]="1f3fc",
+   129423,
 },
 -- Table: {2473}
 {
-   ["subText"]=", :tone3:",
-   ["order"]=2472,
-   ["char"]={5139},
-   ["text"]="Medium skin tone",
-   ["image_path"]="1f3fd",
+   128042,
 },
 -- Table: {2474}
 {
-   ["subText"]=", :tone4:",
-   ["order"]=2473,
-   ["char"]={5140},
-   ["text"]="Medium-dark skin tone",
-   ["image_path"]="1f3fe",
+   128043,
 },
 -- Table: {2475}
 {
-   ["subText"]=", :tone5:",
-   ["order"]=2474,
-   ["char"]={5141},
-   ["text"]="Dark skin tone",
-   ["image_path"]="1f3ff",
+   129426,
 },
 -- Table: {2476}
 {
-   ["subText"]=", :regional_indicator_w:",
-   ["order"]=2475,
-   ["char"]={5142},
-   ["text"]="Regional indicator symbol letter w",
-   ["image_path"]="1f1fc",
+   129432,
 },
 -- Table: {2477}
 {
-   ["subText"]=", :regional_indicator_v:",
-   ["order"]=2476,
-   ["char"]={5143},
-   ["text"]="Regional indicator symbol letter v",
-   ["image_path"]="1f1fb",
+   128003,
 },
 -- Table: {2478}
 {
-   ["subText"]=", :regional_indicator_u:",
-   ["order"]=2477,
-   ["char"]={5144},
-   ["text"]="Regional indicator symbol letter u",
-   ["image_path"]="1f1fa",
+   128002,
 },
 -- Table: {2479}
 {
-   ["subText"]=", :regional_indicator_t:",
-   ["order"]=2478,
-   ["char"]={5145},
-   ["text"]="Regional indicator symbol letter t",
-   ["image_path"]="1f1f9",
+   128004,
 },
 -- Table: {2480}
 {
-   ["subText"]=", :regional_indicator_s:",
-   ["order"]=2479,
-   ["char"]={5146},
-   ["text"]="Regional indicator symbol letter s",
-   ["image_path"]="1f1f8",
+   128014,
 },
 -- Table: {2481}
 {
-   ["subText"]=", :regional_indicator_r:",
-   ["order"]=2480,
-   ["char"]={5147},
-   ["text"]="Regional indicator symbol letter r",
-   ["image_path"]="1f1f7",
+   128022,
 },
 -- Table: {2482}
 {
-   ["subText"]=", :regional_indicator_q:",
-   ["order"]=2481,
-   ["char"]={5148},
-   ["text"]="Regional indicator symbol letter q",
-   ["image_path"]="1f1f6",
+   128015,
 },
 -- Table: {2483}
 {
-   ["subText"]=", :regional_indicator_p:",
-   ["order"]=2482,
-   ["char"]={5149},
-   ["text"]="Regional indicator symbol letter p",
-   ["image_path"]="1f1f5",
+   129433,
 },
 -- Table: {2484}
 {
-   ["subText"]=", :regional_indicator_o:",
-   ["order"]=2483,
-   ["char"]={5150},
-   ["text"]="Regional indicator symbol letter o",
-   ["image_path"]="1f1f4",
+   128017,
 },
 -- Table: {2485}
 {
-   ["subText"]=", :regional_indicator_n:",
-   ["order"]=2484,
-   ["char"]={5151},
-   ["text"]="Regional indicator symbol letter n",
-   ["image_path"]="1f1f3",
+   128016,
 },
 -- Table: {2486}
 {
-   ["subText"]=", :regional_indicator_m:",
-   ["order"]=2485,
-   ["char"]={5152},
-   ["text"]="Regional indicator symbol letter m",
-   ["image_path"]="1f1f2",
+   129420,
 },
 -- Table: {2487}
 {
-   ["subText"]=", :regional_indicator_l:",
-   ["order"]=2486,
-   ["char"]={5153},
-   ["text"]="Regional indicator symbol letter l",
-   ["image_path"]="1f1f1",
+   128021,
 },
 -- Table: {2488}
 {
-   ["subText"]=", :regional_indicator_k:",
-   ["order"]=2487,
-   ["char"]={5154},
-   ["text"]="Regional indicator symbol letter k",
-   ["image_path"]="1f1f0",
+   129454,
 },
 -- Table: {2489}
 {
-   ["subText"]=", :regional_indicator_j:",
-   ["order"]=2488,
-   ["char"]={5155},
-   ["text"]="Regional indicator symbol letter j",
-   ["image_path"]="1f1ef",
+   128021,
+   129466,
 },
 -- Table: {2490}
 {
-   ["subText"]=", :regional_indicator_i:",
-   ["order"]=2489,
-   ["char"]={5156},
-   ["text"]="Regional indicator symbol letter i",
-   ["image_path"]="1f1ee",
+   128041,
 },
 -- Table: {2491}
 {
-   ["subText"]=", :regional_indicator_h:",
-   ["order"]=2490,
-   ["char"]={5157},
-   ["text"]="Regional indicator symbol letter h",
-   ["image_path"]="1f1ed",
+   128008,
 },
 -- Table: {2492}
 {
-   ["subText"]=", :regional_indicator_g:",
-   ["order"]=2491,
-   ["char"]={5158},
-   ["text"]="Regional indicator symbol letter g",
-   ["image_path"]="1f1ec",
+   128019,
 },
 -- Table: {2493}
 {
-   ["subText"]=", :regional_indicator_f:",
-   ["order"]=2492,
-   ["char"]={5159},
-   ["text"]="Regional indicator symbol letter f",
-   ["image_path"]="1f1eb",
+   129411,
 },
 -- Table: {2494}
 {
-   ["subText"]=", :regional_indicator_e:",
-   ["order"]=2493,
-   ["char"]={5160},
-   ["text"]="Regional indicator symbol letter e",
-   ["image_path"]="1f1ea",
+   129434,
 },
 -- Table: {2495}
 {
-   ["subText"]=", :regional_indicator_d:",
-   ["order"]=2494,
-   ["char"]={5161},
-   ["text"]="Regional indicator symbol letter d",
-   ["image_path"]="1f1e9",
+   129436,
 },
 -- Table: {2496}
 {
-   ["subText"]=", :regional_indicator_c:",
-   ["order"]=2495,
-   ["char"]={5162},
-   ["text"]="Regional indicator symbol letter c",
-   ["image_path"]="1f1e8",
+   129442,
 },
 -- Table: {2497}
 {
-   ["subText"]=", :regional_indicator_b:",
-   ["order"]=2496,
-   ["char"]={5163},
-   ["text"]="Regional indicator symbol letter b",
-   ["image_path"]="1f1e7",
+   129449,
 },
 -- Table: {2498}
 {
-   ["subText"]=", :regional_indicator_a:",
-   ["order"]=2497,
-   ["char"]={5164},
-   ["text"]="Regional indicator symbol letter a",
-   ["image_path"]="1f1e6",
+   128330,
 },
 -- Table: {2499}
 {
-   ["subText"]=", :digit_nine:",
-   ["order"]=2498,
-   ["char"]={5165},
-   ["text"]="Digit nine",
-   ["image_path"]="0039",
+   128007,
 },
 -- Table: {2500}
 {
-   ["subText"]=", :digit_eight:",
-   ["order"]=2499,
-   ["char"]={5166},
-   ["text"]="Digit eight",
-   ["image_path"]="0038",
+   129445,
 },
 -- Table: {2501}
 {
-   ["subText"]=", :digit_seven:",
-   ["order"]=2500,
-   ["char"]={5167},
-   ["text"]="Digit seven",
-   ["image_path"]="0037",
+   129446,
 },
 -- Table: {2502}
 {
-   ["subText"]=", :digit_six:",
-   ["order"]=2501,
-   ["char"]={5168},
-   ["text"]="Digit six",
-   ["image_path"]="0036",
+   129448,
 },
 -- Table: {2503}
 {
-   ["subText"]=", :digit_five:",
-   ["order"]=2502,
-   ["char"]={5169},
-   ["text"]="Digit five",
-   ["image_path"]="0035",
+   129437,
 },
 -- Table: {2504}
 {
-   ["subText"]=", :digit_four:",
-   ["order"]=2503,
-   ["char"]={5170},
-   ["text"]="Digit four",
-   ["image_path"]="0034",
+   129441,
 },
 -- Table: {2505}
 {
-   ["subText"]=", :digit_three:",
-   ["order"]=2504,
-   ["char"]={5171},
-   ["text"]="Digit three",
-   ["image_path"]="0033",
+   128001,
 },
 -- Table: {2506}
 {
-   ["subText"]=", :digit_two:",
-   ["order"]=2505,
-   ["char"]={5172},
-   ["text"]="Digit two",
-   ["image_path"]="0032",
+   128000,
 },
 -- Table: {2507}
 {
-   ["subText"]=", :digit_one:",
-   ["order"]=2506,
-   ["char"]={5173},
-   ["text"]="Digit one",
-   ["image_path"]="0031",
+   128063,
 },
 -- Table: {2508}
 {
-   ["subText"]=", :digit_zero:",
-   ["order"]=2507,
-   ["char"]={5174},
-   ["text"]="Digit zero",
-   ["image_path"]="0030",
+   129428,
 },
 -- Table: {2509}
 {
-   ["subText"]="woman, :female_sign:",
-   ["order"]=2508,
-   ["char"]={5175},
-   ["text"]="Female sign",
-   ["image_path"]="2640",
+   128062,
 },
 -- Table: {2510}
 {
-   ["subText"]="man, :male_sign:",
-   ["order"]=2509,
-   ["char"]={5176},
-   ["text"]="Male sign",
-   ["image_path"]="2642",
+   128009,
 },
 -- Table: {2511}
 {
-   ["subText"]="aesculapius, medicine, staff, :medical_symbol:",
-   ["order"]=2510,
-   ["char"]={5177},
-   ["text"]="Medical symbol",
-   ["image_path"]="2695",
+   128050,
 },
 -- Table: {2512}
 {
-   ["subText"]="boy, family, man, woman, :family_man_woman_boy:",
-   ["order"]=2511,
-   ["char"]={5178},
-   ["text"]="Family: man, woman, boy",
-   ["image_path"]="1f468-1f469-1f466",
+   127797,
 },
 -- Table: {2513}
 {
-   ["subText"]="couple, love, man, woman, :couple_with_heart_woman_man:",
-   ["order"]=2512,
-   ["char"]={5179},
-   ["text"]="Couple with heart: woman, man",
-   ["image_path"]="1f469-2764-1f468",
+   127876,
 },
 -- Table: {2514}
 {
-   ["subText"]="couple, man, woman, :kiss_woman_man:",
-   ["order"]=2513,
-   ["char"]={5180},
-   ["text"]="Kiss: woman, man",
-   ["image_path"]="1f469-2764-1f48b-1f468",
+   127794,
 },
 -- Table: {2515}
 {
-   ["subText"]=", :face_with_raised_eyebrow:",
-   ["order"]=2514,
-   ["char"]={5181},
-   ["text"]="Face with raised eyebrow",
-   ["image_path"]="1f928",
+   127795,
 },
 -- Table: {2516}
 {
-   ["subText"]=", :star_struck:",
-   ["order"]=2515,
-   ["char"]={5182},
-   ["text"]="Star-struck",
-   ["image_path"]="1f929",
+   127796,
 },
 -- Table: {2517}
 {
-   ["subText"]="eye, large, small, :crazy_face:",
-   ["order"]=2516,
-   ["char"]={5183},
-   ["text"]="Crazy face",
-   ["image_path"]="1f92a",
+   127793,
 },
 -- Table: {2518}
 {
-   ["subText"]="quiet, shush, :shushing_face:",
-   ["order"]=2517,
-   ["char"]={5184},
-   ["text"]="Shushing face",
-   ["image_path"]="1f92b",
+   127807,
 },
 -- Table: {2519}
 {
-   ["subText"]=", :face_with_symbols_over_mouth:",
-   ["order"]=2518,
-   ["char"]={5185},
-   ["text"]="Face with symbols over mouth",
-   ["image_path"]="1f92c",
+   9752,
 },
 -- Table: {2520}
 {
-   ["subText"]=", :face_with_hand_over_mouth:",
-   ["order"]=2519,
-   ["char"]={5186},
-   ["text"]="Face with hand over mouth",
-   ["image_path"]="1f92d",
+   127808,
 },
 -- Table: {2521}
 {
-   ["subText"]="sick, vomit, :face_vomiting:",
-   ["order"]=2520,
-   ["char"]={5187},
-   ["text"]="Face vomiting",
-   ["image_path"]="1f92e",
+   127885,
 },
 -- Table: {2522}
 {
-   ["subText"]="shocked, :exploding_head:",
-   ["order"]=2521,
-   ["char"]={5188},
-   ["text"]="Exploding head",
-   ["image_path"]="1f92f",
+   127883,
 },
 -- Table: {2523}
 {
-   ["subText"]=", :face_with_monocle:",
-   ["order"]=2522,
-   ["char"]={5189},
-   ["text"]="Face with monocle",
-   ["image_path"]="1f9d0",
+   127811,
 },
 -- Table: {2524}
 {
-   ["subText"]=", :adult:",
-   ["order"]=2523,
-   ["char"]={5190},
-   ["text"]="Adult",
-   ["image_path"]="1f9d1",
+   127810,
 },
 -- Table: {2525}
 {
-   ["subText"]=", :child:",
-   ["order"]=2524,
-   ["char"]={5191},
-   ["text"]="Child",
-   ["image_path"]="1f9d2",
+   127809,
 },
 -- Table: {2526}
 {
-   ["subText"]=", :older_adult:",
-   ["order"]=2525,
-   ["char"]={5192},
-   ["text"]="Older adult",
-   ["image_path"]="1f9d3",
+   127812,
 },
 -- Table: {2527}
 {
-   ["subText"]=", :bearded_person:",
-   ["order"]=2526,
-   ["char"]={5193},
-   ["text"]="Bearded person",
-   ["image_path"]="1f9d4",
+   127806,
 },
 -- Table: {2528}
 {
-   ["subText"]=", :woman_with_headscarf:",
-   ["order"]=2527,
-   ["char"]={5194},
-   ["text"]="Woman with headscarf",
-   ["image_path"]="1f9d5",
+   128144,
 },
 -- Table: {2529}
 {
-   ["subText"]="intelligent, :brain:",
-   ["order"]=2528,
-   ["char"]={5195},
-   ["text"]="Brain",
-   ["image_path"]="1f9e0",
+   127799,
 },
 -- Table: {2530}
 {
-   ["subText"]="baseball cap, :billed_cap:",
-   ["order"]=2529,
-   ["char"]={5196},
-   ["text"]="Billed cap",
-   ["image_path"]="1f9e2",
+   127801,
 },
 -- Table: {2531}
 {
-   ["subText"]="sorcerer, sorceress, witch, wizard, :mage:",
-   ["order"]=2530,
-   ["char"]={5197},
-   ["text"]="Mage",
-   ["image_path"]="1f9d9",
+   129344,
 },
 -- Table: {2532}
 {
-   ["subText"]="Oberon, Puck, Titania, :fairy:",
-   ["order"]=2531,
-   ["char"]={5198},
-   ["text"]="Fairy",
-   ["image_path"]="1f9da",
+   127802,
 },
 -- Table: {2533}
 {
-   ["subText"]="Dracula, undead, :vampire:",
-   ["order"]=2532,
-   ["char"]={5199},
-   ["text"]="Vampire",
-   ["image_path"]="1f9db",
+   127800,
 },
 -- Table: {2534}
 {
-   ["subText"]="mermaid, merman, merwoman, :merperson:",
-   ["order"]=2533,
-   ["char"]={5200},
-   ["text"]="Merperson",
-   ["image_path"]="1f9dc",
+   127804,
 },
 -- Table: {2535}
 {
-   ["subText"]=", :elf:",
-   ["order"]=2534,
-   ["char"]={5201},
-   ["text"]="Elf",
-   ["image_path"]="1f9dd",
+   127803,
 },
 -- Table: {2536}
 {
-   ["subText"]=", :genie:",
-   ["order"]=2535,
-   ["char"]={5202},
-   ["text"]="Genie",
-   ["image_path"]="1f9de",
+   127774,
 },
 -- Table: {2537}
 {
-   ["subText"]=", :zombie:",
-   ["order"]=2536,
-   ["char"]={5203},
-   ["text"]="Zombie",
-   ["image_path"]="1f9df",
+   127773,
 },
 -- Table: {2538}
 {
-   ["subText"]="neck, :scarf:",
-   ["order"]=2537,
-   ["char"]={5204},
-   ["text"]="Scarf",
-   ["image_path"]="1f9e3",
+   127771,
 },
 -- Table: {2539}
 {
-   ["subText"]="hand, :gloves:",
-   ["order"]=2538,
-   ["char"]={5205},
-   ["text"]="Gloves",
-   ["image_path"]="1f9e4",
+   127772,
 },
 -- Table: {2540}
 {
-   ["subText"]="jacket, :coat:",
-   ["order"]=2539,
-   ["char"]={5206},
-   ["text"]="Coat",
-   ["image_path"]="1f9e5",
+   127770,
 },
 -- Table: {2541}
 {
-   ["subText"]="stocking, :socks:",
-   ["order"]=2540,
-   ["char"]={5207},
-   ["text"]="Socks",
-   ["image_path"]="1f9e6",
+   127765,
 },
 -- Table: {2542}
 {
-   ["subText"]="ILY, hand, :love_you_gesture:",
-   ["order"]=2541,
-   ["char"]={5208},
-   ["text"]="Love-you gesture",
-   ["image_path"]="1f91f",
+   127766,
 },
 -- Table: {2543}
 {
-   ["subText"]="ILY, hand, light skin tone, :love_you_gesture_tone1:",
-   ["order"]=2542,
-   ["char"]={5209},
-   ["text"]="Love-you gesture: light skin tone",
-   ["image_path"]="1f91f-1f3fb",
+   127767,
 },
 -- Table: {2544}
 {
-   ["subText"]="ILY, hand, medium-light skin tone, :love_you_gesture_tone2:",
-   ["order"]=2543,
-   ["char"]={5210},
-   ["text"]="Love-you gesture: medium-light skin tone",
-   ["image_path"]="1f91f-1f3fc",
+   127768,
 },
 -- Table: {2545}
 {
-   ["subText"]="ILY, hand, medium skin tone, :love_you_gesture_tone3:",
-   ["order"]=2544,
-   ["char"]={5211},
-   ["text"]="Love-you gesture: medium skin tone",
-   ["image_path"]="1f91f-1f3fd",
+   127761,
 },
 -- Table: {2546}
 {
-   ["subText"]="ILY, hand, medium-dark skin tone, :love_you_gesture_tone4:",
-   ["order"]=2545,
-   ["char"]={5212},
-   ["text"]="Love-you gesture: medium-dark skin tone",
-   ["image_path"]="1f91f-1f3fe",
+   127762,
 },
 -- Table: {2547}
 {
-   ["subText"]="ILY, dark skin tone, hand, :love_you_gesture_tone5:",
-   ["order"]=2546,
-   ["char"]={5213},
-   ["text"]="Love-you gesture: dark skin tone",
-   ["image_path"]="1f91f-1f3ff",
+   127763,
 },
 -- Table: {2548}
 {
-   ["subText"]=", :palms_up_together:",
-   ["order"]=2547,
-   ["char"]={5214},
-   ["text"]="Palms up together",
-   ["image_path"]="1f932",
+   127764,
 },
 -- Table: {2549}
 {
-   ["subText"]="light skin tone, prayer, :palms_up_together_tone1:",
-   ["order"]=2548,
-   ["char"]={5215},
-   ["text"]="Palms up together: light skin tone",
-   ["image_path"]="1f932-1f3fb",
+   127769,
 },
 -- Table: {2550}
 {
-   ["subText"]="medium-light skin tone, prayer, :palms_up_together_tone2:",
-   ["order"]=2549,
-   ["char"]={5216},
-   ["text"]="Palms up together: medium-light skin tone",
-   ["image_path"]="1f932-1f3fc",
+   127758,
 },
 -- Table: {2551}
 {
-   ["subText"]="medium skin tone, prayer, :palms_up_together_tone3:",
-   ["order"]=2550,
-   ["char"]={5217},
-   ["text"]="Palms up together: medium skin tone",
-   ["image_path"]="1f932-1f3fd",
+   127757,
 },
 -- Table: {2552}
 {
-   ["subText"]="medium-dark skin tone, prayer, :palms_up_together_tone4:",
-   ["order"]=2551,
-   ["char"]={5218},
-   ["text"]="Palms up together: medium-dark skin tone",
-   ["image_path"]="1f932-1f3fe",
+   127759,
 },
 -- Table: {2553}
 {
-   ["subText"]="dark skin tone, prayer, :palms_up_together_tone5:",
-   ["order"]=2552,
-   ["char"]={5219},
-   ["text"]="Palms up together: dark skin tone",
-   ["image_path"]="1f932-1f3ff",
+   129680,
 },
 -- Table: {2554}
 {
-   ["subText"]="gender-neutral, light skin tone, :adult_tone1:",
-   ["order"]=2553,
-   ["char"]={5220},
-   ["text"]="Adult: light skin tone",
-   ["image_path"]="1f9d1-1f3fb",
+   128171,
 },
 -- Table: {2555}
 {
-   ["subText"]="gender-neutral, medium-light skin tone, :adult_tone2:",
-   ["order"]=2554,
-   ["char"]={5221},
-   ["text"]="Adult: medium-light skin tone",
-   ["image_path"]="1f9d1-1f3fc",
+   11088,
 },
 -- Table: {2556}
 {
-   ["subText"]="gender-neutral, medium skin tone, :adult_tone3:",
-   ["order"]=2555,
-   ["char"]={5222},
-   ["text"]="Adult: medium skin tone",
-   ["image_path"]="1f9d1-1f3fd",
+   127775,
 },
 -- Table: {2557}
 {
-   ["subText"]="gender-neutral, medium-dark skin tone, :adult_tone4:",
-   ["order"]=2556,
-   ["char"]={5223},
-   ["text"]="Adult: medium-dark skin tone",
-   ["image_path"]="1f9d1-1f3fe",
+   10024,
 },
 -- Table: {2558}
 {
-   ["subText"]="dark skin tone, gender-neutral, :adult_tone5:",
-   ["order"]=2557,
-   ["char"]={5224},
-   ["text"]="Adult: dark skin tone",
-   ["image_path"]="1f9d1-1f3ff",
+   9889,
 },
 -- Table: {2559}
 {
-   ["subText"]="gender-neutral, light skin tone, young, :child_tone1:",
-   ["order"]=2558,
-   ["char"]={5225},
-   ["text"]="Child: light skin tone",
-   ["image_path"]="1f9d2-1f3fb",
+   9732,
 },
 -- Table: {2560}
 {
-   ["subText"]="gender-neutral, medium-light skin tone, young, :child_tone2:",
-   ["order"]=2559,
-   ["char"]={5226},
-   ["text"]="Child: medium-light skin tone",
-   ["image_path"]="1f9d2-1f3fc",
+   128165,
 },
 -- Table: {2561}
 {
-   ["subText"]="gender-neutral, medium skin tone, young, :child_tone3:",
-   ["order"]=2560,
-   ["char"]={5227},
-   ["text"]="Child: medium skin tone",
-   ["image_path"]="1f9d2-1f3fd",
+   128293,
 },
 -- Table: {2562}
 {
-   ["subText"]="gender-neutral, medium-dark skin tone, young, :child_tone4:",
-   ["order"]=2561,
-   ["char"]={5228},
-   ["text"]="Child: medium-dark skin tone",
-   ["image_path"]="1f9d2-1f3fe",
+   127786,
 },
 -- Table: {2563}
 {
-   ["subText"]="dark skin tone, gender-neutral, young, :child_tone5:",
-   ["order"]=2562,
-   ["char"]={5229},
-   ["text"]="Child: dark skin tone",
-   ["image_path"]="1f9d2-1f3ff",
+   127752,
 },
 -- Table: {2564}
 {
-   ["subText"]="gender-neutral, light skin tone, old, :older_adult_tone1:",
-   ["order"]=2563,
-   ["char"]={5230},
-   ["text"]="Older adult: light skin tone",
-   ["image_path"]="1f9d3-1f3fb",
+   9728,
 },
 -- Table: {2565}
 {
-   ["subText"]="gender-neutral, medium-light skin tone, old, :older_adult_tone2:",
-   ["order"]=2564,
-   ["char"]={5231},
-   ["text"]="Older adult: medium-light skin tone",
-   ["image_path"]="1f9d3-1f3fc",
+   127780,
 },
 -- Table: {2566}
 {
-   ["subText"]="gender-neutral, medium skin tone, old, :older_adult_tone3:",
-   ["order"]=2565,
-   ["char"]={5232},
-   ["text"]="Older adult: medium skin tone",
-   ["image_path"]="1f9d3-1f3fd",
+   9925,
 },
 -- Table: {2567}
 {
-   ["subText"]="gender-neutral, medium-dark skin tone, old, :older_adult_tone4:",
-   ["order"]=2566,
-   ["char"]={5233},
-   ["text"]="Older adult: medium-dark skin tone",
-   ["image_path"]="1f9d3-1f3fe",
+   127781,
 },
 -- Table: {2568}
 {
-   ["subText"]="dark skin tone, gender-neutral, old, :older_adult_tone5:",
-   ["order"]=2567,
-   ["char"]={5234},
-   ["text"]="Older adult: dark skin tone",
-   ["image_path"]="1f9d3-1f3ff",
+   9729,
 },
 -- Table: {2569}
 {
-   ["subText"]="beard, light skin tone, :bearded_person_tone1:",
-   ["order"]=2568,
-   ["char"]={5235},
-   ["text"]="Bearded person: light skin tone",
-   ["image_path"]="1f9d4-1f3fb",
+   127782,
 },
 -- Table: {2570}
 {
-   ["subText"]="beard, medium-light skin tone, :bearded_person_tone2:",
-   ["order"]=2569,
-   ["char"]={5236},
-   ["text"]="Bearded person: medium-light skin tone",
-   ["image_path"]="1f9d4-1f3fc",
+   127783,
 },
 -- Table: {2571}
 {
-   ["subText"]="beard, medium skin tone, :bearded_person_tone3:",
-   ["order"]=2570,
-   ["char"]={5237},
-   ["text"]="Bearded person: medium skin tone",
-   ["image_path"]="1f9d4-1f3fd",
+   9928,
 },
 -- Table: {2572}
 {
-   ["subText"]="beard, medium-dark skin tone, :bearded_person_tone4:",
-   ["order"]=2571,
-   ["char"]={5238},
-   ["text"]="Bearded person: medium-dark skin tone",
-   ["image_path"]="1f9d4-1f3fe",
+   127785,
 },
 -- Table: {2573}
 {
-   ["subText"]="beard, dark skin tone, :bearded_person_tone5:",
-   ["order"]=2572,
-   ["char"]={5239},
-   ["text"]="Bearded person: dark skin tone",
-   ["image_path"]="1f9d4-1f3ff",
+   127784,
 },
 -- Table: {2574}
 {
-   ["subText"]="headscarf, hijab, light skin tone, mantilla, tichel, :woman_with_headscarf_tone1:",
-   ["order"]=2573,
-   ["char"]={5240},
-   ["text"]="Woman with headscarf: light skin tone",
-   ["image_path"]="1f9d5-1f3fb",
+   10052,
 },
 -- Table: {2575}
 {
-   ["subText"]="headscarf, hijab, mantilla, medium-light skin tone, tichel, :woman_with_headscarf_tone2:",
-   ["order"]=2574,
-   ["char"]={5241},
-   ["text"]="Woman with headscarf: medium-light skin tone",
-   ["image_path"]="1f9d5-1f3fc",
+   9731,
 },
 -- Table: {2576}
 {
-   ["subText"]="headscarf, hijab, mantilla, medium skin tone, tichel, :woman_with_headscarf_tone3:",
-   ["order"]=2575,
-   ["char"]={5242},
-   ["text"]="Woman with headscarf: medium skin tone",
-   ["image_path"]="1f9d5-1f3fd",
+   9924,
 },
 -- Table: {2577}
 {
-   ["subText"]="headscarf, hijab, mantilla, medium-dark skin tone, tichel, :woman_with_headscarf_tone4:",
-   ["order"]=2576,
-   ["char"]={5243},
-   ["text"]="Woman with headscarf: medium-dark skin tone",
-   ["image_path"]="1f9d5-1f3fe",
+   127788,
 },
 -- Table: {2578}
 {
-   ["subText"]="dark skin tone, headscarf, hijab, mantilla, tichel, :woman_with_headscarf_tone5:",
-   ["order"]=2577,
-   ["char"]={5244},
-   ["text"]="Woman with headscarf: dark skin tone",
-   ["image_path"]="1f9d5-1f3ff",
+   128168,
 },
 -- Table: {2579}
 {
-   ["subText"]="light skin tone, sorcerer, sorceress, witch, wizard, :mage_tone1:",
-   ["order"]=2578,
-   ["char"]={5245},
-   ["text"]="Mage: light skin tone",
-   ["image_path"]="1f9d9-1f3fb",
+   128167,
 },
 -- Table: {2580}
 {
-   ["subText"]="medium-light skin tone, sorcerer, sorceress, witch, wizard, :mage_tone2:",
-   ["order"]=2579,
-   ["char"]={5246},
-   ["text"]="Mage: medium-light skin tone",
-   ["image_path"]="1f9d9-1f3fc",
+   128166,
 },
 -- Table: {2581}
 {
-   ["subText"]="medium skin tone, sorcerer, sorceress, witch, wizard, :mage_tone3:",
-   ["order"]=2580,
-   ["char"]={5247},
-   ["text"]="Mage: medium skin tone",
-   ["image_path"]="1f9d9-1f3fd",
+   9748,
 },
 -- Table: {2582}
 {
-   ["subText"]="medium-dark skin tone, sorcerer, sorceress, witch, wizard, :mage_tone4:",
-   ["order"]=2581,
-   ["char"]={5248},
-   ["text"]="Mage: medium-dark skin tone",
-   ["image_path"]="1f9d9-1f3fe",
+   9730,
 },
 -- Table: {2583}
 {
-   ["subText"]="dark skin tone, sorcerer, sorceress, witch, wizard, :mage_tone5:",
-   ["order"]=2582,
-   ["char"]={5249},
-   ["text"]="Mage: dark skin tone",
-   ["image_path"]="1f9d9-1f3ff",
+   127754,
 },
 -- Table: {2584}
 {
-   ["subText"]="Oberon, Puck, Titania, light skin tone, :fairy_tone1:",
-   ["order"]=2583,
-   ["char"]={5250},
-   ["text"]="Fairy: light skin tone",
-   ["image_path"]="1f9da-1f3fb",
+   127787,
 },
 -- Table: {2585}
 {
-   ["subText"]="Oberon, Puck, Titania, medium-light skin tone, :fairy_tone2:",
-   ["order"]=2584,
-   ["char"]={5251},
-   ["text"]="Fairy: medium-light skin tone",
-   ["image_path"]="1f9da-1f3fc",
+   127823,
 },
 -- Table: {2586}
 {
-   ["subText"]="Oberon, Puck, Titania, medium skin tone, :fairy_tone3:",
-   ["order"]=2585,
-   ["char"]={5252},
-   ["text"]="Fairy: medium skin tone",
-   ["image_path"]="1f9da-1f3fd",
+   127822,
 },
 -- Table: {2587}
 {
-   ["subText"]="Oberon, Puck, Titania, medium-dark skin tone, :fairy_tone4:",
-   ["order"]=2586,
-   ["char"]={5253},
-   ["text"]="Fairy: medium-dark skin tone",
-   ["image_path"]="1f9da-1f3fe",
+   127824,
 },
 -- Table: {2588}
 {
-   ["subText"]="Oberon, Puck, Titania, dark skin tone, :fairy_tone5:",
-   ["order"]=2587,
-   ["char"]={5254},
-   ["text"]="Fairy: dark skin tone",
-   ["image_path"]="1f9da-1f3ff",
+   127818,
 },
 -- Table: {2589}
 {
-   ["subText"]="Dracula, light skin tone, undead, :vampire_tone1:",
-   ["order"]=2588,
-   ["char"]={5255},
-   ["text"]="Vampire: light skin tone",
-   ["image_path"]="1f9db-1f3fb",
+   127819,
 },
 -- Table: {2590}
 {
-   ["subText"]="Dracula, medium-light skin tone, undead, :vampire_tone2:",
-   ["order"]=2589,
-   ["char"]={5256},
-   ["text"]="Vampire: medium-light skin tone",
-   ["image_path"]="1f9db-1f3fc",
+   127820,
 },
 -- Table: {2591}
 {
-   ["subText"]="Dracula, medium skin tone, undead, :vampire_tone3:",
-   ["order"]=2590,
-   ["char"]={5257},
-   ["text"]="Vampire: medium skin tone",
-   ["image_path"]="1f9db-1f3fd",
+   127817,
 },
 -- Table: {2592}
 {
-   ["subText"]="Dracula, medium-dark skin tone, undead, :vampire_tone4:",
-   ["order"]=2591,
-   ["char"]={5258},
-   ["text"]="Vampire: medium-dark skin tone",
-   ["image_path"]="1f9db-1f3fe",
+   127815,
 },
 -- Table: {2593}
 {
-   ["subText"]="Dracula, dark skin tone, undead, :vampire_tone5:",
-   ["order"]=2592,
-   ["char"]={5259},
-   ["text"]="Vampire: dark skin tone",
-   ["image_path"]="1f9db-1f3ff",
+   127827,
 },
 -- Table: {2594}
 {
-   ["subText"]="light skin tone, mermaid, merman, merwoman, :merperson_tone1:",
-   ["order"]=2593,
-   ["char"]={5260},
-   ["text"]="Merperson: light skin tone",
-   ["image_path"]="1f9dc-1f3fb",
+   127816,
 },
 -- Table: {2595}
 {
-   ["subText"]="medium-light skin tone, mermaid, merman, merwoman, :merperson_tone2:",
-   ["order"]=2594,
-   ["char"]={5261},
-   ["text"]="Merperson: medium-light skin tone",
-   ["image_path"]="1f9dc-1f3fc",
+   127826,
 },
 -- Table: {2596}
 {
-   ["subText"]="medium skin tone, mermaid, merman, merwoman, :merperson_tone3:",
-   ["order"]=2595,
-   ["char"]={5262},
-   ["text"]="Merperson: medium skin tone",
-   ["image_path"]="1f9dc-1f3fd",
+   127825,
 },
 -- Table: {2597}
 {
-   ["subText"]="medium-dark skin tone, mermaid, merman, merwoman, :merperson_tone4:",
-   ["order"]=2596,
-   ["char"]={5263},
-   ["text"]="Merperson: medium-dark skin tone",
-   ["image_path"]="1f9dc-1f3fe",
+   129389,
 },
 -- Table: {2598}
 {
-   ["subText"]="dark skin tone, mermaid, merman, merwoman, :merperson_tone5:",
-   ["order"]=2597,
-   ["char"]={5264},
-   ["text"]="Merperson: dark skin tone",
-   ["image_path"]="1f9dc-1f3ff",
+   127821,
 },
 -- Table: {2599}
 {
-   ["subText"]="light skin tone, magical, :elf_tone1:",
-   ["order"]=2598,
-   ["char"]={5265},
-   ["text"]="Elf: light skin tone",
-   ["image_path"]="1f9dd-1f3fb",
+   129381,
 },
 -- Table: {2600}
 {
-   ["subText"]="magical, medium-light skin tone, :elf_tone2:",
-   ["order"]=2599,
-   ["char"]={5266},
-   ["text"]="Elf: medium-light skin tone",
-   ["image_path"]="1f9dd-1f3fc",
+   129373,
 },
 -- Table: {2601}
 {
-   ["subText"]="magical, medium skin tone, :elf_tone3:",
-   ["order"]=2600,
-   ["char"]={5267},
-   ["text"]="Elf: medium skin tone",
-   ["image_path"]="1f9dd-1f3fd",
+   127813,
 },
 -- Table: {2602}
 {
-   ["subText"]="magical, medium-dark skin tone, :elf_tone4:",
-   ["order"]=2601,
-   ["char"]={5268},
-   ["text"]="Elf: medium-dark skin tone",
-   ["image_path"]="1f9dd-1f3fe",
+   127814,
 },
 -- Table: {2603}
 {
-   ["subText"]="dark skin tone, magical, :elf_tone5:",
-   ["order"]=2602,
-   ["char"]={5269},
-   ["text"]="Elf: dark skin tone",
-   ["image_path"]="1f9dd-1f3ff",
+   129361,
 },
 -- Table: {2604}
 {
-   ["subText"]="sorceress, witch, :woman_mage:",
-   ["order"]=2603,
-   ["char"]={5270},
-   ["text"]="Woman mage",
-   ["image_path"]="1f9d9-2640",
+   129382,
 },
 -- Table: {2605}
 {
-   ["subText"]="sorcerer, wizard, :man_mage:",
-   ["order"]=2604,
-   ["char"]={5271},
-   ["text"]="Man mage",
-   ["image_path"]="1f9d9-2642",
+   129388,
 },
 -- Table: {2606}
 {
-   ["subText"]="light skin tone, sorceress, witch, :woman_mage_tone1:",
-   ["order"]=2605,
-   ["char"]={5272},
-   ["text"]="Woman mage: light skin tone",
-   ["image_path"]="1f9d9-1f3fb-2640",
+   129362,
 },
 -- Table: {2607}
 {
-   ["subText"]="light skin tone, sorcerer, wizard, :man_mage_tone1:",
-   ["order"]=2606,
-   ["char"]={5273},
-   ["text"]="Man mage: light skin tone",
-   ["image_path"]="1f9d9-1f3fb-2642",
+   127798,
 },
 -- Table: {2608}
 {
-   ["subText"]="medium-light skin tone, sorceress, witch, :woman_mage_tone2:",
-   ["order"]=2607,
-   ["char"]={5274},
-   ["text"]="Woman mage: medium-light skin tone",
-   ["image_path"]="1f9d9-1f3fc-2640",
+   127805,
 },
 -- Table: {2609}
 {
-   ["subText"]="medium-light skin tone, sorcerer, wizard, :man_mage_tone2:",
-   ["order"]=2608,
-   ["char"]={5275},
-   ["text"]="Man mage: medium-light skin tone",
-   ["image_path"]="1f9d9-1f3fc-2642",
+   129365,
 },
 -- Table: {2610}
 {
-   ["subText"]="medium skin tone, sorceress, witch, :woman_mage_tone3:",
-   ["order"]=2609,
-   ["char"]={5276},
-   ["text"]="Woman mage: medium skin tone",
-   ["image_path"]="1f9d9-1f3fd-2640",
+   129477,
 },
 -- Table: {2611}
 {
-   ["subText"]="medium skin tone, sorcerer, wizard, :man_mage_tone3:",
-   ["order"]=2610,
-   ["char"]={5277},
-   ["text"]="Man mage: medium skin tone",
-   ["image_path"]="1f9d9-1f3fd-2642",
+   129476,
 },
 -- Table: {2612}
 {
-   ["subText"]="medium-dark skin tone, sorceress, witch, :woman_mage_tone4:",
-   ["order"]=2611,
-   ["char"]={5278},
-   ["text"]="Woman mage: medium-dark skin tone",
-   ["image_path"]="1f9d9-1f3fe-2640",
+   129364,
 },
 -- Table: {2613}
 {
-   ["subText"]="medium-dark skin tone, sorcerer, wizard, :man_mage_tone4:",
-   ["order"]=2612,
-   ["char"]={5279},
-   ["text"]="Man mage: medium-dark skin tone",
-   ["image_path"]="1f9d9-1f3fe-2642",
+   127840,
 },
 -- Table: {2614}
 {
-   ["subText"]="dark skin tone, sorceress, witch, :woman_mage_tone5:",
-   ["order"]=2613,
-   ["char"]={5280},
-   ["text"]="Woman mage: dark skin tone",
-   ["image_path"]="1f9d9-1f3ff-2640",
+   129360,
 },
 -- Table: {2615}
 {
-   ["subText"]="dark skin tone, sorcerer, wizard, :man_mage_tone5:",
-   ["order"]=2614,
-   ["char"]={5281},
-   ["text"]="Man mage: dark skin tone",
-   ["image_path"]="1f9d9-1f3ff-2642",
+   129391,
 },
 -- Table: {2616}
 {
-   ["subText"]="Titania, :woman_fairy:",
-   ["order"]=2615,
-   ["char"]={5282},
-   ["text"]="Woman fairy",
-   ["image_path"]="1f9da-2640",
+   127838,
 },
 -- Table: {2617}
 {
-   ["subText"]="Oberon, Puck, :man_fairy:",
-   ["order"]=2616,
-   ["char"]={5283},
-   ["text"]="Man fairy",
-   ["image_path"]="1f9da-2642",
+   129366,
 },
 -- Table: {2618}
 {
-   ["subText"]="Titania, light skin tone, :woman_fairy_tone1:",
-   ["order"]=2617,
-   ["char"]={5284},
-   ["text"]="Woman fairy: light skin tone",
-   ["image_path"]="1f9da-1f3fb-2640",
+   129384,
 },
 -- Table: {2619}
 {
-   ["subText"]="Oberon, Puck, light skin tone, :man_fairy_tone1:",
-   ["order"]=2618,
-   ["char"]={5285},
-   ["text"]="Man fairy: light skin tone",
-   ["image_path"]="1f9da-1f3fb-2642",
+   129472,
 },
 -- Table: {2620}
 {
-   ["subText"]="Titania, medium-light skin tone, :woman_fairy_tone2:",
-   ["order"]=2619,
-   ["char"]={5286},
-   ["text"]="Woman fairy: medium-light skin tone",
-   ["image_path"]="1f9da-1f3fc-2640",
+   129370,
 },
 -- Table: {2621}
 {
-   ["subText"]="Oberon, Puck, medium-light skin tone, :man_fairy_tone2:",
-   ["order"]=2620,
-   ["char"]={5287},
-   ["text"]="Man fairy: medium-light skin tone",
-   ["image_path"]="1f9da-1f3fc-2642",
+   127859,
 },
 -- Table: {2622}
 {
-   ["subText"]="Titania, medium skin tone, :woman_fairy_tone3:",
-   ["order"]=2621,
-   ["char"]={5288},
-   ["text"]="Woman fairy: medium skin tone",
-   ["image_path"]="1f9da-1f3fd-2640",
+   129374,
 },
 -- Table: {2623}
 {
-   ["subText"]="Oberon, Puck, medium skin tone, :man_fairy_tone3:",
-   ["order"]=2622,
-   ["char"]={5289},
-   ["text"]="Man fairy: medium skin tone",
-   ["image_path"]="1f9da-1f3fd-2642",
+   129479,
 },
 -- Table: {2624}
 {
-   ["subText"]="Titania, medium-dark skin tone, :woman_fairy_tone4:",
-   ["order"]=2623,
-   ["char"]={5290},
-   ["text"]="Woman fairy: medium-dark skin tone",
-   ["image_path"]="1f9da-1f3fe-2640",
+   129363,
 },
 -- Table: {2625}
 {
-   ["subText"]="Oberon, Puck, medium-dark skin tone, :man_fairy_tone4:",
-   ["order"]=2624,
-   ["char"]={5291},
-   ["text"]="Man fairy: medium-dark skin tone",
-   ["image_path"]="1f9da-1f3fe-2642",
+   129385,
 },
 -- Table: {2626}
 {
-   ["subText"]="Titania, dark skin tone, :woman_fairy_tone5:",
-   ["order"]=2625,
-   ["char"]={5292},
-   ["text"]="Woman fairy: dark skin tone",
-   ["image_path"]="1f9da-1f3ff-2640",
+   127831,
 },
 -- Table: {2627}
 {
-   ["subText"]="Oberon, Puck, dark skin tone, :man_fairy_tone5:",
-   ["order"]=2626,
-   ["char"]={5293},
-   ["text"]="Man fairy: dark skin tone",
-   ["image_path"]="1f9da-1f3ff-2642",
+   127830,
 },
 -- Table: {2628}
 {
-   ["subText"]="undead, :woman_vampire:",
-   ["order"]=2627,
-   ["char"]={5294},
-   ["text"]="Woman vampire",
-   ["image_path"]="1f9db-2640",
+   127789,
 },
 -- Table: {2629}
 {
-   ["subText"]="Dracula, undead, :man_vampire:",
-   ["order"]=2628,
-   ["char"]={5295},
-   ["text"]="Man vampire",
-   ["image_path"]="1f9db-2642",
+   127828,
 },
 -- Table: {2630}
 {
-   ["subText"]="light skin tone, undead, :woman_vampire_tone1:",
-   ["order"]=2629,
-   ["char"]={5296},
-   ["text"]="Woman vampire: light skin tone",
-   ["image_path"]="1f9db-1f3fb-2640",
+   127839,
 },
 -- Table: {2631}
 {
-   ["subText"]="Dracula, light skin tone, undead, :man_vampire_tone1:",
-   ["order"]=2630,
-   ["char"]={5297},
-   ["text"]="Man vampire: light skin tone",
-   ["image_path"]="1f9db-1f3fb-2642",
+   127829,
 },
 -- Table: {2632}
 {
-   ["subText"]="medium-light skin tone, undead, :woman_vampire_tone2:",
-   ["order"]=2631,
-   ["char"]={5298},
-   ["text"]="Woman vampire: medium-light skin tone",
-   ["image_path"]="1f9db-1f3fc-2640",
+   129386,
 },
 -- Table: {2633}
 {
-   ["subText"]="Dracula, medium-light skin tone, undead, :man_vampire_tone2:",
-   ["order"]=2632,
-   ["char"]={5299},
-   ["text"]="Man vampire: medium-light skin tone",
-   ["image_path"]="1f9db-1f3fc-2642",
+   129478,
 },
 -- Table: {2634}
 {
-   ["subText"]="medium skin tone, undead, :woman_vampire_tone3:",
-   ["order"]=2633,
-   ["char"]={5300},
-   ["text"]="Woman vampire: medium skin tone",
-   ["image_path"]="1f9db-1f3fd-2640",
+   129369,
 },
 -- Table: {2635}
 {
-   ["subText"]="Dracula, medium skin tone, undead, :man_vampire_tone3:",
-   ["order"]=2634,
-   ["char"]={5301},
-   ["text"]="Man vampire: medium skin tone",
-   ["image_path"]="1f9db-1f3fd-2642",
+   127790,
 },
 -- Table: {2636}
 {
-   ["subText"]="medium-dark skin tone, undead, :woman_vampire_tone4:",
-   ["order"]=2635,
-   ["char"]={5302},
-   ["text"]="Woman vampire: medium-dark skin tone",
-   ["image_path"]="1f9db-1f3fe-2640",
+   127791,
 },
 -- Table: {2637}
 {
-   ["subText"]="Dracula, medium-dark skin tone, undead, :man_vampire_tone4:",
-   ["order"]=2636,
-   ["char"]={5303},
-   ["text"]="Man vampire: medium-dark skin tone",
-   ["image_path"]="1f9db-1f3fe-2642",
+   129367,
 },
 -- Table: {2638}
 {
-   ["subText"]="dark skin tone, undead, :woman_vampire_tone5:",
-   ["order"]=2637,
-   ["char"]={5304},
-   ["text"]="Woman vampire: dark skin tone",
-   ["image_path"]="1f9db-1f3ff-2640",
+   129368,
 },
 -- Table: {2639}
 {
-   ["subText"]="Dracula, dark skin tone, undead, :man_vampire_tone5:",
-   ["order"]=2638,
-   ["char"]={5305},
-   ["text"]="Man vampire: dark skin tone",
-   ["image_path"]="1f9db-1f3ff-2642",
+   129387,
 },
 -- Table: {2640}
 {
-   ["subText"]="merwoman, :mermaid:",
-   ["order"]=2639,
-   ["char"]={5306},
-   ["text"]="Mermaid",
-   ["image_path"]="1f9dc-2640",
+   127837,
 },
 -- Table: {2641}
 {
-   ["subText"]="Triton, :merman:",
-   ["order"]=2640,
-   ["char"]={5307},
-   ["text"]="Merman",
-   ["image_path"]="1f9dc-2642",
+   127836,
 },
 -- Table: {2642}
 {
-   ["subText"]="light skin tone, merwoman, :mermaid_tone1:",
-   ["order"]=2641,
-   ["char"]={5308},
-   ["text"]="Mermaid: light skin tone",
-   ["image_path"]="1f9dc-1f3fb-2640",
+   127858,
 },
 -- Table: {2643}
 {
-   ["subText"]="Triton, light skin tone, :merman_tone1:",
-   ["order"]=2642,
-   ["char"]={5309},
-   ["text"]="Merman: light skin tone",
-   ["image_path"]="1f9dc-1f3fb-2642",
+   127835,
 },
 -- Table: {2644}
 {
-   ["subText"]="medium-light skin tone, merwoman, :mermaid_tone2:",
-   ["order"]=2643,
-   ["char"]={5310},
-   ["text"]="Mermaid: medium-light skin tone",
-   ["image_path"]="1f9dc-1f3fc-2640",
+   127843,
 },
 -- Table: {2645}
 {
-   ["subText"]="Triton, medium-light skin tone, :merman_tone2:",
-   ["order"]=2644,
-   ["char"]={5311},
-   ["text"]="Merman: medium-light skin tone",
-   ["image_path"]="1f9dc-1f3fc-2642",
+   127857,
 },
 -- Table: {2646}
 {
-   ["subText"]="medium skin tone, merwoman, :mermaid_tone3:",
-   ["order"]=2645,
-   ["char"]={5312},
-   ["text"]="Mermaid: medium skin tone",
-   ["image_path"]="1f9dc-1f3fd-2640",
+   129375,
 },
 -- Table: {2647}
 {
-   ["subText"]="Triton, medium skin tone, :merman_tone3:",
-   ["order"]=2646,
-   ["char"]={5313},
-   ["text"]="Merman: medium skin tone",
-   ["image_path"]="1f9dc-1f3fd-2642",
+   127844,
 },
 -- Table: {2648}
 {
-   ["subText"]="medium-dark skin tone, merwoman, :mermaid_tone4:",
-   ["order"]=2647,
-   ["char"]={5314},
-   ["text"]="Mermaid: medium-dark skin tone",
-   ["image_path"]="1f9dc-1f3fe-2640",
+   127833,
 },
 -- Table: {2649}
 {
-   ["subText"]="Triton, medium-dark skin tone, :merman_tone4:",
-   ["order"]=2648,
-   ["char"]={5315},
-   ["text"]="Merman: medium-dark skin tone",
-   ["image_path"]="1f9dc-1f3fe-2642",
+   127834,
 },
 -- Table: {2650}
 {
-   ["subText"]="dark skin tone, merwoman, :mermaid_tone5:",
-   ["order"]=2649,
-   ["char"]={5316},
-   ["text"]="Mermaid: dark skin tone",
-   ["image_path"]="1f9dc-1f3ff-2640",
+   127832,
 },
 -- Table: {2651}
 {
-   ["subText"]="Triton, dark skin tone, :merman_tone5:",
-   ["order"]=2650,
-   ["char"]={5317},
-   ["text"]="Merman: dark skin tone",
-   ["image_path"]="1f9dc-1f3ff-2642",
+   127845,
 },
 -- Table: {2652}
 {
-   ["subText"]="magical, :woman_elf:",
-   ["order"]=2651,
-   ["char"]={5318},
-   ["text"]="Woman elf",
-   ["image_path"]="1f9dd-2640",
+   129376,
 },
 -- Table: {2653}
 {
-   ["subText"]="magical, :man_elf:",
-   ["order"]=2652,
-   ["char"]={5319},
-   ["text"]="Man elf",
-   ["image_path"]="1f9dd-2642",
+   129390,
 },
 -- Table: {2654}
 {
-   ["subText"]="light skin tone, magical, :woman_elf_tone1:",
-   ["order"]=2653,
-   ["char"]={5320},
-   ["text"]="Woman elf: light skin tone",
-   ["image_path"]="1f9dd-1f3fb-2640",
+   127842,
 },
 -- Table: {2655}
 {
-   ["subText"]="light skin tone, magical, :man_elf_tone1:",
-   ["order"]=2654,
-   ["char"]={5321},
-   ["text"]="Man elf: light skin tone",
-   ["image_path"]="1f9dd-1f3fb-2642",
+   127841,
 },
 -- Table: {2656}
 {
-   ["subText"]="magical, medium-light skin tone, :woman_elf_tone2:",
-   ["order"]=2655,
-   ["char"]={5322},
-   ["text"]="Woman elf: medium-light skin tone",
-   ["image_path"]="1f9dd-1f3fc-2640",
+   127847,
 },
 -- Table: {2657}
 {
-   ["subText"]="magical, medium-light skin tone, :man_elf_tone2:",
-   ["order"]=2656,
-   ["char"]={5323},
-   ["text"]="Man elf: medium-light skin tone",
-   ["image_path"]="1f9dd-1f3fc-2642",
+   127848,
 },
 -- Table: {2658}
 {
-   ["subText"]="magical, medium skin tone, :woman_elf_tone3:",
-   ["order"]=2657,
-   ["char"]={5324},
-   ["text"]="Woman elf: medium skin tone",
-   ["image_path"]="1f9dd-1f3fd-2640",
+   127846,
 },
 -- Table: {2659}
 {
-   ["subText"]="magical, medium skin tone, :man_elf_tone3:",
-   ["order"]=2658,
-   ["char"]={5325},
-   ["text"]="Man elf: medium skin tone",
-   ["image_path"]="1f9dd-1f3fd-2642",
+   129383,
 },
 -- Table: {2660}
 {
-   ["subText"]="magical, medium-dark skin tone, :woman_elf_tone4:",
-   ["order"]=2659,
-   ["char"]={5326},
-   ["text"]="Woman elf: medium-dark skin tone",
-   ["image_path"]="1f9dd-1f3fe-2640",
+   129473,
 },
 -- Table: {2661}
 {
-   ["subText"]="magical, medium-dark skin tone, :man_elf_tone4:",
-   ["order"]=2660,
-   ["char"]={5327},
-   ["text"]="Man elf: medium-dark skin tone",
-   ["image_path"]="1f9dd-1f3fe-2642",
+   127856,
 },
 -- Table: {2662}
 {
-   ["subText"]="dark skin tone, magical, :woman_elf_tone5:",
-   ["order"]=2661,
-   ["char"]={5328},
-   ["text"]="Woman elf: dark skin tone",
-   ["image_path"]="1f9dd-1f3ff-2640",
+   127874,
 },
 -- Table: {2663}
 {
-   ["subText"]="dark skin tone, magical, :man_elf_tone5:",
-   ["order"]=2662,
-   ["char"]={5329},
-   ["text"]="Man elf: dark skin tone",
-   ["image_path"]="1f9dd-1f3ff-2642",
+   127854,
 },
 -- Table: {2664}
 {
-   ["subText"]="djinn, :woman_genie:",
-   ["order"]=2663,
-   ["char"]={5330},
-   ["text"]="Woman genie",
-   ["image_path"]="1f9de-2640",
+   127853,
 },
 -- Table: {2665}
 {
-   ["subText"]="djinn, :man_genie:",
-   ["order"]=2664,
-   ["char"]={5331},
-   ["text"]="Man genie",
-   ["image_path"]="1f9de-2642",
+   127852,
 },
 -- Table: {2666}
 {
-   ["subText"]="undead, walking dead, :woman_zombie:",
-   ["order"]=2665,
-   ["char"]={5332},
-   ["text"]="Woman zombie",
-   ["image_path"]="1f9df-2640",
+   127851,
 },
 -- Table: {2667}
 {
-   ["subText"]="undead, walking dead, :man_zombie:",
-   ["order"]=2666,
-   ["char"]={5333},
-   ["text"]="Man zombie",
-   ["image_path"]="1f9df-2642",
+   127871,
 },
 -- Table: {2668}
 {
-   128512,
+   127849,
 },
 -- Table: {2669}
 {
-   128515,
+   127850,
 },
 -- Table: {2670}
 {
-   128516,
+   127792,
 },
 -- Table: {2671}
 {
-   128513,
+   129372,
 },
 -- Table: {2672}
 {
-   128518,
+   127855,
 },
 -- Table: {2673}
 {
-   128517,
+   129480,
 },
 -- Table: {2674}
 {
-   128514,
+   129371,
 },
 -- Table: {2675}
 {
-   129315,
+   127868,
 },
 -- Table: {2676}
 {
-   9786,
-   65039,
+   9749,
 },
 -- Table: {2677}
 {
-   128522,
+   127861,
 },
 -- Table: {2678}
 {
-   128519,
+   129481,
 },
 -- Table: {2679}
 {
-   128578,
+   129380,
 },
 -- Table: {2680}
 {
-   128579,
+   129475,
 },
 -- Table: {2681}
 {
-   128521,
+   129482,
 },
 -- Table: {2682}
 {
-   128524,
+   127862,
 },
 -- Table: {2683}
 {
-   128525,
+   127866,
 },
 -- Table: {2684}
 {
-   128536,
+   127867,
 },
 -- Table: {2685}
 {
-   128535,
+   129346,
 },
 -- Table: {2686}
 {
-   128537,
+   127863,
 },
 -- Table: {2687}
 {
-   128538,
+   129347,
 },
 -- Table: {2688}
 {
-   128523,
+   127864,
 },
 -- Table: {2689}
 {
-   128540,
+   127865,
 },
 -- Table: {2690}
 {
-   128541,
+   127870,
 },
 -- Table: {2691}
 {
-   128539,
+   129348,
 },
 -- Table: {2692}
 {
-   129297,
+   127860,
 },
 -- Table: {2693}
 {
-   129303,
+   127869,
 },
 -- Table: {2694}
 {
-   129299,
+   129379,
 },
 -- Table: {2695}
 {
-   128526,
+   129377,
 },
 -- Table: {2696}
 {
-   129313,
+   129378,
 },
 -- Table: {2697}
 {
-   129312,
+   129474,
 },
 -- Table: {2698}
 {
-   128527,
+   128512,
 },
 -- Table: {2699}
 {
-   128530,
+   128515,
 },
 -- Table: {2700}
 {
-   128542,
+   128516,
 },
 -- Table: {2701}
 {
-   128532,
+   128513,
 },
 -- Table: {2702}
 {
-   128543,
+   128518,
 },
 -- Table: {2703}
 {
-   128533,
+   128517,
 },
 -- Table: {2704}
 {
-   128577,
+   128514,
 },
 -- Table: {2705}
 {
-   9785,
-   65039,
+   129315,
 },
 -- Table: {2706}
 {
-   128547,
+   9786,
 },
 -- Table: {2707}
 {
-   128534,
+   128522,
 },
 -- Table: {2708}
 {
-   128555,
+   128519,
 },
 -- Table: {2709}
 {
-   128553,
+   128578,
 },
 -- Table: {2710}
 {
-   128548,
+   128579,
 },
 -- Table: {2711}
 {
-   128544,
+   128521,
 },
 -- Table: {2712}
 {
-   128545,
+   128524,
 },
 -- Table: {2713}
 {
-   128566,
+   128525,
 },
 -- Table: {2714}
 {
-   128528,
+   129392,
 },
 -- Table: {2715}
 {
-   128529,
+   128536,
 },
 -- Table: {2716}
 {
-   128559,
+   128535,
 },
 -- Table: {2717}
 {
-   128550,
+   128537,
 },
 -- Table: {2718}
 {
-   128551,
+   128538,
 },
 -- Table: {2719}
 {
-   128558,
+   128523,
 },
 -- Table: {2720}
 {
-   128562,
+   128539,
 },
 -- Table: {2721}
 {
-   128565,
+   128541,
 },
 -- Table: {2722}
 {
-   128563,
+   128540,
 },
 -- Table: {2723}
 {
-   128561,
+   129322,
 },
 -- Table: {2724}
 {
-   128552,
+   129320,
 },
 -- Table: {2725}
 {
-   128560,
+   129488,
 },
 -- Table: {2726}
 {
-   128546,
+   129299,
 },
 -- Table: {2727}
 {
-   128549,
+   128526,
 },
 -- Table: {2728}
 {
-   129316,
+   129321,
 },
 -- Table: {2729}
 {
-   128557,
+   129395,
 },
 -- Table: {2730}
 {
-   128531,
+   128527,
 },
 -- Table: {2731}
 {
-   128554,
+   128530,
 },
 -- Table: {2732}
 {
-   128564,
+   128542,
 },
 -- Table: {2733}
 {
-   128580,
+   128532,
 },
 -- Table: {2734}
 {
-   129300,
+   128543,
 },
 -- Table: {2735}
 {
-   129317,
+   128533,
 },
 -- Table: {2736}
 {
-   128556,
+   128577,
 },
 -- Table: {2737}
 {
-   129296,
+   9785,
 },
 -- Table: {2738}
 {
-   129314,
+   128547,
 },
 -- Table: {2739}
 {
-   129319,
+   128534,
 },
 -- Table: {2740}
 {
-   128567,
+   128555,
 },
 -- Table: {2741}
 {
-   129298,
+   128553,
 },
 -- Table: {2742}
 {
-   129301,
+   129402,
 },
 -- Table: {2743}
 {
-   128520,
+   128546,
 },
 -- Table: {2744}
 {
-   128127,
+   128557,
 },
 -- Table: {2745}
 {
-   128121,
+   128548,
 },
 -- Table: {2746}
 {
-   128122,
+   128544,
 },
 -- Table: {2747}
 {
-   128169,
+   128545,
 },
 -- Table: {2748}
 {
-   128123,
+   129324,
 },
 -- Table: {2749}
 {
-   128128,
+   129327,
 },
 -- Table: {2750}
 {
-   9760,
-   65039,
+   128563,
 },
 -- Table: {2751}
 {
-   128125,
+   129397,
 },
 -- Table: {2752}
 {
-   128126,
+   129398,
 },
 -- Table: {2753}
 {
-   129302,
+   128561,
 },
 -- Table: {2754}
 {
-   127875,
+   128552,
 },
 -- Table: {2755}
 {
-   128570,
+   128560,
 },
 -- Table: {2756}
 {
-   128568,
+   128549,
 },
 -- Table: {2757}
 {
-   128569,
+   128531,
 },
 -- Table: {2758}
 {
-   128571,
+   129303,
 },
 -- Table: {2759}
 {
-   128572,
+   129300,
 },
 -- Table: {2760}
 {
-   128573,
+   129325,
 },
 -- Table: {2761}
 {
-   128576,
+   129393,
 },
 -- Table: {2762}
 {
-   128575,
+   129323,
 },
 -- Table: {2763}
 {
-   128574,
+   129317,
 },
 -- Table: {2764}
 {
-   128080,
+   128566,
 },
 -- Table: {2765}
 {
-   128080,
-   127995,
+   128528,
 },
 -- Table: {2766}
 {
-   128080,
-   127996,
+   128529,
 },
 -- Table: {2767}
 {
-   128080,
-   127997,
+   128556,
 },
 -- Table: {2768}
 {
-   128080,
-   127998,
+   128580,
 },
 -- Table: {2769}
 {
-   128080,
-   127999,
+   128559,
 },
 -- Table: {2770}
 {
-   128588,
+   128550,
 },
 -- Table: {2771}
 {
-   128588,
-   127995,
+   128551,
 },
 -- Table: {2772}
 {
-   128588,
-   127996,
+   128558,
 },
 -- Table: {2773}
 {
-   128588,
-   127997,
+   128562,
 },
 -- Table: {2774}
 {
-   128588,
-   127998,
+   128564,
 },
 -- Table: {2775}
 {
-   128588,
-   127999,
+   129316,
 },
 -- Table: {2776}
 {
-   128079,
+   128554,
 },
 -- Table: {2777}
 {
-   128079,
-   127995,
+   128565,
 },
 -- Table: {2778}
 {
-   128079,
-   127996,
+   129296,
 },
 -- Table: {2779}
 {
-   128079,
-   127997,
+   129396,
 },
 -- Table: {2780}
 {
-   128079,
-   127998,
+   129314,
 },
 -- Table: {2781}
 {
-   128079,
-   127999,
+   129326,
 },
 -- Table: {2782}
 {
-   128591,
+   129319,
 },
 -- Table: {2783}
 {
-   128591,
-   127995,
+   128567,
 },
 -- Table: {2784}
 {
-   128591,
-   127996,
+   129298,
 },
 -- Table: {2785}
 {
-   128591,
-   127997,
+   129301,
 },
 -- Table: {2786}
 {
-   128591,
-   127998,
+   129297,
 },
 -- Table: {2787}
 {
-   128591,
-   127999,
+   129312,
 },
 -- Table: {2788}
 {
-   129309,
+   128520,
 },
 -- Table: {2789}
 {
-   128077,
+   128127,
 },
 -- Table: {2790}
 {
-   128077,
-   127995,
+   128121,
 },
 -- Table: {2791}
 {
-   128077,
-   127996,
+   128122,
 },
 -- Table: {2792}
 {
-   128077,
-   127997,
+   129313,
 },
 -- Table: {2793}
 {
-   128077,
-   127998,
+   128169,
 },
 -- Table: {2794}
 {
-   128077,
-   127999,
+   128123,
 },
 -- Table: {2795}
 {
-   128078,
+   128128,
 },
 -- Table: {2796}
 {
-   128078,
-   127995,
+   9760,
 },
 -- Table: {2797}
 {
-   128078,
-   127996,
+   128125,
 },
 -- Table: {2798}
 {
-   128078,
-   127997,
+   128126,
 },
 -- Table: {2799}
 {
-   128078,
-   127998,
+   129302,
 },
 -- Table: {2800}
 {
-   128078,
-   127999,
+   127875,
 },
 -- Table: {2801}
 {
-   128074,
+   128570,
 },
 -- Table: {2802}
 {
-   128074,
-   127995,
+   128568,
 },
 -- Table: {2803}
 {
-   128074,
-   127996,
+   128569,
 },
 -- Table: {2804}
 {
-   128074,
-   127997,
+   128571,
 },
 -- Table: {2805}
 {
-   128074,
-   127998,
+   128572,
 },
 -- Table: {2806}
 {
-   128074,
-   127999,
+   128573,
 },
 -- Table: {2807}
 {
-   9994,
+   128576,
 },
 -- Table: {2808}
 {
-   9994,
-   127995,
+   128575,
 },
 -- Table: {2809}
 {
-   9994,
-   127996,
+   128574,
 },
 -- Table: {2810}
 {
-   9994,
-   127997,
+   129330,
 },
 -- Table: {2811}
 {
-   9994,
-   127998,
+   128080,
 },
 -- Table: {2812}
 {
-   9994,
-   127999,
+   128588,
 },
 -- Table: {2813}
 {
-   129307,
+   128079,
 },
 -- Table: {2814}
 {
-   129307,
-   127995,
+   129309,
 },
 -- Table: {2815}
 {
-   129307,
-   127996,
+   128077,
 },
 -- Table: {2816}
 {
-   129307,
-   127997,
+   128078,
 },
 -- Table: {2817}
 {
-   129307,
-   127998,
+   128074,
 },
 -- Table: {2818}
 {
-   129307,
-   127999,
+   9994,
 },
 -- Table: {2819}
 {
-   129308,
+   129307,
 },
 -- Table: {2820}
 {
    129308,
-   127995,
 },
 -- Table: {2821}
 {
-   129308,
-   127996,
+   129310,
 },
 -- Table: {2822}
 {
-   129308,
-   127997,
+   9996,
 },
 -- Table: {2823}
 {
-   129308,
-   127998,
+   129311,
 },
 -- Table: {2824}
 {
-   129308,
-   127999,
+   129304,
 },
 -- Table: {2825}
 {
-   129310,
+   128076,
 },
 -- Table: {2826}
 {
-   129310,
-   127995,
+   129295,
 },
 -- Table: {2827}
 {
-   129310,
-   127996,
+   128072,
 },
 -- Table: {2828}
 {
-   129310,
-   127997,
+   128073,
 },
 -- Table: {2829}
 {
-   129310,
-   127998,
+   128070,
 },
 -- Table: {2830}
 {
-   129310,
-   127999,
+   128071,
 },
 -- Table: {2831}
 {
-   9996,
-   65039,
+   9757,
 },
 -- Table: {2832}
 {
-   9996,
-   127995,
+   9995,
 },
 -- Table: {2833}
 {
-   9996,
-   127996,
+   129306,
 },
 -- Table: {2834}
 {
-   9996,
-   127997,
+   128400,
 },
 -- Table: {2835}
 {
-   9996,
-   127998,
+   128406,
 },
 -- Table: {2836}
 {
-   9996,
-   127999,
+   128075,
 },
 -- Table: {2837}
 {
-   129304,
+   129305,
 },
 -- Table: {2838}
 {
-   129304,
-   127995,
+   128170,
 },
 -- Table: {2839}
 {
-   129304,
-   127996,
+   129470,
 },
 -- Table: {2840}
 {
-   129304,
-   127997,
+   128405,
 },
 -- Table: {2841}
 {
-   129304,
-   127998,
+   9997,
 },
 -- Table: {2842}
 {
-   129304,
-   127999,
+   128591,
 },
 -- Table: {2843}
 {
-   128076,
+   129462,
 },
 -- Table: {2844}
 {
-   128076,
-   127995,
+   129461,
 },
 -- Table: {2845}
 {
-   128076,
-   127996,
+   129471,
 },
 -- Table: {2846}
 {
-   128076,
-   127997,
+   128132,
 },
 -- Table: {2847}
 {
-   128076,
-   127998,
+   128139,
 },
 -- Table: {2848}
 {
-   128076,
-   127999,
+   128068,
 },
 -- Table: {2849}
 {
-   128072,
+   129463,
 },
 -- Table: {2850}
 {
-   128072,
-   127995,
+   129460,
 },
 -- Table: {2851}
 {
-   128072,
-   127996,
+   128069,
 },
 -- Table: {2852}
 {
-   128072,
-   127997,
+   128066,
 },
 -- Table: {2853}
 {
-   128072,
-   127998,
+   129467,
 },
 -- Table: {2854}
 {
-   128072,
-   127999,
+   128067,
 },
 -- Table: {2855}
 {
-   128073,
+   128099,
 },
 -- Table: {2856}
 {
-   128073,
-   127995,
+   128065,
 },
 -- Table: {2857}
 {
-   128073,
-   127996,
+   128064,
 },
 -- Table: {2858}
 {
-   128073,
-   127997,
+   129504,
 },
 -- Table: {2859}
 {
-   128073,
-   127998,
+   128483,
 },
 -- Table: {2860}
 {
-   128073,
-   127999,
+   128100,
 },
 -- Table: {2861}
 {
-   128070,
+   128101,
 },
 -- Table: {2862}
 {
-   128070,
-   127995,
+   128118,
 },
 -- Table: {2863}
 {
-   128070,
-   127996,
+   128103,
 },
 -- Table: {2864}
 {
-   128070,
-   127997,
+   129490,
 },
 -- Table: {2865}
 {
-   128070,
-   127998,
+   128102,
 },
 -- Table: {2866}
 {
-   128070,
-   127999,
+   128105,
 },
 -- Table: {2867}
 {
-   128071,
+   129489,
 },
 -- Table: {2868}
 {
-   128071,
-   127995,
+   128104,
 },
 -- Table: {2869}
 {
-   128071,
-   127996,
+   129489,
+   129457,
 },
 -- Table: {2870}
 {
-   128071,
-   127997,
+   128105,
+   129457,
 },
 -- Table: {2871}
 {
-   128071,
-   127998,
+   128104,
+   129457,
 },
 -- Table: {2872}
 {
-   128071,
-   127999,
+   129489,
+   129456,
 },
 -- Table: {2873}
 {
-   9757,
-   65039,
+   128105,
+   129456,
 },
 -- Table: {2874}
 {
-   9757,
-   127995,
+   128104,
+   129456,
 },
 -- Table: {2875}
 {
-   9757,
-   127996,
+   128113,
+   9792,
 },
 -- Table: {2876}
 {
-   9757,
-   127997,
+   128113,
 },
 -- Table: {2877}
 {
-   9757,
-   127998,
+   128113,
+   9794,
 },
 -- Table: {2878}
 {
-   9757,
-   127999,
+   129489,
+   129459,
 },
 -- Table: {2879}
 {
-   9995,
+   128105,
+   129459,
 },
 -- Table: {2880}
 {
-   9995,
-   127995,
+   128104,
+   129459,
 },
 -- Table: {2881}
 {
-   9995,
-   127996,
+   129489,
+   129458,
 },
 -- Table: {2882}
 {
-   9995,
-   127997,
+   128105,
+   129458,
 },
 -- Table: {2883}
 {
-   9995,
-   127998,
+   128104,
+   129458,
 },
 -- Table: {2884}
 {
-   9995,
-   127999,
+   129492,
 },
 -- Table: {2885}
 {
-   129306,
+   128117,
 },
 -- Table: {2886}
 {
-   129306,
-   127995,
+   129491,
 },
 -- Table: {2887}
 {
-   129306,
-   127996,
+   128116,
 },
 -- Table: {2888}
 {
-   129306,
-   127997,
+   128114,
 },
 -- Table: {2889}
 {
-   129306,
-   127998,
+   128115,
 },
 -- Table: {2890}
 {
-   129306,
-   127999,
+   128115,
+   9792,
 },
 -- Table: {2891}
 {
-   128400,
-   65039,
+   128115,
+   9794,
 },
 -- Table: {2892}
 {
-   128400,
-   127995,
+   129493,
 },
 -- Table: {2893}
 {
-   128400,
-   127996,
+   128110,
 },
 -- Table: {2894}
 {
-   128400,
-   127997,
+   128110,
+   9792,
 },
 -- Table: {2895}
 {
-   128400,
-   127998,
+   128110,
+   9794,
 },
 -- Table: {2896}
 {
-   128400,
-   127999,
+   128119,
 },
 -- Table: {2897}
 {
-   128406,
+   128119,
+   9792,
 },
 -- Table: {2898}
 {
-   128406,
-   127995,
+   128119,
+   9794,
 },
 -- Table: {2899}
 {
-   128406,
-   127996,
+   128130,
 },
 -- Table: {2900}
 {
-   128406,
-   127997,
+   128130,
+   9792,
 },
 -- Table: {2901}
 {
-   128406,
-   127998,
+   128130,
+   9794,
 },
 -- Table: {2902}
 {
-   128406,
-   127999,
+   128373,
 },
 -- Table: {2903}
 {
-   128075,
+   128373,
+   9792,
 },
 -- Table: {2904}
 {
-   128075,
-   127995,
+   128373,
+   9794,
 },
 -- Table: {2905}
 {
-   128075,
-   127996,
+   129489,
+   9877,
 },
 -- Table: {2906}
 {
-   128075,
-   127997,
+   128105,
+   9877,
 },
 -- Table: {2907}
 {
-   128075,
-   127998,
+   128104,
+   9877,
 },
 -- Table: {2908}
 {
-   128075,
-   127999,
+   129489,
+   127806,
 },
 -- Table: {2909}
 {
-   129305,
+   128105,
+   127806,
 },
 -- Table: {2910}
 {
-   129305,
-   127995,
+   128104,
+   127806,
 },
 -- Table: {2911}
 {
-   129305,
-   127996,
+   129489,
+   127859,
 },
 -- Table: {2912}
 {
-   129305,
-   127997,
+   128105,
+   127859,
 },
 -- Table: {2913}
 {
-   129305,
-   127998,
+   128104,
+   127859,
 },
 -- Table: {2914}
 {
-   129305,
-   127999,
+   129489,
+   127891,
 },
 -- Table: {2915}
 {
-   128170,
+   128105,
+   127891,
 },
 -- Table: {2916}
 {
-   128170,
-   127995,
+   128104,
+   127891,
 },
 -- Table: {2917}
 {
-   128170,
-   127996,
+   129489,
+   127908,
 },
 -- Table: {2918}
 {
-   128170,
-   127997,
+   128105,
+   127908,
 },
 -- Table: {2919}
 {
-   128170,
-   127998,
+   128104,
+   127908,
 },
 -- Table: {2920}
 {
-   128170,
-   127999,
+   129489,
+   127979,
 },
 -- Table: {2921}
 {
-   128405,
+   128105,
+   127979,
 },
 -- Table: {2922}
 {
-   128405,
-   127995,
+   128104,
+   127979,
 },
 -- Table: {2923}
 {
-   128405,
-   127996,
+   129489,
+   127981,
 },
 -- Table: {2924}
 {
-   128405,
-   127997,
+   128105,
+   127981,
 },
 -- Table: {2925}
 {
-   128405,
-   127998,
+   128104,
+   127981,
 },
 -- Table: {2926}
 {
-   128405,
-   127999,
+   129489,
+   128187,
 },
 -- Table: {2927}
 {
-   9997,
-   65039,
+   128105,
+   128187,
 },
 -- Table: {2928}
 {
-   9997,
-   127995,
+   128104,
+   128187,
 },
 -- Table: {2929}
 {
-   9997,
-   127996,
+   129489,
+   128188,
 },
 -- Table: {2930}
 {
-   9997,
-   127997,
+   128105,
+   128188,
 },
 -- Table: {2931}
 {
-   9997,
-   127998,
+   128104,
+   128188,
 },
 -- Table: {2932}
 {
-   9997,
-   127999,
+   129489,
+   128295,
 },
 -- Table: {2933}
 {
-   129331,
+   128105,
+   128295,
 },
 -- Table: {2934}
 {
-   129331,
-   127995,
+   128104,
+   128295,
 },
 -- Table: {2935}
 {
-   129331,
-   127996,
+   129489,
+   128300,
 },
 -- Table: {2936}
 {
-   129331,
-   127997,
+   128105,
+   128300,
 },
 -- Table: {2937}
 {
-   129331,
-   127998,
+   128104,
+   128300,
 },
 -- Table: {2938}
 {
-   129331,
-   127999,
+   129489,
+   127912,
 },
 -- Table: {2939}
 {
-   128133,
+   128105,
+   127912,
 },
 -- Table: {2940}
 {
-   128133,
-   127995,
+   128104,
+   127912,
 },
 -- Table: {2941}
 {
-   128133,
-   127996,
+   129489,
+   128658,
 },
 -- Table: {2942}
 {
-   128133,
-   127997,
+   128105,
+   128658,
 },
 -- Table: {2943}
 {
-   128133,
-   127998,
+   128104,
+   128658,
 },
 -- Table: {2944}
 {
-   128133,
-   127999,
+   129489,
+   9992,
 },
 -- Table: {2945}
 {
-   128141,
+   128105,
+   9992,
 },
 -- Table: {2946}
 {
-   128132,
+   128104,
+   9992,
 },
 -- Table: {2947}
 {
-   128139,
+   129489,
+   128640,
 },
 -- Table: {2948}
 {
-   128068,
+   128105,
+   128640,
 },
 -- Table: {2949}
 {
-   128069,
+   128104,
+   128640,
 },
 -- Table: {2950}
 {
-   128066,
+   129489,
+   9878,
 },
 -- Table: {2951}
 {
-   128066,
-   127995,
+   128105,
+   9878,
 },
 -- Table: {2952}
 {
-   128066,
-   127996,
+   128104,
+   9878,
 },
 -- Table: {2953}
 {
-   128066,
-   127997,
+   128112,
 },
 -- Table: {2954}
 {
-   128066,
-   127998,
+   129333,
 },
 -- Table: {2955}
 {
-   128066,
-   127999,
+   128120,
 },
 -- Table: {2956}
 {
-   128067,
+   129332,
 },
 -- Table: {2957}
 {
-   128067,
-   127995,
+   129464,
 },
 -- Table: {2958}
 {
-   128067,
-   127996,
+   129464,
+   9792,
 },
 -- Table: {2959}
 {
-   128067,
-   127997,
+   129464,
+   9794,
 },
 -- Table: {2960}
 {
-   128067,
-   127998,
+   129465,
 },
 -- Table: {2961}
 {
-   128067,
-   127999,
+   129465,
+   9792,
 },
 -- Table: {2962}
 {
-   128099,
+   129465,
+   9794,
 },
 -- Table: {2963}
 {
-   128065,
-   65039,
+   129334,
 },
 -- Table: {2964}
 {
-   128064,
+   127877,
 },
 -- Table: {2965}
 {
-   128483,
-   65039,
+   129497,
 },
 -- Table: {2966}
 {
-   128100,
+   129497,
+   9792,
 },
 -- Table: {2967}
 {
-   128101,
+   129497,
+   9794,
 },
 -- Table: {2968}
 {
-   128118,
+   129501,
 },
 -- Table: {2969}
 {
-   128118,
-   127995,
+   129501,
+   9792,
 },
 -- Table: {2970}
 {
-   128118,
-   127996,
+   129501,
+   9794,
 },
 -- Table: {2971}
 {
-   128118,
-   127997,
+   129499,
 },
 -- Table: {2972}
 {
-   128118,
-   127998,
+   129499,
+   9792,
 },
 -- Table: {2973}
 {
-   128118,
-   127999,
+   129499,
+   9794,
 },
 -- Table: {2974}
 {
-   128102,
+   129503,
 },
 -- Table: {2975}
 {
-   128102,
-   127995,
+   129503,
+   9792,
 },
 -- Table: {2976}
 {
-   128102,
-   127996,
+   129503,
+   9794,
 },
 -- Table: {2977}
 {
-   128102,
-   127997,
+   129502,
 },
 -- Table: {2978}
 {
-   128102,
-   127998,
+   129502,
+   9792,
 },
 -- Table: {2979}
 {
-   128102,
-   127999,
+   129502,
+   9794,
 },
 -- Table: {2980}
 {
-   128103,
+   129500,
 },
 -- Table: {2981}
 {
-   128103,
-   127995,
+   129500,
+   9792,
 },
 -- Table: {2982}
 {
-   128103,
-   127996,
+   129500,
+   9794,
 },
 -- Table: {2983}
 {
-   128103,
-   127997,
+   129498,
 },
 -- Table: {2984}
 {
-   128103,
-   127998,
+   129498,
+   9792,
 },
 -- Table: {2985}
 {
-   128103,
-   127999,
+   129498,
+   9794,
 },
 -- Table: {2986}
 {
-   128104,
+   128124,
 },
 -- Table: {2987}
 {
-   128104,
-   127995,
+   129328,
 },
 -- Table: {2988}
 {
-   128104,
-   127996,
+   129329,
 },
 -- Table: {2989}
 {
-   128104,
-   127997,
+   128583,
 },
 -- Table: {2990}
 {
-   128104,
-   127998,
+   128583,
+   9792,
 },
 -- Table: {2991}
 {
-   128104,
-   127999,
+   128583,
+   9794,
 },
 -- Table: {2992}
 {
-   128105,
+   128129,
 },
 -- Table: {2993}
 {
-   128105,
-   127995,
+   128129,
+   9792,
 },
 -- Table: {2994}
 {
-   128105,
-   127996,
+   128129,
+   9794,
 },
 -- Table: {2995}
 {
-   128105,
-   127997,
+   128581,
 },
 -- Table: {2996}
 {
-   128105,
-   127998,
+   128581,
+   9792,
 },
 -- Table: {2997}
 {
-   128105,
-   127999,
+   128581,
+   9794,
 },
 -- Table: {2998}
 {
-   128113,
-   8205,
-   9792,
-   65039,
+   128582,
 },
 -- Table: {2999}
 {
-   128113,
-   127995,
-   8205,
+   128582,
    9792,
-   65039,
 },
 -- Table: {3000}
 {
-   128113,
-   127996,
-   8205,
-   9792,
-   65039,
+   128582,
+   9794,
 },
 -- Table: {3001}
 {
-   128113,
-   127997,
-   8205,
-   9792,
-   65039,
+   128587,
 },
 -- Table: {3002}
 {
-   128113,
-   127998,
-   8205,
+   128587,
    9792,
-   65039,
 },
 -- Table: {3003}
 {
-   128113,
-   127999,
-   8205,
-   9792,
-   65039,
+   128587,
+   9794,
 },
 -- Table: {3004}
 {
-   128113,
+   129487,
 },
 -- Table: {3005}
 {
-   128113,
-   127995,
+   129487,
+   9792,
 },
 -- Table: {3006}
 {
-   128113,
-   127996,
+   129487,
+   9794,
 },
 -- Table: {3007}
 {
-   128113,
-   127997,
+   129318,
 },
 -- Table: {3008}
 {
-   128113,
-   127998,
+   129318,
+   9792,
 },
 -- Table: {3009}
 {
-   128113,
-   127999,
+   129318,
+   9794,
 },
 -- Table: {3010}
 {
-   128113,
-   8205,
-   9794,
-   65039,
+   129335,
 },
 -- Table: {3011}
 {
-   128113,
-   127999,
-   8205,
-   9794,
-   65039,
+   129335,
+   9792,
 },
 -- Table: {3012}
 {
-   128113,
-   127998,
-   8205,
+   129335,
    9794,
-   65039,
 },
 -- Table: {3013}
 {
-   128113,
-   127997,
-   8205,
-   9794,
-   65039,
+   128590,
 },
 -- Table: {3014}
 {
-   128113,
-   127996,
-   8205,
-   9794,
-   65039,
+   128590,
+   9792,
 },
 -- Table: {3015}
 {
-   128113,
-   127995,
-   8205,
+   128590,
    9794,
-   65039,
 },
 -- Table: {3016}
 {
-   128116,
+   128589,
 },
 -- Table: {3017}
 {
-   128116,
-   127995,
+   128589,
+   9792,
 },
 -- Table: {3018}
 {
-   128116,
-   127996,
+   128589,
+   9794,
 },
 -- Table: {3019}
 {
-   128116,
-   127997,
+   128135,
 },
 -- Table: {3020}
 {
-   128116,
-   127998,
+   128135,
+   9792,
 },
 -- Table: {3021}
 {
-   128116,
-   127999,
+   128135,
+   9794,
 },
 -- Table: {3022}
 {
-   128117,
+   128134,
 },
 -- Table: {3023}
 {
-   128117,
-   127995,
+   128134,
+   9792,
 },
 -- Table: {3024}
 {
-   128117,
-   127996,
+   128134,
+   9794,
 },
 -- Table: {3025}
 {
-   128117,
-   127997,
+   129494,
 },
 -- Table: {3026}
 {
-   128117,
-   127998,
+   129494,
+   9792,
 },
 -- Table: {3027}
 {
-   128117,
-   127999,
+   129494,
+   9794,
 },
 -- Table: {3028}
 {
-   128114,
+   128133,
 },
 -- Table: {3029}
 {
-   128114,
-   127995,
+   129331,
 },
 -- Table: {3030}
 {
-   128114,
-   127996,
+   128131,
 },
 -- Table: {3031}
 {
-   128114,
-   127997,
+   128378,
 },
 -- Table: {3032}
 {
-   128114,
-   127998,
+   128111,
 },
 -- Table: {3033}
 {
-   128114,
-   127999,
+   128111,
+   9792,
 },
 -- Table: {3034}
 {
-   128115,
-   8205,
-   9792,
-   65039,
+   128111,
+   9794,
 },
 -- Table: {3035}
 {
-   128115,
-   127995,
-   8205,
-   9792,
-   65039,
+   128372,
 },
 -- Table: {3036}
 {
-   128115,
-   127996,
-   8205,
-   9792,
-   65039,
+   128694,
 },
 -- Table: {3037}
 {
-   128115,
-   127997,
-   8205,
+   128694,
    9792,
-   65039,
 },
 -- Table: {3038}
 {
-   128115,
-   127998,
-   8205,
-   9792,
-   65039,
+   128694,
+   9794,
 },
 -- Table: {3039}
 {
-   128115,
-   127999,
-   8205,
-   9792,
-   65039,
+   127939,
 },
 -- Table: {3040}
 {
-   128115,
+   127939,
+   9792,
 },
 -- Table: {3041}
 {
-   128115,
-   127995,
+   127939,
+   9794,
 },
 -- Table: {3042}
 {
-   128115,
-   127996,
+   129485,
 },
 -- Table: {3043}
 {
-   128115,
-   127997,
+   129485,
+   9792,
 },
 -- Table: {3044}
 {
-   128115,
-   127998,
+   129485,
+   9794,
 },
 -- Table: {3045}
 {
-   128115,
-   127999,
+   129486,
 },
 -- Table: {3046}
 {
-   128115,
-   8205,
-   9794,
-   65039,
+   129486,
+   9792,
 },
 -- Table: {3047}
 {
-   128115,
-   127999,
-   8205,
+   129486,
    9794,
-   65039,
 },
 -- Table: {3048}
 {
-   128115,
-   127998,
-   8205,
-   9794,
-   65039,
+   129489,
+   129455,
 },
 -- Table: {3049}
 {
-   128115,
-   127997,
-   8205,
-   9794,
-   65039,
+   128105,
+   129455,
 },
 -- Table: {3050}
 {
-   128115,
-   127996,
-   8205,
-   9794,
-   65039,
+   128104,
+   129455,
 },
 -- Table: {3051}
 {
-   128115,
-   127995,
-   8205,
-   9794,
-   65039,
+   129489,
+   129468,
 },
 -- Table: {3052}
 {
-   128110,
-   8205,
-   9792,
-   65039,
+   128105,
+   129468,
 },
 -- Table: {3053}
 {
-   128110,
-   127995,
-   8205,
-   9792,
-   65039,
+   128104,
+   129468,
 },
 -- Table: {3054}
 {
-   128110,
-   127996,
-   8205,
-   9792,
-   65039,
+   129489,
+   129469,
 },
 -- Table: {3055}
 {
-   128110,
-   127997,
-   8205,
-   9792,
-   65039,
+   128105,
+   129469,
 },
 -- Table: {3056}
 {
-   128110,
-   127998,
-   8205,
-   9792,
-   65039,
+   128104,
+   129469,
 },
 -- Table: {3057}
 {
-   128110,
-   127999,
-   8205,
-   9792,
-   65039,
+   129489,
+   129309,
+   129489,
 },
 -- Table: {3058}
 {
-   128110,
+   128107,
 },
 -- Table: {3059}
 {
-   128110,
-   127995,
+   128109,
 },
 -- Table: {3060}
 {
-   128110,
-   127996,
+   128108,
 },
 -- Table: {3061}
 {
-   128110,
-   127997,
+   128145,
 },
 -- Table: {3062}
 {
-   128110,
-   127998,
+   128105,
+   10084,
+   128104,
 },
 -- Table: {3063}
 {
-   128110,
-   127999,
+   128105,
+   10084,
+   128105,
 },
 -- Table: {3064}
 {
-   128110,
-   8205,
-   9794,
-   65039,
+   128104,
+   10084,
+   128104,
 },
 -- Table: {3065}
 {
-   128110,
-   127999,
-   8205,
-   9794,
-   65039,
+   128143,
 },
 -- Table: {3066}
 {
-   128110,
-   127998,
-   8205,
-   9794,
-   65039,
+   128105,
+   10084,
+   128139,
+   128104,
 },
 -- Table: {3067}
 {
-   128110,
-   127997,
-   8205,
-   9794,
-   65039,
+   128105,
+   10084,
+   128139,
+   128105,
 },
 -- Table: {3068}
 {
-   128110,
-   127996,
-   8205,
-   9794,
-   65039,
+   128104,
+   10084,
+   128139,
+   128104,
 },
 -- Table: {3069}
 {
-   128110,
-   127995,
-   8205,
-   9794,
-   65039,
+   128106,
 },
 -- Table: {3070}
 {
-   128119,
-   8205,
-   9792,
-   65039,
+   128104,
+   128105,
+   128102,
 },
 -- Table: {3071}
 {
-   128119,
-   127995,
-   8205,
-   9792,
-   65039,
+   128104,
+   128105,
+   128103,
 },
 -- Table: {3072}
 {
-   128119,
-   127996,
-   8205,
-   9792,
-   65039,
+   128104,
+   128105,
+   128103,
+   128102,
 },
 -- Table: {3073}
 {
-   128119,
-   127997,
-   8205,
-   9792,
-   65039,
+   128104,
+   128105,
+   128102,
+   128102,
 },
 -- Table: {3074}
 {
-   128119,
-   127998,
-   8205,
-   9792,
-   65039,
+   128104,
+   128105,
+   128103,
+   128103,
 },
 -- Table: {3075}
 {
-   128119,
-   127999,
-   8205,
-   9792,
-   65039,
+   128105,
+   128105,
+   128102,
 },
 -- Table: {3076}
 {
-   128119,
+   128105,
+   128105,
+   128103,
 },
 -- Table: {3077}
 {
-   128119,
-   127995,
+   128105,
+   128105,
+   128103,
+   128102,
 },
 -- Table: {3078}
 {
-   128119,
-   127996,
+   128105,
+   128105,
+   128102,
+   128102,
 },
 -- Table: {3079}
 {
-   128119,
-   127997,
+   128105,
+   128105,
+   128103,
+   128103,
 },
 -- Table: {3080}
 {
-   128119,
-   127998,
+   128104,
+   128104,
+   128102,
 },
 -- Table: {3081}
 {
-   128119,
-   127999,
+   128104,
+   128104,
+   128103,
 },
 -- Table: {3082}
 {
-   128119,
-   8205,
-   9794,
-   65039,
+   128104,
+   128104,
+   128103,
+   128102,
 },
 -- Table: {3083}
 {
-   128119,
-   127999,
-   8205,
-   9794,
-   65039,
+   128104,
+   128104,
+   128102,
+   128102,
 },
 -- Table: {3084}
 {
-   128119,
-   127998,
-   8205,
-   9794,
-   65039,
+   128104,
+   128104,
+   128103,
+   128103,
 },
 -- Table: {3085}
 {
-   128119,
-   127997,
-   8205,
-   9794,
-   65039,
+   128105,
+   128102,
 },
 -- Table: {3086}
 {
-   128119,
-   127996,
-   8205,
-   9794,
-   65039,
+   128105,
+   128103,
 },
 -- Table: {3087}
 {
-   128119,
-   127995,
-   8205,
-   9794,
-   65039,
+   128105,
+   128103,
+   128102,
 },
 -- Table: {3088}
 {
-   128130,
-   8205,
-   9792,
-   65039,
+   128105,
+   128102,
+   128102,
 },
 -- Table: {3089}
 {
-   128130,
-   127995,
-   8205,
-   9792,
-   65039,
+   128105,
+   128103,
+   128103,
 },
 -- Table: {3090}
 {
-   128130,
-   127996,
-   8205,
-   9792,
-   65039,
+   128104,
+   128102,
 },
 -- Table: {3091}
 {
-   128130,
-   127997,
-   8205,
-   9792,
-   65039,
+   128104,
+   128103,
 },
 -- Table: {3092}
 {
-   128130,
-   127998,
-   8205,
-   9792,
-   65039,
+   128104,
+   128103,
+   128102,
 },
 -- Table: {3093}
 {
-   128130,
-   127999,
-   8205,
-   9792,
-   65039,
+   128104,
+   128102,
+   128102,
 },
 -- Table: {3094}
 {
-   128130,
+   128104,
+   128103,
+   128103,
 },
 -- Table: {3095}
 {
-   128130,
-   127995,
+   129526,
 },
 -- Table: {3096}
 {
-   128130,
-   127996,
+   129525,
 },
 -- Table: {3097}
 {
-   128130,
-   127997,
+   129509,
 },
 -- Table: {3098}
 {
-   128130,
-   127998,
+   129404,
 },
 -- Table: {3099}
 {
-   128130,
-   127999,
+   129466,
 },
 -- Table: {3100}
 {
-   128130,
-   8205,
-   9794,
-   65039,
+   128090,
 },
 -- Table: {3101}
 {
-   128130,
-   127999,
-   8205,
-   9794,
-   65039,
+   128085,
 },
 -- Table: {3102}
 {
-   128130,
-   127998,
-   8205,
-   9794,
-   65039,
+   128086,
 },
 -- Table: {3103}
 {
-   128130,
-   127997,
-   8205,
-   9794,
-   65039,
+   129651,
 },
 -- Table: {3104}
 {
-   128130,
-   127996,
-   8205,
-   9794,
-   65039,
+   128084,
 },
 -- Table: {3105}
 {
-   128130,
-   127995,
-   8205,
-   9794,
-   65039,
+   128087,
 },
 -- Table: {3106}
 {
-   128373,
-   65039,
-   8205,
-   9792,
-   65039,
+   128089,
 },
 -- Table: {3107}
 {
-   128373,
-   127995,
-   8205,
-   9792,
-   65039,
+   129649,
 },
 -- Table: {3108}
 {
-   128373,
-   127996,
-   8205,
-   9792,
-   65039,
+   128088,
 },
 -- Table: {3109}
 {
-   128373,
-   127997,
-   8205,
-   9792,
-   65039,
+   129403,
 },
 -- Table: {3110}
 {
-   128373,
-   127998,
-   8205,
-   9792,
-   65039,
+   129407,
 },
 -- Table: {3111}
 {
-   128373,
-   127999,
-   8205,
-   9792,
-   65039,
+   128096,
 },
 -- Table: {3112}
 {
-   128373,
-   65039,
+   128097,
 },
 -- Table: {3113}
 {
-   128373,
-   127995,
+   128098,
 },
 -- Table: {3114}
 {
-   128373,
-   127996,
+   129648,
 },
 -- Table: {3115}
 {
-   128373,
-   127997,
+   128094,
 },
 -- Table: {3116}
 {
-   128373,
-   127998,
+   128095,
 },
 -- Table: {3117}
 {
-   128373,
-   127999,
+   129406,
 },
 -- Table: {3118}
 {
-   128373,
-   65039,
-   8205,
-   9794,
-   65039,
+   129650,
 },
 -- Table: {3119}
 {
-   128373,
-   127999,
-   8205,
-   9794,
-   65039,
+   129510,
 },
 -- Table: {3120}
 {
-   128373,
-   127998,
-   8205,
-   9794,
-   65039,
+   129508,
 },
 -- Table: {3121}
 {
-   128373,
-   127997,
-   8205,
-   9794,
-   65039,
+   129507,
 },
 -- Table: {3122}
 {
-   128373,
-   127996,
-   8205,
-   9794,
-   65039,
+   127913,
 },
 -- Table: {3123}
 {
-   128373,
-   127995,
-   8205,
-   9794,
-   65039,
+   129506,
 },
 -- Table: {3124}
 {
-   128105,
-   8205,
-   9877,
-   65039,
+   128082,
 },
 -- Table: {3125}
 {
-   128105,
-   127995,
-   8205,
-   9877,
-   65039,
+   127891,
 },
 -- Table: {3126}
 {
-   128105,
-   127996,
-   8205,
-   9877,
-   65039,
+   9937,
 },
 -- Table: {3127}
 {
-   128105,
-   127997,
-   8205,
-   9877,
-   65039,
+   128081,
 },
 -- Table: {3128}
 {
-   128105,
-   127998,
-   8205,
-   9877,
-   65039,
+   128141,
 },
 -- Table: {3129}
 {
-   128105,
-   127999,
-   8205,
-   9877,
-   65039,
+   128093,
 },
 -- Table: {3130}
 {
-   128104,
-   8205,
-   9877,
-   65039,
+   128091,
 },
 -- Table: {3131}
 {
-   128104,
-   127995,
-   8205,
-   9877,
-   65039,
+   128092,
 },
 -- Table: {3132}
 {
-   128104,
-   127996,
-   8205,
-   9877,
-   65039,
+   128188,
 },
 -- Table: {3133}
 {
-   128104,
-   127997,
-   8205,
-   9877,
-   65039,
+   127890,
 },
 -- Table: {3134}
 {
-   128104,
-   127998,
-   8205,
-   9877,
-   65039,
+   129523,
 },
 -- Table: {3135}
 {
-   128104,
-   127999,
-   8205,
-   9877,
-   65039,
+   128083,
 },
 -- Table: {3136}
 {
-   128105,
-   8205,
-   127806,
+   128374,
 },
 -- Table: {3137}
 {
-   128105,
-   127995,
-   8205,
-   127806,
+   129405,
 },
 -- Table: {3138}
 {
-   128105,
-   127996,
-   8205,
-   127806,
+   129343,
 },
 -- Table: {3139}
 {
-   128105,
-   127997,
-   8205,
-   127806,
+   127746,
 },
 -- Table: {3140}
 {
-   128105,
-   127998,
-   8205,
-   127806,
+   129457,
 },
 -- Table: {3141}
 {
-   128105,
-   127999,
-   8205,
-   127806,
+   129456,
 },
 -- Table: {3142}
 {
-   128104,
-   8205,
-   127806,
+   129459,
 },
 -- Table: {3143}
 {
-   128104,
-   127995,
-   8205,
-   127806,
+   129458,
 },
 -- Table: {3144}
 {
-   128104,
-   127996,
-   8205,
-   127806,
+   128663,
 },
 -- Table: {3145}
 {
-   128104,
-   127997,
-   8205,
-   127806,
+   128661,
 },
 -- Table: {3146}
 {
-   128104,
-   127998,
-   8205,
-   127806,
+   128665,
 },
 -- Table: {3147}
 {
-   128104,
-   127999,
-   8205,
-   127806,
+   128652,
 },
 -- Table: {3148}
 {
-   128105,
-   8205,
-   127859,
+   128654,
 },
 -- Table: {3149}
 {
-   128105,
-   127995,
-   8205,
-   127859,
+   127950,
 },
 -- Table: {3150}
 {
-   128105,
-   127996,
-   8205,
-   127859,
+   128659,
 },
 -- Table: {3151}
 {
-   128105,
-   127997,
-   8205,
-   127859,
+   128657,
 },
 -- Table: {3152}
 {
-   128105,
-   127998,
-   8205,
-   127859,
+   128658,
 },
 -- Table: {3153}
 {
-   128105,
-   127999,
-   8205,
-   127859,
+   128656,
 },
 -- Table: {3154}
 {
-   128104,
-   8205,
-   127859,
+   128666,
 },
 -- Table: {3155}
 {
-   128104,
-   127995,
-   8205,
-   127859,
+   128667,
 },
 -- Table: {3156}
 {
-   128104,
-   127996,
-   8205,
-   127859,
+   128668,
 },
 -- Table: {3157}
 {
-   128104,
-   127997,
-   8205,
-   127859,
+   128762,
 },
 -- Table: {3158}
 {
-   128104,
-   127998,
-   8205,
-   127859,
+   128757,
 },
 -- Table: {3159}
 {
-   128104,
-   127999,
-   8205,
-   127859,
+   127949,
 },
 -- Table: {3160}
 {
-   128105,
-   8205,
-   127891,
+   128756,
 },
 -- Table: {3161}
 {
-   128105,
-   127995,
-   8205,
-   127891,
+   128690,
 },
 -- Table: {3162}
 {
-   128105,
-   127996,
-   8205,
-   127891,
+   129468,
 },
 -- Table: {3163}
 {
-   128105,
-   127997,
-   8205,
-   127891,
+   129469,
 },
 -- Table: {3164}
 {
-   128105,
-   127998,
-   8205,
-   127891,
+   128680,
 },
 -- Table: {3165}
 {
-   128105,
-   127999,
-   8205,
-   127891,
+   128660,
 },
 -- Table: {3166}
 {
-   128104,
-   8205,
-   127891,
+   128653,
 },
 -- Table: {3167}
 {
-   128104,
-   127995,
-   8205,
-   127891,
+   128664,
 },
 -- Table: {3168}
 {
-   128104,
-   127996,
-   8205,
-   127891,
+   128662,
 },
 -- Table: {3169}
 {
-   128104,
-   127997,
-   8205,
-   127891,
+   128673,
 },
 -- Table: {3170}
 {
-   128104,
-   127998,
-   8205,
-   127891,
+   128672,
 },
 -- Table: {3171}
 {
-   128104,
-   127999,
-   8205,
-   127891,
+   128671,
 },
 -- Table: {3172}
 {
-   128105,
-   8205,
-   127908,
+   128643,
 },
 -- Table: {3173}
 {
-   128105,
-   127995,
-   8205,
-   127908,
+   128651,
 },
 -- Table: {3174}
 {
-   128105,
-   127996,
-   8205,
-   127908,
+   128670,
 },
 -- Table: {3175}
 {
-   128105,
-   127997,
-   8205,
-   127908,
+   128669,
 },
 -- Table: {3176}
 {
-   128105,
-   127998,
-   8205,
-   127908,
+   128644,
 },
 -- Table: {3177}
 {
-   128105,
-   127999,
-   8205,
-   127908,
+   128645,
 },
 -- Table: {3178}
 {
-   128104,
-   8205,
-   127908,
+   128648,
 },
 -- Table: {3179}
 {
-   128104,
-   127995,
-   8205,
-   127908,
+   128642,
 },
 -- Table: {3180}
 {
-   128104,
-   127996,
-   8205,
-   127908,
+   128646,
 },
 -- Table: {3181}
 {
-   128104,
-   127997,
-   8205,
-   127908,
+   128647,
 },
 -- Table: {3182}
 {
-   128104,
-   127998,
-   8205,
-   127908,
+   128650,
 },
 -- Table: {3183}
 {
-   128104,
-   127999,
-   8205,
-   127908,
+   128649,
 },
 -- Table: {3184}
 {
-   128105,
-   8205,
-   127979,
+   9992,
 },
 -- Table: {3185}
 {
-   128105,
-   127995,
-   8205,
-   127979,
+   128747,
 },
 -- Table: {3186}
 {
-   128105,
-   127996,
-   8205,
-   127979,
+   128748,
 },
 -- Table: {3187}
 {
-   128105,
-   127997,
-   8205,
-   127979,
+   128745,
 },
 -- Table: {3188}
 {
-   128105,
-   127998,
-   8205,
-   127979,
+   128186,
 },
 -- Table: {3189}
 {
-   128105,
-   127999,
-   8205,
-   127979,
+   128752,
 },
 -- Table: {3190}
 {
-   128104,
-   8205,
-   127979,
+   128640,
 },
 -- Table: {3191}
 {
-   128104,
-   127995,
-   8205,
-   127979,
+   128760,
 },
 -- Table: {3192}
 {
-   128104,
-   127996,
-   8205,
-   127979,
+   128641,
 },
 -- Table: {3193}
 {
-   128104,
-   127997,
-   8205,
-   127979,
+   128758,
 },
 -- Table: {3194}
 {
-   128104,
-   127998,
-   8205,
-   127979,
+   9973,
 },
 -- Table: {3195}
 {
-   128104,
-   127999,
-   8205,
-   127979,
+   128676,
 },
 -- Table: {3196}
 {
-   128105,
-   8205,
-   127981,
+   128741,
 },
 -- Table: {3197}
 {
-   128105,
-   127995,
-   8205,
-   127981,
+   128755,
 },
 -- Table: {3198}
 {
-   128105,
-   127996,
-   8205,
-   127981,
+   9972,
 },
 -- Table: {3199}
 {
-   128105,
-   127997,
-   8205,
-   127981,
+   128674,
 },
 -- Table: {3200}
 {
-   128105,
-   127998,
-   8205,
-   127981,
+   9875,
 },
 -- Table: {3201}
 {
-   128105,
-   127999,
-   8205,
-   127981,
+   9981,
 },
 -- Table: {3202}
 {
-   128104,
-   8205,
-   127981,
+   128679,
 },
 -- Table: {3203}
 {
-   128104,
-   127995,
-   8205,
-   127981,
+   128678,
 },
 -- Table: {3204}
 {
-   128104,
-   127996,
-   8205,
-   127981,
+   128677,
 },
 -- Table: {3205}
 {
-   128104,
-   127997,
-   8205,
-   127981,
+   128655,
 },
 -- Table: {3206}
 {
-   128104,
-   127998,
-   8205,
-   127981,
+   128506,
 },
 -- Table: {3207}
 {
-   128104,
-   127999,
-   8205,
-   127981,
+   128511,
 },
 -- Table: {3208}
 {
-   128105,
-   8205,
-   128187,
+   128509,
 },
 -- Table: {3209}
 {
-   128105,
-   127995,
-   8205,
-   128187,
+   128508,
 },
 -- Table: {3210}
 {
-   128105,
-   127996,
-   8205,
-   128187,
+   127984,
 },
 -- Table: {3211}
 {
-   128105,
-   127997,
-   8205,
-   128187,
+   127983,
 },
 -- Table: {3212}
 {
-   128105,
-   127998,
-   8205,
-   128187,
+   127967,
 },
 -- Table: {3213}
 {
-   128105,
-   127999,
-   8205,
-   128187,
+   127905,
 },
 -- Table: {3214}
 {
-   128104,
-   8205,
-   128187,
+   127906,
 },
 -- Table: {3215}
 {
-   128104,
-   127995,
-   8205,
-   128187,
+   127904,
 },
 -- Table: {3216}
 {
-   128104,
-   127996,
-   8205,
-   128187,
+   9970,
 },
 -- Table: {3217}
 {
-   128104,
-   127997,
-   8205,
-   128187,
+   9969,
 },
 -- Table: {3218}
 {
-   128104,
-   127998,
-   8205,
-   128187,
+   127958,
 },
 -- Table: {3219}
 {
-   128104,
-   127999,
-   8205,
-   128187,
+   127965,
 },
 -- Table: {3220}
 {
-   128105,
-   8205,
-   128188,
+   127964,
 },
 -- Table: {3221}
 {
-   128105,
-   127995,
-   8205,
-   128188,
+   127755,
 },
 -- Table: {3222}
 {
-   128105,
-   127996,
-   8205,
-   128188,
+   9968,
 },
 -- Table: {3223}
 {
-   128105,
-   127997,
-   8205,
-   128188,
+   127956,
 },
 -- Table: {3224}
 {
-   128105,
-   127998,
-   8205,
-   128188,
+   128507,
 },
 -- Table: {3225}
 {
-   128105,
-   127999,
-   8205,
-   128188,
+   127957,
 },
 -- Table: {3226}
 {
-   128104,
-   8205,
-   128188,
+   9978,
 },
 -- Table: {3227}
 {
-   128104,
-   127995,
-   8205,
-   128188,
+   127968,
 },
 -- Table: {3228}
 {
-   128104,
-   127996,
-   8205,
-   128188,
+   127969,
 },
 -- Table: {3229}
 {
-   128104,
-   127997,
-   8205,
-   128188,
+   127960,
 },
 -- Table: {3230}
 {
-   128104,
-   127998,
-   8205,
-   128188,
+   127962,
 },
 -- Table: {3231}
 {
-   128104,
-   127999,
-   8205,
-   128188,
+   127959,
 },
 -- Table: {3232}
 {
-   128105,
-   8205,
-   128295,
+   127981,
 },
 -- Table: {3233}
 {
-   128105,
-   127995,
-   8205,
-   128295,
+   127970,
 },
 -- Table: {3234}
 {
-   128105,
-   127996,
-   8205,
-   128295,
+   127980,
 },
 -- Table: {3235}
 {
-   128105,
-   127997,
-   8205,
-   128295,
+   127971,
 },
 -- Table: {3236}
 {
-   128105,
-   127998,
-   8205,
-   128295,
+   127972,
 },
 -- Table: {3237}
 {
-   128105,
-   127999,
-   8205,
-   128295,
+   127973,
 },
 -- Table: {3238}
 {
-   128104,
-   8205,
-   128295,
+   127974,
 },
 -- Table: {3239}
 {
-   128104,
-   127995,
-   8205,
-   128295,
+   127976,
 },
 -- Table: {3240}
 {
-   128104,
-   127996,
-   8205,
-   128295,
+   127978,
 },
 -- Table: {3241}
 {
-   128104,
-   127997,
-   8205,
-   128295,
+   127979,
 },
 -- Table: {3242}
 {
-   128104,
-   127998,
-   8205,
-   128295,
+   127977,
 },
 -- Table: {3243}
 {
-   128104,
-   127999,
-   8205,
-   128295,
+   128146,
 },
 -- Table: {3244}
 {
-   128105,
-   8205,
-   128300,
+   127963,
 },
 -- Table: {3245}
 {
-   128105,
-   127995,
-   8205,
-   128300,
+   9962,
 },
 -- Table: {3246}
 {
-   128105,
-   127996,
-   8205,
-   128300,
+   128332,
 },
 -- Table: {3247}
 {
-   128105,
-   127997,
-   8205,
-   128300,
+   128725,
 },
 -- Table: {3248}
 {
-   128105,
-   127998,
-   8205,
-   128300,
+   128333,
 },
 -- Table: {3249}
 {
-   128105,
-   127999,
-   8205,
-   128300,
+   128331,
 },
 -- Table: {3250}
 {
-   128104,
-   8205,
-   128300,
+   9961,
 },
 -- Table: {3251}
 {
-   128104,
-   127995,
-   8205,
-   128300,
+   128740,
 },
 -- Table: {3252}
 {
-   128104,
-   127996,
-   8205,
-   128300,
+   128739,
 },
 -- Table: {3253}
 {
-   128104,
-   127997,
-   8205,
-   128300,
+   128510,
 },
 -- Table: {3254}
 {
-   128104,
-   127998,
-   8205,
-   128300,
+   127889,
 },
 -- Table: {3255}
 {
-   128104,
-   127999,
-   8205,
-   128300,
+   127966,
 },
 -- Table: {3256}
 {
-   128105,
-   8205,
-   127912,
+   127749,
 },
 -- Table: {3257}
 {
-   128105,
-   127995,
-   8205,
-   127912,
+   127748,
 },
 -- Table: {3258}
 {
-   128105,
-   127996,
-   8205,
-   127912,
+   127776,
 },
 -- Table: {3259}
 {
-   128105,
-   127997,
-   8205,
-   127912,
+   127879,
 },
 -- Table: {3260}
 {
-   128105,
-   127998,
-   8205,
-   127912,
+   127878,
 },
 -- Table: {3261}
 {
-   128105,
-   127999,
-   8205,
-   127912,
+   127751,
 },
 -- Table: {3262}
 {
-   128104,
-   8205,
-   127912,
+   127750,
 },
 -- Table: {3263}
 {
-   128104,
-   127995,
-   8205,
-   127912,
+   127961,
 },
 -- Table: {3264}
 {
-   128104,
-   127996,
-   8205,
-   127912,
+   127747,
 },
 -- Table: {3265}
 {
-   128104,
-   127997,
-   8205,
-   127912,
+   127756,
 },
 -- Table: {3266}
 {
-   128104,
-   127998,
-   8205,
-   127912,
+   127753,
 },
 -- Table: {3267}
 {
-   128104,
-   127999,
-   8205,
-   127912,
+   127745,
 },
 -- Table: {3268}
 {
-   128105,
-   8205,
-   128658,
+   127487,
 },
 -- Table: {3269}
 {
-   128105,
-   127995,
-   8205,
-   128658,
+   127486,
 },
 -- Table: {3270}
 {
-   128105,
-   127996,
-   8205,
-   128658,
+   127485,
 },
 -- Table: {3271}
 {
-   128105,
-   127997,
-   8205,
-   128658,
+   127484,
 },
 -- Table: {3272}
 {
-   128105,
-   127998,
-   8205,
-   128658,
+   127483,
 },
 -- Table: {3273}
 {
-   128105,
-   127999,
-   8205,
-   128658,
+   127482,
 },
 -- Table: {3274}
 {
-   128104,
-   8205,
-   128658,
+   127481,
 },
 -- Table: {3275}
 {
-   128104,
-   127995,
-   8205,
-   128658,
+   127480,
 },
 -- Table: {3276}
 {
-   128104,
-   127996,
-   8205,
-   128658,
+   127479,
 },
 -- Table: {3277}
 {
-   128104,
-   127997,
-   8205,
-   128658,
+   127478,
 },
 -- Table: {3278}
 {
-   128104,
-   127998,
-   8205,
-   128658,
+   127477,
 },
 -- Table: {3279}
 {
-   128104,
-   127999,
-   8205,
-   128658,
+   127476,
 },
 -- Table: {3280}
 {
-   128105,
-   8205,
-   9992,
-   65039,
+   127475,
 },
 -- Table: {3281}
 {
-   128105,
-   127995,
-   8205,
-   9992,
-   65039,
+   127474,
 },
 -- Table: {3282}
 {
-   128105,
-   127996,
-   8205,
-   9992,
-   65039,
+   127473,
 },
 -- Table: {3283}
 {
-   128105,
-   127997,
-   8205,
-   9992,
-   65039,
+   127472,
 },
 -- Table: {3284}
 {
-   128105,
-   127998,
-   8205,
-   9992,
-   65039,
+   127471,
 },
 -- Table: {3285}
 {
-   128105,
-   127999,
-   8205,
-   9992,
-   65039,
+   127470,
 },
 -- Table: {3286}
 {
-   128104,
-   8205,
-   9992,
-   65039,
+   127469,
 },
 -- Table: {3287}
 {
-   128104,
-   127995,
-   8205,
-   9992,
-   65039,
+   127468,
 },
 -- Table: {3288}
 {
-   128104,
-   127996,
-   8205,
-   9992,
-   65039,
+   127467,
 },
 -- Table: {3289}
 {
-   128104,
-   127997,
-   8205,
-   9992,
-   65039,
+   127466,
 },
 -- Table: {3290}
 {
-   128104,
-   127998,
-   8205,
-   9992,
-   65039,
+   127465,
 },
 -- Table: {3291}
 {
-   128104,
-   127999,
-   8205,
-   9992,
-   65039,
+   127464,
 },
 -- Table: {3292}
 {
-   128105,
-   8205,
-   128640,
+   127463,
 },
 -- Table: {3293}
 {
-   128105,
-   127995,
-   8205,
-   128640,
+   127462,
 },
 -- Table: {3294}
 {
-   128105,
-   127996,
-   8205,
-   128640,
+   127987,
 },
 -- Table: {3295}
 {
-   128105,
-   127997,
-   8205,
-   128640,
+   127988,
 },
 -- Table: {3296}
 {
-   128105,
-   127998,
-   8205,
-   128640,
+   127937,
 },
 -- Table: {3297}
 {
-   128105,
-   127999,
-   8205,
-   128640,
+   128681,
 },
 -- Table: {3298}
 {
-   128104,
-   8205,
-   128640,
+   127987,
+   127752,
 },
 -- Table: {3299}
 {
-   128104,
-   127995,
-   8205,
-   128640,
+   127988,
+   9760,
 },
 -- Table: {3300}
 {
-   128104,
-   127996,
-   8205,
-   128640,
+   127462,
+   127467,
 },
 -- Table: {3301}
 {
-   128104,
-   127997,
-   8205,
-   128640,
+   127462,
+   127485,
 },
 -- Table: {3302}
 {
-   128104,
-   127998,
-   8205,
-   128640,
+   127462,
+   127473,
 },
 -- Table: {3303}
 {
-   128104,
-   127999,
-   8205,
-   128640,
+   127465,
+   127487,
 },
 -- Table: {3304}
 {
-   128105,
-   8205,
-   9878,
-   65039,
+   127462,
+   127480,
 },
 -- Table: {3305}
 {
-   128105,
-   127995,
-   8205,
-   9878,
-   65039,
+   127462,
+   127465,
 },
 -- Table: {3306}
 {
-   128105,
-   127996,
-   8205,
-   9878,
-   65039,
+   127462,
+   127476,
 },
 -- Table: {3307}
 {
-   128105,
-   127997,
-   8205,
-   9878,
-   65039,
+   127462,
+   127470,
 },
 -- Table: {3308}
 {
-   128105,
-   127998,
-   8205,
-   9878,
-   65039,
+   127462,
+   127478,
 },
 -- Table: {3309}
 {
-   128105,
-   127999,
-   8205,
-   9878,
-   65039,
+   127462,
+   127468,
 },
 -- Table: {3310}
 {
-   128104,
-   8205,
-   9878,
-   65039,
+   127462,
+   127479,
 },
 -- Table: {3311}
 {
-   128104,
-   127995,
-   8205,
-   9878,
-   65039,
+   127462,
+   127474,
 },
 -- Table: {3312}
 {
-   128104,
-   127996,
-   8205,
-   9878,
-   65039,
+   127462,
+   127484,
 },
 -- Table: {3313}
 {
-   128104,
-   127997,
-   8205,
-   9878,
-   65039,
+   127462,
+   127482,
 },
 -- Table: {3314}
 {
-   128104,
-   127998,
-   8205,
-   9878,
-   65039,
+   127462,
+   127481,
 },
 -- Table: {3315}
 {
-   128104,
-   127999,
-   8205,
-   9878,
-   65039,
+   127462,
+   127487,
 },
 -- Table: {3316}
 {
-   129334,
+   127463,
+   127480,
 },
 -- Table: {3317}
 {
-   129334,
-   127995,
+   127463,
+   127469,
 },
 -- Table: {3318}
 {
-   129334,
-   127996,
+   127463,
+   127465,
 },
 -- Table: {3319}
 {
-   129334,
-   127997,
+   127463,
+   127463,
 },
 -- Table: {3320}
 {
-   129334,
-   127998,
+   127463,
+   127486,
 },
 -- Table: {3321}
 {
-   129334,
-   127999,
+   127463,
+   127466,
 },
 -- Table: {3322}
 {
-   127877,
+   127463,
+   127487,
 },
 -- Table: {3323}
 {
-   127877,
-   127995,
+   127463,
+   127471,
 },
 -- Table: {3324}
 {
-   127877,
-   127996,
+   127463,
+   127474,
 },
 -- Table: {3325}
 {
-   127877,
-   127997,
+   127463,
+   127481,
 },
 -- Table: {3326}
 {
-   127877,
-   127998,
+   127463,
+   127476,
 },
 -- Table: {3327}
 {
-   127877,
-   127999,
+   127463,
+   127462,
 },
 -- Table: {3328}
 {
-   128120,
+   127463,
+   127484,
 },
 -- Table: {3329}
 {
-   128120,
-   127995,
+   127463,
+   127479,
 },
 -- Table: {3330}
 {
-   128120,
-   127996,
+   127470,
+   127476,
 },
 -- Table: {3331}
 {
-   128120,
-   127997,
+   127483,
+   127468,
 },
 -- Table: {3332}
 {
-   128120,
-   127998,
+   127463,
+   127475,
 },
 -- Table: {3333}
 {
-   128120,
-   127999,
+   127463,
+   127468,
 },
 -- Table: {3334}
 {
-   129332,
+   127463,
+   127467,
 },
 -- Table: {3335}
 {
-   129332,
-   127995,
+   127463,
+   127470,
 },
 -- Table: {3336}
 {
-   129332,
-   127996,
+   127472,
+   127469,
 },
 -- Table: {3337}
 {
-   129332,
-   127997,
+   127464,
+   127474,
 },
 -- Table: {3338}
 {
-   129332,
-   127998,
+   127464,
+   127462,
 },
 -- Table: {3339}
 {
-   129332,
-   127999,
+   127470,
+   127464,
 },
 -- Table: {3340}
 {
-   128112,
+   127464,
+   127483,
 },
 -- Table: {3341}
 {
-   128112,
-   127995,
+   127463,
+   127478,
 },
 -- Table: {3342}
 {
-   128112,
-   127996,
+   127472,
+   127486,
 },
 -- Table: {3343}
 {
-   128112,
-   127997,
+   127464,
+   127467,
 },
 -- Table: {3344}
 {
-   128112,
-   127998,
+   127481,
+   127465,
 },
 -- Table: {3345}
 {
-   128112,
-   127999,
+   127464,
+   127473,
 },
 -- Table: {3346}
 {
-   129333,
+   127464,
+   127475,
 },
 -- Table: {3347}
 {
-   129333,
-   127995,
+   127464,
+   127485,
 },
 -- Table: {3348}
 {
-   129333,
-   127996,
+   127464,
+   127464,
 },
 -- Table: {3349}
 {
-   129333,
-   127997,
+   127464,
+   127476,
 },
 -- Table: {3350}
 {
-   129333,
-   127998,
+   127472,
+   127474,
 },
 -- Table: {3351}
 {
-   129333,
-   127999,
+   127464,
+   127468,
 },
 -- Table: {3352}
 {
-   128124,
+   127464,
+   127465,
 },
 -- Table: {3353}
 {
-   128124,
-   127995,
+   127464,
+   127472,
 },
 -- Table: {3354}
 {
-   128124,
-   127996,
+   127464,
+   127479,
 },
 -- Table: {3355}
 {
-   128124,
-   127997,
+   127464,
+   127470,
 },
 -- Table: {3356}
 {
-   128124,
-   127998,
+   127469,
+   127479,
 },
 -- Table: {3357}
 {
-   128124,
-   127999,
+   127464,
+   127482,
 },
 -- Table: {3358}
 {
-   129328,
+   127464,
+   127484,
 },
 -- Table: {3359}
 {
-   129328,
-   127995,
+   127464,
+   127486,
 },
 -- Table: {3360}
 {
-   129328,
-   127996,
+   127464,
+   127487,
 },
 -- Table: {3361}
 {
-   129328,
-   127997,
+   127465,
+   127472,
 },
 -- Table: {3362}
 {
-   129328,
-   127998,
+   127465,
+   127471,
 },
 -- Table: {3363}
 {
-   129328,
-   127999,
+   127465,
+   127474,
 },
 -- Table: {3364}
 {
-   128583,
-   8205,
-   9792,
-   65039,
+   127465,
+   127476,
 },
 -- Table: {3365}
 {
-   128583,
-   127995,
-   8205,
-   9792,
-   65039,
+   127466,
+   127464,
 },
 -- Table: {3366}
 {
-   128583,
-   127996,
-   8205,
-   9792,
-   65039,
+   127466,
+   127468,
 },
 -- Table: {3367}
 {
-   128583,
-   127997,
-   8205,
-   9792,
-   65039,
+   127480,
+   127483,
 },
 -- Table: {3368}
 {
-   128583,
-   127998,
-   8205,
-   9792,
-   65039,
+   127468,
+   127478,
 },
 -- Table: {3369}
 {
-   128583,
-   127999,
-   8205,
-   9792,
-   65039,
+   127466,
+   127479,
 },
 -- Table: {3370}
 {
-   128583,
+   127466,
+   127466,
 },
 -- Table: {3371}
 {
-   128583,
-   127995,
+   127466,
+   127481,
 },
 -- Table: {3372}
 {
-   128583,
-   127996,
+   127466,
+   127482,
 },
 -- Table: {3373}
 {
-   128583,
-   127997,
+   127467,
+   127472,
 },
 -- Table: {3374}
 {
-   128583,
-   127998,
+   127467,
+   127476,
 },
 -- Table: {3375}
 {
-   128583,
-   127999,
+   127467,
+   127471,
 },
 -- Table: {3376}
 {
-   128583,
-   8205,
-   9794,
-   65039,
+   127467,
+   127470,
 },
 -- Table: {3377}
 {
-   128583,
-   127999,
-   8205,
-   9794,
-   65039,
+   127467,
+   127479,
 },
 -- Table: {3378}
 {
-   128583,
-   127998,
-   8205,
-   9794,
-   65039,
+   127468,
+   127467,
 },
 -- Table: {3379}
 {
-   128583,
-   127997,
-   8205,
-   9794,
-   65039,
+   127477,
+   127467,
 },
 -- Table: {3380}
 {
-   128583,
-   127996,
-   8205,
-   9794,
-   65039,
+   127481,
+   127467,
 },
 -- Table: {3381}
 {
-   128583,
-   127995,
-   8205,
-   9794,
-   65039,
+   127468,
+   127462,
 },
 -- Table: {3382}
 {
-   128129,
+   127468,
+   127474,
 },
 -- Table: {3383}
 {
-   128129,
-   127995,
+   127468,
+   127466,
 },
 -- Table: {3384}
 {
-   128129,
-   127996,
+   127465,
+   127466,
 },
 -- Table: {3385}
 {
-   128129,
-   127997,
+   127468,
+   127469,
 },
 -- Table: {3386}
 {
-   128129,
-   127998,
+   127468,
+   127470,
 },
 -- Table: {3387}
 {
-   128129,
-   127999,
+   127468,
+   127479,
 },
 -- Table: {3388}
 {
-   128129,
-   8205,
-   9794,
-   65039,
+   127468,
+   127473,
 },
 -- Table: {3389}
 {
-   128129,
-   127995,
-   8205,
-   9794,
-   65039,
+   127468,
+   127465,
 },
 -- Table: {3390}
 {
-   128129,
-   127996,
-   8205,
-   9794,
-   65039,
+   127468,
+   127477,
 },
 -- Table: {3391}
 {
-   128129,
-   127997,
-   8205,
-   9794,
-   65039,
+   127468,
+   127482,
 },
 -- Table: {3392}
 {
-   128129,
-   127998,
-   8205,
-   9794,
-   65039,
+   127468,
+   127481,
 },
 -- Table: {3393}
 {
-   128129,
-   127999,
-   8205,
-   9794,
-   65039,
+   127468,
+   127468,
 },
 -- Table: {3394}
 {
-   128129,
-   8205,
-   9792,
-   65039,
+   127468,
+   127475,
 },
 -- Table: {3395}
 {
-   128129,
-   127999,
-   8205,
-   9792,
-   65039,
+   127468,
+   127484,
 },
 -- Table: {3396}
 {
-   128129,
-   127998,
-   8205,
-   9792,
-   65039,
+   127468,
+   127486,
 },
 -- Table: {3397}
 {
-   128129,
-   127997,
-   8205,
-   9792,
-   65039,
+   127469,
+   127481,
 },
 -- Table: {3398}
 {
-   128129,
-   127996,
-   8205,
-   9792,
-   65039,
+   127469,
+   127475,
 },
 -- Table: {3399}
 {
-   128129,
-   127995,
-   8205,
-   9792,
-   65039,
+   127469,
+   127472,
 },
 -- Table: {3400}
 {
-   128581,
+   127469,
+   127482,
 },
 -- Table: {3401}
 {
-   128581,
-   127995,
+   127470,
+   127480,
 },
 -- Table: {3402}
 {
-   128581,
-   127996,
+   127470,
+   127475,
 },
 -- Table: {3403}
 {
-   128581,
-   127997,
+   127470,
+   127465,
 },
 -- Table: {3404}
 {
-   128581,
-   127998,
+   127470,
+   127479,
 },
 -- Table: {3405}
 {
-   128581,
-   127999,
+   127470,
+   127478,
 },
 -- Table: {3406}
 {
-   128581,
-   8205,
-   9794,
-   65039,
+   127470,
+   127466,
 },
 -- Table: {3407}
 {
-   128581,
-   127995,
-   8205,
-   9794,
-   65039,
+   127470,
+   127474,
 },
 -- Table: {3408}
 {
-   128581,
-   127996,
-   8205,
-   9794,
-   65039,
+   127470,
+   127473,
 },
 -- Table: {3409}
 {
-   128581,
-   127997,
-   8205,
-   9794,
-   65039,
+   127470,
+   127481,
 },
 -- Table: {3410}
 {
-   128581,
-   127998,
-   8205,
-   9794,
-   65039,
+   127471,
+   127474,
 },
 -- Table: {3411}
 {
-   128581,
-   127999,
-   8205,
-   9794,
-   65039,
+   127471,
+   127477,
 },
 -- Table: {3412}
 {
-   128581,
-   8205,
-   9792,
-   65039,
+   127884,
 },
 -- Table: {3413}
 {
-   128581,
-   127999,
-   8205,
-   9792,
-   65039,
+   127471,
+   127466,
 },
 -- Table: {3414}
 {
-   128581,
-   127998,
-   8205,
-   9792,
-   65039,
+   127471,
+   127476,
 },
 -- Table: {3415}
 {
-   128581,
-   127997,
-   8205,
-   9792,
-   65039,
+   127472,
+   127487,
 },
 -- Table: {3416}
 {
-   128581,
-   127996,
-   8205,
-   9792,
-   65039,
+   127472,
+   127466,
 },
 -- Table: {3417}
 {
-   128581,
-   127995,
-   8205,
-   9792,
-   65039,
+   127472,
+   127470,
 },
 -- Table: {3418}
 {
-   128582,
+   127485,
+   127472,
 },
 -- Table: {3419}
 {
-   128582,
-   127995,
+   127472,
+   127484,
 },
 -- Table: {3420}
 {
-   128582,
-   127996,
+   127472,
+   127468,
 },
 -- Table: {3421}
 {
-   128582,
-   127997,
+   127473,
+   127462,
 },
 -- Table: {3422}
 {
-   128582,
-   127998,
+   127473,
+   127483,
 },
 -- Table: {3423}
 {
-   128582,
-   127999,
+   127473,
+   127463,
 },
 -- Table: {3424}
 {
-   128582,
-   8205,
-   9794,
-   65039,
+   127473,
+   127480,
 },
 -- Table: {3425}
 {
-   128582,
-   127995,
-   8205,
-   9794,
-   65039,
+   127473,
+   127479,
 },
 -- Table: {3426}
 {
-   128582,
-   127996,
-   8205,
-   9794,
-   65039,
+   127473,
+   127486,
 },
 -- Table: {3427}
 {
-   128582,
-   127997,
-   8205,
-   9794,
-   65039,
+   127473,
+   127470,
 },
 -- Table: {3428}
 {
-   128582,
-   127998,
-   8205,
-   9794,
-   65039,
+   127473,
+   127481,
 },
 -- Table: {3429}
 {
-   128582,
-   127999,
-   8205,
-   9794,
-   65039,
+   127473,
+   127482,
 },
 -- Table: {3430}
 {
-   128582,
-   8205,
-   9792,
-   65039,
+   127474,
+   127476,
 },
 -- Table: {3431}
 {
-   128582,
-   127999,
-   8205,
-   9792,
-   65039,
+   127474,
+   127472,
 },
 -- Table: {3432}
 {
-   128582,
-   127998,
-   8205,
-   9792,
-   65039,
+   127474,
+   127468,
 },
 -- Table: {3433}
 {
-   128582,
-   127997,
-   8205,
-   9792,
-   65039,
+   127474,
+   127484,
 },
 -- Table: {3434}
 {
-   128582,
-   127996,
-   8205,
-   9792,
-   65039,
+   127474,
+   127486,
 },
 -- Table: {3435}
 {
-   128582,
-   127995,
-   8205,
-   9792,
-   65039,
+   127474,
+   127483,
 },
 -- Table: {3436}
 {
-   128587,
+   127474,
+   127473,
 },
 -- Table: {3437}
 {
-   128587,
-   127995,
+   127474,
+   127481,
 },
 -- Table: {3438}
 {
-   128587,
-   127996,
+   127474,
+   127469,
 },
 -- Table: {3439}
 {
-   128587,
-   127997,
+   127474,
+   127478,
 },
 -- Table: {3440}
 {
-   128587,
-   127998,
+   127474,
+   127479,
 },
 -- Table: {3441}
 {
-   128587,
-   127999,
+   127474,
+   127482,
 },
 -- Table: {3442}
 {
-   128587,
-   8205,
-   9794,
-   65039,
+   127486,
+   127481,
 },
 -- Table: {3443}
 {
-   128587,
-   127995,
-   8205,
-   9794,
-   65039,
+   127474,
+   127485,
 },
 -- Table: {3444}
 {
-   128587,
-   127996,
-   8205,
-   9794,
-   65039,
+   127467,
+   127474,
 },
 -- Table: {3445}
 {
-   128587,
-   127997,
-   8205,
-   9794,
-   65039,
+   127474,
+   127465,
 },
 -- Table: {3446}
 {
-   128587,
-   127998,
-   8205,
-   9794,
-   65039,
+   127474,
+   127464,
 },
 -- Table: {3447}
 {
-   128587,
-   127999,
-   8205,
-   9794,
-   65039,
+   127474,
+   127475,
 },
 -- Table: {3448}
 {
-   128587,
-   8205,
-   9792,
-   65039,
+   127474,
+   127466,
 },
 -- Table: {3449}
 {
-   128587,
-   127999,
-   8205,
-   9792,
-   65039,
+   127474,
+   127480,
 },
 -- Table: {3450}
 {
-   128587,
-   127998,
-   8205,
-   9792,
-   65039,
+   127474,
+   127462,
 },
 -- Table: {3451}
 {
-   128587,
-   127997,
-   8205,
-   9792,
-   65039,
+   127474,
+   127487,
 },
 -- Table: {3452}
 {
-   128587,
-   127996,
-   8205,
-   9792,
-   65039,
+   127474,
+   127474,
 },
 -- Table: {3453}
 {
-   128587,
-   127995,
-   8205,
-   9792,
-   65039,
+   127475,
+   127462,
 },
 -- Table: {3454}
 {
-   129318,
-   8205,
-   9792,
-   65039,
+   127475,
+   127479,
 },
 -- Table: {3455}
 {
-   129318,
-   127995,
-   8205,
-   9792,
-   65039,
+   127475,
+   127477,
 },
 -- Table: {3456}
 {
-   129318,
-   127996,
-   8205,
-   9792,
-   65039,
+   127475,
+   127473,
 },
 -- Table: {3457}
 {
-   129318,
-   127997,
-   8205,
-   9792,
-   65039,
+   127475,
+   127464,
 },
 -- Table: {3458}
 {
-   129318,
-   127998,
-   8205,
-   9792,
-   65039,
+   127475,
+   127487,
 },
 -- Table: {3459}
 {
-   129318,
-   127999,
-   8205,
-   9792,
-   65039,
+   127475,
+   127470,
 },
 -- Table: {3460}
 {
-   129318,
-   8205,
-   9794,
-   65039,
+   127475,
+   127466,
 },
 -- Table: {3461}
 {
-   129318,
-   127995,
-   8205,
-   9794,
-   65039,
+   127475,
+   127468,
 },
 -- Table: {3462}
 {
-   129318,
-   127996,
-   8205,
-   9794,
-   65039,
+   127475,
+   127482,
 },
 -- Table: {3463}
 {
-   129318,
-   127997,
-   8205,
-   9794,
-   65039,
+   127475,
+   127467,
 },
 -- Table: {3464}
 {
-   129318,
-   127998,
-   8205,
-   9794,
-   65039,
+   127472,
+   127477,
 },
 -- Table: {3465}
 {
-   129318,
-   127999,
-   8205,
-   9794,
-   65039,
+   127474,
+   127477,
 },
 -- Table: {3466}
 {
-   129318,
+   127475,
+   127476,
 },
 -- Table: {3467}
 {
-   129318,
-   127995,
+   127476,
+   127474,
 },
 -- Table: {3468}
 {
-   129318,
-   127996,
+   127477,
+   127472,
 },
 -- Table: {3469}
 {
-   129318,
-   127997,
+   127477,
+   127484,
 },
 -- Table: {3470}
 {
-   129318,
-   127998,
+   127477,
+   127480,
 },
 -- Table: {3471}
 {
-   129318,
-   127999,
+   127477,
+   127462,
 },
 -- Table: {3472}
 {
-   129335,
-   8205,
-   9792,
-   65039,
+   127477,
+   127468,
 },
 -- Table: {3473}
 {
-   129335,
-   127995,
-   8205,
-   9792,
-   65039,
+   127477,
+   127486,
 },
 -- Table: {3474}
 {
-   129335,
-   127996,
-   8205,
-   9792,
-   65039,
+   127477,
+   127466,
 },
 -- Table: {3475}
 {
-   129335,
-   127997,
-   8205,
-   9792,
-   65039,
+   127477,
+   127469,
 },
 -- Table: {3476}
 {
-   129335,
-   127998,
-   8205,
-   9792,
-   65039,
+   127477,
+   127475,
 },
 -- Table: {3477}
 {
-   129335,
-   127999,
-   8205,
-   9792,
-   65039,
+   127477,
+   127473,
 },
 -- Table: {3478}
 {
-   129335,
-   8205,
-   9794,
-   65039,
+   127477,
+   127481,
 },
 -- Table: {3479}
 {
-   129335,
-   127995,
-   8205,
-   9794,
-   65039,
+   127477,
+   127479,
 },
 -- Table: {3480}
 {
-   129335,
-   127996,
-   8205,
-   9794,
-   65039,
+   127478,
+   127462,
 },
 -- Table: {3481}
 {
-   129335,
-   127997,
-   8205,
-   9794,
-   65039,
+   127479,
+   127466,
 },
 -- Table: {3482}
 {
-   129335,
-   127998,
-   8205,
-   9794,
-   65039,
+   127479,
+   127476,
 },
 -- Table: {3483}
 {
-   129335,
-   127999,
-   8205,
-   9794,
-   65039,
+   127479,
+   127482,
 },
 -- Table: {3484}
 {
-   129335,
+   127479,
+   127484,
 },
 -- Table: {3485}
 {
-   129335,
-   127995,
+   127484,
+   127480,
 },
 -- Table: {3486}
 {
-   129335,
-   127996,
+   127480,
+   127474,
 },
 -- Table: {3487}
 {
-   129335,
-   127997,
+   127480,
+   127481,
 },
 -- Table: {3488}
 {
-   129335,
-   127998,
+   127480,
+   127462,
 },
 -- Table: {3489}
 {
-   129335,
-   127999,
+   127480,
+   127475,
 },
 -- Table: {3490}
 {
-   128590,
+   127479,
+   127480,
 },
 -- Table: {3491}
 {
-   128590,
-   127995,
+   127480,
+   127464,
 },
 -- Table: {3492}
 {
-   128590,
-   127996,
+   127480,
+   127473,
 },
 -- Table: {3493}
 {
-   128590,
-   127997,
+   127480,
+   127468,
 },
 -- Table: {3494}
 {
-   128590,
-   127998,
+   127480,
+   127485,
 },
 -- Table: {3495}
 {
-   128590,
-   127999,
+   127480,
+   127472,
 },
 -- Table: {3496}
 {
-   128590,
-   8205,
-   9794,
-   65039,
+   127480,
+   127470,
 },
 -- Table: {3497}
 {
-   128590,
-   127995,
-   8205,
-   9794,
-   65039,
+   127468,
+   127480,
 },
 -- Table: {3498}
 {
-   128590,
-   127996,
-   8205,
-   9794,
-   65039,
+   127480,
+   127463,
 },
 -- Table: {3499}
 {
-   128590,
-   127997,
-   8205,
-   9794,
-   65039,
+   127480,
+   127476,
 },
 -- Table: {3500}
 {
-   128590,
-   127998,
-   8205,
-   9794,
-   65039,
+   127487,
+   127462,
 },
 -- Table: {3501}
 {
-   128590,
-   127999,
-   8205,
-   9794,
-   65039,
+   127472,
+   127479,
 },
 -- Table: {3502}
 {
-   128590,
-   8205,
-   9792,
-   65039,
+   127480,
+   127480,
 },
 -- Table: {3503}
 {
-   128590,
-   127999,
-   8205,
-   9792,
-   65039,
+   127466,
+   127480,
 },
 -- Table: {3504}
 {
-   128590,
-   127998,
-   8205,
-   9792,
-   65039,
+   127473,
+   127472,
 },
 -- Table: {3505}
 {
-   128590,
-   127997,
-   8205,
-   9792,
-   65039,
+   127463,
+   127473,
 },
 -- Table: {3506}
 {
-   128590,
-   127996,
-   8205,
-   9792,
-   65039,
+   127480,
+   127469,
 },
 -- Table: {3507}
 {
-   128590,
-   127995,
-   8205,
-   9792,
-   65039,
+   127472,
+   127475,
 },
 -- Table: {3508}
 {
-   128589,
+   127473,
+   127464,
 },
 -- Table: {3509}
 {
-   128589,
-   127995,
+   127477,
+   127474,
 },
 -- Table: {3510}
 {
-   128589,
-   127996,
+   127483,
+   127464,
 },
 -- Table: {3511}
 {
-   128589,
-   127997,
+   127480,
+   127465,
 },
 -- Table: {3512}
 {
-   128589,
-   127998,
+   127480,
+   127479,
 },
 -- Table: {3513}
 {
-   128589,
-   127999,
+   127480,
+   127487,
 },
 -- Table: {3514}
 {
-   128589,
-   8205,
-   9794,
-   65039,
+   127480,
+   127466,
 },
 -- Table: {3515}
 {
-   128589,
-   127995,
-   8205,
-   9794,
-   65039,
+   127464,
+   127469,
 },
 -- Table: {3516}
 {
-   128589,
-   127996,
-   8205,
-   9794,
-   65039,
+   127480,
+   127486,
 },
 -- Table: {3517}
 {
-   128589,
-   127997,
-   8205,
-   9794,
-   65039,
+   127481,
+   127484,
 },
 -- Table: {3518}
 {
-   128589,
-   127998,
-   8205,
-   9794,
-   65039,
+   127481,
+   127471,
 },
 -- Table: {3519}
 {
-   128589,
-   127999,
-   8205,
-   9794,
-   65039,
+   127481,
+   127487,
 },
 -- Table: {3520}
 {
-   128589,
-   8205,
-   9792,
-   65039,
+   127481,
+   127469,
 },
 -- Table: {3521}
 {
-   128589,
-   127999,
-   8205,
-   9792,
-   65039,
+   127481,
+   127473,
 },
 -- Table: {3522}
 {
-   128589,
-   127998,
-   8205,
-   9792,
-   65039,
+   127481,
+   127468,
 },
 -- Table: {3523}
 {
-   128589,
-   127997,
-   8205,
-   9792,
-   65039,
+   127481,
+   127472,
 },
 -- Table: {3524}
 {
-   128589,
-   127996,
-   8205,
-   9792,
-   65039,
+   127481,
+   127476,
 },
 -- Table: {3525}
 {
-   128589,
-   127995,
-   8205,
-   9792,
-   65039,
+   127481,
+   127481,
 },
 -- Table: {3526}
 {
-   128135,
+   127481,
+   127475,
 },
 -- Table: {3527}
 {
-   128135,
-   127995,
+   127481,
+   127479,
 },
 -- Table: {3528}
 {
-   128135,
-   127996,
+   127481,
+   127474,
 },
 -- Table: {3529}
 {
-   128135,
-   127997,
+   127481,
+   127464,
 },
 -- Table: {3530}
 {
-   128135,
-   127998,
+   127483,
+   127470,
 },
 -- Table: {3531}
 {
-   128135,
-   127999,
+   127481,
+   127483,
 },
 -- Table: {3532}
 {
-   128135,
-   8205,
-   9794,
-   65039,
+   127482,
+   127468,
 },
 -- Table: {3533}
 {
-   128135,
-   127995,
-   8205,
-   9794,
-   65039,
+   127482,
+   127462,
 },
 -- Table: {3534}
 {
-   128135,
-   127996,
-   8205,
-   9794,
-   65039,
+   127462,
+   127466,
 },
 -- Table: {3535}
 {
-   128135,
-   127997,
-   8205,
-   9794,
-   65039,
+   127468,
+   127463,
 },
 -- Table: {3536}
-{
-   128135,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3537}
-{
-   128135,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3538}
-{
-   128135,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3539}
-{
-   128135,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3540}
-{
-   128135,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3541}
-{
-   128135,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3542}
-{
-   128135,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3543}
-{
-   128135,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3544}
-{
-   128134,
-},
--- Table: {3545}
-{
-   128134,
-   127995,
-},
--- Table: {3546}
-{
-   128134,
-   127996,
-},
--- Table: {3547}
-{
-   128134,
-   127997,
-},
--- Table: {3548}
-{
-   128134,
-   127998,
-},
--- Table: {3549}
-{
-   128134,
-   127999,
-},
--- Table: {3550}
-{
-   128134,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3551}
-{
-   128134,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3552}
-{
-   128134,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3553}
-{
-   128134,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3554}
-{
-   128134,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3555}
-{
-   128134,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3556}
-{
-   128134,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3557}
-{
-   128134,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3558}
-{
-   128134,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3559}
-{
-   128134,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3560}
-{
-   128134,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3561}
-{
-   128134,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3562}
-{
-   128372,
-   65039,
-},
--- Table: {3563}
-{
-   128372,
-   127995,
-},
--- Table: {3564}
-{
-   128372,
-   127996,
-},
--- Table: {3565}
-{
-   128372,
-   127997,
-},
--- Table: {3566}
-{
-   128372,
-   127998,
-},
--- Table: {3567}
-{
-   128372,
-   127999,
-},
--- Table: {3568}
-{
-   128131,
-},
--- Table: {3569}
-{
-   128131,
-   127995,
-},
--- Table: {3570}
-{
-   128131,
-   127996,
-},
--- Table: {3571}
-{
-   128131,
-   127997,
-},
--- Table: {3572}
-{
-   128131,
-   127998,
-},
--- Table: {3573}
-{
-   128131,
-   127999,
-},
--- Table: {3574}
-{
-   128378,
-},
--- Table: {3575}
-{
-   128378,
-   127995,
-},
--- Table: {3576}
-{
-   128378,
-   127996,
-},
--- Table: {3577}
-{
-   128378,
-   127997,
-},
--- Table: {3578}
-{
-   128378,
-   127998,
-},
--- Table: {3579}
-{
-   128378,
-   127999,
-},
--- Table: {3580}
-{
-   128111,
-},
--- Table: {3581}
-{
-   128111,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3582}
-{
-   128111,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3583}
-{
-   128694,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3584}
-{
-   128694,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3585}
-{
-   128694,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3586}
-{
-   128694,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3587}
-{
-   128694,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3588}
-{
-   128694,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3589}
-{
-   128694,
-},
--- Table: {3590}
-{
-   128694,
-   127995,
-},
--- Table: {3591}
-{
-   128694,
-   127996,
-},
--- Table: {3592}
-{
-   128694,
-   127997,
-},
--- Table: {3593}
-{
-   128694,
-   127998,
-},
--- Table: {3594}
-{
-   128694,
-   127999,
-},
--- Table: {3595}
-{
-   128694,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3596}
-{
-   128694,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3597}
-{
-   128694,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3598}
-{
-   128694,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3599}
-{
-   128694,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3600}
-{
-   128694,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3601}
-{
-   127939,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3602}
-{
-   127939,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3603}
-{
-   127939,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3604}
-{
-   127939,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3605}
-{
-   127939,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3606}
-{
-   127939,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3607}
-{
-   127939,
-},
--- Table: {3608}
-{
-   127939,
-   127995,
-},
--- Table: {3609}
-{
-   127939,
-   127996,
-},
--- Table: {3610}
-{
-   127939,
-   127997,
-},
--- Table: {3611}
-{
-   127939,
-   127998,
-},
--- Table: {3612}
-{
-   127939,
-   127999,
-},
--- Table: {3613}
-{
-   127939,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3614}
-{
-   127939,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3615}
-{
-   127939,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3616}
-{
-   127939,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3617}
-{
-   127939,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3618}
-{
-   127939,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3619}
-{
-   128107,
-},
--- Table: {3620}
-{
-   128109,
-},
--- Table: {3621}
-{
-   128108,
-},
--- Table: {3622}
-{
-   128145,
-},
--- Table: {3623}
-{
-   128105,
-   8205,
-   10084,
-   65039,
-   8205,
-   128105,
-},
--- Table: {3624}
-{
-   128104,
-   8205,
-   10084,
-   65039,
-   8205,
-   128104,
-},
--- Table: {3625}
-{
-   128143,
-},
--- Table: {3626}
-{
-   128105,
-   8205,
-   10084,
-   65039,
-   8205,
-   128139,
-   8205,
-   128105,
-},
--- Table: {3627}
-{
-   128104,
-   8205,
-   10084,
-   65039,
-   8205,
-   128139,
-   8205,
-   128104,
-},
--- Table: {3628}
-{
-   128106,
-},
--- Table: {3629}
-{
-   128104,
-   8205,
-   128105,
-   8205,
-   128103,
-},
--- Table: {3630}
-{
-   128104,
-   8205,
-   128105,
-   8205,
-   128103,
-   8205,
-   128102,
-},
--- Table: {3631}
-{
-   128104,
-   8205,
-   128105,
-   8205,
-   128102,
-   8205,
-   128102,
-},
--- Table: {3632}
-{
-   128104,
-   8205,
-   128105,
-   8205,
-   128103,
-   8205,
-   128103,
-},
--- Table: {3633}
-{
-   128105,
-   8205,
-   128105,
-   8205,
-   128102,
-},
--- Table: {3634}
-{
-   128105,
-   8205,
-   128105,
-   8205,
-   128103,
-},
--- Table: {3635}
-{
-   128105,
-   8205,
-   128105,
-   8205,
-   128103,
-   8205,
-   128102,
-},
--- Table: {3636}
-{
-   128105,
-   8205,
-   128105,
-   8205,
-   128102,
-   8205,
-   128102,
-},
--- Table: {3637}
-{
-   128105,
-   8205,
-   128105,
-   8205,
-   128103,
-   8205,
-   128103,
-},
--- Table: {3638}
-{
-   128104,
-   8205,
-   128104,
-   8205,
-   128102,
-},
--- Table: {3639}
-{
-   128104,
-   8205,
-   128104,
-   8205,
-   128103,
-},
--- Table: {3640}
-{
-   128104,
-   8205,
-   128104,
-   8205,
-   128103,
-   8205,
-   128102,
-},
--- Table: {3641}
-{
-   128104,
-   8205,
-   128104,
-   8205,
-   128102,
-   8205,
-   128102,
-},
--- Table: {3642}
-{
-   128104,
-   8205,
-   128104,
-   8205,
-   128103,
-   8205,
-   128103,
-},
--- Table: {3643}
-{
-   128105,
-   8205,
-   128102,
-},
--- Table: {3644}
-{
-   128105,
-   8205,
-   128103,
-},
--- Table: {3645}
-{
-   128105,
-   8205,
-   128103,
-   8205,
-   128102,
-},
--- Table: {3646}
-{
-   128105,
-   8205,
-   128102,
-   8205,
-   128102,
-},
--- Table: {3647}
-{
-   128105,
-   8205,
-   128103,
-   8205,
-   128103,
-},
--- Table: {3648}
-{
-   128104,
-   8205,
-   128102,
-},
--- Table: {3649}
-{
-   128104,
-   8205,
-   128103,
-},
--- Table: {3650}
-{
-   128104,
-   8205,
-   128103,
-   8205,
-   128102,
-},
--- Table: {3651}
-{
-   128104,
-   8205,
-   128102,
-   8205,
-   128102,
-},
--- Table: {3652}
-{
-   128104,
-   8205,
-   128103,
-   8205,
-   128103,
-},
--- Table: {3653}
-{
-   128090,
-},
--- Table: {3654}
-{
-   128085,
-},
--- Table: {3655}
-{
-   128086,
-},
--- Table: {3656}
-{
-   128084,
-},
--- Table: {3657}
-{
-   128087,
-},
--- Table: {3658}
-{
-   128089,
-},
--- Table: {3659}
-{
-   128088,
-},
--- Table: {3660}
-{
-   128096,
-},
--- Table: {3661}
-{
-   128097,
-},
--- Table: {3662}
-{
-   128098,
-},
--- Table: {3663}
-{
-   128094,
-},
--- Table: {3664}
-{
-   128095,
-},
--- Table: {3665}
-{
-   128082,
-},
--- Table: {3666}
-{
-   127913,
-},
--- Table: {3667}
-{
-   127891,
-},
--- Table: {3668}
-{
-   128081,
-},
--- Table: {3669}
-{
-   9937,
-   65039,
-},
--- Table: {3670}
-{
-   127890,
-},
--- Table: {3671}
-{
-   128093,
-},
--- Table: {3672}
-{
-   128091,
-},
--- Table: {3673}
-{
-   128092,
-},
--- Table: {3674}
-{
-   128188,
-},
--- Table: {3675}
-{
-   128083,
-},
--- Table: {3676}
-{
-   128374,
-   65039,
-},
--- Table: {3677}
-{
-   127746,
-},
--- Table: {3678}
-{
-   9730,
-   65039,
-},
--- Table: {3679}
-{
-   128054,
-},
--- Table: {3680}
-{
-   128049,
-},
--- Table: {3681}
-{
-   128045,
-},
--- Table: {3682}
-{
-   128057,
-},
--- Table: {3683}
-{
-   128048,
-},
--- Table: {3684}
-{
-   129418,
-},
--- Table: {3685}
-{
-   128059,
-},
--- Table: {3686}
-{
-   128060,
-},
--- Table: {3687}
-{
-   128040,
-},
--- Table: {3688}
-{
-   128047,
-},
--- Table: {3689}
-{
-   129409,
-},
--- Table: {3690}
-{
-   128046,
-},
--- Table: {3691}
-{
-   128055,
-},
--- Table: {3692}
-{
-   128061,
-},
--- Table: {3693}
-{
-   128056,
-},
--- Table: {3694}
-{
-   128053,
-},
--- Table: {3695}
-{
-   128584,
-},
--- Table: {3696}
-{
-   128585,
-},
--- Table: {3697}
-{
-   128586,
-},
--- Table: {3698}
-{
-   128018,
-},
--- Table: {3699}
-{
-   128020,
-},
--- Table: {3700}
-{
-   128039,
-},
--- Table: {3701}
-{
-   128038,
-},
--- Table: {3702}
-{
-   128036,
-},
--- Table: {3703}
-{
-   128035,
-},
--- Table: {3704}
-{
-   128037,
-},
--- Table: {3705}
-{
-   129414,
-},
--- Table: {3706}
-{
-   129413,
-},
--- Table: {3707}
-{
-   129417,
-},
--- Table: {3708}
-{
-   129415,
-},
--- Table: {3709}
-{
-   128058,
-},
--- Table: {3710}
-{
-   128023,
-},
--- Table: {3711}
-{
-   128052,
-},
--- Table: {3712}
-{
-   129412,
-},
--- Table: {3713}
-{
-   128029,
-},
--- Table: {3714}
-{
-   128027,
-},
--- Table: {3715}
-{
-   129419,
-},
--- Table: {3716}
-{
-   128012,
-},
--- Table: {3717}
-{
-   128026,
-},
--- Table: {3718}
-{
-   128030,
-},
--- Table: {3719}
-{
-   128028,
-},
--- Table: {3720}
-{
-   128375,
-   65039,
-},
--- Table: {3721}
-{
-   128376,
-   65039,
-},
--- Table: {3722}
-{
-   128034,
-},
--- Table: {3723}
-{
-   128013,
-},
--- Table: {3724}
-{
-   129422,
-},
--- Table: {3725}
-{
-   129410,
-},
--- Table: {3726}
-{
-   129408,
-},
--- Table: {3727}
-{
-   129425,
-},
--- Table: {3728}
-{
-   128025,
-},
--- Table: {3729}
-{
-   129424,
-},
--- Table: {3730}
-{
-   128032,
-},
--- Table: {3731}
-{
-   128031,
-},
--- Table: {3732}
-{
-   128033,
-},
--- Table: {3733}
-{
-   128044,
-},
--- Table: {3734}
-{
-   129416,
-},
--- Table: {3735}
-{
-   128051,
-},
--- Table: {3736}
-{
-   128011,
-},
--- Table: {3737}
-{
-   128010,
-},
--- Table: {3738}
-{
-   128006,
-},
--- Table: {3739}
-{
-   128005,
-},
--- Table: {3740}
-{
-   128003,
-},
--- Table: {3741}
-{
-   128002,
-},
--- Table: {3742}
-{
-   128004,
-},
--- Table: {3743}
-{
-   129420,
-},
--- Table: {3744}
-{
-   128042,
-},
--- Table: {3745}
-{
-   128043,
-},
--- Table: {3746}
-{
-   128024,
-},
--- Table: {3747}
-{
-   129423,
-},
--- Table: {3748}
-{
-   129421,
-},
--- Table: {3749}
-{
-   128014,
-},
--- Table: {3750}
-{
-   128022,
-},
--- Table: {3751}
-{
-   128016,
-},
--- Table: {3752}
-{
-   128015,
-},
--- Table: {3753}
-{
-   128017,
-},
--- Table: {3754}
-{
-   128021,
-},
--- Table: {3755}
-{
-   128041,
-},
--- Table: {3756}
-{
-   128008,
-},
--- Table: {3757}
-{
-   128019,
-},
--- Table: {3758}
-{
-   129411,
-},
--- Table: {3759}
-{
-   128330,
-   65039,
-},
--- Table: {3760}
-{
-   128007,
-},
--- Table: {3761}
-{
-   128001,
-},
--- Table: {3762}
-{
-   128000,
-},
--- Table: {3763}
-{
-   128063,
-   65039,
-},
--- Table: {3764}
-{
-   128062,
-},
--- Table: {3765}
-{
-   128009,
-},
--- Table: {3766}
-{
-   128050,
-},
--- Table: {3767}
-{
-   127797,
-},
--- Table: {3768}
-{
-   127876,
-},
--- Table: {3769}
-{
-   127794,
-},
--- Table: {3770}
-{
-   127795,
-},
--- Table: {3771}
-{
-   127796,
-},
--- Table: {3772}
-{
-   127793,
-},
--- Table: {3773}
-{
-   127807,
-},
--- Table: {3774}
-{
-   9752,
-   65039,
-},
--- Table: {3775}
-{
-   127808,
-},
--- Table: {3776}
-{
-   127885,
-},
--- Table: {3777}
-{
-   127883,
-},
--- Table: {3778}
-{
-   127811,
-},
--- Table: {3779}
-{
-   127810,
-},
--- Table: {3780}
-{
-   127809,
-},
--- Table: {3781}
-{
-   127812,
-},
--- Table: {3782}
-{
-   127806,
-},
--- Table: {3783}
-{
-   128144,
-},
--- Table: {3784}
-{
-   127799,
-},
--- Table: {3785}
-{
-   127801,
-},
--- Table: {3786}
-{
-   129344,
-},
--- Table: {3787}
-{
-   127803,
-},
--- Table: {3788}
-{
-   127804,
-},
--- Table: {3789}
-{
-   127800,
-},
--- Table: {3790}
-{
-   127802,
-},
--- Table: {3791}
-{
-   127758,
-},
--- Table: {3792}
-{
-   127757,
-},
--- Table: {3793}
-{
-   127759,
-},
--- Table: {3794}
-{
-   127765,
-},
--- Table: {3795}
-{
-   127766,
-},
--- Table: {3796}
-{
-   127767,
-},
--- Table: {3797}
-{
-   127768,
-},
--- Table: {3798}
-{
-   127761,
-},
--- Table: {3799}
-{
-   127762,
-},
--- Table: {3800}
-{
-   127763,
-},
--- Table: {3801}
-{
-   127764,
-},
--- Table: {3802}
-{
-   127770,
-},
--- Table: {3803}
-{
-   127773,
-},
--- Table: {3804}
-{
-   127774,
-},
--- Table: {3805}
-{
-   127771,
-},
--- Table: {3806}
-{
-   127772,
-},
--- Table: {3807}
-{
-   127769,
-},
--- Table: {3808}
-{
-   128171,
-},
--- Table: {3809}
-{
-   11088,
-},
--- Table: {3810}
-{
-   127775,
-},
--- Table: {3811}
-{
-   10024,
-},
--- Table: {3812}
-{
-   9889,
-},
--- Table: {3813}
-{
-   128293,
-},
--- Table: {3814}
-{
-   128165,
-},
--- Table: {3815}
-{
-   9732,
-   65039,
-},
--- Table: {3816}
-{
-   9728,
-   65039,
-},
--- Table: {3817}
-{
-   127780,
-   65039,
-},
--- Table: {3818}
-{
-   9925,
-},
--- Table: {3819}
-{
-   127781,
-   65039,
-},
--- Table: {3820}
-{
-   127782,
-   65039,
-},
--- Table: {3821}
-{
-   127752,
-},
--- Table: {3822}
-{
-   9729,
-   65039,
-},
--- Table: {3823}
-{
-   127783,
-   65039,
-},
--- Table: {3824}
-{
-   9928,
-   65039,
-},
--- Table: {3825}
-{
-   127785,
-   65039,
-},
--- Table: {3826}
-{
-   127784,
-   65039,
-},
--- Table: {3827}
-{
-   9731,
-   65039,
-},
--- Table: {3828}
-{
-   9924,
-},
--- Table: {3829}
-{
-   10052,
-   65039,
-},
--- Table: {3830}
-{
-   127788,
-   65039,
-},
--- Table: {3831}
-{
-   128168,
-},
--- Table: {3832}
-{
-   127786,
-   65039,
-},
--- Table: {3833}
-{
-   127787,
-   65039,
-},
--- Table: {3834}
-{
-   127754,
-},
--- Table: {3835}
-{
-   128167,
-},
--- Table: {3836}
-{
-   128166,
-},
--- Table: {3837}
-{
-   9748,
-},
--- Table: {3838}
-{
-   129426,
-},
--- Table: {3839}
-{
-   129427,
-},
--- Table: {3840}
-{
-   129428,
-},
--- Table: {3841}
-{
-   129429,
-},
--- Table: {3842}
-{
-   129430,
-},
--- Table: {3843}
-{
-   129431,
-},
--- Table: {3844}
-{
-   127823,
-},
--- Table: {3845}
-{
-   127822,
-},
--- Table: {3846}
-{
-   127824,
-},
--- Table: {3847}
-{
-   127818,
-},
--- Table: {3848}
-{
-   127819,
-},
--- Table: {3849}
-{
-   127820,
-},
--- Table: {3850}
-{
-   127817,
-},
--- Table: {3851}
-{
-   127815,
-},
--- Table: {3852}
-{
-   127827,
-},
--- Table: {3853}
-{
-   127816,
-},
--- Table: {3854}
-{
-   127826,
-},
--- Table: {3855}
-{
-   127825,
-},
--- Table: {3856}
-{
-   127821,
-},
--- Table: {3857}
-{
-   129373,
-},
--- Table: {3858}
-{
-   129361,
-},
--- Table: {3859}
-{
-   127813,
-},
--- Table: {3860}
-{
-   127814,
-},
--- Table: {3861}
-{
-   129362,
-},
--- Table: {3862}
-{
-   129365,
-},
--- Table: {3863}
-{
-   127805,
-},
--- Table: {3864}
-{
-   127798,
-   65039,
-},
--- Table: {3865}
-{
-   129364,
-},
--- Table: {3866}
-{
-   127840,
-},
--- Table: {3867}
-{
-   127792,
-},
--- Table: {3868}
-{
-   129372,
-},
--- Table: {3869}
-{
-   127855,
-},
--- Table: {3870}
-{
-   129360,
-},
--- Table: {3871}
-{
-   127838,
-},
--- Table: {3872}
-{
-   129366,
-},
--- Table: {3873}
-{
-   129472,
-},
--- Table: {3874}
-{
-   129370,
-},
--- Table: {3875}
-{
-   127859,
-},
--- Table: {3876}
-{
-   129363,
-},
--- Table: {3877}
-{
-   129374,
-},
--- Table: {3878}
-{
-   127844,
-},
--- Table: {3879}
-{
-   127831,
-},
--- Table: {3880}
-{
-   127830,
-},
--- Table: {3881}
-{
-   127829,
-},
--- Table: {3882}
-{
-   127789,
-},
--- Table: {3883}
-{
-   127828,
-},
--- Table: {3884}
-{
-   127839,
-},
--- Table: {3885}
-{
-   129369,
-},
--- Table: {3886}
-{
-   127790,
-},
--- Table: {3887}
-{
-   127791,
-},
--- Table: {3888}
-{
-   129367,
-},
--- Table: {3889}
-{
-   129368,
-},
--- Table: {3890}
-{
-   127837,
-},
--- Table: {3891}
-{
-   127836,
-},
--- Table: {3892}
-{
-   127858,
-},
--- Table: {3893}
-{
-   127845,
-},
--- Table: {3894}
-{
-   127843,
-},
--- Table: {3895}
-{
-   127857,
-},
--- Table: {3896}
-{
-   127835,
-},
--- Table: {3897}
-{
-   127833,
-},
--- Table: {3898}
-{
-   127834,
-},
--- Table: {3899}
-{
-   127832,
-},
--- Table: {3900}
-{
-   127842,
-},
--- Table: {3901}
-{
-   127841,
-},
--- Table: {3902}
-{
-   127847,
-},
--- Table: {3903}
-{
-   127848,
-},
--- Table: {3904}
-{
-   127846,
-},
--- Table: {3905}
-{
-   127856,
-},
--- Table: {3906}
-{
-   127874,
-},
--- Table: {3907}
-{
-   127854,
-},
--- Table: {3908}
-{
-   127853,
-},
--- Table: {3909}
-{
-   127852,
-},
--- Table: {3910}
-{
-   127851,
-},
--- Table: {3911}
-{
-   127871,
-},
--- Table: {3912}
-{
-   127849,
-},
--- Table: {3913}
-{
-   127850,
-},
--- Table: {3914}
-{
-   129371,
-},
--- Table: {3915}
-{
-   127868,
-},
--- Table: {3916}
-{
-   9749,
-},
--- Table: {3917}
-{
-   127861,
-},
--- Table: {3918}
-{
-   127862,
-},
--- Table: {3919}
-{
-   127866,
-},
--- Table: {3920}
-{
-   127867,
-},
--- Table: {3921}
-{
-   129346,
-},
--- Table: {3922}
-{
-   127863,
-},
--- Table: {3923}
-{
-   129347,
-},
--- Table: {3924}
-{
-   127864,
-},
--- Table: {3925}
-{
-   127865,
-},
--- Table: {3926}
-{
-   127870,
-},
--- Table: {3927}
-{
-   129348,
-},
--- Table: {3928}
-{
-   127860,
-},
--- Table: {3929}
-{
-   127869,
-   65039,
-},
--- Table: {3930}
-{
-   129375,
-},
--- Table: {3931}
-{
-   129376,
-},
--- Table: {3932}
-{
-   129377,
-},
--- Table: {3933}
-{
-   129378,
-},
--- Table: {3934}
-{
-   129379,
-},
--- Table: {3935}
-{
-   129380,
-},
--- Table: {3936}
-{
-   129381,
-},
--- Table: {3937}
-{
-   129382,
-},
--- Table: {3938}
-{
-   129383,
-},
--- Table: {3939}
-{
-   129384,
-},
--- Table: {3940}
-{
-   129385,
-},
--- Table: {3941}
-{
-   129386,
-},
--- Table: {3942}
-{
-   129387,
-},
--- Table: {3943}
-{
-   9917,
-},
--- Table: {3944}
-{
-   127936,
-},
--- Table: {3945}
-{
-   127944,
-},
--- Table: {3946}
-{
-   9918,
-},
--- Table: {3947}
-{
-   127934,
-},
--- Table: {3948}
-{
-   127952,
-},
--- Table: {3949}
-{
-   127945,
-},
--- Table: {3950}
-{
-   127921,
-},
--- Table: {3951}
-{
-   127955,
-},
--- Table: {3952}
-{
-   127992,
-},
--- Table: {3953}
-{
-   129349,
-},
--- Table: {3954}
-{
-   127954,
-},
--- Table: {3955}
-{
-   127953,
-},
--- Table: {3956}
-{
-   127951,
-},
--- Table: {3957}
-{
-   9971,
-},
--- Table: {3958}
-{
-   127993,
-},
--- Table: {3959}
-{
-   127907,
-},
--- Table: {3960}
-{
-   129354,
-},
--- Table: {3961}
-{
-   129355,
-},
--- Table: {3962}
-{
-   9976,
-   65039,
-},
--- Table: {3963}
-{
-   127935,
-},
--- Table: {3964}
-{
-   9975,
-   65039,
-},
--- Table: {3965}
-{
-   127938,
-},
--- Table: {3966}
-{
-   127938,
-   127995,
-},
--- Table: {3967}
-{
-   127938,
-   127996,
-},
--- Table: {3968}
-{
-   127938,
-   127997,
-},
--- Table: {3969}
-{
-   127938,
-   127998,
-},
--- Table: {3970}
-{
-   127938,
-   127999,
-},
--- Table: {3971}
-{
-   127947,
-   65039,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3972}
-{
-   127947,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3973}
-{
-   127947,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3974}
-{
-   127947,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3975}
-{
-   127947,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3976}
-{
-   127947,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3977}
-{
-   127947,
-   65039,
-},
--- Table: {3978}
-{
-   127947,
-   127995,
-},
--- Table: {3979}
-{
-   127947,
-   127996,
-},
--- Table: {3980}
-{
-   127947,
-   127997,
-},
--- Table: {3981}
-{
-   127947,
-   127998,
-},
--- Table: {3982}
-{
-   127947,
-   127999,
-},
--- Table: {3983}
-{
-   127947,
-   65039,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3984}
-{
-   127947,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3985}
-{
-   127947,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3986}
-{
-   127947,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3987}
-{
-   127947,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3988}
-{
-   127947,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3989}
-{
-   129338,
-},
--- Table: {3990}
-{
-   129340,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3991}
-{
-   129340,
-   8205,
-   9794,
-   65039,
-},
--- Table: {3992}
-{
-   129340,
-},
--- Table: {3993}
-{
-   129336,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3994}
-{
-   129336,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3995}
-{
-   129336,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3996}
-{
-   129336,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3997}
-{
-   129336,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3998}
-{
-   129336,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {3999}
-{
-   129336,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4000}
-{
-   129336,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4001}
-{
-   129336,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4002}
-{
-   129336,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4003}
-{
-   129336,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4004}
-{
-   129336,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4005}
-{
-   129336,
-},
--- Table: {4006}
-{
-   129336,
-   127995,
-},
--- Table: {4007}
-{
-   129336,
-   127996,
-},
--- Table: {4008}
-{
-   129336,
-   127997,
-},
--- Table: {4009}
-{
-   129336,
-   127998,
-},
--- Table: {4010}
-{
-   129336,
-   127999,
-},
--- Table: {4011}
-{
-   9977,
-   65039,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4012}
-{
-   9977,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4013}
-{
-   9977,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4014}
-{
-   9977,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4015}
-{
-   9977,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4016}
-{
-   9977,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4017}
-{
-   9977,
-   65039,
-},
--- Table: {4018}
-{
-   9977,
-   127995,
-},
--- Table: {4019}
-{
-   9977,
-   127996,
-},
--- Table: {4020}
-{
-   9977,
-   127997,
-},
--- Table: {4021}
-{
-   9977,
-   127998,
-},
--- Table: {4022}
-{
-   9977,
-   127999,
-},
--- Table: {4023}
-{
-   9977,
-   65039,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4024}
-{
-   9977,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4025}
-{
-   9977,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4026}
-{
-   9977,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4027}
-{
-   9977,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4028}
-{
-   9977,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4029}
-{
-   129342,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4030}
-{
-   129342,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4031}
-{
-   129342,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4032}
-{
-   129342,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4033}
-{
-   129342,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4034}
-{
-   129342,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4035}
-{
-   129342,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4036}
-{
-   129342,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4037}
-{
-   129342,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4038}
-{
-   129342,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4039}
-{
-   129342,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4040}
-{
-   129342,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4041}
-{
-   129342,
-},
--- Table: {4042}
-{
-   129342,
-   127995,
-},
--- Table: {4043}
-{
-   129342,
-   127996,
-},
--- Table: {4044}
-{
-   129342,
-   127997,
-},
--- Table: {4045}
-{
-   129342,
-   127998,
-},
--- Table: {4046}
-{
-   129342,
-   127999,
-},
--- Table: {4047}
-{
-   127948,
-   65039,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4048}
-{
-   127948,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4049}
-{
-   127948,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4050}
-{
-   127948,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4051}
-{
-   127948,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4052}
-{
-   127948,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4053}
-{
-   127948,
-   65039,
-},
--- Table: {4054}
-{
-   127948,
-   127995,
-},
--- Table: {4055}
-{
-   127948,
-   127996,
-},
--- Table: {4056}
-{
-   127948,
-   127997,
-},
--- Table: {4057}
-{
-   127948,
-   127998,
-},
--- Table: {4058}
-{
-   127948,
-   127999,
-},
--- Table: {4059}
-{
-   127948,
-   65039,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4060}
-{
-   127948,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4061}
-{
-   127948,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4062}
-{
-   127948,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4063}
-{
-   127948,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4064}
-{
-   127948,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4065}
-{
-   127940,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4066}
-{
-   127940,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4067}
-{
-   127940,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4068}
-{
-   127940,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4069}
-{
-   127940,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4070}
-{
-   127940,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4071}
-{
-   127940,
-},
--- Table: {4072}
-{
-   127940,
-   127995,
-},
--- Table: {4073}
-{
-   127940,
-   127996,
-},
--- Table: {4074}
-{
-   127940,
-   127997,
-},
--- Table: {4075}
-{
-   127940,
-   127998,
-},
--- Table: {4076}
-{
-   127940,
-   127999,
-},
--- Table: {4077}
-{
-   127940,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4078}
-{
-   127940,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4079}
-{
-   127940,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4080}
-{
-   127940,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4081}
-{
-   127940,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4082}
-{
-   127940,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4083}
-{
-   127946,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4084}
-{
-   127946,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4085}
-{
-   127946,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4086}
-{
-   127946,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4087}
-{
-   127946,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4088}
-{
-   127946,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4089}
-{
-   127946,
-},
--- Table: {4090}
-{
-   127946,
-   127995,
-},
--- Table: {4091}
-{
-   127946,
-   127996,
-},
--- Table: {4092}
-{
-   127946,
-   127997,
-},
--- Table: {4093}
-{
-   127946,
-   127998,
-},
--- Table: {4094}
-{
-   127946,
-   127999,
-},
--- Table: {4095}
-{
-   127946,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4096}
-{
-   127946,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4097}
-{
-   127946,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4098}
-{
-   127946,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4099}
-{
-   127946,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4100}
-{
-   127946,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4101}
-{
-   129341,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4102}
-{
-   129341,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4103}
-{
-   129341,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4104}
-{
-   129341,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4105}
-{
-   129341,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4106}
-{
-   129341,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4107}
-{
-   129341,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4108}
-{
-   129341,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4109}
-{
-   129341,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4110}
-{
-   129341,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4111}
-{
-   129341,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4112}
-{
-   129341,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4113}
-{
-   129341,
-},
--- Table: {4114}
-{
-   129341,
-   127995,
-},
--- Table: {4115}
-{
-   129341,
-   127996,
-},
--- Table: {4116}
-{
-   129341,
-   127997,
-},
--- Table: {4117}
-{
-   129341,
-   127998,
-},
--- Table: {4118}
-{
-   129341,
-   127999,
-},
--- Table: {4119}
-{
-   128675,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4120}
-{
-   128675,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4121}
-{
-   128675,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4122}
-{
-   128675,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4123}
-{
-   128675,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4124}
-{
-   128675,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4125}
-{
-   128675,
-},
--- Table: {4126}
-{
-   128675,
-   127995,
-},
--- Table: {4127}
-{
-   128675,
-   127996,
-},
--- Table: {4128}
-{
-   128675,
-   127997,
-},
--- Table: {4129}
-{
-   128675,
-   127998,
-},
--- Table: {4130}
-{
-   128675,
-   127999,
-},
--- Table: {4131}
-{
-   128675,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4132}
-{
-   128675,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4133}
-{
-   128675,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4134}
-{
-   128675,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4135}
-{
-   128675,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4136}
-{
-   128675,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4137}
-{
-   127943,
-},
--- Table: {4138}
-{
-   127943,
-   127995,
-},
--- Table: {4139}
-{
-   127943,
-   127996,
-},
--- Table: {4140}
-{
-   127943,
-   127997,
-},
--- Table: {4141}
-{
-   127943,
-   127998,
-},
--- Table: {4142}
-{
-   127943,
-   127999,
-},
--- Table: {4143}
-{
-   128692,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4144}
-{
-   128692,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4145}
-{
-   128692,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4146}
-{
-   128692,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4147}
-{
-   128692,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4148}
-{
-   128692,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4149}
-{
-   128692,
-},
--- Table: {4150}
-{
-   128692,
-   127995,
-},
--- Table: {4151}
-{
-   128692,
-   127996,
-},
--- Table: {4152}
-{
-   128692,
-   127997,
-},
--- Table: {4153}
-{
-   128692,
-   127998,
-},
--- Table: {4154}
-{
-   128692,
-   127999,
-},
--- Table: {4155}
-{
-   128692,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4156}
-{
-   128692,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4157}
-{
-   128692,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4158}
-{
-   128692,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4159}
-{
-   128692,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4160}
-{
-   128692,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4161}
-{
-   128693,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4162}
-{
-   128693,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4163}
-{
-   128693,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4164}
-{
-   128693,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4165}
-{
-   128693,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4166}
-{
-   128693,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4167}
-{
-   128693,
-},
--- Table: {4168}
-{
-   128693,
-   127995,
-},
--- Table: {4169}
-{
-   128693,
-   127996,
-},
--- Table: {4170}
-{
-   128693,
-   127997,
-},
--- Table: {4171}
-{
-   128693,
-   127998,
-},
--- Table: {4172}
-{
-   128693,
-   127999,
-},
--- Table: {4173}
-{
-   128693,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4174}
-{
-   128693,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4175}
-{
-   128693,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4176}
-{
-   128693,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4177}
-{
-   128693,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4178}
-{
-   128693,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4179}
-{
-   127933,
-},
--- Table: {4180}
-{
-   127941,
-},
--- Table: {4181}
-{
-   127894,
-   65039,
-},
--- Table: {4182}
-{
-   129351,
-},
--- Table: {4183}
-{
-   129352,
-},
--- Table: {4184}
-{
-   129353,
-},
--- Table: {4185}
-{
-   127942,
-},
--- Table: {4186}
-{
-   127989,
-   65039,
-},
--- Table: {4187}
-{
-   127895,
-   65039,
-},
--- Table: {4188}
-{
-   127915,
-},
--- Table: {4189}
-{
-   127903,
-   65039,
-},
--- Table: {4190}
-{
-   127914,
-},
--- Table: {4191}
-{
-   129337,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4192}
-{
-   129337,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4193}
-{
-   129337,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4194}
-{
-   129337,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4195}
-{
-   129337,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4196}
-{
-   129337,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4197}
-{
-   129337,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4198}
-{
-   129337,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4199}
-{
-   129337,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4200}
-{
-   129337,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4201}
-{
-   129337,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4202}
-{
-   129337,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4203}
-{
-   129337,
-},
--- Table: {4204}
-{
-   129337,
-   127995,
-},
--- Table: {4205}
-{
-   129337,
-   127996,
-},
--- Table: {4206}
-{
-   129337,
-   127997,
-},
--- Table: {4207}
-{
-   129337,
-   127998,
-},
--- Table: {4208}
-{
-   129337,
-   127999,
-},
--- Table: {4209}
-{
-   127917,
-},
--- Table: {4210}
-{
-   127912,
-},
--- Table: {4211}
-{
-   127916,
-},
--- Table: {4212}
-{
-   127908,
-},
--- Table: {4213}
-{
-   127911,
-},
--- Table: {4214}
-{
-   127932,
-},
--- Table: {4215}
-{
-   127929,
-},
--- Table: {4216}
-{
-   129345,
-},
--- Table: {4217}
-{
-   127927,
-},
--- Table: {4218}
-{
-   127930,
-},
--- Table: {4219}
-{
-   127928,
-},
--- Table: {4220}
-{
-   127931,
-},
--- Table: {4221}
-{
-   127922,
-},
--- Table: {4222}
-{
-   127919,
-},
--- Table: {4223}
-{
-   127923,
-},
--- Table: {4224}
-{
-   127918,
-},
--- Table: {4225}
-{
-   127920,
-},
--- Table: {4226}
-{
-   128759,
-},
--- Table: {4227}
-{
-   129329,
-},
--- Table: {4228}
-{
-   129356,
-},
--- Table: {4229}
-{
-   129494,
-},
--- Table: {4230}
-{
-   129495,
-},
--- Table: {4231}
-{
-   129496,
-},
--- Table: {4232}
-{
-   129329,
-   127995,
-},
--- Table: {4233}
-{
-   129329,
-   127996,
-},
--- Table: {4234}
-{
-   129329,
-   127997,
-},
--- Table: {4235}
-{
-   129329,
-   127998,
-},
--- Table: {4236}
-{
-   129329,
-   127999,
-},
--- Table: {4237}
-{
-   129494,
-   127995,
-},
--- Table: {4238}
-{
-   129494,
-   127996,
-},
--- Table: {4239}
-{
-   129494,
-   127997,
-},
--- Table: {4240}
-{
-   129494,
-   127998,
-},
--- Table: {4241}
-{
-   129494,
-   127999,
-},
--- Table: {4242}
-{
-   129495,
-   127995,
-},
--- Table: {4243}
-{
-   129495,
-   127996,
-},
--- Table: {4244}
-{
-   129495,
-   127997,
-},
--- Table: {4245}
-{
-   129495,
-   127998,
-},
--- Table: {4246}
-{
-   129495,
-   127999,
-},
--- Table: {4247}
-{
-   129496,
-   127995,
-},
--- Table: {4248}
-{
-   129496,
-   127996,
-},
--- Table: {4249}
-{
-   129496,
-   127997,
-},
--- Table: {4250}
-{
-   129496,
-   127998,
-},
--- Table: {4251}
-{
-   129496,
-   127999,
-},
--- Table: {4252}
-{
-   129494,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4253}
-{
-   129494,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4254}
-{
-   129494,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4255}
-{
-   129494,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4256}
-{
-   129494,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4257}
-{
-   129494,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4258}
-{
-   129494,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4259}
-{
-   129494,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4260}
-{
-   129494,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4261}
-{
-   129494,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4262}
-{
-   129494,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4263}
-{
-   129494,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4264}
-{
-   129495,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4265}
-{
-   129495,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4266}
-{
-   129495,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4267}
-{
-   129495,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4268}
-{
-   129495,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4269}
-{
-   129495,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4270}
-{
-   129495,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4271}
-{
-   129495,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4272}
-{
-   129495,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4273}
-{
-   129495,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4274}
-{
-   129495,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4275}
-{
-   129495,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4276}
-{
-   129496,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4277}
-{
-   129496,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4278}
-{
-   129496,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4279}
-{
-   129496,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4280}
-{
-   129496,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4281}
-{
-   129496,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4282}
-{
-   129496,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4283}
-{
-   129496,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4284}
-{
-   129496,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4285}
-{
-   129496,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4286}
-{
-   129496,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {4287}
-{
-   129496,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {4288}
-{
-   128663,
-},
--- Table: {4289}
-{
-   128661,
-},
--- Table: {4290}
-{
-   128665,
-},
--- Table: {4291}
-{
-   128652,
-},
--- Table: {4292}
-{
-   128654,
-},
--- Table: {4293}
-{
-   127950,
-   65039,
-},
--- Table: {4294}
-{
-   128659,
-},
--- Table: {4295}
-{
-   128657,
-},
--- Table: {4296}
-{
-   128658,
-},
--- Table: {4297}
-{
-   128656,
-},
--- Table: {4298}
-{
-   128666,
-},
--- Table: {4299}
-{
-   128667,
-},
--- Table: {4300}
-{
-   128668,
-},
--- Table: {4301}
-{
-   128756,
-},
--- Table: {4302}
-{
-   128690,
-},
--- Table: {4303}
-{
-   128757,
-},
--- Table: {4304}
-{
-   127949,
-   65039,
-},
--- Table: {4305}
-{
-   128680,
-},
--- Table: {4306}
-{
-   128660,
-},
--- Table: {4307}
-{
-   128653,
-},
--- Table: {4308}
-{
-   128664,
-},
--- Table: {4309}
-{
-   128662,
-},
--- Table: {4310}
-{
-   128673,
-},
--- Table: {4311}
-{
-   128672,
-},
--- Table: {4312}
-{
-   128671,
-},
--- Table: {4313}
-{
-   128643,
-},
--- Table: {4314}
-{
-   128651,
-},
--- Table: {4315}
-{
-   128670,
-},
--- Table: {4316}
-{
-   128669,
-},
--- Table: {4317}
-{
-   128644,
-},
--- Table: {4318}
-{
-   128645,
-},
--- Table: {4319}
-{
-   128648,
-},
--- Table: {4320}
-{
-   128642,
-},
--- Table: {4321}
-{
-   128646,
-},
--- Table: {4322}
-{
-   128647,
-},
--- Table: {4323}
-{
-   128650,
-},
--- Table: {4324}
-{
-   128649,
-},
--- Table: {4325}
-{
-   128641,
-},
--- Table: {4326}
-{
-   128745,
-   65039,
-},
--- Table: {4327}
-{
-   9992,
-   65039,
-},
--- Table: {4328}
-{
-   128747,
-},
--- Table: {4329}
-{
-   128748,
-},
--- Table: {4330}
-{
-   128640,
-},
--- Table: {4331}
-{
-   128752,
-   65039,
-},
--- Table: {4332}
-{
-   128186,
-},
--- Table: {4333}
-{
-   128758,
-},
--- Table: {4334}
-{
-   9973,
-},
--- Table: {4335}
-{
-   128741,
-   65039,
-},
--- Table: {4336}
-{
-   128676,
-},
--- Table: {4337}
-{
-   128755,
-   65039,
-},
--- Table: {4338}
-{
-   9972,
-   65039,
-},
--- Table: {4339}
-{
-   128674,
-},
--- Table: {4340}
-{
-   9875,
-},
--- Table: {4341}
-{
-   128679,
-},
--- Table: {4342}
-{
-   9981,
-},
--- Table: {4343}
-{
-   128655,
-},
--- Table: {4344}
-{
-   128678,
-},
--- Table: {4345}
-{
-   128677,
-},
--- Table: {4346}
-{
-   128506,
-   65039,
-},
--- Table: {4347}
-{
-   128511,
-},
--- Table: {4348}
-{
-   128509,
-},
--- Table: {4349}
-{
-   9970,
-},
--- Table: {4350}
-{
-   128508,
-},
--- Table: {4351}
-{
-   127984,
-},
--- Table: {4352}
-{
-   127983,
-},
--- Table: {4353}
-{
-   127967,
-   65039,
-},
--- Table: {4354}
-{
-   127905,
-},
--- Table: {4355}
-{
-   127906,
-},
--- Table: {4356}
-{
-   127904,
-},
--- Table: {4357}
-{
-   9969,
-   65039,
-},
--- Table: {4358}
-{
-   127958,
-   65039,
-},
--- Table: {4359}
-{
-   127965,
-   65039,
-},
--- Table: {4360}
-{
-   9968,
-   65039,
-},
--- Table: {4361}
-{
-   127956,
-   65039,
-},
--- Table: {4362}
-{
-   128507,
-},
--- Table: {4363}
-{
-   127755,
-},
--- Table: {4364}
-{
-   127964,
-   65039,
-},
--- Table: {4365}
-{
-   127957,
-   65039,
-},
--- Table: {4366}
-{
-   9978,
-},
--- Table: {4367}
-{
-   128740,
-   65039,
-},
--- Table: {4368}
-{
-   128739,
-   65039,
-},
--- Table: {4369}
-{
-   127959,
-   65039,
-},
--- Table: {4370}
-{
-   127981,
-},
--- Table: {4371}
-{
-   127968,
-},
--- Table: {4372}
-{
-   127969,
-},
--- Table: {4373}
-{
-   127960,
-   65039,
-},
--- Table: {4374}
-{
-   127962,
-   65039,
-},
--- Table: {4375}
-{
-   127970,
-},
--- Table: {4376}
-{
-   127980,
-},
--- Table: {4377}
-{
-   127971,
-},
--- Table: {4378}
-{
-   127972,
-},
--- Table: {4379}
-{
-   127973,
-},
--- Table: {4380}
-{
-   127974,
-},
--- Table: {4381}
-{
-   127976,
-},
--- Table: {4382}
-{
-   127978,
-},
--- Table: {4383}
-{
-   127979,
-},
--- Table: {4384}
-{
-   127977,
-},
--- Table: {4385}
-{
-   128146,
-},
--- Table: {4386}
-{
-   127963,
-   65039,
-},
--- Table: {4387}
-{
-   9962,
-},
--- Table: {4388}
-{
-   128332,
-},
--- Table: {4389}
-{
-   128333,
-},
--- Table: {4390}
-{
-   128331,
-},
--- Table: {4391}
-{
-   9961,
-   65039,
-},
--- Table: {4392}
-{
-   128510,
-},
--- Table: {4393}
-{
-   127889,
-},
--- Table: {4394}
-{
-   127966,
-   65039,
-},
--- Table: {4395}
-{
-   127749,
-},
--- Table: {4396}
-{
-   127748,
-},
--- Table: {4397}
-{
-   127776,
-},
--- Table: {4398}
-{
-   127879,
-},
--- Table: {4399}
-{
-   127878,
-},
--- Table: {4400}
-{
-   127751,
-},
--- Table: {4401}
-{
-   127750,
-},
--- Table: {4402}
-{
-   127961,
-   65039,
-},
--- Table: {4403}
-{
-   127747,
-},
--- Table: {4404}
-{
-   127756,
-},
--- Table: {4405}
-{
-   127753,
-},
--- Table: {4406}
-{
-   127745,
-},
--- Table: {4407}
-{
-   128760,
-},
--- Table: {4408}
-{
-   8986,
-},
--- Table: {4409}
-{
-   128241,
-},
--- Table: {4410}
-{
-   128242,
-},
--- Table: {4411}
-{
-   128187,
-},
--- Table: {4412}
-{
-   9000,
-   65039,
-},
--- Table: {4413}
-{
-   128421,
-   65039,
-},
--- Table: {4414}
-{
-   128424,
-   65039,
-},
--- Table: {4415}
-{
-   128433,
-   65039,
-},
--- Table: {4416}
-{
-   128434,
-   65039,
-},
--- Table: {4417}
-{
-   128377,
-   65039,
-},
--- Table: {4418}
-{
-   128476,
-   65039,
-},
--- Table: {4419}
-{
-   128189,
-},
--- Table: {4420}
-{
-   128190,
-},
--- Table: {4421}
-{
-   128191,
-},
--- Table: {4422}
-{
-   128192,
-},
--- Table: {4423}
-{
-   128252,
-},
--- Table: {4424}
-{
-   128247,
-},
--- Table: {4425}
-{
-   128248,
-},
--- Table: {4426}
-{
-   128249,
-},
--- Table: {4427}
-{
-   127909,
-},
--- Table: {4428}
-{
-   128253,
-   65039,
-},
--- Table: {4429}
-{
-   127902,
-   65039,
-},
--- Table: {4430}
-{
-   128222,
-},
--- Table: {4431}
-{
-   9742,
-   65039,
-},
--- Table: {4432}
-{
-   128223,
-},
--- Table: {4433}
-{
-   128224,
-},
--- Table: {4434}
-{
-   128250,
-},
--- Table: {4435}
-{
-   128251,
-},
--- Table: {4436}
-{
-   127897,
-   65039,
-},
--- Table: {4437}
-{
-   127898,
-   65039,
-},
--- Table: {4438}
-{
-   127899,
-   65039,
-},
--- Table: {4439}
-{
-   9201,
-   65039,
-},
--- Table: {4440}
-{
-   9202,
-   65039,
-},
--- Table: {4441}
-{
-   9200,
-},
--- Table: {4442}
-{
-   128368,
-   65039,
-},
--- Table: {4443}
-{
-   8987,
-},
--- Table: {4444}
-{
-   9203,
-},
--- Table: {4445}
-{
-   128225,
-},
--- Table: {4446}
-{
-   128267,
-},
--- Table: {4447}
-{
-   128268,
-},
--- Table: {4448}
-{
-   128161,
-},
--- Table: {4449}
-{
-   128294,
-},
--- Table: {4450}
-{
-   128367,
-   65039,
-},
--- Table: {4451}
-{
-   128465,
-   65039,
-},
--- Table: {4452}
-{
-   128738,
-   65039,
-},
--- Table: {4453}
-{
-   128184,
-},
--- Table: {4454}
-{
-   128181,
-},
--- Table: {4455}
-{
-   128180,
-},
--- Table: {4456}
-{
-   128182,
-},
--- Table: {4457}
-{
-   128183,
-},
--- Table: {4458}
-{
-   128176,
-},
--- Table: {4459}
-{
-   128179,
-},
--- Table: {4460}
-{
-   128142,
-},
--- Table: {4461}
-{
-   9878,
-   65039,
-},
--- Table: {4462}
-{
-   128295,
-},
--- Table: {4463}
-{
-   128296,
-},
--- Table: {4464}
-{
-   9874,
-   65039,
-},
--- Table: {4465}
-{
-   128736,
-   65039,
-},
--- Table: {4466}
-{
-   9935,
-   65039,
-},
--- Table: {4467}
-{
-   128297,
-},
--- Table: {4468}
-{
-   9881,
-   65039,
-},
--- Table: {4469}
-{
-   9939,
-   65039,
-},
--- Table: {4470}
-{
-   128299,
-},
--- Table: {4471}
-{
-   128163,
-},
--- Table: {4472}
-{
-   128298,
-},
--- Table: {4473}
-{
-   128481,
-   65039,
-},
--- Table: {4474}
-{
-   9876,
-   65039,
-},
--- Table: {4475}
-{
-   128737,
-   65039,
-},
--- Table: {4476}
-{
-   128684,
-},
--- Table: {4477}
-{
-   9904,
-   65039,
-},
--- Table: {4478}
-{
-   9905,
-   65039,
-},
--- Table: {4479}
-{
-   127994,
-},
--- Table: {4480}
-{
-   128302,
-},
--- Table: {4481}
-{
-   128255,
-},
--- Table: {4482}
-{
-   128136,
-},
--- Table: {4483}
-{
-   9879,
-   65039,
-},
--- Table: {4484}
-{
-   128301,
-},
--- Table: {4485}
-{
-   128300,
-},
--- Table: {4486}
-{
-   128371,
-   65039,
-},
--- Table: {4487}
-{
-   128138,
-},
--- Table: {4488}
-{
-   128137,
-},
--- Table: {4489}
-{
-   127777,
-   65039,
-},
--- Table: {4490}
-{
-   128701,
-},
--- Table: {4491}
-{
-   128688,
-},
--- Table: {4492}
-{
-   128703,
-},
--- Table: {4493}
-{
-   128705,
-},
--- Table: {4494}
-{
-   128704,
-},
--- Table: {4495}
-{
-   128704,
-   127995,
-},
--- Table: {4496}
-{
-   128704,
-   127996,
-},
--- Table: {4497}
-{
-   128704,
-   127997,
-},
--- Table: {4498}
-{
-   128704,
-   127998,
-},
--- Table: {4499}
-{
-   128704,
-   127999,
-},
--- Table: {4500}
-{
-   128718,
-   65039,
-},
--- Table: {4501}
-{
-   128273,
-},
--- Table: {4502}
-{
-   128477,
-   65039,
-},
--- Table: {4503}
-{
-   128682,
-},
--- Table: {4504}
-{
-   128715,
-   65039,
-},
--- Table: {4505}
-{
-   128719,
-   65039,
-},
--- Table: {4506}
-{
-   128716,
-},
--- Table: {4507}
-{
-   128716,
-   127995,
-},
--- Table: {4508}
-{
-   128716,
-   127996,
-},
--- Table: {4509}
-{
-   128716,
-   127997,
-},
--- Table: {4510}
-{
-   128716,
-   127998,
-},
--- Table: {4511}
-{
-   128716,
-   127999,
-},
--- Table: {4512}
-{
-   128444,
-   65039,
-},
--- Table: {4513}
-{
-   128717,
-   65039,
-},
--- Table: {4514}
-{
-   128722,
-},
--- Table: {4515}
-{
-   127873,
-},
--- Table: {4516}
-{
-   127880,
-},
--- Table: {4517}
-{
-   127887,
-},
--- Table: {4518}
-{
-   127872,
-},
--- Table: {4519}
-{
-   127882,
-},
--- Table: {4520}
-{
-   127881,
-},
--- Table: {4521}
-{
-   127886,
-},
--- Table: {4522}
-{
-   127982,
-},
--- Table: {4523}
-{
-   127888,
-},
--- Table: {4524}
-{
-   9993,
-   65039,
-},
--- Table: {4525}
-{
-   128233,
-},
--- Table: {4526}
-{
-   128232,
-},
--- Table: {4527}
-{
-   128231,
-},
--- Table: {4528}
-{
-   128140,
-},
--- Table: {4529}
-{
-   128229,
-},
--- Table: {4530}
-{
-   128228,
-},
--- Table: {4531}
-{
-   128230,
-},
--- Table: {4532}
-{
-   127991,
-   65039,
-},
--- Table: {4533}
-{
-   128234,
-},
--- Table: {4534}
-{
-   128235,
-},
--- Table: {4535}
-{
-   128236,
-},
--- Table: {4536}
-{
-   128237,
-},
--- Table: {4537}
-{
-   128238,
-},
--- Table: {4538}
-{
-   128239,
-},
--- Table: {4539}
-{
-   128220,
-},
--- Table: {4540}
-{
-   128195,
-},
--- Table: {4541}
-{
-   128196,
-},
--- Table: {4542}
-{
-   128209,
-},
--- Table: {4543}
-{
-   128202,
-},
--- Table: {4544}
-{
-   128200,
-},
--- Table: {4545}
-{
-   128201,
-},
--- Table: {4546}
-{
-   128466,
-   65039,
-},
--- Table: {4547}
-{
-   128467,
-   65039,
-},
--- Table: {4548}
-{
-   128198,
-},
--- Table: {4549}
-{
-   128197,
-},
--- Table: {4550}
-{
-   128199,
-},
--- Table: {4551}
-{
-   128451,
-   65039,
-},
--- Table: {4552}
-{
-   128499,
-   65039,
-},
--- Table: {4553}
-{
-   128452,
-   65039,
-},
--- Table: {4554}
-{
-   128203,
-},
--- Table: {4555}
-{
-   128193,
-},
--- Table: {4556}
-{
-   128194,
-},
--- Table: {4557}
-{
-   128450,
-   65039,
-},
--- Table: {4558}
-{
-   128478,
-   65039,
-},
--- Table: {4559}
-{
-   128240,
-},
--- Table: {4560}
-{
-   128211,
-},
--- Table: {4561}
-{
-   128212,
-},
--- Table: {4562}
-{
-   128210,
-},
--- Table: {4563}
-{
-   128213,
-},
--- Table: {4564}
-{
-   128215,
-},
--- Table: {4565}
-{
-   128216,
-},
--- Table: {4566}
-{
-   128217,
-},
--- Table: {4567}
-{
-   128218,
-},
--- Table: {4568}
-{
-   128214,
-},
--- Table: {4569}
-{
-   128278,
-},
--- Table: {4570}
-{
-   128279,
-},
--- Table: {4571}
-{
-   128206,
-},
--- Table: {4572}
-{
-   128391,
-   65039,
-},
--- Table: {4573}
-{
-   128208,
-},
--- Table: {4574}
-{
-   128207,
-},
--- Table: {4575}
-{
-   128204,
-},
--- Table: {4576}
-{
-   128205,
-},
--- Table: {4577}
-{
-   9986,
-   65039,
-},
--- Table: {4578}
-{
-   128394,
-   65039,
-},
--- Table: {4579}
-{
-   128395,
-   65039,
-},
--- Table: {4580}
-{
-   10002,
-   65039,
-},
--- Table: {4581}
-{
-   128396,
-   65039,
-},
--- Table: {4582}
-{
-   128397,
-   65039,
-},
--- Table: {4583}
-{
-   128221,
-},
--- Table: {4584}
-{
-   9999,
-   65039,
-},
--- Table: {4585}
-{
-   128269,
-},
--- Table: {4586}
-{
-   128270,
-},
--- Table: {4587}
-{
-   128271,
-},
--- Table: {4588}
-{
-   128272,
-},
--- Table: {4589}
-{
-   128274,
-},
--- Table: {4590}
-{
-   128275,
-},
--- Table: {4591}
-{
-   129505,
-},
--- Table: {4592}
-{
-   10084,
-   65039,
-},
--- Table: {4593}
-{
-   128155,
-},
--- Table: {4594}
-{
-   128154,
-},
--- Table: {4595}
-{
-   128153,
-},
--- Table: {4596}
-{
-   128156,
-},
--- Table: {4597}
-{
-   128420,
-},
--- Table: {4598}
-{
-   128148,
-},
--- Table: {4599}
-{
-   10083,
-   65039,
-},
--- Table: {4600}
-{
-   128149,
-},
--- Table: {4601}
-{
-   128158,
-},
--- Table: {4602}
-{
-   128147,
-},
--- Table: {4603}
-{
-   128151,
-},
--- Table: {4604}
-{
-   128150,
-},
--- Table: {4605}
-{
-   128152,
-},
--- Table: {4606}
-{
-   128157,
-},
--- Table: {4607}
-{
-   128159,
-},
--- Table: {4608}
-{
-   9774,
-   65039,
-},
--- Table: {4609}
-{
-   10013,
-   65039,
-},
--- Table: {4610}
-{
-   9770,
-   65039,
-},
--- Table: {4611}
-{
-   128329,
-   65039,
-},
--- Table: {4612}
-{
-   9784,
-   65039,
-},
--- Table: {4613}
-{
-   10017,
-   65039,
-},
--- Table: {4614}
-{
-   128303,
-},
--- Table: {4615}
-{
-   128334,
-},
--- Table: {4616}
-{
-   9775,
-   65039,
-},
--- Table: {4617}
-{
-   9766,
-   65039,
-},
--- Table: {4618}
-{
-   128720,
-},
--- Table: {4619}
-{
-   9934,
-},
--- Table: {4620}
-{
-   9800,
-},
--- Table: {4621}
-{
-   9801,
-},
--- Table: {4622}
-{
-   9802,
-},
--- Table: {4623}
-{
-   9803,
-},
--- Table: {4624}
-{
-   9804,
-},
--- Table: {4625}
-{
-   9805,
-},
--- Table: {4626}
-{
-   9806,
-},
--- Table: {4627}
-{
-   9807,
-},
--- Table: {4628}
-{
-   9808,
-},
--- Table: {4629}
-{
-   9809,
-},
--- Table: {4630}
-{
-   9810,
-},
--- Table: {4631}
-{
-   9811,
-},
--- Table: {4632}
-{
-   127380,
-},
--- Table: {4633}
-{
-   9883,
-   65039,
-},
--- Table: {4634}
-{
-   127569,
-},
--- Table: {4635}
-{
-   9762,
-   65039,
-},
--- Table: {4636}
-{
-   9763,
-   65039,
-},
--- Table: {4637}
-{
-   128244,
-},
--- Table: {4638}
-{
-   128243,
-},
--- Table: {4639}
-{
-   127542,
-},
--- Table: {4640}
-{
-   127514,
-},
--- Table: {4641}
-{
-   127544,
-},
--- Table: {4642}
-{
-   127546,
-},
--- Table: {4643}
-{
-   127543,
-   65039,
-},
--- Table: {4644}
-{
-   10036,
-   65039,
-},
--- Table: {4645}
-{
-   127386,
-},
--- Table: {4646}
-{
-   128174,
-},
--- Table: {4647}
-{
-   127568,
-},
--- Table: {4648}
-{
-   12953,
-   65039,
-},
--- Table: {4649}
-{
-   12951,
-   65039,
-},
--- Table: {4650}
-{
-   127540,
-},
--- Table: {4651}
-{
-   127541,
-},
--- Table: {4652}
-{
-   127545,
-},
--- Table: {4653}
-{
-   127538,
-},
--- Table: {4654}
-{
-   127344,
-   65039,
-},
--- Table: {4655}
-{
-   127345,
-   65039,
-},
--- Table: {4656}
-{
-   127374,
-},
--- Table: {4657}
-{
-   127377,
-},
--- Table: {4658}
-{
-   127358,
-   65039,
-},
--- Table: {4659}
-{
-   127384,
-},
--- Table: {4660}
-{
-   10060,
-},
--- Table: {4661}
-{
-   11093,
-},
--- Table: {4662}
-{
-   128721,
-},
--- Table: {4663}
-{
-   9940,
-},
--- Table: {4664}
-{
-   128219,
-},
--- Table: {4665}
-{
-   128683,
-},
--- Table: {4666}
-{
-   128175,
-},
--- Table: {4667}
-{
-   128162,
-},
--- Table: {4668}
-{
-   9832,
-   65039,
-},
--- Table: {4669}
-{
-   128695,
-},
--- Table: {4670}
-{
-   128687,
-},
--- Table: {4671}
-{
-   128691,
-},
--- Table: {4672}
-{
-   128689,
-},
--- Table: {4673}
-{
-   128286,
-},
--- Table: {4674}
-{
-   128245,
-},
--- Table: {4675}
-{
-   128685,
-},
--- Table: {4676}
-{
-   10071,
-},
--- Table: {4677}
-{
-   10069,
-},
--- Table: {4678}
-{
-   10067,
-},
--- Table: {4679}
-{
-   10068,
-},
--- Table: {4680}
-{
-   8252,
-   65039,
-},
--- Table: {4681}
-{
-   8265,
-   65039,
-},
--- Table: {4682}
-{
-   128261,
-},
--- Table: {4683}
-{
-   128262,
-},
--- Table: {4684}
-{
-   12349,
-   65039,
-},
--- Table: {4685}
-{
-   9888,
-   65039,
-},
--- Table: {4686}
-{
-   128696,
-},
--- Table: {4687}
-{
-   128305,
-},
--- Table: {4688}
-{
-   9884,
-   65039,
-},
--- Table: {4689}
-{
-   128304,
-},
--- Table: {4690}
-{
-   9851,
-   65039,
-},
--- Table: {4691}
-{
-   9989,
-},
--- Table: {4692}
-{
-   127535,
-},
--- Table: {4693}
-{
-   128185,
-},
--- Table: {4694}
-{
-   10055,
-   65039,
-},
--- Table: {4695}
-{
-   10035,
-   65039,
-},
--- Table: {4696}
-{
-   10062,
-},
--- Table: {4697}
-{
-   127760,
-},
--- Table: {4698}
-{
-   128160,
-},
--- Table: {4699}
-{
-   9410,
-   65039,
-},
--- Table: {4700}
-{
-   127744,
-},
--- Table: {4701}
-{
-   128164,
-},
--- Table: {4702}
-{
-   127975,
-},
--- Table: {4703}
-{
-   128702,
-},
--- Table: {4704}
-{
-   9855,
-},
--- Table: {4705}
-{
-   127359,
-   65039,
-},
--- Table: {4706}
-{
-   127539,
-},
--- Table: {4707}
-{
-   127490,
-   65039,
-},
--- Table: {4708}
-{
-   128706,
-},
--- Table: {4709}
-{
-   128707,
-},
--- Table: {4710}
-{
-   128708,
-},
--- Table: {4711}
-{
-   128709,
-},
--- Table: {4712}
-{
-   128697,
-},
--- Table: {4713}
-{
-   128698,
-},
--- Table: {4714}
-{
-   128700,
-},
--- Table: {4715}
-{
-   128699,
-},
--- Table: {4716}
-{
-   128686,
-},
--- Table: {4717}
-{
-   127910,
-},
--- Table: {4718}
-{
-   128246,
-},
--- Table: {4719}
-{
-   127489,
-},
--- Table: {4720}
-{
-   128291,
-},
--- Table: {4721}
-{
-   8505,
-   65039,
-},
--- Table: {4722}
-{
-   128292,
-},
--- Table: {4723}
-{
-   128289,
-},
--- Table: {4724}
-{
-   128288,
-},
--- Table: {4725}
-{
-   127382,
-},
--- Table: {4726}
-{
-   127383,
-},
--- Table: {4727}
-{
-   127385,
-},
--- Table: {4728}
-{
-   127378,
-},
--- Table: {4729}
-{
-   127381,
-},
--- Table: {4730}
-{
-   127379,
-},
--- Table: {4731}
-{
-   48,
-   65039,
-   8419,
-},
--- Table: {4732}
-{
-   49,
-   65039,
-   8419,
-},
--- Table: {4733}
-{
-   50,
-   65039,
-   8419,
-},
--- Table: {4734}
-{
-   51,
-   65039,
-   8419,
-},
--- Table: {4735}
-{
-   52,
-   65039,
-   8419,
-},
--- Table: {4736}
-{
-   53,
-   65039,
-   8419,
-},
--- Table: {4737}
-{
-   54,
-   65039,
-   8419,
-},
--- Table: {4738}
-{
-   55,
-   65039,
-   8419,
-},
--- Table: {4739}
-{
-   56,
-   65039,
-   8419,
-},
--- Table: {4740}
-{
-   57,
-   65039,
-   8419,
-},
--- Table: {4741}
-{
-   128287,
-},
--- Table: {4742}
-{
-   128290,
-},
--- Table: {4743}
-{
-   35,
-   65039,
-   8419,
-},
--- Table: {4744}
-{
-   42,
-   65039,
-   8419,
-},
--- Table: {4745}
-{
-   9654,
-   65039,
-},
--- Table: {4746}
-{
-   9208,
-   65039,
-},
--- Table: {4747}
-{
-   9199,
-   65039,
-},
--- Table: {4748}
-{
-   9209,
-   65039,
-},
--- Table: {4749}
-{
-   9210,
-   65039,
-},
--- Table: {4750}
-{
-   9167,
-   65039,
-},
--- Table: {4751}
-{
-   9197,
-   65039,
-},
--- Table: {4752}
-{
-   9198,
-   65039,
-},
--- Table: {4753}
-{
-   9193,
-},
--- Table: {4754}
-{
-   9194,
-},
--- Table: {4755}
-{
-   9195,
-},
--- Table: {4756}
-{
-   9196,
-},
--- Table: {4757}
-{
-   9664,
-   65039,
-},
--- Table: {4758}
-{
-   128316,
-},
--- Table: {4759}
-{
-   128317,
-},
--- Table: {4760}
-{
-   10145,
-   65039,
-},
--- Table: {4761}
-{
-   11013,
-   65039,
-},
--- Table: {4762}
-{
-   11014,
-   65039,
-},
--- Table: {4763}
-{
-   11015,
-   65039,
-},
--- Table: {4764}
-{
-   8599,
-   65039,
-},
--- Table: {4765}
-{
-   8600,
-   65039,
-},
--- Table: {4766}
-{
-   8601,
-   65039,
-},
--- Table: {4767}
-{
-   8598,
-   65039,
-},
--- Table: {4768}
-{
-   8597,
-   65039,
-},
--- Table: {4769}
-{
-   8596,
-   65039,
-},
--- Table: {4770}
-{
-   8618,
-   65039,
-},
--- Table: {4771}
-{
-   8617,
-   65039,
-},
--- Table: {4772}
-{
-   10548,
-   65039,
-},
--- Table: {4773}
-{
-   10549,
-   65039,
-},
--- Table: {4774}
-{
-   128256,
-},
--- Table: {4775}
-{
-   128257,
-},
--- Table: {4776}
-{
-   128258,
-},
--- Table: {4777}
-{
-   128260,
-},
--- Table: {4778}
-{
-   128259,
-},
--- Table: {4779}
-{
-   127925,
-},
--- Table: {4780}
-{
-   127926,
-},
--- Table: {4781}
-{
-   10133,
-},
--- Table: {4782}
-{
-   10134,
-},
--- Table: {4783}
-{
-   10135,
-},
--- Table: {4784}
-{
-   10006,
-   65039,
-},
--- Table: {4785}
-{
-   128178,
-},
--- Table: {4786}
-{
-   128177,
-},
--- Table: {4787}
-{
-   8482,
-   65039,
-},
--- Table: {4788}
-{
-   169,
-   65039,
-},
--- Table: {4789}
-{
-   174,
-   65039,
-},
--- Table: {4790}
-{
-   12336,
-   65039,
-},
--- Table: {4791}
-{
-   10160,
-},
--- Table: {4792}
-{
-   10175,
-},
--- Table: {4793}
-{
-   128282,
-},
--- Table: {4794}
-{
-   128281,
-},
--- Table: {4795}
-{
-   128283,
-},
--- Table: {4796}
-{
-   128285,
-},
--- Table: {4797}
-{
-   128284,
-},
--- Table: {4798}
-{
-   10004,
-   65039,
-},
--- Table: {4799}
-{
-   9745,
-   65039,
-},
--- Table: {4800}
-{
-   128280,
-},
--- Table: {4801}
-{
-   9898,
-},
--- Table: {4802}
-{
-   9899,
-},
--- Table: {4803}
-{
-   128308,
-},
--- Table: {4804}
-{
-   128309,
-},
--- Table: {4805}
-{
-   128314,
-},
--- Table: {4806}
-{
-   128315,
-},
--- Table: {4807}
-{
-   128312,
-},
--- Table: {4808}
-{
-   128313,
-},
--- Table: {4809}
-{
-   128310,
-},
--- Table: {4810}
-{
-   128311,
-},
--- Table: {4811}
-{
-   128307,
-},
--- Table: {4812}
-{
-   128306,
-},
--- Table: {4813}
-{
-   9642,
-   65039,
-},
--- Table: {4814}
-{
-   9643,
-   65039,
-},
--- Table: {4815}
-{
-   9726,
-},
--- Table: {4816}
-{
-   9725,
-},
--- Table: {4817}
-{
-   9724,
-   65039,
-},
--- Table: {4818}
-{
-   9723,
-   65039,
-},
--- Table: {4819}
-{
-   11035,
-},
--- Table: {4820}
-{
-   11036,
-},
--- Table: {4821}
-{
-   128264,
-},
--- Table: {4822}
-{
-   128263,
-},
--- Table: {4823}
-{
-   128265,
-},
--- Table: {4824}
-{
-   128266,
-},
--- Table: {4825}
-{
-   128276,
-},
--- Table: {4826}
-{
-   128277,
-},
--- Table: {4827}
-{
-   128227,
-},
--- Table: {4828}
-{
-   128226,
-},
--- Table: {4829}
-{
-   128488,
-   65039,
-},
--- Table: {4830}
-{
-   128065,
-   65039,
-   8205,
-   128488,
-   65039,
-},
--- Table: {4831}
-{
-   128172,
-},
--- Table: {4832}
-{
-   128173,
-},
--- Table: {4833}
-{
-   128495,
-   65039,
-},
--- Table: {4834}
-{
-   9824,
-   65039,
-},
--- Table: {4835}
-{
-   9827,
-   65039,
-},
--- Table: {4836}
-{
-   9829,
-   65039,
-},
--- Table: {4837}
-{
-   9830,
-   65039,
-},
--- Table: {4838}
-{
-   127183,
-},
--- Table: {4839}
-{
-   127924,
-},
--- Table: {4840}
-{
-   126980,
-},
--- Table: {4841}
-{
-   128336,
-},
--- Table: {4842}
-{
-   128337,
-},
--- Table: {4843}
-{
-   128338,
-},
--- Table: {4844}
-{
-   128339,
-},
--- Table: {4845}
-{
-   128340,
-},
--- Table: {4846}
-{
-   128341,
-},
--- Table: {4847}
-{
-   128342,
-},
--- Table: {4848}
-{
-   128343,
-},
--- Table: {4849}
-{
-   128344,
-},
--- Table: {4850}
-{
-   128345,
-},
--- Table: {4851}
-{
-   128346,
-},
--- Table: {4852}
-{
-   128347,
-},
--- Table: {4853}
-{
-   128348,
-},
--- Table: {4854}
-{
-   128349,
-},
--- Table: {4855}
-{
-   128350,
-},
--- Table: {4856}
-{
-   128351,
-},
--- Table: {4857}
-{
-   128352,
-},
--- Table: {4858}
-{
-   128353,
-},
--- Table: {4859}
-{
-   128354,
-},
--- Table: {4860}
-{
-   128355,
-},
--- Table: {4861}
-{
-   128356,
-},
--- Table: {4862}
-{
-   128357,
-},
--- Table: {4863}
-{
-   128358,
-},
--- Table: {4864}
-{
-   128359,
-},
--- Table: {4865}
-{
-   127987,
-   65039,
-},
--- Table: {4866}
-{
-   127988,
-},
--- Table: {4867}
-{
-   127937,
-},
--- Table: {4868}
-{
-   128681,
-},
--- Table: {4869}
-{
-   127987,
-   65039,
-   8205,
-   127752,
-},
--- Table: {4870}
-{
-   127462,
-   127467,
-},
--- Table: {4871}
-{
-   127462,
-   127485,
-},
--- Table: {4872}
-{
-   127462,
-   127473,
-},
--- Table: {4873}
-{
-   127465,
-   127487,
-},
--- Table: {4874}
-{
-   127462,
-   127480,
-},
--- Table: {4875}
-{
-   127462,
-   127465,
-},
--- Table: {4876}
-{
-   127462,
-   127476,
-},
--- Table: {4877}
-{
-   127462,
-   127470,
-},
--- Table: {4878}
-{
-   127462,
-   127478,
-},
--- Table: {4879}
-{
-   127462,
-   127468,
-},
--- Table: {4880}
-{
-   127462,
-   127479,
-},
--- Table: {4881}
-{
-   127462,
-   127474,
-},
--- Table: {4882}
-{
-   127462,
-   127484,
-},
--- Table: {4883}
-{
-   127462,
-   127482,
-},
--- Table: {4884}
-{
-   127462,
-   127481,
-},
--- Table: {4885}
-{
-   127462,
-   127487,
-},
--- Table: {4886}
-{
-   127463,
-   127480,
-},
--- Table: {4887}
-{
-   127463,
-   127469,
-},
--- Table: {4888}
-{
-   127463,
-   127465,
-},
--- Table: {4889}
-{
-   127463,
-   127463,
-},
--- Table: {4890}
-{
-   127463,
-   127486,
-},
--- Table: {4891}
-{
-   127463,
-   127466,
-},
--- Table: {4892}
-{
-   127463,
-   127487,
-},
--- Table: {4893}
-{
-   127463,
-   127471,
-},
--- Table: {4894}
-{
-   127463,
-   127474,
-},
--- Table: {4895}
-{
-   127463,
-   127481,
-},
--- Table: {4896}
-{
-   127463,
-   127476,
-},
--- Table: {4897}
-{
-   127463,
-   127462,
-},
--- Table: {4898}
-{
-   127463,
-   127484,
-},
--- Table: {4899}
-{
-   127463,
-   127479,
-},
--- Table: {4900}
-{
-   127470,
-   127476,
-},
--- Table: {4901}
-{
-   127483,
-   127468,
-},
--- Table: {4902}
-{
-   127463,
-   127475,
-},
--- Table: {4903}
-{
-   127463,
-   127468,
-},
--- Table: {4904}
-{
-   127463,
-   127467,
-},
--- Table: {4905}
-{
-   127463,
-   127470,
-},
--- Table: {4906}
-{
-   127472,
-   127469,
-},
--- Table: {4907}
-{
-   127464,
-   127474,
-},
--- Table: {4908}
-{
-   127464,
-   127462,
-},
--- Table: {4909}
-{
-   127470,
-   127464,
-},
--- Table: {4910}
-{
-   127464,
-   127483,
-},
--- Table: {4911}
-{
-   127463,
-   127478,
-},
--- Table: {4912}
-{
-   127472,
-   127486,
-},
--- Table: {4913}
-{
-   127464,
-   127467,
-},
--- Table: {4914}
-{
-   127481,
-   127465,
-},
--- Table: {4915}
-{
-   127464,
-   127473,
-},
--- Table: {4916}
-{
-   127464,
-   127475,
-},
--- Table: {4917}
-{
-   127464,
-   127485,
-},
--- Table: {4918}
-{
-   127464,
-   127464,
-},
--- Table: {4919}
-{
-   127464,
-   127476,
-},
--- Table: {4920}
-{
-   127472,
-   127474,
-},
--- Table: {4921}
-{
-   127464,
-   127468,
-},
--- Table: {4922}
-{
-   127464,
-   127465,
-},
--- Table: {4923}
-{
-   127464,
-   127472,
-},
--- Table: {4924}
-{
-   127464,
-   127479,
-},
--- Table: {4925}
-{
-   127464,
-   127470,
-},
--- Table: {4926}
-{
-   127469,
-   127479,
-},
--- Table: {4927}
-{
-   127464,
-   127482,
-},
--- Table: {4928}
-{
-   127464,
-   127484,
-},
--- Table: {4929}
-{
-   127464,
-   127486,
-},
--- Table: {4930}
-{
-   127464,
-   127487,
-},
--- Table: {4931}
-{
-   127465,
-   127472,
-},
--- Table: {4932}
-{
-   127465,
-   127471,
-},
--- Table: {4933}
-{
-   127465,
-   127474,
-},
--- Table: {4934}
-{
-   127465,
-   127476,
-},
--- Table: {4935}
-{
-   127466,
-   127464,
-},
--- Table: {4936}
-{
-   127466,
-   127468,
-},
--- Table: {4937}
-{
-   127480,
-   127483,
-},
--- Table: {4938}
-{
-   127468,
-   127478,
-},
--- Table: {4939}
-{
-   127466,
-   127479,
-},
--- Table: {4940}
-{
-   127466,
-   127466,
-},
--- Table: {4941}
-{
-   127466,
-   127481,
-},
--- Table: {4942}
-{
-   127466,
-   127482,
-},
--- Table: {4943}
-{
-   127467,
-   127472,
-},
--- Table: {4944}
-{
-   127467,
-   127476,
-},
--- Table: {4945}
-{
-   127467,
-   127471,
-},
--- Table: {4946}
-{
-   127467,
-   127470,
-},
--- Table: {4947}
-{
-   127467,
-   127479,
-},
--- Table: {4948}
-{
-   127468,
-   127467,
-},
--- Table: {4949}
-{
-   127477,
-   127467,
-},
--- Table: {4950}
-{
-   127481,
-   127467,
-},
--- Table: {4951}
-{
-   127468,
-   127462,
-},
--- Table: {4952}
-{
-   127468,
-   127474,
-},
--- Table: {4953}
-{
-   127468,
-   127466,
-},
--- Table: {4954}
-{
-   127465,
-   127466,
-},
--- Table: {4955}
-{
-   127468,
-   127469,
-},
--- Table: {4956}
-{
-   127468,
-   127470,
-},
--- Table: {4957}
-{
-   127468,
-   127479,
-},
--- Table: {4958}
-{
-   127468,
-   127473,
-},
--- Table: {4959}
-{
-   127468,
-   127465,
-},
--- Table: {4960}
-{
-   127468,
-   127477,
-},
--- Table: {4961}
-{
-   127468,
-   127482,
-},
--- Table: {4962}
-{
-   127468,
-   127481,
-},
--- Table: {4963}
-{
-   127468,
-   127468,
-},
--- Table: {4964}
-{
-   127468,
-   127475,
-},
--- Table: {4965}
-{
-   127468,
-   127484,
-},
--- Table: {4966}
-{
-   127468,
-   127486,
-},
--- Table: {4967}
-{
-   127469,
-   127481,
-},
--- Table: {4968}
-{
-   127469,
-   127475,
-},
--- Table: {4969}
-{
-   127469,
-   127472,
-},
--- Table: {4970}
-{
-   127469,
-   127482,
-},
--- Table: {4971}
-{
-   127470,
-   127480,
-},
--- Table: {4972}
-{
-   127470,
-   127475,
-},
--- Table: {4973}
-{
-   127470,
-   127465,
-},
--- Table: {4974}
-{
-   127470,
-   127479,
-},
--- Table: {4975}
-{
-   127470,
-   127478,
-},
--- Table: {4976}
-{
-   127470,
-   127466,
-},
--- Table: {4977}
-{
-   127470,
-   127474,
-},
--- Table: {4978}
-{
-   127470,
-   127473,
-},
--- Table: {4979}
-{
-   127470,
-   127481,
-},
--- Table: {4980}
-{
-   127471,
-   127474,
-},
--- Table: {4981}
-{
-   127471,
-   127477,
-},
--- Table: {4982}
-{
-   127884,
-},
--- Table: {4983}
-{
-   127471,
-   127466,
-},
--- Table: {4984}
-{
-   127471,
-   127476,
-},
--- Table: {4985}
-{
-   127472,
-   127487,
-},
--- Table: {4986}
-{
-   127472,
-   127466,
-},
--- Table: {4987}
-{
-   127472,
-   127470,
-},
--- Table: {4988}
-{
-   127485,
-   127472,
-},
--- Table: {4989}
-{
-   127472,
-   127484,
-},
--- Table: {4990}
-{
-   127472,
-   127468,
-},
--- Table: {4991}
-{
-   127473,
-   127462,
-},
--- Table: {4992}
-{
-   127473,
-   127483,
-},
--- Table: {4993}
-{
-   127473,
-   127463,
-},
--- Table: {4994}
-{
-   127473,
-   127480,
-},
--- Table: {4995}
-{
-   127473,
-   127479,
-},
--- Table: {4996}
-{
-   127473,
-   127486,
-},
--- Table: {4997}
-{
-   127473,
-   127470,
-},
--- Table: {4998}
-{
-   127473,
-   127481,
-},
--- Table: {4999}
-{
-   127473,
-   127482,
-},
--- Table: {5000}
-{
-   127474,
-   127476,
-},
--- Table: {5001}
-{
-   127474,
-   127472,
-},
--- Table: {5002}
-{
-   127474,
-   127468,
-},
--- Table: {5003}
-{
-   127474,
-   127484,
-},
--- Table: {5004}
-{
-   127474,
-   127486,
-},
--- Table: {5005}
-{
-   127474,
-   127483,
-},
--- Table: {5006}
-{
-   127474,
-   127473,
-},
--- Table: {5007}
-{
-   127474,
-   127481,
-},
--- Table: {5008}
-{
-   127474,
-   127469,
-},
--- Table: {5009}
-{
-   127474,
-   127478,
-},
--- Table: {5010}
-{
-   127474,
-   127479,
-},
--- Table: {5011}
-{
-   127474,
-   127482,
-},
--- Table: {5012}
-{
-   127486,
-   127481,
-},
--- Table: {5013}
-{
-   127474,
-   127485,
-},
--- Table: {5014}
-{
-   127467,
-   127474,
-},
--- Table: {5015}
-{
-   127474,
-   127465,
-},
--- Table: {5016}
-{
-   127474,
-   127464,
-},
--- Table: {5017}
-{
-   127474,
-   127475,
-},
--- Table: {5018}
-{
-   127474,
-   127466,
-},
--- Table: {5019}
-{
-   127474,
-   127480,
-},
--- Table: {5020}
-{
-   127474,
-   127462,
-},
--- Table: {5021}
-{
-   127474,
-   127487,
-},
--- Table: {5022}
-{
-   127474,
-   127474,
-},
--- Table: {5023}
-{
-   127475,
-   127462,
-},
--- Table: {5024}
-{
-   127475,
-   127479,
-},
--- Table: {5025}
-{
-   127475,
-   127477,
-},
--- Table: {5026}
-{
-   127475,
-   127473,
-},
--- Table: {5027}
-{
-   127475,
-   127464,
-},
--- Table: {5028}
-{
-   127475,
-   127487,
-},
--- Table: {5029}
-{
-   127475,
-   127470,
-},
--- Table: {5030}
-{
-   127475,
-   127466,
-},
--- Table: {5031}
-{
-   127475,
-   127468,
-},
--- Table: {5032}
-{
-   127475,
-   127482,
-},
--- Table: {5033}
-{
-   127475,
-   127467,
-},
--- Table: {5034}
-{
-   127472,
-   127477,
-},
--- Table: {5035}
-{
-   127474,
-   127477,
-},
--- Table: {5036}
-{
-   127475,
-   127476,
-},
--- Table: {5037}
-{
-   127476,
-   127474,
-},
--- Table: {5038}
-{
-   127477,
-   127472,
-},
--- Table: {5039}
-{
-   127477,
-   127484,
-},
--- Table: {5040}
-{
-   127477,
-   127480,
-},
--- Table: {5041}
-{
-   127477,
-   127462,
-},
--- Table: {5042}
-{
-   127477,
-   127468,
-},
--- Table: {5043}
-{
-   127477,
-   127486,
-},
--- Table: {5044}
-{
-   127477,
-   127466,
-},
--- Table: {5045}
-{
-   127477,
-   127469,
-},
--- Table: {5046}
-{
-   127477,
-   127475,
-},
--- Table: {5047}
-{
-   127477,
-   127473,
-},
--- Table: {5048}
-{
-   127477,
-   127481,
-},
--- Table: {5049}
-{
-   127477,
-   127479,
-},
--- Table: {5050}
-{
-   127478,
-   127462,
-},
--- Table: {5051}
-{
-   127479,
-   127466,
-},
--- Table: {5052}
-{
-   127479,
-   127476,
-},
--- Table: {5053}
-{
-   127479,
-   127482,
-},
--- Table: {5054}
-{
-   127479,
-   127484,
-},
--- Table: {5055}
-{
-   127484,
-   127480,
-},
--- Table: {5056}
-{
-   127480,
-   127474,
-},
--- Table: {5057}
-{
-   127480,
-   127481,
-},
--- Table: {5058}
-{
-   127480,
-   127462,
-},
--- Table: {5059}
-{
-   127480,
-   127475,
-},
--- Table: {5060}
-{
-   127479,
-   127480,
-},
--- Table: {5061}
-{
-   127480,
-   127464,
-},
--- Table: {5062}
-{
-   127480,
-   127473,
-},
--- Table: {5063}
-{
-   127480,
-   127468,
-},
--- Table: {5064}
-{
-   127480,
-   127485,
-},
--- Table: {5065}
-{
-   127480,
-   127472,
-},
--- Table: {5066}
-{
-   127480,
-   127470,
-},
--- Table: {5067}
-{
-   127468,
-   127480,
-},
--- Table: {5068}
-{
-   127480,
-   127463,
-},
--- Table: {5069}
-{
-   127480,
-   127476,
-},
--- Table: {5070}
-{
-   127487,
-   127462,
-},
--- Table: {5071}
-{
-   127472,
-   127479,
-},
--- Table: {5072}
-{
-   127480,
-   127480,
-},
--- Table: {5073}
-{
-   127466,
-   127480,
-},
--- Table: {5074}
-{
-   127473,
-   127472,
-},
--- Table: {5075}
-{
-   127463,
-   127473,
-},
--- Table: {5076}
-{
-   127480,
-   127469,
-},
--- Table: {5077}
-{
-   127472,
-   127475,
-},
--- Table: {5078}
-{
-   127473,
-   127464,
-},
--- Table: {5079}
-{
-   127477,
-   127474,
-},
--- Table: {5080}
-{
-   127483,
-   127464,
-},
--- Table: {5081}
-{
-   127480,
-   127465,
-},
--- Table: {5082}
-{
-   127480,
-   127479,
-},
--- Table: {5083}
-{
-   127480,
-   127487,
-},
--- Table: {5084}
-{
-   127480,
-   127466,
-},
--- Table: {5085}
-{
-   127464,
-   127469,
-},
--- Table: {5086}
-{
-   127480,
-   127486,
-},
--- Table: {5087}
-{
-   127481,
-   127484,
-},
--- Table: {5088}
-{
-   127481,
-   127471,
-},
--- Table: {5089}
-{
-   127481,
-   127487,
-},
--- Table: {5090}
-{
-   127481,
-   127469,
-},
--- Table: {5091}
-{
-   127481,
-   127473,
-},
--- Table: {5092}
-{
-   127481,
-   127468,
-},
--- Table: {5093}
-{
-   127481,
-   127472,
-},
--- Table: {5094}
-{
-   127481,
-   127476,
-},
--- Table: {5095}
-{
-   127481,
-   127481,
-},
--- Table: {5096}
-{
-   127481,
-   127475,
-},
--- Table: {5097}
-{
-   127481,
-   127479,
-},
--- Table: {5098}
-{
-   127481,
-   127474,
-},
--- Table: {5099}
-{
-   127481,
-   127464,
-},
--- Table: {5100}
-{
-   127481,
-   127483,
-},
--- Table: {5101}
-{
-   127483,
-   127470,
-},
--- Table: {5102}
-{
-   127482,
-   127468,
-},
--- Table: {5103}
-{
-   127482,
-   127462,
-},
--- Table: {5104}
-{
-   127462,
-   127466,
-},
--- Table: {5105}
-{
-   127468,
-   127463,
-},
--- Table: {5106}
-{
-   127482,
-   127480,
-},
--- Table: {5107}
-{
-   127482,
-   127486,
-},
--- Table: {5108}
-{
-   127482,
-   127487,
-},
--- Table: {5109}
-{
-   127483,
-   127482,
-},
--- Table: {5110}
-{
-   127483,
-   127462,
-},
--- Table: {5111}
-{
-   127483,
-   127466,
-},
--- Table: {5112}
-{
-   127483,
-   127475,
-},
--- Table: {5113}
-{
-   127484,
-   127467,
-},
--- Table: {5114}
-{
-   127466,
-   127469,
-},
--- Table: {5115}
-{
-   127486,
-   127466,
-},
--- Table: {5116}
-{
-   127487,
-   127474,
-},
--- Table: {5117}
-{
-   127487,
-   127484,
-},
--- Table: {5118}
-{
-   127462,
-   127464,
-},
--- Table: {5119}
-{
-   127481,
-   127462,
-},
--- Table: {5120}
-{
-   127463,
-   127483,
-},
--- Table: {5121}
-{
-   127469,
-   127474,
-},
--- Table: {5122}
-{
-   127480,
-   127471,
-},
--- Table: {5123}
-{
-   127482,
-   127474,
-},
--- Table: {5124}
-{
-   127466,
-   127462,
-},
--- Table: {5125}
-{
-   127464,
-   127477,
-},
--- Table: {5126}
-{
-   127465,
-   127468,
-},
--- Table: {5127}
-{
-   127474,
-   127467,
-},
--- Table: {5128}
-{
-   127482,
-   127475,
-},
--- Table: {5129}
 {
    127988,
    917607,
@@ -37084,7 +23536,7 @@ return {
    917607,
    917631,
 },
--- Table: {5130}
+-- Table: {3537}
 {
    127988,
    917607,
@@ -37094,7 +23546,7 @@ return {
    917620,
    917631,
 },
--- Table: {5131}
+-- Table: {3538}
 {
    127988,
    917607,
@@ -37104,1145 +23556,119 @@ return {
    917619,
    917631,
 },
--- Table: {5132}
-{
-   42,
-   65039,
-},
--- Table: {5133}
-{
-   127487,
-},
--- Table: {5134}
-{
-   127486,
-},
--- Table: {5135}
-{
-   127485,
-},
--- Table: {5136}
-{
-   35,
-   65039,
-},
--- Table: {5137}
-{
-   127995,
-},
--- Table: {5138}
-{
-   127996,
-},
--- Table: {5139}
-{
-   127997,
-},
--- Table: {5140}
-{
-   127998,
-},
--- Table: {5141}
-{
-   127999,
-},
--- Table: {5142}
-{
-   127484,
-},
--- Table: {5143}
-{
-   127483,
-},
--- Table: {5144}
+-- Table: {3539}
 {
    127482,
-},
--- Table: {5145}
-{
-   127481,
-},
--- Table: {5146}
-{
    127480,
 },
--- Table: {5147}
+-- Table: {3540}
 {
-   127479,
+   127482,
+   127486,
 },
--- Table: {5148}
+-- Table: {3541}
 {
-   127478,
+   127482,
+   127487,
 },
--- Table: {5149}
+-- Table: {3542}
 {
-   127477,
+   127483,
+   127482,
 },
--- Table: {5150}
+-- Table: {3543}
 {
-   127476,
-},
--- Table: {5151}
-{
-   127475,
-},
--- Table: {5152}
-{
-   127474,
-},
--- Table: {5153}
-{
-   127473,
-},
--- Table: {5154}
-{
-   127472,
-},
--- Table: {5155}
-{
-   127471,
-},
--- Table: {5156}
-{
-   127470,
-},
--- Table: {5157}
-{
-   127469,
-},
--- Table: {5158}
-{
-   127468,
-},
--- Table: {5159}
-{
-   127467,
-},
--- Table: {5160}
-{
-   127466,
-},
--- Table: {5161}
-{
-   127465,
-},
--- Table: {5162}
-{
-   127464,
-},
--- Table: {5163}
-{
-   127463,
-},
--- Table: {5164}
-{
+   127483,
    127462,
 },
--- Table: {5165}
+-- Table: {3544}
 {
-   57,
-   65039,
+   127483,
+   127466,
 },
--- Table: {5166}
+-- Table: {3545}
 {
-   56,
-   65039,
+   127483,
+   127475,
 },
--- Table: {5167}
+-- Table: {3546}
 {
-   55,
-   65039,
+   127484,
+   127467,
 },
--- Table: {5168}
+-- Table: {3547}
 {
-   54,
-   65039,
+   127466,
+   127469,
 },
--- Table: {5169}
+-- Table: {3548}
 {
-   53,
-   65039,
+   127486,
+   127466,
 },
--- Table: {5170}
+-- Table: {3549}
 {
-   52,
-   65039,
+   127487,
+   127474,
 },
--- Table: {5171}
+-- Table: {3550}
 {
-   51,
-   65039,
+   127487,
+   127484,
 },
--- Table: {5172}
+-- Table: {3551}
 {
-   50,
-   65039,
+   127462,
+   127464,
 },
--- Table: {5173}
+-- Table: {3552}
 {
-   49,
-   65039,
+   127463,
+   127483,
 },
--- Table: {5174}
+-- Table: {3553}
 {
-   48,
-   65039,
+   127464,
+   127477,
 },
--- Table: {5175}
+-- Table: {3554}
 {
-   9792,
-   65039,
+   127466,
+   127462,
 },
--- Table: {5176}
+-- Table: {3555}
 {
-   9794,
-   65039,
+   127465,
+   127468,
 },
--- Table: {5177}
+-- Table: {3556}
 {
-   9877,
-   65039,
+   127469,
+   127474,
 },
--- Table: {5178}
+-- Table: {3557}
 {
-   128104,
-   8205,
-   128105,
-   8205,
-   128102,
+   127474,
+   127467,
 },
--- Table: {5179}
+-- Table: {3558}
 {
-   128105,
-   8205,
-   10084,
-   65039,
-   8205,
-   128104,
+   127480,
+   127471,
 },
--- Table: {5180}
+-- Table: {3559}
 {
-   128105,
-   8205,
-   10084,
-   65039,
-   8205,
-   128139,
-   8205,
-   128104,
+   127481,
+   127462,
 },
--- Table: {5181}
+-- Table: {3560}
 {
-   129320,
+   127482,
+   127474,
 },
--- Table: {5182}
+-- Table: {3561}
 {
-   129321,
-},
--- Table: {5183}
-{
-   129322,
-},
--- Table: {5184}
-{
-   129323,
-},
--- Table: {5185}
-{
-   129324,
-},
--- Table: {5186}
-{
-   129325,
-},
--- Table: {5187}
-{
-   129326,
-},
--- Table: {5188}
-{
-   129327,
-},
--- Table: {5189}
-{
-   129488,
-},
--- Table: {5190}
-{
-   129489,
-},
--- Table: {5191}
-{
-   129490,
-},
--- Table: {5192}
-{
-   129491,
-},
--- Table: {5193}
-{
-   129492,
-},
--- Table: {5194}
-{
-   129493,
-},
--- Table: {5195}
-{
-   129504,
-},
--- Table: {5196}
-{
-   129506,
-},
--- Table: {5197}
-{
-   129497,
-},
--- Table: {5198}
-{
-   129498,
-},
--- Table: {5199}
-{
-   129499,
-},
--- Table: {5200}
-{
-   129500,
-},
--- Table: {5201}
-{
-   129501,
-},
--- Table: {5202}
-{
-   129502,
-},
--- Table: {5203}
-{
-   129503,
-},
--- Table: {5204}
-{
-   129507,
-},
--- Table: {5205}
-{
-   129508,
-},
--- Table: {5206}
-{
-   129509,
-},
--- Table: {5207}
-{
-   129510,
-},
--- Table: {5208}
-{
-   129311,
-},
--- Table: {5209}
-{
-   129311,
-   127995,
-},
--- Table: {5210}
-{
-   129311,
-   127996,
-},
--- Table: {5211}
-{
-   129311,
-   127997,
-},
--- Table: {5212}
-{
-   129311,
-   127998,
-},
--- Table: {5213}
-{
-   129311,
-   127999,
-},
--- Table: {5214}
-{
-   129330,
-},
--- Table: {5215}
-{
-   129330,
-   127995,
-},
--- Table: {5216}
-{
-   129330,
-   127996,
-},
--- Table: {5217}
-{
-   129330,
-   127997,
-},
--- Table: {5218}
-{
-   129330,
-   127998,
-},
--- Table: {5219}
-{
-   129330,
-   127999,
-},
--- Table: {5220}
-{
-   129489,
-   127995,
-},
--- Table: {5221}
-{
-   129489,
-   127996,
-},
--- Table: {5222}
-{
-   129489,
-   127997,
-},
--- Table: {5223}
-{
-   129489,
-   127998,
-},
--- Table: {5224}
-{
-   129489,
-   127999,
-},
--- Table: {5225}
-{
-   129490,
-   127995,
-},
--- Table: {5226}
-{
-   129490,
-   127996,
-},
--- Table: {5227}
-{
-   129490,
-   127997,
-},
--- Table: {5228}
-{
-   129490,
-   127998,
-},
--- Table: {5229}
-{
-   129490,
-   127999,
-},
--- Table: {5230}
-{
-   129491,
-   127995,
-},
--- Table: {5231}
-{
-   129491,
-   127996,
-},
--- Table: {5232}
-{
-   129491,
-   127997,
-},
--- Table: {5233}
-{
-   129491,
-   127998,
-},
--- Table: {5234}
-{
-   129491,
-   127999,
-},
--- Table: {5235}
-{
-   129492,
-   127995,
-},
--- Table: {5236}
-{
-   129492,
-   127996,
-},
--- Table: {5237}
-{
-   129492,
-   127997,
-},
--- Table: {5238}
-{
-   129492,
-   127998,
-},
--- Table: {5239}
-{
-   129492,
-   127999,
-},
--- Table: {5240}
-{
-   129493,
-   127995,
-},
--- Table: {5241}
-{
-   129493,
-   127996,
-},
--- Table: {5242}
-{
-   129493,
-   127997,
-},
--- Table: {5243}
-{
-   129493,
-   127998,
-},
--- Table: {5244}
-{
-   129493,
-   127999,
-},
--- Table: {5245}
-{
-   129497,
-   127995,
-},
--- Table: {5246}
-{
-   129497,
-   127996,
-},
--- Table: {5247}
-{
-   129497,
-   127997,
-},
--- Table: {5248}
-{
-   129497,
-   127998,
-},
--- Table: {5249}
-{
-   129497,
-   127999,
-},
--- Table: {5250}
-{
-   129498,
-   127995,
-},
--- Table: {5251}
-{
-   129498,
-   127996,
-},
--- Table: {5252}
-{
-   129498,
-   127997,
-},
--- Table: {5253}
-{
-   129498,
-   127998,
-},
--- Table: {5254}
-{
-   129498,
-   127999,
-},
--- Table: {5255}
-{
-   129499,
-   127995,
-},
--- Table: {5256}
-{
-   129499,
-   127996,
-},
--- Table: {5257}
-{
-   129499,
-   127997,
-},
--- Table: {5258}
-{
-   129499,
-   127998,
-},
--- Table: {5259}
-{
-   129499,
-   127999,
-},
--- Table: {5260}
-{
-   129500,
-   127995,
-},
--- Table: {5261}
-{
-   129500,
-   127996,
-},
--- Table: {5262}
-{
-   129500,
-   127997,
-},
--- Table: {5263}
-{
-   129500,
-   127998,
-},
--- Table: {5264}
-{
-   129500,
-   127999,
-},
--- Table: {5265}
-{
-   129501,
-   127995,
-},
--- Table: {5266}
-{
-   129501,
-   127996,
-},
--- Table: {5267}
-{
-   129501,
-   127997,
-},
--- Table: {5268}
-{
-   129501,
-   127998,
-},
--- Table: {5269}
-{
-   129501,
-   127999,
-},
--- Table: {5270}
-{
-   129497,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5271}
-{
-   129497,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5272}
-{
-   129497,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5273}
-{
-   129497,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5274}
-{
-   129497,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5275}
-{
-   129497,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5276}
-{
-   129497,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5277}
-{
-   129497,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5278}
-{
-   129497,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5279}
-{
-   129497,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5280}
-{
-   129497,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5281}
-{
-   129497,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5282}
-{
-   129498,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5283}
-{
-   129498,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5284}
-{
-   129498,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5285}
-{
-   129498,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5286}
-{
-   129498,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5287}
-{
-   129498,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5288}
-{
-   129498,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5289}
-{
-   129498,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5290}
-{
-   129498,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5291}
-{
-   129498,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5292}
-{
-   129498,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5293}
-{
-   129498,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5294}
-{
-   129499,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5295}
-{
-   129499,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5296}
-{
-   129499,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5297}
-{
-   129499,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5298}
-{
-   129499,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5299}
-{
-   129499,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5300}
-{
-   129499,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5301}
-{
-   129499,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5302}
-{
-   129499,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5303}
-{
-   129499,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5304}
-{
-   129499,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5305}
-{
-   129499,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5306}
-{
-   129500,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5307}
-{
-   129500,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5308}
-{
-   129500,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5309}
-{
-   129500,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5310}
-{
-   129500,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5311}
-{
-   129500,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5312}
-{
-   129500,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5313}
-{
-   129500,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5314}
-{
-   129500,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5315}
-{
-   129500,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5316}
-{
-   129500,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5317}
-{
-   129500,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5318}
-{
-   129501,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5319}
-{
-   129501,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5320}
-{
-   129501,
-   127995,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5321}
-{
-   129501,
-   127995,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5322}
-{
-   129501,
-   127996,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5323}
-{
-   129501,
-   127996,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5324}
-{
-   129501,
-   127997,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5325}
-{
-   129501,
-   127997,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5326}
-{
-   129501,
-   127998,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5327}
-{
-   129501,
-   127998,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5328}
-{
-   129501,
-   127999,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5329}
-{
-   129501,
-   127999,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5330}
-{
-   129502,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5331}
-{
-   129502,
-   8205,
-   9794,
-   65039,
-},
--- Table: {5332}
-{
-   129503,
-   8205,
-   9792,
-   65039,
-},
--- Table: {5333}
-{
-   129503,
-   8205,
-   9794,
-   65039,
+   127482,
+   127475,
 },
 }
