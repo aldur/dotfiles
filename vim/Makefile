@@ -6,17 +6,8 @@ all: vimrc neovim templates autoload plugin after_plugin after_ftplugin scripts
 vimrc:
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
 
-scripts: vimf
+scripts templates plugin: vimf
 	$(LN) $(shell readlink -f $@) ${HOME}/.vim/$@
-
-templates: vimf
-	$(LN) $(shell readlink -f $@) ${HOME}/.vim/$@
-
-plugin: vimf
-	$(LN) $(shell readlink -f $@) ${HOME}/.vim/$@
-
-autoload_neoformat: autload
-	$(LN) $(shell readlink -f $@) ${HOME}/.vim/autoload/neoformat
 
 after_ftplugin: after
 	$(LN) $(shell readlink -f $@) ${HOME}/.vim/after/ftplugin
