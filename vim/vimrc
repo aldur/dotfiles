@@ -232,16 +232,16 @@
     " }}}
 
     " vim-polyglot {{{
-        let g:polyglot_disabled = ['tex', 'latex', 'python-compiler', ]
+        let g:polyglot_disabled = ['tex', 'latex', 'python-compiler']
     " }}}
 
     " vim.wiki {{{
         let g:wiki_root = '~/Documents/NotesMD'
-        let g:wiki_filetypes = ['wiki']
+        let g:wiki_filetypes = ['md']
         let g:wiki_link_target_type = 'md'
 
         let g:wiki_export = {
-            \ 'args' : '-s',
+            \ 'args' : '-s --lua-filter ~/Documents/NotesMD/header_as_title.lua',
             \ 'from_format' : 'markdown',
             \ 'ext' : 'html',
             \ 'view' : v:true,
@@ -254,6 +254,8 @@
                     \}
 
         let g:wiki_mappings_local = g:wiki_mappings_global
+
+        let g:wiki_list_todos = ['TODO', 'IN PROGRESS', 'DONE']
         " }}}
 " }}}
 
