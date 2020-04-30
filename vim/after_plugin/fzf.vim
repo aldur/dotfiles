@@ -3,25 +3,27 @@ if exists(':FZF') == 0
 endif
 
 let g:fzf_layout = { 'down': '~40%' }
-function! s:FZFFiles() abort
+function! FZFRoot() abort
     try
-        " If possible, launch FZF from the current project root.
+        " If possible, execut FZF from the current project root.
         " We're using gutentags#get_project_root for the task.
-        execute 'Files' gutentags#get_project_root(expand('%:p:h', 1))
+        return gutentags#get_project_root(expand('%:p:h', 1))
     catch
-        execute 'Files' expand('%:p:h', 1)
+        return expand('%:p:h', 1)
     endtry
 endfunction
 
+" Hide statusbar while FZF is on.
 autocmd vimrc FileType fzf set laststatus=0 noshowmode noruler
   \| autocmd vimrc BufLeave <buffer> set laststatus=2 noshowmode ruler
 
-nnoremap <silent> <leader><space> :call <SID>FZFFiles()<CR>
+nnoremap <silent> <leader><space> :<c-U>execute 'Files' FZFRoot()<CR>
 nnoremap <silent> <leader>a :Buffers<CR>
 nnoremap <silent> <leader>g :Ag<CR>
 nnoremap <silent> <leader>tt :BTags<CR>
 nnoremap <silent> <leader>tT :Tags<CR>
 nnoremap <silent> <leader>h :History<CR>
+nnoremap <silent> <leader>H :Files ~<CR>
 nnoremap <silent> <leader>: :History:<CR>
 
 let g:fzf_colors = {
