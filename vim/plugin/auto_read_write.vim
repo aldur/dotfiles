@@ -8,8 +8,10 @@ autocmd vimrc FileChangedShellPost *
             \ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
 
 " Auto save on :next, :edit, :quit, etc.
-set autowrite
-set autowriteall
+set autowriteall  " Implies `autowrite`
+
+" When transparently editing buffers through Netrw, we disable `autowriteall`
+autocmd vimrc BufEnter * if exists('b:netrw_lastfile') | setlocal noautowriteall | endif
 
 " ... when changing window
 autocmd vimrc WinLeave * :silent! w
