@@ -1,8 +1,3 @@
-" Should not be required, but if we don't set it netrw does not have
-" network capacities in Neovim
-" vint: -ProhibitSetNoCompatible
-set nocompatible
-
 " Not an external plugin, but still... :)
 let g:netrw_banner = 0  " Disable top banner
 let g:netrw_silent = 1  " Do not output `scp` commands etc, while saving.
