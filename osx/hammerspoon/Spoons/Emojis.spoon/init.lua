@@ -29,15 +29,27 @@ dofile(obj.spoonPath .. "/table.lua")
 local wf = hs.window.filter.defaultCurrentSpace
 
 function obj.callback(choice)
+    if not choice then return end
+
+    local lastApplication = nil
     local lastFocused = wf:getWindows(wf.sortByFocusedLast)
     if #lastFocused > 0 then
         lastFocused[1]:focus()
+        lastApplication = lastFocused[1]:application()
     end
-    if not choice then
-        return
+
+    if lastApplication ~= nil and hs.fnutils.contains(
+            {'com.qvacua.VimR', 'com.googlecode.iterm2'}, lastApplication:bundleID()
+            ) then
+        -- Some applications do not seem to handle "typing" emojis.
+        -- In those cases, we put them in the pasteboard, paste them, and then restore the status.
+        local previousContent = hs.pasteboard.getContents()
+        hs.pasteboard.setContents(choice.char)
+        hs.eventtap.keyStroke({'cmd'}, 'v')
+        hs.pasteboard.setContents(previousContent)
+    else
+        hs.eventtap.keyStrokes(choice.char)
     end
-    assert(choice.char)
-    hs.eventtap.keyStrokes(hs.utf8.codepointToUTF8(table.unpack(choice.char)))
 end
 
 function obj:init()
@@ -65,13 +77,12 @@ function obj:init()
             end
 
             local subText = table.concat(subTexts, ", ")
-            local chars =
-                hs.fnutils.imap(
-                hs.fnutils.split(emoji.code_points.base, "-"),
-                function(s)
-                    return tonumber(s, 16)
-                end
-            )
+            local split = hs.fnutils.imap(
+                    hs.fnutils.split(emoji.code_points.base, "-"),
+                    function(s) return tonumber(s, 16) end
+                )
+            local chars = hs.utf8.codepointToUTF8(table.unpack(split))
+            assert(chars)
 
             table.insert(
                 self.choices,
