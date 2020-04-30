@@ -26,7 +26,7 @@ function! s:GitBackupCurrentFile() abort
     let l:cmd .= 'cd "' . s:custom_backup_dir . '";'
     let l:cmd .= 'git add "' . l:backup_file . '";'
     let l:cmd .= 'git commit -m "Backup - `date`";'
-    if has("nvim")
+    if has('nvim')
         call jobstart(l:cmd)
     else
         call job_start(l:cmd)
