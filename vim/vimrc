@@ -231,17 +231,21 @@
         vnoremap K :call investigate#Investigate('v')<CR>
     " }}}
 
+    " pear-tree {{{
+        let g:pear_tree_ft_disabled = []
+    " }}}
+
     " vim-polyglot {{{
         let g:polyglot_disabled = ['tex', 'latex', 'python-compiler']
     " }}}
 
     " vim.wiki {{{
-        let g:wiki_root = '~/Documents/NotesMD'
+        let g:wiki_root = '~/Documents/Notes'
         let g:wiki_filetypes = ['md']
         let g:wiki_link_target_type = 'md'
 
         let g:wiki_export = {
-            \ 'args' : '-s --lua-filter ~/Documents/NotesMD/header_as_title.lua',
+            \ 'args' : '-s --lua-filter ' . g:wiki_root . '/header_as_title.lua',
             \ 'from_format' : 'markdown',
             \ 'ext' : 'html',
             \ 'view' : v:true,
@@ -249,7 +253,6 @@
             \}
 
         let g:wiki_mappings_global = {
-                    \ '<plug>(wiki-journal)' : '<plug>',
                     \ '<plug>(wiki-page-toc)' : '<plug>',
                     \}
 
