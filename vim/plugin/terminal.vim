@@ -14,3 +14,10 @@ let g:terminal_color_12 = '#268ad1'
 let g:terminal_color_13 = '#bc99ff'
 let g:terminal_color_14 = '#75dff2'
 let g:terminal_color_15 = '#feffff'
+
+" https://github.com/junegunn/fzf.vim/issues/544
+" FZF uses Escape keys to close the window
+if has('nvim')
+  autocmd vimrc TermOpen * tnoremap <buffer> <Esc> <c-\><c-n>
+  autocmd vimrc FileType fzf tunmap <buffer> <Esc>
+endif
