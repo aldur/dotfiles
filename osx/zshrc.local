@@ -23,17 +23,15 @@ tab-title() {
     echo -ne "\033]0;"$*"\007"
 }
 
-# Tmux integration.
-iterm2_print_user_vars() {
-    # Keep track of the tmux session in a variable.
-    iterm2_set_user_var tmuxSession $([[ -n "${TMUX+set}" ]] && tmux display-message -p "#S")
-}
-
 # Set iTerm's tab name to the name of the tmux session.
 if [[ -n "${TMUX+set}" ]] then 
     tmux rename-window -t ${TMUX_PANE} "$(tmux display-message -p "#S")"
     tab-title "$(tmux display-message -p "#S")"
 fi
+
+zet() {
+    nvim "+call wiki#page#open('$*')"
+}
 
 # Source FZF bindings
 [ -f "${HOME}/.fzf.zsh" ] && source "${HOME}/.fzf.zsh"
