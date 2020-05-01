@@ -23,6 +23,10 @@
         if filereadable('/usr/local/bin/python3')
             let g:python3_host_prog = '/usr/local/bin/python3'
         end
+
+        " Disable some of VIM standard plugins
+        let g:loaded_2html_plugin = 1  " Disable tohtml.vim
+        let g:loaded_tutor_mode_plugin = 1  " Disable vimtutor
     " }}}
 " }}}
 
@@ -57,6 +61,10 @@
     else  " Install it as a local plugin
         Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
         Plug 'junegunn/fzf.vim'
+    end
+
+    if executable('rg')
+        Plug 'alok/notational-fzf-vim'
     end
 
     if executable('ctags')
@@ -110,18 +118,14 @@
     " Plug 'kopischke/vim-stay'                      " Save and restore cursor position, folds and so on
     " TRIAL: Replace `vim-stay` with:
     autocmd vimrc BufReadPost *
-      \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
-      \ |   exe "normal! g`\""
-      \ | endif
+                \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+                \ |   exe "normal! g`\""
+                \ | endif
 
     Plug 'sheerun/vim-polyglot'                    " Additional syntaxes / indent, load it after syntax specific plugins
 
     " ...Vim-plug is done
     call plug#end()
-
-    " Disable some of VIM standard plugins
-    let g:loaded_2html_plugin = 1  " Disable tohtml.vim
-    let g:loaded_tutor_mode_plugin = 1  " Disable vimtutor
 " }}}
 
 " General {{{
@@ -245,7 +249,9 @@
         let g:wiki_link_target_type = 'md'
 
         let g:wiki_export = {
-            \ 'args' : '-s --lua-filter ' . g:wiki_root . '/header_as_title.lua',
+            \ 'args' : '-s --lua-filter ' . g:wiki_root .
+            \ '/assets/header_as_title.lua --template GitHub.html5 --data-dir '
+            \ . g:wiki_root . '/assets/',
             \ 'from_format' : 'markdown',
             \ 'ext' : 'html',
             \ 'view' : v:true,
@@ -259,7 +265,12 @@
         let g:wiki_mappings_local = g:wiki_mappings_global
 
         let g:wiki_list_todos = ['TODO', 'IN PROGRESS', 'DONE']
-        " }}}
+
+        " Configure `notational-fzf-vim`
+        let g:nv_search_paths = [g:wiki_root, ]
+        let g:nv_create_note_key = 'ctrl-x'
+        let g:nv_create_note_window = 'edit'
+    " }}}
 " }}}
 
 " Ending settings {{{
