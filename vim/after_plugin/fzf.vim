@@ -17,9 +17,13 @@ endfunction
 autocmd vimrc FileType fzf set laststatus=0 noshowmode noruler
   \| autocmd vimrc BufLeave <buffer> set laststatus=2 noshowmode ruler
 
+" Override the Rg command so that it searches in the current root
+command! -bang -nargs=* Rg
+            \ call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>)." ".FZFRoot(), 1, fzf#vim#with_preview(), <bang>0)
+
 nnoremap <silent> <leader><space> :<c-U>execute 'Files' FZFRoot()<CR>
 nnoremap <silent> <leader>a :Buffers<CR>
-nnoremap <silent> <leader>g :Ag<CR>
+nnoremap <silent> <leader>g :Rg<CR>
 nnoremap <silent> <leader>tt :BTags<CR>
 nnoremap <silent> <leader>tT :Tags<CR>
 nnoremap <silent> <leader>h :History<CR>

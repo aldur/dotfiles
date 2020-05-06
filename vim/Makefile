@@ -1,12 +1,12 @@
 include ../include.mk
 
 .PHONY: all
-all: vimrc neovim templates autoload plugin after_plugin after_ftplugin scripts
+all: vimrc neovim templates autoload plugin after_plugin after_ftplugin scripts rplugin
 
 vimrc:
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
 
-scripts templates plugin: vimf
+scripts templates plugin rplugin: vimf
 	$(LN) $(shell readlink -f $@) ${HOME}/.vim/$@
 
 after_ftplugin: after

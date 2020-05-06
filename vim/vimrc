@@ -67,10 +67,6 @@
         Plug 'alok/notational-fzf-vim'
     end
 
-    if executable('ctags')
-        Plug 'ludovicchabant/vim-gutentags'            " Automatic tag management
-    endif
-
     " Appearance and Statusline
     Plug 'itchyny/lightline.vim'                  " Configure the statusbar
     Plug 'fatih/molokai'                          " Molokai color scheme
@@ -84,6 +80,9 @@
 
         " Go
         Plug 'fatih/vim-go', { 'for': 'go' }
+
+        " Markdown
+        Plug 'plasticboy/vim-markdown'
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
@@ -98,11 +97,16 @@
         " VIM completion
         Plug 'Shougo/neco-vim', b:has_nvim_python3 ? {} : { 'on': [] }
 
-        if executable('look')
-            " Spell completion
-            Plug 'ujihisa/neco-look', b:has_nvim_python3 ? {} : { 'on': [] }
-        endif
+        " Dictionary completion
+        Plug 'deoplete-plugins/deoplete-dictionary', b:has_nvim_python3 ? {} : { 'on': [] }
     " }}}
+
+    if executable('ctags')
+        Plug 'ludovicchabant/vim-gutentags'            " Automatic tag management
+
+        " ...and tag completion
+        Plug 'deoplete-plugins/deoplete-tag', b:has_nvim_python3 ? {} : { 'on': [] }
+    endif
 
     " Snippets  {{{
         " Conditionally load `ultisnips` if on `nvim` with `python3`.
@@ -114,15 +118,7 @@
     " }}}
 
 
-    " Enable Vim-stay after all the other plugins
-    " Plug 'kopischke/vim-stay'                      " Save and restore cursor position, folds and so on
-    " TRIAL: Replace `vim-stay` with:
-    autocmd vimrc BufReadPost *
-                \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
-                \ |   exe "normal! g`\""
-                \ | endif
-
-    Plug 'sheerun/vim-polyglot'                    " Additional syntaxes / indent, load it after syntax specific plugins
+    " Plug 'sheerun/vim-polyglot'                    " Additional syntaxes / indent, load it after syntax specific plugins
 
     " ...Vim-plug is done
     call plug#end()
@@ -268,7 +264,6 @@
 
         " Configure `notational-fzf-vim`
         let g:nv_search_paths = [g:wiki_root, ]
-        let g:nv_create_note_key = 'ctrl-x'
         let g:nv_create_note_window = 'edit'
     " }}}
 " }}}

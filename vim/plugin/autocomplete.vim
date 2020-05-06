@@ -1,3 +1,4 @@
+set complete+=k
 set complete+=kspell
 set completeopt=menuone,longest
 
