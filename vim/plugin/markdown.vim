@@ -13,3 +13,22 @@ let g:vim_markdown_no_extensions_in_markdown = 1  " Open links (without extensio
 " let g:vim_markdown_conceal = 0  " Disable syntax concealing.
 " let g:vim_markdown_conceal_code_blocks = 0  " Disable code blocks concealing.
 " }}}
+
+function! HeaderDecrease() abort
+    if match(getline('.'), '^# ') > -1
+        execute 'silent! substitute/^# //'
+        return
+    endif
+
+    execute '.HeaderDecrease'
+endfunction
+
+function! HeaderIncrease() abort
+    if match(getline('.'), '^#') > -1
+        execute '.HeaderIncrease'
+        return
+    endif
+
+    execute 'silent! substitute/^/# /'
+endfunction
+

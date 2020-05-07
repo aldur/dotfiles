@@ -15,6 +15,9 @@ after_ftplugin: after
 after_plugin: after
 	$(LN) $(shell readlink -f $@) ${HOME}/.vim/after/plugin
 
+after_indent: after
+	$(LN) $(shell readlink -f $@) ${HOME}/.vim/after/indent
+
 neovim: vimf vimrc
 	mkdir -p ${HOME}/.config
 	$(LN) ${HOME}/.vim ${HOME}/.config/nvim

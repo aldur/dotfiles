@@ -11,23 +11,5 @@ let b:ale_javascript_prettier_options = '--tab-width 4'
 " Disable three backticks disappearing on new-line
 let b:pear_tree_repeatable_expand = 0
 
-function! s:HeaderDecrease() abort
-    if match(getline('.'), '^# ') > -1
-        execute 'silent! substitute/^# //'
-        return
-    endif
-
-    execute '.HeaderDecrease'
-endfunction
-
-function! s:HeaderIncrease() abort
-    if match(getline('.'), '^#') > -1
-        execute '.HeaderIncrease'
-        return
-    endif
-
-    execute 'silent! substitute/^/# /'
-endfunction
-
-nnoremap <silent><buffer> + :<c-U> call <SID>HeaderIncrease()<CR>
-nnoremap <silent><buffer> - :<c-U> call <SID>HeaderDecrease()<CR>
+nnoremap <silent><buffer> + :<c-U> call HeaderIncrease()<CR>
+nnoremap <silent><buffer> - :<c-U> call HeaderDecrease()<CR>
