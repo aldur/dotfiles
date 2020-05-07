@@ -1,2 +1,2 @@
-[pep8]
+[pycodestyle]
 ignore = W191, E501
