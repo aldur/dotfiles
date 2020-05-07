@@ -25,8 +25,8 @@ set number
 set relativenumber
 
 " Only show cursorline in current window
-autocmd vimrc WinEnter * set cursorline
-autocmd vimrc WinLeave * set nocursorline
+" autocmd vimrc WinEnter * set cursorline
+" autocmd vimrc WinLeave * set nocursorline
 
 " White spaces
 scriptencoding utf8
