@@ -1,2 +1,2 @@
 setlocal commentstring=#\ %s
-set makeprg=gnuplot\ %
+setlocal makeprg=gnuplot\ %

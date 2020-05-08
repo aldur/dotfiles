@@ -1,3 +1,5 @@
+scriptencoding utf-8
+
 setlocal spell spelllang=en,it
 setlocal textwidth=80
 setlocal conceallevel=0
@@ -13,3 +15,6 @@ let b:pear_tree_repeatable_expand = 0
 
 nnoremap <silent><buffer> + :<c-U> call HeaderIncrease()<CR>
 nnoremap <silent><buffer> - :<c-U> call HeaderDecrease()<CR>
+
+" For Markdown, we enable additional snippets (from ~/.vim/UltiSnips).
+let b:UltiSnipsSnippetDirectories=['UltiSnips']
