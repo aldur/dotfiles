@@ -11,8 +11,6 @@ export GIT_EDITOR="nvim"
 
 # Configure ZSH
 skip_global_compinit=1
-# Set key timeout to a lower value, useful for vi-mode
-# export KEYTIMEOUT=1
 
 # Do not automatically set iTerm's title.
 export DISABLE_AUTO_TITLE="true"
@@ -34,7 +32,7 @@ MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
 PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"
 
 # MacTex 2019
-PATH="/usr/local/texlive/2019/bin/x86_64-darwin:$PATH"
+PATH="/usr/local/texlive/2020/bin/x86_64-darwin:$PATH"
 
 # Homebrew zsh-completions
 export fpath=(/usr/local/share/zsh-completions $fpath)
@@ -43,8 +41,6 @@ export fpath=(/usr/local/share/zsh-completions $fpath)
 export WORKON_HOME=$HOME/.virtualenvs
 VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
 export VIRTUALENVWRAPPER_SCRIPT=/usr/local/bin/virtualenvwrapper.sh
-
-# Lua/Luarocks PATH="${HOME}/.luarocks/bin:$PATH" 
 
 # Android development
 export ANDROID_HOME=~/Library/Android/sdk
@@ -73,7 +69,7 @@ export HOMEBREW_CASK_OPTS=--require-sha
 export AUTOSSH_PORT=0
 
 # Setup FZF
-if [ -x "$(command -v fd)" ]; then
+if type fd > /dev/null; then
     export FZF_DEFAULT_COMMAND='fd -d 10 --hidden --follow --exclude .git --exclude .svn --ignore-file ~/.gitignore_global'
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
     export FZF_ALT_C_COMMAND="${FZF_DEFAULT_COMMAND} --type d"
@@ -82,6 +78,3 @@ fi
 # Export $PATH and MANPATH
 export PATH=$PATH
 export MANPATH=$MANPATH
-
-# Enable iTerm and tmux integration (breaks non -CC sessions)
-export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
