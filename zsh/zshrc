@@ -1,3 +1,5 @@
+zmodload zsh/zprof
+
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.oh-my-zsh
 
@@ -6,8 +8,6 @@ HYPHEN_INSENSITIVE="true"
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
 ZSH_THEME="aldur"
 
 # Uncomment following line if you want to disable marking untracked files under
@@ -19,6 +19,11 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # in the history command output. The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|
 # yyyy-mm-dd
 HIST_STAMPS="dd/mm/yyyy"
+
+# https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/compfix.zsh
+ZSH_DISABLE_COMPFIX="true"
+
+DISABLE_UPDATE_PROMPT=true
 
 plugins=(
     git  # Git aliases
