@@ -21,4 +21,4 @@ if exists(':NV')
 else
     nmap <silent> <leader>n <plug>(wiki-fzf-pages)
 endif
-nmap <silent> <leader>wt <plug>(wiki-fzf-tags)
+nnoremap <expr><silent><leader>wt ':e ' . g:wiki_root . '/Tasklist.md <CR>'
