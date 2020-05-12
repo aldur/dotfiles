@@ -6,17 +6,10 @@ alias ta='tmux -CC new -ADs'  # Automatically use tmux in Control Center mode
 alias tls='tmux ls'
 
 # Alsias vim to its GUI
-[ -x "$(command -v vimr)" ] && alias vim="vimr"
+type vimr > /dev/null && alias vim="vimr"
 
 # SSH to autossh
-[ -x "$(command -v autossh)" ] && alias ssh=autossh
-
-# Set tab color programmatically.
-tab-color() {
-    echo -ne "\033]6;1;bg;red;brightness;$1\a"
-    echo -ne "\033]6;1;bg;green;brightness;$2\a"
-    echo -ne "\033]6;1;bg;blue;brightness;$3\a"
-}
+type autossh > /dev/null && alias ssh=autossh
 
 # Set the tab title programmatically.
 tab-title() {
@@ -38,6 +31,3 @@ zet() {
 
 # Source virtualenvwrapper
 [ -f "/usr/local/bin/virtualenvwrapper_lazy.sh" ] && source "/usr/local/bin/virtualenvwrapper_lazy.sh"
-
-# Source iTerm2 integration tools.
-[ -f "${HOME}/.iterm2_shell_integration.zsh" ] && source "${HOME}/.iterm2_shell_integration.zsh"
