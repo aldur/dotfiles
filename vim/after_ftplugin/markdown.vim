@@ -17,4 +17,14 @@ nnoremap <silent><buffer> + :<c-U> call HeaderIncrease()<CR>
 nnoremap <silent><buffer> - :<c-U> call HeaderDecrease()<CR>
 
 " For Markdown, we enable additional snippets (from ~/.vim/UltiSnips).
-let b:UltiSnipsSnippetDirectories=['UltiSnips']
+" let b:UltiSnipsSnippetDirectories=['UltiSnips']
+
+iabbrev <buffer> e' è
+iabbrev <buffer> perche' perché
+
+" TODO: You can do this with `imap`
+" iabbrev <buffer> a' à
+" iabbrev <buffer> e'' é
+" iabbrev <buffer> i' ì
+" iabbrev <buffer> o' ò
+" iabbrev <buffer> u' ù
