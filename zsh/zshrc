@@ -1,57 +1,104 @@
 zmodload zsh/zprof
 
-# Path to your oh-my-zsh configuration.
-ZSH=$HOME/.oh-my-zsh
+# -=- ZSH-specific options -=-
+setopt PROMPT_SUBST  # Enable substitutions in prompt.
+setopt INTERACTIVE_COMMENTS  # Enable # comments
 
-# _  and - will be interchangeable.
-HYPHEN_INSENSITIVE="true"
+setopt AUTO_CD
+setopt AUTO_PUSHD
+setopt CHASE_LINKS
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-ZSH_THEME="aldur"
+setopt PUSHD_IGNORE_DUPS
+setopt PUSHD_SILENT
 
-# Uncomment following line if you want to disable marking untracked files under
-# VCS as dirty. This makes repository status check for large repositories much,
-# much faster.
-DISABLE_UNTRACKED_FILES_DIRTY="true"
+# Completion
+setopt ALWAYS_TO_END
+setopt AUTO_MENU
+setopt AUTO_PARAM_SLASH
+setopt COMPLETE_ALIASES
+setopt COMPLETE_IN_WORD
+setopt NO_CASE_GLOB
 
-# Uncomment following line if you want to  shown in the command execution time stamp
-# in the history command output. The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|
-# yyyy-mm-dd
-HIST_STAMPS="dd/mm/yyyy"
+setopt BAD_PATTERN
 
-# https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/compfix.zsh
-ZSH_DISABLE_COMPFIX="true"
+# History configuration.
+setopt SHARE_HISTORY
+setopt EXTENDED_HISTORY
+setopt HIST_FCNTL_LOCK
+setopt HIST_IGNORE_SPACE
+setopt HIST_REDUCE_BLANKS
+setopt HIST_VERIFY
+export HISTSIZE=1000000
+export SAVEHIST=$HISTSIZE
 
-DISABLE_UPDATE_PROMPT=true
+setopt CORRECT
+setopt CORRECT_ALL
 
-plugins=(
-    git  # Git aliases
-    virtualenv  # Auto-completion
-    colored-man-pages  # Colors
-)
+if [[ -f $HOME/.dotfiles/zsh/aldur.zsh-theme ]]; then
+    source $HOME/.dotfiles/zsh/aldur.zsh-theme
+fi
 
-source $ZSH/oh-my-zsh.sh
+# Man Syntax Highlightning
+export LESS_TERMCAP_mb=$(printf "\e[1;31m")
+export LESS_TERMCAP_md=$(printf "\e[1;31m")
+export LESS_TERMCAP_me=$(printf "\e[0m")
+export LESS_TERMCAP_se=$(printf "\e[0m")
+export LESS_TERMCAP_so=$(printf "\e[1;44;33m")
+export LESS_TERMCAP_ue=$(printf "\e[0m")
+export LESS_TERMCAP_us=$(printf "\e[1;32m")
+
+# Completion
+zmodload -i zsh/complist
+bindkey -M menuselect '\e' send-break  # Esc to cancel completion
+
+zstyle ':completion:*' completer _expand _complete _ignored _correct _approximate
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' matcher-list '' 'm:{[:lower:]}={[:upper:]} r:|[._-]=** r:|=**'
+zstyle ':completion:*:*:*:*:*' menu select
+# Complete . and .. special directories
+zstyle ':completion:*' special-dirs true
+
+autoload -Uz compinit
+
+# The globbing is a little complicated here:
+# - '#q' is an explicit glob qualifier that makes globbing work within zsh's [[ ]] construct.
+# - 'N' makes the glob pattern evaluate to nothing when it doesn't match (rather than throw a globbing error)
+# - '.' matches "regular files"
+# - 'mh+24' matches files (or directories or whatever) that are older than 24 hours.
+# Note that we are setting `EXTENDED_GLOB` otherwise this would not match.
+setopt EXTENDED_GLOB
+if [[ -n $HOME/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+  touch .zcompdump
+else
+  compinit -C
+fi
+unsetopt EXTENDED_GLOB
+
+# VIM keybindings
+export KEYTIMEOUT=5
+[[ -f $HOME/.dotfiles/zsh/zsh-vim-mode/zsh-vim-mode.plugin.zsh ]] && source $HOME/.dotfiles/zsh/zsh-vim-mode/zsh-vim-mode.plugin.zsh
+
+MODE_INDICATOR_VICMD='%F{2}%B[NORMAL]%f%b'
+MODE_INDICATOR_REPLACE='%F{1}%B[REPLACE]%f%b'
+MODE_INDICATOR_SEARCH='%F{5}%B[SEARCH]%f%b'
+MODE_INDICATOR_VISUAL='%F{4}%B[VISUAL]%f%b'
+MODE_INDICATOR_VLINE='%F{4}%B[V-LINE]%f%b'
 
 # ----------- Personal configuration -------------
 
 # Aliases
-
-# Enable aliases to be sudo’ed
 alias history='fc -dElD 0'  # Better history with timestamps, elapsed time, etc.
 
-# ZSH specific configuration
-# Allows you to type Bash style comments on your command line
-# good ol' Bash :)
-setopt interactivecomments
+# Git aliases
+alias gst='git status'
+alias gc='git commit'
+alias gd='git diff'
 
-# History configuration.
-# Increase size.
-export HISTSIZE=1000000
-export SAVEHIST=$HISTSIZE
+alias ll='ls -al'
 
-# History file locking with better performance.
-setopt hist_fcntl_lock
+# Colored LS (from `oh-my-zsh`)
+[[ -n "$LS_COLORS" || -f "$HOME/.dircolors" ]] && gls --color -d . &>/dev/null && alias ls='gls --color=tty'
 
 # Load local configuration files
 if [[ -f $HOME/.zshrc.local ]]; then
