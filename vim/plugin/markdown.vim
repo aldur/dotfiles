@@ -16,7 +16,9 @@ let g:vim_markdown_no_extensions_in_markdown = 1  " Open links (without extensio
 
 function! HeaderDecrease() abort
     if match(getline('.'), '^# ') > -1
+        let l:search = @/
         execute 'silent! substitute/^# //'
+        let @/=l:search
         return
     endif
 
@@ -29,6 +31,8 @@ function! HeaderIncrease() abort
         return
     endif
 
+    let l:search = @/
     execute 'silent! substitute/^/# /'
+    let @/=l:search
 endfunction
 

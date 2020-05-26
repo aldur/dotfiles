@@ -53,7 +53,7 @@
 
     " Plug 'tpope/vim-fugitive'                      " A GIT wrapper
 
-    Plug 'lervag/wiki.vim'
+    Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
 
     " Fuzzy files, tags, life.
     if has('mac') && executable('fzf')  " Install `fzf` with homebrew
@@ -63,6 +63,7 @@
         Plug 'junegunn/fzf.vim'
     end
 
+    Plug 'lervag/wiki.vim'
     if executable('rg')
         Plug 'alok/notational-fzf-vim'
     end
@@ -72,8 +73,8 @@
     Plug 'fatih/molokai'                          " Molokai color scheme
 
     " Language specific plugins {{{
-        " Python virtualenvs within VIM
-        Plug 'jmcantrell/vim-virtualenv', { 'for': 'python' }
+        " Proper Python indent
+        Plug 'Vimjas/vim-python-pep8-indent', { 'for': 'python' }
 
         " Latex
         Plug 'lervag/vimtex', { 'for': 'tex' }
@@ -82,7 +83,7 @@
         Plug 'fatih/vim-go', { 'for': 'go' }
 
         " Markdown
-        Plug 'plasticboy/vim-markdown'
+        Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
@@ -117,11 +118,11 @@
         Plug 'honza/vim-snippets', b:has_nvim_python3 ? {} : { 'on': [] }
     " }}}
 
-
-    " Plug 'sheerun/vim-polyglot'                    " Additional syntaxes / indent, load it after syntax specific plugins
-
     " ...Vim-plug is done
     call plug#end()
+
+    " Load the `matchit` plugin from VIM's runtime.
+    packadd! matchit
 " }}}
 
 " General {{{
@@ -235,10 +236,6 @@
         let g:pear_tree_ft_disabled = []
     " }}}
 
-    " vim-polyglot {{{
-        let g:polyglot_disabled = ['tex', 'latex', 'python-compiler']
-    " }}}
-
     " vim.wiki {{{
         let g:wiki_root = '~/Documents/Notes'
         let g:wiki_filetypes = ['md']
@@ -256,18 +253,38 @@
             \ 'output': fnamemodify(tempname(), ':h'),
             \}
 
+        " Disable unused mappings
         let g:wiki_mappings_global = {
+                    \ '<plug>(wiki-index)' : '<plug>',
+                    \ '<plug>(wiki-open)' : '<plug>',
+                    \ '<plug>(wiki-reload)' : '<plug>',
                     \ '<plug>(wiki-page-toc)' : '<plug>',
+                    \ '<plug>(wiki-page-toc-local)' : '<plug>',
+                    \ '<plug>(wiki-tag-list)' : '<plug>',
+                    \ '<plug>(wiki-tag-reload)' : '<plug>',
+                    \ '<plug>(wiki-tag-search)' : '<plug>',
+                    \ '<plug>(wiki-link-next)' : '<plug>',
+                    \ '<plug>(wiki-link-prev)' : '<plug>',
+                    \ '<plug>(wiki-link-toggle)' : '<plug>',
+                    \ '<plug>(wiki-link-open)' : '<plug>',
                     \}
 
         let g:wiki_mappings_local = g:wiki_mappings_global
 
         let g:wiki_list_todos = ['TODO', 'DONE']
 
+        " Fix temporary error in creating links.
+        let g:wiki_map_link_create = 'WikiMapLinkCreate'
+        function! WikiMapLinkCreate(text) abort
+            return a:text
+        endfunction
+
         " Configure `notational-fzf-vim`
         let g:nv_search_paths = [g:wiki_root, ]
         let g:nv_create_note_window = 'edit'
     " }}}
+
+
 " }}}
 
 " Ending settings {{{

@@ -13,6 +13,8 @@ highlight SpellBad guifg=orange
 " Improve VimTeX syntax highlight.
 highlight Special guibg=0
 
+highlight Conceal guibg=none ctermbg=none
+
 set fillchars=""  " Disable split separator characters
 
 " Show snippet_complete marker (if any)

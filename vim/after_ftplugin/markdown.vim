@@ -6,25 +6,26 @@ setlocal conceallevel=0
 setlocal nojoinspaces
 
 let b:ale_linters = ['mdl', ]
-let b:ale_fixers = ['prettier', ]
+let b:ale_fixers = ['prettier']
 " This configures prettier for Markdown even if it says javascript :)
 let b:ale_javascript_prettier_options = '--tab-width 4'
+
+" Match fenced code blocks and inline backticks.
+let b:match_words = '```.\+:```$,\S\@<!`:`\S\@!'
 
 " Disable three backticks disappearing on new-line
 let b:pear_tree_repeatable_expand = 0
 
 nnoremap <silent><buffer> + :<c-U> call HeaderIncrease()<CR>
 nnoremap <silent><buffer> - :<c-U> call HeaderDecrease()<CR>
-
-" For Markdown, we enable additional snippets (from ~/.vim/UltiSnips).
-" let b:UltiSnipsSnippetDirectories=['UltiSnips']
+nnoremap <silent><buffer> gO :<c-U>BLines ^#<CR>
 
 iabbrev <buffer> e' è
+iabbrev <buffer> cioe' cioè
+iabbrev <buffer> c'e' c'è
 iabbrev <buffer> perche' perché
+iabbrev <buffer> poiche' poiché
+iabbrev <buffer> piu' più
+iabbrev <buffer> puo' può
+iabbrev <buffer> gia' già
 
-" TODO: You can do this with `imap`
-" iabbrev <buffer> a' à
-" iabbrev <buffer> e'' é
-" iabbrev <buffer> i' ì
-" iabbrev <buffer> o' ò
-" iabbrev <buffer> u' ù

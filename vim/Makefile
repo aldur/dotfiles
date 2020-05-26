@@ -1,12 +1,12 @@
 include ../include.mk
 
 .PHONY: all
-all: vimrc neovim templates autoload plugin after_plugin after_ftplugin scripts rplugin
+all: vimrc neovim templates autoload plugin ftdetect after_plugin after_ftplugin after_syntax scripts rplugin
 
 vimrc:
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
 
-scripts templates plugin rplugin: vimf
+scripts templates plugin rplugin ftdetect: vimf
 	$(LN) $(shell readlink -f $@) ${HOME}/.vim/$@
 
 after_ftplugin: after
@@ -17,6 +17,9 @@ after_plugin: after
 
 after_indent: after
 	$(LN) $(shell readlink -f $@) ${HOME}/.vim/after/indent
+
+after_syntax: after
+	$(LN) $(shell readlink -f $@) ${HOME}/.vim/after/syntax
 
 neovim: vimf vimrc
 	mkdir -p ${HOME}/.config
