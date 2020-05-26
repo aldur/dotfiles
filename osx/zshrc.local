@@ -26,8 +26,19 @@ zet() {
     nvim "+call wiki#page#open('$*')"
 }
 
+get_current_event() {
+    /usr/local/bin/icalBuddy \
+        --includeOnlyEventsFromNowOn \
+        --noCalendarNames \
+        --limitItems 1 \
+        --includeEventProps title,datetime,attendees \
+        --bullet '' \
+        --propertyOrder title,datetime,attendees \
+        -ic 'adriano@keyless.io' eventsToday \
+        | python3 \
+        -c "import fileinput; print('\n\n'.join('#' * (i + 2) + ' ' + l.strip().replace('mailto:', '').replace('@keyless.io', '').title() for i, l in enumerate(fileinput.input())))" \
+        | pbcopy
+}
+
 # Source FZF bindings
 [ -f "${HOME}/.fzf.zsh" ] && source "${HOME}/.fzf.zsh"
-
-# Source virtualenvwrapper
-[ -f "/usr/local/bin/virtualenvwrapper_lazy.sh" ] && source "/usr/local/bin/virtualenvwrapper_lazy.sh"
