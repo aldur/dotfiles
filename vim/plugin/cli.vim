@@ -1,7 +1,6 @@
 set showcmd               " Display incomplete commands
 
-" Magic pattern matching
-set magic
+set magic                 " Magic pattern matching
 
 set incsearch             " Find as you type search
 set hlsearch              " Highlight search terms
@@ -21,3 +20,5 @@ set wildmode=longest,full " Command <Tab> completion, list matches, then longest
 " Use sane magic regexes
 nnoremap / /\v
 vnoremap / /\v
+
+nnoremap Q <Nop>
