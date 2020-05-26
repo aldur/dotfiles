@@ -38,9 +38,7 @@ PATH="/usr/local/texlive/2020/bin/x86_64-darwin:$PATH"
 export fpath=(/usr/local/share/zsh-completions $fpath)
 
 # Python / Virtualenv / Virtualenvwrapper
-export WORKON_HOME=$HOME/.virtualenvs
-VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
-export VIRTUALENVWRAPPER_SCRIPT=/usr/local/bin/virtualenvwrapper.sh
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 
 # Android development
 export ANDROID_HOME=~/Library/Android/sdk
