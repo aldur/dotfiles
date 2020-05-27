@@ -20,7 +20,8 @@ setlocal commentstring=<!--%s-->
 setlocal formatoptions+=rtln formatoptions-=o formatoptions-=c formatoptions-=q
 
 " This pattern is used by the `n` flag in the `formatoptions`
-" - ^\s*\d+\.\s\+ matches a digit followed by a literal period and some space.
-" ^[-*+]\s+ matches the list markers followed by some space.
-" ^\\[^\ze[^\\]]\\+\\]:
-setlocal formatlistpat=^\\s*\\d\\+\\.\\s\\+\\\|^[-*+]\\s\\+\\\|^\\[^\\ze[^\\]]\\+\\]:
+" - ^\s*\d+\.\s\+ matches a digit followed by a literal period and white space
+"   and preceded by white space.
+" ^\s[-*+]\s+ matches the list markers followed or preceded by white space.
+" ^\[^\ze[^\]]+]:
+setlocal formatlistpat=^\\s*\\d\\+\\.\\s\\+\\\|^\\s*[-*+]\\s\\+\\\|^\\[^\\ze[^\\]]\\+\\]:
