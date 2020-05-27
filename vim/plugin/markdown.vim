@@ -36,3 +36,10 @@ function! HeaderIncrease() abort
     let @/=l:search
 endfunction
 
+function! FenceStart() abort
+    call search('```.\+$', 'bW')
+endfunction
+
+function! FenceEnd() abort
+    call search('```$', 'W')
+endfunction

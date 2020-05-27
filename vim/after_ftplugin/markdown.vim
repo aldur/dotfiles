@@ -18,6 +18,9 @@ let b:pear_tree_repeatable_expand = 0
 
 nnoremap <silent><buffer> + :<c-U> call HeaderIncrease()<CR>
 nnoremap <silent><buffer> - :<c-U> call HeaderDecrease()<CR>
+nnoremap <silent><buffer> [` :<c-U> call FenceStart()<CR>
+nnoremap <silent><buffer> ]` :<c-U> call FenceEnd()<CR>
+
 nnoremap <silent><buffer> gO :<c-U>BLines ^#<CR>
 
 iabbrev <buffer> e' è
