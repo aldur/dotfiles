@@ -9,3 +9,6 @@ set backupdir-=~/
 set backupdir-=~/.local/share/nvim/backup
 set backupdir^=~/.vim_backups/backup/
 set backup
+
+set noswapfile  " Stop annoying swap files
+

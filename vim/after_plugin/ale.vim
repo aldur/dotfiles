@@ -17,29 +17,12 @@ let g:ale_sign_error = '✘'
 highlight ALEErrorSign ctermbg=NONE ctermfg=red
 highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
 
-function! ALEFixGently() abort
-    " Preparation: save cursor position
-    " (last search is automatically saved because inside a function)
-    let l:save = winsaveview()
-
-    " Do the business.
-    ALEFix
-
-    " Clean up: restore cursor position.
-    call winrestview(l:save)
-endfunction
-nnoremap <leader>f :<C-u>silent call ALEFixGently()<CR>
+nnoremap <silent> <leader>f :<C-u>silent call aldur#ale#fix_gently()<CR>
 
 " This is macOS specific, but for the time being it's fine since it's the only
 " OS we use this in :)
 let g:ale_cpp_ccls_init_options = {
             \   'cache': {
             \       'directory': '/tmp/ccls/cache'
-            \   },
-            \   'clang': {
-            \        'extraArgs': [
-            \               '-isystem', '/Library/Developer/CommandLineTools/usr/include/c++/v1',
-            \               '-isystem', '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include'
-            \        ],
             \   },
             \ }

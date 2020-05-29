@@ -6,10 +6,9 @@ let g:lightline = {}
 
 let g:lightline.component_expand = {
             \ 'tabs': 'lightline#tabs',
-            \ 'virtualenv': 'LightlineVirtualenv',
-            \ 'syntax_error': 'LightlineAleError',
-            \ 'syntax_warning': 'LightlineAleWarning',
-            \ 'syntax_info': 'LightlineAleInfo',
+            \ 'syntax_error': 'aldur#lightline#ale_error',
+            \ 'syntax_warning': 'aldur#lightline#ale_warning',
+            \ 'syntax_info': 'aldur#lightline#ale_info',
             \ }
 
 let g:lightline.component_type = {
@@ -50,27 +49,3 @@ let g:lightline.tab = {
     \ 'active': [ 'filename', 'modified' ],
     \ 'inactive': [ 'tabnum', 'filename', 'modified' ] }
 
-" Virtualenv integration
-function! LightlineVirtualenv() abort
-    return &filetype ==? 'python' ? virtualenv#statusline() : ''
-endfunction
-
-" Neomake integration {{{
-    function! LightlineAleError() abort
-        let l:counts = ale#statusline#Count(bufnr(''))
-        let l:errors = l:counts.error + l:counts.style_error
-        return l:errors > 0 ? 'E: '.l:errors : ''
-    endfunction
-
-    function! LightlineAleWarning() abort
-        let l:counts = ale#statusline#Count(bufnr(''))
-        let l:warnings = l:counts.warning + l:counts.style_warning
-        return l:warnings > 0 ? 'W: '.l:warnings : ''
-    endfunction
-
-    function! LightlineAleInfo() abort
-        let l:counts = ale#statusline#Count(bufnr(''))
-        let l:infos = l:counts.info
-        return l:infos > 0 ? 'I: '.l:infos : ''
-    endfunction
-" }}}

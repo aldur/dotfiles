@@ -1,5 +1,6 @@
 set complete+=k
 set complete+=kspell
+set completeopt=menuone,noinsert
 set completeopt=menuone,longest
 
 " This enables Dictionary completion in deoplete

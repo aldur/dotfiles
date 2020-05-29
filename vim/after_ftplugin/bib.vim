@@ -1,6 +1,3 @@
 if executable('bibtool')
-    function! Bibtool(buffer) abort
-        return { 'command': 'bibtool %t' }
-    endf
-    let b:ale_fixers = ['Bibtool']
+    let b:ale_fixers = ['aldur#ale_fixers#bibtool']
 endif

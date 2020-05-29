@@ -32,3 +32,6 @@ if has('nvim')
     autocmd vimrc TermLeave *
                 \ let &timeoutlen = s:timeoutlen
 endif
+
+nnoremap <silent> <C-z> :<C-U>call aldur#terminal#toggle()<CR>
+tnoremap <silent> <C-z> <c-\><c-n>:<C-U>call aldur#terminal#toggle()<CR>

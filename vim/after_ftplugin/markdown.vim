@@ -6,7 +6,7 @@ setlocal conceallevel=0
 setlocal nojoinspaces
 
 let b:ale_linters = ['mdl', ]
-let b:ale_fixers = ['prettier']
+let b:ale_fixers = ['prettier', ]
 " This configures prettier for Markdown even if it says javascript :)
 let b:ale_javascript_prettier_options = '--tab-width 4'
 
@@ -16,10 +16,10 @@ let b:match_words = '```.\+:```$,\S\@<!`:`\S\@!'
 " Disable three backticks disappearing on new-line
 let b:pear_tree_repeatable_expand = 0
 
-nnoremap <silent><buffer> + :<c-U> call HeaderIncrease()<CR>
-nnoremap <silent><buffer> - :<c-U> call HeaderDecrease()<CR>
-nnoremap <silent><buffer> [` :<c-U> call FenceStart()<CR>
-nnoremap <silent><buffer> ]` :<c-U> call FenceEnd()<CR>
+nnoremap <silent><buffer> + :<c-U> call aldur#markdown#header_increase()<CR>
+nnoremap <silent><buffer> - :<c-U> call aldur#markdown#header_decrease()<CR>
+nnoremap <silent><buffer> [` :<c-U> call aldur#markdown#fence_start()<CR>
+nnoremap <silent><buffer> ]` :<c-U> call aldur#markdown#fence_end()<CR>
 
 nnoremap <silent><buffer> gO :<c-U>BLines ^#<CR>
 

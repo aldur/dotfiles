@@ -13,33 +13,3 @@ let g:vim_markdown_folding_disabled = 1  " Disable folding
 let g:vim_markdown_conceal = 0  " Disable syntax concealing.
 let g:vim_markdown_conceal_code_blocks = 0  " Disable code blocks concealing.
 " }}}
-
-function! HeaderDecrease() abort
-    if match(getline('.'), '^# ') > -1
-        let l:search = @/
-        execute 'silent! substitute/^# //'
-        let @/=l:search
-        return
-    endif
-
-    execute '.HeaderDecrease'
-endfunction
-
-function! HeaderIncrease() abort
-    if match(getline('.'), '^#') > -1
-        execute '.HeaderIncrease'
-        return
-    endif
-
-    let l:search = @/
-    execute 'silent! substitute/^/# /'
-    let @/=l:search
-endfunction
-
-function! FenceStart() abort
-    call search('```.\+$', 'bW')
-endfunction
-
-function! FenceEnd() abort
-    call search('```$', 'W')
-endfunction

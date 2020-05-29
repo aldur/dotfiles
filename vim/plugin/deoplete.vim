@@ -48,16 +48,11 @@ let g:deoplete#sources#go#sort_class    = ['package', 'func', 'type', 'var', 'co
 "                 \})
 " endif
 
-function! s:check_back_space() abort
-    let l:col = col('.') - 1
-    return !l:col || getline('.')[l:col - 1]  =~? '\s'
-endfunction
-
 " Clever tab to cycle the completion popup menu
 " If you even need to insert a literal tab, press <CTRL-V><Tab>
 inoremap <silent><expr> <TAB>
             \ pumvisible() ? "\<C-n>" :
-            \ <SID>check_back_space() ? "\<TAB>" :
+            \ aldur#deoplete#check_back_space() ? "\<TAB>" :
             \ deoplete#manual_complete()
 
 " Add a command to quickly toggle deoplete.

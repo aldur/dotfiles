@@ -13,13 +13,14 @@ highlight SpellBad guifg=orange
 " Improve VimTeX syntax highlight.
 highlight Special guibg=0
 
-highlight Conceal guibg=none ctermbg=none
-
 set fillchars=""  " Disable split separator characters
 
 " Show snippet_complete marker (if any)
 if has('conceal')
     set conceallevel=2 concealcursor=""
+
+    " Concealed characters have the same background
+    highlight Conceal guibg=none ctermbg=none
 endif
 
 " Line and relative numbers
@@ -27,6 +28,7 @@ set number
 set relativenumber
 
 " Only show cursorline in current window
+" Disabled in general as it slows down redrawing
 " autocmd vimrc WinEnter * set cursorline
 " autocmd vimrc WinLeave * set nocursorline
 
@@ -49,3 +51,22 @@ if has('nvim')
     " Restore terminal cursor when nvim leaves.
     autocmd vimrc VimLeave * set guicursor=a:hor10-blinkon0
 endif
+
+set scrolloff=8       " don't scroll any closer to top/bottom
+set sidescrolloff=5   " don't scroll any closer to left/right
+
+" No annoying sound on errors
+set noerrorbells novisualbell
+if !has('nvim')
+    " nvim ignores t_vb
+    autocmd vimrc GUIEnter * set visualbell t_vb=
+end
+
+" Allow the cursor to be one more the last char.
+set virtualedit=onemore
+
+" Set minimum height and width for windows
+" set winminheight=10 winminwidth=10
+
+" Do not resize when opening or closing windows
+set noequalalways

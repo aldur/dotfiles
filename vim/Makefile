@@ -1,7 +1,7 @@
 include ../include.mk
 
 .PHONY: all
-all: vimrc neovim templates autoload plugin ftdetect after_plugin after_ftplugin after_syntax scripts rplugin
+all: vimrc neovim templates autoload autoload_aldur plugin ftdetect after_plugin after_ftplugin after_syntax scripts rplugin
 
 vimrc:
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
@@ -28,6 +28,9 @@ neovim: vimf vimrc
 
 after: vimf
 	mkdir -p ${HOME}/.vim/after
+
+autoload_aldur: autoload
+	$(LN) $(shell readlink -f $@) ${HOME}/.vim/autoload/aldur
 
 autoload: vimf
 	mkdir -p ${HOME}/.vim/autoload

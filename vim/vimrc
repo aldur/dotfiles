@@ -27,6 +27,10 @@
         " Disable some of VIM standard plugins
         let g:loaded_2html_plugin = 1  " Disable tohtml.vim
         let g:loaded_tutor_mode_plugin = 1  " Disable vimtutor
+        let g:loaded_vimballPlugin = 1  " Disable vimball
+        let g:loaded_tarPlugin = 1  " Disable tar
+        let g:loaded_getscriptPlugin = 1  " Disable getscript
+        let g:loaded_zipPlugin = 1  " Disable zip
     " }}}
 " }}}
 
@@ -84,6 +88,9 @@
 
         " Markdown
         Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
+
+        " Swift
+        Plug 'keith/swift.vim', { 'for': 'swift' }
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
@@ -137,25 +144,11 @@
     set mouse=a
     set mousehide               " Hide the mouse cursor while typing
 
-    set noswapfile  " Stop annoying swap files
-
     set updatetime=1000  " ms to trigger the CursorHold/CursorHoldI events
 
     " With a map leader it's possible to do extra key combinations
     let g:mapleader = "\<Space>"
     let g:maplocalleader = "\<Space>"
-" }}}
-
-" Appearance {{{
-    set scrolloff=8       " don't scroll any closer to top/bottom
-    set sidescrolloff=5   " don't scroll any closer to left/right
-
-    " No annoying sound on errors
-    set noerrorbells visualbell t_vb=
-    autocmd vimrc GUIEnter * set visualbell t_vb=
-
-    " Allow the cursor to be one more the last char.
-    set virtualedit=onemore
 " }}}
 
 " Text, lines, tab, indent and folding {{{
@@ -228,8 +221,8 @@
         " Use Dash on macOS (if available)
         let g:investigate_use_dash=1
 
-        nnoremap K :call investigate#Investigate('n')<CR>
-        vnoremap K :call investigate#Investigate('v')<CR>
+        nnoremap <silent> K :call investigate#Investigate('n')<CR>
+        vnoremap <silent> K :call investigate#Investigate('v')<CR>
     " }}}
 
     " pear-tree {{{
@@ -274,10 +267,7 @@
         let g:wiki_list_todos = ['TODO', 'DONE']
 
         " Fix temporary error in creating links.
-        let g:wiki_map_link_create = 'WikiMapLinkCreate'
-        function! WikiMapLinkCreate(text) abort
-            return a:text
-        endfunction
+        let g:wiki_map_link_create = 'aldur#wiki#map_link_create'
 
         " Configure `notational-fzf-vim`
         let g:nv_search_paths = [g:wiki_root, ]
