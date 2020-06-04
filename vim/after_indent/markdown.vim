@@ -22,6 +22,7 @@ setlocal formatoptions+=rtln formatoptions-=o formatoptions-=c formatoptions-=q
 " This pattern is used by the `n` flag in the `formatoptions`
 " - ^\s*\d+\.\s\+ matches a digit followed by a literal period and white space
 "   and preceded by white space.
-" ^\s[-*+]\s+ matches the list markers followed or preceded by white space.
-" ^\[^\ze[^\]]+]:
-setlocal formatlistpat=^\\s*\\d\\+\\.\\s\\+\\\|^\\s*[-*+]\\s\\+\\\|^\\[^\\ze[^\\]]\\+\\]:
+" - ^\s[-*+]\s+ matches the list markers followed or preceded by white space.
+" - ^\[^\ze[^\]]+]: ?
+" - ^\s*>+\s+ ? matches a > followed or preceded by white space.
+setlocal formatlistpat=^\\s*\\d\\+\\.\\s\\+\\\|^\\s*[-*+]\\s\\+\\\|^\\[^\\ze[^\\]]\\+\\]:\\\|^\\s*>\\s\\+
