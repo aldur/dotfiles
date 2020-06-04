@@ -21,6 +21,9 @@ nnoremap <silent><buffer> - :<c-U> call aldur#markdown#header_decrease()<CR>
 nnoremap <silent><buffer> [` :<c-U> call aldur#markdown#fence_start()<CR>
 nnoremap <silent><buffer> ]` :<c-U> call aldur#markdown#fence_end()<CR>
 
+nmap <silent><buffer> [c <Plug>Markdown_MoveToCurHeader
+nmap <silent><buffer> [p <Plug>Markdown_MoveToParentHeader
+
 nnoremap <silent><buffer> gO :<c-U>BLines ^#<CR>
 
 iabbrev <buffer> e' è
