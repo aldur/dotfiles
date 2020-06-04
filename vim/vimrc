@@ -51,11 +51,15 @@
     Plug 'romainl/vim-qf'                          " Fix the quickfix
     Plug 'tmsvg/pear-tree'                         " Auto-pair
     Plug 'tommcdo/vim-lion'                        " Add gl/gL to align text
-    Plug 'tpope/vim-commentary'                    " Toggle comments
-    Plug 'tpope/vim-repeat'                        " Enable supported plugin actions to be repeated with '.'
-    Plug 'tpope/vim-surround'                      " All about surrounding
 
-    " Plug 'tpope/vim-fugitive'                      " A GIT wrapper
+    Plug 'tpope/vim-commentary'                    " Toggle comments
+    Plug 'tpope/vim-repeat'                        " Enable '.' for plugin actions
+    Plug 'tpope/vim-surround'                      " All about surrounding
+    Plug 'tpope/vim-scriptease'                    " Easier plugin development
+
+    if executable('git')
+        Plug 'tpope/vim-fugitive'                      " A GIT wrapper
+    endif
 
     Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
 
@@ -67,6 +71,7 @@
         Plug 'junegunn/fzf.vim'
     end
 
+    " Wiki
     Plug 'lervag/wiki.vim'
     if executable('rg')
         Plug 'alok/notational-fzf-vim'
@@ -118,7 +123,6 @@
 
     " Snippets  {{{
         " Conditionally load `ultisnips` if on `nvim` with `python3`.
-
         " Snippets engine
         Plug 'SirVer/ultisnips', b:has_nvim_python3 ? {} : { 'on': [] }
         " Vim snippets
@@ -225,10 +229,6 @@
         vnoremap <silent> K :call investigate#Investigate('v')<CR>
     " }}}
 
-    " pear-tree {{{
-        let g:pear_tree_ft_disabled = []
-    " }}}
-
     " vim.wiki {{{
         let g:wiki_root = '~/Documents/Notes'
         let g:wiki_filetypes = ['md']
@@ -273,8 +273,6 @@
         let g:nv_search_paths = [g:wiki_root, ]
         let g:nv_create_note_window = 'edit'
     " }}}
-
-
 " }}}
 
 " Ending settings {{{
