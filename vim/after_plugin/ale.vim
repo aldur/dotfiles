@@ -18,11 +18,3 @@ highlight ALEErrorSign ctermbg=NONE ctermfg=red
 highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
 
 nnoremap <silent> <leader>f :<C-u>silent call aldur#ale#fix_gently()<CR>
-
-" This is macOS specific, but for the time being it's fine since it's the only
-" OS we use this in :)
-let g:ale_cpp_ccls_init_options = {
-            \   'cache': {
-            \       'directory': '/tmp/ccls/cache'
-            \   },
-            \ }
