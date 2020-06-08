@@ -34,9 +34,6 @@ setopt SHARE_HISTORY
 export HISTSIZE=1000000
 export SAVEHIST=$HISTSIZE
 
-setopt CORRECT
-setopt CORRECT_ALL
-
 # Disable bells (iTerm disables them, but the `nvim` terminal does not)
 unsetopt BEEP
 
