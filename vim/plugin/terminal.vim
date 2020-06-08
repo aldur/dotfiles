@@ -21,7 +21,7 @@ if has('nvim')
     autocmd vimrc TermOpen *
                 \ setlocal nonumber norelativenumber |
                 \ tnoremap <buffer> <Esc><Esc> <c-\><c-n> |
-                \ nnoremap <silent><buffer> <leader><space> :<c-U>Files<CR>
+                \ nnoremap <silent><buffer> <leader><space> :<c-U>Files<CR> |
                 \ nnoremap <silent><buffer> <leader>bd :<c-U>bdelete!<CR>
     autocmd vimrc FileType fzf tunmap <buffer> <Esc><Esc>
 
