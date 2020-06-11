@@ -4,11 +4,12 @@ setlocal spell spelllang=en,it
 setlocal textwidth=80
 setlocal conceallevel=0
 setlocal nojoinspaces
+setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 
 let b:ale_linters = ['mdl', ]
 let b:ale_fixers = ['prettier', ]
 " This configures prettier for Markdown even if it says javascript :)
-let b:ale_javascript_prettier_options = '--tab-width 4'
+let b:ale_javascript_prettier_options = '--tab-width 2'
 
 " Match fenced code blocks and inline backticks.
 let b:match_words = '```.\+:```$,\S\@<!`:`\S\@!'
