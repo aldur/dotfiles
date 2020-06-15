@@ -2,7 +2,7 @@ include ../include.mk
 
 DOTFILES = psqlrc radare2rc curlrc gdbinit inputrc ideavimrc chktexrc pylintrc gitignore_global weechat mdlrc mdlstyle.rb
 CONFIG_FILES = flake8 pycodestyle ctags
-ALL = $(DOTFILES) $(CONFIG_FILES) _yamllint _bat vale weechat
+ALL = $(DOTFILES) $(CONFIG_FILES) _yamllint _bat vale
 
 .PHONY: $(ALL)
 all: $(ALL)
@@ -35,5 +35,5 @@ _bat: bat
 	mkdir -p ${HOME}/.config/$</
 	$(LN) $(shell readlink -f $<) ${HOME}/.config/$</config
 
-vale weechat:
+vale:
 	$(MAKE) -C $@
