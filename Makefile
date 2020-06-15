@@ -1,5 +1,5 @@
 # TODO: check for requirements.
-TARGETS = zsh vim various ssh weechat vale
+TARGETS = zsh vim various ssh
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)

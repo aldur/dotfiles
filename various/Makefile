@@ -2,9 +2,10 @@ include ../include.mk
 
 DOTFILES = psqlrc radare2rc curlrc gdbinit inputrc ideavimrc chktexrc pylintrc gitignore_global weechat mdlrc mdlstyle.rb
 CONFIG_FILES = flake8 pycodestyle ctags
+ALL = $(DOTFILES) $(CONFIG_FILES) _yamllint _bat vale weechat
 
-.PHONY: all
-all: $(DOTFILES) $(CONFIG_FILES) git _yamllint _bat
+.PHONY: $(ALL)
+all: $(ALL)
 
 git:
 	git config --global user.name "Adriano Di Luzio"
@@ -33,3 +34,6 @@ _yamllint: yamllint
 _bat: bat
 	mkdir -p ${HOME}/.config/$</
 	$(LN) $(shell readlink -f $<) ${HOME}/.config/$</config
+
+vale weechat:
+	$(MAKE) -C $@
