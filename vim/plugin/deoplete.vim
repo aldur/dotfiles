@@ -50,10 +50,7 @@ let g:deoplete#sources#go#sort_class    = ['package', 'func', 'type', 'var', 'co
 
 " Clever tab to cycle the completion popup menu
 " If you even need to insert a literal tab, press <CTRL-V><Tab>
-inoremap <silent><expr> <TAB>
-            \ pumvisible() ? "\<C-n>" :
-            \ aldur#deoplete#check_back_space() ? "\<TAB>" :
-            \ deoplete#manual_complete()
+inoremap <silent><expr> <TAB> aldur#deoplete#tab_imap()
 
 " Add a command to quickly toggle deoplete.
 command! DeopleteToggle call deoplete#toggle()
