@@ -17,19 +17,38 @@ let b:match_words = '```.\+:```$,\S\@<!`:`\S\@!'
 " Disable three backticks disappearing on new-line
 let b:pear_tree_repeatable_expand = 0
 
-nnoremap <silent><buffer> + :<c-U> call aldur#markdown#header_increase()<CR>
-nnoremap <silent><buffer> - :<c-U> call aldur#markdown#header_decrease()<CR>
-nnoremap <silent><buffer> [` :<c-U> call aldur#markdown#fence_start()<CR>
-nnoremap <silent><buffer> ]` :<c-U> call aldur#markdown#fence_end()<CR>
+nnoremap <silent><buffer> [` :<c-U>call aldur#markdown#fence_start()<CR>
+onoremap <silent><buffer> [` :<c-U>call aldur#markdown#fence_start()<CR>
+vnoremap <silent><buffer> [` <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#fence_start')<CR>
 
-nmap <silent><buffer> [c <Plug>Markdown_MoveToCurHeader
-nmap <silent><buffer> [p <Plug>Markdown_MoveToParentHeader
+nnoremap <silent><buffer> ]` :<c-U>call aldur#markdown#fence_end()<CR>
+onoremap <silent><buffer> ]` :<C-U>call aldur#markdown#fence_end()<CR>
+vnoremap <silent><buffer> ]` <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#fence_end')<CR>
+
+nnoremap <silent><buffer> ]] :<C-U>call aldur#markdown#next_header()<CR>
+onoremap <silent><buffer> ]] :<C-U>call aldur#markdown#next_header()<CR>
+vnoremap <silent><buffer> ]] <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#next_header')<CR>
+
+nnoremap <silent><buffer> [[ :<C-U>call aldur#markdown#previous_header()<CR>
+onoremap <silent><buffer> [[ :<C-U>call aldur#markdown#previous_header()<CR>
+vnoremap <silent><buffer> [[ <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#previous_header')<CR>
+
+nnoremap <silent><buffer> [p :<C-U>call aldur#markdown#parent_header()<CR>
+onoremap <silent><buffer> [p :<C-U>call aldur#markdown#parent_header()<CR>
+vnoremap <silent><buffer> [p <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#parent_header')<CR>
+
+nnoremap <silent><buffer> + :<c-U>call aldur#markdown#increase_header_level()<CR>
+nnoremap <silent><buffer> - :<c-U>call aldur#markdown#decrease_header_level()<CR>
 
 nnoremap <silent><buffer> gO :<c-U>BLines ^#<CR>
+
+inoremap <silent><buffer><expr> <tab> aldur#markdown#tab_imap()
+inoremap <silent><buffer><expr> <s-tab> aldur#markdown#s_tab_imap()
 
 iabbrev <buffer> e' è
 iabbrev <buffer> cioe' cioè
 iabbrev <buffer> c'e' c'è
+iabbrev <buffer> pero' però
 iabbrev <buffer> perche' perché
 iabbrev <buffer> poiche' poiché
 iabbrev <buffer> piu' più

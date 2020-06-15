@@ -15,4 +15,6 @@ let g:vim_markdown_conceal_code_blocks = 0  " Disable code blocks concealing.
 " Disable some of the default mappigns
 map <Plug> <Plug>Markdown_MoveToParentHeader
 map <Plug> <Plug>Markdown_MoveToCurHeader
+map <Plug> <Plug>Markdown_MoveToPreviousHeader
+map <Plug> <Plug>Markdown_MoveToNextHeader
 " }}}
