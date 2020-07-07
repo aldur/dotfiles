@@ -5,6 +5,7 @@ setlocal textwidth=80
 setlocal conceallevel=0
 setlocal nojoinspaces
 setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
+setlocal signcolumn=no
 
 let b:ale_linters = ['mdl', ]
 let b:ale_fixers = ['prettier', ]
