@@ -11,6 +11,25 @@ let g:lightline.component_expand = {
             \ 'syntax_info': 'aldur#lightline#ale_info',
             \ }
 
+let g:lightline.component_function = {
+            \ 'gitbranch': 'aldur#lightline#git_branch',
+            \ 'readonly': 'aldur#lightline#read_only',
+            \ 'filename': 'aldur#lightline#filename',
+            \ 'filetype': 'aldur#lightline#filetype',
+            \ 'spell': 'aldur#lightline#spell'
+            \ }
+
+" Custom component for file encoding and format
+let g:lightline.component = {
+    \ 'fileencoding': '%{&fenc!=#"utf-8"?(&fenc!=#""?&fenc:&enc):""}',
+    \ 'fileformat': '%{&ff!=#"unix"?&ff:""}' }
+
+" ...and companions to define visibility
+let g:lightline.component_visible_condition = {
+    \ 'fileencoding': '&fenc!=#"utf-8"',
+    \ 'fileformat': '&ff!=#"unix"'
+    \ }
+
 let g:lightline.component_type = {
             \ 'tabs': 'tabsel',
             \ 'close': 'raw',
@@ -22,7 +41,7 @@ let g:lightline.component_type = {
 " Setup the active status bar
 let g:lightline.active = {
             \ 'left': [ [ 'mode', 'paste', 'spell' ],
-            \           [ 'readonly', 'filename', 'modified' ] ],
+            \           [ 'readonly', 'gitbranch', 'filename' ] ],
             \ 'right': [ [ 'syntax_error', 'syntax_warning', 'syntax_info' ],
             \            [ 'lineinfo' ],
             \            [ 'fileformat', 'fileencoding', 'filetype' ],
@@ -49,3 +68,16 @@ let g:lightline.tab = {
     \ 'active': [ 'filename', 'modified' ],
     \ 'inactive': [ 'tabnum', 'filename', 'modified' ] }
 
+let g:lightline.mode_map = {
+            \ 'n' : 'N',
+            \ 'i' : 'I',
+            \ 'R' : 'R',
+            \ 'v' : 'V',
+            \ 'V' : 'VL',
+            \ "\<C-v>": 'VB',
+            \ 'c' : 'C',
+            \ 's' : 'S',
+            \ 'S' : 'SL',
+            \ "\<C-s>": 'SB',
+            \ 't': 'T',
+            \ }
