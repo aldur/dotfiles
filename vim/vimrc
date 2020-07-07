@@ -238,12 +238,13 @@
         let g:wiki_filetypes = ['md']
         let g:wiki_link_target_type = 'md'
 
+        let s:expand_root = expand(g:wiki_root)
         let g:wiki_export = {
             \ 'args' : '--self-contained ' .
-            \ '--lua-filter ' . g:wiki_root . '/assets/header_as_title.lua ' .
-            \ '--lua-filter ' . g:wiki_root . '/assets/todo_to_checkbox.lua ' .
+            \ '--lua-filter ' . s:expand_root . '/assets/header_as_title.lua ' .
+            \ '--lua-filter ' . s:expand_root . '/assets/todo_to_checkbox.lua ' .
             \ '--template GitHub.html5 ' .
-            \ '--data-dir ' . g:wiki_root . '/assets/',
+            \ '--data-dir ' . s:expand_root . '/assets/ ',
             \ 'from_format' : 'markdown',
             \ 'ext' : 'html',
             \ 'view' : v:true,
@@ -264,6 +265,7 @@
                     \ '<plug>(wiki-link-prev)' : '<plug>',
                     \ '<plug>(wiki-link-toggle)' : '<plug>',
                     \ '<plug>(wiki-link-open)' : '<plug>',
+                    \ '<plug>(wiki-export)' : '<plug>',
                     \}
 
         let g:wiki_mappings_local = g:wiki_mappings_global
