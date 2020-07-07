@@ -32,6 +32,15 @@ set relativenumber
 " autocmd vimrc WinEnter * set cursorline
 " autocmd vimrc WinLeave * set nocursorline
 
+" Only show line number on the current window
+" autocmd vimrc WinEnter * set number relativenumber
+" autocmd vimrc WinLeave * set nonumber norelativenumber
+
+" Disable signcolumn
+" Note that you need to use `BufRead`/`BufNewFile` because `WintEnter` does
+" not apply to the first window.
+" autocmd BufRead,BufNewFile * setlocal signcolumn=no
+
 " White spaces
 scriptencoding utf8
 set list                                           " Display white spaces
