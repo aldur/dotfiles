@@ -1,7 +1,8 @@
 " At the start of the line or when there's only whitespace triggers tab.
 function! aldur#deoplete#check_back_space() abort
-    let l:col = col('.') - 1
-    return !l:col || getline('.')[l:col - 1]  =~? '\s'
+    " let l:col = col('.') - 1
+    " return !l:col || getline('.')[l:col - 1] =~? '\s'
+    return match(getline('.'), '^\s*$') != -1
 endfunction
 
 function! aldur#deoplete#tab_imap() abort
