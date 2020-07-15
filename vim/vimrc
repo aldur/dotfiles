@@ -80,7 +80,10 @@
 
     " Appearance and Statusline
     Plug 'itchyny/lightline.vim'                  " Configure the statusbar
-    Plug 'fatih/molokai'                          " Molokai color scheme
+
+    " Plug 'fatih/molokai'                          " Molokai color scheme
+    Plug 'patstockwell/vim-monokai-tasty'           " Molokai color scheme
+    Plug 'erichdongubler/vim-sublime-monokai'           " Molokai color scheme
 
     " Language specific plugins {{{
         " Proper Python indent
