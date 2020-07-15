@@ -5,7 +5,7 @@ function! aldur#whitespace#strip_trailing() abort
 
     " Do the business.
     " vint: -ProhibitCommandRelyOnUser -ProhibitCommandWithUnintendedSideEffect
-    keeppatterns %s/\s\+$//ei
+    execute 'keepjumps keeppatterns %s/\s\+$//ei'
 
     " Clean up: restore cursor position.
     " vint: +ProhibitCommandRelyOnUser +ProhibitCommandWithUnintendedSideEffect
@@ -18,7 +18,7 @@ function! aldur#whitespace#retab() abort
     let l:save = winsaveview()
 
     " Do the business.
-    retab!
+    execute 'keepjumps keeppatterns retab!'
 
     " Clean up: restore cursor position.
     call winrestview(l:save)
