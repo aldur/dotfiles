@@ -22,10 +22,6 @@ if [[ -n "${TMUX+set}" ]] then
     tab-title "$(tmux display-message -p "#S")"
 fi
 
-zet() {
-    nvim "+call wiki#page#open('$*')"
-}
-
 get_current_event() {
     /usr/local/bin/icalBuddy \
         --includeOnlyEventsFromNowOn \
