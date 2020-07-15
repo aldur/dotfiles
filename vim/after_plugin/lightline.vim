@@ -4,6 +4,29 @@
 
 let g:lightline = {}
 
+" === Setup the lightline colorscheme ===
+" Source: https://github.com/patstockwell/vim-monokai-tasty/blob/master/autoload/lightline/colorscheme/monokai_tasty.vim
+let s:palette = g:lightline#colorscheme#monokai_tasty#palette
+
+let s:insert = deepcopy(s:palette.insert)
+let s:normal = deepcopy(s:palette.normal)
+let s:command = deepcopy(s:palette.command)
+
+" insert -> normal
+let s:palette.normal = s:insert
+let s:palette.normal.error = s:normal.error
+let s:palette.normal.warning = s:normal.warning
+" normal -> command
+let s:palette.command = s:normal
+unlet s:palette.command["middle"]
+" command -> insert
+let s:palette.insert = s:command
+let s:palette.insert.middle = s:insert.middle
+
+" === /Setup the lightline colorscheme ===
+
+let g:lightline.colorscheme = 'monokai_tasty'
+
 let g:lightline.component_expand = {
             \ 'tabs': 'lightline#tabs',
             \ 'syntax_error': 'aldur#lightline#ale_error',
@@ -32,7 +55,6 @@ let g:lightline.component_visible_condition = {
 
 let g:lightline.component_type = {
             \ 'tabs': 'tabsel',
-            \ 'close': 'raw',
             \ 'syntax_error': 'error',
             \ 'syntax_warning': 'warning',
             \ 'syntax_info': 'info',
@@ -40,12 +62,13 @@ let g:lightline.component_type = {
 
 " Setup the active status bar
 let g:lightline.active = {
-            \ 'left': [ [ 'mode', 'paste', 'spell' ],
-            \           [ 'readonly', 'gitbranch', 'filename' ] ],
+            \ 'left' : [ [ 'mode', 'paste', 'spell'                        ],
+            \            [ 'readonly', 'filename'                          ],
+            \            [ 'gitbranch'                                     ] ],
             \ 'right': [ [ 'syntax_error', 'syntax_warning', 'syntax_info' ],
-            \            [ 'lineinfo' ],
-            \            [ 'fileformat', 'fileencoding', 'filetype' ],
-            \            [ 'virtualenv' ] ] }
+            \            [ 'lineinfo'                                      ],
+            \            [ 'fileformat', 'fileencoding', 'filetype'        ],
+            \            [ 'virtualenv'                                    ] ] }
 
 " Setup the inactive status bar
 let g:lightline.inactive = {
@@ -69,15 +92,15 @@ let g:lightline.tab = {
     \ 'inactive': [ 'tabnum', 'filename', 'modified' ] }
 
 let g:lightline.mode_map = {
-            \ 'n' : 'N',
-            \ 'i' : 'I',
-            \ 'R' : 'R',
-            \ 'v' : 'V',
-            \ 'V' : 'VL',
-            \ "\<C-v>": 'VB',
-            \ 'c' : 'C',
-            \ 's' : 'S',
-            \ 'S' : 'SL',
-            \ "\<C-s>": 'SB',
-            \ 't': 'T',
+            \ 'n' : 'NRM',
+            \ 'i' : 'INS',
+            \ 'R' : 'RPL',
+            \ 'v' : 'VSL',
+            \ 'V' : 'VLN',
+            \ "\<C-v>": 'VBL',
+            \ 'c' : 'CMD',
+            \ 's' : 'SEL',
+            \ 'S' : 'SLN',
+            \ "\<C-s>": 'SBL',
+            \ 't': 'TRM',
             \ }

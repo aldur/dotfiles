@@ -16,7 +16,7 @@ scriptencoding utf-8
     function! aldur#lightline#ale_info() abort
         let l:counts = ale#statusline#Count(bufnr(''))
         let l:infos = l:counts.info
-        return l:infos > 0 ? 'ⓘ '.l:infos : ''
+        return l:infos > 0 ? 'ℹ '.l:infos : ''
     endfunction
 " }}}
 
