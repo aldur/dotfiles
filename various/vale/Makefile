@@ -1,10 +1,7 @@
 include ../../include.mk
 
 .PHONY: all
-all: vale styles link
-
-vale:
-	curl -sfL https://install.goreleaser.com/github.com/ValeLint/vale.sh | sh -s latest
+all: styles
 
 styles:
 	mkdir -p styles
@@ -12,8 +9,7 @@ styles:
 	cd styles; unzip \*.zip
 	rm styles/*.zip
 
-link:
+link: styles
 	$(LN) $(shell readlink -f vale.ini) ${HOME}/.vale.ini
 	mkdir -p ~/.vale/
-	$(LN) $(shell readlink -f bin) ${HOME}/.vale/bin
 	$(LN) $(shell readlink -f styles) ${HOME}/.vale/styles
