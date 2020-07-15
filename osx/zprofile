@@ -45,9 +45,6 @@ export ANDROID_HOME=~/Library/Android/sdk
 export ANDROID_SDK_ROOT=~/Library/Android/sdk
 export ANDROID_AVD_HOME=~/.android/avd
 
-# Integrate Vale
-PATH=$HOME/.vale/bin:$PATH
-
 # Integrate Python executables
 PATH=$HOME/Library/Python/3.7/bin:$PATH
 
@@ -72,6 +69,8 @@ if type fd > /dev/null; then
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
     export FZF_ALT_C_COMMAND="${FZF_DEFAULT_COMMAND} --type d"
 fi
+
+export FZF_DEFAULT_OPTS="--bind alt-p:toggle-preview"
 
 # Export $PATH and MANPATH
 export PATH=$PATH
