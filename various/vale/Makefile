@@ -1,4 +1,4 @@
-include ../include.mk
+include ../../include.mk
 
 .PHONY: all
 all: vale styles link
