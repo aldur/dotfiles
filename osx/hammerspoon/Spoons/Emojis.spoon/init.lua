@@ -39,8 +39,8 @@ function obj.callback(choice)
     end
 
     if lastApplication ~= nil and hs.fnutils.contains(
-            {'com.qvacua.VimR', 'com.googlecode.iterm2'}, lastApplication:bundleID()
-            ) then
+        {'com.qvacua.VimR', 'com.googlecode.iterm2', 'com.apple.Safari'}, lastApplication:bundleID()
+    ) then
         -- Some applications do not seem to handle "typing" emojis.
         -- In those cases, we put them in the pasteboard, paste them, and then restore the status.
         local previousContent = hs.pasteboard.getContents()
