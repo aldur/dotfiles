@@ -1,3 +1,5 @@
+include include.mk
+
 # TODO: check for requirements.
 TARGETS = vim various ssh fish zsh
 
