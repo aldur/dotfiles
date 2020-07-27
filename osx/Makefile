@@ -1,9 +1,10 @@
 include ../include.mk
 
 DOTFILES = latexmkrc hammerspoon tmux.conf tmux-osx.conf hushlogin zprofile zshrc.local
+TARGETS = $(DOTFILES) gpg-agent karabiner
 
-.PHONY: all gpg-agent karabiner
-all: $(DOTFILES)
+.PHONY: $(TARGETS)
+all: $(TARGETS)
 
 $(DOTFILES):
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
