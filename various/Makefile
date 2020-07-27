@@ -2,7 +2,7 @@ include ../include.mk
 
 DOTFILES = psqlrc radare2rc curlrc gdbinit inputrc ideavimrc chktexrc pylintrc gitignore_global weechat mdlrc mdlstyle.rb
 CONFIG_FILES = flake8 pycodestyle ctags
-ALL = $(DOTFILES) $(CONFIG_FILES) _yamllint _bat vale
+ALL = $(DOTFILES) $(CONFIG_FILES) _yamllint _bat vale git
 
 .PHONY: $(ALL)
 all: $(ALL)
