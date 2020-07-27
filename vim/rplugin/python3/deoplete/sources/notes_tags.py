@@ -39,9 +39,12 @@ class Source(Base):
         if not context['input']:
             return []
 
-        res = subprocess.run(
-            ['rg', '--no-filename', '--no-heading', '--no-line-number',
-             "\\s*:\\w*:$",
-             self.wiki_path], stdout=PIPE, stderr=PIPE
-        )
-        return [l.strip() for l in res.stdout.decode('utf-8').splitlines()]
+        try:
+            res = subprocess.run(
+                ['rg', '--no-filename', '--no-heading', '--no-line-number',
+                "\\s*:\\w*:$",
+                self.wiki_path], stdout=PIPE, stderr=PIPE
+            )
+            return [l.strip() for l in res.stdout.decode('utf-8').splitlines()]
+        except FileNotFoundError:
+            return []
