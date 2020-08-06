@@ -1,5 +1,16 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
+SETUVAR --export AUTOSSH_PORT:0
+SETUVAR --export EDITOR:nvim
+SETUVAR --export FZF_ALT_C_COMMAND:fd\x20\x2dd\x2010\x20\x2d\x2dhidden\x20\x2d\x2dfollow\x20\x2d\x2dexclude\x20\x2egit\x20\x2d\x2dexclude\x20\x2esvn\x20\x2d\x2dignore\x2dfile\x20\x7e/\x2egitignore_global\x20\x2d\x2dtype\x20d
+SETUVAR --export FZF_CTRL_T_COMMAND:fd\x20\x2dd\x2010\x20\x2d\x2dhidden\x20\x2d\x2dfollow\x20\x2d\x2dexclude\x20\x2egit\x20\x2d\x2dexclude\x20\x2esvn\x20\x2d\x2dignore\x2dfile\x20\x7e/\x2egitignore_global
+SETUVAR --export FZF_DEFAULT_COMMAND:fd\x20\x2dd\x2010\x20\x2d\x2dhidden\x20\x2d\x2dfollow\x20\x2d\x2dexclude\x20\x2egit\x20\x2d\x2dexclude\x20\x2esvn\x20\x2d\x2dignore\x2dfile\x20\x7e/\x2egitignore_global
+SETUVAR --export FZF_DEFAULT_OPTS:\x2d\x2dbind\x20alt\x2dp\x3atoggle\x2dpreview
+SETUVAR --export HOMEBREW_CASK_OPTS:\x2d\x2drequire\x2dsha
+SETUVAR --export HOMEBREW_NO_ANALYTICS:1
+SETUVAR --export HOMEBREW_NO_AUTO_UPDATE:1
+SETUVAR --export HOMEBREW_NO_INSECURE_REDIRECT:1
+SETUVAR --export VISUAL:nvim
 SETUVAR __fish_initialized:3100
 SETUVAR _fish_abbr_gc:git\x20commit
 SETUVAR _fish_abbr_gd:git\x20diff

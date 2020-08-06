@@ -7,3 +7,6 @@ abbr -a ssh autossh
 abbr -a ta tmux -CC new -ADs
 abbr -a tls tmux ls
 abbr -a vim vimr
+
+# Source Google Cloud SKD
+source /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.fish.inc
