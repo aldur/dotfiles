@@ -1,1 +1,1 @@
-autocmd vimrc FileType tex call aldur#surround#latex()
+autocmd vimrc FileType tex call aldur#surrounds#latex()
