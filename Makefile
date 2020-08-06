@@ -12,14 +12,17 @@ TARGETS += osx
 requirements: homebrew ale_linters_fixers_and_lsp
 
 homebrew: homebrew-cask universal-ctags
-	brew install fzf ack diff-so-fancy fd zsh
+	brew install fzf rg bat diff-so-fancy fd fish
 	brew install tmux reattach-to-user-namespace
 	brew install neovim curl
 	brew install rig autossh pinentry-mac
 	brew install npm gem
 
 homebrew-cask: fira-code
-	brew cask install 1password keybase skim tunnelblick android-platform-tools font-fontawesome mactex-no-gui skype vimr android-studio google-chrome plex slack vlc appcleaner plex-media-player spotify zoomus calibre hammerspoon tableplus cyberduck iterm2 pycharm the-unarchiver disk-inventory-x karabiner-elements sigil tor-browser
+	brew cask install 1password keybase skim tunnelblick android-platform-tools font-fontawesome skype vimr android-studio google-chrome plex slack vlc appcleaner plex-media-player spotify zoomus calibre hammerspoon tableplus cyberduck iterm2 pycharm the-unarchiver disk-inventory-x karabiner-elements sigil tor-browser dash
+
+homebrew-cask-heavy: 
+	brew cask install mactex-no-gui
 
 fira-code:
 	brew tap homebrew/cask-fonts
