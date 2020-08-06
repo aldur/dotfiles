@@ -26,6 +26,7 @@ let s:default_sources = ['around', 'member', 'tag', 'file', 'ultisnips']  " 'omn
 " cpp completion provided by CCLS
 " py completion provided by python-language-server
 " latex completion provided by texlab
+" go completion provided by gopls
 call deoplete#custom#option('sources', {
             \ '_': s:default_sources,
             \ 'cpp': s:default_sources + ['ale'],
@@ -34,12 +35,12 @@ call deoplete#custom#option('sources', {
             \ 'gitcommit': s:default_sources + ['look'],
             \ 'markdown': s:default_sources + ['notes', 'notes_tags'] + ['dictionary'],
             \ 'python': s:default_sources + ['ale'],
-            \ 'go': s:default_sources + ['go'],
+            \ 'go': s:default_sources + ['ale'],
             \})
 
 " Go completion settings
-let g:deoplete#sources#go#gocode_binary = $GOPATH . '/bin/gocode'
-let g:deoplete#sources#go#sort_class    = ['package', 'func', 'type', 'var', 'const']
+" let g:deoplete#sources#go#gocode_binary = $GOPATH . '/bin/gocode'
+" let g:deoplete#sources#go#sort_class    = ['package', 'func', 'type', 'var', 'const']
 
 " vim-tex integration
 " if exists('g:vimtex#re#deoplete')

@@ -110,9 +110,6 @@
         " Conditionally load `deoplete` and friends if on `nvim` with `python3`.
         Plug 'Shougo/deoplete.nvim', b:has_nvim_python3 ? { 'do': ':UpdateRemotePlugins' } : { 'on': [] }
 
-        " Go completion
-        Plug 'zchee/deoplete-go', b:has_nvim_python3 ? { 'do': ':make' } : { 'on': [] }
-
         " VIM completion
         Plug 'Shougo/neco-vim', b:has_nvim_python3 ? {} : { 'on': [] }
 
