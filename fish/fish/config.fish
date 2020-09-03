@@ -1,4 +1,5 @@
 abbr -a gc git commit
+abbr -a gco "git checkout (git branch --all | fzf | tr -d '[:space:]')"
 abbr -a gd git diff
 abbr -a gp git push
 abbr -a gst git status
