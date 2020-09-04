@@ -10,4 +10,6 @@ abbr -a tls tmux ls
 abbr -a vim vimr
 
 # Source Google Cloud SKD
-source /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.fish.inc
+if test -f /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.fish.inc
+    source /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.fish.inc
+end
