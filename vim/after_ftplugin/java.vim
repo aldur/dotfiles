@@ -1,1 +1,1 @@
-let b:ale_linters_ignore += ['javac']
+let b:ale_linters = []
