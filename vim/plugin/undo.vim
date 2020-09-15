@@ -8,3 +8,19 @@ endif
 set undodir=./.vim-undo//
 set undodir+=~/.vim_backups/undo//
 set undofile
+
+" The following lines should fix a bug in neovim in which undoing causes the
+" cursor to jump around.
+" https://stackoverflow.com/questions/31548025/vim-undo-why-does-the-cursor-jump-to-the-wrong-position-when-undoing-undojoin
+" --- UNDO NVIM FIX ---
+function! s:safeundo()
+    call aldur#stay#stay('undo')
+endfunc
+
+function! s:saferedo()
+    call aldur#stay#stay('redo')
+endfunc
+
+nnoremap u :call <sid>safeundo()<CR>
+nnoremap <C-r> :call <sid>saferedo()<CR>
+" --- /UNDO NVIM FIX ---
