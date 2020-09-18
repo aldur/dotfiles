@@ -102,6 +102,9 @@
 
         " Fish
         Plug 'georgewitteman/vim-fish', { 'for': 'fish' }
+
+        " Kotlin
+        Plug 'udalov/kotlin-vim', { 'for': 'kotlin' }
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
