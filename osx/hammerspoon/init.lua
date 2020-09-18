@@ -396,7 +396,7 @@ end
 hs.fnutils.each({
     {'M', 'com.spotify.client'}, {'B', 'com.apple.Safari'},
     {'W', 'com.kapeli.dashdoc'}, {'T', 'com.qvacua.VimR'},
-    {'Z', 'us.zoom.xos'},
+    {'Z', 'us.zoom.xos'}, {'G', 'com.culturedcode.ThingsMac'}
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function() focusOrSwitch(k[2]) end)
 end)
