@@ -106,6 +106,9 @@
 
         " Kotlin
         Plug 'udalov/kotlin-vim', { 'for': 'kotlin' }
+
+        " Nginx
+        Plug 'chr4/nginx.vim', { 'for': 'nginx' }
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
