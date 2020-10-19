@@ -68,7 +68,7 @@
     if has('mac') && executable('fzf')  " Install `fzf` with homebrew
         Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
     else  " Install it as a local plugin
-        Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+        Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
         Plug 'junegunn/fzf.vim'
     end
 
@@ -96,6 +96,7 @@
 
         " Markdown
         Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
+        Plug 'junegunn/goyo.vim', { 'for': 'markdown' }
 
         " Swift
         Plug 'keith/swift.vim', { 'for': 'swift' }
