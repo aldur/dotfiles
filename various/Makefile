@@ -1,6 +1,6 @@
 include ../include.mk
 
-DOTFILES = psqlrc radare2rc curlrc gdbinit inputrc ideavimrc chktexrc pylintrc gitignore_global weechat mdlrc mdlstyle.rb
+DOTFILES = psqlrc radare2rc curlrc gdbinit inputrc ideavimrc chktexrc pylintrc gitignore_global gitattributes_global weechat mdlrc mdlstyle.rb
 CONFIG_FILES = flake8 pycodestyle ctags
 ALL = $(DOTFILES) $(CONFIG_FILES) _yamllint _bat vale git
 
@@ -14,6 +14,7 @@ git:
 	git config --global push.default current
 	git config --global push.followTags true
 	git config --global core.excludesfile ~/.gitignore_global
+	git config --global core.attributesfile ~/.gitattributes_global
 	git config --global log.abbrevCommit true
 	git config --global log.follow true
 	git config --global status.showUntrackedFiles all
