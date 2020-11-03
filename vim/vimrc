@@ -243,7 +243,6 @@
         let g:wiki_root = '~/Documents/Notes'
         let g:wiki_filetypes = ['md']
         let g:wiki_link_target_type = 'md'
-        let g:wiki_link_extension = 'html'
 
         let s:expand_root = expand(g:wiki_root)
         let g:wiki_export = {
