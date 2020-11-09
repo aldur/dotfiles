@@ -357,9 +357,7 @@ hs.fnutils.each({"h", "j", "k", "l"}, function(k)
         end
 
         local f = "focusWindow" .. cardinals[k]:gsub("^%l", string.upper)
-        wf.defaultCurrentSpace[f](wf.defaultCurrentSpace,
-            nil, false, false
-        )
+        wf.defaultCurrentSpace[f](wf.defaultCurrentSpace, nil, false, false)
     end)
 end)
 
@@ -396,14 +394,15 @@ end
 hs.fnutils.each({
     {'M', 'com.spotify.client'}, {'B', 'com.apple.Safari'},
     {'W', 'com.kapeli.dashdoc'}, {'T', 'com.qvacua.VimR'},
-    {'Z', 'us.zoom.xos'}, {'G', 'com.culturedcode.ThingsMac'}
+    {'G', 'com.culturedcode.ThingsMac'}, {'X', 'com.tinyspeck.slackmacgap'},
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function() focusOrSwitch(k[2]) end)
 end)
 
--- Focus/launch most commonly used applications / multiple options.
+-- Focus/launch most commonly used applications across multiple options.
 hs.fnutils.each({
-    {'P', {'com.jetbrains.pycharm', 'com.microsoft.VSCode', 'com.apple.dt.Xcode'}}
+    {'P', {'com.jetbrains.pycharm', 'com.microsoft.VSCode', 'com.apple.dt.Xcode'}},
+    {'Z', {'us.zoom.xos', 'com.cisco.webexmeetingsapp', 'com.microsoft.teams'}}
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function()
         for _, bundleID in pairs(k[2]) do
