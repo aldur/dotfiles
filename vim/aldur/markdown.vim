@@ -39,6 +39,28 @@ function! aldur#markdown#next_header() abort
     call search(g:aldur#markdown#header_pattern, 'W')
 endfunction
 
+" Source: https://gist.github.com/habamax/4662821a1dad716f5c18205489203a67
+" TODO: Change this to our your functions.
+function! aldur#markdown#header_textobj(inner) abort
+    let lnum_start = search('^#\+\s\+[^[:space:]=]', "ncbW")
+    if lnum_start
+        let lvlheader = matchstr(getline(lnum_start), '^#\+')
+        let lnum_end = search('^#\{1,' .. len(lvlheader) .. '}\s', "nW")
+        if !lnum_end
+            let lnum_end = search('\%$', 'nW')
+        else
+            let lnum_end -= 1
+        endif
+        if a:inner && getline(lnum_start + 1) !~ '^#\+\s\+[^[:space:]=]'
+            let lnum_start += 1
+        endif
+
+        exe lnum_end
+        normal! V
+        exe lnum_start
+    endif
+endfunc
+
 function! aldur#markdown#fence_start() abort
     call search('```.\+$', 'bW')
 endfunction

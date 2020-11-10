@@ -59,3 +59,8 @@ iabbrev <buffer> gia' già
 command! -buffer -range=% -nargs=* WikiExportHTML
             \ call aldur#wiki#export_to_html(<line1>, <line2>, <f-args>)
 nnoremap <silent><buffer> <leader>wp :WikiExportHTML<CR>
+
+onoremap <silent><buffer> ih :<C-u>call aldur#markdown#header_textobj(v:true)<CR>
+onoremap <silent><buffer> ah :<C-u>call aldur#markdown#header_textobj(v:false)<CR>
+xnoremap <silent><buffer> ih :<C-u>call aldur#markdown#header_textobj(v:true)<CR>
+xnoremap <silent><buffer> ah :<C-u>call aldur#markdown#header_textobj(v:false)<CR>
