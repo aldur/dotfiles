@@ -1,5 +1,4 @@
 let g:aldur#markdown#header_pattern = '^#\+ .*$'
-let g:aldur#markdown#header_start_pattern = '^#\+'
 
 function! aldur#markdown#increase_header_level() abort
     let l:current_level = aldur#markdown#get_current_header_level()
@@ -14,60 +13,86 @@ function! aldur#markdown#decrease_header_level() abort
     call setline('.', l:new_line)
 endfunction
 
-" Return the current line's header level (>= 1) or -1
-function! aldur#markdown#get_current_header_level() abort
-    return matchend(getline('.'), g:aldur#markdown#header_start_pattern)
+" Return the header level at given line (>= 1) or -1
+function! aldur#markdown#get_header_level(lnum) abort
+    let header_start_pattern = '^#\+'
+    return matchend(getline(a:lnum), header_start_pattern)
 endfunction
 
-function! aldur#markdown#current_header() abort
+" Return the current line's header level (>= 1) or -1
+function! aldur#markdown#get_current_header_level() abort
+    return aldur#markdown#get_header_level('.')
+endfunction
+
+function! aldur#markdown#to_current_header() abort
     " Move to the current header, if we are not there already.
     if match(getline('.'), g:aldur#markdown#header_pattern) == -1
-        call aldur#markdown#previous_header()
+        call aldur#markdown#to_previous_header()
     endif
 endfunction
 
-function! aldur#markdown#parent_header() abort
-    call aldur#markdown#current_header()
+function! aldur#markdown#to_parent_header() abort
+    call aldur#markdown#to_current_header()
     call search('^' . repeat('#', aldur#markdown#get_current_header_level() - 1) . ' .*$', 'bW')
 endfunction
 
-function! aldur#markdown#previous_header() abort
+function! aldur#markdown#to_previous_header() abort
     call search(g:aldur#markdown#header_pattern, 'bW')
 endfunction
 
-function! aldur#markdown#next_header() abort
+function! aldur#markdown#to_next_header() abort
     call search(g:aldur#markdown#header_pattern, 'W')
 endfunction
 
 " Source: https://gist.github.com/habamax/4662821a1dad716f5c18205489203a67
-" TODO: Change this to our your functions.
 function! aldur#markdown#header_textobj(inner) abort
-    let lnum_start = search('^#\+\s\+[^[:space:]=]', "ncbW")
-    if lnum_start
-        let lvlheader = matchstr(getline(lnum_start), '^#\+')
-        let lnum_end = search('^#\{1,' .. len(lvlheader) .. '}\s', "nW")
-        if !lnum_end
-            let lnum_end = search('\%$', 'nW')
+    let header_line = search(g:aldur#markdown#header_pattern, 'ncbW')
+    if header_line
+        let header_level = aldur#markdown#get_header_level(header_line)
+        let block_end = search('^#\{1,' . header_level . '}\s', 'nW')
+        if !block_end
+            let block_end = search('\%$', 'nW')
         else
-            let lnum_end -= 1
+            let block_end -= 1
         endif
-        if a:inner && getline(lnum_start + 1) !~ '^#\+\s\+[^[:space:]=]'
-            let lnum_start += 1
+        if a:inner && getline(header_line + 1) !~ g:aldur#markdown#header_pattern
+            let header_line += 1
         endif
 
-        exe lnum_end
+        execute block_end
         normal! V
-        exe lnum_start
+        execute header_line
     endif
 endfunc
 
-function! aldur#markdown#fence_start() abort
+function! aldur#markdown#to_fence_start() abort
     call search('```.\+$', 'bW')
 endfunction
 
-function! aldur#markdown#fence_end() abort
+function! aldur#markdown#to_fence_end() abort
     call search('```$', 'W')
 endfunction
+
+function! aldur#markdown#fence_textobj(inner) abort
+    let start_line = search('```.\+$', 'ncbW')
+    if !start_line
+        return
+    endif
+
+    let end_line = search('```$', 'nW')
+    if !end_line
+        return
+    endif
+
+    if a:inner
+        let start_line = start_line + 1
+        let end_line = end_line - 1
+    endif
+
+    execute end_line
+    normal! V
+    execute start_line
+endfunc
 
 function! aldur#markdown#visual_move(f) abort
     normal! gv

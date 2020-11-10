@@ -18,25 +18,25 @@ let b:match_words = '```.\+:```$,\S\@<!`:`\S\@!'
 " Disable three backticks disappearing on new-line
 let b:pear_tree_repeatable_expand = 0
 
-nnoremap <silent><buffer> [` :<c-U>call aldur#markdown#fence_start()<CR>
-onoremap <silent><buffer> [` :<c-U>call aldur#markdown#fence_start()<CR>
-vnoremap <silent><buffer> [` <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#fence_start')<CR>
+nnoremap <silent><buffer> [` :<c-U>call aldur#markdown#to_fence_start()<CR>
+onoremap <silent><buffer> [` :<c-U>call aldur#markdown#to_fence_start()<CR>
+vnoremap <silent><buffer> [` <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#to_fence_start')<CR>
 
-nnoremap <silent><buffer> ]` :<c-U>call aldur#markdown#fence_end()<CR>
-onoremap <silent><buffer> ]` :<C-U>call aldur#markdown#fence_end()<CR>
-vnoremap <silent><buffer> ]` <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#fence_end')<CR>
+nnoremap <silent><buffer> ]` :<c-U>call aldur#markdown#to_fence_end()<CR>
+onoremap <silent><buffer> ]` :<C-U>call aldur#markdown#to_fence_end()<CR>
+vnoremap <silent><buffer> ]` <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#to_fence_end')<CR>
 
-nnoremap <silent><buffer> ]] :<C-U>call aldur#markdown#next_header()<CR>
-onoremap <silent><buffer> ]] :<C-U>call aldur#markdown#next_header()<CR>
-vnoremap <silent><buffer> ]] <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#next_header')<CR>
+nnoremap <silent><buffer> ]] :<C-U>call aldur#markdown#to_next_header()<CR>
+onoremap <silent><buffer> ]] :<C-U>call aldur#markdown#to_next_header()<CR>
+vnoremap <silent><buffer> ]] <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#to_next_header')<CR>
 
-nnoremap <silent><buffer> [[ :<C-U>call aldur#markdown#previous_header()<CR>
-onoremap <silent><buffer> [[ :<C-U>call aldur#markdown#previous_header()<CR>
-vnoremap <silent><buffer> [[ <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#previous_header')<CR>
+nnoremap <silent><buffer> [[ :<C-U>call aldur#markdown#to_previous_header()<CR>
+onoremap <silent><buffer> [[ :<C-U>call aldur#markdown#to_previous_header()<CR>
+vnoremap <silent><buffer> [[ <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#to_previous_header')<CR>
 
-nnoremap <silent><buffer> [p :<C-U>call aldur#markdown#parent_header()<CR>
-onoremap <silent><buffer> [p :<C-U>call aldur#markdown#parent_header()<CR>
-vnoremap <silent><buffer> [p <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#parent_header')<CR>
+nnoremap <silent><buffer> [p :<C-U>call aldur#markdown#to_parent_header()<CR>
+onoremap <silent><buffer> [p :<C-U>call aldur#markdown#to_parent_header()<CR>
+vnoremap <silent><buffer> [p <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#to_parent_header')<CR>
 
 nnoremap <silent><buffer> + :<c-U>call aldur#markdown#increase_header_level()<CR>
 nnoremap <silent><buffer> - :<c-U>call aldur#markdown#decrease_header_level()<CR>
@@ -64,3 +64,8 @@ onoremap <silent><buffer> ih :<C-u>call aldur#markdown#header_textobj(v:true)<CR
 onoremap <silent><buffer> ah :<C-u>call aldur#markdown#header_textobj(v:false)<CR>
 xnoremap <silent><buffer> ih :<C-u>call aldur#markdown#header_textobj(v:true)<CR>
 xnoremap <silent><buffer> ah :<C-u>call aldur#markdown#header_textobj(v:false)<CR>
+
+onoremap <silent><buffer> if :<C-u>call aldur#markdown#fence_textobj(v:true)<CR>
+onoremap <silent><buffer> af :<C-u>call aldur#markdown#fence_textobj(v:false)<CR>
+xnoremap <silent><buffer> if :<C-u>call aldur#markdown#fence_textobj(v:true)<CR>
+xnoremap <silent><buffer> af :<C-u>call aldur#markdown#fence_textobj(v:false)<CR>
