@@ -279,7 +279,7 @@
         let g:wiki_list_todos = ['TODO', 'DONE']
 
         " Fix temporary error in creating links.
-        let g:wiki_map_link_create = 'aldur#wiki#map_link_create'
+        " let g:wiki_map_link_create = 'aldur#wiki#map_link_create'
 
         " Configure `notational-fzf-vim`
         let g:nv_search_paths = [g:wiki_root, ]
