@@ -26,7 +26,6 @@ local module = {
     },
 
     -- You don't need to edit anything below this line.
-    last_change=hs.pasteboard.changeCount(),
     last_focused_window=nil,
     clipboard_history=hs.settings.get(pasteboard_name) or {},
     archive=hs.settings.get(archive_name) or {},
@@ -50,7 +49,6 @@ local function clearAll()
     module.clipboard_history = {}
     hs.settings.set(pasteboard_name, module.clipboard_history)
     hs.pasteboard.clearContents()
-    module.last_change = hs.pasteboard.changeCount()
     module.chooser:choices(module.clipboard_history)
 end
 
@@ -68,7 +66,6 @@ local function archiveAll()
     hs.settings.set(pasteboard_name, module.clipboard_history)
 
     hs.pasteboard.clearContents()
-    module.last_change = hs.pasteboard.changeCount()
     module.chooser:choices(module.clipboard_history)
 end
 
@@ -76,7 +73,6 @@ end
 local function clearLastItem()
     table.remove(module.clipboard_history, #module.clipboard_history)
     hs.settings.set(pasteboard_name, module.clipboard_history)
-    module.last_change = hs.pasteboard.changeCount()
     module.chooser:choices(module.clipboard_history)
 end
 
@@ -115,14 +111,8 @@ end)
 module.chooser:rows(9)  -- Show 9 rows of elements in the chooser.
 module.chooser:choices(module.clipboard_history)
 
-local function storeCopy()
-    local now = hs.pasteboard.changeCount()
-    if hs.pasteboard.changeCount() == module.last_change then return end
-    if (now <= module.last_change) then return end
-    module.last_change = now
-
+local function storeCopy(current_clipboard)
     if not shouldBeStored() then return end
-    local current_clipboard = hs.pasteboard.getContents()
 
     if not current_clipboard then
         logger.v('Clipboard is empty. Clearing last item...')
@@ -141,7 +131,9 @@ local function storeCopy()
     end
 end
 
-module.timer = hs.timer.new(module.frequency, storeCopy):start()
+-- Set watched frequency.
+hs.pasteboard.watcher.interval(module.frequency)
+module.watcher = hs.pasteboard.watcher.new(storeCopy)
 
 function module.toggle()
     local chooser = module.chooser
