@@ -1,6 +1,6 @@
 include ../include.mk
 
-DOTFILES = psqlrc radare2rc curlrc gdbinit inputrc ideavimrc chktexrc pylintrc gitignore_global gitattributes_global weechat mdlrc mdlstyle.rb
+DOTFILES = psqlrc radare2rc curlrc gdbinit inputrc ideavimrc chktexrc pylintrc gitignore_global gitattributes_global weechat mdlrc mdlstyle.rb ripgreprc
 CONFIG_FILES = flake8 pycodestyle ctags
 ALL = $(DOTFILES) $(CONFIG_FILES) _yamllint _bat vale git
 

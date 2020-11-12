@@ -1,0 +1,8 @@
+# Every line is a shell argument, after trimming whitespace.
+# Lines starting with # (optionally preceded by any amount of whitespace) are ignored.
+
+# Enable smart case
+--smart-case
+
+# Search hidden files
+--hidden
