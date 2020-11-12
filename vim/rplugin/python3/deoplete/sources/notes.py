@@ -45,12 +45,13 @@ class Source(Base):
         contents = []
         # Gather all note files and return paths relative to the current
         # note's directory.
-        cur_file_dir = dirname(self.vim.buffers[context['bufnr']].name)
-        for fname in glob.iglob(self.wiki_path + '**/*', recursive=True):
+        cur_file_dir = dirname(self.vim.current.buffer.name)
+        for fname in glob.iglob(self.wiki_path + '/**', recursive=True):
             if not isfile(fname):
                 continue
             fname = relpath(fname, cur_file_dir)
             if fname.endswith('.md'):
                 fname = fname[:-3]
             contents.append(fname)
+
         return contents
