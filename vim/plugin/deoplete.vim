@@ -10,19 +10,27 @@ call deoplete#custom#option({
 
 call deoplete#custom#source('ultisnips', 'rank', 1000) " Keep snippets on top
 
-" This requires `set complete+=k` and a dictionary file set.
-" Sample configuration for dictionary source with multiple dictionary files.
+" The `dictionary` source requires `set complete+=k` and at least one dictionary file set.
+
 " Remove this if you'd like to use fuzzy search
-call deoplete#custom#source(
-            \ 'dictionary', 'matchers', ['matcher_head'])
+" XXX 2020-11-13: I removed this to enable fuzzy search on the dictionary.
+" call deoplete#custom#source(
+"             \ 'dictionary', 'matchers', ['matcher_head'])
+
 " If dictionary is already sorted, no need to sort it again.
 call deoplete#custom#source(
             \ 'dictionary', 'sorters', [])
 " Do not complete too short words
 call deoplete#custom#source(
-            \ 'dictionary', 'min_pattern_length', 2)
+            \ 'dictionary', 'min_pattern_length', 5)
 
-let s:default_sources = ['around', 'member', 'tag', 'file', 'ultisnips']  " 'omni' is disabled 'cause is not async
+" Set `fuzzy` finding for files.
+call deoplete#custom#source(
+            \ 'file', 'matchers', ['matcher_fuzzy'])
+
+" 'omni' is disabled 'cause is not async
+let s:default_sources = ['around', 'member', 'tag', 'file', 'ultisnips']
+
 " cpp completion provided by CCLS
 " py completion provided by python-language-server
 " latex completion provided by texlab
@@ -32,22 +40,11 @@ call deoplete#custom#option('sources', {
             \ 'cpp': s:default_sources + ['ale'],
             \ 'vim': s:default_sources + ['vim'],
             \ 'tex': s:default_sources + ['dictionary'] + ['ale'],
-            \ 'gitcommit': s:default_sources + ['look'],
+            \ 'gitcommit': s:default_sources + ['dictionary'],
             \ 'markdown': s:default_sources + ['notes', 'notes_tags'] + ['dictionary'],
             \ 'python': s:default_sources + ['ale'],
             \ 'go': s:default_sources + ['ale'],
             \})
-
-" Go completion settings
-" let g:deoplete#sources#go#gocode_binary = $GOPATH . '/bin/gocode'
-" let g:deoplete#sources#go#sort_class    = ['package', 'func', 'type', 'var', 'const']
-
-" vim-tex integration
-" if exists('g:vimtex#re#deoplete')
-"     call deoplete#custom#var('omni', 'input_patterns', {
-"                 \ 'tex': g:vimtex#re#deoplete
-"                 \})
-" endif
 
 " Clever tab to cycle the completion popup menu
 " If you even need to insert a literal tab, press <CTRL-V><Tab>
