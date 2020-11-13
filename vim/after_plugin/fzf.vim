@@ -24,13 +24,16 @@ command! -bang -nargs=? -complete=dir RgCd
 
 nnoremap <silent> <leader><space> :<c-U>execute 'Files' aldur#find_root#find_root()<CR>
 nnoremap <silent> <leader>a :Buffers<CR>
-nnoremap <silent> <leader>g :LocalRg<CR>
-nnoremap <silent> <leader>G :Rg<CR>
+nnoremap <silent> <leader>g :RgProject<CR>
+" nnoremap <silent> <leader>G :Rg<CR>
 nnoremap <silent> <leader>tt :BTags<CR>
 nnoremap <silent> <leader>tT :Tags<CR>
 nnoremap <silent> <leader>h :History<CR>
 nnoremap <silent> <leader>H :Files ~<CR>
 nnoremap <silent> <leader>: :History:<CR>
+
+imap <silent> <c-x><c-f> <plug>(fzf-complete-path)
+imap <silent> <c-x><c-k> <plug>(fzf-complete-word)
 
 let g:fzf_colors = {
             \ 'fg':      ['fg', 'Normal'],
