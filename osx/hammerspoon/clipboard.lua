@@ -9,7 +9,7 @@ local logger = hs.logger.new('clipboard')
 local module = {
     frequency=1.0,  -- Clipboar polling frequency.
     chooser_max_size=1000,  -- Number of elements to store in the chooser.
-    element_max_length=1000,  -- Maximum length of elements to store.
+    element_max_length=10000,  -- Maximum length of elements to store.
     archive_max_size=20000,  -- Store additional n items in the 'archive'
 
     trim=true,  -- Strip leading/trailing whitespace
