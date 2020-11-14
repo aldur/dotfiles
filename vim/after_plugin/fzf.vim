@@ -27,7 +27,7 @@ command! -bang -nargs=* RgProject
 " Run `rg` in a given directory
 " Here we pass an empty pattern to `rg` to match everything.
 command! -bang -nargs=? -complete=dir RgCd
-            \ call fzf#vim#grep("rg --column --line-number --no-heading --color=always ''", 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..', 'dir': shellescape(<q-args)}), <bang>0)
+            \ call fzf#vim#grep("rg --column --line-number --no-heading --color=always '' ", 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..', 'dir': shellescape(<q-args>)}), <bang>0)
 
 nnoremap <silent> <leader><space> :<c-U>execute 'Files' aldur#find_root#find_root()<CR>
 nnoremap <silent> <leader>a :Buffers<CR>
