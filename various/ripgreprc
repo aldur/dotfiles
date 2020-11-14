@@ -9,3 +9,7 @@
 
 # Follow symlinks
 --follow
+
+# Ignore git folder
+--glob
+!.git/
