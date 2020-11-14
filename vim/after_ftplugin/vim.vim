@@ -2,7 +2,11 @@
 " The following turn any `vim` buffer behave like the command-line window
 " i.e. by quickly executing lines with `<CR>` from normal mode.
 "
-" When selected through visual selections, the <bar> will be removed and lines
-" will be joined.
-nnoremap <silent><buffer> <CR> :execute getline(".")<cr>
+" When selected through visual selections, the <bar> will be added between the
+" joined lines
+nnoremap <silent><buffer> <CR> :echomsg 'Line "' . getline(".") '" executed' <bar> :execute getline(".")<cr>
 vnoremap <silent><buffer> <CR> :<c-u>execute join(getline("'<","'>"),'<bar>')<cr>
+
+" https://stackoverflow.com/questions/20262519/vim-how-to-source-a-part-of-the-buffer
+" TODO: Try to make thsi work.
+" vnoremap <silent><buffer> <CR> :<c-u> execute(getline("'<","'>"), '')<cr>
