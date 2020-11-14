@@ -6,6 +6,10 @@ endif
 
 " Backup file modifications through GIT.
 function! aldur#git_backup_current_file#backup() abort
+    if &buftype  " if it is set, return
+        return
+    endif
+
     let l:file = expand('%:p')
     if l:file =~ fnamemodify(s:custom_backup_dir, ':t')
         return
