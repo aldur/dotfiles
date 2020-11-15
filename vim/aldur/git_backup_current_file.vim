@@ -11,11 +11,11 @@ function! aldur#git_backup_current_file#backup() abort
         return
     endif
 
-    " If we are root, we write to the `as_root` directory
+    " If we are using sudo, we write to the `as_sudo` directory
     " to avoid permissions on later writes.
     let l:backup_dir = s:custom_backup_dir
-    if $USER =~ 'root'
-        let l:backup_dir .= 'as_root'
+    if !empty($SUDO_USER)
+        let l:backup_dir .= 'as_sudo'
     endif
 
     let l:file = expand('%:p')
