@@ -23,8 +23,8 @@ function! aldur#git_backup_current_file#backup() abort
         return
     endif
 
-    let l:file_dir = l:backup_dir . l:backup_subdir . expand('%:p:h')
-    let l:backup_file = l:backup_dir . l:backup_subdir . l:file
+    let l:file_dir = l:backup_dir . expand('%:p:h')
+    let l:backup_file = l:backup_dir . l:file
 
     if !isdirectory(expand(l:file_dir))
         call mkdir(l:file_dir, 'p')
@@ -33,11 +33,10 @@ function! aldur#git_backup_current_file#backup() abort
     let l:cmd = 'cp "' . l:file . '" "' . l:backup_file . '";'
     let l:cmd .= 'cd "' . l:backup_dir . '";'
     let l:cmd .= 'git add "' . l:backup_file . '";'
-    let l:cmd .= 'git commit -m "Backup";'
+    let l:cmd .= 'git commit -m "Backup ' . l:file . '";'
     if has('nvim')
         call jobstart(l:cmd)
     else
         call job_start(l:cmd)
     endif
 endfunction
-
