@@ -1,4 +1,4 @@
-let s:custom_backup_dir=$HOME . '/.vim_backups/git_backups/'
+let s:custom_backup_dir = $HOME . '/.vim_backups/git_backups/'
 if isdirectory(s:custom_backup_dir) == 0 && executable('git')
     call mkdir(s:custom_backup_dir, 'p')
     call system('git init ' . s:custom_backup_dir)
@@ -10,20 +10,27 @@ function! aldur#git_backup_current_file#backup() abort
         return
     endif
 
+    " If we are root, we write to the `as_root` directory
+    " to avoid permissions on later writes.
+    let l:backup_dir = s:custom_backup_dir
+    if $USER =~ 'root'
+        let l:backup_dir .= 'as_root'
+    endif
+
     let l:file = expand('%:p')
-    if l:file =~ fnamemodify(s:custom_backup_dir, ':t')
+    if l:backup_dir =~ l:file
         return
     endif
 
-    let l:file_dir = s:custom_backup_dir . expand('%:p:h')
-    let l:backup_file = s:custom_backup_dir . l:file
+    let l:file_dir = l:backup_dir . l:backup_subdir . expand('%:p:h')
+    let l:backup_file = l:backup_dir . l:backup_subdir . l:file
 
     if !isdirectory(expand(l:file_dir))
         call mkdir(l:file_dir, 'p')
     endif
 
     let l:cmd = 'cp "' . l:file . '" "' . l:backup_file . '";'
-    let l:cmd .= 'cd "' . s:custom_backup_dir . '";'
+    let l:cmd .= 'cd "' . l:backup_dir . '";'
     let l:cmd .= 'git add "' . l:backup_file . '";'
     let l:cmd .= 'git commit -m "Backup";'
     if has('nvim')
