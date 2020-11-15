@@ -2,6 +2,7 @@ let s:custom_backup_dir = $HOME . '/.vim_backups/git_backups/'
 if isdirectory(s:custom_backup_dir) == 0 && executable('git')
     call mkdir(s:custom_backup_dir, 'p')
     call system('git init ' . s:custom_backup_dir)
+    call system('chmod 700 ' . s:custom_backup_dir)
 endif
 
 " Backup file modifications through GIT.
