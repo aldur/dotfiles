@@ -29,6 +29,8 @@ command! -bang -nargs=* RgProject
 command! -bang -nargs=? -complete=dir RgCd
             \ call fzf#vim#grep("rg --column --line-number --no-heading --color=always '' ", 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..', 'dir': shellescape(<q-args>)}), <bang>0)
 
+command! -nargs=* -bang RGNotes call aldur#fzf#rg_notes(<q-args>, <bang>0)
+
 nnoremap <silent> <leader><space> :<c-U>execute 'Files' aldur#find_root#find_root()<CR>
 nnoremap <silent> <leader>a :Buffers<CR>
 nnoremap <silent> <leader>g :RgProject<CR>
