@@ -52,6 +52,8 @@ function! aldur#fzf#rg_cd(query, fullscreen) abort
     call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
 endfunction
 
+" There's also a plugin for this:
+" https://github.com/stsewd/fzf-checkout.vim
 function! aldur#fzf#git_checkout_branch_sink(line) abort
     if a:line ==# ''
         return
@@ -67,5 +69,9 @@ function! aldur#fzf#git_checkout_branch_sink(line) abort
 endfunction
 
 function! aldur#fzf#git_checkout_branch(query, fullscreen) abort
-    call fzf#run({'source': 'git branch --all', 'sink': function('aldur#fzf#git_checkout_branch_sink')})
+    call fzf#run({
+                \ 'source': 'git branch --all',
+                \ 'sink': function('aldur#fzf#git_checkout_branch_sink'),
+                \ 'dir': aldur#find_root#find_root()
+                \ })
 endfunction
