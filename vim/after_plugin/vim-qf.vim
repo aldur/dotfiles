@@ -4,7 +4,7 @@ let g:qf_max_height = 8
 let g:ale_list_window_size = g:qf_max_height
 let g:ale_open_list = 0
 
-let g:qf_auto_open_quickfix = 0
+let g:qf_auto_open_quickfix = 1
 let g:qf_auto_open_loclist = 0
 
 " Loclist mappings
