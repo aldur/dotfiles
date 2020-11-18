@@ -57,9 +57,11 @@
     Plug 'tpope/vim-surround'                      " All about surrounding
     Plug 'tpope/vim-scriptease'                    " Easier plugin development
     Plug 'tpope/vim-unimpaired'                    " Complementary mappings
+    Plug 'tpope/vim-dispatch'                      " Async job execution
 
     if executable('git')
         Plug 'tpope/vim-fugitive'                      " A GIT wrapper
+        Plug 'tpope/vim-rhubarb'                       " Allow `Gbrowse`
     endif
 
     Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
