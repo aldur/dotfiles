@@ -12,13 +12,14 @@ function! aldur#fzf#rg_sink(lines)
   PPmsg a:lines
 endfunction
 
+" Documentation for the `fzf` options is here:
+" https://github.com/junegunn/fzf/blob/master/README-VIM.md
+
 " Based on `:h fzf-vim-example-advanced-ripgrep-integration`
 "
 " We need to show colum and line-number for the preview to work.
 " Then, we remove them through `--with-nth=1,4..`
 "
-" Documentation for the `fzf` options is here:
-" https://github.com/junegunn/fzf/blob/master/README-VIM.md
 function! aldur#fzf#rg_notes(query, fullscreen) abort
     let l:initial_command = "rg --column --line-number --no-heading --color=always ''"
     let l:spec = {'options': '--with-nth=1,4.. --exact --print-query', 'dir': g:wiki_root, 'sink*': function('aldur#fzf#rg_sink')}
@@ -45,10 +46,26 @@ function! aldur#fzf#rg_project(query, fullscreen) abort
     call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
 endfunction
 
-" This does not seem to be working:
-" https://github.com/junegunn/fzf.vim/issues/1135
 function! aldur#fzf#rg_cd(query, fullscreen) abort
     let l:initial_command = s:rg_default_command . "''"
     let l:spec = {'options': s:rg_default_options, 'dir': a:query}
     call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
+endfunction
+
+function! aldur#fzf#git_checkout_branch_sink(line) abort
+    if a:line ==# ''
+        return
+    endif
+
+    if a:line =~# '^* '
+        return
+    endif
+
+    " Not sure if this is a hack or not, but let's see if it works :)
+    let l:line = substitute(a:line, '^remotes/', '', '')
+    execute 'Git checkout --track ' . trim(l:line)
+endfunction
+
+function! aldur#fzf#git_checkout_branch(query, fullscreen) abort
+    call fzf#run({'source': 'git branch --all', 'sink': function('aldur#fzf#git_checkout_branch_sink')})
 endfunction
