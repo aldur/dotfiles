@@ -1,3 +1,7 @@
+" With a map leader it's possible to do extra key combinations
+let g:mapleader = "\<Space>"
+let g:maplocalleader = "\<Space>"
+
 " Quickly change current working directory to buffer's
 nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 

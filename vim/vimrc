@@ -159,11 +159,7 @@
     set mouse=a
     set mousehide               " Hide the mouse cursor while typing
 
-    set updatetime=1000  " ms to trigger the CursorHold/CursorHoldI events
-
-    " With a map leader it's possible to do extra key combinations
-    let g:mapleader = "\<Space>"
-    let g:maplocalleader = "\<Space>"
+    set updatetime=1000         " ms to trigger the CursorHold/CursorHoldI events
 " }}}
 
 " Text, lines, tab, indent and folding {{{
