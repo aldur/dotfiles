@@ -176,12 +176,6 @@
     autocmd vimrc FileType * setlocal formatoptions-=o
 " }}}
 
-" Misc {{{
-    set iskeyword-=.                    " '.' is an end of word designator
-    set iskeyword-=#                    " '#' is an end of word designator
-    set iskeyword-=-                    " '-' is an end of word designator
-" }}}
-
 " Plugin settings {{{
     " Investigate {{{
         " Use Dash on macOS (if available)
