@@ -18,7 +18,7 @@ function! aldur#terminal#toggle() abort
         try
             exec 'buffer ' . g:aldur#terminal#term_buf
         catch
-            call termopen(&shell, {'detach': 0})
+            call termopen(&shell, {'detach': 0, 'cwd': aldur#find_root#find_root()})
             let g:aldur#terminal#term_buf = bufnr('')
         endtry
         let g:aldur#terminal#term_win = win_getid()
