@@ -4,7 +4,7 @@
 "
 " When selected through visual selections, the <bar> will be added between the
 " joined lines
-nnoremap <silent><buffer> <CR> :echomsg 'Line "' . getline(".") '" executed' <bar> :execute getline(".")<cr>
+nnoremap <silent><buffer> <CR> :echomsg 'Line "' . getline(".") . '" executed' <bar> :execute getline(".")<cr>
 vnoremap <silent><buffer> <CR> :<c-u>execute join(getline("'<","'>"),'<bar>')<cr>
 
 " https://stackoverflow.com/questions/20262519/vim-how-to-source-a-part-of-the-buffer
