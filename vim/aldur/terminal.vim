@@ -3,22 +3,24 @@
 
 let g:aldur#terminal#term_buf = 0
 let g:aldur#terminal#term_win = 0
-let g:aldur#terminal#term_height = 15
+let g:aldur#terminal#term_height_percentage = 0.40
 
 function! aldur#terminal#toggle() abort
     if !has('nvim')
         return v:false
     endif
 
+    let l:project_root = aldur#find_root#find_root()
+
     if win_gotoid(g:aldur#terminal#term_win)
         hide
     else
         botright new
-        exec 'resize ' . g:aldur#terminal#term_height
+        exec 'resize ' . string(&lines * g:aldur#terminal#term_height_percentage)
         try
             exec 'buffer ' . g:aldur#terminal#term_buf
         catch
-            call termopen(&shell, {'detach': 0, 'cwd': aldur#find_root#find_root()})
+            call termopen(&shell, {'detach': 0, 'cwd': l:project_root})
             let g:aldur#terminal#term_buf = bufnr('')
         endtry
         let g:aldur#terminal#term_win = win_getid()
