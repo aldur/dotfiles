@@ -19,6 +19,7 @@ local function script_path()
     return str:match("(.*/)")
 end
 obj.spoonPath = script_path()
+obj.emojisTablePath = obj.spoonPath .. "emojis_json_lua.lua"
 
 obj.choices = {}
 obj.chooser = nil
@@ -52,10 +53,11 @@ function obj.callback(choice)
     end
 end
 
+
 function obj:init()
     -- is the emojis file available?
     print("Starting Emojis Spoon...")
-    local mod, err = table.load(script_path() .. "emoji_json_lua.lua") -- luacheck: ignore
+    local mod, err = table.load(obj.emojisTablePath) -- luacheck: ignore
     if err then
         print("Emojis Spoon: table's not here, generating it from json.")
         mod = nil
@@ -105,7 +107,7 @@ function obj:init()
         )
 
         print("Emojis Spoon: Saving emojis... ")
-        table.save(self.choices, self.spoonPath .. "/emojis_json_lua.lua") -- luacheck: ignore
+        table.save(self.choices, obj.emojisTablePath) -- luacheck: ignore
         print("Emojis Spoon: ... saved")
     end
     -- inject all images now
