@@ -10,8 +10,8 @@ local secrets = require("secrets")
 obj.snippets = secrets.snippets
 
 function obj:commands()
-    return {snippets={
-            cmd='snippets', fn=obj.choicesSnippets,
+    return {snip={
+            cmd='snip', fn=obj.choicesSnippets,
             name='Snippets',
             description="Choose a snippet",
             plugin=obj.__name, icon=obj.__icon,
