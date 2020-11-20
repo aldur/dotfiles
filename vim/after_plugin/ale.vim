@@ -22,3 +22,6 @@ highlight ALEErrorSign ctermbg=NONE ctermfg=red
 highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
 
 nnoremap <silent> <leader>f :<C-u>silent call aldur#ale#fix_gently()<CR>
+
+" Mnemonic for 'usages'
+nnoremap <silent> <leader>u :<C-u>ALEFindReferences -relative<CR>
