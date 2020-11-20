@@ -10,11 +10,11 @@ autocmd vimrc FileChangedShellPost *
 " Auto save on :next, :edit, :quit, etc.
 set autowriteall  " Implies `autowrite`
 
-" When transparently editing buffers through Netrw, we disable `autowriteall`
+" When transparently editing remote buffers through Netrw, we disable `autowriteall`
 autocmd vimrc BufEnter * if exists('b:netrw_lastfile') | setlocal noautowriteall | endif
 
 " ... when changing window
-autocmd vimrc WinLeave * :silent! w
+autocmd vimrc WinLeave * :call aldur#auto_read_write#write_gently()
 
 " ... and on focus lost
 autocmd vimrc FocusLost * :silent! wall
