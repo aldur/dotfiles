@@ -9,6 +9,8 @@
 if getcmdwintype() ==# ''
     nnoremap <silent><buffer> <CR> :echomsg 'Line "' . getline(".") . '" executed' <bar> :execute getline(".")<cr>
     vnoremap <silent><buffer> <CR> :<c-u>execute join(getline("'<","'>"),'<bar>')<cr>
+
+    nnoremap <silent><buffer> <leader>m :<c-u>Runtime<CR>
 endif
 
 " https://stackoverflow.com/questions/20262519/vim-how-to-source-a-part-of-the-buffer
