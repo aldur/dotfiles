@@ -216,6 +216,7 @@
                     \ '<plug>(wiki-reload)' : '<plug>',
                     \ '<plug>(wiki-page-toc)' : '<plug>',
                     \ '<plug>(wiki-page-toc-local)' : '<plug>',
+                    \ '<plug>(wiki-page-rename)' : '<plug>',
                     \ '<plug>(wiki-tag-list)' : '<plug>',
                     \ '<plug>(wiki-tag-reload)' : '<plug>',
                     \ '<plug>(wiki-tag-search)' : '<plug>',
