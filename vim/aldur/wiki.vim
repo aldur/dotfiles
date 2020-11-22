@@ -26,3 +26,12 @@ function! aldur#wiki#export_to_html(line1, line2, ...) abort
                 \ '-output', expand('../HTML/' . l:relative_folder)
                 \ )
 endfunction
+
+function! aldur#wiki#rename_no_ask() abort
+    redraw!
+    echo 'Enter new name (without extension):'
+    let l:name = input('> ' . expand('%:p:t:r'))
+    if l:name !=# ''
+        call wiki#page#rename(l:name)
+    endif
+endfunction
