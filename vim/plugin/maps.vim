@@ -3,7 +3,7 @@ let g:mapleader = "\<Space>"
 let g:maplocalleader = "\<Space>"
 
 " Quickly change current working directory to buffer's
-nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
+nnoremap <leader>cd :call aldur#find_root#cd_to_root()<CR>
 
 " Remap VIM 0 to first non-blank character
 map 0 ^

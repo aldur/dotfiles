@@ -20,3 +20,8 @@ function! aldur#find_root#find_root() abort
     return l:root
 endfunction
 
+function! aldur#find_root#cd_to_root() abort
+    let l:root = aldur#find_root#find_root()
+    execute 'cd ' l:root
+    pwd
+endfunction
