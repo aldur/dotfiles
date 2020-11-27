@@ -1,7 +1,7 @@
 include include.mk
 
 # TODO: check for requirements.
-TARGETS = vim various ssh fish zsh
+TARGETS = vim various ssh fish
 
 UNAME_S := $(shell uname -s)
 
