@@ -1,0 +1,3 @@
+cask "mactex-no-gui"
+cask "pycharm"
+cask "android-studio"
