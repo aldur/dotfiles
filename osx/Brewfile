@@ -12,12 +12,12 @@ brew "rig"
 brew "autossh"
 brew "pinentry-mac"
 brew "npm"
-brew "gem"
+brew "ruby"
 
 brew "universal-ctags/universal-ctags/universal-ctags", args: ["HEAD"]
 
 tap "homebrew/cask"
-cask_args appdir: require_sha: true
+cask_args require_sha: true
 
 cask "1password"
 cask "keybase"
