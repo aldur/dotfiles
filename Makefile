@@ -20,8 +20,8 @@ homebrew-cask-heavy:
 ale_linters_fixers_and_lsp: homebrew
 	brew bundle install --file osx/AleBrewfile
 	python3 -m pip install -r various/ale_requirements.txt
-	gem install sqlint mdl
-	npm install -g prettier@1.13
+	cat various/gem_ale_requirements.txt | xargs gem install
+	cat various/npm_ale_requirements.txt | xargs npm install -g
 	luarocks install luacheck
 
 endif

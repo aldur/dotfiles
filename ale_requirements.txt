@@ -1,6 +1,6 @@
-pynvim 
-black 
-vim-vint 
-python-language-server[all] 
-yamllint 
+pynvim
+black
+vim-vint
+python-language-server[all]
+yamllint
 yamlfix
