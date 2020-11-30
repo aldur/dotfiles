@@ -13,6 +13,9 @@ set autowriteall  " Implies `autowrite`
 " When transparently editing remote buffers through Netrw, we disable `autowriteall`
 autocmd vimrc BufEnter * if exists('b:netrw_lastfile') | setlocal noautowriteall | endif
 
+" Add buffer to v:oldfiles
+autocmd vimrc BufNew * :call aldur#auto_read_write#add_to_oldfiles()
+
 " ... when changing window
 autocmd vimrc WinLeave * :call aldur#auto_read_write#write_gently()
 
