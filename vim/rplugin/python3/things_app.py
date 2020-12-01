@@ -25,6 +25,7 @@ THINGS_QUICK_ENTRY = 'show-quick-entry'
 def prepare_uri(scheme, action, query_params=None):
     query_params = query_params or {}
     qs = urllib.parse.urlencode(query_params, True, quote_via=urllib.parse.quote)
+    action = urllib.parse.quote(action)
     return f"{scheme}:///{action}{'?' if qs else ''}{qs}"
 
 
