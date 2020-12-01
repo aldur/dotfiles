@@ -110,6 +110,9 @@
 
         " Nginx
         Plug 'chr4/nginx.vim', { 'for': 'nginx' }
+
+        " Rust
+        Plug 'rust-lang/rust.vim', { 'for': 'rust' }
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
