@@ -32,7 +32,10 @@ let s:rg_default_command = 'rg --column --line-number --no-heading --color=alway
 " https://github.com/junegunn/fzf.vim/issues/346#issuecomment-288483704
 " {'options': '--delimiter : --nth 4..'} will make `rg` search file contents
 " only, not names.
-let s:rg_default_options = '--delimiter : --nth 4..'
+" This, however, prevents you from excluding paths from the search with
+" `!path`.
+" let s:rg_default_options = '--delimiter : --nth 4..'
+let s:rg_default_options = ''
 
 " The `dir` option specify the search directory, source:
 " https://github.com/junegunn/fzf.vim/issues/837
