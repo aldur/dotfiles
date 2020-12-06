@@ -5,7 +5,7 @@
 " The termina _window_, however, will be local to the current window.
 
 let g:aldur#terminal#term_buf = 0
-let w:aldur_terminal_term_win = 0
+let t:aldur_terminal_term_win = 0
 let g:aldur#terminal#term_height_percentage = 0.40
 
 function! aldur#terminal#toggle() abort
@@ -15,7 +15,7 @@ function! aldur#terminal#toggle() abort
 
     let l:project_root = aldur#find_root#find_root()
 
-    if exists('w:aldur_terminal_term_win') && win_gotoid(w:aldur_terminal_term_win)
+    if exists('t:aldur_terminal_term_win') && win_gotoid(t:aldur_terminal_term_win)
         hide
     else
         botright new
@@ -26,7 +26,7 @@ function! aldur#terminal#toggle() abort
             call termopen(&shell, {'detach': 0, 'cwd': l:project_root})
             let g:aldur#terminal#term_buf = bufnr('')
         endtry
-        let w:aldur_terminal_term_win = win_getid()
+        let t:aldur_terminal_term_win = win_getid()
         setlocal nobuflisted
         startinsert
 
