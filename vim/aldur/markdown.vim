@@ -111,6 +111,8 @@ endfunction
 
 " De-indent the current line. Disables `indentexpr` to prevent conflicts.
 function! aldur#markdown#s_tab_imap() abort
+    " Here we can simply read the value since its local to the buffer.
+    " No need for `setlocal` and parents.
     let l:indent_expr = &indentexpr
     let &indentexpr = ''
 
