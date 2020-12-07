@@ -109,6 +109,13 @@ function! aldur#markdown#tab_imap() abort
     return result
 endfunction
 
+" De-indent the current line. Disables `indentexpr` to prevent conflicts.
 function! aldur#markdown#s_tab_imap() abort
-    return "\<esc><<A"
+    let l:indent_expr = &indentexpr
+    let &indentexpr = ''
+
+    execute 'normal! <<'
+    startinsert!
+
+    let &indentexpr = l:indent_expr
 endfunction

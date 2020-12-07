@@ -43,8 +43,9 @@ nnoremap <silent><buffer> - :<c-U>call aldur#markdown#decrease_header_level()<CR
 
 nnoremap <silent><buffer> gO :<c-U>BLines ^#<CR>
 
+" Note that we do `<C-\><C-O>`.
+inoremap <buffer> <s-tab> <C-\><C-O>:<c-U>call aldur#markdown#s_tab_imap()<CR>
 inoremap <silent><buffer><expr> <tab> aldur#markdown#tab_imap()
-inoremap <silent><buffer><expr> <s-tab> aldur#markdown#s_tab_imap()
 
 iabbrev <buffer> e' è
 iabbrev <buffer> cioe' cioè
