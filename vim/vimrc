@@ -207,7 +207,7 @@
             \ '--data-dir ' . s:expand_root . '/assets/ ',
             \ 'from_format' : 'markdown',
             \ 'ext' : 'html',
-            \ 'link_ext_replace': v:true,
+            \ 'link_ext_replace': v:false,
             \ 'view' : v:true,
             \ 'output': fnamemodify(tempname(), ':h'),
             \}
