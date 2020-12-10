@@ -44,6 +44,7 @@ call deoplete#custom#option('sources', {
             \ 'markdown': s:default_sources + ['notes', 'notes_tags'] + ['dictionary'],
             \ 'python': s:default_sources + ['ale'],
             \ 'go': s:default_sources + ['ale'],
+            \ 'rust': s:default_sources + ['ale'],
             \})
 
 " Clever tab to cycle the completion popup menu
