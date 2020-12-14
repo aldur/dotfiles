@@ -1,4 +1,5 @@
 brew "fzf"
+brew "delta"
 brew "rg"
 brew "bat"
 brew "diff-so-fancy"
