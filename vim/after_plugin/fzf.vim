@@ -17,9 +17,9 @@ command! -bang -nargs=? -complete=dir RgCd call aldur#fzf#rg_cd(<q-args>, <bang>
 " Experimental own version of notational-fzf
 command! -nargs=* -bang RGNotes call aldur#fzf#rg_notes(<q-args>, <bang>0)
 
-if exists(':Git')
+if exists(':G')
     " Switch `git` branch through `fzf`
-    command! -nargs=* -bang GBranches call aldur#fzf#git_checkout_branch(<q-args>, <bang>0)
+    command! -nargs=* -bang Gbranches call aldur#fzf#git_checkout_branch(<q-args>, <bang>0)
 endif
 
 nnoremap <silent> <leader><space> :<c-U>execute 'Files' aldur#find_root#find_root()<CR>
