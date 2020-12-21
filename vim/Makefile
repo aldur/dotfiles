@@ -3,10 +3,7 @@ include ../include.mk
 .PHONY: all
 all: vimrc neovim templates autoload aldur plugin ftdetect after_plugin after_ftplugin after_syntax after_indent scripts rplugin snippets UltiSnips
 
-vimrc:
-	$(LN) $(shell readlink -f $@) ${HOME}/.$@
-
-scripts templates plugin rplugin ftdetect snippets UltiSnips: vimf
+vimrc scripts templates plugin rplugin ftdetect snippets UltiSnips: vimf
 	$(LN) $(shell readlink -f $@) ${HOME}/.vim/$@
 
 after_ftplugin: after
@@ -24,7 +21,7 @@ after_syntax: after
 neovim: vimf vimrc
 	mkdir -p ${HOME}/.config
 	$(LN) ${HOME}/.vim ${HOME}/.config/nvim
-	$(LN) ${HOME}/.vimrc ${HOME}/.config/nvim/init.vim
+	$(LN) ${HOME}/.vim/vimrc ${HOME}/.config/nvim/init.vim
 
 after: vimf
 	mkdir -p ${HOME}/.vim/after
