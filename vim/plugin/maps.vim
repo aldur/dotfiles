@@ -19,13 +19,6 @@ nnoremap <localleader>pp :setlocal paste!<cr>
 " Make Y yank everything from the cursor to the end of the line.
 noremap Y y$
 
-" Quickly call 'make'
-if exists(':Make')
-    nnoremap <leader>m :Make<cr>
-else
-    nnoremap <leader>m :make<cr>
-endif
-
 " Use 'c*' to change the word under the cursor, repeat with '.'
 nnoremap c* *<C-o>cgn
 
