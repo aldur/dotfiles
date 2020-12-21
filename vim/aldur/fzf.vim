@@ -55,26 +55,29 @@ function! aldur#fzf#rg_cd(query, fullscreen) abort
     call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
 endfunction
 
-" There's also a plugin for this:
-" https://github.com/stsewd/fzf-checkout.vim
-function! aldur#fzf#git_checkout_branch_sink(line) abort
-    if a:line ==# ''
-        return
-    endif
 
-    if a:line =~# '^* '
-        return
-    endif
-
-    " Not sure if this is a hack or not, but let's see if it works :)
-    let l:line = substitute(a:line, '^remotes/', '', '')
-    execute 'Git checkout --track ' . trim(l:line)
+" Inspired by https://github.com/stsewd/dotfiles/blob/7a9a8972c8a994abf42d87814980dc92cdce9a22/config/nvim/init.vim#L419-L434
+function! aldur#fzf#open_branch_fzf(line)
+    let l:branch = a:line
+    execute 'split | resize 10 | terminal git checkout ' . l:branch
+    call feedkeys('i', 'n')
 endfunction
 
+
 function! aldur#fzf#git_checkout_branch(query, fullscreen) abort
-    call fzf#run({
-                \ 'source': 'git branch --all',
-                \ 'sink': function('aldur#fzf#git_checkout_branch_sink'),
-                \ 'dir': aldur#find_root#find_root()
+    let l:current = system('git symbolic-ref --short HEAD')
+    let l:current = substitute(l:current, '\n', '', 'g')
+    let l:current_escaped = substitute(l:current, '/', '\\/', 'g')
+
+    let l:source = 'git branch -r --no-color --sort=-committerdate '
+                \ . "| sed -r -e 's/^[^/]*\\///' -e '/^"
+                \ . l:current_escaped . "$/d' -e '/^HEAD/d'"
+
+    call fzf#vim#grep(
+                \ l:source, a:fullscreen,
+                \ {
+                \     'sink': function('aldur#fzf#open_branch_fzf'),
+                \     'options': ['--no-multi', '--header='.l:current],
+                \     'dir': aldur#find_root#find_root()
                 \ })
 endfunction
