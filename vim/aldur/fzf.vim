@@ -59,7 +59,11 @@ endfunction
 " Inspired by https://github.com/stsewd/dotfiles/blob/7a9a8972c8a994abf42d87814980dc92cdce9a22/config/nvim/init.vim#L419-L434
 function! aldur#fzf#open_branch_fzf(line)
     let l:branch = a:line
+
+    " TODO: execute this into the tab terminal buffer if it exists.
+    " https://thoughtbot.com/upcase/videos/neovim-sending-commands-to-a-terminal-buffer
     execute 'split | resize 10 | terminal git checkout ' . l:branch
+
     call feedkeys('i', 'n')
 endfunction
 

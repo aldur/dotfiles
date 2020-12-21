@@ -5,6 +5,7 @@
 " The termina _window_, however, will be local to the current window.
 
 let g:aldur#terminal#term_buf = 0
+let g:aldur#terminal#term_buf_id = -2
 let t:aldur_terminal_term_win = 0
 let g:aldur#terminal#term_height_percentage = 0.40
 
@@ -23,7 +24,7 @@ function! aldur#terminal#toggle() abort
         try
             exec 'buffer ' . g:aldur#terminal#term_buf
         catch
-            call termopen(&shell, {'detach': 0, 'cwd': l:project_root})
+            let g:aldur#terminal#term_buf_id = termopen(&shell, {'detach': 0, 'cwd': l:project_root})
             let g:aldur#terminal#term_buf = bufnr('')
         endtry
         let t:aldur_terminal_term_win = win_getid()
