@@ -43,3 +43,6 @@ nnoremap <localleader>ss :setlocal spell!<cr>
 
 " Quickly reach for :
 nnoremap <leader>; :
+
+" Disable the `co` map
+nnoremap co <plug>
