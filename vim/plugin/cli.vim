@@ -27,3 +27,6 @@ nnoremap Q <Nop>
 " Source: https://github.com/mhinz/vim-galore/issues/148
 cnoremap <expr> <c-n> wildmenumode() ? "<c-n>" : "<down>"
 cnoremap <expr> <c-p> wildmenumode() ? "<c-p>" : "<up>"
+
+" Send the current filepath and line number to the clipboard (+ register).
+command! FilepathToClipboard let @+ = expand('%') . ':' . line('.')
