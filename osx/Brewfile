@@ -14,6 +14,7 @@ brew "autossh"
 brew "pinentry-mac"
 brew "npm"
 brew "ruby"
+brew "dotenv-linter"
 
 brew "universal-ctags/universal-ctags/universal-ctags", args: ["HEAD"]
 
