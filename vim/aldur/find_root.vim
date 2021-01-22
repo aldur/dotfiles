@@ -1,6 +1,6 @@
 function! aldur#find_root#find_root() abort
     let l:base = '%:p:h'
-    if exists('b:netrw_curdir')
+    if &filetype ==# 'netrw' && exists('b:netrw_curdir')
         let l:base = b:netrw_curdir
     endif
 
