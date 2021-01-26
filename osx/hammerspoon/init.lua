@@ -127,15 +127,17 @@ local function ssidChangedCallback()
         logger.e('[Network Locations] Error setting ' .. networkLocation .. '.')
     end
 
-    -- Execute IN callback for new network location.
-    local callback = secrets.SSID_CALLBACKS[networkLocation]
-    if callback then assert(#callback == 2); callback[1]() end
+    if secrets["SSID_CALLBACKS"] then
+        -- Execute IN callback for new network location.
+        local callback = secrets.SSID_CALLBACKS[networkLocation]
+        if callback then assert(#callback == 2); callback[1]() end
 
-    -- Execute OUT callback for last network location.
-    local lastSSID = globals.WiFi.lastSSID
-    local lastNetworkLocation = secrets.SSIDS[lastSSID] or 'Automatic'
-    callback = secrets.SSID_CALLBACKS[lastNetworkLocation]
-    if callback then assert(#callback == 2); callback[2]() end
+        -- Execute OUT callback for last network location.
+        local lastSSID = globals.WiFi.lastSSID
+        local lastNetworkLocation = secrets.SSIDS[lastSSID] or 'Automatic'
+        callback = secrets.SSID_CALLBACKS[lastNetworkLocation]
+        if callback then assert(#callback == 2); callback[2]() end
+    end
 
     globals.WiFi.lastSSID = newSSID
 end
