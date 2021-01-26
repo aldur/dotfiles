@@ -244,8 +244,15 @@ end
 -- Focus last window when closing Finder.
 globals.wfilters.finder = wf.copy(wf.defaultCurrentSpace):
     setDefaultFilter(false):setAppFilter('Finder'):
-    subscribe(wf.windowDestroyed, focusLastFocused)
-
+    subscribe(
+        wf.windowDestroyed,
+        function(_, name, _)
+            -- Finder always keep a background window open.
+            if #hs.application('com.apple.finder'):allWindows() == 1 then
+                focusLastFocused()
+            end
+        end
+    )
 -- }}}
 
 -- Emojis {{{
