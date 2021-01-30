@@ -56,6 +56,8 @@ iabbrev <buffer> poiche' poiché
 iabbrev <buffer> piu' più
 iabbrev <buffer> puo' può
 iabbrev <buffer> gia' già
+iabbrev <buffer> -> →
+iabbrev <buffer> <- ←
 
 command! -buffer -range=% -nargs=* WikiExportHTML
             \ call aldur#wiki#export_to_html(<line1>, <line2>, <f-args>)
