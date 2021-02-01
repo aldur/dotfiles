@@ -20,6 +20,7 @@ git:
 	git config --global status.showUntrackedFiles all
 	git config --global pull.rebase true
 	git config --global rebase.autoStash true
+	git config --global commit.gpgsign true
 
 $(DOTFILES):
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
