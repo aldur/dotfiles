@@ -31,6 +31,14 @@ nnoremap <silent> <leader>h :History<CR>
 nnoremap <silent> <leader>H :Files ~<CR>
 nnoremap <silent> <leader>: :History:<CR>
 
+if !empty($FZF_DEFAULT_COMMAND)
+    inoremap <expr> <plug>(fzf-complete-path)      fzf#vim#complete#path($FZF_DEFAULT_COMMAND)
+endif
+
+if !empty($FZF_DEFAULT_COMMAND)
+    inoremap <expr> <plug>(fzf-complete-file)      fzf#vim#complete#path($FZF_DEFAULT_COMMAND . ' --type f')
+endif
+
 imap <silent> <c-x><c-f> <plug>(fzf-complete-path)
 imap <silent> <c-x><c-k> <plug>(fzf-complete-word)
 
