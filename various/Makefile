@@ -1,7 +1,7 @@
 include ../include.mk
 
 DOTFILES = psqlrc radare2rc curlrc gdbinit inputrc ideavimrc chktexrc pylintrc gitignore_global gitattributes_global weechat mdlrc mdlstyle.rb ripgreprc
-CONFIG_FILES = flake8 pycodestyle ctags
+CONFIG_FILES = flake8 pycodestyle ctags fd
 ALL = $(DOTFILES) $(CONFIG_FILES) _yamllint _bat vale git
 
 .PHONY: $(ALL)
@@ -12,6 +12,7 @@ git:
 	git config --global user.email "adrianodl@hotmail.it"
 	git config --global commit.verbose true
 	git config --global push.default current
+	git config --global pull.default current
 	git config --global push.followTags true
 	git config --global core.excludesfile ~/.gitignore_global
 	git config --global core.attributesfile ~/.gitattributes_global
