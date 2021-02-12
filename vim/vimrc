@@ -228,6 +228,7 @@
                     \ '<plug>(wiki-link-toggle)' : '<plug>',
                     \ '<plug>(wiki-link-open)' : '<plug>',
                     \ '<plug>(wiki-export)' : '<plug>',
+                    \ '<plug>(wiki-rename)' : '<plug>',
                     \}
 
         let g:wiki_mappings_local = g:wiki_mappings_global
