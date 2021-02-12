@@ -1,7 +1,12 @@
-if exists('g:wiki_root')
-    " If the full path of this file matches the full `g:wiki_root`:
-    execute 'autocmd vimrc BufNewFile ' . expand(g:wiki_root) . '/*.md call aldur#wiki#yaml_frontmatter_and_header()'
+if !exists('g:wiki_root')
+    finish
 endif
+
+let g:wiki_root = expand(g:wiki_root)
+
+" If the full path of this file matches the full `g:wiki_root`:
+execute 'autocmd vimrc BufNewFile ' . g:wiki_root . '/*.md call aldur#wiki#yaml_frontmatter_and_header()'
+execute 'autocmd vimrc BufRead,BufNewFile ' . g:wiki_root . '/*.md set filetype=markdown.wiki'
 
 if exists(':NV')
     nnoremap <silent> <leader>n :NV<CR>
@@ -13,5 +18,5 @@ nnoremap <expr><silent><leader>wt ':e ' . g:wiki_root . '/Tasklist.md <CR>'
 " This mapping will recursively search for notes, remove the "Notes" folder
 " path and remove the `.md` extension.
 " Note that this replaces *i_CTRL-X_CTRL-N*
-inoremap <expr> <plug>(fzf-complete-note)      fzf#vim#complete#path("find " . expand(g:wiki_root) . " -type f -print \| sed 's#^" . expand(g:wiki_root) . "/##' \| sed 's#." . g:wiki_link_target_type . "$##'")
+inoremap <expr> <plug>(fzf-complete-note)      fzf#vim#complete#path("find " . g:wiki_root . " -type f -print \| sed 's#^" . s:wiki_root . "/##' \| sed 's#." . g:wiki_link_target_type . "$##'")
 imap <silent> <c-x><c-n> <plug>(fzf-complete-note)
