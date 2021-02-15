@@ -18,5 +18,5 @@ nnoremap <expr><silent><leader>wt ':e ' . g:wiki_root . '/Tasklist.md <CR>'
 " This mapping will recursively search for notes, remove the "Notes" folder
 " path and remove the `.md` extension.
 " Note that this replaces *i_CTRL-X_CTRL-N*
-inoremap <expr> <plug>(fzf-complete-note)      fzf#vim#complete#path("find " . g:wiki_root . " -type f -print \| sed 's#^" . s:wiki_root . "/##' \| sed 's#." . g:wiki_link_target_type . "$##'")
+inoremap <expr> <plug>(fzf-complete-note)      fzf#vim#complete#path("find " . g:wiki_root . " -type f -print \| sed 's#^" . g:wiki_root . "/##' \| sed 's#." . g:wiki_link_target_type . "$##'")
 imap <silent> <c-x><c-n> <plug>(fzf-complete-note)
