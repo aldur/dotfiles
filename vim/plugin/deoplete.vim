@@ -42,6 +42,7 @@ call deoplete#custom#option('sources', {
             \ 'tex': s:default_sources + ['dictionary'] + ['ale'],
             \ 'gitcommit': s:default_sources + ['dictionary'],
             \ 'markdown': s:default_sources + ['notes', 'notes_tags'] + ['dictionary'],
+            \ 'markdown.wiki': s:default_sources + ['notes', 'notes_tags'] + ['dictionary'],
             \ 'python': s:default_sources + ['ale'],
             \ 'go': s:default_sources + ['ale'],
             \ 'rust': s:default_sources + ['ale'],
