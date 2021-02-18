@@ -30,6 +30,7 @@ call deoplete#custom#source(
 
 " 'omni' is disabled 'cause is not async
 let s:default_sources = ['around', 'member', 'tag', 'file', 'ultisnips']
+let s:markdown_sources = s:default_sources + ['notes', 'notes_tags'] + ['dictionary']
 
 " cpp completion provided by CCLS
 " py completion provided by python-language-server
@@ -41,8 +42,8 @@ call deoplete#custom#option('sources', {
             \ 'vim': s:default_sources + ['vim'],
             \ 'tex': s:default_sources + ['dictionary'] + ['ale'],
             \ 'gitcommit': s:default_sources + ['dictionary'],
-            \ 'markdown': s:default_sources + ['notes', 'notes_tags'] + ['dictionary'],
-            \ 'markdown.wiki': s:default_sources + ['notes', 'notes_tags'] + ['dictionary'],
+            \ 'markdown': s:markdown_sources,
+            \ 'markdown.wiki': s:markdown_sources,
             \ 'python': s:default_sources + ['ale'],
             \ 'go': s:default_sources + ['ale'],
             \ 'rust': s:default_sources + ['ale'],
