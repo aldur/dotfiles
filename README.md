@@ -21,7 +21,7 @@ $ brew install git make gpg coreutils git-crypt
 $ PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
 $ gpg --import email.gpg
 $ git-crypt unlock
-$ make requirements #optional
+$ gmake requirements #optional
 ```
 
 ## Install
