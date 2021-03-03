@@ -1,4 +1,8 @@
 brew "fzf"
+brew "pandoc"
+brew "jq"
+brew "htop"
+brew "tree"
 brew "delta"
 brew "rg"
 brew "bat"
@@ -15,7 +19,6 @@ brew "rig"
 brew "autossh"
 brew "npm"
 brew "ruby"
-brew "dotenv-linter"
 
 brew "universal-ctags/universal-ctags/universal-ctags", args: ["HEAD"]
 
