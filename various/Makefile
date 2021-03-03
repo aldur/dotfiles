@@ -22,6 +22,7 @@ git:
 	git config --global pull.rebase true
 	git config --global rebase.autoStash true
 	git config --global commit.gpgsign true
+	git config --global user.signingkey 22ABB9E8653C4764FF5B842B67F8D00BDD8874D3
 
 $(DOTFILES):
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
