@@ -13,3 +13,8 @@ abbr -a vim vimr
 if test -f /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.fish.inc
     source /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.fish.inc
 end
+
+# Override macOS ssh-agent with yubikey-agent
+# We need to do this here since macOS sets a universal variable, so we shadow
+# it this way.
+set -gx SSH_AUTH_SOCK /usr/local/var/run/yubikey-agent.sock
