@@ -80,7 +80,7 @@ function obj:init()
 
             local subText = table.concat(subTexts, ", ")
             local split = hs.fnutils.imap(
-                    hs.fnutils.split(emoji.code_points.base, "-"),
+                    hs.fnutils.split(emoji.code_points.fully_qualified, "-"),
                     function(s) return tonumber(s, 16) end
                 )
             local chars = hs.utf8.codepointToUTF8(table.unpack(split))
