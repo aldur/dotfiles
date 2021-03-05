@@ -11,7 +11,8 @@ SETUVAR --export HOMEBREW_NO_ANALYTICS:1
 SETUVAR --export HOMEBREW_NO_AUTO_UPDATE:1
 SETUVAR --export HOMEBREW_NO_INSECURE_REDIRECT:1
 SETUVAR --export MANPAGER:nvim\x20\x2bMan\x21
-SETUVAR --export --path RIPGREP_CONFIG_PATH:/Users/aldur/\x2eripgreprc
+SETUVAR --export --path RIPGREP_CONFIG_PATH:/Users/adriano/\x2eripgreprc
+SETUVAR --export SSH_AUTH_SOCK:/usr/local/var/run/yubikey\x2dagent\x2esock
 SETUVAR --export VISUAL:nvim
 SETUVAR __fish_initialized:3100
 SETUVAR _fish_abbr_gc:git\x20commit
@@ -53,4 +54,4 @@ SETUVAR fish_pager_color_completion:normal
 SETUVAR fish_pager_color_description:B3A06D\x1eyellow
 SETUVAR fish_pager_color_prefix:white\x1e\x2d\x2dbold\x1e\x2d\x2dunderline
 SETUVAR fish_pager_color_progress:brwhite\x1e\x2d\x2dbackground\x3dcyan
-SETUVAR fish_user_paths:/Users/aldur/Library/Python/3\x2e9/bin\x1e/usr/local/opt/coreutils/libexec/gnubin\x1e/Users/aldur/go/bin/\x1e/usr/local/opt/fzf/bin\x1e/Users/aldur/\x2ecargo/bin
+SETUVAR fish_user_paths:/Users/adriano/\x2egem/ruby/2\x2e6\x2e0/bin\x1e/Users/adriano/Library/Python/3\x2e9/bin\x1e/usr/local/opt/coreutils/libexec/gnubin\x1e/Users/adriano/go/bin/\x1e/usr/local/opt/fzf/bin\x1e/Users/adriano/\x2ecargo/bin
