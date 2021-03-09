@@ -23,7 +23,7 @@ function! aldur#wiki#export_to_html(line1, line2, ...) abort
 
     call wiki#page#export(
                 \ a:line1, a:line2,
-                \ '-output', expand('../HTML/' . l:relative_folder)
+                \ '-output', expand(g:wiki_root . '/../HTML/' . l:relative_folder)
                 \ )
 endfunction
 
