@@ -411,7 +411,13 @@ end)
 -- Focus/launch most commonly used applications across multiple options.
 hs.fnutils.each({
     {'P', {'com.jetbrains.pycharm', 'com.microsoft.VSCode', 'com.apple.dt.Xcode'}},
-    {'Z', {'us.zoom.xos', 'com.cisco.webexmeetingsapp', 'com.webex.meetingmanager', 'com.microsoft.teams'}}
+    {'Z', {
+        'com.fuzebox.fuze.Fuze',
+        'us.zoom.xos',
+        'com.cisco.webexmeetingsapp',
+        'com.webex.meetingmanager',
+        'com.microsoft.teams'
+    }}
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function()
         for _, bundleID in pairs(k[2]) do
