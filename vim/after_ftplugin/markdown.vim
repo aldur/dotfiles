@@ -53,11 +53,13 @@ iabbrev <buffer> c'e' c'è
 iabbrev <buffer> pero' però
 iabbrev <buffer> perche' perché
 iabbrev <buffer> poiche' poiché
+iabbrev <buffer> finche' finché
 iabbrev <buffer> piu' più
 iabbrev <buffer> puo' può
 iabbrev <buffer> gia' già
 iabbrev <buffer> -> →
 iabbrev <buffer> <- ←
+iabbrev <buffer> <-> ↔
 
 onoremap <silent><buffer> ih :<C-u>call aldur#markdown#header_textobj(v:true)<CR>
 onoremap <silent><buffer> ah :<C-u>call aldur#markdown#header_textobj(v:false)<CR>
