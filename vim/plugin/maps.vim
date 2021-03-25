@@ -10,6 +10,10 @@ noremap k gk
 noremap gj j
 noremap gk k
 
+" Note that this disables `i_CTRL-E`
+" Yes, this is emacs style, no shame!
+inoremap <C-e> <End>
+
 " Disable highlight when <leader><cr> is pressed
 nnoremap <silent> <leader><cr> :noh<cr>
 
