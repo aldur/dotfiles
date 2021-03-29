@@ -17,17 +17,20 @@ snippet clps "Collapsable Text"
 	$2
 	</details>
 
-snippet ref "Reference Header"
+snippet [[ "Reference"
+	[$1][$2]
+
+snippet refh "Reference Header"
 	## References
 
 	- [$1]($2)
 
-snippet refc "Reference Header (clip)"
+snippet refhc "Reference Header (clip)"
 	## References
 
 	- [${1:`@+`}](${2:`@+`})
 
-snippet readc "Readings Header (clip)"
+snippet readhc "Readings Header (clip)"
 	## Readings
 
 	### $1
