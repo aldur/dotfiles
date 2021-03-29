@@ -18,6 +18,12 @@ let b:match_words = '```.\+:```$,\S\@<!`:`\S\@!'
 " Disable three backticks disappearing on new-line
 let b:pear_tree_repeatable_expand = 0
 
+" Disable pairs for [, instead rely on snippets.
+let b:pear_tree_pairs = deepcopy(g:pear_tree_pairs)
+if has_key(b:pear_tree_pairs, '[')
+    call remove(b:pear_tree_pairs, '[')
+endif
+
 nnoremap <silent><buffer> [` :<c-U>call aldur#markdown#to_fence_start()<CR>
 onoremap <silent><buffer> [` :<c-U>call aldur#markdown#to_fence_start()<CR>
 vnoremap <silent><buffer> [` <esc>:<C-U>call aldur#markdown#visual_move('aldur#markdown#to_fence_start')<CR>
