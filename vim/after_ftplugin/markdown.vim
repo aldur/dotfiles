@@ -23,6 +23,8 @@ let b:pear_tree_pairs = deepcopy(g:pear_tree_pairs)
 if has_key(b:pear_tree_pairs, '[')
     call remove(b:pear_tree_pairs, '[')
 endif
+let b:pear_tree_pairs['_'] = {'closer': '_'}
+let b:pear_tree_pairs['*'] = {'closer': '*'}
 
 nnoremap <silent><buffer> [` :<c-U>call aldur#markdown#to_fence_start()<CR>
 onoremap <silent><buffer> [` :<c-U>call aldur#markdown#to_fence_start()<CR>
