@@ -1,7 +1,7 @@
 " {{{
 let g:vim_markdown_frontmatter = 1  " Highlight YAML front matter.
 let g:vim_markdown_strikethrough = 1  " Enable strikethrough with double tilde
-let g:vim_markdown_math = 1  " Enable Latex syntax highlight
+let g:vim_markdown_math = 0  " Latex syntax highlight
 
 let g:vim_markdown_auto_insert_bullets = 1  " Automatically insert bullets in Markdown
 
