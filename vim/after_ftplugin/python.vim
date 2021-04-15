@@ -4,3 +4,4 @@ setlocal makeprg=python3\ %
 let b:ale_linters = ['pyls']  " pyls includes pyflakes
 let b:ale_fixers = ['black']
 
+setlocal formatoptions+=r
