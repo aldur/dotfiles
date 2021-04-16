@@ -1,5 +1,5 @@
 " Source: https://gist.github.com/romainl/379904f91fa40533175dfaec4c833f2f
-function! aldur#colors#customize_molokai() abort
+function! aldur#colors#customize_monokai() abort
     " Make SpellBad text have a red underline on GUIs...
     highlight SpellBad ctermfg=231 ctermbg=197 guibg=none guifg=none guisp=#ff005f gui=undercurl
 
