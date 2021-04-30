@@ -113,6 +113,9 @@
 
         " Rust
         Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+
+        " Algorand's TEAL
+        Plug 'aldur/vim-algorand-teal'
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
