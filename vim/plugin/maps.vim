@@ -51,3 +51,10 @@ nnoremap co <plug>
 " Fugitive maps
 nnoremap gdh :diffget //2<CR>
 nnoremap gdl :diffget //3<CR>
+
+" Swap :tjump (g CTRL-]) with CTRL-]
+" https://codeinthehole.com/tips/vim-lists/#tip-use-tjump-as-your-default-jump-to-tag-command
+nnoremap <c-]> g<c-]>
+vnoremap <c-]> g<c-]>
+nnoremap g<c-]> <c-]>
+vnoremap g<c-]> <c-]>
