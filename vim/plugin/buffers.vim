@@ -7,7 +7,7 @@ nnoremap <leader>bd :bdelete<cr>
 nnoremap <leader>ba :%bdelete<cr>
 
 " Specify the behavior when switching between buffers
-set switchbuf=useopen,usetab,newtab
+set switchbuf=useopen,usetab,split
 
 " Resize splits when the window is resized
 autocmd vimrc VimResized * :wincmd =
