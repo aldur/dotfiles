@@ -1,9 +1,7 @@
 let g:python_highlight_all = 1  " Enable all Python syntax highlights
-compiler python  " Sets  makeprg=python3\ -t\ %
 
-if executable('pipenv')
-    setlocal makeprg=cd\ %:h\ &&\ pipenv\ run\ python\ %:t
-endif
+" compiler python  " Sets makeprg=python3\ -t\ %
+compiler pipenv  " Calls `compiler python` and sets makeprg=cd\ %:h\ &&\ pipenv\ run\ python\ %:t
 
 let b:ale_linters = ['pyls']  " pyls includes pyflakes
 let b:ale_fixers = ['black']

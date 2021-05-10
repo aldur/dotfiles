@@ -49,5 +49,3 @@ CompilerSet errorformat+=%Z%m
 
 let &cpoptions = s:cpo_save
 unlet s:cpo_save
-
-" vim:set sw=2 sts=2:
