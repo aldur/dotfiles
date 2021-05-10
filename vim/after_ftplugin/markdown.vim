@@ -15,6 +15,9 @@ let b:ale_javascript_prettier_options = '--tab-width 2'
 " Match fenced code blocks and inline backticks.
 let b:match_words = '```.\+:```$,\S\@<!`:`\S\@!'
 
+let b:surround_105 = "_\r_"  " i - italic
+let b:surround_98 = "*\r*"  " b - bold
+
 " Disable three backticks disappearing on new-line
 let b:pear_tree_repeatable_expand = 0
 
