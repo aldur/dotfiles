@@ -17,4 +17,7 @@ end
 # Override macOS ssh-agent with yubikey-agent
 # We need to do this here since macOS sets a universal variable, so we shadow
 # it this way.
-set -gx SSH_AUTH_SOCK /usr/local/var/run/yubikey-agent.sock
+# set -gx SSH_AUTH_SOCK /usr/local/var/run/yubikey-agent.sock
+
+# Override macOS ssh-agent with Secretive (installed from `brew`)
+set -x SSH_AUTH_SOCK $HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh

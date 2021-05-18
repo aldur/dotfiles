@@ -13,7 +13,7 @@ SETUVAR --export HOMEBREW_NO_AUTO_UPDATE:1
 SETUVAR --export HOMEBREW_NO_INSECURE_REDIRECT:1
 SETUVAR --export MANPAGER:nvim\x20\x2bMan\x21
 SETUVAR --export --path RIPGREP_CONFIG_PATH:/Users/adriano/\x2eripgreprc
-SETUVAR --export SSH_AUTH_SOCK:/usr/local/var/run/yubikey\x2dagent\x2esock
+SETUVAR --export SSH_AUTH_SOCK:/Users/adriano/Library/Containers/com\x2emaxgoedjen\x2eSecretive\x2eSecretAgent/Data/socket\x2essh
 SETUVAR --export VISUAL:nvim
 SETUVAR __fish_initialized:3100
 SETUVAR _fish_abbr_gc:git\x20commit
