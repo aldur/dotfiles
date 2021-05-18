@@ -116,6 +116,9 @@
 
         " Algorand's TEAL
         Plug 'aldur/vim-algorand-teal'
+
+        " Solidity
+        Plug 'TovarishFin/vim-solidity', { 'for': 'solidity' }
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
