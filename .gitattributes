@@ -1,1 +1,2 @@
 osx/hammerspoon/secrets.lua filter=git-crypt diff=git-crypt
+fish/fish/functions/gpg-yubikey-encrypt.fish filter=git-crypt diff=git-crypt
