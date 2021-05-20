@@ -7,6 +7,7 @@
 let g:aldur#terminal#term_buf = 0
 let g:aldur#terminal#term_buf_id = -2
 let t:aldur_terminal_term_win = 0
+" This can be overriden per tab by `t:term_height_percentage`.
 let g:aldur#terminal#term_height_percentage = 0.40
 
 function! aldur#terminal#toggle() abort
@@ -20,7 +21,10 @@ function! aldur#terminal#toggle() abort
         hide
     else
         botright new
-        exec 'resize ' . string(&lines * g:aldur#terminal#term_height_percentage)
+        let l:term_height_percentage = get(t:,
+                    \ 'term_height_percentage',
+                    \ g:aldur#terminal#term_height_percentage)
+        exec 'resize ' . string(&lines * l:term_height_percentage)
         try
             exec 'buffer ' . g:aldur#terminal#term_buf
         catch
