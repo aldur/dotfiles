@@ -76,6 +76,7 @@
 
     " Wiki
     Plug 'lervag/wiki.vim'
+    Plug 'lervag/lists.vim'
     if executable('rg')
         Plug 'alok/notational-fzf-vim'
     end
