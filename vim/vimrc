@@ -200,6 +200,14 @@
         vnoremap <silent> K :call investigate#Investigate('v')<CR>
     " }}}
 
+    " lion {{{
+        let g:lion_map_right = 'gR'  " Prevent conflict with vim.wiki
+    " }}}
+
+    " lists.vim {{{
+        let g:lists_filetypes = ['md']
+    " }}}
+
     " vim.wiki {{{
         let g:wiki_root = '~/Documents/Notes'
         let g:wiki_filetypes = ['md']
