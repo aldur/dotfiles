@@ -47,3 +47,7 @@ endfunction
 function! aldur#lightline#spell()
     return winwidth(0) > 70 ? (&spell?&spelllang:'') : ''
 endfunction
+
+function! aldur#lightline#treesitter()
+    return winwidth(0) > 70 ? (nvim_treesitter#statusline()) : ''
+endfunction

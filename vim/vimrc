@@ -150,6 +150,10 @@
         Plug 'honza/vim-snippets', b:has_nvim_python3 ? {} : { 'on': [] }
     " }}}
 
+    " Update treesitter parsers when updating the the plugin itself
+    Plug 'nvim-treesitter/nvim-treesitter',
+                \ b:has_nvim_python3 ? {'do': ':TSUpdate'} : { 'on': []}
+
     " ...Vim-plug is done
     call plug#end()
 

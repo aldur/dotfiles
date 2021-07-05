@@ -19,7 +19,7 @@ if exists('g:lightline#colorscheme#monokai_tasty#palette')
     let s:palette.normal.warning = s:normal.warning
     " normal -> command
     let s:palette.command = s:normal
-    unlet s:palette.command["middle"]
+    unlet s:palette.command['middle']
     " command -> insert
     let s:palette.insert = s:command
     let s:palette.insert.middle = s:insert.middle
@@ -40,18 +40,21 @@ let g:lightline.component_function = {
             \ 'readonly': 'aldur#lightline#read_only',
             \ 'filename': 'aldur#lightline#filename',
             \ 'filetype': 'aldur#lightline#filetype',
-            \ 'spell': 'aldur#lightline#spell'
+            \ 'spell': 'aldur#lightline#spell',
+            \ 'treesitter': 'aldur#lightline#treesitter'
             \ }
 
 " Custom component for file encoding and format
 let g:lightline.component = {
     \ 'fileencoding': '%{&fenc!=#"utf-8"?(&fenc!=#""?&fenc:&enc):""}',
-    \ 'fileformat': '%{&ff!=#"unix"?&ff:""}' }
+    \ 'fileformat': '%{&ff!=#"unix"?&ff:""}',
+    \ }
 
 " ...and companions to define visibility
 let g:lightline.component_visible_condition = {
     \ 'fileencoding': '&fenc!=#"utf-8"',
-    \ 'fileformat': '&ff!=#"unix"'
+    \ 'fileformat': '&ff!=#"unix"',
+    \ 'treesitter': 'aldur#lightline#treesitter()!=""'
     \ }
 
 let g:lightline.component_type = {
@@ -69,6 +72,7 @@ let g:lightline.active = {
             \ 'right': [ [ 'syntax_error', 'syntax_warning', 'syntax_info' ],
             \            [ 'lineinfo'                                      ],
             \            [ 'fileformat', 'fileencoding', 'filetype'        ],
+            \            [ 'treesitter'                                    ],
             \            [ 'virtualenv'                                    ] ] }
 
 " Setup the inactive status bar
