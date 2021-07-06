@@ -8,6 +8,13 @@ let g:ale_lint_on_enter = 1
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_filetype_changed = 1
 
+if has('nvim')
+    let g:ale_hover_cursor = 0
+    let g:ale_hover_to_preview = 1
+    let g:ale_floating_preview = 1
+    let g:ale_floating_window_border = ['│', '─', '╭', '╮', '╯', '╰']
+endif
+
 " Lint when changing window
 autocmd vimrc WinLeave * :ALELint
 
@@ -28,3 +35,8 @@ nnoremap <silent> <leader>f :<C-u>silent call aldur#ale#fix_gently()<CR>
 
 " Mnemonic for 'usages'
 nnoremap <silent> <leader>u :<C-u>ALEFindReferences -relative<CR>
+
+autocmd vimrc CursorHoldI * :ALEHover
+
+" Reload ALE after configuring it.
+" ALEDisable | ALEEnable
