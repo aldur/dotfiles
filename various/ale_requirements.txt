@@ -2,6 +2,7 @@ pynvim
 black 
 vim-vint 
 python-language-server[all] 
+pyls-mypy 
 yamllint 
 yamlfix
 timefhuman
