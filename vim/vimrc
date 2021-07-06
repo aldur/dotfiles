@@ -177,7 +177,7 @@
     set mouse=a
     set mousehide               " Hide the mouse cursor while typing
 
-    set updatetime=1000         " ms to trigger the CursorHold/CursorHoldI events
+    set updatetime=500         " ms to trigger the CursorHold/CursorHoldI events
 
     " With a map leader it's possible to do extra key combinations.
     " We set it here so it is effective for all `plugin/` files.
