@@ -258,6 +258,16 @@
 
         let g:wiki_list_todos = ['TODO', 'DONE']
 
+        function! TemplateWrapper(context) abort
+            call aldur#wiki#template(a:context)
+        endfunction
+
+        " Catch-all template.
+        let g:wiki_templates = [
+            \ { 'match_func': {x -> v:true},
+            \   'source_func': function('TemplateWrapper')},
+            \]
+
         " Fix temporary error in creating links.
         " let g:wiki_map_link_create = 'aldur#wiki#map_link_create'
 

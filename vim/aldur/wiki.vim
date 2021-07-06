@@ -1,16 +1,3 @@
-" Insert YAML front matter and header/title
-function! aldur#wiki#yaml_frontmatter_and_header() abort
-    if exists('g:snips_author')
-        let l:author = g:snips_author
-    else
-        let l:author = 'Adriano Di Luzio'
-    end
-    execute "normal ggi---\<cr>author: " . l:author . "\<cr>" .
-                \ "date: \<C-r>=strftime('%Y-%m-%d %H:%M')\<cr>\<cr>" .
-                \ "tags:\<cr>---\<cr>\<cr># " .
-                \ expand('%:t:r') ."\<cr>\<esc>"
-endfunc
-
 function! aldur#wiki#map_link_create(text) abort
     return a:text
 endfunction
@@ -34,4 +21,20 @@ function! aldur#wiki#rename_no_ask() abort
     if l:name !=# ''
         call wiki#page#rename(l:name)
     endif
+endfunction
+
+function! aldur#wiki#template(context) abort
+    if exists('g:snips_author')
+        let l:author = g:snips_author
+    else
+        let l:author = 'Adriano Di Luzio'
+    end
+
+    call append(0, '---')
+    call append(1, 'author: ' . l:author)
+    call append(2, 'date: ' . a:context.date . ' ' . a:context.time)
+    call append(3, 'tags:')
+    call append(4, '---')
+    call append(5, '')
+    call append(6, '# ' . a:context.name)
 endfunction

@@ -5,7 +5,6 @@ endif
 let g:wiki_root = expand(g:wiki_root)
 
 " If the full path of this file matches the full `g:wiki_root`:
-execute 'autocmd vimrc BufNewFile ' . g:wiki_root . '/*.md call aldur#wiki#yaml_frontmatter_and_header()'
 execute 'autocmd vimrc BufRead,BufNewFile ' . g:wiki_root . '/*.md set filetype=markdown.wiki'
 
 if exists(':NV')
