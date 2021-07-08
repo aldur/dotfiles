@@ -37,7 +37,7 @@ nnoremap <silent> <leader>f :<C-u>silent call aldur#ale#fix_gently()<CR>
 nnoremap <silent> <leader>u :<C-u>ALEFindReferences -relative<CR>
 
 " Show hover. You can use `<C-y>` to close the autocomplete popup
-inoremap <silent> <C-x><C-i> <C-o>:<C-u>ALEHover<CR>
+inoremap <silent> <C-x><C-i> <C-o>:<C-u>call aldur#ale#show_hover_at_bracket()<CR>
 " autocmd vimrc CursorHoldI * :ALEHover
 
 " Reload ALE after configuring it.

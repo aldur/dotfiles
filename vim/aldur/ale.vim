@@ -42,3 +42,14 @@ function! aldur#ale#go_to_definition_or_tag() abort
 
     tjump
 endfunction
+
+" This will show a hover at the caracther _before_
+" the closest (to the left) open bracket.
+function! aldur#ale#show_hover_at_bracket() abort
+    let l:buffer = bufnr('')
+    let l:line = getpos('.')[1]
+    let l:colum = v:lua.search_before_closest_open_braket_in_line()
+
+    call ale#hover#Show(l:buffer, l:line, l:colum, {'called_from_balloonexpr': 1})
+endfunction
+
