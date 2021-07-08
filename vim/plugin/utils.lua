@@ -4,7 +4,7 @@ function _G.search_before_closest_open_braket_in_line()
     local line = vim.api.nvim_get_current_line()
     local current_column = vim.api.nvim_eval('getpos(".")')[3]
 
-    local line = line:sub(1, current_column)
+    line = line:sub(1, current_column)
     local reversed = line:reverse()
     local match = reversed:find("(", 1, true)
     if match == nil then

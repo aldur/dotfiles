@@ -13,7 +13,3 @@ if getcmdwintype() ==# ''
     " Same mapping as `vim-dispatch`
     nnoremap <silent><buffer> m<CR> :<c-u>Runtime<CR>
 endif
-
-" https://stackoverflow.com/questions/20262519/vim-how-to-source-a-part-of-the-buffer
-" TODO: Try to make this work.
-" vnoremap <silent><buffer> <CR> :<c-u> execute(getline("'<","'>"), '')<cr>
