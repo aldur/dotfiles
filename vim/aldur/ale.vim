@@ -31,3 +31,14 @@ function! aldur#ale#handle_dotenv_linter_format(buffer, lines) abort
 
     return l:output
 endfunction
+
+function! aldur#ale#go_to_definition_or_tag() abort
+    for l:linter in ale#linter#Get(&filetype)
+        if !empty(l:linter.lsp)
+            ALEGoToDefinition
+            return
+        endif
+    endfor
+
+    tjump
+endfunction
