@@ -38,7 +38,7 @@ nnoremap <silent> <leader>u :<C-u>ALEFindReferences -relative<CR>
 
 " Show hover. You can use `<C-y>` to close the autocomplete popup
 inoremap <silent> <C-x><C-i> <C-o>:<C-u>ALEHover<CR>
-autocmd vimrc CursorHoldI * :ALEHover
+" autocmd vimrc CursorHoldI * :ALEHover
 
 " Reload ALE after configuring it.
 " ALEDisable | ALEEnable
