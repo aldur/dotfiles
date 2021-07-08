@@ -123,22 +123,11 @@
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
 
-    " Deoplete and its plugins {{{
-        " Conditionally load `deoplete` and friends if on `nvim` with `python3`.
-        Plug 'Shougo/deoplete.nvim', b:has_nvim_python3 ? { 'do': ':UpdateRemotePlugins' } : { 'on': [] }
-
-        " VIM completion
-        Plug 'Shougo/neco-vim', b:has_nvim_python3 ? {} : { 'on': [] }
-
-        " Dictionary completion
-        Plug 'deoplete-plugins/deoplete-dictionary', b:has_nvim_python3 ? {} : { 'on': [] }
-    " }}}
+    Plug 'neovim/nvim-lspconfig', b:has_nvim_python3 ? {  } : { 'on': [] }
+    Plug 'nvim-lua/completion-nvim', b:has_nvim_python3 ? {  } : { 'on': [] }
 
     if executable('ctags')
         Plug 'ludovicchabant/vim-gutentags'            " Automatic tag management
-
-        " ...and tag completion
-        Plug 'deoplete-plugins/deoplete-tag', b:has_nvim_python3 ? {} : { 'on': [] }
     endif
 
     " Snippets  {{{

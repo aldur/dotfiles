@@ -1,7 +1,5 @@
 set complete+=k
 set complete+=kspell
-set completeopt=menuone,noinsert
-set completeopt=menuone,longest
 
 " This enables Dictionary completion in deoplete
 " In standard VIM completion,this should not be required as it defaults to the
@@ -13,3 +11,17 @@ set completeopt=menuone,longest
 if has('patch-7.4.314')
     set shortmess+=c " Quiet completions
 endif
+
+lua require'lspconfig'.pyls.setup{on_attach=require'completion'.on_attach}
+
+" Use <Tab> and <S-Tab> to navigate through popup menu
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+let g:completion_enable_auto_popup = 1
+
+" Set completeopt to have a better completion experience
+set completeopt=menuone,noinsert,noselect
+
+let g:completion_enable_snippet = 'UltiSnips'
+let g:completion_matching_smart_case = 1
