@@ -5,8 +5,10 @@ local lspconfig = require 'lspconfig'
 
 -- Setup everything on lsp attach
 local on_attach = function(_, bufnr)
-    -- Enable auto-complete.
-    require'completion'.on_attach()
+    require"lsp_signature".on_attach({
+        bind = true, -- This is mandatory, otherwise border config won't get registered.
+        handler_opts = {border = "single"}
+    })
 
     -- Mappings
     local opts = {noremap = true, silent = true}

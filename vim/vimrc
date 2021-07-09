@@ -124,7 +124,8 @@
     let b:has_nvim_python3 = has('nvim') && has('python3')
 
     Plug 'neovim/nvim-lspconfig', b:has_nvim_python3 ? {  } : { 'on': [] }
-    Plug 'nvim-lua/completion-nvim', b:has_nvim_python3 ? {  } : { 'on': [] }
+    Plug 'hrsh7th/nvim-compe', b:has_nvim_python3 ? {  } : { 'on': [] }
+    Plug 'ray-x/lsp_signature.nvim', b:has_nvim_python3 ? {  } : { 'on': [] }
 
     if executable('ctags')
         Plug 'ludovicchabant/vim-gutentags'            " Automatic tag management
