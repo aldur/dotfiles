@@ -7,10 +7,8 @@ setlocal nojoinspaces
 setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 setlocal signcolumn=no
 
-let b:ale_linters = []
-let b:ale_fixers = ['prettier', ]
-" This configures prettier for Markdown even if it says javascript :)
-let b:ale_javascript_prettier_options = '--tab-width 2'
+" Disable virtual text.
+let b:show_virtual_text = v:false
 
 " Match fenced code blocks and inline backticks.
 let b:match_words = '```.\+:```$,\S\@<!`:`\S\@!'
@@ -52,11 +50,6 @@ nnoremap <silent><buffer> + :<c-U>call aldur#markdown#increase_header_level()<CR
 nnoremap <silent><buffer> - :<c-U>call aldur#markdown#decrease_header_level()<CR>
 
 nnoremap <silent><buffer> gO :<c-U>BLines ^#<CR>
-
-" Note that we do `<C-\><C-O>`.
-" Disabled as we can do the same with `<C-T>` and `<C-D>` in insert mode.
-" inoremap <buffer> <s-tab> <C-\><C-O>:<c-U>call aldur#markdown#s_tab_imap()<CR>
-" inoremap <silent><buffer><expr> <tab> aldur#markdown#tab_imap()
 
 iabbrev <buffer> e' è
 iabbrev <buffer> cioe' cioè
