@@ -1,21 +1,27 @@
 scriptencoding utf-8
 
 " ALE integration {{{
-    function! aldur#lightline#ale_error() abort
-        let l:counts = ale#statusline#Count(bufnr(''))
-        let l:errors = l:counts.error + l:counts.style_error
+    function! aldur#lightline#lsp_error() abort
+        let l:errors = 0
+        if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
+            let l:errors = luaeval('vim.lsp.diagnostic.get_count(0, [[Error]])')
+        endif
         return l:errors > 0 ? '☢ '.l:errors : ''
     endfunction
 
-    function! aldur#lightline#ale_warning() abort
-        let l:counts = ale#statusline#Count(bufnr(''))
-        let l:warnings = l:counts.warning + l:counts.style_warning
+    function! aldur#lightline#lsp_warning() abort
+        let l:warnings = 0
+        if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
+            let l:warnings = luaeval('vim.lsp.diagnostic.get_count(0, [[Warning]])')
+        endif
         return l:warnings > 0 ? '⚠ '.l:warnings : ''
     endfunction
 
-    function! aldur#lightline#ale_info() abort
-        let l:counts = ale#statusline#Count(bufnr(''))
-        let l:infos = l:counts.info
+    function! aldur#lightline#lsp_info() abort
+        let l:infos = 0
+        if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
+            let l:infos = luaeval('vim.lsp.diagnostic.get_count(0, [[Information]])')
+        endif
         return l:infos > 0 ? 'ℹ '.l:infos : ''
     endfunction
 " }}}

@@ -1,9 +1,9 @@
 include ../include.mk
 
 .PHONY: all
-all: vimrc neovim templates autoload aldur plugin ftdetect after_plugin after_ftplugin after_syntax after_indent after_compiler scripts rplugin snippets UltiSnips ale_linters compiler
+all: vimrc neovim templates autoload aldur plugin ftdetect after_plugin after_ftplugin after_syntax after_indent after_compiler scripts rplugin snippets UltiSnips ale_linters compiler lua
 
-vimrc scripts templates plugin rplugin ftdetect snippets UltiSnips ale_linters compiler: vimf
+vimrc scripts templates plugin rplugin ftdetect snippets UltiSnips ale_linters compiler lua: vimf
 	$(LN) $(shell readlink -f $@) ${HOME}/.vim/$@
 
 after_ftplugin: after

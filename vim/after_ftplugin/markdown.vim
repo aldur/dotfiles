@@ -7,7 +7,7 @@ setlocal nojoinspaces
 setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 setlocal signcolumn=no
 
-let b:ale_linters = ['mdl', ]
+let b:ale_linters = []
 let b:ale_fixers = ['prettier', ]
 " This configures prettier for Markdown even if it says javascript :)
 let b:ale_javascript_prettier_options = '--tab-width 2'

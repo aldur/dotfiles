@@ -52,10 +52,7 @@ nnoremap co <plug>
 nnoremap gdh :diffget //2<CR>
 nnoremap gdl :diffget //3<CR>
 
-" When looking for tags, first try to ask an LSP. Then, resort to vim.
-" Swap :tjump (g CTRL-]) with CTRL-]
-" https://codeinthehole.com/tips/vim-lists/#tip-use-tjump-as-your-default-jump-to-tag-command
-nnoremap <c-]> :call aldur#ale#go_to_definition_or_tag()<CR>
-vnoremap <c-]> :call aldur#ale#go_to_definition_or_tag()<CR>
+nnoremap <c-]> g<c-]>
+vnoremap <c-]> g<c-]>
 nnoremap g<c-]> <c-]>
 vnoremap g<c-]> <c-]>

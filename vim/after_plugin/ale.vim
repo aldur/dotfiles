@@ -16,14 +16,14 @@ if has('nvim')
 endif
 
 " Lint when changing window
-autocmd vimrc WinLeave * :ALELint
+" autocmd vimrc WinLeave * :ALELint
 
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
 let g:airline#extensions#ale#enabled = 0  " Disable airline integration
-autocmd vimrc User ALELintPost call lightline#update()
+" autocmd vimrc User ALELintPost call lightline#update()
 
 " Better warning sign.
 let g:ale_sign_warning = '•'
@@ -31,17 +31,4 @@ let g:ale_sign_error = '✘'
 highlight ALEErrorSign ctermbg=NONE ctermfg=red
 highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
 
-nnoremap <silent> <leader>f :<C-u>silent call aldur#ale#fix_gently()<CR>
-
-" Mnemonic for 'usages'
-nnoremap <silent> <leader>u :<C-u>ALEFindReferences -relative<CR>
-
-" Mnemonic for 'info'
-nnoremap <silent> <leader>i :<C-u>ALEHover<CR>
-
-" Show hover. You can use `<C-y>` to close the autocomplete popup
-inoremap <silent> <C-x><C-i> <C-o>:<C-u>call aldur#ale#show_hover_at_bracket()<CR>
-" autocmd vimrc CursorHoldI * :ALEHover
-
-" Reload ALE after configuring it.
-" ALEDisable | ALEEnable
+let g:ale_disable_lsp = 1

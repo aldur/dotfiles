@@ -12,11 +12,10 @@ if has('patch-7.4.314')
     set shortmess+=c " Quiet completions
 endif
 
-lua require'lspconfig'.pyls.setup{on_attach=require'completion'.on_attach}
+lua require('plugins/nvim-lspconfig')
 
-" Use <Tab> and <S-Tab> to navigate through popup menu
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" Enable completion-nvim on all buffers.
+" autocmd vimrc BufEnter * lua require'completion'.on_attach()
 
 let g:completion_enable_auto_popup = 1
 

@@ -30,9 +30,9 @@ end
 
 let g:lightline.component_expand = {
             \ 'tabs': 'lightline#tabs',
-            \ 'syntax_error': 'aldur#lightline#ale_error',
-            \ 'syntax_warning': 'aldur#lightline#ale_warning',
-            \ 'syntax_info': 'aldur#lightline#ale_info',
+            \ 'syntax_error': 'aldur#lightline#lsp_error',
+            \ 'syntax_warning': 'aldur#lightline#lsp_warning',
+            \ 'syntax_info': 'aldur#lightline#lsp_info',
             \ }
 
 let g:lightline.component_function = {
