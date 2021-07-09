@@ -17,9 +17,13 @@ require'compe'.setup {
 
         vsnip = false,
         ultisnips = true,
-        luasnip = false
+        luasnip = false,
+
+        note_tags = true
     }
 }
+
+require'compe'.register_source('note_tags', require 'plugins/compe_note_tags')
 
 local t = function(str)
     return vim.api.nvim_replace_termcodes(str, true, true, true)

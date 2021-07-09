@@ -13,10 +13,3 @@ set shortmess+=c " Quiet completions
 
 lua require('plugins/nvim-lspconfig')
 lua require('plugins/compe')
-
-" inoremap <silent><expr> <Tab> compe#complete()
-" inoremap <silent><expr> <CR>      compe#confirm({'keys': "\<Plug>(PearTreeExpand)", 'mode': ''})
-" inoremap <silent><expr> <C-e>     compe#close('<C-e>')
-" inoremap <silent><expr> <Tab>     compe#confirm('<Tab>')
-" inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
-" inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
