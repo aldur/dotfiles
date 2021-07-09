@@ -10,3 +10,5 @@ brew "luarocks"
 brew "dotenv-linter"
 brew "bib-tool"
 brew "astyle"
+
+brew "saadparwaiz1/personal/lua-language-server"

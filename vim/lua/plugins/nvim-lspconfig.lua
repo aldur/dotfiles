@@ -4,7 +4,7 @@ local lspconfig = require 'lspconfig'
 -- local configs = require("lspconfig/configs")
 
 -- Setup everything on lsp attach
-local on_attach = function(client, bufnr)
+local on_attach = function(_, bufnr)
     -- Enable auto-complete.
     require'completion'.on_attach()
 
@@ -61,13 +61,54 @@ lspconfig.efm.setup {
     on_attach = on_attach
 }
 
+-- https://www.chrisatmachine.com/Neovim/28-neovim-lua-development/
+lspconfig.sumneko_lua.setup {
+    cmd = {"/usr/local/bin/lua-langserver"},
+    settings = {
+        Lua = {
+            runtime = {
+                -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+                version = 'LuaJIT',
+                -- Setup your lua path
+                path = vim.split(package.path, ';')
+            },
+            diagnostics = {
+                -- Get the language server to recognize the `vim` global
+                globals = {'vim'}
+            },
+            workspace = {
+                -- Make the server aware of Neovim runtime files
+                library = {
+                    [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+                    [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true
+                }
+            }
+        }
+    },
+    on_attach = on_attach
+}
+
+local function _read_buffer_variable(name, default, bufnr)
+    local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, name)
+    -- If not set, rely on the default value.
+    if not ok then return default end
+
+    return result
+end
+
+-- https://github.com/nvim-lua/diagnostic-nvim/issues/73
 vim.lsp.handlers["textDocument/publishDiagnostics"] =
     vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
         -- disable virtual text
-        -- virtual_text = false,
+        virtual_text = function(bufnr, _)
+            return _read_buffer_variable('show_virtual_text', true, bufnr)
+        end,
 
-        -- show signs
-        signs = false
+        -- Use a function to dynamically turn signs off
+        -- and on, using buffer local variables
+        signs = function(bufnr, _)
+            return _read_buffer_variable('show_signs', false, bufnr)
+        end
 
         -- delay update diagnostics
         -- update_in_insert = false,
