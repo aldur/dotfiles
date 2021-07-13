@@ -56,7 +56,7 @@ endfunction
 
 function! aldur#lightline#treesitter()
     if winwidth(0) > 70
-        let l:s = nvim_treesitter#statusline()
+        let l:s = nvim_treesitter#statusline(50)
         if l:s != v:null
             return l:s
         endif
