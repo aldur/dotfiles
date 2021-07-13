@@ -1,1 +1,2 @@
-let b:ale_lua_luacheck_options = '--read-globals vim'
+" Same mapping as `vim-dispatch`
+nnoremap <silent><buffer> m<CR> :<C-u>luafile %<CR>
