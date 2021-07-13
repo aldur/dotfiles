@@ -76,7 +76,8 @@ local efm_languages = {
     sh = {require 'efm/shellcheck', require 'efm/shfmt'},
     bib = {require 'efm/bibtool'},
     cpp = {require 'efm/astyle'},
-    json = {require 'efm/jq'}
+    json = {require 'efm/jq'},
+    xml = {require 'efm/xmllint'},
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
 efm_languages['sh.env'] = efm_languages['sh']
@@ -124,6 +125,9 @@ lspconfig.sumneko_lua.setup {
 
 -- https://github.com/golang/tools/blob/master/gopls/doc/vim.md#neovim-config
 lspconfig.gopls.setup {on_attach = on_attach}
+
+-- JavaScript/TypeScript
+lspconfig.denols.setup{ on_attach = on_attach}
 
 local function _read_buffer_variable(name, default, bufnr)
     local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, name)
