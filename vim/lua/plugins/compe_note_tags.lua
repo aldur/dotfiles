@@ -4,7 +4,7 @@ function Source.get_metadata(_)
     return {
         priority = 450,
         dup = 0,
-        menu = '[NT]',
+        menu = '[NoteTag]',
         filetypes = {'wiki', 'markdown.wiki'}
     }
 end
