@@ -1,4 +1,5 @@
-require'compe'.setup {
+local compe = require('compe')
+compe.setup {
     enabled = true,
     autocomplete = true,
     documentation = true,
@@ -25,8 +26,8 @@ require'compe'.setup {
     }
 }
 
-require'compe'.register_source('note_tags', require 'plugins/compe_note_tags')
-require'compe'.register_source('notes', require 'plugins/compe_notes')
+compe.register_source('note_tags', require 'plugins/compe_note_tags')
+compe.register_source('notes', require 'plugins/compe_notes')
 
 local t = function(str)
     return vim.api.nvim_replace_termcodes(str, true, true, true)
