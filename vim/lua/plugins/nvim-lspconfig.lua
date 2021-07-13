@@ -2,10 +2,10 @@
 local lspconfig = require 'lspconfig'
 local util = require('lspconfig/util')
 
-local path = util.path
-
 -- https://github.com/neovim/nvim-lspconfig/issues/500#issuecomment-876700701
 local function get_python_path(workspace)
+    local path = util.path
+
     -- Use activated virtualenv.
     if vim.env.VIRTUAL_ENV then
         return path.join(vim.env.VIRTUAL_ENV, 'bin', 'python')
@@ -18,7 +18,10 @@ local function get_python_path(workspace)
                                      'PIPENV_PIPFILE=' .. match ..
                                          ' pipenv --venv'))
         local msg = "Activating Pipenv at " .. venv
-        vim.cmd(([[echohl Function | echomsg "%s" | echohl None]]):format(vim.fn.escape(msg, "\"\\")))
+        vim.cmd(([[echohl Function | echomsg "%s" | echohl None]]):format(vim.fn
+                                                                              .escape(
+                                                                              msg,
+                                                                              "\"\\")))
 
         return path.join(venv, 'bin', 'python')
     end
@@ -115,11 +118,15 @@ lspconfig.sumneko_lua.setup {
                     [vim.fn.expand('$VIMRUNTIME/lua')] = true,
                     [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true
                 }
-            }
+            },
+            telemetry = {enable = false}
         }
     },
     on_attach = on_attach
 }
+
+-- https://github.com/golang/tools/blob/master/gopls/doc/vim.md#neovim-config
+lspconfig.gopls.setup {on_attach = on_attach}
 
 local function _read_buffer_variable(name, default, bufnr)
     local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, name)
