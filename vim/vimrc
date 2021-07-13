@@ -46,7 +46,6 @@
     " The list of installed plugins
     Plug 'Konfekt/FastFold'                        " Better fold refresh
     Plug 'keith/investigate.vim'                   " Smart documentation finder
-    Plug 'dense-analysis/ale'                      " Async linting engine
     Plug 'romainl/vim-qf'                          " Fix the quickfix
     Plug 'tmsvg/pear-tree'                         " Auto-pair
     Plug 'tommcdo/vim-lion'                        " Add gl/gL to align text
