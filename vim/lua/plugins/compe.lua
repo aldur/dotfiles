@@ -49,5 +49,6 @@ _G.tab_complete = function()
 end
 
 local complete_s = "v:lua.tab_complete()"
-vim.api.nvim_set_keymap("i", "<Tab>", complete_s, {expr = true})
-vim.api.nvim_set_keymap("s", "<Tab>", complete_s, {expr = true})
+for _, m in ipairs({"i", "s"}) do
+    vim.api.nvim_set_keymap(m, "<Tab>", complete_s, {expr = true})
+end
