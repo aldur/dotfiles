@@ -18,10 +18,7 @@ local function get_python_path(workspace)
                                      'PIPENV_PIPFILE=' .. match ..
                                          ' pipenv --venv'))
         local msg = "Activating Pipenv at " .. venv
-        vim.cmd(([[echohl Function | echomsg "%s" | echohl None]]):format(vim.fn
-                                                                              .escape(
-                                                                              msg,
-                                                                              "\"\\")))
+        _G.info_message(msg)
 
         return path.join(venv, 'bin', 'python')
     end

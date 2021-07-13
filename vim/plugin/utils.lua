@@ -7,9 +7,7 @@ function _G.search_before_closest_open_braket_in_line()
     line = line:sub(1, current_column)
     local reversed = line:reverse()
     local match = reversed:find("(", 1, true)
-    if match == nil then
-        return -1
-    end
+    if match == nil then return -1 end
 
     return current_column - match
 end
@@ -19,4 +17,14 @@ function _G.dump(...)
     local objects = vim.tbl_map(vim.inspect, {...})
     print(unpack(objects))
     return ...
+end
+
+function _G.info_message(msg)
+    local fmt_str = [[echohl Function | echomsg "%s" | echohl None]]
+    vim.cmd((fmt_str):format(vim.fn.escape(msg, "\"\\")))
+end
+
+function _G.warning_message(msg)
+    local fmt_str = [[echohl WarningMsg | echomsg "%s" | echohl None]]
+    vim.cmd((fmt_str):format(vim.fn.escape(msg, "\"\\")))
 end
