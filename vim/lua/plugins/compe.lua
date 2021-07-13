@@ -19,6 +19,7 @@ require'compe'.setup {
         ultisnips = true,
         luasnip = false,
 
+        -- markdown.wiki only
         notes = true,
         note_tags = true
     }
