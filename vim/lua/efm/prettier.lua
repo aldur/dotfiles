@@ -1,4 +1,4 @@
 return {
-  formatCommand = "prettier --stdin-filepath ${INPUT} --tab-width 2",
+  formatCommand = "prettier --parser markdown --tab-width 2",
   formatStdin = true
 }
