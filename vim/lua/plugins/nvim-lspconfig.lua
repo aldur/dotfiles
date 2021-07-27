@@ -77,7 +77,7 @@ local efm_languages = {
     bib = {require 'efm/bibtool'},
     cpp = {require 'efm/astyle'},
     json = {require 'efm/jq'},
-    xml = {require 'efm/xmllint'},
+    xml = {require 'efm/xmllint'}
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
 efm_languages['sh.env'] = efm_languages['sh']
@@ -127,7 +127,7 @@ lspconfig.sumneko_lua.setup {
 lspconfig.gopls.setup {on_attach = on_attach}
 
 -- JavaScript/TypeScript
-lspconfig.denols.setup{ on_attach = on_attach}
+lspconfig.denols.setup {on_attach = on_attach}
 
 local function _read_buffer_variable(name, default, bufnr)
     local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, name)
