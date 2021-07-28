@@ -252,11 +252,18 @@
             call aldur#wiki#template(a:context)
         endfunction
 
+        function! TemplateMatcher(context) abort
+            " Only match if within the wiki root
+            return a:context.path =~ '^' . g:wiki_root
+        endfunction
+
         " Catch-all template.
         let g:wiki_templates = [
-            \ { 'match_func': {x -> v:true},
-            \   'source_func': function('TemplateWrapper')},
-            \]
+            \ {
+            \   'match_func': function('TemplateMatcher'),
+            \   'source_func': function('TemplateWrapper')
+            \ },
+            \ ]
 
         " Fix temporary error in creating links.
         " let g:wiki_map_link_create = 'aldur#wiki#map_link_create'
