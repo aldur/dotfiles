@@ -53,7 +53,6 @@ local on_attach = function(_, bufnr)
 end
 
 -- Python pyright
-lspconfig.pyright.setup {}
 lspconfig.pyright.setup {
     on_attach = on_attach,
     on_init = function(client)
@@ -127,7 +126,10 @@ lspconfig.sumneko_lua.setup {
 lspconfig.gopls.setup {on_attach = on_attach}
 
 -- JavaScript/TypeScript
-lspconfig.denols.setup {on_attach = on_attach}
+-- lspconfig.denols.setup {on_attach = on_attach}
+
+-- JavaScript
+lspconfig.tsserver.setup {on_attach = on_attach}
 
 local function _read_buffer_variable(name, default, bufnr)
     local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, name)
