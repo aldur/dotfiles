@@ -79,9 +79,9 @@ local efm_languages = {
     xml = {require 'efm/xmllint'}
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
-efm_languages['sh.env'] = efm_languages['sh']
+efm_languages['sh.env'] = vim.deepcopy(efm_languages['sh'])
 table.insert(efm_languages['sh.env'], require 'efm/dotenv')
-efm_languages['c'] = efm_languages['cpp']
+efm_languages['c'] = vim.deepcopy(efm_languages['cpp'])
 
 lspconfig.efm.setup {
     filetypes = vim.tbl_keys(efm_languages),
