@@ -22,15 +22,14 @@ compe.setup {
 
         -- markdown.wiki only
         notes = true,
-        note_tags = true
+        note_tags = true,
+        md_headers = true
     }
 }
 
 compe.register_source('note_tags', require 'plugins/compe_note_tags')
 compe.register_source('notes', require 'plugins/compe_notes')
-
--- TODO: Write custom completion plugins that only autocompletes tags in
--- markdown headers.
+compe.register_source('md_headers', require 'plugins/compe_md_headers')
 
 -- Custom options for markdown
 -- vim.api.nvim_command(
