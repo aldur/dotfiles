@@ -29,6 +29,13 @@ compe.setup {
 compe.register_source('note_tags', require 'plugins/compe_note_tags')
 compe.register_source('notes', require 'plugins/compe_notes')
 
+-- TODO: Write custom completion plugins that only autocompletes tags in
+-- markdown headers.
+
+-- Custom options for markdown
+-- vim.api.nvim_command(
+--     "autocmd vimrc FileType markdown lua require'compe'.setup({source = {tags = true, notes = true, note_tags = true}}, 0)")
+
 local t = function(str)
     return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
