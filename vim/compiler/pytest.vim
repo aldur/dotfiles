@@ -15,9 +15,9 @@ set cpoptions&vim
 set cpoptions-=C
 
 if executable('pipenv')
-    CompilerSet makeprg=cd\ %:h\ &&\ pipenv\ run\ pytest\ --tb=short\ -q\ %
+    CompilerSet makeprg=cd\ %:h\ &&\ pipenv\ run\ pytest\ --tb=short\ -q\ %:p
 else
-    CompilerSet makeprg=pytest\ --tb=short\ -q\ %
+    CompilerSet makeprg=pytest\ --tb=short\ -q\ %:p
 endif
 
 " Skip lines like the following:

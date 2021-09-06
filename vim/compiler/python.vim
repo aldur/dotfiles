@@ -16,7 +16,7 @@ set cpoptions-=C
 "   -3     : warn about Python 3.x incompatibilities that 2to3 cannot
 "   trivially fix
 "
-CompilerSet makeprg=python3\ -t\ %
+CompilerSet makeprg=python3\ -t\ %:p
 
 " Use each file and line of Tracebacks (to see and step through the code executing).
 CompilerSet errorformat=%A%\\s%#File\ \"%f\"\\,\ line\ %l\\,\ in%.%#
