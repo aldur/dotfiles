@@ -1,7 +1,6 @@
 pynvim
 black
 vim-vint
-pyright
 yamllint
 yamlfix
 timefhuman

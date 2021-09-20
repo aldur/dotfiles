@@ -2,3 +2,4 @@ prettier@1.13
 vim-language-server
 typescript
 typescript-language-server
+pyright
