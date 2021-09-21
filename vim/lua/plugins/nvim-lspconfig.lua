@@ -2,17 +2,12 @@
 local lspconfig = require 'lspconfig'
 local util = require('lspconfig/util')
 
--- https://github.com/neovim/nvim-lspconfig/issues/500#issuecomment-876700701
-local function get_python_path(workspace)
-    local path = util.path
-
+local function get_venv(workspace)
     -- Use activated virtualenv.
-    if vim.env.VIRTUAL_ENV then
-        return path.join(vim.env.VIRTUAL_ENV, 'bin', 'python')
-    end
+    if vim.env.VIRTUAL_ENV then return vim.env.VIRTUAL_ENV end
 
     -- Find and use virtualenv from pipenv in workspace directory.
-    local match = vim.fn.glob(path.join(workspace, 'Pipfile'))
+    local match = vim.fn.glob(util.path.join(workspace, 'Pipfile'))
     if match ~= '' then
         local venv = vim.fn.trim(vim.fn.system(
                                      'PIPENV_PIPFILE=' .. match ..
@@ -20,8 +15,16 @@ local function get_python_path(workspace)
         local msg = "Activating Pipenv at " .. venv
         _G.info_message(msg)
 
-        return path.join(venv, 'bin', 'python')
+        return venv
     end
+
+    return nil
+end
+
+-- https://github.com/neovim/nvim-lspconfig/issues/500#issuecomment-876700701
+local function get_python_path(workspace)
+    local venv = get_venv(workspace)
+    if venv then return util.path.join(venv, 'bin', 'python') end
 
     -- Fallback to system Python.
     return vim.fn.exepath('python3') or vim.fn.exepath('python') or 'python'
@@ -58,6 +61,28 @@ lspconfig.pyright.setup {
     on_init = function(client)
         client.config.settings.python.pythonPath =
             get_python_path(client.config.root_dir)
+    end
+}
+
+-- Inspired by:
+-- https://github.com/python-lsp/python-lsp-server/pull/68
+local function pylps_cmd_env(workspace)
+    local venv = get_venv(workspace)
+    if venv then
+        return {
+            VIRTUAL_ENV = venv,
+            PATH = util.path.join(venv, 'bin') .. ':' .. vim.env.PATH
+        }
+    end
+
+    return {}
+end
+
+-- https://github.com/python-lsp/python-lsp-server
+lspconfig.pylsp.setup {
+    on_attach = on_attach,
+    on_new_config = function(new_config, new_root_dir)
+        new_config['cmd_env'] = pylps_cmd_env(new_root_dir)
     end
 }
 

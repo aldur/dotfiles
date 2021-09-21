@@ -4,3 +4,4 @@ vim-vint
 yamllint
 yamlfix
 timefhuman
+python-lsp-server[all]
