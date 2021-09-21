@@ -32,6 +32,8 @@ end
 
 -- Setup everything on lsp attach
 local on_attach = function(_, bufnr)
+    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+
     require"lsp_signature".on_attach({
         bind = true, -- This is mandatory, otherwise border config won't get registered.
         handler_opts = {border = "single"}
@@ -135,16 +137,23 @@ lspconfig.efm.setup {
     on_attach = on_attach
 }
 
+-- https://github.com/mjlbach/defaults.nvim/blob/master/init.lua#L245
+-- Make runtime files discoverable to the server
+local runtime_path = vim.split(package.path, ';')
+table.insert(runtime_path, 'lua/?.lua')
+table.insert(runtime_path, 'lua/?/init.lua')
+
 -- https://www.chrisatmachine.com/Neovim/28-neovim-lua-development/
 lspconfig.sumneko_lua.setup {
     cmd = {"/usr/local/bin/lua-langserver"},
     settings = {
         Lua = {
             runtime = {
-                -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+                -- Tell the language server which version of Lua you're using
+                -- (most likely LuaJIT in the case of Neovim)
                 version = 'LuaJIT',
                 -- Setup your lua path
-                path = vim.split(package.path, ';')
+                path = runtime_path
             },
             diagnostics = {
                 -- Get the language server to recognize the `vim` global
@@ -152,10 +161,7 @@ lspconfig.sumneko_lua.setup {
             },
             workspace = {
                 -- Make the server aware of Neovim runtime files
-                library = {
-                    [vim.fn.expand('$VIMRUNTIME/lua')] = true,
-                    [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true
-                }
+                library = vim.api.nvim_get_runtime_file('', true)
             },
             telemetry = {enable = false}
         }
