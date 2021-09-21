@@ -81,9 +81,21 @@ end
 -- https://github.com/python-lsp/python-lsp-server
 lspconfig.pylsp.setup {
     on_attach = function(client, bufnr)
-        -- Disable formatting as we do it throuhg Black/efm.
+        -- Disable all non-required features as we also use Black/efm/pyright.
         client.resolved_capabilities.document_formatting = false
-        return on_attach(client, bufnr)
+        client.resolved_capabilities.completion = false
+        client.resolved_capabilities.document_highlight = false
+        client.resolved_capabilities.document_range_formatting = false
+        client.resolved_capabilities.find_references = false
+        client.resolved_capabilities.goto_definition = false
+        client.resolved_capabilities.execute_command = false
+        client.resolved_capabilities.document_symbol = false
+        client.resolved_capabilities.hover = false
+        client.resolved_capabilities.rename = false
+        client.resolved_capabilities.signature_help = false
+        client.resolved_capabilities.code_lens = false
+        client.resolved_capabilities.code_action = false
+        on_attach(client, bufnr)
     end,
     on_new_config = function(new_config, new_root_dir)
         new_config['cmd_env'] = pylps_cmd_env(new_root_dir)
