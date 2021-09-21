@@ -123,8 +123,15 @@
     let b:has_nvim_python3 = has('nvim') && has('python3')
 
     Plug 'neovim/nvim-lspconfig', b:has_nvim_python3 ? {  } : { 'on': [] }
-    Plug 'hrsh7th/nvim-compe', b:has_nvim_python3 ? {  } : { 'on': [] }
     Plug 'ray-x/lsp_signature.nvim', b:has_nvim_python3 ? {  } : { 'on': [] }
+
+    " Completion {{{ "
+        Plug 'hrsh7th/cmp-nvim-lsp', b:has_nvim_python3 ? {  } : { 'on': [] }
+        Plug 'hrsh7th/cmp-buffer', b:has_nvim_python3 ? {  } : { 'on': [] }
+        Plug 'hrsh7th/nvim-cmp', b:has_nvim_python3 ? {  } : { 'on': [] }
+        Plug 'hrsh7th/cmp-path', b:has_nvim_python3 ? {  } : { 'on': [] }
+        Plug 'hrsh7th/cmp-nvim-lua', b:has_nvim_python3 ? {  } : { 'on': [] }
+    " }}} Completion "
 
     if executable('ctags')
         Plug 'ludovicchabant/vim-gutentags'            " Automatic tag management
@@ -136,6 +143,9 @@
         Plug 'SirVer/ultisnips', b:has_nvim_python3 ? {} : { 'on': [] }
         " Vim snippets
         Plug 'honza/vim-snippets', b:has_nvim_python3 ? {} : { 'on': [] }
+
+        " Completion plugin.
+        Plug 'quangnguyen30192/cmp-nvim-ultisnips', b:has_nvim_python3 ? {  } : { 'on': [] }
     " }}}
 
     " Update treesitter parsers when updating the plugin itself

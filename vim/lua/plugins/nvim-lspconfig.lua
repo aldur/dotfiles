@@ -30,6 +30,10 @@ local function get_python_path(workspace)
     return vim.fn.exepath('python3') or vim.fn.exepath('python') or 'python'
 end
 
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp
+                                                                     .protocol
+                                                                     .make_client_capabilities())
+
 -- Setup everything on lsp attach
 local on_attach = function(_, bufnr)
     vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -60,6 +64,7 @@ end
 -- Python pyright
 lspconfig.pyright.setup {
     on_attach = on_attach,
+    capabilities = capabilities,
     on_init = function(client)
         client.config.settings.python.pythonPath =
             get_python_path(client.config.root_dir)
@@ -99,13 +104,14 @@ lspconfig.pylsp.setup {
         client.resolved_capabilities.code_action = false
         on_attach(client, bufnr)
     end,
+    capabilities = capabilities,
     on_new_config = function(new_config, new_root_dir)
         new_config['cmd_env'] = pylps_cmd_env(new_root_dir)
     end
 }
 
 -- Vim lsp
-lspconfig.vimls.setup {on_attach = on_attach}
+lspconfig.vimls.setup {on_attach = on_attach, capabilities = capabilities}
 
 -- Formatting/linting via efm
 local prettier = require "efm/prettier"
@@ -134,7 +140,8 @@ lspconfig.efm.setup {
         -- log_level = 1,
         -- log_file = '~/efm.log',
     },
-    on_attach = on_attach
+    on_attach = on_attach,
+    capabilities = capabilities
 }
 
 -- https://github.com/mjlbach/defaults.nvim/blob/master/init.lua#L245
@@ -166,17 +173,18 @@ lspconfig.sumneko_lua.setup {
             telemetry = {enable = false}
         }
     },
-    on_attach = on_attach
+    on_attach = on_attach,
+    capabilities = capabilities
 }
 
 -- https://github.com/golang/tools/blob/master/gopls/doc/vim.md#neovim-config
-lspconfig.gopls.setup {on_attach = on_attach}
+lspconfig.gopls.setup {on_attach = on_attach, capabilities = capabilities}
 
 -- JavaScript/TypeScript
 -- lspconfig.denols.setup {on_attach = on_attach}
 
 -- JavaScript
-lspconfig.tsserver.setup {on_attach = on_attach}
+lspconfig.tsserver.setup {on_attach = on_attach, capabilities = capabilities}
 
 local function _read_buffer_variable(name, default, bufnr)
     local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, name)
