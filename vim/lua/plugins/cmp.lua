@@ -5,6 +5,8 @@ local check_back_space = function()
     return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
 end
 
+cmp.register_source('note_tags', require'plugins/cmp_note_tags'.new())
+
 cmp.setup({
     snippet = {expand = function(args) vim.fn["UltiSnips#Anon"](args.body) end},
     mapping = {
@@ -24,7 +26,7 @@ cmp.setup({
         end, {'i', 's'})
     },
     sources = { -- Sorted by priority.
-        {name = 'nvim_lsp'}, {name = 'nvim_lua'}, {name = 'ultisnips'},
-        {name = 'buffer'}, {name = 'path'}
+        {name = 'note_tags'}, {name = 'nvim_lsp'}, {name = 'nvim_lua'},
+        {name = 'ultisnips'}, {name = 'buffer'}, {name = 'path'}
     }
 })
