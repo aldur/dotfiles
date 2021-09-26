@@ -114,6 +114,7 @@ local efm_languages = {
     markdown = {require 'efm/mdl', prettier},
     lua = {require 'efm/luafmt', require 'efm/luacheck'},
     python = {require 'efm/black'},
+    dockerfile = {require 'efm/hadolint'},
     vim = {require 'efm/vint'},
     sh = {require 'efm/shellcheck', require 'efm/shfmt'},
     bib = {require 'efm/bibtool'},
@@ -130,7 +131,7 @@ lspconfig.efm.setup {
     filetypes = vim.tbl_keys(efm_languages),
     init_options = {documentFormatting = true, codeAction = true},
     settings = {
-        languages = efm_languages
+        languages = efm_languages,
         -- log_level = 1,
         -- log_file = '~/efm.log',
     },
@@ -177,6 +178,9 @@ lspconfig.gopls.setup {on_attach = on_attach}
 
 -- JavaScript
 lspconfig.tsserver.setup {on_attach = on_attach}
+
+-- Docker
+lspconfig.dockerls.setup{on_attach = on_attach}
 
 local function _read_buffer_variable(name, default, bufnr)
     local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, name)
