@@ -68,7 +68,7 @@ lspconfig.pyright.setup {
 
 -- Inspired by:
 -- https://github.com/python-lsp/python-lsp-server/pull/68
-local function pylps_cmd_env(workspace)
+local function pylsp_cmd_env(workspace)
     local venv = get_venv(workspace)
     if venv then
         return {
@@ -100,7 +100,7 @@ lspconfig.pylsp.setup {
         on_attach(client, bufnr)
     end,
     on_new_config = function(new_config, new_root_dir)
-        new_config['cmd_env'] = pylps_cmd_env(new_root_dir)
+        new_config['cmd_env'] = pylsp_cmd_env(new_root_dir)
     end
 }
 
@@ -131,7 +131,7 @@ lspconfig.efm.setup {
     filetypes = vim.tbl_keys(efm_languages),
     init_options = {documentFormatting = true, codeAction = true},
     settings = {
-        languages = efm_languages,
+        languages = efm_languages
         -- log_level = 1,
         -- log_file = '~/efm.log',
     },
@@ -180,7 +180,7 @@ lspconfig.gopls.setup {on_attach = on_attach}
 lspconfig.tsserver.setup {on_attach = on_attach}
 
 -- Docker
-lspconfig.dockerls.setup{on_attach = on_attach}
+lspconfig.dockerls.setup {on_attach = on_attach}
 
 local function _read_buffer_variable(name, default, bufnr)
     local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, name)
