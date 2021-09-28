@@ -1,6 +1,6 @@
 scriptencoding utf-8
 
-" ALE integration {{{
+" LSP integration {{{
     function! aldur#lightline#lsp_error() abort
         let l:errors = 0
         if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
@@ -32,9 +32,20 @@ function! aldur#lightline#read_only()
 endfunction
 
 function! aldur#lightline#git_branch()
-    if exists('*FugitiveHead')
-        let l:branch = FugitiveHead()
-        return l:branch !=# '' ? ' '.branch : ''
+    let branch = FugitiveStatusline()
+    if !empty(branch)
+        let branch = substitute(branch, '[Git', '', '')
+        let branch = substitute(branch, ']', '', '')
+
+        if stridx(branch, ":") != -1
+            let branch = substitute(branch, ':', '', '')
+            let branch = substitute(branch, '\v\(.*', '', '')
+        else
+            let branch = substitute(branch, '(', '', '')
+            let branch = substitute(branch, ')', '', '')
+        endif
+
+        return branch !=# '' ? ' '.branch : ''
     endif
     return ''
 endfunction
