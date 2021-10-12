@@ -120,7 +120,7 @@ local efm_languages = {
     bib = {require 'efm/bibtool'},
     cpp = {require 'efm/astyle'},
     json = {require 'efm/jq'},
-    xml = {require 'efm/xmllint'}
+    xml = {require 'efm/xmltidy'}
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
 efm_languages['sh.env'] = vim.deepcopy(efm_languages['sh'])
@@ -181,6 +181,9 @@ lspconfig.tsserver.setup {on_attach = on_attach}
 
 -- Docker
 lspconfig.dockerls.setup {on_attach = on_attach}
+
+-- YAML
+lspconfig.yamlls.setup{on_attach = on_attach}
 
 local function _read_buffer_variable(name, default, bufnr)
     local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, name)
