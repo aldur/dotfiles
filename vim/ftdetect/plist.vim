@@ -1,1 +1,1 @@
-autocmd BufNewFile,BufRead Info.plist      setfiletype xml
+autocmd vimrc BufNewFile,BufRead Info.plist      setfiletype xml
