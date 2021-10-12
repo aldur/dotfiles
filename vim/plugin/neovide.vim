@@ -1,9 +1,15 @@
 let g:neovide_input_use_logo=v:true
+let g:neovide_remember_window_size=v:true
+let g:neovide_cursor_animation_length=0.05
+let g:neovide_cursor_trail_length=0.5
 
-nnoremap <d-w> :bd<cr>
+nnoremap <D-w> :bd<cr>
 
-inoremap <d-v> <C-o>"+p
-tnoremap <d-v> "+p
-onoremap <d-v> "+p
+inoremap <D-v> <C-o>"+p
+cnoremap <D-v> <C-r>*
+tnoremap <D-v> "+p
+onoremap <D-v> "+p
 
-vnoremap <d-c> "+y
+vnoremap <D-c> "+y
+
+nnoremap <C-6> <C-^>
