@@ -15,6 +15,9 @@ function! aldur#colors#customize_monokai() abort
     " TODO are bold and yellow.
     highlight Todo cterm=bold ctermfg=228 ctermbg=59 gui=bold guifg=#ffff87 guibg=none
 
+    " Make folds a little lighter `s:light_grey` from `monokay-tasty`
+    highlight Folded ctermfg=250 guifg=#bcbcbc
+
     " In LaTeX, the arguments of the `begin` and `end` names will be purple
     highlight link texBeginEndName Constant
 
