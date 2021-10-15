@@ -6,5 +6,5 @@ compiler pipenv  " Calls `compiler python` and sets makeprg=cd\ %:h\ &&\ pipenv\
 setlocal formatoptions+=r
 
 " Setup folds
-set foldmethod=expr
-set foldexpr=nvim_treesitter#foldexpr()
+setlocal foldmethod=expr
+setlocal foldexpr=nvim_treesitter#foldexpr()
