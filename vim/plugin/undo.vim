@@ -13,14 +13,14 @@ set undofile
 " cursor to jump around.
 " https://stackoverflow.com/questions/31548025/vim-undo-why-does-the-cursor-jump-to-the-wrong-position-when-undoing-undojoin
 " --- UNDO NVIM FIX ---
-function! s:safeundo()
-    call aldur#stay#stay('undo')
-endfunc
+" function! s:safeundo()
+"     call aldur#stay#stay('undo')
+" endfunc
 
-function! s:saferedo()
-    call aldur#stay#stay('redo')
-endfunc
+" function! s:saferedo()
+"     call aldur#stay#stay('redo')
+" endfunc
 
-nnoremap u :call <sid>safeundo()<CR>
-nnoremap <C-r> :call <sid>saferedo()<CR>
+" nnoremap u :call <sid>safeundo()<CR>
+" nnoremap <C-r> :call <sid>saferedo()<CR>
 " --- /UNDO NVIM FIX ---
