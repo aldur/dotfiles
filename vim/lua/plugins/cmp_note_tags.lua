@@ -26,7 +26,11 @@ end
 
 local cmp = require 'cmp'
 
-function source:complete(_, callback)
+function source:complete(params, callback)
+    if params.context.cursor_before_line:find('^%s+:') == nil then
+        return callback()
+    end
+
     local unique_tags = {}
     local function on_exit(_, _, _)
         local tags = {}
