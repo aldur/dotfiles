@@ -48,11 +48,11 @@ cmp.setup({
         end, {'i', 's'})
     },
     sources = { -- Sorted by priority.
+        -- markdown.wiki only
         {name = 'notes'}, -- Does not currently work well.
-        {name = 'note_tags', max_item_count = 5},
-        {name = 'note_headers'},
-        {name = 'nvim_lsp'},
-        {name = 'nvim_lua'}, {name = 'ultisnips'}, {
+        {name = 'note_tags', max_item_count = 5}, {name = 'note_headers'},
+        -- /markdown.wiki only
+        {name = 'nvim_lsp'}, {name = 'nvim_lua'}, {name = 'ultisnips'}, {
             name = 'buffer',
             -- https://github.com/hrsh7th/cmp-buffer
             -- Source from visibile buffers.

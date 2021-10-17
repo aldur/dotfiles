@@ -13,7 +13,8 @@ end
 
 function source:get_debug_name() return 'Note' end
 
--- function source:get_trigger_characters(_) return {"[", "]("} end
+function source:get_trigger_characters(_) return {"[", "]("} end
+
 function source:get_keyword_pattern(_)
     local note_pattern = "[[:alnum:][:blank:]]*"
 
