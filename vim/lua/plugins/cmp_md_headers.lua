@@ -8,6 +8,10 @@ source.new = function()
     return self
 end
 
+function source:get_debug_name()
+  return 'md_headers'
+end
+
 function source:is_available()
     -- Only enable this for `markdown`.
     local filetypes = vim.split(vim.bo.filetype, '.', true)
@@ -15,11 +19,8 @@ function source:is_available()
 end
 
 function source:complete(params, callback)
-    -- print(vim.inspect(params.context.cursor_before_line))
     local start = params.context.cursor_before_line:find('# ', 1, true)
-    if start ~= nil then
-        tags:complete(params, callback)
-    end
+    if start ~= nil then tags.complete(params, callback) end
 end
 
 return source
