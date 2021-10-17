@@ -11,27 +11,29 @@ function source:is_available()
     return vim.tbl_contains(filetypes, 'markdown')
 end
 
-function source:get_debug_name()
-    return 'NoteTags'
-end
+function source:get_debug_name() return 'NoteTags' end
 
-function source:get_trigger_characters(_)
-  return { ":" }
-end
+function source:get_trigger_characters(_) return {":"} end
 
 function source:get_keyword_pattern(_)
-    -- Don't ask what this mean.
-    -- Taken from https://github.com/hrsh7th/cmp-emoji,
-    -- Then addeed ^\s to only match after whitespace at beginning of line.
-    -- Does not seem to work.
-    return [=[^\s\%(\s\|^\)\zs:[[:alnum:]_\-\+]*:\?]=]
+    -- [=[ and ]=] are Lua string delimiters
+    -- \%(^\s\+\) matches the beginning of the line followed by whitespace
+    -- \%(\) makes sure what's inside does not count as a sub expression.
+    -- \zs means set the start of the match here, i.e. at the :
+    -- The rest matches anything after the :, til the next : (optional)
+    return [=[\%(^\s\+\)\zs:[[:alnum:]_\-\+]*:\?]=]
 end
+
+local cmp = require 'cmp'
 
 function source:complete(_, callback)
     local unique_tags = {}
     local function on_exit(_, _, _)
         local tags = {}
-        for k,_ in pairs(unique_tags) do table.insert(tags, {label=k}) end
+        for k, _ in pairs(unique_tags) do
+            table.insert(tags,
+                         {label = k, kind = cmp.lsp.CompletionItemKind.Enum})
+        end
         callback(tags)
     end
 
@@ -39,7 +41,7 @@ function source:complete(_, callback)
         vim.tbl_map(function(line)
             line = line:gsub("%s+", "")
             if line ~= "" then
-                unique_tags[line] = true  -- Build a table with unique keys.
+                unique_tags[line] = true -- Build a table with unique keys.
             end
         end, data)
     end

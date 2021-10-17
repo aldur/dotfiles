@@ -25,7 +25,8 @@ end
 -- end
 
 cmp.register_source('note_tags', require'plugins/cmp_note_tags'.new())
--- cmp.register_source('notes', require'plugins/cmp_notes'.new())
+cmp.register_source('notes', require'plugins/cmp_notes'.new())
+cmp.register_source('note_headers', require'plugins/cmp_md_headers'.new())
 
 cmp.setup({
     snippet = {expand = function(args) vim.fn["UltiSnips#Anon"](args.body) end},
@@ -47,9 +48,21 @@ cmp.setup({
         end, {'i', 's'})
     },
     sources = { -- Sorted by priority.
-        -- {name = 'notes'},  -- Does not currently work well.
-        {name = 'note_tags', max_item_count = 5}, {name = 'nvim_lsp'},
-        {name = 'nvim_lua'}, {name = 'ultisnips'}, {name = 'buffer'},
-        {name = 'path'}
+        {name = 'notes'}, -- Does not currently work well.
+        {name = 'note_tags', max_item_count = 5},
+        {name = 'note_headers'},
+        {name = 'nvim_lsp'},
+        {name = 'nvim_lua'}, {name = 'ultisnips'}, {
+            name = 'buffer',
+            -- https://github.com/hrsh7th/cmp-buffer
+            -- Source from visibile buffers.
+            get_bufnrs = function()
+                local bufs = {}
+                for _, win in ipairs(vim.api.nvim_list_wins()) do
+                    bufs[vim.api.nvim_win_get_buf(win)] = true
+                end
+                return vim.tbl_keys(bufs)
+            end
+        }, {name = 'path'}
     }
 })
