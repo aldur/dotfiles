@@ -13,6 +13,8 @@ end
 
 function source:get_debug_name() return 'Note' end
 
+-- NOTE: This works for [ but not for ](
+-- Maybe this should return single characters rather than strings.
 function source:get_trigger_characters(_) return {"[", "]("} end
 
 function source:get_keyword_pattern(_)
