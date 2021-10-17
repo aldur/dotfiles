@@ -1,37 +1,43 @@
 local source = {}
 
--- TODO: File-type specific availability.
-
 source.new = function()
     local self = setmetatable({}, {__index = source})
     return self
 end
 
-source.get_trigger_characters = function() return {':'} end
+function source:is_available()
+    -- Only enable this for `markdown`.
+    local filetypes = vim.split(vim.bo.filetype, '.', true)
+    return vim.tbl_contains(filetypes, 'markdown')
+end
 
-source.get_keyword_pattern = function()
+function source:get_debug_name()
+    return 'NoteTags'
+end
+
+function source:get_trigger_characters(_)
+  return { ":" }
+end
+
+function source:get_keyword_pattern(_)
+    -- TODO: Do not complete is not top of the document.
     return [=[\%(\s\|^\)\zs:[[:alnum:]_\-\+]*:\?]=]
 end
 
-source.complete = function(self, request, callback)
-    -- Avoid unexpected completion.
-    -- if not vim.regex(self.get_keyword_pattern() .. '$'):match_str(
-    --     request.context.cursor_before_line) then return callback() end
-
-    -- if not self.items then self.items = require('cmp_emoji.items') end
-
-    -- callback(self.items)
-
-    local tags = {}
+function source:complete(_, callback)
+    local unique_tags = {}
     local function on_exit(_, _, _)
-        -- TODO: Ignore duplicates.
+        local tags = {}
+        for k,_ in pairs(unique_tags) do table.insert(tags, {label=k}) end
         callback(tags)
     end
 
     local function process_stdout(_, data, _)
         vim.tbl_map(function(line)
             line = line:gsub("%s+", "")
-            if line ~= "" then table.insert(tags, {label = line}) end
+            if line ~= "" then
+                unique_tags[line] = true  -- Build a table with unique keys.
+            end
         end, data)
     end
 

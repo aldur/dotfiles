@@ -13,4 +13,3 @@ set shortmess+=c " Quiet completions
 
 lua require('plugins/nvim-lspconfig')
 lua require('plugins/cmp')
-" lua require('plugins/compe')
