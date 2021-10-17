@@ -4,7 +4,7 @@ if has('nvim')
     require'nvim-treesitter.configs'.setup {
         ensure_installed = "maintained",
         highlight = {enable = true},
-        indent = {enable = true},
+        indent = {enable = true, disable = {"python", }, },
         incremental_selection = {
             enable = true,
             keymaps = {

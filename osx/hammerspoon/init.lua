@@ -402,7 +402,7 @@ end
 -- Focus/launch most commonly used applications.
 hs.fnutils.each({
     {'M', 'com.spotify.client'}, {'B', 'com.apple.Safari'},
-    {'W', 'com.kapeli.dashdoc'}, {'T', 'com.qvacua.VimR'},
+    {'W', 'com.kapeli.dashdoc'},
     {'G', 'com.culturedcode.ThingsMac'}, {'X', 'com.tinyspeck.slackmacgap'},
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function() focusOrSwitch(k[2]) end)
@@ -433,6 +433,7 @@ end
 
 -- Focus/launch most commonly used applications across multiple options.
 hs.fnutils.each({
+    {'T', {'com.qvacua.VimR', 'com.kethku.neovide'}},
     {'P', {'com.jetbrains.pycharm', 'com.microsoft.VSCode', 'com.apple.dt.Xcode'}},
     {'Z', getMeetingClients()}
 }, function(k)

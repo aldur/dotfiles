@@ -73,7 +73,7 @@ lspconfig.pyright.setup {
 
 -- Inspired by:
 -- https://github.com/python-lsp/python-lsp-server/pull/68
-local function pylps_cmd_env(workspace)
+local function pylsp_cmd_env(workspace)
     local venv = get_venv(workspace)
     if venv then
         return {
@@ -106,7 +106,7 @@ lspconfig.pylsp.setup {
     end,
     capabilities = capabilities,
     on_new_config = function(new_config, new_root_dir)
-        new_config['cmd_env'] = pylps_cmd_env(new_root_dir)
+        new_config['cmd_env'] = pylsp_cmd_env(new_root_dir)
     end
 }
 
@@ -120,12 +120,13 @@ local efm_languages = {
     markdown = {require 'efm/mdl', prettier},
     lua = {require 'efm/luafmt', require 'efm/luacheck'},
     python = {require 'efm/black'},
+    dockerfile = {require 'efm/hadolint'},
     vim = {require 'efm/vint'},
     sh = {require 'efm/shellcheck', require 'efm/shfmt'},
     bib = {require 'efm/bibtool'},
     cpp = {require 'efm/astyle'},
     json = {require 'efm/jq'},
-    xml = {require 'efm/xmllint'}
+    xml = {require 'efm/xmltidy'}
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
 efm_languages['sh.env'] = vim.deepcopy(efm_languages['sh'])
@@ -185,6 +186,12 @@ lspconfig.gopls.setup {on_attach = on_attach, capabilities = capabilities}
 
 -- JavaScript
 lspconfig.tsserver.setup {on_attach = on_attach, capabilities = capabilities}
+
+-- Docker
+lspconfig.dockerls.setup {on_attach = on_attach}
+
+-- YAML
+lspconfig.yamlls.setup{on_attach = on_attach}
 
 local function _read_buffer_variable(name, default, bufnr)
     local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, name)

@@ -1,2 +1,3 @@
 sqlint
 mdl
+dockerfile-language-server-nodejs
