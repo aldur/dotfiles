@@ -22,8 +22,7 @@ ale_linters_fixers_and_lsp: homebrew
 	python3 -m pip install -r various/ale_requirements.txt
 	cat various/gem_ale_requirements.txt | xargs gem install --user-install
 	cat various/npm_ale_requirements.txt | xargs npm install -g
-	luarocks install luacheck
-
+	cat various/luarocks_requirements.txt | xargs luarocks install --server=https://luarocks.org/dev
 endif
 
 all: $(TARGETS)
