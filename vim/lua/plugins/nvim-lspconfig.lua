@@ -61,15 +61,15 @@ local on_attach = function(_, bufnr)
     buf_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
 end
 
+local default_lsp_config = {on_attach = on_attach, capabilities = capabilities}
+
 -- Python pyright
-lspconfig.pyright.setup {
-    on_attach = on_attach,
-    capabilities = capabilities,
+lspconfig.pyright.setup(vim.tbl_deep_extend('force', default_lsp_config, {
     on_init = function(client)
         client.config.settings.python.pythonPath =
             get_python_path(client.config.root_dir)
     end
-}
+}))
 
 -- Inspired by:
 -- https://github.com/python-lsp/python-lsp-server/pull/68
@@ -86,7 +86,7 @@ local function pylsp_cmd_env(workspace)
 end
 
 -- https://github.com/python-lsp/python-lsp-server
-lspconfig.pylsp.setup {
+lspconfig.pylsp.setup(vim.tbl_deep_extend('force', default_lsp_config, {
     on_attach = function(client, bufnr)
         -- Disable all non-required features as we also use Black/efm/pyright.
         client.resolved_capabilities.document_formatting = false
@@ -104,14 +104,13 @@ lspconfig.pylsp.setup {
         client.resolved_capabilities.code_action = false
         on_attach(client, bufnr)
     end,
-    capabilities = capabilities,
     on_new_config = function(new_config, new_root_dir)
         new_config['cmd_env'] = pylsp_cmd_env(new_root_dir)
     end
-}
+}))
 
 -- Vim lsp
-lspconfig.vimls.setup {on_attach = on_attach, capabilities = capabilities}
+lspconfig.vimls.setup(default_lsp_config)
 
 -- Formatting/linting via efm
 local prettier = require "efm/prettier"
@@ -133,7 +132,7 @@ efm_languages['sh.env'] = vim.deepcopy(efm_languages['sh'])
 table.insert(efm_languages['sh.env'], require 'efm/dotenv')
 efm_languages['c'] = vim.deepcopy(efm_languages['cpp'])
 
-lspconfig.efm.setup {
+lspconfig.efm.setup(vim.tbl_deep_extend('force', default_lsp_config, {
     filetypes = vim.tbl_keys(efm_languages),
     init_options = {documentFormatting = true, codeAction = true},
     settings = {
@@ -143,7 +142,7 @@ lspconfig.efm.setup {
     },
     on_attach = on_attach,
     capabilities = capabilities
-}
+}))
 
 -- https://github.com/mjlbach/defaults.nvim/blob/master/init.lua#L245
 -- Make runtime files discoverable to the server
@@ -152,7 +151,7 @@ table.insert(runtime_path, 'lua/?.lua')
 table.insert(runtime_path, 'lua/?/init.lua')
 
 -- https://www.chrisatmachine.com/Neovim/28-neovim-lua-development/
-lspconfig.sumneko_lua.setup {
+lspconfig.sumneko_lua.setup(vim.tbl_deep_extend('force', default_lsp_config, {
     cmd = {"/usr/local/bin/lua-langserver"},
     settings = {
         Lua = {
@@ -176,22 +175,22 @@ lspconfig.sumneko_lua.setup {
     },
     on_attach = on_attach,
     capabilities = capabilities
-}
+}))
 
 -- https://github.com/golang/tools/blob/master/gopls/doc/vim.md#neovim-config
-lspconfig.gopls.setup {on_attach = on_attach, capabilities = capabilities}
+lspconfig.gopls.setup(default_lsp_config)
 
 -- JavaScript/TypeScript
--- lspconfig.denols.setup {on_attach = on_attach}
+-- lspconfig.denols.setup(default_lsp_config)
 
 -- JavaScript
-lspconfig.tsserver.setup {on_attach = on_attach, capabilities = capabilities}
+lspconfig.tsserver.setup(default_lsp_config)
 
 -- Docker
-lspconfig.dockerls.setup {on_attach = on_attach}
+lspconfig.dockerls.setup(default_lsp_config)
 
 -- YAML
-lspconfig.yamlls.setup{on_attach = on_attach}
+lspconfig.yamlls.setup(default_lsp_config)
 
 local function _read_buffer_variable(name, default, bufnr)
     local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, name)

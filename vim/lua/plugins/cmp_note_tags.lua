@@ -20,8 +20,11 @@ function source:get_trigger_characters(_)
 end
 
 function source:get_keyword_pattern(_)
-    -- TODO: Do not complete is not top of the document.
-    return [=[\%(\s\|^\)\zs:[[:alnum:]_\-\+]*:\?]=]
+    -- Don't ask what this mean.
+    -- Taken from https://github.com/hrsh7th/cmp-emoji,
+    -- Then addeed ^\s to only match after whitespace at beginning of line.
+    -- Does not seem to work.
+    return [=[^\s\%(\s\|^\)\zs:[[:alnum:]_\-\+]*:\?]=]
 end
 
 function source:complete(_, callback)
@@ -41,7 +44,7 @@ function source:complete(_, callback)
         end, data)
     end
 
-    -- TODO: We should be able to do this without `rg` in pure Lua.
+    -- TODO: Do this without `rg` in pure Lua or warn if `rg` not in PATH.
     vim.fn.jobstart(
         "rg --no-filename --no-heading --no-line-number --color=never '^\\s*:\\w*:$' " ..
             vim.api.nvim_get_var('wiki_root'), {
