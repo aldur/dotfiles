@@ -26,7 +26,9 @@ end
 
 cmp.register_source('note_tags', require'plugins/cmp_note_tags'.new())
 cmp.register_source('notes', require'plugins/cmp_notes'.new())
-cmp.register_source('note_headers', require'plugins/cmp_md_headers'.new())
+
+-- Disabled as currently buggy.
+-- cmp.register_source('note_headers', require'plugins/cmp_md_headers'.new())
 
 cmp.setup({
     snippet = {expand = function(args) vim.fn["UltiSnips#Anon"](args.body) end},
