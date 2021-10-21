@@ -212,9 +212,8 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] =
         -- and on, using buffer local variables
         signs = function(bufnr, _)
             return _read_buffer_variable('show_signs', false, bufnr)
-        end
+        end,
 
         -- delay update diagnostics
-        -- update_in_insert = false,
-        -- display_diagnostic_autocmds = { "InsertLeave" },
+        update_in_insert = false,
     })
