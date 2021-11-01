@@ -131,6 +131,7 @@
         Plug 'hrsh7th/nvim-cmp', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'hrsh7th/cmp-path', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'hrsh7th/cmp-nvim-lua', b:has_nvim_python3 ? {  } : { 'on': [] }
+        Plug 'hrsh7th/cmp-cmdline', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'quangnguyen30192/cmp-nvim-tags', b:has_nvim_python3 ? {  } : { 'on': [] }
     " }}} Completion "
 

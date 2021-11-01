@@ -30,11 +30,17 @@ cmp.register_source('notes', require'plugins/cmp_notes'.new())
 -- Disabled as currently buggy.
 -- cmp.register_source('note_headers', require'plugins/cmp_md_headers'.new())
 
+local map_modes = {'i', 's', 'c'}
+
 cmp.setup({
     snippet = {expand = function(args) vim.fn["UltiSnips#Anon"](args.body) end},
     -- formatting = {format = format},
     mapping = {
-        ['<C-e>'] = cmp.mapping.close(),
+        ['<C-e>'] = cmp.mapping(function(fallback)
+            -- First close the popup, then send `c-e`.
+            cmp.mapping.close()
+            fallback()
+        end, map_modes),
         ['<Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
                 -- If completion menu is open, `tab` trigger completion of the
@@ -47,7 +53,7 @@ cmp.setup({
                 -- Otherwise trigger completion.
                 cmp.complete()
             end
-        end, {'i', 's'})
+        end, map_modes)
     },
     sources = { -- Sorted by priority.
         -- markdown.wiki only
@@ -68,3 +74,5 @@ cmp.setup({
         }, {name = 'path'}
     }
 })
+
+cmp.setup.cmdline(':', {sources = {{name = 'cmdline'}}})
