@@ -5,55 +5,43 @@ local check_back_space = function()
     return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
 end
 
--- TODO: You were trying to display custom information, without success.
--- local function format(entry, vim_item)
---     local opts = {}
---     opts.menu = {
---       notes = "[Notes]",
---       note_tags = "[NoteTags]",
---     }
-
---     if opts.menu ~= nil then
---         vim_item.menu = opts.menu[entry.source.name]
---     end
-
---     if opts.maxwidth ~= nil then
---         vim_item.abbr = string.sub(vim_item.abbr, 1, opts.maxwidth)
---     end
-
---     return vim_item
--- end
-
 cmp.register_source('note_tags', require'plugins/cmp_note_tags'.new())
 cmp.register_source('notes', require'plugins/cmp_notes'.new())
 
 -- Disabled as currently buggy.
--- cmp.register_source('note_headers', require'plugins/cmp_md_headers'.new())
+cmp.register_source('note_headers', require'plugins/cmp_md_headers'.new())
 
-local map_modes = {'i', 's', 'c'}
+local default_map_modes = {'i', 's', 'c'}
+
+local function default_tab_mapping(fallback)
+    if cmp.visible() then
+        -- If completion menu is open, `tab` trigger completion of the
+        -- selected item (or the first one if only one is open.)
+        cmp.confirm({select = true})
+    elseif check_back_space() then
+        -- If it has backspace behind, fallback a literal tab.
+        fallback()
+    else
+        -- Otherwise trigger completion.
+        cmp.complete()
+    end
+end
 
 cmp.setup({
     snippet = {expand = function(args) vim.fn["UltiSnips#Anon"](args.body) end},
-    -- formatting = {format = format},
     mapping = {
         ['<C-e>'] = cmp.mapping(function(fallback)
             -- First close the popup, then send `c-e`.
-            cmp.mapping.close()
-            fallback()
-        end, map_modes),
-        ['<Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
-                -- If completion menu is open, `tab` trigger completion of the
-                -- selected item (or the first one if only one is open.)
-                cmp.confirm({select = true})
-            elseif check_back_space() then
-                -- If it has backspace behind, fallback a literal tab.
-                fallback()
-            else
-                -- Otherwise trigger completion.
-                cmp.complete()
+                cmp.mapping.close()
             end
-        end, map_modes)
+            fallback()
+        end, default_map_modes),
+        ['<Tab>'] = cmp.mapping({
+            i = default_tab_mapping,
+            s = default_tab_mapping,
+            c = cmp.mapping.select_next_item(),
+        })
     },
     sources = { -- Sorted by priority.
         -- markdown.wiki only
@@ -75,4 +63,7 @@ cmp.setup({
     }
 })
 
-cmp.setup.cmdline(':', {sources = {{name = 'cmdline'}}})
+cmp.setup.cmdline(':', {
+    sources = cmp.config.sources({{name = 'path'}}, {{name = 'cmdline'}})
+})
+cmp.setup.cmdline('/', {sources = {{name = 'buffer'}}})
