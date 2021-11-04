@@ -18,9 +18,9 @@ function source:is_available()
     return vim.tbl_contains(filetypes, 'markdown')
 end
 
-function source:complete(params, callback)
-    local start = params.context.cursor_before_line:find('# ', 1, true)
-    if start ~= nil then tags.complete(params, callback) end
+function source:complete(request, callback)
+    local start = request.context.cursor_before_line:find('# ', 1, true)
+    if start ~= nil then tags:complete(request, callback) end
 end
 
 return source
