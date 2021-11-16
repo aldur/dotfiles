@@ -141,7 +141,8 @@ lspconfig.efm.setup(vim.tbl_deep_extend('force', default_lsp_config, {
         -- log_file = '~/efm.log',
     },
     on_attach = on_attach,
-    capabilities = capabilities
+    capabilities = capabilities,
+    single_file_support = true
 }))
 
 -- https://github.com/mjlbach/defaults.nvim/blob/master/init.lua#L245
