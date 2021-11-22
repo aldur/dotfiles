@@ -82,7 +82,8 @@ cmp.setup({
                 notes = "[Notes]",
                 note_tags = "[NoteTags]",
                 note_headers = "[NoteHeaders]",
-                path = "[Path]"
+                path = "[Path]",
+                cmdline = "[Cmd]"
             })[entry.source.name]
             return vim_item
         end
