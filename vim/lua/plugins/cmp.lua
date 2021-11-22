@@ -1,5 +1,34 @@
 local cmp = require 'cmp'
 
+-- https://github.com/onsails/lspkind-nvim/blob/master/lua/lspkind/init.lua
+local kind_icons = {
+    Text = "",
+    Method = "",
+    Function = "",
+    Constructor = "",
+    Field = "",
+    Variable = "",
+    Class = "ﴯ",
+    Interface = "",
+    Module = "",
+    Property = "ﰠ",
+    Unit = "",
+    Value = "",
+    Enum = "",
+    Keyword = "",
+    Snippet = "",
+    Color = "",
+    File = "",
+    Reference = "",
+    Folder = "",
+    EnumMember = "",
+    Constant = "",
+    Struct = "",
+    Event = "",
+    Operator = "",
+    TypeParameter = ""
+}
+
 local check_back_space = function()
     local col = vim.fn.col('.') - 1
     return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
@@ -27,20 +56,48 @@ local function default_tab_mapping(fallback)
     end
 end
 
+local function format_if_nerdfont(vim_item)
+    -- If there's a Nerd Font set, display fancy icons.
+    local guifont = vim.opt.guifont:get()
+    if #guifont == 0 or guifont[1]:lower():find('nerd', 0, true) == nil then
+        return vim_item.kind
+    end
+    -- This concatenates the icons with the name of the item kind
+    return string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind)
+end
+
 cmp.setup({
+    formatting = {
+        format = function(entry, vim_item)
+            -- Kind icons
+            vim_item.kind = format_if_nerdfont(vim_item)
+
+            -- Source
+            vim_item.menu = ({
+                buffer = "[Buffer]",
+                nvim_lsp = "[LSP]",
+                ultisnips = "[UltiSnips]",
+                nvim_lua = "[Lua]",
+                latex_symbols = "[LaTeX]",
+                notes = "[Notes]",
+                note_tags = "[NoteTags]",
+                note_headers = "[NoteHeaders]",
+                path = "[Path]"
+            })[entry.source.name]
+            return vim_item
+        end
+    },
     snippet = {expand = function(args) vim.fn["UltiSnips#Anon"](args.body) end},
     mapping = {
         ['<C-e>'] = cmp.mapping(function(fallback)
             -- First close the popup, then send `c-e`.
-            if cmp.visible() then
-                cmp.mapping.close()
-            end
+            if cmp.visible() then cmp.mapping.close() end
             fallback()
         end, default_map_modes),
         ['<Tab>'] = cmp.mapping({
             i = default_tab_mapping,
             s = default_tab_mapping,
-            c = cmp.mapping.select_next_item(),
+            c = cmp.mapping.select_next_item()
         })
     },
     sources = { -- Sorted by priority.
