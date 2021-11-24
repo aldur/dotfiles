@@ -6,3 +6,6 @@ autocmd vimrc User LspDiagnosticsChanged lua vim.lsp.diagnostic.set_loclist({ope
 
 command! Hover lua vim.lsp.buf.hover()
 command! Rename lua vim.lsp.buf.rename()
+
+command! ToggleVirtualText call aldur#lsp#toggle_virtual_text()
+command! ToggleSigns call aldur#lsp#toggle_signs()

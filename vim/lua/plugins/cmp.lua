@@ -29,6 +29,18 @@ local kind_icons = {
     TypeParameter = ""
 }
 
+local menu_identifiers = {
+    buffer = "[Buf]",
+    nvim_lsp = "[LSP]",
+    ultisnips = "[Snips]",
+    nvim_lua = "[Lua]",
+    notes = "[Notes]",
+    note_tags = "[NTags]",
+    note_headers = "[NHead]",
+    path = "[Path]",
+    cmdline = "[Cmd]"
+}
+
 local check_back_space = function()
     local col = vim.fn.col('.') - 1
     return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
@@ -58,12 +70,11 @@ end
 
 local function format_if_nerdfont(vim_item)
     -- If there's a Nerd Font set, display fancy icons.
-    local guifont = vim.opt.guifont:get()
-    if #guifont == 0 or guifont[1]:lower():find('nerd', 0, true) == nil then
-        return vim_item.kind
+    if require('plugins.utils').is_nerdfont() then
+        -- This concatenates the icons with the name of the item kind
+        return string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind)
     end
-    -- This concatenates the icons with the name of the item kind
-    return string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind)
+    return vim_item.kind
 end
 
 cmp.setup({
@@ -73,18 +84,7 @@ cmp.setup({
             vim_item.kind = format_if_nerdfont(vim_item)
 
             -- Source
-            vim_item.menu = ({
-                buffer = "[Buffer]",
-                nvim_lsp = "[LSP]",
-                ultisnips = "[UltiSnips]",
-                nvim_lua = "[Lua]",
-                latex_symbols = "[LaTeX]",
-                notes = "[Notes]",
-                note_tags = "[NoteTags]",
-                note_headers = "[NoteHeaders]",
-                path = "[Path]",
-                cmdline = "[Cmd]"
-            })[entry.source.name]
+            vim_item.menu = (menu_identifiers)[entry.source.name]
             return vim_item
         end
     },

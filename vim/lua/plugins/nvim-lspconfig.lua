@@ -206,7 +206,10 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] =
     vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
         -- disable virtual text
         virtual_text = function(bufnr, _)
-            return _read_buffer_variable('show_virtual_text', true, bufnr)
+            if _read_buffer_variable('show_virtual_text', true, bufnr) then
+                return {prefix = '●'}
+            end
+            return false
         end,
 
         -- Use a function to dynamically turn signs off
@@ -216,5 +219,5 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] =
         end,
 
         -- delay update diagnostics
-        update_in_insert = false,
+        update_in_insert = false
     })
