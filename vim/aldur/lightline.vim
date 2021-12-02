@@ -4,7 +4,7 @@ scriptencoding utf-8
     function! aldur#lightline#lsp_error() abort
         let l:errors = 0
         if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
-            let l:errors = luaeval('vim.lsp.diagnostic.get_count(0, [[Error]])')
+            let l:errors = luaeval('#vim.diagnostic.get(0, {severity=vim.diagnostic.severity.ERROR})')
         endif
         return l:errors > 0 ? '☢ '.l:errors : ''
     endfunction
@@ -12,7 +12,7 @@ scriptencoding utf-8
     function! aldur#lightline#lsp_warning() abort
         let l:warnings = 0
         if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
-            let l:warnings = luaeval('vim.lsp.diagnostic.get_count(0, [[Warning]])')
+            let l:warnings = luaeval('#vim.diagnostic.get(0, {severity=vim.diagnostic.severity.WARN})')
         endif
         return l:warnings > 0 ? '⚠ '.l:warnings : ''
     endfunction
@@ -20,7 +20,7 @@ scriptencoding utf-8
     function! aldur#lightline#lsp_info() abort
         let l:infos = 0
         if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
-            let l:infos = luaeval('vim.lsp.diagnostic.get_count(0, [[Information]])')
+            let l:infos = luaeval('#vim.diagnostic.get(0, {severity=vim.diagnostic.severity.INFO})')
         endif
         return l:infos > 0 ? 'ℹ '.l:infos : ''
     endfunction

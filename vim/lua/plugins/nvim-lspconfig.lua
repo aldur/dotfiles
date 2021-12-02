@@ -193,31 +193,26 @@ lspconfig.dockerls.setup(default_lsp_config)
 -- YAML
 lspconfig.yamlls.setup(default_lsp_config)
 
-local function _read_buffer_variable(name, default, bufnr)
-    local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, name)
-    -- If not set, rely on the default value.
-    if not ok then return default end
+local bo_default = require('plugins.utils').bo_default
 
-    return result
-end
+local diagnostic_config = {
+    virtual_text = function(_, bufnr)
+        if bo_default(bufnr, 'show_virtual_text', true) then
+            return {prefix = '●', source = "if_many"}
+        end
+        return false
+    end,
+
+    signs = function(_, bufnr)
+        return bo_default(bufnr, 'show_signs', false)
+    end,
+
+    -- delay update diagnostics
+    update_in_insert = false
+}
+
+vim.diagnostic.config(diagnostic_config)
 
 -- https://github.com/nvim-lua/diagnostic-nvim/issues/73
-vim.lsp.handlers["textDocument/publishDiagnostics"] =
-    vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-        -- disable virtual text
-        virtual_text = function(bufnr, _)
-            if _read_buffer_variable('show_virtual_text', true, bufnr) then
-                return {prefix = '●'}
-            end
-            return false
-        end,
-
-        -- Use a function to dynamically turn signs off
-        -- and on, using buffer local variables
-        signs = function(bufnr, _)
-            return _read_buffer_variable('show_signs', false, bufnr)
-        end,
-
-        -- delay update diagnostics
-        update_in_insert = false
-    })
+-- vim.lsp.handlers["textDocument/publishDiagnostics"] =
+--     vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, config)
