@@ -12,6 +12,7 @@ local function get_venv(workspace)
         local venv = vim.fn.trim(vim.fn.system(
                                      'PIPENV_PIPFILE=' .. match ..
                                          ' pipenv --venv'))
+
         local msg = "Activating Pipenv at " .. venv
         _G.info_message(msg)
 
@@ -61,10 +62,18 @@ local on_attach = function(_, bufnr)
     buf_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
 end
 
-local default_lsp_config = {on_attach = on_attach, capabilities = capabilities}
+local default_lsp_config = {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    flags = {debounce_text_changes = 200}
+}
+
+local function extend_config(tbl)
+    return vim.tbl_deep_extend('force', default_lsp_config, tbl)
+end
 
 -- Python pyright
-lspconfig.pyright.setup(vim.tbl_deep_extend('force', default_lsp_config, {
+lspconfig.pyright.setup(extend_config({
     on_init = function(client)
         client.config.settings.python.pythonPath =
             get_python_path(client.config.root_dir)
@@ -86,7 +95,7 @@ local function pylsp_cmd_env(workspace)
 end
 
 -- https://github.com/python-lsp/python-lsp-server
-lspconfig.pylsp.setup(vim.tbl_deep_extend('force', default_lsp_config, {
+lspconfig.pylsp.setup(extend_config({
     on_attach = function(client, bufnr)
         -- Disable all non-required features as we also use Black/efm/pyright.
         client.resolved_capabilities.document_formatting = false
@@ -110,7 +119,7 @@ lspconfig.pylsp.setup(vim.tbl_deep_extend('force', default_lsp_config, {
 }))
 
 -- Vim lsp
-lspconfig.vimls.setup(default_lsp_config)
+lspconfig.vimls.setup(extend_config({flags = {debounce_text_changes = 500}}))
 
 -- Formatting/linting via efm
 local prettier = require "efm/prettier"
@@ -132,7 +141,7 @@ efm_languages['sh.env'] = vim.deepcopy(efm_languages['sh'])
 table.insert(efm_languages['sh.env'], require 'efm/dotenv')
 efm_languages['c'] = vim.deepcopy(efm_languages['cpp'])
 
-lspconfig.efm.setup(vim.tbl_deep_extend('force', default_lsp_config, {
+lspconfig.efm.setup(extend_config({
     filetypes = vim.tbl_keys(efm_languages),
     init_options = {documentFormatting = true, codeAction = true},
     settings = {
@@ -140,8 +149,6 @@ lspconfig.efm.setup(vim.tbl_deep_extend('force', default_lsp_config, {
         -- log_level = 1,
         -- log_file = '~/efm.log',
     },
-    on_attach = on_attach,
-    capabilities = capabilities,
     single_file_support = true
 }))
 
@@ -152,7 +159,7 @@ table.insert(runtime_path, 'lua/?.lua')
 table.insert(runtime_path, 'lua/?/init.lua')
 
 -- https://www.chrisatmachine.com/Neovim/28-neovim-lua-development/
-lspconfig.sumneko_lua.setup(vim.tbl_deep_extend('force', default_lsp_config, {
+lspconfig.sumneko_lua.setup(extend_config({
     cmd = {"/usr/local/bin/lua-langserver"},
     settings = {
         Lua = {
@@ -173,9 +180,7 @@ lspconfig.sumneko_lua.setup(vim.tbl_deep_extend('force', default_lsp_config, {
             },
             telemetry = {enable = false}
         }
-    },
-    on_attach = on_attach,
-    capabilities = capabilities
+    }
 }))
 
 -- https://github.com/golang/tools/blob/master/gopls/doc/vim.md#neovim-config
@@ -193,22 +198,24 @@ lspconfig.dockerls.setup(default_lsp_config)
 -- YAML
 lspconfig.yamlls.setup(default_lsp_config)
 
-local bo_default = require('plugins.utils').bo_default
+local buffer_options_default = require('plugins.utils').buffer_options_default
 
 local diagnostic_config = {
     virtual_text = function(_, bufnr)
-        if bo_default(bufnr, 'show_virtual_text', true) then
+        if buffer_options_default(bufnr, 'show_virtual_text', true) then
             return {prefix = '●', source = "if_many"}
         end
         return false
     end,
 
     signs = function(_, bufnr)
-        return bo_default(bufnr, 'show_signs', false)
+        return buffer_options_default(bufnr, 'show_signs', false)
     end,
 
     -- delay update diagnostics
-    update_in_insert = false
+    update_in_insert = false,
+
+    severity_sort = true
 }
 
 vim.diagnostic.config(diagnostic_config)
