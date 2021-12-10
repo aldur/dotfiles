@@ -3,3 +3,4 @@ vim-language-server
 typescript
 typescript-language-server
 pyright
+dockerfile-language-server-nodejs
