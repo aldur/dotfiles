@@ -12,5 +12,4 @@ brew "texlab"
 brew "tidy-html5"
 brew "vale"
 brew "efm-langserver"
-
-brew "saadparwaiz1/personal/lua-language-server"
+brew "lua-language-server"

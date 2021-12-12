@@ -160,7 +160,7 @@ table.insert(runtime_path, 'lua/?/init.lua')
 
 -- https://www.chrisatmachine.com/Neovim/28-neovim-lua-development/
 lspconfig.sumneko_lua.setup(extend_config({
-    cmd = {"/usr/local/bin/lua-langserver"},
+    cmd = {"/usr/local/bin/lua-language-server"},
     settings = {
         Lua = {
             runtime = {
