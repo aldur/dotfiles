@@ -60,6 +60,7 @@ local on_attach = function(_, bufnr)
     buf_set_keymap('n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>',
                    opts)
     buf_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+    buf_set_keymap('n', '<leader>lo', '<cmd>TroubleToggle<CR>', opts)
 end
 
 local default_lsp_config = {
