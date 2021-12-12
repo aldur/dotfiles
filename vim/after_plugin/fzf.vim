@@ -25,8 +25,8 @@ endif
 nnoremap <silent> <leader><space> :<c-U>execute 'Files' aldur#find_root#find_root()<CR>
 nnoremap <silent> <leader>a :Buffers<CR>
 nnoremap <silent> <leader>r :RgProject<CR>
-nnoremap <silent> <leader>tt :BTags<CR>
-nnoremap <silent> <leader>tT :Tags<CR>
+nnoremap <silent> <leader>t :BTags<CR>
+nnoremap <silent> <leader>T :Tags<CR>
 nnoremap <silent> <leader>h :History<CR>
 nnoremap <silent> <leader>H :Files ~<CR>
 nnoremap <silent> <leader>: :History:<CR>
