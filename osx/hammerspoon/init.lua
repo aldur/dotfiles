@@ -1,13 +1,10 @@
 -- Modeline {{{
 -- vim: set foldmarker={{{,}}} foldlevel=0 foldmethod=marker
 -- }}}
-
 -- luacheck: globals hs
 -- luacheck: globals globals
 -- luacheck: no self
-
 -- Require {{{
-
 local secrets = require('secrets')
 
 -- }}}
@@ -30,10 +27,12 @@ globals.windows = {}
 globals.wfilters = {}
 globals.modals = {}
 
-local cardinals = { h='west', l='east', k='north', j='south', }
+local cardinals = {h = 'west', l = 'east', k = 'north', j = 'south'}
 local snapped = {
-    west=hs.geometry(0,0,0.5,1), east=hs.geometry(0.5,0,0.5,1),
-    north=hs.geometry(0,0,1,0.5), south=hs.geometry(0,0.5,1,0.5),
+    west = hs.geometry(0, 0, 0.5, 1),
+    east = hs.geometry(0.5, 0, 0.5, 1),
+    north = hs.geometry(0, 0, 1, 0.5),
+    south = hs.geometry(0, 0.5, 1, 0.5)
 }
 
 local hyper = {'cmd', 'alt', 'ctrl'}
@@ -43,12 +42,12 @@ local hyper_shift = {'cmd', 'alt', 'ctrl', 'shift'}
 
 -- Settings {{{
 
-hs.window.animationDuration = animationDuration  -- Disable window animation
-hs.window.setShadows(shadows)  -- No windows shadow
-wf.setLogLevel('error')  -- Only log WF errors
-hs.hotkey.setLogLevel('warning')  -- Less verbose hotkey logging
-hs.application.enableSpotlightForNameSearches(true)  -- Enable alternate application names
-hs.grid.setGrid('11x7')  -- Grid size
+hs.window.animationDuration = animationDuration -- Disable window animation
+hs.window.setShadows(shadows) -- No windows shadow
+wf.setLogLevel('error') -- Only log WF errors
+hs.hotkey.setLogLevel('warning') -- Less verbose hotkey logging
+hs.application.enableSpotlightForNameSearches(true) -- Enable alternate application names
+hs.grid.setGrid('11x7') -- Grid size
 local margin = hs.geometry('5x5')
 hs.grid.setMargins(margin)
 
@@ -89,11 +88,11 @@ local function ssidChangedCallback()
 
     if newSSID == nil and hs.wifi.interfaceDetails('en0').power then
         hs.notify.new({
-            title="Hammerspoon",
-            informativeText="Wireless disconnected",
-            contentImage=hs.image.imageFromPath('icons/internet.ico'),
-            autoWithdraw=true,
-            hasActionButton=false,
+            title = "Hammerspoon",
+            informativeText = "Wireless disconnected",
+            contentImage = hs.image.imageFromPath('icons/internet.ico'),
+            autoWithdraw = true,
+            hasActionButton = false
         }):send()
         return
     end
@@ -102,41 +101,48 @@ local function ssidChangedCallback()
     local networkConfiguration = hs.network.configuration.open()
     local networkLocations = networkConfiguration:locations()
 
-    if ((globals.WiFi.lastSSID == newSSID
-                and networkLocations[networkConfiguration:location()] == networkLocation) or
-            not hs.wifi.interfaceDetails('en0').power) then
-        return
-    end
+    if ((globals.WiFi.lastSSID == newSSID and
+        networkLocations[networkConfiguration:location()] == networkLocation) or
+        not hs.wifi.interfaceDetails('en0').power) then return end
 
     if networkConfiguration:setLocation(networkLocation) then
-        if not hs.wifi.interfaceDetails('en0').power then hs.wifi.setPower(true, 'en0') end
+        if not hs.wifi.interfaceDetails('en0').power then
+            hs.wifi.setPower(true, 'en0')
+        end
         hs.notify.new({
-                title="Hammerspoon",
-                contentImage=hs.image.imageFromPath("icons/internet.ico"),
-                informativeText="Selecting '" .. networkLocation .. "' network location.",
-                autoWithdraw=true,
-                hasActionButton=false,
-            }):send()
+            title = "Hammerspoon",
+            contentImage = hs.image.imageFromPath("icons/internet.ico"),
+            informativeText = "Selecting '" .. networkLocation ..
+                "' network location.",
+            autoWithdraw = true,
+            hasActionButton = false
+        }):send()
     else
         hs.notify.new({
-                title="Hammerspoon",
-                informativeText="An error occurred while managing network locations.",
-                autoWithdraw=true,
-                hasActionButton=false,
-            }):send()
+            title = "Hammerspoon",
+            informativeText = "An error occurred while managing network locations.",
+            autoWithdraw = true,
+            hasActionButton = false
+        }):send()
         logger.e('[Network Locations] Error setting ' .. networkLocation .. '.')
     end
 
     if secrets["SSID_CALLBACKS"] then
         -- Execute IN callback for new network location.
         local callback = secrets.SSID_CALLBACKS[networkLocation]
-        if callback then assert(#callback == 2); callback[1]() end
+        if callback then
+            assert(#callback == 2);
+            callback[1]()
+        end
 
         -- Execute OUT callback for last network location.
         local lastSSID = globals.WiFi.lastSSID
         local lastNetworkLocation = secrets.SSIDS[lastSSID] or 'Automatic'
         callback = secrets.SSID_CALLBACKS[lastNetworkLocation]
-        if callback then assert(#callback == 2); callback[2]() end
+        if callback then
+            assert(#callback == 2);
+            callback[2]()
+        end
     end
 
     globals.WiFi.lastSSID = newSSID
@@ -182,21 +188,21 @@ local function setFrame(window, frame)
     if cardinal then globals.windows[cardinal] = nil end
 
     local savedFrame = globals.windows.savedFrames[windowID]
-    if frame == nil and savedFrame == nil then return end  -- Nothing to do
+    if frame == nil and savedFrame == nil then return end -- Nothing to do
 
     if frame == nil then
         assert(savedFrame)
-        window:setFrame(savedFrame)  -- Restore the original frame
+        window:setFrame(savedFrame) -- Restore the original frame
         globals.windows.savedFrames[windowID] = nil
         return
     end
 
-    saveFrame(window)  -- Save the current frame.
+    saveFrame(window) -- Save the current frame.
 
     if frame == 'full' then
         hs.grid.maximizeWindow(window)
-    elseif frame and frame.x <= 1 and frame.y <= 1
-        and frame.w <= 1 and frame.h <= 1 then
+    elseif frame and frame.x <= 1 and frame.y <= 1 and frame.w <= 1 and frame.h <=
+        1 then
         window:moveToUnit(frame)
     else
         window:move(frame)
@@ -242,17 +248,14 @@ end
 -- Window filters {{{
 
 -- Focus last window when closing Finder.
-globals.wfilters.finder = wf.copy(wf.defaultCurrentSpace):
-    setDefaultFilter(false):setAppFilter('Finder'):
-    subscribe(
-        wf.windowDestroyed,
-        function(_, name, _)
-            -- Finder always keep a background window open.
-            if #hs.application('com.apple.finder'):allWindows() == 1 then
-                focusLastFocused()
-            end
+globals.wfilters.finder =
+    wf.copy(wf.defaultCurrentSpace):setDefaultFilter(false):setAppFilter(
+        'Finder'):subscribe(wf.windowDestroyed, function(_, name, _)
+        -- Finder always keep a background window open.
+        if #hs.application('com.apple.finder'):allWindows() == 1 then
+            focusLastFocused()
         end
-    )
+    end)
 -- }}}
 
 -- Emojis {{{
@@ -264,8 +267,11 @@ globals.emojis = hs.loadSpoon('Emojis')
 -- Seal {{{
 
 globals.seal = hs.loadSpoon('Seal')
-globals.seal:loadPlugins({'tunnelblick', 'network_locations', 'snippets', 'macos', 'hammerspoon', 'zoom'})
-globals.seal:bindHotkeys({toggle={hyper, 'space'}})
+globals.seal:loadPlugins({
+    'tunnelblick', 'network_locations', 'snippets', 'macos', 'hammerspoon',
+    'zoom', 'shortcuts'
+})
+globals.seal:bindHotkeys({toggle = {hyper, 'space'}})
 globals.seal:start()
 
 -- }}}
@@ -297,18 +303,13 @@ end)
 
 local h = hs.hotkey.modal.new(hyper, 'q')
 globals.modals.grid_snapping_hotkey = h
-function h:entered()
-    hs.alert('Entered grid snapping mode')
-end
-function h:exited()
-    hs.alert('Exited grid snapping mode')
-end
+function h:entered() hs.alert('Entered grid snapping mode') end
+function h:exited() hs.alert('Exited grid snapping mode') end
 h:bind('', 'escape', function() h:exit() end)
 
 -- Move through the grid
-hs.fnutils.each({
-    {"k", "Up"}, {"j", "Down"}, {"h", "Left"}, {"l", "Right"},
-}, function(k)
+hs.fnutils.each({{"k", "Up"}, {"j", "Down"}, {"h", "Left"}, {"l", "Right"}},
+                function(k)
     h:bind('', k[1], nil, function()
         saveFrame(hs.window.focusedWindow());
         hs.grid["pushWindow" .. k[2]]()
@@ -317,7 +318,7 @@ end)
 
 -- Shrink/enlarge within the grid
 hs.fnutils.each({
-    {"k", "Shorter"}, {"j", "Taller"}, {"h", "Thinner"}, {"l", "Wider"},
+    {"k", "Shorter"}, {"j", "Taller"}, {"h", "Thinner"}, {"l", "Wider"}
 }, function(k)
     h:bind('shift', k[1], nil, function()
         saveFrame(hs.window.focusedWindow());
@@ -371,9 +372,7 @@ hs.fnutils.each({"h", "j", "k", "l"}, function(k)
 end)
 
 -- Focus second-last focused window
-hs.hotkey.bind(hyper, ',', function()
-    focusSecondToLastFocused()
-end)
+hs.hotkey.bind(hyper, ',', function() focusSecondToLastFocused() end)
 
 -- Center on screen
 hs.hotkey.bind(hyper, ".", function()
@@ -384,9 +383,8 @@ end)
 
 -- Enlarge / shrink window
 hs.fnutils.each({{"-", false}, {"=", true}}, function(k)
-    hs.hotkey.bind(hyper, k[1], function()
-        resize(hs.window.focusedWindow(), k[2])
-    end)
+    hs.hotkey.bind(hyper, k[1],
+                   function() resize(hs.window.focusedWindow(), k[2]) end)
 end)
 
 local function focusOrSwitch(bundleID)
@@ -402,20 +400,18 @@ end
 -- Focus/launch most commonly used applications.
 hs.fnutils.each({
     {'M', 'com.spotify.client'}, {'B', 'com.apple.Safari'},
-    {'W', 'com.kapeli.dashdoc'},
-    {'G', 'com.culturedcode.ThingsMac'}, {'X', 'com.tinyspeck.slackmacgap'},
-}, function(k)
+    {'W', 'com.kapeli.dashdoc'}, {'G', 'com.culturedcode.ThingsMac'},
+    {'X', 'com.tinyspeck.slackmacgap'}
+},
+                function(k)
     hs.hotkey.bind(hyper, k[1], function() focusOrSwitch(k[2]) end)
 end)
 
 local function getMeetingClients()
     local clients = {
-        'com.google.Chrome.app.kjgfgldnnfoeklkmfkjfagphfepbbdan',  -- Google Meet?
-        'com.fuzebox.fuze.Fuze',
-        'us.zoom.xos',
-        'com.cisco.webexmeetingsapp',
-        'com.webex.meetingmanager',
-        'com.microsoft.teams'
+        'com.google.Chrome.app.kjgfgldnnfoeklkmfkjfagphfepbbdan', -- Google Meet?
+        'com.fuzebox.fuze.Fuze', 'us.zoom.xos', 'com.cisco.webexmeetingsapp',
+        'com.webex.meetingmanager', 'com.microsoft.teams'
     }
 
     -- This is a Google Chrome app and the bundleID changes
@@ -424,9 +420,7 @@ local function getMeetingClients()
     -- TODO: This only works if the application is running,
     -- but this function gets called once when HS in init.
     local googleMeet = hs.application.get("Google Meet")
-    if googleMeet ~= nil then
-        table.insert(clients, 1, googleMeet:bundleID())
-    end
+    if googleMeet ~= nil then table.insert(clients, 1, googleMeet:bundleID()) end
 
     return clients
 end
@@ -434,8 +428,10 @@ end
 -- Focus/launch most commonly used applications across multiple options.
 hs.fnutils.each({
     {'T', {'com.qvacua.VimR', 'com.kethku.neovide'}},
-    {'P', {'com.jetbrains.pycharm', 'com.microsoft.VSCode', 'com.apple.dt.Xcode'}},
-    {'Z', getMeetingClients()}
+    {
+        'P',
+        {'com.jetbrains.pycharm', 'com.microsoft.VSCode', 'com.apple.dt.Xcode'}
+    }, {'Z', getMeetingClients()}
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function()
         for _, bundleID in pairs(k[2]) do
@@ -473,7 +469,7 @@ end)
 
 -- Emoji chooser
 
-globals.emojis:bindHotkeys({toggle={hyper, 'e'}})
+globals.emojis:bindHotkeys({toggle = {hyper, 'e'}})
 
 -- }}}
 
@@ -482,7 +478,8 @@ globals.emojis:bindHotkeys({toggle={hyper, 'e'}})
 -- Launch iTerm2 by pressing alt-space
 -- Showing/hiding the window is managed within iTerm itself
 local function launchOrFocusITerm()
-    local iTerms = hs.application.applicationsForBundleID('com.googlecode.iterm2')
+    local iTerms = hs.application.applicationsForBundleID(
+                       'com.googlecode.iterm2')
     assert(#iTerms <= 1)
 
     if #iTerms == 0 then
@@ -494,7 +491,8 @@ local function launchOrFocusITerm()
         globals.iTermHotkey:enable()
     end
 end
-globals.iTermHotkey = hs.hotkey.new({'alt'}, 'space', launchOrFocusITerm):enable()
+globals.iTermHotkey =
+    hs.hotkey.new({'alt'}, 'space', launchOrFocusITerm):enable()
 
 -- }}}
 
@@ -513,19 +511,17 @@ hs.hotkey.bind(hyper, "a", globals.audio.toggleAudioInput)
 
 -- Local Configuration {{{
 
-if hs.fs.attributes('local.lua') then
-    require('local')
-end
+if hs.fs.attributes('local.lua') then require('local') end
 
 -- }}}
 
 -- Ending {{{
 
 hs.notify.new({
-    title="Hammerspoon",
-    informativeText="Hammerspoon is ready",
-    autoWithdraw=true,
-    hasActionButton=false,
+    title = "Hammerspoon",
+    informativeText = "Hammerspoon is ready",
+    autoWithdraw = true,
+    hasActionButton = false
 }):send()
 
 -- }}}
