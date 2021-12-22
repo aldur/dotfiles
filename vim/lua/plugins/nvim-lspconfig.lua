@@ -219,6 +219,10 @@ local diagnostic_config = {
     severity_sort = true
 }
 
+lspconfig.rls.setup(extend_config({
+    settings = {rust = {build_on_save = false, all_features = true}}
+}))
+
 vim.diagnostic.config(diagnostic_config)
 
 -- https://github.com/nvim-lua/diagnostic-nvim/issues/73
