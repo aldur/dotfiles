@@ -96,7 +96,7 @@
 
         " Markdown
         Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
-        Plug 'junegunn/goyo.vim', { 'for': 'markdown' }
+        Plug 'junegunn/goyo.vim', { 'on':  'Goyo' }
 
         " Swift
         Plug 'keith/swift.vim', { 'for': 'swift' }
