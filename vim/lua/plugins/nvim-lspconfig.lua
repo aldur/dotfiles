@@ -199,6 +199,14 @@ lspconfig.dockerls.setup(default_lsp_config)
 -- YAML
 lspconfig.yamlls.setup(default_lsp_config)
 
+-- Rust
+lspconfig.rls.setup(extend_config({
+    settings = {rust = {build_on_save = false, all_features = true}}
+}))
+
+-- Solidity
+lspconfig.solc.setup {default_lsp_config}
+
 local buffer_options_default = require('plugins.utils').buffer_options_default
 
 local diagnostic_config = {
@@ -219,12 +227,17 @@ local diagnostic_config = {
     severity_sort = true
 }
 
-lspconfig.rls.setup(extend_config({
-    settings = {rust = {build_on_save = false, all_features = true}}
-}))
-
 vim.diagnostic.config(diagnostic_config)
 
--- https://github.com/nvim-lua/diagnostic-nvim/issues/73
--- vim.lsp.handlers["textDocument/publishDiagnostics"] =
---     vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, config)
+-- Override this LSP handler to open the quickfix in Trouble
+-- Inspired by $VIMRUNTIME/lua/vim/lsp/handlers.lua
+-- Credits here: https://www.reddit.com/r/vim/comments/osmt4x/help_me_run_vimlspbufreferences_without_opening/
+vim.lsp.handlers['textDocument/references'] =
+    function(_, result, ctx)
+        if not result or vim.tbl_isempty(result) then return end
+        vim.fn.setqflist({}, ' ', {
+            title = 'Language Server',
+            items = vim.lsp.util.locations_to_items(result, ctx.bufnr)
+        })
+        require'trouble'.open('quickfix')
+    end
