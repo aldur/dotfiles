@@ -1,7 +1,6 @@
 autocmd vimrc DiagnosticChanged * call lightline#update()
 
 " Inspired by how lightline.vim refreshes the statusline.
-autocmd vimrc WinEnter,BufEnter,SessionLoadPost * lua vim.diagnostic.setloclist({open = false})
 autocmd vimrc DiagnosticChanged * lua vim.diagnostic.setloclist({open = false})
 lua require('plugins/trouble')
 
