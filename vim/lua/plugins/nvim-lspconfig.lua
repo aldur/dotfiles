@@ -60,7 +60,7 @@ local on_attach = function(_, bufnr)
     buf_set_keymap('n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>',
                    opts)
     buf_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-    buf_set_keymap('n', '<leader>lo', '<cmd>TroubleToggle<CR>', opts)
+    -- buf_set_keymap('n', '<leader>lo', '<cmd>TroubleToggle loclist<CR>', opts)
 end
 
 local default_lsp_config = {
@@ -232,12 +232,12 @@ vim.diagnostic.config(diagnostic_config)
 -- Override this LSP handler to open the quickfix in Trouble
 -- Inspired by $VIMRUNTIME/lua/vim/lsp/handlers.lua
 -- Credits here: https://www.reddit.com/r/vim/comments/osmt4x/help_me_run_vimlspbufreferences_without_opening/
-vim.lsp.handlers['textDocument/references'] =
-    function(_, result, ctx)
-        if not result or vim.tbl_isempty(result) then return end
-        vim.fn.setqflist({}, ' ', {
-            title = 'Language Server',
-            items = vim.lsp.util.locations_to_items(result, ctx.bufnr)
-        })
-        require'trouble'.open('quickfix')
-    end
+-- vim.lsp.handlers['textDocument/references'] =
+--     function(_, result, ctx)
+--         if not result or vim.tbl_isempty(result) then return end
+--         vim.fn.setqflist({}, ' ', {
+--             title = 'Language Server',
+--             items = vim.lsp.util.locations_to_items(result, ctx.bufnr)
+--         })
+--         require'trouble'.open('quickfix')
+--     end
