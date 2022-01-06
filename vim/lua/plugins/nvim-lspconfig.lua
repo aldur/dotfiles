@@ -134,7 +134,7 @@ local efm_languages = {
     cpp = {require 'efm/astyle'},
     json = {require 'efm/jq'},
     xml = {require 'efm/xmltidy'},
-    solidity = {require 'efm/prettier_solidity'}
+    solidity = {require 'efm/prettier_solidity', require 'efm/solhint'}
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
 efm_languages['sh.env'] = vim.deepcopy(efm_languages['sh'])
@@ -204,7 +204,11 @@ lspconfig.rls.setup(extend_config({
 }))
 
 -- Solidity
-lspconfig.solc.setup {default_lsp_config}
+lspconfig.solc.setup(extend_config({
+    cmd = {
+        "solc", '--base-path', '.', "--include-path", 'node_modules', '--lsp'
+    }
+}))
 
 local buffer_options_default = require('plugins.utils').buffer_options_default
 
