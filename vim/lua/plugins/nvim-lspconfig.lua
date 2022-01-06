@@ -123,10 +123,8 @@ lspconfig.pylsp.setup(extend_config({
 lspconfig.vimls.setup(extend_config({flags = {debounce_text_changes = 500}}))
 
 -- Formatting/linting via efm
-local prettier = require "efm/prettier"
-
 local efm_languages = {
-    markdown = {require 'efm/mdl', prettier},
+    markdown = {require 'efm/mdl', require 'efm/prettier_markdown'},
     lua = {require 'efm/luafmt', require 'efm/luacheck'},
     python = {require 'efm/black'},
     dockerfile = {require 'efm/hadolint'},
@@ -135,7 +133,8 @@ local efm_languages = {
     bib = {require 'efm/bibtool'},
     cpp = {require 'efm/astyle'},
     json = {require 'efm/jq'},
-    xml = {require 'efm/xmltidy'}
+    xml = {require 'efm/xmltidy'},
+    solidity = {require 'efm/prettier_solidity'}
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
 efm_languages['sh.env'] = vim.deepcopy(efm_languages['sh'])

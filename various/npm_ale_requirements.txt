@@ -1,4 +1,5 @@
-prettier@1.13
+prettier
+prettier-plugin-solidity
 vim-language-server
 typescript
 typescript-language-server
