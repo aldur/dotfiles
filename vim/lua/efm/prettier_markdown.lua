@@ -1,4 +1,4 @@
 return {
-  formatCommand = "prettier --parser markdown --tab-width 2",
-  formatStdin = true
+    formatCommand = "prettier --parser markdown --tab-width 2",
+    formatStdin = true
 }

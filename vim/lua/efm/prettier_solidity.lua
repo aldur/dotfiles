@@ -1,4 +1,1 @@
-return {
-  formatCommand = "prettier --parser solidity-parse",
-  formatStdin = true
-}
+return {formatCommand = "prettier --parser solidity-parse", formatStdin = true}

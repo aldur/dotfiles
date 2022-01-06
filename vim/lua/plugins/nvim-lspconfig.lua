@@ -134,7 +134,9 @@ local efm_languages = {
     cpp = {require 'efm/astyle'},
     json = {require 'efm/jq'},
     xml = {require 'efm/xmltidy'},
-    solidity = {require 'efm/prettier_solidity', require 'efm/solhint'}
+    solidity = {require 'efm/prettier_solidity', require 'efm/solhint'},
+    typescript = {require 'efm/prettier_typescript'},
+    javascript = {require 'efm/prettier_javascript'}
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
 efm_languages['sh.env'] = vim.deepcopy(efm_languages['sh'])
@@ -187,10 +189,32 @@ lspconfig.sumneko_lua.setup(extend_config({
 lspconfig.gopls.setup(default_lsp_config)
 
 -- JavaScript/TypeScript
--- lspconfig.denols.setup(default_lsp_config)
+-- Only formatting, as it's faster than `prettier`.
+-- lspconfig.denols.setup(extend_config({
+--     on_attach = function(client, bufnr)
+--         for k, _ in pairs(client.resolved_capabilities) do
+--             client.resolved_capabilities[k] = false
+--         end
+--         client.resolved_capabilities.document_formatting = true
+--         on_attach(client, bufnr)
+--     end,
+-- }))
 
--- JavaScript
-lspconfig.tsserver.setup(default_lsp_config)
+-- JavaScript/TypeScript
+-- This has an executable called `typescript-language-server` that wraps `tsserver`.
+-- For JS, you'll need to crate a `jsconfig.json` file in the root directory:
+-- https://github.com/tsconfig/bases/blob/main/bases/node16.json
+lspconfig.tsserver.setup(extend_config({
+    init_options = {npmLocation = '/usr/local/bin/npm'},
+    on_attach = function(client, bufnr)
+        client.resolved_capabilities.document_formatting = false
+        on_attach(client, bufnr)
+    end
+    -- cmd = {
+    --     "typescript-language-server", "--stdio", "--tsserver-log-file",
+    --     "/Users/adriano/tsserver.log", "--tsserver-log-verbosity", "verbose"
+    -- }
+}))
 
 -- Docker
 lspconfig.dockerls.setup(default_lsp_config)
@@ -204,11 +228,7 @@ lspconfig.rls.setup(extend_config({
 }))
 
 -- Solidity
-lspconfig.solc.setup(extend_config({
-    cmd = {
-        "solc", '--base-path', '.', "--include-path", 'node_modules', '--lsp'
-    }
-}))
+lspconfig.solc.setup(default_lsp_config)
 
 local buffer_options_default = require('plugins.utils').buffer_options_default
 
