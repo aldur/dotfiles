@@ -228,7 +228,8 @@ lspconfig.rls.setup(extend_config({
 }))
 
 -- Solidity
-lspconfig.solc.setup(default_lsp_config)
+-- Currently very buggy.
+-- lspconfig.solc.setup(default_lsp_config)
 
 local buffer_options_default = require('plugins.utils').buffer_options_default
 
