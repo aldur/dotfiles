@@ -1,7 +1,8 @@
 return {
     formatCommand = "jq .",
     formatStdin = true,
-    lintCommand = "jq",
+    lintCommand = "jq .",
     lintStdin = true,
-    lintFormats = {'%m at line %l, column %c'}
+    lintFormats = {'parse error: %m at line %l, column %c'},
+    lintIgnoreExitCode = true
 }
