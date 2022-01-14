@@ -6,3 +6,9 @@ function! aldur#whitespace#retab() abort
     call aldur#stay#stay('keepjumps keeppatterns retab!')
 endfunction
 
+function! aldur#whitespace#settab(tabsize) abort
+    let &l:tabstop = a:tabsize
+    let &l:softtabstop = a:tabsize
+    let &l:shiftwidth = a:tabsize
+    setlocal expandtab
+endfunction

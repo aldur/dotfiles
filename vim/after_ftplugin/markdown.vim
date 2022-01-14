@@ -4,8 +4,8 @@ setlocal spell spelllang=en,it
 setlocal textwidth=80
 setlocal conceallevel=0
 setlocal nojoinspaces
-setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 setlocal signcolumn=no
+call aldur#whitespace#settab(2)
 
 " Allow reading modelines in YAML header
 setlocal modelines=5
