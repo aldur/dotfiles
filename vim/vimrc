@@ -156,6 +156,7 @@
                 \ b:has_nvim_python3 ? { 'do': ':TSUpdate' }
                 \ : { 'on': []}
     Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+    Plug 'RRethy/nvim-treesitter-textsubjects'
 
     " Highlight last yanked object.
     " nvim provides this out of the box.

@@ -5,14 +5,21 @@ if has('nvim')
         ensure_installed = "maintained",
         highlight = {enable = true},
         indent = {enable = true, disable = {"python", }, },
-        incremental_selection = {
+        textsubjects = {
             enable = true,
             keymaps = {
-                init_selection = "gnn",
-                node_incremental = "grn",
-                scope_incremental = "grc",
-                node_decremental = "grm"
+                ['.'] = 'textsubjects-smart',
+                [';'] = 'textsubjects-container-outer',
             }
+        },
+        incremental_selection = {
+            enable = false,  -- Replaced by `textsubjects`
+            -- keymaps = {
+            --    init_selection = "gnn",
+            --    node_incremental = "gnn",
+            --    node_decremental = "gnN",
+            --    scope_incremental = "grc",
+            -- }
         },
         textobjects = {
             select = {
@@ -35,7 +42,7 @@ if has('nvim')
             },
             move = {
                 enable = true,
-                set_jumps = false, -- whether to set jumps in the jumplist
+                set_jumps = true, -- whether to set jumps in the jumplist
                 goto_next_start = {
                     ["]m"] = "@function.outer",
                     ["]]"] = "@class.outer"
