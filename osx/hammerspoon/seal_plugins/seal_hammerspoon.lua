@@ -39,20 +39,6 @@ function obj.archiveClipboard()
     if not success then obj.__logger.e('Got an error while opening Hammerspoon/Clipboard url handler.') end
 end
 
-function obj.meetingNote()
-    local success, _, e = hs.applescript([[
-    set currentEvent to do shell script "/usr/local/bin/icalBuddy --includeOnlyEventsFromNowOn --noCalendarNames --limitItems 1 --includeEventProps title,datetime,attendees --bullet '' eventsToday | python3 -c \"import fileinput; lines = list(l.strip() for l in fileinput.input()); print(f'''<body><h1>{lines[0]}</h1><br>{'<br>'.join(lines[1:])}<br></body>''')\""
-    tell application "Notes"
-        tell account "iCloud"
-            make new note at folder "Keyless" with properties {name:"", body:currentEvent}
-            show
-        end tell
-    end tell
-    ]])
-    print(hs.inspect.inspect(e))
-    if not success then obj.__logger.e('Got an error while creating meeting note.') end
-end
-
 function obj.showCaffeineMenubar(isEnabled)
     if isEnabled == nil then isEnabled = hs.caffeinate.get('displayIdle') end
     if isEnabled then
