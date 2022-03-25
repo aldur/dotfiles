@@ -36,7 +36,7 @@ local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp
                                                                      .make_client_capabilities())
 
 -- Setup everything on lsp attach
-local on_attach = function(_, bufnr)
+local default_on_attach = function(_, bufnr)
     vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
     require"lsp_signature".on_attach({
@@ -64,7 +64,7 @@ local on_attach = function(_, bufnr)
 end
 
 local default_lsp_config = {
-    on_attach = on_attach,
+    on_attach = default_on_attach,
     capabilities = capabilities,
     flags = {debounce_text_changes = 200}
 }
@@ -162,6 +162,11 @@ table.insert(runtime_path, 'lua/?/init.lua')
 
 -- https://www.chrisatmachine.com/Neovim/28-neovim-lua-development/
 lspconfig.sumneko_lua.setup(extend_config({
+    on_attach = function(client, bufnr)
+        client.resolved_capabilities.document_formatting = false
+        client.resolved_capabilities.document_range_formatting = false
+        default_on_attach(client, bufnr)
+    end,
     cmd = {"/usr/local/bin/lua-language-server"},
     settings = {
         Lua = {
@@ -208,7 +213,7 @@ lspconfig.tsserver.setup(extend_config({
     init_options = {npmLocation = '/usr/local/bin/npm'},
     on_attach = function(client, bufnr)
         client.resolved_capabilities.document_formatting = false
-        on_attach(client, bufnr)
+        default_on_attach(client, bufnr)
     end
     -- cmd = {
     --     "typescript-language-server", "--stdio", "--tsserver-log-file",
