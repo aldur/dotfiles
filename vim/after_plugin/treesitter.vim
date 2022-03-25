@@ -46,6 +46,7 @@ if has('nvim')
                 goto_next_start = {
                     ["]m"] = "@function.outer",
                     ["]]"] = "@class.outer"
+                    ["]c"] = "@class.outer"
                 },
                 goto_next_end = {
                     ["]M"] = "@function.outer",
@@ -54,6 +55,7 @@ if has('nvim')
                 goto_previous_start = {
                     ["[m"] = "@function.outer",
                     ["[["] = "@class.outer"
+                    ["[c"] = "@class.outer"
                 },
                 goto_previous_end = {
                     ["[M"] = "@function.outer",
@@ -63,4 +65,6 @@ if has('nvim')
         }
     }
 EOF
+
+    TSContextEnable
 endif

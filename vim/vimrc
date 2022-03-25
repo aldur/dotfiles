@@ -160,6 +160,9 @@
                 \ : { 'on': []}
     Plug 'nvim-treesitter/nvim-treesitter-textobjects'
     Plug 'RRethy/nvim-treesitter-textsubjects'
+    Plug 'lewis6991/spellsitter.nvim'
+    Plug 'romgrk/nvim-treesitter-context'
+    Plug 'nvim-treesitter/playground'
 
     " Highlight last yanked object.
     " nvim provides this out of the box.
