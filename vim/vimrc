@@ -85,6 +85,9 @@
     Plug 'patstockwell/vim-monokai-tasty'         " Molokai color scheme
     Plug 'sainnhe/sonokai'                        " Based on Monokai pro
 
+    Plug 'junegunn/goyo.vim', { 'on':  'Goyo' }   " Candidate for removal
+    Plug 'folke/zen-mode.nvim'
+
     " Language specific plugins {{{
         " Proper Python indent
         Plug 'Vimjas/vim-python-pep8-indent', { 'for': 'python' }
@@ -97,7 +100,6 @@
 
         " Markdown
         Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
-        Plug 'junegunn/goyo.vim', { 'on':  'Goyo' }
 
         " Swift
         Plug 'keith/swift.vim', { 'for': 'swift' }
