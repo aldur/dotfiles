@@ -4,29 +4,35 @@ end
 
 let g:lightline = {}
 
-if exists('g:lightline#colorscheme#monokai_tasty#palette')
-    " === Setup the lightline colorscheme ===
-    " Source: https://github.com/patstockwell/vim-monokai-tasty/blob/master/autoload/lightline/colorscheme/monokai_tasty.vim
-    let s:palette = g:lightline#colorscheme#monokai_tasty#palette
-
-    let s:insert = deepcopy(s:palette.insert)
-    let s:normal = deepcopy(s:palette.normal)
-    let s:command = deepcopy(s:palette.command)
+function SwapPalette(palette) abort
+    " Swaps insert mode colors with normal mode colors.
+    " Source:
+    " https://github.com/patstockwell/vim-monokai-tasty/blob/master/autoload/lightline/colorscheme/monokai_tasty.vim
+    let s:insert = deepcopy(a:palette.insert)
+    let s:normal = deepcopy(a:palette.normal)
+    let s:command = deepcopy(a:palette.command)
 
     " insert -> normal
-    let s:palette.normal = s:insert
-    let s:palette.normal.error = s:normal.error
-    let s:palette.normal.warning = s:normal.warning
+    let a:palette.normal = s:insert
+    let a:palette.normal.error = s:normal.error
+    let a:palette.normal.warning = s:normal.warning
     " normal -> command
-    let s:palette.command = s:normal
-    unlet s:palette.command['middle']
+    let a:palette.command = s:normal
+    unlet a:palette.command['middle']
     " command -> insert
-    let s:palette.insert = s:command
-    let s:palette.insert.middle = s:insert.middle
+    let a:palette.insert = s:command
+    let a:palette.insert.middle = s:insert.middle
+endfunction
+
+" === Setup the lightline colorscheme ===
+if g:colors_name == 'monokai_tasty'
+    call SwapPalette(g:lightline#colorscheme#monokai_tasty#palette)
 
     let g:lightline.colorscheme = 'monokai_tasty'
-    " === /Setup the lightline colorscheme ===
+elseif g:colors_name == 'sonokai'
+    let g:lightline.colorscheme = 'sonokai'
 end
+" === /Setup the lightline colorscheme ===
 
 let g:lightline.component_expand = {
             \ 'tabs': 'lightline#tabs',
