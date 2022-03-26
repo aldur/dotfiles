@@ -185,7 +185,10 @@ local function setFrame(window, frame)
     if cardinal then Globals.windows[cardinal] = nil end
 
     local savedFrame = Globals.windows.savedFrames[windowID]
-    if frame == nil and savedFrame == nil then return end -- Nothing to do
+    if frame == nil and savedFrame == nil then
+        logger.w("Called `setFrame` without `frame` nor `savedFrame")
+        return -- Nothing to do
+    end
 
     if frame == nil then
         assert(savedFrame)
@@ -338,7 +341,8 @@ hs.fnutils.each({{"d", "Downloads"}, {"s", "Desktop"}}, function(k)
 end)
 
 -- Fullscreen / revert to original
-hs.fnutils.each({{"delete", nil}, {"return", 'full'}}, function(k)
+-- for some reasons, hyper + backspace (here called `delete`) stopped working.
+hs.fnutils.each({{"delete", nil}, {"0", nil}, {"return", 'full'}}, function(k)
     hs.hotkey.bind(hyper, k[1], function()
         local focused = hs.window.focusedWindow()
         if not focused then return end
