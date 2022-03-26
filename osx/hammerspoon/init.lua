@@ -380,8 +380,11 @@ end)
 
 -- Enlarge / shrink window
 hs.fnutils.each({{"-", false}, {"=", true}}, function(k)
-    hs.hotkey.bind(hyper, k[1],
-                   function() resize(hs.window.focusedWindow(), k[2]) end)
+    hs.hotkey.bind(hyper, k[1], function()
+        local focused = hs.window.focusedWindow()
+        saveFrame(focused)
+        resize(focused, k[2])
+    end)
 end)
 
 local function focusOrSwitch(bundleID)
