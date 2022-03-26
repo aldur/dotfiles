@@ -91,7 +91,6 @@
     Plug 'patstockwell/vim-monokai-tasty'         " Molokai color scheme
     Plug 'sainnhe/sonokai'                        " Based on Monokai pro
 
-    Plug 'junegunn/goyo.vim', { 'on':  'Goyo' }   " Candidate for removal
     Plug 'folke/zen-mode.nvim'
 
     " Language specific plugins {{{
