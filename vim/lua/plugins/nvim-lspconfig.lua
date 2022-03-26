@@ -1,6 +1,7 @@
 -- Original credits to https://github.com/tomaskallup/dotfiles/blob/master/nvim/lua/plugins/nvim-lspconfig.lua
 local lspconfig = require 'lspconfig'
 local util = require('lspconfig/util')
+local M = {}
 
 local function get_venv(workspace)
     -- Use activated virtualenv.
@@ -111,7 +112,7 @@ lspconfig.pylsp.setup(extend_config({
         client.resolved_capabilities.rename = false
         client.resolved_capabilities.signature_help = false
         client.resolved_capabilities.code_lens = false
-        client.resolved_capabilities.code_action = false
+        client.resolved_capabilities.code_action = true
         default_on_attach(client, bufnr)
     end,
     on_new_config = function(new_config, new_root_dir)
@@ -273,7 +274,7 @@ lspconfig.ltex.setup(extend_config({
 
 local buffer_options_default = require('plugins.utils').buffer_options_default
 
-local diagnostic_config = {
+M.diagnostic_config = {
     virtual_text = function(_, bufnr)
         if buffer_options_default(bufnr, 'show_virtual_text', true) then
             return {prefix = '●', source = "if_many"}
@@ -286,12 +287,17 @@ local diagnostic_config = {
     end,
 
     -- delay update diagnostics
-    update_in_insert = false,
+    update_in_insert = function(_, bufnr)
+        return buffer_options_default(bufnr, 'update_in_insert', false)
+    end,
 
     severity_sort = true
 }
 
-vim.diagnostic.config(diagnostic_config)
+function M.reload_config() vim.diagnostic.config(M.diagnostic_config) end
+M.reload_config() -- First time initialization.
+
+return M
 
 -- Override this LSP handler to open the quickfix in Trouble
 -- Inspired by $VIMRUNTIME/lua/vim/lsp/handlers.lua
