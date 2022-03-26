@@ -1,9 +1,13 @@
 -- Modeline {{{
+
 -- vim: set foldmarker={{{,}}} foldlevel=0 foldmethod=marker:
+
 -- }}}
 -- luacheck: globals hs Globals, no self
 -- Require {{{
+
 local secrets = require('secrets')
+
 -- }}}
 
 -- Constants / Definitions {{{
