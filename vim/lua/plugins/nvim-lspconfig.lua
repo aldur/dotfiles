@@ -232,6 +232,41 @@ lspconfig.rls.setup(extend_config({
     settings = {rust = {build_on_save = false, all_features = true}}
 }))
 
+local default_ltex_configuration = require'lspconfig/server_configurations/ltex'.default_config
+
+-- Markdown, LaTeX
+lspconfig.ltex.setup(extend_config({
+    settings = {
+        ltex = {
+            dictionary = {
+                -- Couldn't make this work, unfortunately, so added `MORFOLOGIK_RULE_EN_US`.
+                ['en-US'] = {[[:~/.vim/spell/en.utf-8.add]]}
+            },
+            additionalRules = {motherTongue = "it"},
+            disabledRules = {
+                ['en-US'] = {"WHITESPACE_RULE", "MORFOLOGIK_RULE_EN_US"}
+            },
+            markdown = {
+                nodes = {
+                    CodeBlock = "ignore",
+                    FencedCodeBlock = "ignore",
+                    AutoLink = "dummy",
+                    Code = "dummy"
+                }
+            }
+        }
+    },
+
+    -- https://github.com/neovim/nvim-lspconfig/blob/7d5a6dc46dd2ebaeb74b573922f289ae33089fe7/lua/lspconfig/server_configurations/ltex.lua#L23
+    -- Could probably do better by overriding the function.
+    get_language_id = function(_, filetype)
+        if filetype == 'markdown.wiki' then
+            return 'markdown'
+        end
+        return default_ltex_configuration.get_language_id(_, filetype)
+    end
+}))
+
 -- Solidity
 -- Currently very buggy.
 -- lspconfig.solc.setup(default_lsp_config)
