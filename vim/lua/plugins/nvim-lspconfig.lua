@@ -179,7 +179,7 @@ lspconfig.sumneko_lua.setup(extend_config({
             },
             diagnostics = {
                 -- Get the language server to recognize the `vim` global
-                globals = {'vim'}
+                globals = {'vim', 'hs'}
             },
             workspace = {
                 -- Make the server aware of Neovim runtime files
@@ -232,7 +232,8 @@ lspconfig.rls.setup(extend_config({
     settings = {rust = {build_on_save = false, all_features = true}}
 }))
 
-local default_ltex_configuration = require'lspconfig/server_configurations/ltex'.default_config
+local default_ltex_configuration =
+    require'lspconfig/server_configurations/ltex'.default_config
 
 -- Markdown, LaTeX
 lspconfig.ltex.setup(extend_config({
@@ -261,9 +262,7 @@ lspconfig.ltex.setup(extend_config({
     -- 7d5a6dc46dd2ebaeb74b573922f289ae33089fe7/lua/lspconfig/
     -- server_configurations/ltex.lua#L23
     get_language_id = function(_, filetype)
-        if filetype == 'markdown.wiki' then
-            return 'markdown'
-        end
+        if filetype == 'markdown.wiki' then return 'markdown' end
         return default_ltex_configuration.get_language_id(_, filetype)
     end
 }))
