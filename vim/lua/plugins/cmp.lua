@@ -77,6 +77,32 @@ local function format_if_nerdfont(vim_item)
     return vim_item.kind
 end
 
+local default_sources = {
+    -- Sorted by priority.
+    {name = 'nvim_lsp'}, {name = 'nvim_lua'}, {name = 'ultisnips'}, {
+        name = 'buffer',
+        -- https://github.com/hrsh7th/cmp-buffer
+        option = {
+            get_bufnrs = function()
+                local bufs = {}
+                for _, win in ipairs(vim.api.nvim_list_wins()) do
+                    -- Only show completions from visibile buffers.
+                    local buf = vim.api.nvim_win_get_buf(win)
+                    bufs[buf] = true
+                    local line_count = vim.api.nvim_buf_line_count(buf)
+                    local byte_size =
+                        vim.api.nvim_buf_get_offset(buf, line_count)
+                    if byte_size <= 1024 * 1024 then -- 1 Megabyte max
+                        -- Discard buffers that are too big.
+                        bufs[buf] = true
+                    end
+                end
+                return vim.tbl_keys(bufs)
+            end
+        }
+    }, {name = 'path'}
+}
+
 cmp.setup({
     formatting = {
         format = function(entry, vim_item)
@@ -101,24 +127,14 @@ cmp.setup({
             c = cmp.mapping.select_next_item()
         })
     },
-    sources = { -- Sorted by priority.
-        -- markdown.wiki only
+    sources = default_sources
+})
+
+cmp.setup.filetype({'markdown', 'markdown.wiki'}, {
+    sources = vim.tbl_deep_extend('force', {
         {name = 'notes'}, -- Does not currently work well.
-        {name = 'note_tags', max_item_count = 5}, {name = 'note_headers'},
-        -- /markdown.wiki only
-        {name = 'nvim_lsp'}, {name = 'nvim_lua'}, {name = 'ultisnips'}, {
-            name = 'buffer',
-            -- https://github.com/hrsh7th/cmp-buffer
-            -- Source from visibile buffers.
-            -- get_bufnrs = function()
-            --     local bufs = {}
-            --     for _, win in ipairs(vim.api.nvim_list_wins()) do
-            --         bufs[vim.api.nvim_win_get_buf(win)] = true
-            --     end
-            --     return vim.tbl_keys(bufs)
-            -- end
-        }, {name = 'path'}
-    }
+        {name = 'note_tags', max_item_count = 5}, {name = 'note_headers'}
+    }, default_sources)
 })
 
 cmp.setup.cmdline(':', {
