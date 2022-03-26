@@ -1,12 +1,9 @@
 -- Modeline {{{
--- vim: set foldmarker={{{,}}} foldlevel=0 foldmethod=marker
+-- vim: set foldmarker={{{,}}} foldlevel=0 foldmethod=marker:
 -- }}}
--- luacheck: globals hs
--- luacheck: globals globals
--- luacheck: no self
+-- luacheck: globals hs Globals, no self
 -- Require {{{
 local secrets = require('secrets')
-
 -- }}}
 
 -- Constants / Definitions {{{
@@ -20,12 +17,12 @@ local shadows = false
 
 local wf = hs.window.filter
 
-globals = {}
-globals.WiFi = {}
-globals.watcher = {}
-globals.windows = {}
-globals.wfilters = {}
-globals.modals = {}
+Globals = {}
+Globals.WiFi = {}
+Globals.watcher = {}
+Globals.windows = {}
+Globals.wfilters = {}
+Globals.modals = {}
 
 local cardinals = {h = 'west', l = 'east', k = 'north', j = 'south'}
 local snapped = {
@@ -57,12 +54,12 @@ hs.grid.setMargins(margin)
 
 local function cleanup()
     -- Cleanup here.
-    hs.fnutils.each(globals.watcher, function(w) w:stop() end)
+    hs.fnutils.each(Globals.watcher, function(w) w:stop() end)
     -- hs.fnutils.each(globals.watchable_watcher, function(w) w:release() end)
-    hs.fnutils.each(globals.wfilters, function(f) f:unsubscribeAll() end)
+    hs.fnutils.each(Globals.wfilters, function(f) f:unsubscribeAll() end)
 
-    for key in pairs(globals) do globals[key] = nil end
-    globals = nil
+    for key in pairs(Globals) do Globals[key] = nil end
+    Globals = nil
 end
 
 -- }}}
@@ -82,7 +79,7 @@ end
 --     },
 -- }
 
-globals.WiFi.lastSSID = hs.wifi.currentNetwork()
+Globals.WiFi.lastSSID = hs.wifi.currentNetwork()
 local function ssidChangedCallback()
     local newSSID = hs.wifi.currentNetwork()
 
@@ -101,7 +98,7 @@ local function ssidChangedCallback()
     local networkConfiguration = hs.network.configuration.open()
     local networkLocations = networkConfiguration:locations()
 
-    if ((globals.WiFi.lastSSID == newSSID and
+    if ((Globals.WiFi.lastSSID == newSSID and
         networkLocations[networkConfiguration:location()] == networkLocation) or
         not hs.wifi.interfaceDetails('en0').power) then return end
 
@@ -136,7 +133,7 @@ local function ssidChangedCallback()
         end
 
         -- Execute OUT callback for last network location.
-        local lastSSID = globals.WiFi.lastSSID
+        local lastSSID = Globals.WiFi.lastSSID
         local lastNetworkLocation = secrets.SSIDS[lastSSID] or 'Automatic'
         callback = secrets.SSID_CALLBACKS[lastNetworkLocation]
         if callback then
@@ -145,9 +142,9 @@ local function ssidChangedCallback()
         end
     end
 
-    globals.WiFi.lastSSID = newSSID
+    Globals.WiFi.lastSSID = newSSID
 end
-globals.watcher.WiFi = hs.wifi.watcher.new(ssidChangedCallback):start()
+Globals.watcher.WiFi = hs.wifi.watcher.new(ssidChangedCallback):start()
 
 -- }}}
 
@@ -169,12 +166,12 @@ local function focusSecondToLastFocused()
     if #lastFocused > 1 then lastFocused[2]:focus() end
 end
 
-globals.windows.savedFrames = {}
+Globals.windows.savedFrames = {}
 local function saveFrame(window)
     if window == nil then return end
-    local savedFrame = globals.windows.savedFrames[window:id()]
+    local savedFrame = Globals.windows.savedFrames[window:id()]
     if savedFrame == nil then
-        globals.windows.savedFrames[window:id()] = window:frame()
+        Globals.windows.savedFrames[window:id()] = window:frame()
     end
 end
 
@@ -184,16 +181,16 @@ local function setFrame(window, frame)
     assert(windowID)
 
     -- Check if window was snapped on one of the borders.
-    local cardinal = hs.fnutils.indexOf(globals["windows"], windowID)
-    if cardinal then globals.windows[cardinal] = nil end
+    local cardinal = hs.fnutils.indexOf(Globals["windows"], windowID)
+    if cardinal then Globals.windows[cardinal] = nil end
 
-    local savedFrame = globals.windows.savedFrames[windowID]
+    local savedFrame = Globals.windows.savedFrames[windowID]
     if frame == nil and savedFrame == nil then return end -- Nothing to do
 
     if frame == nil then
         assert(savedFrame)
         window:setFrame(savedFrame) -- Restore the original frame
-        globals.windows.savedFrames[windowID] = nil
+        Globals.windows.savedFrames[windowID] = nil
         return
     end
 
@@ -210,7 +207,7 @@ local function setFrame(window, frame)
 
     -- Store that window is snapped to one of the borders.
     cardinal = hs.fnutils.indexOf(snapped, frame)
-    if cardinal then globals.windows[cardinal] = windowID end
+    if cardinal then Globals.windows[cardinal] = windowID end
 end
 
 local function resize(window, enlarge)
@@ -248,9 +245,9 @@ end
 -- Window filters {{{
 
 -- Focus last window when closing Finder.
-globals.wfilters.finder =
+Globals.wfilters.finder =
     wf.copy(wf.defaultCurrentSpace):setDefaultFilter(false):setAppFilter(
-        'Finder'):subscribe(wf.windowDestroyed, function(_, name, _)
+        'Finder'):subscribe(wf.windowDestroyed, function(_, _, _)
         -- Finder always keep a background window open.
         if #hs.application('com.apple.finder'):allWindows() == 1 then
             focusLastFocused()
@@ -260,19 +257,19 @@ globals.wfilters.finder =
 
 -- Emojis {{{
 
-globals.emojis = hs.loadSpoon('Emojis')
+Globals.emojis = hs.loadSpoon('Emojis')
 
 -- }}}
 
 -- Seal {{{
 
-globals.seal = hs.loadSpoon('Seal')
-globals.seal:loadPlugins({
+Globals.seal = hs.loadSpoon('Seal')
+Globals.seal:loadPlugins({
     'tunnelblick', 'network_locations', 'snippets', 'macos', 'hammerspoon',
     'zoom', 'shortcuts'
 })
-globals.seal:bindHotkeys({toggle = {hyper, 'space'}})
-globals.seal:start()
+Globals.seal:bindHotkeys({toggle = {hyper, 'space'}})
+Globals.seal:start()
 
 -- }}}
 
@@ -291,8 +288,8 @@ hs.hotkey.bind(hyper_shift, "c", function()
 end)
 
 -- Clipboard manager
-globals.clipboard = require('clipboard')
-hs.hotkey.bind(hyper, "c", globals.clipboard.toggle)
+Globals.clipboard = require('clipboard')
+hs.hotkey.bind(hyper, "c", Globals.clipboard.toggle)
 
 -- Force pasting where forbidden
 hs.hotkey.bind(hyper_shift, "v", function()
@@ -302,7 +299,7 @@ end)
 -- Grid Snapping Mode {{{
 
 local h = hs.hotkey.modal.new(hyper, 'q')
-globals.modals.grid_snapping_hotkey = h
+Globals.modals.grid_snapping_hotkey = h
 function h:entered() hs.alert('Entered grid snapping mode') end
 function h:exited() hs.alert('Exited grid snapping mode') end
 h:bind('', 'escape', function() h:exit() end)
@@ -360,7 +357,7 @@ end)
 -- Focus window on west, south, north, east
 hs.fnutils.each({"h", "j", "k", "l"}, function(k)
     hs.hotkey.bind(hyper, k, function()
-        local snappedID = globals["windows"][cardinals[k]]
+        local snappedID = Globals["windows"][cardinals[k]]
         if snappedID and hs.window.get(snappedID) then
             hs.window.get(snappedID):focus()
             return
@@ -469,7 +466,7 @@ end)
 
 -- Emoji chooser
 
-globals.emojis:bindHotkeys({toggle = {hyper, 'e'}})
+Globals.emojis:bindHotkeys({toggle = {hyper, 'e'}})
 
 -- }}}
 
@@ -486,12 +483,12 @@ local function launchOrFocusITerm()
         hs.application.open('com.googlecode.iterm2')
     else
         -- Pass the hotkey through.
-        globals.iTermHotkey:disable()
+        Globals.iTermHotkey:disable()
         hs.eventtap.keyStroke({'alt'}, 'space')
-        globals.iTermHotkey:enable()
+        Globals.iTermHotkey:enable()
     end
 end
-globals.iTermHotkey =
+Globals.iTermHotkey =
     hs.hotkey.new({'alt'}, 'space', launchOrFocusITerm):enable()
 
 -- }}}
@@ -504,8 +501,8 @@ require('pocket')
 
 -- Audio input/output {{{
 
-globals.audio = require('audio')
-hs.hotkey.bind(hyper, "a", globals.audio.toggleAudioInput)
+Globals.audio = require('audio')
+hs.hotkey.bind(hyper, "a", Globals.audio.toggleAudioInput)
 
 -- }}}
 
