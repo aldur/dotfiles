@@ -12,4 +12,4 @@ local function usbDeviceCallback(data)
         end
     end
 end
-globals.watcher.usb = hs.usb.watcher.new(usbDeviceCallback):start()
+Globals.watcher.usb = hs.usb.watcher.new(usbDeviceCallback):start()
