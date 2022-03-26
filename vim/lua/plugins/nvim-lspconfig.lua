@@ -112,7 +112,7 @@ lspconfig.pylsp.setup(extend_config({
         client.resolved_capabilities.signature_help = false
         client.resolved_capabilities.code_lens = false
         client.resolved_capabilities.code_action = false
-        on_attach(client, bufnr)
+        default_on_attach(client, bufnr)
     end,
     on_new_config = function(new_config, new_root_dir)
         new_config['cmd_env'] = pylsp_cmd_env(new_root_dir)
@@ -257,8 +257,9 @@ lspconfig.ltex.setup(extend_config({
         }
     },
 
-    -- https://github.com/neovim/nvim-lspconfig/blob/7d5a6dc46dd2ebaeb74b573922f289ae33089fe7/lua/lspconfig/server_configurations/ltex.lua#L23
-    -- Could probably do better by overriding the function.
+    -- https://github.com/neovim/nvim-lspconfig/blob/
+    -- 7d5a6dc46dd2ebaeb74b573922f289ae33089fe7/lua/lspconfig/
+    -- server_configurations/ltex.lua#L23
     get_language_id = function(_, filetype)
         if filetype == 'markdown.wiki' then
             return 'markdown'
