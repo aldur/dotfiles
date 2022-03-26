@@ -4,8 +4,10 @@ setlocal spell spelllang=en,it
 setlocal textwidth=80
 setlocal conceallevel=0
 setlocal nojoinspaces
-setlocal signcolumn=no
 call aldur#whitespace#settab(2)
+
+" Signs are disabled in LSP configuration.
+" setlocal signcolumn=no
 
 " Allow reading modelines in YAML header
 setlocal modelines=5
