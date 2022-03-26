@@ -133,6 +133,7 @@
     Plug 'neovim/nvim-lspconfig', b:has_nvim_python3 ? {  } : { 'on': [] }
     Plug 'ray-x/lsp_signature.nvim', b:has_nvim_python3 ? {  } : { 'on': [] }
     Plug 'folke/trouble.nvim', b:has_nvim_python3 ? {  } : { 'on': [] }
+    Plug 'kosayoda/nvim-lightbulb', b:has_nvim_python3 ? {  } : { 'on': [] }
 
     " Completion {{{ "
         Plug 'hrsh7th/cmp-nvim-lsp', b:has_nvim_python3 ? {  } : { 'on': [] }

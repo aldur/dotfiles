@@ -16,3 +16,5 @@ command! ToggleUpdateInInsert call aldur#lsp#toggle_update_in_insert()
 " font. We work around this by calling it with `DiagnosticChanged`, and then
 " having making it a no-op after it executes the first time.
 autocmd vimrc DiagnosticChanged * lua require('plugins/utils').set_nerd_signs()
+
+autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()

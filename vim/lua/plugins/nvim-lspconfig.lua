@@ -57,6 +57,10 @@ local default_on_attach = function(_, bufnr)
                    opts)
     -- Mnemonic for Info
     buf_set_keymap('n', '<leader>i', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+    buf_set_keymap('n', '<leader>c', '<cmd>lua vim.lsp.buf.code_action()<CR>',
+                   opts)
+    buf_set_keymap('x', '<leader>c', '<esc><cmd>lua vim.lsp.buf.range_code_action()<CR>',
+                   opts)
 
     buf_set_keymap('n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>',
                    opts)
@@ -106,7 +110,7 @@ lspconfig.pylsp.setup(extend_config({
         client.resolved_capabilities.document_range_formatting = false
         client.resolved_capabilities.find_references = false
         client.resolved_capabilities.goto_definition = false
-        client.resolved_capabilities.execute_command = false
+        client.resolved_capabilities.execute_command = true
         client.resolved_capabilities.document_symbol = false
         client.resolved_capabilities.hover = false
         client.resolved_capabilities.rename = false

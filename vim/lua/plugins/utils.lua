@@ -33,6 +33,7 @@ function M.set_nerd_signs()
             end
         end
     end
+    M._nerd_signs_were_set = true
 end
 
 return M
