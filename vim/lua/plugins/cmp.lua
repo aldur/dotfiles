@@ -90,8 +90,8 @@ local default_sources = {
                     local buf = vim.api.nvim_win_get_buf(win)
                     bufs[buf] = true
                     local line_count = vim.api.nvim_buf_line_count(buf)
-                    local byte_size =
-                        vim.api.nvim_buf_get_offset(buf, line_count)
+                    local byte_size = vim.api.nvim_buf_get_offset(buf,
+                                                                  line_count)
                     if byte_size <= 1024 * 1024 then -- 1 Megabyte max
                         -- Discard buffers that are too big.
                         bufs[buf] = true
@@ -102,6 +102,19 @@ local default_sources = {
         }
     }, {name = 'path'}
 }
+
+local md_sources = {
+    {name = 'notes'}, -- Does not currently work well.
+    {name = 'note_tags', max_item_count = 5}, {name = 'note_headers'}
+}
+
+for _, source in pairs(default_sources) do
+    -- NOTE: You can't use `tbl_deep_extend` because it doesn't work on lists.
+    table.insert(md_sources, source)
+end
+
+-- For some reasons, I couldn't get this to work.
+cmp.setup.filetype({'markdown.wiki', 'markdown'}, {sources = md_sources})
 
 cmp.setup({
     formatting = {
@@ -128,13 +141,6 @@ cmp.setup({
         })
     },
     sources = default_sources
-})
-
-cmp.setup.filetype({'markdown', 'markdown.wiki'}, {
-    sources = vim.tbl_deep_extend('force', {
-        {name = 'notes'}, -- Does not currently work well.
-        {name = 'note_tags', max_item_count = 5}, {name = 'note_headers'}
-    }, default_sources)
 })
 
 cmp.setup.cmdline(':', {
