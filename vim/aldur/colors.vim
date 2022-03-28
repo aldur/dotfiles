@@ -48,6 +48,12 @@ function! aldur#colors#customize_sonokai() abort
     " and the last parameter is for `guisp` which is also optional.
     " See `autoload/sonokai.vim` for the format of `l:palette`.
 
-    " TODO are bold and yellow.
+    " TODO is bold and yellow
     call sonokai#highlight('Todo', l:palette.yellow, l:palette.bg0, 'bold')
+    " NOTE is bold and blue
+    call sonokai#highlight('Note', l:palette.blue, l:palette.bg0, 'bold')
+    " DEBUG is bold and red
+    call sonokai#highlight('Debug', l:palette.red, l:palette.bg0, 'bold')
+    " DONE is bold and green
+    call sonokai#highlight('Done', l:palette.green, l:palette.bg0, 'bold')
 endfunction
