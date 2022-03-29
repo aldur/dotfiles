@@ -79,3 +79,6 @@ onoremap <silent><buffer> if :<C-u>call aldur#markdown#fence_textobj(v:true)<CR>
 onoremap <silent><buffer> af :<C-u>call aldur#markdown#fence_textobj(v:false)<CR>
 xnoremap <silent><buffer> if :<C-u>call aldur#markdown#fence_textobj(v:true)<CR>
 xnoremap <silent><buffer> af :<C-u>call aldur#markdown#fence_textobj(v:false)<CR>
+
+nnoremap <silent><buffer> K :<C-u>call aldur#dictionary#dictionary('')<CR>
+xnoremap <silent><buffer> K :<C-u>call aldur#dictionary#dictionary('')<CR>
