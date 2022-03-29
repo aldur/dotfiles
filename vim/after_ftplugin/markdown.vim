@@ -82,3 +82,5 @@ xnoremap <silent><buffer> af :<C-u>call aldur#markdown#fence_textobj(v:false)<CR
 
 nnoremap <silent><buffer> K :<C-u>call aldur#dictionary#dictionary('')<CR>
 xnoremap <silent><buffer> K :<C-u>call aldur#dictionary#dictionary('')<CR>
+
+nmap <silent><buffer> gx <plug>(wiki-link-follow)
