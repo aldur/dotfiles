@@ -59,8 +59,8 @@ local default_on_attach = function(_, bufnr)
     buf_set_keymap('n', '<leader>i', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
     buf_set_keymap('n', '<leader>c', '<cmd>lua vim.lsp.buf.code_action()<CR>',
                    opts)
-    buf_set_keymap('x', '<leader>c', '<esc><cmd>lua vim.lsp.buf.range_code_action()<CR>',
-                   opts)
+    buf_set_keymap('x', '<leader>c',
+                   '<esc><cmd>lua vim.lsp.buf.range_code_action()<CR>', opts)
 
     buf_set_keymap('n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>',
                    opts)
@@ -300,6 +300,25 @@ M.diagnostic_config = {
 
 function M.reload_config() vim.diagnostic.config(M.diagnostic_config) end
 M.reload_config() -- First time initialization.
+
+-- Remove annoying highlight and lightbulb, just color the line.
+vim.fn.sign_define('LightBulbSign', {
+    text = "",
+    texthl = "",
+    linehl = "",
+    numhl = "QuickFixLine"
+})
+
+require'nvim-lightbulb'.setup {
+    ignore = {'pylsp'}, -- LSP client names to ignore
+    sign = {
+        enabled = true,
+        priority = 10 -- Priority of the gutter sign
+    },
+    float = {enabled = false},
+    virtual_text = {enabled = false},
+    status_text = {enabled = false}
+}
 
 return M
 

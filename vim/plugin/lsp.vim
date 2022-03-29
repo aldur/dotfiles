@@ -17,4 +17,4 @@ command! ToggleUpdateInInsert call aldur#lsp#toggle_update_in_insert()
 " having making it a no-op after it executes the first time.
 autocmd vimrc DiagnosticChanged * lua require('plugins/utils').set_nerd_signs()
 
-autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()
+autocmd CursorHold * lua require'nvim-lightbulb'.update_lightbulb()
