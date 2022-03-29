@@ -11,4 +11,4 @@ autocmd vimrc FileType netrw setl bufhidden=wipe  " Wipe netrw buffers when hidd
 " For some reasons, netrw `gx` seems not to work on recent versions of nvim.
 " This fixes it.
 " https://stackoverflow.com/questions/9458294/open-url-under-cursor-in-vim-with-browser/53817071#53817071
-nmap <silent>gx :sil !open <c-r><c-a><cr>
+nnoremap <silent> gx :execute 'silent! !open ' . shellescape(expand('<cWORD>'), 1)<cr>
