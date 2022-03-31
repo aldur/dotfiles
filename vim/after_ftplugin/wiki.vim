@@ -4,3 +4,5 @@ nnoremap <silent><buffer> <leader>wp :WikiExportHTML<CR>
 
 " Faster rename
 nnoremap <silent><buffer> <leader>wr :call aldur#wiki#rename_no_ask()<CR>
+" Overwrite default command
+command! -buffer WikiPageRename         call aldur#wiki#rename_no_ask()
