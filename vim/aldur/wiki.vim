@@ -38,3 +38,17 @@ function! aldur#wiki#template(context) abort
     call append(5, '')
     call append(6, '# ' . a:context.name)
 endfunction
+
+function! aldur#wiki#export_args() abort
+    let l:expanded_root = expand(g:wiki_root)
+    let l:args = [
+                \ '--self-contained',
+                \ '--lua-filter ' . l:expanded_root . '/assets/header_as_title.lua',
+                \ '--lua-filter ' . l:expanded_root . '/assets/todo_to_checkbox.lua',
+                \ '-F mermaid-filter',
+                \ '--template GitHub.html5',
+                \ '--data-dir ' . l:expanded_root . '/assets/'
+        \ ]
+
+    return join(l:args, ' ')
+endfunction
