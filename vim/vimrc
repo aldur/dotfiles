@@ -238,15 +238,6 @@
         let g:wiki_filetypes = ['md']
         let g:wiki_link_target_type = 'md'
 
-        let g:wiki_export = {
-            \ 'args' : aldur#wiki#export_args(),
-            \ 'from_format' : 'markdown',
-            \ 'ext' : 'html',
-            \ 'link_ext_replace': v:false,
-            \ 'view' : v:true,
-            \ 'output': fnamemodify(tempname(), ':h'),
-            \}
-
         " Disable unused mappings
         let g:wiki_mappings_global = {
                     \ '<plug>(wiki-index)' : '<plug>',
