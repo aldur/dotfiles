@@ -58,7 +58,12 @@ let &showbreak = '↪'                               " Show whether lines have b
 set showtabline=1  " Only show the tabline if there are at least two tab pages.
 
 set noshowmode   " Do not show mode indicator below status bar
-set laststatus=2 " Always show the statusbar
+
+if has('nvim')
+    set laststatus=3 " Set global statusbar
+else
+    set laststatus=2 " Always show the statusbar
+endif
 
 if has('nvim')
     " Restore terminal cursor when nvim leaves.
