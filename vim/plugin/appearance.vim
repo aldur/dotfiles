@@ -59,11 +59,7 @@ set showtabline=1  " Only show the tabline if there are at least two tab pages.
 
 set noshowmode   " Do not show mode indicator below status bar
 
-if has('nvim')
-    set laststatus=3 " Set global statusbar
-else
-    set laststatus=2 " Always show the statusbar
-endif
+call aldur#appearance#setlaststatus()
 
 if has('nvim')
     " Restore terminal cursor when nvim leaves.
