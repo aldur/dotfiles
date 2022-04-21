@@ -128,7 +128,7 @@ cmp.setup({
         end
     },
     snippet = {expand = function(args) vim.fn["UltiSnips#Anon"](args.body) end},
-    mapping = {
+    mapping = cmp.mapping.preset.insert({
         ['<C-e>'] = cmp.mapping(function(fallback)
             -- First close the popup, then send `c-e`.
             if cmp.visible() then cmp.mapping.close() end
@@ -139,11 +139,15 @@ cmp.setup({
             s = default_tab_mapping,
             c = cmp.mapping.select_next_item()
         })
-    },
+    }),
     sources = default_sources
 })
 
 cmp.setup.cmdline(':', {
-    sources = cmp.config.sources({{name = 'path'}}, {{name = 'cmdline'}})
+    sources = cmp.config.sources({{name = 'path'}}, {{name = 'cmdline'}}),
+    mapping = cmp.mapping.preset.cmdline()
 })
-cmp.setup.cmdline('/', {sources = {{name = 'buffer'}}})
+cmp.setup.cmdline('/', {
+    sources = {{name = 'buffer'}},
+    mapping = cmp.mapping.preset.cmdline()
+})
