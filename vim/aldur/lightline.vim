@@ -64,33 +64,3 @@ endfunction
 function! aldur#lightline#spell()
     return winwidth(0) > 70 ? (&spell?&spelllang:'') : ''
 endfunction
-
-lua << EOF
-function _G.lightline_tresitter()
-    if vim.fn.winwidth(0) > 70 then
-        local ts = require'nvim-treesitter'.statusline({
-            indicator_size=50,
-            transform_fn=function(line)
-                local filetypes = vim.split(vim.bo.filetype, '.', true)
-                if vim.tbl_contains(filetypes, 'python') then
-                    line = line:gsub('class ', '')
-                    line = line:gsub('def ', '')
-                    line = line:gsub('%s*->%s*.+%s*:', '')
-                    line = line:gsub('%(.*%)', '')
-                    line = line:gsub(':', '')
-                end
-                return line:gsub('%s*[%[%(%{]*%s*$', '')
-            end,
-        })
-        if ts ~= nil then
-            return ts
-        end
-    end
-
-    return ''
-end
-EOF
-
-function! aldur#lightline#treesitter()
-    return v:lua.lightline_tresitter()
-endfunction

@@ -47,7 +47,6 @@ let g:lightline.component_function = {
             \ 'filename': 'aldur#lightline#filename',
             \ 'filetype': 'aldur#lightline#filetype',
             \ 'spell': 'aldur#lightline#spell',
-            \ 'treesitter': 'aldur#lightline#treesitter'
             \ }
 
 " Custom component for file encoding and format
