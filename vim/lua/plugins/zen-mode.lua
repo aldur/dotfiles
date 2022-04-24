@@ -42,7 +42,15 @@ require("zen-mode").setup({
         }
     },
     -- callback where you can add custom code when the Zen window opens
-    on_open = function(_) end,
+    on_open = function(_)
+        vim.w.zen_mode_restore_fzf_layout = vim.g.fzf_layout
+        vim.g.fzf_layout = {
+            window = {width = 1.0, height = 0.4, relative = false, yoffset = 1.0}
+        }
+    end,
     -- callback where you can add custom code when the Zen window closes
-    on_close = function() end
+    on_close = function()
+        vim.g.fzf_layout = vim.w.zen_mode_restore_fzf_layout
+        vim.w.zen_mode_restore_fzf_layout = nil
+    end
 })
