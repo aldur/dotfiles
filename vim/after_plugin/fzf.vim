@@ -2,11 +2,7 @@ if exists(':FZF') == 0
     finish
 endif
 
-let g:fzf_layout = { 'down': '~40%' }
-
-" Hide statusbar while FZF is on.
-autocmd vimrc FileType fzf set laststatus=0 noshowmode noruler
-  \| autocmd vimrc BufLeave <buffer> call aldur#appearance#setlaststatus() | set noshowmode ruler
+let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 0.4, 'relative': v:false, 'yoffset': 1.0, 'border': 'sharp' } }
 
 " Override the Rg command so that it searches in the current project root
 command! -bang -nargs=* RgProject call aldur#fzf#rg_project(<q-args>, <bang>0)
