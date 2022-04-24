@@ -1,11 +1,8 @@
 -- Modeline {{{
-
 -- vim: set foldmarker={{{,}}} foldlevel=0 foldmethod=marker:
-
 -- }}}
 -- luacheck: globals hs Globals, no self
 -- Require {{{
-
 local secrets = require('secrets')
 
 -- }}}
@@ -209,7 +206,8 @@ local function setFrame(window, frame)
         1 then
         window:moveToUnit(frame)
     else
-        window:move(frame)
+        window:move(frame, nil, true -- ensure new frame is in screen bounds
+        )
     end
 
     -- Store that window is snapped to one of the borders.
@@ -229,13 +227,6 @@ local function resize(window, enlarge)
 
         frame.w = frame.w * 11 / 10
         frame.h = frame.h * 11 / 10
-
-        if frame.x < 0 then frame.x = 0 end
-        if frame.y < 0 then frame.y = 0 end
-
-        local screen = window:screen():frame()
-        if frame.w > screen.w then frame.w = screen.w end
-        if frame.h > screen.h then frame.h = screen.h end
     else
         frame.x = frame.x + (frame.w * 1 / 20)
         frame.y = frame.y + (frame.h * 1 / 20)
