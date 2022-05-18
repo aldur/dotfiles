@@ -39,7 +39,10 @@ function! aldur#colors#customize_sonokai() abort
 
     " Initialize the color palette.
     " The parameter is a valid value for `g:sonokai_style`,
-    let l:palette = sonokai#get_palette(get(g:, 'sonokai_style', "default"))
+    let l:palette = sonokai#get_palette(
+                \ get(g:, 'sonokai_style', "default"),
+                \ get(g:, 'soookai_colors_override', {})
+                \ )
     " Define a highlight group.
     " The first parameter is the name of a highlight group,
     " the second parameter is the foreground color,
