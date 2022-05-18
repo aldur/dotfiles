@@ -279,6 +279,8 @@ lspconfig.ltex.setup(extend_config({
 -- Currently very buggy.
 -- lspconfig.solc.setup(default_lsp_config)
 
+lspconfig.ccls.setup(default_lsp_config)
+
 local buffer_options_default = require('plugins.utils').buffer_options_default
 
 M.diagnostic_config = {
