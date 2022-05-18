@@ -37,7 +37,7 @@ local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp
                                                                      .make_client_capabilities())
 
 -- Setup everything on lsp attach
-local default_on_attach = function(_, bufnr)
+local default_on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
     require"lsp_signature".on_attach({
@@ -52,9 +52,12 @@ local default_on_attach = function(_, bufnr)
         vim.api.nvim_buf_set_keymap(bufnr, ...)
     end
 
-    -- Mnemonic for Usages
-    buf_set_keymap('n', '<leader>u', '<cmd>lua vim.lsp.buf.references()<CR>',
-                   opts)
+    if client.resolved_capabilities.find_references then
+        -- Mnemonic for Usages
+        buf_set_keymap('n', '<leader>u',
+                       '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+    end
+
     -- Mnemonic for Info
     buf_set_keymap('n', '<leader>i', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
     buf_set_keymap('n', '<leader>c', '<cmd>lua vim.lsp.buf.code_action()<CR>',
