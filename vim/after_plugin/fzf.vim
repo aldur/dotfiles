@@ -27,6 +27,8 @@ nnoremap <silent> <leader>h :History<CR>
 nnoremap <silent> <leader>H :Files ~<CR>
 nnoremap <silent> <leader>: :History:<CR>
 
+nnoremap <silent> <leader>u :RgProject <C-r><C-w><CR>  " NOTE this will be overwritten by LSP
+
 if !empty($FZF_DEFAULT_COMMAND)
     inoremap <expr> <plug>(fzf-complete-path)      fzf#vim#complete#path($FZF_DEFAULT_COMMAND)
 endif
