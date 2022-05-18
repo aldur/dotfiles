@@ -18,8 +18,8 @@ let b:show_virtual_text = v:false
 " Match fenced code blocks and inline backticks.
 let b:match_words = '```.\+:```$,\S\@<!`:`\S\@!'
 
+let b:surround_103 = "**\r**"  " g - bold
 let b:surround_105 = "_\r_"  " i - italic
-" let b:surround_98 = "*\r*"  " b - bold
 
 " Disable three backticks disappearing on new-line
 let b:pear_tree_repeatable_expand = 0
