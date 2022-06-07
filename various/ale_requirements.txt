@@ -5,3 +5,4 @@ yamllint
 yamlfix
 timefhuman
 python-lsp-server[all]
+pyflakes
