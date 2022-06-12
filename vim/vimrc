@@ -86,7 +86,7 @@
     Plug 'lervag/wiki.vim'
     Plug 'lervag/lists.vim'
     if executable('rg')
-        Plug 'alok/notational-fzf-vim'
+        Plug 'aldur/notational-fzf-vim'
     end
 
     " Appearance and Statusline
@@ -108,7 +108,7 @@
         Plug 'fatih/vim-go', { 'for': 'go' }
 
         " Markdown
-        Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
+        Plug 'aldur/vim-markdown', { 'for': 'markdown' }
 
         " Swift
         Plug 'keith/swift.vim', { 'for': 'swift' }
