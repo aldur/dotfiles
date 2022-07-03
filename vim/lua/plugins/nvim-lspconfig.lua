@@ -284,6 +284,12 @@ lspconfig.ccls.setup(default_lsp_config)
 -- cargo install rnix-lsp
 lspconfig.rnix.setup(default_lsp_config)
 
+-- https://github.com/artempyanykh/marksman
+-- requires manual installation
+lspconfig.marksman.setup(extend_config({
+    root_dir = util.root_pattern(".git", ".marksman.toml", ".enable_ctags")
+}))
+
 local buffer_options_default = require('plugins.utils').buffer_options_default
 
 M.diagnostic_config = {
