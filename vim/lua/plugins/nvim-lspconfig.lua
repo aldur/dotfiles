@@ -286,9 +286,11 @@ lspconfig.rnix.setup(default_lsp_config)
 
 -- https://github.com/artempyanykh/marksman
 -- requires manual installation
-lspconfig.marksman.setup(extend_config({
-    root_dir = util.root_pattern(".git", ".marksman.toml", ".enable_ctags")
-}))
+if vim.fn.executable('marksman') == 1 then
+    lspconfig.marksman.setup(extend_config({
+        root_dir = util.root_pattern(".git", ".marksman.toml", ".enable_ctags")
+    }))
+end
 
 local buffer_options_default = require('plugins.utils').buffer_options_default
 
