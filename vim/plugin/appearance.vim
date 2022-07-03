@@ -8,11 +8,7 @@ if has('termguicolors')
     set termguicolors
 endif
 
-autocmd vimrc ColorScheme vim-monokai-tasty call aldur#colors#customize_monokai()
 autocmd vimrc ColorScheme sonokai call aldur#colors#customize_sonokai()
-
-" let g:vim_monokai_tasty_italic = 1
-" silent! colorscheme vim-monokai-tasty
 
 " The configuration options should be placed before `colorscheme sonokai`.
 let g:sonokai_style = 'atlantis'

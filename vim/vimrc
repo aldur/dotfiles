@@ -92,7 +92,6 @@
     " Appearance and Statusline
     Plug 'itchyny/lightline.vim'                  " Configure the statusbar
 
-    Plug 'patstockwell/vim-monokai-tasty'         " Molokai color scheme
     Plug 'sainnhe/sonokai'                        " Based on Monokai pro
 
     Plug 'folke/zen-mode.nvim'
