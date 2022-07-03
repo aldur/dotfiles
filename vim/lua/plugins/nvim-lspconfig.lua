@@ -324,7 +324,7 @@ vim.fn.sign_define('LightBulbSign', {
 })
 
 require'nvim-lightbulb'.setup {
-    ignore = {'pylsp'}, -- LSP client names to ignore
+    ignore = {'pylsp', 'marksman'}, -- LSP client names to ignore
     sign = {
         enabled = true,
         priority = 10 -- Priority of the gutter sign

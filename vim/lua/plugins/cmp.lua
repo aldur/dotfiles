@@ -46,10 +46,10 @@ local check_back_space = function()
     return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
 end
 
-cmp.register_source('note_tags', require'plugins/cmp_note_tags'.new())
+-- Disabled as currently buggy.
 -- cmp.register_source('notes', require'plugins/cmp_notes'.new())
 
--- Disabled as currently buggy.
+cmp.register_source('note_tags', require'plugins/cmp_note_tags'.new())
 cmp.register_source('note_headers', require'plugins/cmp_md_headers'.new())
 
 local default_map_modes = {'i', 's', 'c'}
