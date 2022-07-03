@@ -11,5 +11,4 @@ set completeopt=menuone,noselect
 
 set shortmess+=c " Quiet completions
 
-lua require('plugins/nvim-lspconfig')
 lua require('plugins/cmp')
