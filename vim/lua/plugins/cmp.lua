@@ -34,7 +34,7 @@ local menu_identifiers = {
     nvim_lsp = "[LSP]",
     ultisnips = "[Snips]",
     nvim_lua = "[Lua]",
-    notes = "[Notes]",
+    -- notes = "[Notes]",
     note_tags = "[NTags]",
     note_headers = "[NHead]",
     path = "[Path]",
@@ -47,7 +47,7 @@ local check_back_space = function()
 end
 
 cmp.register_source('note_tags', require'plugins/cmp_note_tags'.new())
-cmp.register_source('notes', require'plugins/cmp_notes'.new())
+-- cmp.register_source('notes', require'plugins/cmp_notes'.new())
 
 -- Disabled as currently buggy.
 cmp.register_source('note_headers', require'plugins/cmp_md_headers'.new())
@@ -104,7 +104,7 @@ local default_sources = {
 }
 
 local md_sources = {
-    {name = 'notes'}, -- Does not currently work well.
+    -- {name = 'notes'}, -- Does not currently work well.
     {name = 'note_tags', max_item_count = 5}, {name = 'note_headers'}
 }
 
@@ -113,7 +113,6 @@ for _, source in pairs(default_sources) do
     table.insert(md_sources, source)
 end
 
--- For some reasons, I couldn't get this to work.
 cmp.setup.filetype({'markdown.wiki', 'markdown'}, {sources = md_sources})
 
 cmp.setup({
