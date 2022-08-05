@@ -15,7 +15,7 @@ karabiner:
 	$(LN) $(shell readlink -f karabiner) ${HOME}/.config/karabiner
 
 gpg-agent.conf:
+	# This needs to be dynamic because we read brew's prefix
 	mkdir -p ${HOME}/.gnupg
-	$(LN) $(shell readlink -f $@) ${HOME}/.gnupg/$@
-	echo pinentry-program $(brew --prefix)/bin/pinentry-mac >> ${HOME}/.gnupg/$@
+	echo pinentry-program $(shell brew --prefix)/bin/pinentry-mac >> ${HOME}/.gnupg/$@
 
