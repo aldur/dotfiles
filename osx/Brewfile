@@ -46,6 +46,7 @@ cask "disk-inventory-x"
 cask "karabiner-elements"
 cask "dash"
 cask "secretive"
+cask "stats"
 
 tap "homebrew/cask-fonts"
 cask "font-fira-code"
