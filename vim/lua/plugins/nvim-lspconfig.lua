@@ -175,7 +175,6 @@ lspconfig.sumneko_lua.setup(extend_config({
         client.resolved_capabilities.document_range_formatting = false
         default_on_attach(client, bufnr)
     end,
-    cmd = {"/usr/local/bin/lua-language-server"},
     settings = {
         Lua = {
             runtime = {
@@ -217,8 +216,12 @@ lspconfig.gopls.setup(default_lsp_config)
 -- This has an executable called `typescript-language-server` that wraps `tsserver`.
 -- For JS, you'll need to crate a `jsconfig.json` file in the root directory:
 -- https://github.com/tsconfig/bases/blob/main/bases/node16.json
+local npm_path = '/usr/local/bin/npm'
+if vim.fn.filereadable(npm_path) == 0 then
+    npm_path = '/opt/homebrew/bin/npm'
+end
 lspconfig.tsserver.setup(extend_config({
-    init_options = {npmLocation = '/usr/local/bin/npm'},
+    init_options = {npmLocation = npm_path},
     on_attach = function(client, bufnr)
         client.resolved_capabilities.document_formatting = false
         default_on_attach(client, bufnr)

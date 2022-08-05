@@ -77,13 +77,17 @@ end
 
 function obj.toggleBluetooth()
     -- Requires `brew install blueutil`.
-    local success, result, _ = hs.applescript([[do shell script "/usr/local/bin/blueutil power"]])
+    local path =  "/usr/local/bin/blueutil"
+    if hs.fs.displayName(path) == nil then
+        path =  "/opt/homebrew/bin/blueutil"
+    end
+    local success, result, _ = hs.applescript([[do shell script " ]] .. path .. [["]])
     if not success then
         obj.__logger.e('Got an error while determining Bluetooth power state.')
         return
     end
 
-    local script = [[do shell script "/usr/local/bin/blueutil %s"]]
+    local script = [[do shell script " ]] .. path .. [[ %s"]]
     if result == '1' then
         script = script:format('off')
     else
