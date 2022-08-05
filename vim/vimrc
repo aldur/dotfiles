@@ -27,6 +27,8 @@
         " Path to homebrew Python3 for nvim
         if filereadable('/usr/local/bin/python3')
             let g:python3_host_prog = '/usr/local/bin/python3'
+        elseif filereadable('/opt/homebrew/bin/python3')
+            let g:python3_host_prog = '/opt/homebrew/bin/python3'
         end
 
         " Disable some of VIM standard plugins
