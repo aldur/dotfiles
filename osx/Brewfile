@@ -19,31 +19,34 @@ brew "rig"
 brew "autossh"
 brew "npm"
 brew "ruby"
+brew "python"  # This is required so that pip install to homebrew Python's directory
 
+tap "universal-ctags/universal-ctags"
 brew "universal-ctags/universal-ctags/universal-ctags", args: ["HEAD"]
 
 tap "homebrew/cask"
+cask_args require_sha: false
+
+cask "google-chrome"
+cask "spotify"
+
 cask_args require_sha: true
 
-cask "1password"
-cask "font-fontawesome"
 cask "vimr"
-cask "google-chrome"
 cask "slack"
 cask "vlc"
 cask "appcleaner"
 cask "plex-media-player"
-cask "spotify"
 cask "calibre"
 cask "hammerspoon"
-cask "cyberduck"
 cask "iterm2"
 cask "the-unarchiver"
 cask "disk-inventory-x"
 cask "karabiner-elements"
-cask "tor-browser"
 cask "dash"
+cask "secretive"
 
 tap "homebrew/cask-fonts"
 cask "font-fira-code"
 cask "font-fira-code-nerd-font"
+cask "font-fontawesome"
