@@ -76,7 +76,12 @@
 
     " Fuzzy files, tags, life.
     if has('mac') && executable('fzf')  " Install `fzf` with homebrew
-        Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
+        if filereadable('/usr/local/opt/fzf')
+            Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
+        else
+            " M1 macs
+            Plug '/opt/homebrew/opt/fzf' | Plug 'junegunn/fzf.vim'
+        endif
     else  " Install it as a local plugin
         Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
         Plug 'junegunn/fzf.vim'
