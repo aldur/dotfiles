@@ -6,7 +6,11 @@ let g:tex_flavor = 'latex'  " Open '.tex' files as 'tex' and not 'plaintex'.
 let g:vimtex_quickfix_mode = 2  " Auto-open quickfix with no focus.
 
 if has('nvim')
-    let g:vimtex_compiler_progname = '/usr/local/bin/nvr'
+    if filereadable('/usr/local/bin/nvr')
+        let g:vimtex_compiler_progname = '/usr/local/bin/nvr'
+    elseif filereadable('/opt/homebrew/bin/nvr')
+        let g:vimtex_compiler_progname = '/opt/homebrew/bin/nvr'
+    endif
 end
 
 if has('mac')
