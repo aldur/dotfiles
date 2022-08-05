@@ -20,6 +20,7 @@ brew "autossh"
 brew "npm"
 brew "ruby"
 brew "python"  # This is required so that pip install to homebrew Python's directory
+brew "blueutil"
 
 tap "universal-ctags/universal-ctags"
 brew "universal-ctags/universal-ctags/universal-ctags", args: ["HEAD"]
