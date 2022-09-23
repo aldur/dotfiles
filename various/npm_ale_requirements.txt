@@ -6,3 +6,4 @@ typescript-language-server
 pyright
 dockerfile-language-server-nodejs
 solhint
+yaml-language-server
