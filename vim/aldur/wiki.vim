@@ -52,7 +52,8 @@ endfunction
 function! aldur#wiki#export_args() abort
     let l:expanded_root = expand(g:wiki_root)
     let s:args = [
-                \ '--self-contained',
+                \ '--embed-resources',
+                \ '--standalone',
                 \ '--lua-filter ' . l:expanded_root . '/assets/header_as_title.lua',
                 \ '--lua-filter ' . l:expanded_root . '/assets/todo_to_checkbox.lua',
                 \ '--template GitHub.html5',
