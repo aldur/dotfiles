@@ -23,6 +23,7 @@ brew "python"  # This is required so that pip install to homebrew Python's direc
 brew "blueutil"
 brew "cmake"
 brew "rga"
+brew "pv"
 
 tap "universal-ctags/universal-ctags"
 brew "universal-ctags/universal-ctags/universal-ctags", args: ["HEAD"]
@@ -49,6 +50,7 @@ cask "karabiner-elements"
 cask "dash"
 cask "secretive"
 cask "stats"
+cask "tailscale"
 
 tap "homebrew/cask-fonts"
 cask "font-fira-code"
