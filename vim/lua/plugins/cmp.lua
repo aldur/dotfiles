@@ -139,7 +139,8 @@ cmp.setup({
             c = cmp.mapping.select_next_item()
         })
     }),
-    sources = default_sources
+    sources = default_sources,
+    experimental = {ghost_text = true}
 })
 
 cmp.setup.cmdline(':', {
