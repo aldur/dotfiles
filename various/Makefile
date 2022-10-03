@@ -1,4 +1,4 @@
-include ../include.mk
+various/Makefileinclude ../include.mk
 
 DOTFILES = psqlrc radare2rc curlrc gdbinit inputrc ideavimrc chktexrc pylintrc gitignore_global gitattributes_global weechat mdlrc mdlstyle.rb ripgreprc solhint.json
 CONFIG_FILES = flake8 pycodestyle ctags fd
@@ -22,7 +22,10 @@ git:
 	git config --global pull.rebase true
 	git config --global rebase.autoStash true
 	git config --global commit.gpgsign true
-	git config --global user.signingkey 22ABB9E8653C4764FF5B842B67F8D00BDD8874D3
+	git config --global tag.gpgsign true
+	git config --global tag.forceSignAnnotated true
+	git config --global gpg.ssh.defaultKeyCommand 'sh -c \'echo key::$(ssh-add -L)\''
+	git config --global rerere.enabled true
 
 $(DOTFILES):
 	$(LN) $(shell readlink -f $@) ${HOME}/.$@
