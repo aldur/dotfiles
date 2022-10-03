@@ -33,7 +33,7 @@ function! aldur#git_backup_current_file#backup() abort
     let l:cmd = 'cp "' . l:file . '" "' . l:backup_file . '";'
     let l:cmd .= 'cd "' . l:backup_dir . '";'
     let l:cmd .= 'git add "' . l:backup_file . '";'
-    let l:cmd .= 'git commit -m "Backup ' . l:file . '";'
+    let l:cmd .= 'git commit --no-gpg-sign -m "Backup ' . l:file . '";'
     if has('nvim')
         call jobstart(l:cmd)
     else
