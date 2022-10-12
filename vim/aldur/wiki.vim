@@ -29,7 +29,7 @@ function! aldur#wiki#rename_no_ask() abort
     echo 'Enter new name (without extension):'
     let l:name = input('> ', expand('%:p:t:r'))
     if l:name !=# ''
-        call wiki#page#rename(l:name)
+        call wiki#page#rename({'new_name': l:name})
     endif
 endfunction
 
