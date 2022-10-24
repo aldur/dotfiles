@@ -20,8 +20,8 @@
             let g:loaded_perl_provider = 0  "   Disable Perl support
 
             " Replace `filetype.vim` for `filetype.lua` for faster startup.
-            let g:do_filetype_lua = 1
-            let g:did_load_filetypes = 0
+            " let g:do_filetype_lua = 1
+            " let g:did_load_filetypes = 0
         endif
 
         " Path to homebrew Python3 for nvim

@@ -32,9 +32,7 @@ local function get_python_path(workspace)
     return vim.fn.exepath('python3') or vim.fn.exepath('python') or 'python'
 end
 
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp
-                                                                     .protocol
-                                                                     .make_client_capabilities())
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 -- Setup everything on lsp attach
 local default_on_attach = function(client, bufnr)
@@ -52,7 +50,7 @@ local default_on_attach = function(client, bufnr)
         vim.api.nvim_buf_set_keymap(bufnr, ...)
     end
 
-    if client.resolved_capabilities.find_references then
+    if client.server_capabilities.findReferencesProvider then
         -- Mnemonic for Usages
         buf_set_keymap('n', '<leader>u',
                        '<cmd>lua vim.lsp.buf.references()<CR>', opts)
@@ -107,19 +105,19 @@ end
 lspconfig.pylsp.setup(extend_config({
     on_attach = function(client, bufnr)
         -- Disable all non-required features as we also use Black/efm/pyright.
-        client.resolved_capabilities.document_formatting = false
-        client.resolved_capabilities.completion = false
-        client.resolved_capabilities.document_highlight = false
-        client.resolved_capabilities.document_range_formatting = false
-        client.resolved_capabilities.find_references = false
-        client.resolved_capabilities.goto_definition = false
-        client.resolved_capabilities.execute_command = true
-        client.resolved_capabilities.document_symbol = false
-        client.resolved_capabilities.hover = false
-        client.resolved_capabilities.rename = false
-        client.resolved_capabilities.signature_help = false
-        client.resolved_capabilities.code_lens = false
-        client.resolved_capabilities.code_action = true
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.completionProvider = false
+        client.server_capabilities.documentHighlightProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
+        client.server_capabilities.findReferencesProvider = false
+        client.server_capabilities.gotoDefinitionProvider = false
+        client.server_capabilities.executeCommandProvider = true
+        client.server_capabilities.documentSymbolProvider = false
+        client.server_capabilities.hoverProvider = false
+        client.server_capabilities.renameProvider = false
+        client.server_capabilities.signatureHelpProvider = false
+        client.server_capabilities.codeLensProvider = false
+        client.server_capabilities.codeActionProvider = true
         default_on_attach(client, bufnr)
     end,
     on_new_config = function(new_config, new_root_dir)
@@ -171,8 +169,8 @@ table.insert(runtime_path, 'lua/?/init.lua')
 -- https://www.chrisatmachine.com/Neovim/28-neovim-lua-development/
 lspconfig.sumneko_lua.setup(extend_config({
     on_attach = function(client, bufnr)
-        client.resolved_capabilities.document_formatting = false
-        client.resolved_capabilities.document_range_formatting = false
+        client.server_capabilities.document_formatting = false
+        client.server_capabilities.document_range_formatting = false
         default_on_attach(client, bufnr)
     end,
     settings = {
@@ -204,10 +202,10 @@ lspconfig.gopls.setup(default_lsp_config)
 -- Only formatting, as it's faster than `prettier`.
 -- lspconfig.denols.setup(extend_config({
 --     on_attach = function(client, bufnr)
---         for k, _ in pairs(client.resolved_capabilities) do
---             client.resolved_capabilities[k] = false
+--         for k, _ in pairs(client.server_capabilities) do
+--             client.server_capabilities[k] = false
 --         end
---         client.resolved_capabilities.document_formatting = true
+--         client.server_capabilities.document_formatting = true
 --         on_attach(client, bufnr)
 --     end,
 -- }))
@@ -223,7 +221,7 @@ end
 lspconfig.tsserver.setup(extend_config({
     init_options = {npmLocation = npm_path},
     on_attach = function(client, bufnr)
-        client.resolved_capabilities.document_formatting = false
+        client.server_capabilities.documentFormattingProvider = false
         default_on_attach(client, bufnr)
     end
     -- cmd = {
