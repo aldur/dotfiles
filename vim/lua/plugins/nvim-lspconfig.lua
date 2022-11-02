@@ -44,30 +44,21 @@ local default_on_attach = function(client, bufnr)
     })
 
     -- Mappings
-    local opts = {noremap = true, silent = true}
+    local bufopts = {noremap = true, silent = true, buffer = bufnr}
 
-    local function buf_set_keymap(...)
-        vim.api.nvim_buf_set_keymap(bufnr, ...)
-    end
-
-    if client.server_capabilities.findReferencesProvider or
-        client.server_capabilities.referencesProvider then
+    if client.server_capabilities.referencesProvider then
         -- Mnemonic for Usages
-        buf_set_keymap('n', '<leader>u',
-                       '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+        vim.keymap.set('n', '<leader>u', vim.lsp.buf.references, bufopts)
     end
 
     -- Mnemonic for Info
-    buf_set_keymap('n', '<leader>i', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-    buf_set_keymap('n', '<leader>c', '<cmd>lua vim.lsp.buf.code_action()<CR>',
-                   opts)
-    buf_set_keymap('x', '<leader>c',
-                   '<esc><cmd>lua vim.lsp.buf.range_code_action()<CR>', opts)
-
-    buf_set_keymap('n', '<leader>f',
-                   '<cmd>lua vim.lsp.buf.format({async = true})<CR>', opts)
-    buf_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-    -- buf_set_keymap('n', '<leader>lo', '<cmd>TroubleToggle loclist<CR>', opts)
+    vim.keymap.set('n', '<leader>i', vim.lsp.buf.hover, bufopts)
+    vim.keymap.set('n', '<leader>c', vim.lsp.buf.code_action, bufopts)
+    vim.keymap.set('x', '<leader>c', vim.lsp.buf.code_action, bufopts)
+    vim.keymap.set('n', '<leader>f',
+                   function() vim.lsp.buf.format {async = true} end, bufopts)
+    vim.keymap.set('n', '<c-]>', vim.lsp.buf.definition, bufopts)
+    -- vim.keymap.set('n', '<leader>lo', '<cmd>TroubleToggle loclist<CR>', opts)
 end
 
 local default_lsp_config = {
@@ -110,7 +101,7 @@ lspconfig.pylsp.setup(extend_config({
         client.server_capabilities.completionProvider = false
         client.server_capabilities.documentHighlightProvider = false
         client.server_capabilities.documentRangeFormattingProvider = false
-        client.server_capabilities.findReferencesProvider = false
+        client.server_capabilities.referencesProvider = false
         client.server_capabilities.gotoDefinitionProvider = false
         client.server_capabilities.executeCommandProvider = true
         client.server_capabilities.documentSymbolProvider = false
