@@ -1,3 +1,6 @@
+-- luacheck: globals vim.g
+vim.g.ts_highlight_lua = true
+
 -- https://github.com/nvim-treesitter/nvim-treesitter#modules
 require'nvim-treesitter.configs'.setup {
     ensure_installed = "all",
