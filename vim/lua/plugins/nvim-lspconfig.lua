@@ -50,7 +50,8 @@ local default_on_attach = function(client, bufnr)
         vim.api.nvim_buf_set_keymap(bufnr, ...)
     end
 
-    if client.server_capabilities.findReferencesProvider then
+    if client.server_capabilities.findReferencesProvider or
+        client.server_capabilities.referencesProvider then
         -- Mnemonic for Usages
         buf_set_keymap('n', '<leader>u',
                        '<cmd>lua vim.lsp.buf.references()<CR>', opts)
@@ -63,8 +64,8 @@ local default_on_attach = function(client, bufnr)
     buf_set_keymap('x', '<leader>c',
                    '<esc><cmd>lua vim.lsp.buf.range_code_action()<CR>', opts)
 
-    buf_set_keymap('n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>',
-                   opts)
+    buf_set_keymap('n', '<leader>f',
+                   '<cmd>lua vim.lsp.buf.format({async = true})<CR>', opts)
     buf_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
     -- buf_set_keymap('n', '<leader>lo', '<cmd>TroubleToggle loclist<CR>', opts)
 end
@@ -169,8 +170,8 @@ table.insert(runtime_path, 'lua/?/init.lua')
 -- https://www.chrisatmachine.com/Neovim/28-neovim-lua-development/
 lspconfig.sumneko_lua.setup(extend_config({
     on_attach = function(client, bufnr)
-        client.server_capabilities.document_formatting = false
-        client.server_capabilities.document_range_formatting = false
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
         default_on_attach(client, bufnr)
     end,
     settings = {
@@ -205,7 +206,7 @@ lspconfig.gopls.setup(default_lsp_config)
 --         for k, _ in pairs(client.server_capabilities) do
 --             client.server_capabilities[k] = false
 --         end
---         client.server_capabilities.document_formatting = true
+--         client.server_capabilities.documentFormattingProvider = true
 --         on_attach(client, bufnr)
 --     end,
 -- }))
@@ -215,9 +216,7 @@ lspconfig.gopls.setup(default_lsp_config)
 -- For JS, you'll need to crate a `jsconfig.json` file in the root directory:
 -- https://github.com/tsconfig/bases/blob/main/bases/node16.json
 local npm_path = '/usr/local/bin/npm'
-if vim.fn.filereadable(npm_path) == 0 then
-    npm_path = '/opt/homebrew/bin/npm'
-end
+if vim.fn.filereadable(npm_path) == 0 then npm_path = '/opt/homebrew/bin/npm' end
 lspconfig.tsserver.setup(extend_config({
     init_options = {npmLocation = npm_path},
     on_attach = function(client, bufnr)
@@ -316,6 +315,7 @@ M.diagnostic_config = {
 }
 
 function M.reload_config() vim.diagnostic.config(M.diagnostic_config) end
+
 M.reload_config() -- First time initialization.
 
 -- Remove annoying highlight and lightbulb, just color the line.
