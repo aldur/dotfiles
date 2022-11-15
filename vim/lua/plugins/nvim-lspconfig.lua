@@ -12,7 +12,7 @@ local function get_venv(workspace)
     if match ~= '' then
         local venv = vim.fn.trim(vim.fn.system(
                                      'PIPENV_PIPFILE=' .. match ..
-                                         ' pipenv --venv'))
+                                         ' pipenv -q --venv'))
 
         local msg = "Activating Pipenv at " .. venv
         _G.info_message(msg)
