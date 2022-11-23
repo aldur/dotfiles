@@ -180,7 +180,8 @@ lspconfig.sumneko_lua.setup(extend_config({
             },
             workspace = {
                 -- Make the server aware of Neovim runtime files
-                library = vim.api.nvim_get_runtime_file('', true)
+                library = vim.api.nvim_get_runtime_file('', true),
+                checkThirdParty = false
             },
             telemetry = {enable = false}
         }
@@ -288,7 +289,7 @@ local buffer_options_default = require('plugins.utils').buffer_options_default
 M.diagnostic_config = {
     virtual_text = function(_, bufnr)
         if buffer_options_default(bufnr, 'show_virtual_text', true) then
-            return {prefix = '●', source = "if_many"}
+            return {prefix = '●', source = "always"}
         end
         return false
     end,
