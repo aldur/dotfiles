@@ -56,6 +56,7 @@ function! aldur#wiki#export_args() abort
                 \ '--standalone',
                 \ '--lua-filter ' . l:expanded_root . '/assets/header_as_title.lua',
                 \ '--lua-filter ' . l:expanded_root . '/assets/todo_to_checkbox.lua',
+                \ '--lua-filter ' . l:expanded_root . '/assets/colored_markers.lua',
                 \ '--template GitHub.html5',
                 \ '--data-dir ' . l:expanded_root . '/assets/'
         \ ]
