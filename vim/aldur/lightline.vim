@@ -20,7 +20,7 @@ scriptencoding utf-8
     function! aldur#lightline#lsp_info() abort
         let l:infos = 0
         if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
-            let l:infos = luaeval('#vim.diagnostic.get(0, {severity=vim.diagnostic.severity.INFO})')
+            let l:infos = luaeval('#vim.diagnostic.get(0, {severity={max = vim.diagnostic.severity.INFO}})')
         endif
         return l:infos > 0 ? 'ℹ '.l:infos : ''
     endfunction
