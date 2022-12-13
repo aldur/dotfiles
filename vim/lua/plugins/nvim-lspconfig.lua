@@ -235,7 +235,8 @@ lspconfig.rust_analyzer.setup(extend_config({
             cargo = {buildScripts = {enable = true}},
             procMacro = {enable = true}
         }
-    }
+    },
+    cmd = {"rustup", "run", "stable", "rust-analyzer"}
 }))
 
 local default_ltex_configuration =
