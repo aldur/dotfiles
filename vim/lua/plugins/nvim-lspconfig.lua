@@ -228,8 +228,14 @@ lspconfig.dockerls.setup(default_lsp_config)
 lspconfig.yamlls.setup(default_lsp_config)
 
 -- Rust
-lspconfig.rls.setup(extend_config({
-    settings = {rust = {build_on_save = false, all_features = true}}
+lspconfig.rust_analyzer.setup(extend_config({
+    settings = {
+        ["rust-analyzer"] = {
+            imports = {granularity = {group = "module"}, prefix = "self"},
+            cargo = {buildScripts = {enable = true}},
+            procMacro = {enable = true}
+        }
+    }
 }))
 
 local default_ltex_configuration =
