@@ -15,12 +15,16 @@ local function setAudioInput(isMuted)
     for _, d in pairs(hs.audiodevice.allInputDevices()) do
         local name = d:name()
         if name == nil then name = '<nil>' end
+
         if isMuted then
             logger.d('Muting input of ' .. name .. '.')
         else
             logger.d('Unmuting input of ' .. name .. '.')
         end
-        assert(d:setInputMuted(module.isMuted))
+
+        if not d:setInputMuted(module.isMuted) then
+            logger.d('Device ' .. name .. 'does not support muting.')
+        end
     end
 end
 
