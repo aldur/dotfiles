@@ -1,6 +1,5 @@
 -- luacheck: globals hs
 -- luacheck: globals globals
-
 local logger = hs.logger.new('mic')
 logger.level = 3
 
@@ -43,7 +42,9 @@ function module.localAudioWatchCallback(device_uid, event_name, event_scope, _)
     if event_name == 'mute' and (event_scope == 'glob' or event_scope == 'inpt') then
         local d = hs.audiodevice.findDeviceByUID(device_uid)
         if d == nil then
-            logger.w('Received an event for `nil` device with name "' .. device_uid .. '".')
+            logger.w('Received an event for `nil` device with name "' ..
+                         device_uid .. '".')
+            return
         end
 
         local name = d:name()
@@ -52,9 +53,9 @@ function module.localAudioWatchCallback(device_uid, event_name, event_scope, _)
         if d:inputMuted() ~= module.isMuted then
             local m = 'false'
             if module.isMuted then m = 'true' end
-            logger.i(
-                'Device named ' .. name ..' did not respect the module `isMuted` state (' .. m .. '). Re-setting it.'
-            )
+            logger.i('Device named ' .. name ..
+                         ' did not respect the module `isMuted` state (' .. m ..
+                         '). Re-setting it.')
             assert(d:setInputMuted(module.isMuted))
         end
     end
@@ -82,9 +83,13 @@ end
 function module.toggleMutedMenubar()
     if module.isMuted then
         if module.__menubar ~= nil then return end
-        module.__menubar = hs.menubar.new():setIcon('icons/audio-mute-on.pdf'):setTitle('muted'):setTooltip(
-            'Audio Inputs Are Muted'):setMenu({{title='Audio Inputs Are Muted', disabled=true},
-            {title='-'}, {title='Unmute Input Devices', fn=module.toggleAudioInput}})
+        module.__menubar = hs.menubar.new():setIcon('icons/audio-mute-on.pdf')
+                               :setTitle('muted')
+                               :setTooltip('Audio Inputs Are Muted'):setMenu({
+                {title = 'Audio Inputs Are Muted', disabled = true},
+                {title = '-'},
+                {title = 'Unmute Input Devices', fn = module.toggleAudioInput}
+            })
     else
         if module.__menubar == nil then return end
         module.__menubar:delete()
@@ -93,9 +98,7 @@ function module.toggleMutedMenubar()
 end
 
 hs.audiodevice.watcher.setCallback(module.globalAudioWatchCallback)
-if not hs.audiodevice.watcher.isRunning() then
-    hs.audiodevice.watcher.start()
-end
+if not hs.audiodevice.watcher.isRunning() then hs.audiodevice.watcher.start() end
 
 local function start()
     -- At startup, we use the `muted` state of the default device as truth.
