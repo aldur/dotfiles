@@ -2,7 +2,7 @@ if has('nvim')
     lua require('plugins/nvim-lspconfig')
 
     " Inspired by how lightline.vim refreshes the statusline.
-    autocmd vimrc DiagnosticChanged * |
+    autocmd vimrc DiagnosticChanged *
                 \ call lightline#update() |
                 \ lua vim.diagnostic.setloclist({open = false})
 
