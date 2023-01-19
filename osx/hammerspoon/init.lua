@@ -398,9 +398,8 @@ end
 
 -- Focus/launch most commonly used applications.
 hs.fnutils.each({
-    {'M', 'com.spotify.client'}, {'B', 'com.apple.Safari'},
-    {'W', 'com.kapeli.dashdoc'}, {'G', 'com.culturedcode.ThingsMac'},
-    {'X', 'com.tinyspeck.slackmacgap'}
+    {'B', 'com.apple.Safari'}, {'W', 'com.kapeli.dashdoc'},
+    {'G', 'com.culturedcode.ThingsMac'}, {'X', 'com.tinyspeck.slackmacgap'}
 },
                 function(k)
     hs.hotkey.bind(hyper, k[1], function() focusOrSwitch(k[2]) end)
@@ -409,8 +408,8 @@ end)
 local function getMeetingClients()
     local clients = {
         'com.google.Chrome.app.kjgfgldnnfoeklkmfkjfagphfepbbdan', -- Google Meet?
-        'us.zoom.xos', 'com.cisco.webexmeetingsapp',
-        'com.webex.meetingmanager', 'com.microsoft.teams'
+        'us.zoom.xos', 'com.cisco.webexmeetingsapp', 'com.webex.meetingmanager',
+        'com.microsoft.teams'
     }
 
     -- This is a Google Chrome app and the bundleID changes
@@ -426,6 +425,7 @@ end
 
 -- Focus/launch most commonly used applications across multiple options.
 hs.fnutils.each({
+    {'M', {'com.spotify.client', 'tv.plex.plexamp'}},
     {'T', {'com.qvacua.VimR', 'com.kethku.neovide'}},
     {
         'P',
