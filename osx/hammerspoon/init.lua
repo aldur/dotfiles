@@ -409,7 +409,7 @@ end)
 local function getMeetingClients()
     local clients = {
         'com.google.Chrome.app.kjgfgldnnfoeklkmfkjfagphfepbbdan', -- Google Meet?
-        'com.fuzebox.fuze.Fuze', 'us.zoom.xos', 'com.cisco.webexmeetingsapp',
+        'us.zoom.xos', 'com.cisco.webexmeetingsapp',
         'com.webex.meetingmanager', 'com.microsoft.teams'
     }
 
