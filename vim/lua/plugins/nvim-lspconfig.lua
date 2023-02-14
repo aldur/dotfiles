@@ -159,7 +159,7 @@ table.insert(runtime_path, 'lua/?.lua')
 table.insert(runtime_path, 'lua/?/init.lua')
 
 -- https://www.chrisatmachine.com/Neovim/28-neovim-lua-development/
-lspconfig.sumneko_lua.setup(extend_config({
+lspconfig.lua_ls.setup(extend_config({
     on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = false
         client.server_capabilities.documentRangeFormattingProvider = false
