@@ -291,6 +291,9 @@ if vim.fn.executable('marksman') == 1 then
     }))
 end
 
+-- Terraform
+lspconfig.terraformls.setup(default_lsp_config)
+
 local buffer_options_default = require('plugins.utils').buffer_options_default
 
 M.diagnostic_config = {
