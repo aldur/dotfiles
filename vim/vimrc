@@ -136,6 +136,9 @@
 
         " Solidity
         Plug 'TovarishFin/vim-solidity', { 'for': 'solidity' }
+
+        " Terraform
+        Plug 'hashivim/vim-terraform'
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
