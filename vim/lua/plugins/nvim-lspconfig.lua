@@ -271,7 +271,11 @@ lspconfig.ltex.setup(extend_config({
     get_language_id = function(_, filetype)
         if filetype == 'markdown.wiki' then return 'markdown' end
         return default_ltex_configuration.get_language_id(_, filetype)
-    end
+    end,
+
+    filetypes = vim.tbl_deep_extend('force',
+                                    default_ltex_configuration.filetypes,
+                                    {'markdown.wiki'})
 }))
 
 -- Solidity
