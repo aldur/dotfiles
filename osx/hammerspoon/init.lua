@@ -263,8 +263,10 @@ Globals.emojis = hs.loadSpoon('Emojis')
 
 Globals.seal = hs.loadSpoon('Seal')
 Globals.seal:loadPlugins({
-    'tunnelblick', 'network_locations', 'snippets', 'macos', 'hammerspoon',
-    'zoom', 'shortcuts'
+    -- 'tunnelblick',
+    -- 'network_locations',
+    'snippets', 'macos', 'hammerspoon', -- 'zoom',
+    'shortcuts'
 })
 Globals.seal:bindHotkeys({toggle = {hyper, 'space'}})
 Globals.seal:start()
