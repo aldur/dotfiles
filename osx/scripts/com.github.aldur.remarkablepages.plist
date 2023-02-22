@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+   "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>Label</key>
+        <string>com.github.aldur.remarkablepages</string>
+        <key>Program</key>
+        <string>/Users/aldur/.dotfiles/osx/scripts/process_remarkable_page_launchd.sh</string>
+        <key>KeepAlive</key>
+        <true />
+        <key>RunAtLoad</key>
+		<true/>
+    </dict>
+</plist>
