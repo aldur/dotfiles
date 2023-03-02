@@ -3,3 +3,5 @@ if !exists(':Git')
 endif
 
 nnoremap <leader>g :G
+
+cnoreabbrev <expr> Gbrowse (getcmdtype() ==# ':' && getcmdline() ==# 'Gbrowse') ? 'GBrowse' : 'Gbrowse'
