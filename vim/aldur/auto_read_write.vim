@@ -17,5 +17,8 @@ function aldur#auto_read_write#add_to_oldfiles() abort
 
     if index(v:oldfiles, l:current_path) == -1
         let v:oldfiles += [l:current_path]
+        if has('nvim')
+            wshada
+        endif
     endif
 endf
