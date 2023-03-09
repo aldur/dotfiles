@@ -73,9 +73,8 @@ end
 
 -- Python pyright
 lspconfig.pyright.setup(extend_config({
-    on_init = function(client)
-        client.config.settings.python.pythonPath =
-            get_python_path(client.config.root_dir)
+    before_init = function(_, config)
+        config.settings.python.pythonPath = get_python_path(config.root_dir)
     end
 }))
 
