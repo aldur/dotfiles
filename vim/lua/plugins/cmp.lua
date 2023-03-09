@@ -77,29 +77,30 @@ local function format_if_nerdfont(vim_item)
     return vim_item.kind
 end
 
+-- https://github.com/hrsh7th/cmp-buffer
+-- local function get_visibile_buffers()
+--     local bufs = {}
+--     for _, win in ipairs(vim.api.nvim_list_wins()) do
+--         -- TODO: Ignore unlisted buffers?
+--         -- Only show completions from visibile buffers.
+--         local buf = vim.api.nvim_win_get_buf(win)
+
+--         local line_count = vim.api.nvim_buf_line_count(buf)
+--         local byte_size = vim.api.nvim_buf_get_offset(buf, line_count)
+--         if byte_size <= 1024 * 1024 then -- 1 Megabyte max
+--             -- Discard buffers that are too big.
+--             bufs[buf] = true
+--         end
+--     end
+--     return vim.tbl_keys(bufs)
+-- end
+
+local function get_current_buffer() return {vim.api.nvim_get_current_buf()} end
+
 local default_sources = {
     -- Sorted by priority.
-    {name = 'nvim_lsp'}, {name = 'nvim_lua'}, {name = 'ultisnips'}, -- {
-    --     name = 'buffer',
-    --     -- https://github.com/hrsh7th/cmp-buffer
-    --     option = {
-    --         get_bufnrs = function()
-    --             local bufs = {}
-    --             for _, win in ipairs(vim.api.nvim_list_wins()) do
-    --                 -- Only show completions from visibile buffers.
-    --                 local buf = vim.api.nvim_win_get_buf(win)
-    --                 local line_count = vim.api.nvim_buf_line_count(buf)
-    --                 local byte_size = vim.api.nvim_buf_get_offset(buf,
-    --                                                               line_count)
-    --                 if byte_size <= 1024 * 1024 then -- 1 Megabyte max
-    --                     -- Discard buffers that are too big.
-    --                     bufs[buf] = true
-    --                 end
-    --             end
-    --             return vim.tbl_keys(bufs)
-    --         end
-    --     }
-    -- },
+    {name = 'nvim_lsp'}, {name = 'nvim_lua'}, {name = 'ultisnips'},
+    {name = 'buffer', option = {get_bufnrs = get_current_buffer}},
     {name = 'path'}
 }
 
