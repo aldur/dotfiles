@@ -15,7 +15,9 @@ end
 
 M._nerd_signs_were_set = false
 function M.set_nerd_signs()
-    if M.is_nerdfont() and M._nerd_signs_were_set == false then
+    if M._nerd_signs_were_set then return end
+
+    if M.is_nerdfont() then
         -- _G.info_message("Setting nerd signs...")
         local signs = {
             Error = "",
@@ -33,6 +35,7 @@ function M.set_nerd_signs()
             end
         end
     end
+
     M._nerd_signs_were_set = true
 end
 
