@@ -3,7 +3,7 @@ function! aldur#whitespace#strip_trailing() abort
 endfunction
 
 function! aldur#whitespace#retab() abort
-    call aldur#stay#stay('keepjumps keeppatterns retab!')
+    call aldur#stay#stay('undojoin | keepjumps keeppatterns retab!')
 endfunction
 
 function! aldur#whitespace#settab(tabsize) abort
