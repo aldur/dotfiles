@@ -21,6 +21,8 @@ cleanup() {
 file_path=$1
 output=~/reMarkablePages/
 
+export PATH="$PATH:/opt/homebrew/bin/"
+
 echo "Processing" "$file_path"
 /Users/aldur/Work/lines-are-rusty/target/release/lines-are-rusty "$file_path" -o "$file_path.svg"
 # brew install librsvg
