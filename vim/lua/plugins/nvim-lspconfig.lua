@@ -225,7 +225,16 @@ lspconfig.tsserver.setup(extend_config({
 lspconfig.dockerls.setup(default_lsp_config)
 
 -- YAML
-lspconfig.yamlls.setup(default_lsp_config)
+lspconfig.yamlls.setup(extend_config({
+    on_attach = function(client, bufnr)
+        client.server_capabilities.documentFormattingProvider = true
+        default_on_attach(client, bufnr)
+    end,
+    settings = {
+        redhat = {telemetry = {enabled = false}},
+        yaml = {keyOrdering = false}
+    }
+}))
 
 -- Rust
 lspconfig.rust_analyzer.setup(extend_config({
