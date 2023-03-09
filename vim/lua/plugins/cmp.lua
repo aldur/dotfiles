@@ -77,6 +77,12 @@ local function format_if_nerdfont(vim_item)
     return vim_item.kind
 end
 
+local function is_buf_size_allowed(buf)
+    local line_count = vim.api.nvim_buf_line_count(buf)
+    local byte_size = vim.api.nvim_buf_get_offset(buf, line_count)
+    return byte_size <= 1024 * 1024 -- 1 Megabyte max
+end
+
 -- https://github.com/hrsh7th/cmp-buffer
 -- local function get_visibile_buffers()
 --     local bufs = {}
@@ -85,9 +91,7 @@ end
 --         -- Only show completions from visibile buffers.
 --         local buf = vim.api.nvim_win_get_buf(win)
 
---         local line_count = vim.api.nvim_buf_line_count(buf)
---         local byte_size = vim.api.nvim_buf_get_offset(buf, line_count)
---         if byte_size <= 1024 * 1024 then -- 1 Megabyte max
+--         if is_buf_size_allowed(buf) then
 --             -- Discard buffers that are too big.
 --             bufs[buf] = true
 --         end
@@ -95,12 +99,16 @@ end
 --     return vim.tbl_keys(bufs)
 -- end
 
-local function get_current_buffer() return {vim.api.nvim_get_current_buf()} end
+local function get_current_buffer_nr()
+    local buf = vim.api.nvim_get_current_buf()
+    if is_buf_size_allowed(buf) then return {buf} end
+    return {}
+end
 
 local default_sources = {
     -- Sorted by priority.
     {name = 'nvim_lsp'}, {name = 'nvim_lua'}, {name = 'ultisnips'},
-    {name = 'buffer', option = {get_bufnrs = get_current_buffer}},
+    {name = 'buffer', option = {get_bufnrs = get_current_buffer_nr}},
     {name = 'path'}
 }
 
