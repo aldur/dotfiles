@@ -4,15 +4,15 @@ local util = require('lspconfig/util')
 local M = {}
 
 -- Running `pipenv` in a subshell is expensive, so we cache the result.
-local venv_cache = {}
+M.venv_cache = {}
 
 local function find_python_venv(workspace_rootdir)
     -- Use activated virtualenv.
     if vim.env.VIRTUAL_ENV then return vim.env.VIRTUAL_ENV end
 
     -- Try looking in cache.
-    if venv_cache[workspace_rootdir] then
-        return venv_cache[workspace_rootdir]
+    if M.venv_cache[workspace_rootdir] then
+        return M.venv_cache[workspace_rootdir]
     end
 
     -- Find and use virtualenv from pipenv in workspace directory.
@@ -25,7 +25,7 @@ local function find_python_venv(workspace_rootdir)
         local msg = "Activating Pipenv at " .. venv
         _G.info_message(msg)
 
-        venv_cache[workspace_rootdir] = venv
+        M.venv_cache[workspace_rootdir] = venv
 
         return venv
     end
