@@ -117,9 +117,12 @@ local md_sources = {
     {name = 'note_tags', max_item_count = 5}, {name = 'note_headers'}
 }
 
+-- Extend `md_sources` by appending the other sources.
 for _, source in pairs(default_sources) do
     -- NOTE: You can't use `tbl_deep_extend` because it doesn't work on lists.
+    if source.name == 'buffer' then goto continue end
     table.insert(md_sources, source)
+    ::continue::
 end
 
 cmp.setup.filetype({'markdown.wiki', 'markdown'}, {sources = md_sources})
@@ -152,13 +155,13 @@ cmp.setup({
     experimental = {ghost_text = true}
 })
 
--- cmp.setup.cmdline(':', {
---     sources = cmp.config.sources({{name = 'path'}}, {
---         {name = 'cmdline', option = {ignore_cmds = {'Man', '!'}}}
---     }),
---     mapping = cmp.mapping.preset.cmdline()
--- })
--- cmp.setup.cmdline('/', {
---     sources = {{name = 'buffer'}},
---     mapping = cmp.mapping.preset.cmdline()
--- })
+cmp.setup.cmdline(':', {
+    sources = cmp.config.sources({{name = 'path'}}, {
+        {name = 'cmdline', option = {ignore_cmds = {'Man', '!'}}}
+    }),
+    mapping = cmp.mapping.preset.cmdline()
+})
+cmp.setup.cmdline('/', {
+    sources = {{name = 'buffer'}},
+    mapping = cmp.mapping.preset.cmdline()
+})
