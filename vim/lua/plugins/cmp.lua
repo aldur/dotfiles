@@ -145,7 +145,9 @@ cmp.setup({
 })
 
 -- cmp.setup.cmdline(':', {
---     sources = cmp.config.sources({{name = 'path'}}, {{name = 'cmdline'}}),
+--     sources = cmp.config.sources({{name = 'path'}}, {
+--         {name = 'cmdline', option = {ignore_cmds = {'Man', '!'}}}
+--     }),
 --     mapping = cmp.mapping.preset.cmdline()
 -- })
 -- cmp.setup.cmdline('/', {
