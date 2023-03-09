@@ -88,7 +88,7 @@ local default_sources = {
                 for _, win in ipairs(vim.api.nvim_list_wins()) do
                     -- Only show completions from visibile buffers.
                     local buf = vim.api.nvim_win_get_buf(win)
-                    bufs[buf] = true
+
                     local line_count = vim.api.nvim_buf_line_count(buf)
                     local byte_size = vim.api.nvim_buf_get_offset(buf,
                                                                   line_count)
