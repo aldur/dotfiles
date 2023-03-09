@@ -12,12 +12,12 @@ function _G.search_before_closest_open_braket_in_line()
     return current_column - match
 end
 
-function _G.dump(...)
-    -- https://github.com/nanotee/nvim-lua-guide
-    local objects = vim.tbl_map(vim.inspect, {...})
-    print(unpack(objects))
-    return ...
-end
+-- function _G.dump(...)
+--     -- https://github.com/nanotee/nvim-lua-guide
+--     local objects = vim.tbl_map(vim.inspect, {...})
+--     print(unpack(objects))
+--     return ...
+-- end
 
 function _G.info_message(msg) vim.notify(msg, vim.log.levels.INFO) end
 
