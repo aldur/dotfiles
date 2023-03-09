@@ -19,8 +19,8 @@ local function find_python_venv(workspace_rootdir)
     local match = vim.fn.glob(util.path.join(workspace_rootdir, 'Pipfile'))
     if match ~= '' then
         local venv = vim.fn.trim(vim.fn.system(
-            'PIPENV_PIPFILE=' .. match ..
-            ' pipenv -q --venv'))
+                                     'PIPENV_PIPFILE=' .. match ..
+                                         ' pipenv -q --venv'))
 
         local msg = "Activating Pipenv at " .. venv
         _G.info_message(msg)
