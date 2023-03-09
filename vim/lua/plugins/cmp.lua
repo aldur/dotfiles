@@ -170,7 +170,10 @@ cmp.setup.cmdline(':', {
     mapping = cmp.mapping.preset.cmdline()
 })
 
-cmp.setup.cmdline('/', {
+local search_config = {
     sources = {buffer_source},
     mapping = cmp.mapping.preset.cmdline()
-})
+}
+
+cmp.setup.cmdline('/', search_config)
+cmp.setup.cmdline('?', search_config)

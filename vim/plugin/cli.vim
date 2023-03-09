@@ -20,6 +20,8 @@ set wildmode=longest,full " Command <Tab> completion, list matches, then longest
 " Use sane magic regexes
 nnoremap / /\v
 vnoremap / /\v
+nnoremap ? /\v
+vnoremap ? /\v
 
 nnoremap Q <Nop>
 
