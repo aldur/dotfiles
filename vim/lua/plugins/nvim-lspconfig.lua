@@ -297,7 +297,6 @@ lspconfig.ccls.setup(default_lsp_config)
 lspconfig.rnix.setup(default_lsp_config)
 
 -- https://github.com/artempyanykh/marksman
--- requires manual installation
 if vim.fn.executable('marksman') == 1 then
     lspconfig.marksman.setup(extend_config({
         root_dir = util.root_pattern(".git", ".marksman.toml", ".enable_ctags")
@@ -341,7 +340,7 @@ vim.fn.sign_define('LightBulbSign', {
     numhl = "QuickFixLine"
 })
 
-require'nvim-lightbulb'.setup {
+require('nvim-lightbulb').setup {
     ignore = {'pylsp', 'marksman'}, -- LSP client names to ignore
     sign = {
         enabled = true,
