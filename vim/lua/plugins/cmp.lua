@@ -79,28 +79,28 @@ end
 
 local default_sources = {
     -- Sorted by priority.
-    {name = 'nvim_lsp'}, {name = 'nvim_lua'}, {name = 'ultisnips'}, {
-        name = 'buffer',
-        -- https://github.com/hrsh7th/cmp-buffer
-        option = {
-            get_bufnrs = function()
-                local bufs = {}
-                for _, win in ipairs(vim.api.nvim_list_wins()) do
-                    -- Only show completions from visibile buffers.
-                    local buf = vim.api.nvim_win_get_buf(win)
-
-                    local line_count = vim.api.nvim_buf_line_count(buf)
-                    local byte_size = vim.api.nvim_buf_get_offset(buf,
-                                                                  line_count)
-                    if byte_size <= 1024 * 1024 then -- 1 Megabyte max
-                        -- Discard buffers that are too big.
-                        bufs[buf] = true
-                    end
-                end
-                return vim.tbl_keys(bufs)
-            end
-        }
-    }, {name = 'path'}
+    {name = 'nvim_lsp'}, {name = 'nvim_lua'}, {name = 'ultisnips'}, -- {
+    --     name = 'buffer',
+    --     -- https://github.com/hrsh7th/cmp-buffer
+    --     option = {
+    --         get_bufnrs = function()
+    --             local bufs = {}
+    --             for _, win in ipairs(vim.api.nvim_list_wins()) do
+    --                 -- Only show completions from visibile buffers.
+    --                 local buf = vim.api.nvim_win_get_buf(win)
+    --                 local line_count = vim.api.nvim_buf_line_count(buf)
+    --                 local byte_size = vim.api.nvim_buf_get_offset(buf,
+    --                                                               line_count)
+    --                 if byte_size <= 1024 * 1024 then -- 1 Megabyte max
+    --                     -- Discard buffers that are too big.
+    --                     bufs[buf] = true
+    --                 end
+    --             end
+    --             return vim.tbl_keys(bufs)
+    --         end
+    --     }
+    -- },
+    {name = 'path'}
 }
 
 local md_sources = {
@@ -143,11 +143,11 @@ cmp.setup({
     experimental = {ghost_text = true}
 })
 
-cmp.setup.cmdline(':', {
-    sources = cmp.config.sources({{name = 'path'}}, {{name = 'cmdline'}}),
-    mapping = cmp.mapping.preset.cmdline()
-})
-cmp.setup.cmdline('/', {
-    sources = {{name = 'buffer'}},
-    mapping = cmp.mapping.preset.cmdline()
-})
+-- cmp.setup.cmdline(':', {
+--     sources = cmp.config.sources({{name = 'path'}}, {{name = 'cmdline'}}),
+--     mapping = cmp.mapping.preset.cmdline()
+-- })
+-- cmp.setup.cmdline('/', {
+--     sources = {{name = 'buffer'}},
+--     mapping = cmp.mapping.preset.cmdline()
+-- })
