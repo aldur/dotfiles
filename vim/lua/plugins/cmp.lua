@@ -105,11 +105,15 @@ local function get_current_buffer_nr()
     return {}
 end
 
+local buffer_source = {
+    name = 'buffer',
+    option = {get_bufnrs = get_current_buffer_nr}
+}
+
 local default_sources = {
     -- Sorted by priority.
     {name = 'nvim_lsp'}, {name = 'nvim_lua'}, {name = 'ultisnips'},
-    {name = 'buffer', option = {get_bufnrs = get_current_buffer_nr}},
-    {name = 'path'}
+    buffer_source, {name = 'path'}
 }
 
 local md_sources = {
@@ -156,12 +160,17 @@ cmp.setup({
 })
 
 cmp.setup.cmdline(':', {
-    sources = cmp.config.sources({{name = 'path'}}, {
+    sources = cmp.config.sources({
+        -- Double brackets because this creates `group_index`es
+        {name = 'path', max_item_count = 10}
+    }, {
+        -- Same here, another group
         {name = 'cmdline', option = {ignore_cmds = {'Man', '!'}}}
     }),
     mapping = cmp.mapping.preset.cmdline()
 })
+
 cmp.setup.cmdline('/', {
-    sources = {{name = 'buffer'}},
+    sources = {buffer_source},
     mapping = cmp.mapping.preset.cmdline()
 })
