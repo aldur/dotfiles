@@ -320,7 +320,7 @@ local buffer_options_default = require('plugins.utils').buffer_options_default
 M.diagnostic_config = {
     virtual_text = function(_, bufnr)
         if buffer_options_default(bufnr, 'show_virtual_text', true) then
-            return {prefix = '●', source = "always"}
+            return {prefix = '●', source = "if_many"}
         end
         return false
     end,
