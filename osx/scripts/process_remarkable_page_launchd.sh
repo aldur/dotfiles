@@ -23,13 +23,11 @@ echo "Executing 'process_remarkable_page_launchd.sh'..."
 /opt/homebrew/bin/fswatch \
 	--recursive \
 	-0 \
-	-e '.*' \
-	-i '\\.rm$' \
-	-e '.stversions' \
-	-e '.stfolder' \
+	-e ".*" \
+	-i "\\.rm$" \
 	--event Created \
 	--event Updated \
 	--event Renamed \
 	/Users/aldur/reMarkableRemote/ \
-	| /usr/bin/xargs -0 -n 1 -I {} \
-		/bin/bash /Users/aldur/.dotfiles/osx/scripts/process_remarkable_page.sh {}
+	| /usr/bin/xargs -t -0 -n 1 -I {} \
+		/Users/aldur/.dotfiles/osx/scripts/process_remarkable_page.sh {}
