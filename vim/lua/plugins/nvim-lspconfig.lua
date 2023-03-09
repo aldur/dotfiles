@@ -3,19 +3,29 @@ local lspconfig = require 'lspconfig'
 local util = require('lspconfig/util')
 local M = {}
 
-local function get_venv(workspace)
+-- Running `pipenv` in a subshell is expensive, so we cache the result.
+local venv_cache = {}
+
+local function find_python_venv(workspace_rootdir)
     -- Use activated virtualenv.
     if vim.env.VIRTUAL_ENV then return vim.env.VIRTUAL_ENV end
 
+    -- Try looking in cache.
+    if venv_cache[workspace_rootdir] then
+        return venv_cache[workspace_rootdir]
+    end
+
     -- Find and use virtualenv from pipenv in workspace directory.
-    local match = vim.fn.glob(util.path.join(workspace, 'Pipfile'))
+    local match = vim.fn.glob(util.path.join(workspace_rootdir, 'Pipfile'))
     if match ~= '' then
         local venv = vim.fn.trim(vim.fn.system(
-                                     'PIPENV_PIPFILE=' .. match ..
-                                         ' pipenv -q --venv'))
+            'PIPENV_PIPFILE=' .. match ..
+            ' pipenv -q --venv'))
 
         local msg = "Activating Pipenv at " .. venv
         _G.info_message(msg)
+
+        venv_cache[workspace_rootdir] = venv
 
         return venv
     end
@@ -24,8 +34,8 @@ local function get_venv(workspace)
 end
 
 -- https://github.com/neovim/nvim-lspconfig/issues/500#issuecomment-876700701
-local function get_python_path(workspace)
-    local venv = get_venv(workspace)
+local function find_python_path(workspace_rootdir)
+    local venv = find_python_venv(workspace_rootdir)
     if venv then return util.path.join(venv, 'bin', 'python') end
 
     -- Fallback to system Python.
@@ -74,14 +84,14 @@ end
 -- Python pyright
 lspconfig.pyright.setup(extend_config({
     before_init = function(_, config)
-        config.settings.python.pythonPath = get_python_path(config.root_dir)
+        config.settings.python.pythonPath = find_python_path(config.root_dir)
     end
 }))
 
 -- Inspired by:
 -- https://github.com/python-lsp/python-lsp-server/pull/68
 local function pylsp_cmd_env(workspace)
-    local venv = get_venv(workspace)
+    local venv = find_python_venv(workspace)
     if venv then
         return {
             VIRTUAL_ENV = venv,
