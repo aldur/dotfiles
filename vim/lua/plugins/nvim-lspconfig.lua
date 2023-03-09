@@ -326,7 +326,7 @@ M.diagnostic_config = {
     end,
 
     signs = function(_, bufnr)
-        return buffer_options_default(bufnr, 'show_signs', false)
+        return buffer_options_default(bufnr, 'show_signs', true)
     end,
 
     -- delay update diagnostics
