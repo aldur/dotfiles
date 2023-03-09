@@ -20,6 +20,4 @@ if has('nvim')
     " font. We work around this by calling it with `DiagnosticChanged`, and then
     " having making it a no-op after it executes the first time.
     autocmd vimrc DiagnosticChanged * lua require('plugins/utils').set_nerd_signs()
-
-    autocmd CursorHold * lua require'nvim-lightbulb'.update_lightbulb()
 endif

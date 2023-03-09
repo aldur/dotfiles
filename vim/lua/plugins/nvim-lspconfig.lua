@@ -350,14 +350,15 @@ vim.fn.sign_define('LightBulbSign', {
 })
 
 require('nvim-lightbulb').setup {
-    ignore = {'pylsp', 'marksman'}, -- LSP client names to ignore
+    ignore = {'pylsp'}, -- LSP client names to ignore
     sign = {
         enabled = true,
         priority = 10 -- Priority of the gutter sign
     },
     float = {enabled = false},
     virtual_text = {enabled = false},
-    status_text = {enabled = false}
+    status_text = {enabled = false},
+    autocmd = {enabled = true} -- Automatically create `autocmd` to update sign
 }
 
 local function close_loclist_if_no_diagnostic()

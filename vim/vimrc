@@ -145,6 +145,7 @@
     Plug 'kosayoda/nvim-lightbulb', b:has_nvim_python3 ? {  } : { 'on': [] }
 
     " Improve Neovim responsiveness around CursorHold/CursorHoldI events
+    " Suggested by `nvim-lightbulb`
     Plug 'antoinemadec/FixCursorHold.nvim', b:has_nvim_python3 ? {  } : { 'on': [] }
 
     " Completion {{{ "
