@@ -19,12 +19,6 @@ function _G.dump(...)
     return ...
 end
 
-function _G.info_message(msg)
-    local fmt_str = [[echohl Function | echomsg "%s" | echohl None]]
-    vim.cmd((fmt_str):format(vim.fn.escape(msg, "\"\\")))
-end
+function _G.info_message(msg) vim.notify(msg, vim.log.levels.INFO) end
 
-function _G.warning_message(msg)
-    local fmt_str = [[echohl WarningMsg | echomsg "%s" | echohl None]]
-    vim.cmd((fmt_str):format(vim.fn.escape(msg, "\"\\")))
-end
+function _G.warning_message(msg) vim.notify(msg, vim.log.levels.WARN) end
