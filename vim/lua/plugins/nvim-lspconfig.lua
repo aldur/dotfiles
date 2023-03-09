@@ -360,6 +360,15 @@ require('nvim-lightbulb').setup {
     status_text = {enabled = false}
 }
 
+local function close_loclist_if_no_diagnostic()
+    if #vim.diagnostic.get(0) == 0 then vim.cmd("lclose") end
+end
+
+function M.on_diagnostic_changed()
+    vim.diagnostic.setloclist({open = false})
+    close_loclist_if_no_diagnostic()
+end
+
 return M
 
 -- Override this LSP handler to open the quickfix in Trouble
