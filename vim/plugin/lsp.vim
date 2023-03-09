@@ -19,5 +19,5 @@ if has('nvim')
     " This must run after the GUI has been initialized as it checks for a NERD
     " font. We work around this by calling it with `DiagnosticChanged`, and then
     " having making it a no-op after it executes the first time.
-    autocmd vimrc DiagnosticChanged * lua require('plugins/utils').set_nerd_signs()
+    autocmd vimrc DiagnosticChanged * lua require('plugins/utils').configure_signs()
 endif

@@ -13,30 +13,23 @@ function M.buffer_options_default(bufnr, name, default)
     return result
 end
 
-M._nerd_signs_were_set = false
-function M.set_nerd_signs()
-    if M._nerd_signs_were_set then return end
+function M.configure_signs()
+    -- _G.info_message("Configuring signs...")
+    local highlights = {
+        Error = "ErrorMsg",
+        Warning = "WarningMsg",
+        Hint = "MoreMsg",
+        Info = "ModeMsg"
+    }
 
-    if M.is_nerdfont() then
-        -- _G.info_message("Setting nerd signs...")
-        local signs = {
-            Error = "",
-            Warning = "",
-            Hint = "",
-            Info = ""
-        }
-
-        for type, icon in pairs(signs) do
-            -- https://github.com/neovim/nvim-lspconfig/wiki/
-            -- UI-Customization#change-diagnostic-symbols-in-the-sign-column-gutter
-            local hl = "DiagnosticSign" .. type
-            if vim.fn.sign_define(hl, {text = icon}) ~= 0 then
-                _G.warning_message("Couldn't set sign " .. type)
-            end
+    for type, hl in pairs(highlights) do
+        -- https://github.com/neovim/nvim-lspconfig/wiki/
+        -- UI-Customization#change-diagnostic-symbols-in-the-sign-column-gutter
+        local sign = "DiagnosticSign" .. type
+        if vim.fn.sign_define(sign, {numhl = hl}) ~= 0 then
+            _G.warning_message("Couldn't set sign " .. type)
         end
     end
-
-    M._nerd_signs_were_set = true
 end
 
 return M
