@@ -38,13 +38,13 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 local default_on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
-    require"lsp_signature".on_attach({
+    require "lsp_signature".on_attach({
         bind = true, -- This is mandatory, otherwise border config won't get registered.
-        handler_opts = {border = "single"}
+        handler_opts = { border = "single" }
     })
 
     -- Mappings
-    local bufopts = {noremap = true, silent = true, buffer = bufnr}
+    local bufopts = { noremap = true, silent = true, buffer = bufnr }
 
     if client.server_capabilities.referencesProvider then
         -- Mnemonic for Usages
@@ -56,7 +56,7 @@ local default_on_attach = function(client, bufnr)
     vim.keymap.set('n', '<leader>c', vim.lsp.buf.code_action, bufopts)
     vim.keymap.set('x', '<leader>c', vim.lsp.buf.code_action, bufopts)
     vim.keymap.set('n', '<leader>f',
-                   function() vim.lsp.buf.format {async = true} end, bufopts)
+        function() vim.lsp.buf.format { async = true } end, bufopts)
     vim.keymap.set('n', '<c-]>', vim.lsp.buf.definition, bufopts)
     -- vim.keymap.set('n', '<leader>lo', '<cmd>TroubleToggle loclist<CR>', opts)
 end
@@ -64,7 +64,7 @@ end
 local default_lsp_config = {
     on_attach = default_on_attach,
     capabilities = capabilities,
-    flags = {debounce_text_changes = 200}
+    flags = { debounce_text_changes = 200 }
 }
 
 local function extend_config(tbl)
@@ -117,23 +117,23 @@ lspconfig.pylsp.setup(extend_config({
 }))
 
 -- Vim lsp
-lspconfig.vimls.setup(extend_config({flags = {debounce_text_changes = 500}}))
+lspconfig.vimls.setup(extend_config({ flags = { debounce_text_changes = 500 } }))
 
 -- Formatting/linting via efm
 local efm_languages = {
-    markdown = {require 'efm/mdl', require 'efm/prettier_markdown'},
-    lua = {require 'efm/luafmt', require 'efm/luacheck'},
-    python = {require 'efm/black'},
-    dockerfile = {require 'efm/hadolint'},
-    vim = {require 'efm/vint'},
-    sh = {require 'efm/shellcheck', require 'efm/shfmt'},
-    bib = {require 'efm/bibtool'},
-    cpp = {require 'efm/astyle'},
-    json = {require 'efm/jq'},
-    xml = {require 'efm/xmltidy'},
-    solidity = {require 'efm/prettier_solidity', require 'efm/solhint'},
-    typescript = {require 'efm/prettier_typescript'},
-    javascript = {require 'efm/prettier_javascript'}
+    markdown = { require 'efm/mdl', require 'efm/prettier_markdown' },
+    lua = { require 'efm/luacheck' },
+    python = { require 'efm/black' },
+    dockerfile = { require 'efm/hadolint' },
+    vim = { require 'efm/vint' },
+    sh = { require 'efm/shellcheck', require 'efm/shfmt' },
+    bib = { require 'efm/bibtool' },
+    cpp = { require 'efm/astyle' },
+    json = { require 'efm/jq' },
+    xml = { require 'efm/xmltidy' },
+    solidity = { require 'efm/prettier_solidity', require 'efm/solhint' },
+    typescript = { require 'efm/prettier_typescript' },
+    javascript = { require 'efm/prettier_javascript' }
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
 efm_languages['sh.env'] = vim.deepcopy(efm_languages['sh'])
@@ -142,7 +142,7 @@ efm_languages['c'] = vim.deepcopy(efm_languages['cpp'])
 
 lspconfig.efm.setup(extend_config({
     filetypes = vim.tbl_keys(efm_languages),
-    init_options = {documentFormatting = true, codeAction = true},
+    init_options = { documentFormatting = true, codeAction = true },
     settings = {
         languages = efm_languages
         -- log_level = 1,
@@ -152,18 +152,18 @@ lspconfig.efm.setup(extend_config({
 }))
 
 -- https://github.com/mjlbach/defaults.nvim/blob/master/init.lua#L245
--- Make runtime files discoverable to the server
+-- Make runtime files discoverable to the server.
 local runtime_path = vim.split(package.path, ';')
 table.insert(runtime_path, 'lua/?.lua')
 table.insert(runtime_path, 'lua/?/init.lua')
 
 -- https://www.chrisatmachine.com/Neovim/28-neovim-lua-development/
 lspconfig.lua_ls.setup(extend_config({
-    on_attach = function(client, bufnr)
-        client.server_capabilities.documentFormattingProvider = false
-        client.server_capabilities.documentRangeFormattingProvider = false
-        default_on_attach(client, bufnr)
-    end,
+    -- on_attach = function(client, bufnr)
+    --     client.server_capabilities.documentFormattingProvider = false
+    --     client.server_capabilities.documentRangeFormattingProvider = false
+    --     default_on_attach(client, bufnr)
+    -- end,
     settings = {
         Lua = {
             runtime = {
@@ -175,14 +175,14 @@ lspconfig.lua_ls.setup(extend_config({
             },
             diagnostics = {
                 -- Get the language server to recognize the `vim` global
-                globals = {'vim', 'hs'}
+                globals = { 'vim', 'hs' }
             },
             workspace = {
                 -- Make the server aware of Neovim runtime files
                 library = vim.api.nvim_get_runtime_file('', true),
                 checkThirdParty = false
             },
-            telemetry = {enable = false}
+            telemetry = { enable = false }
         }
     }
 }))
@@ -209,7 +209,7 @@ lspconfig.gopls.setup(default_lsp_config)
 local npm_path = '/usr/local/bin/npm'
 if vim.fn.filereadable(npm_path) == 0 then npm_path = '/opt/homebrew/bin/npm' end
 lspconfig.tsserver.setup(extend_config({
-    init_options = {npmLocation = npm_path},
+    init_options = { npmLocation = npm_path },
     on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = false
         default_on_attach(client, bufnr)
@@ -230,25 +230,25 @@ lspconfig.yamlls.setup(extend_config({
         default_on_attach(client, bufnr)
     end,
     settings = {
-        redhat = {telemetry = {enabled = false}},
-        yaml = {keyOrdering = false}
+        redhat = { telemetry = { enabled = false } },
+        yaml = { keyOrdering = false }
     }
 }))
 
 -- Rust
 lspconfig.rust_analyzer.setup(extend_config({
     settings = {
-        ["rust-analyzer"] = {
-            imports = {granularity = {group = "module"}, prefix = "self"},
-            cargo = {buildScripts = {enable = true}},
-            procMacro = {enable = true}
+            ["rust-analyzer"] = {
+            imports = { granularity = { group = "module" }, prefix = "self" },
+            cargo = { buildScripts = { enable = true } },
+            procMacro = { enable = true }
         }
     },
-    cmd = {"rustup", "run", "stable", "rust-analyzer"}
+    cmd = { "rustup", "run", "stable", "rust-analyzer" }
 }))
 
 local default_ltex_configuration =
-    require'lspconfig/server_configurations/ltex'.default_config
+    require 'lspconfig/server_configurations/ltex'.default_config
 
 -- Markdown, LaTeX
 lspconfig.ltex.setup(extend_config({
@@ -256,11 +256,11 @@ lspconfig.ltex.setup(extend_config({
         ltex = {
             dictionary = {
                 -- Couldn't make this work, unfortunately, so added `MORFOLOGIK_RULE_EN_US`.
-                ['en-US'] = {[[:~/.vim/spell/en.utf-8.add]]}
+                    ['en-US'] = { [[:~/.vim/spell/en.utf-8.add]] }
             },
-            additionalRules = {motherTongue = "it"},
+            additionalRules = { motherTongue = "it" },
             disabledRules = {
-                ['en-US'] = {"WHITESPACE_RULE", "MORFOLOGIK_RULE_EN_US"}
+                    ['en-US'] = { "WHITESPACE_RULE", "MORFOLOGIK_RULE_EN_US" }
             },
             markdown = {
                 nodes = {
@@ -272,7 +272,6 @@ lspconfig.ltex.setup(extend_config({
             }
         }
     },
-
     -- https://github.com/neovim/nvim-lspconfig/blob/
     -- 7d5a6dc46dd2ebaeb74b573922f289ae33089fe7/lua/lspconfig/
     -- server_configurations/ltex.lua#L23
@@ -280,22 +279,32 @@ lspconfig.ltex.setup(extend_config({
         if filetype == 'markdown.wiki' then return 'markdown' end
         return default_ltex_configuration.get_language_id(_, filetype)
     end,
-
     filetypes = vim.tbl_deep_extend('force',
-                                    default_ltex_configuration.filetypes,
-                                    {'markdown.wiki'})
+        default_ltex_configuration.filetypes,
+        { 'markdown.wiki' })
 }))
 
 -- Solidity
 -- Currently very buggy.
 -- lspconfig.solc.setup(default_lsp_config)
 
-lspconfig.ccls.setup(default_lsp_config)
+local ccls_config = extend_config({
+    on_init = function(client, initialize_result)
+        vim.pretty_print(initialize_result)
+        client.offset_encoding = 'utf-8'
+        -- vim.pretty_print(client)
+    end,
+    offset_encoding = 'utf-8'
+})
+lspconfig.ccls.setup(ccls_config)
 
 -- cargo install rnix-lsp
 lspconfig.rnix.setup(default_lsp_config)
 
 -- https://github.com/artempyanykh/marksman
+-- See here for project-level configuration:
+-- https://github.com/artempyanykh/marksman/blob/
+-- b8eff56fd7d546c88de4657aad70a0c997bb53ea/docs/configuration.md
 if vim.fn.executable('marksman') == 1 then
     lspconfig.marksman.setup(extend_config({
         root_dir = util.root_pattern(".git", ".marksman.toml", ".enable_ctags")
@@ -310,20 +319,17 @@ local buffer_options_default = require('plugins.utils').buffer_options_default
 M.diagnostic_config = {
     virtual_text = function(_, bufnr)
         if buffer_options_default(bufnr, 'show_virtual_text', true) then
-            return {prefix = '●', source = "always"}
+            return { prefix = '●', source = "always" }
         end
         return false
     end,
-
     signs = function(_, bufnr)
         return buffer_options_default(bufnr, 'show_signs', false)
     end,
-
     -- delay update diagnostics
     update_in_insert = function(_, bufnr)
         return buffer_options_default(bufnr, 'update_in_insert', false)
     end,
-
     severity_sort = true
 }
 
@@ -340,14 +346,14 @@ vim.fn.sign_define('LightBulbSign', {
 })
 
 require('nvim-lightbulb').setup {
-    ignore = {'pylsp', 'marksman'}, -- LSP client names to ignore
+    ignore = { 'pylsp', 'marksman' }, -- LSP client names to ignore
     sign = {
         enabled = true,
         priority = 10 -- Priority of the gutter sign
     },
-    float = {enabled = false},
-    virtual_text = {enabled = false},
-    status_text = {enabled = false}
+    float = { enabled = false },
+    virtual_text = { enabled = false },
+    status_text = { enabled = false }
 }
 
 return M
