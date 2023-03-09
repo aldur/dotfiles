@@ -165,7 +165,15 @@ cmp.setup.cmdline(':', {
         {name = 'path', max_item_count = 10}
     }, {
         -- Same here, another group
-        {name = 'cmdline', option = {ignore_cmds = {'Man', '!'}}}
+        {
+            name = 'cmdline',
+            -- https://github.com/hrsh7th/cmp-cmdline/issues/60
+            -- `cmdline` completion works badly, and clashes w/ `path` completion
+            -- Here we are manually disabling it for the commands we typically
+            -- use which require a path.
+            option = {ignore_cmds = {'Man', '!', 'edit'}},
+            max_item_count = 10
+        }
     }),
     mapping = cmp.mapping.preset.cmdline()
 })
