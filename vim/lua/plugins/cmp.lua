@@ -72,7 +72,8 @@ local function format_if_nerdfont(vim_item)
     -- If there's a Nerd Font set, display fancy icons.
     if require('plugins.utils').is_nerdfont() then
         -- This concatenates the icons with the name of the item kind
-        return string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind)
+        -- return string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind)
+        return kind_icons[vim_item.kind]
     end
     return vim_item.kind
 end
