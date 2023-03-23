@@ -317,21 +317,29 @@ lspconfig.terraformls.setup(default_lsp_config)
 
 local buffer_options_default = require('plugins.utils').buffer_options_default
 
+function M.signs_enabled(bufnr)
+    return buffer_options_default(bufnr, 'show_signs', true)
+end
+function M.virtual_text_enabled(bufnr)
+    return buffer_options_default(bufnr, 'show_virtual_text', true)
+end
+function M.update_in_insert_enabled(bufnr)
+    return buffer_options_default(bufnr, 'update_in_insert', false)
+end
+
 M.diagnostic_config = {
     virtual_text = function(_, bufnr)
-        if buffer_options_default(bufnr, 'show_virtual_text', true) then
+        if M.virtual_text_enabled(bufnr) then
             return {prefix = '●', source = "if_many"}
         end
         return false
     end,
 
-    signs = function(_, bufnr)
-        return buffer_options_default(bufnr, 'show_signs', true)
-    end,
+    signs = function(_, bufnr) return M.signs_enabled(bufnr) end,
 
     -- delay update diagnostics
     update_in_insert = function(_, bufnr)
-        return buffer_options_default(bufnr, 'update_in_insert', false)
+        return M.update_in_insert_enabled(bufnr)
     end,
 
     severity_sort = true
