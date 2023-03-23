@@ -17,7 +17,6 @@ function M.configure_signs()
     -- _G.info_message("Configuring signs...")
     local highlights = {
         Error = "ErrorMsg",
-        Warning = "WarningMsg",
         Hint = "MoreMsg",
         Info = "ModeMsg"
     }
@@ -29,6 +28,12 @@ function M.configure_signs()
         if vim.fn.sign_define(sign, {numhl = hl}) ~= 0 then
             _G.warning_message("Couldn't set sign " .. type)
         end
+    end
+
+    -- "Warn" -> "WarningMsg"
+    -- Special treatment
+    if vim.fn.sign_define("DiagnosticSignWarn", {numhl = "WarningMsg"}) ~= 0 then
+        _G.warning_message("Couldn't set sign " .. type)
     end
 end
 
