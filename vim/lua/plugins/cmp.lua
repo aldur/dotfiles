@@ -85,36 +85,41 @@ local function is_buf_size_allowed(buf)
 end
 
 -- https://github.com/hrsh7th/cmp-buffer
--- local function get_visibile_buffers()
---     local bufs = {}
---     for _, win in ipairs(vim.api.nvim_list_wins()) do
---         -- TODO: Ignore unlisted buffers?
---         -- Only show completions from visibile buffers.
---         local buf = vim.api.nvim_win_get_buf(win)
+local function visible_buffers_only()
+    local bufs = {}
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+        -- TODO: Ignore quickfix buffers and similar?
+        -- Only show completions from visibile buffers.
+        local buf = vim.api.nvim_win_get_buf(win)
 
---         if is_buf_size_allowed(buf) then
---             -- Discard buffers that are too big.
---             bufs[buf] = true
---         end
---     end
---     return vim.tbl_keys(bufs)
--- end
+        if is_buf_size_allowed(buf) then
+            -- Discard buffers that are too big.
+            bufs[buf] = true
+        end
+    end
+    return vim.tbl_keys(bufs)
+end
 
-local function get_current_buffer_nr()
+local function current_buffer_only()
     local buf = vim.api.nvim_get_current_buf()
     if is_buf_size_allowed(buf) then return {buf} end
     return {}
 end
 
-local buffer_source = {
+local current_buffer_source = {
     name = 'buffer',
-    option = {get_bufnrs = get_current_buffer_nr}
+    option = {get_bufnrs = current_buffer_only}
+}
+
+local visible_buffers_source = {
+    name = 'buffer',
+    option = {get_bufnrs = visible_buffers_only}
 }
 
 local default_sources = {
     -- Sorted by priority.
     {name = 'nvim_lsp'}, {name = 'nvim_lua'}, {name = 'ultisnips'},
-    buffer_source, {name = 'path'}
+    visible_buffers_source, {name = 'path'}
 }
 
 local md_sources = {
@@ -180,7 +185,7 @@ cmp.setup.cmdline(':', {
 })
 
 local search_config = {
-    sources = {buffer_source},
+    sources = {current_buffer_source},
     mapping = cmp.mapping.preset.cmdline()
 }
 
