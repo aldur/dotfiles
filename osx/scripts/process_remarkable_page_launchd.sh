@@ -30,4 +30,4 @@ echo "Executing 'process_remarkable_page_launchd.sh'..."
 	--event Renamed \
 	/Users/aldur/reMarkableRemote/ \
 	| /usr/bin/xargs -t -0 -n 1 -I {} \
-		/Users/aldur/.dotfiles/osx/scripts/process_remarkable_page.sh {}
+		/Users/aldur/.dotfiles/osx/scripts/process_remarkable_page.2.sh {}
