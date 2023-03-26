@@ -7,15 +7,8 @@ require'nvim-treesitter.configs'.setup {
     ignore_install = {"phpdoc"},
     highlight = {enable = true},
     indent = {enable = true, disable = {"python"}},
-    textsubjects = {
-        enable = true,
-        keymaps = {
-            ['.'] = 'textsubjects-smart',
-            [';'] = 'textsubjects-container-outer'
-        }
-    },
     incremental_selection = {
-        enable = false -- Replaced by `textsubjects`
+        enable = false
         -- keymaps = {
         --    init_selection = "gnn",
         --    node_incremental = "gnn",
