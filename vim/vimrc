@@ -58,7 +58,6 @@
     Plug 'tpope/vim-surround'                      " All about surrounding
     Plug 'tpope/vim-scriptease'                    " Easier plugin development
     Plug 'tpope/vim-unimpaired'                    " Complementary mappings
-    Plug 'tpope/vim-dispatch'                      " Async job execution
 
     " This does multiple things:
     " - :%Subvert/facilit{y,ies}/building{,s}/g
