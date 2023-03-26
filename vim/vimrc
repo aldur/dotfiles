@@ -66,7 +66,7 @@
 
     if executable('git')
         Plug 'tpope/vim-fugitive'                      " A GIT wrapper
-        Plug 'tpope/vim-rhubarb'                       " Allow `Gbrowse`
+        Plug 'tpope/vim-rhubarb'                       " Allow `Gbrowse` for Github
     endif
 
     Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
@@ -74,11 +74,12 @@
     " Fuzzy files, tags, life.
     if has('mac') && executable('fzf')  " Install `fzf` with homebrew
         if filereadable('/usr/local/opt/fzf')
-            Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
+            Plug '/usr/local/opt/fzf'
         else
             " M1 macs
-            Plug '/opt/homebrew/opt/fzf' | Plug 'junegunn/fzf.vim'
+            Plug '/opt/homebrew/opt/fzf'
         endif
+        Plug 'junegunn/fzf.vim'
     else  " Install it as a local plugin
         Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
         Plug 'junegunn/fzf.vim'
