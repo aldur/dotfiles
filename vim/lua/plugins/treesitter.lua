@@ -4,7 +4,7 @@ vim.g.ts_highlight_lua = true
 -- https://github.com/nvim-treesitter/nvim-treesitter#modules
 require'nvim-treesitter.configs'.setup {
     ensure_installed = "all",
-    ignore_install = {"phpdoc"},
+    ignore_install = {},
     highlight = {enable = true},
     indent = {enable = true, disable = {"python"}},
     incremental_selection = {
