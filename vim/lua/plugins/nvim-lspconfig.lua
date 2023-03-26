@@ -175,6 +175,11 @@ lspconfig.lua_ls.setup(extend_config({
         client.server_capabilities.documentRangeFormattingProvider = false
         default_on_attach(client, bufnr)
     end,
+    -- NOTE: If you need to debug the LSP.
+    -- cmd = {
+    --     "lua-language-server", "--logpath", "/tmp/.cache/lua-language-server/",
+    --     "--metapath", "/tmp/.cache/lua-language-server/meta/"
+    -- },
     settings = {
         Lua = {
             runtime = {
