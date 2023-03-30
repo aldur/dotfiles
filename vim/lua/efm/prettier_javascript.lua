@@ -1,1 +1,1 @@
-return {formatCommand = "prettier --parser babel", formatStdin = true}
+return {formatCommand = "prettier --parser babel"}
