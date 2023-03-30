@@ -7,3 +7,4 @@ pyright
 dockerfile-language-server-nodejs
 solhint
 yaml-language-server
+vscode-langservers-extracted
