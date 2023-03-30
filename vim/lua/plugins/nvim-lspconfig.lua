@@ -153,7 +153,12 @@ efm_languages['c'] = vim.deepcopy(efm_languages['cpp'])
 
 lspconfig.efm.setup(extend_config({
     filetypes = vim.tbl_keys(efm_languages),
-    init_options = {documentFormatting = true, codeAction = true},
+    init_options = {
+        documentFormatting = true,
+        codeAction = true,
+        completion = true,
+        hover = true
+    },
     settings = {
         languages = efm_languages
         -- log_level = 1,
@@ -317,6 +322,13 @@ if vim.fn.executable('marksman') == 1 then
         root_dir = util.root_pattern(".git", ".marksman.toml", ".enable_ctags")
     }))
 end
+
+lspconfig.eslint.setup(extend_config({
+    on_attach = function(client, bufnr)
+        client.server_capabilities.documentFormattingProvider = true
+        default_on_attach(client, bufnr)
+    end
+}))
 
 -- Terraform
 lspconfig.terraformls.setup(default_lsp_config)
