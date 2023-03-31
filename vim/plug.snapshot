@@ -29,7 +29,6 @@ silent! let g:plugs['pear-tree'].commit = '3bb209d9637d6bd7506040b2fcd158c9a7917
 silent! let g:plugs['rust.vim'].commit = '889b9a7515db477f4cb6808bef1769e53493c578'
 silent! let g:plugs['sonokai'].commit = '296f7fa3432f7d9b55b27ad0023f8824701cfec4'
 silent! let g:plugs['swift.vim'].commit = 'ba6f6cef58d08ac741aaf1626d3799d476cd43b6'
-silent! let g:plugs['trouble.nvim'].commit = '67337644e38144b444d026b0df2dc5fa0038930f'
 silent! let g:plugs['ultisnips'].commit = '0ad238b1910d447476b2d98f593322c1cdb71285'
 silent! let g:plugs['undotree'].commit = '485f01efde4e22cb1ce547b9e8c9238f36566f21'
 silent! let g:plugs['vim-abolish'].commit = '880a562ff9176773897930b5a26a496f68e5a985'

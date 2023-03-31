@@ -6,7 +6,6 @@ if has('nvim')
                 \ call lightline#update() |
                 \ lua require('plugins/nvim-lspconfig').on_diagnostic_changed()
 
-    lua require('plugins/trouble')
     lua require('plugins/utils').configure_signs()
 
     command! Hover lua vim.lsp.buf.hover()

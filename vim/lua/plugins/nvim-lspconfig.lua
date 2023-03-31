@@ -77,7 +77,6 @@ local default_on_attach = function(client, bufnr)
     end)
 
     vim.keymap.set('n', '<c-]>', vim.lsp.buf.definition, bufopts)
-    -- vim.keymap.set('n', '<leader>lo', '<cmd>TroubleToggle loclist<CR>', opts)
 end
 
 default_lsp_config.on_attach = default_on_attach
