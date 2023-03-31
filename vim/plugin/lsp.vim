@@ -7,6 +7,7 @@ if has('nvim')
                 \ lua require('plugins/nvim-lspconfig').on_diagnostic_changed()
 
     lua require('plugins/trouble')
+    lua require('plugins/utils').configure_signs()
 
     command! Hover lua vim.lsp.buf.hover()
     command! Rename lua vim.lsp.buf.rename()
@@ -15,9 +16,4 @@ if has('nvim')
     command! ToggleVirtualText call aldur#lsp#toggle_virtual_text()
     command! ToggleSigns call aldur#lsp#toggle_signs()
     command! ToggleUpdateInInsert call aldur#lsp#toggle_update_in_insert()
-
-    " This must run after the GUI has been initialized as it checks for a NERD
-    " font. We work around this by calling it with `DiagnosticChanged`, and then
-    " having making it a no-op after it executes the first time.
-    autocmd vimrc DiagnosticChanged * lua require('plugins/utils').configure_signs()
 endif
