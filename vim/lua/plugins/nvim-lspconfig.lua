@@ -43,7 +43,11 @@ local function find_python_path(workspace_rootdir)
     return vim.fn.exepath('python3') or vim.fn.exepath('python') or 'python'
 end
 
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
+local default_lsp_config = lspconfig.util.default_config
+
+default_lsp_config.capabilities = vim.tbl_deep_extend('force',
+                                                      default_lsp_config.capabilities,
+                                                      require('cmp_nvim_lsp').default_capabilities())
 
 -- Setup everything on lsp attach
 local default_on_attach = function(client, bufnr)
@@ -64,19 +68,20 @@ local default_on_attach = function(client, bufnr)
 
     -- Mnemonic for Info
     vim.keymap.set('n', '<leader>i', vim.lsp.buf.hover, bufopts)
-    vim.keymap.set('n', '<leader>c', vim.lsp.buf.code_action, bufopts)
-    vim.keymap.set('x', '<leader>c', vim.lsp.buf.code_action, bufopts)
+    vim.keymap.set({'n', 'x'}, '<leader>c', vim.lsp.buf.code_action, bufopts)
+
     vim.keymap.set('n', '<leader>f',
-                   function() vim.lsp.buf.format {async = true} end, bufopts)
+                   function() vim.lsp.buf.format({async = true}) end, bufopts)
+    vim.keymap.set({'n', 'x'}, 'gq', function()
+        vim.lsp.buf.format({async = false, timeout_ms = 1000})
+    end)
+
     vim.keymap.set('n', '<c-]>', vim.lsp.buf.definition, bufopts)
     -- vim.keymap.set('n', '<leader>lo', '<cmd>TroubleToggle loclist<CR>', opts)
 end
 
-local default_lsp_config = {
-    on_attach = default_on_attach,
-    capabilities = capabilities,
-    flags = {debounce_text_changes = 200}
-}
+default_lsp_config.on_attach = default_on_attach
+-- default_lsp_config.flags = {debounce_text_changes = 200}
 
 local function extend_config(tbl)
     return vim.tbl_deep_extend('force', default_lsp_config, tbl)
@@ -397,16 +402,3 @@ function M.on_diagnostic_changed()
 end
 
 return M
-
--- Override this LSP handler to open the quickfix in Trouble
--- Inspired by $VIMRUNTIME/lua/vim/lsp/handlers.lua
--- Credits here: https://www.reddit.com/r/vim/comments/osmt4x/help_me_run_vimlspbufreferences_without_opening/
--- vim.lsp.handlers['textDocument/references'] =
---     function(_, result, ctx)
---         if not result or vim.tbl_isempty(result) then return end
---         vim.fn.setqflist({}, ' ', {
---             title = 'Language Server',
---             items = vim.lsp.util.locations_to_items(result, ctx.bufnr)
---         })
---         require'trouble'.open('quickfix')
---     end
