@@ -108,18 +108,21 @@ end
 
 local current_buffer_source = {
     name = 'buffer',
+    keyword_length = 3,
     option = {get_bufnrs = current_buffer_only}
 }
 
 local visible_buffers_source = {
     name = 'buffer',
+    keyword_length = 3,
     option = {get_bufnrs = visible_buffers_only}
 }
 
 local default_sources = {
     -- Sorted by priority.
-    {name = 'nvim_lsp'}, {name = 'nvim_lua'}, {name = 'ultisnips'},
-    visible_buffers_source, {name = 'path'}
+    {name = 'nvim_lsp'}, {name = 'nvim_lua'},
+    {name = 'ultisnips', keyword_length = 2}, visible_buffers_source,
+    {name = 'path'}
 }
 
 local md_sources = {
