@@ -67,34 +67,38 @@
     if executable('git')
         Plug 'tpope/vim-fugitive'                      " A GIT wrapper
         Plug 'tpope/vim-rhubarb'                       " Allow `Gbrowse` for Github
-    endif
+    end
 
     Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
 
-    " Fuzzy files, tags, life.
-    if has('mac') && executable('fzf')  " Install `fzf` with homebrew
-        if filereadable('/usr/local/opt/fzf')
-            Plug '/usr/local/opt/fzf'
-        else
-            " M1 macs
-            Plug '/opt/homebrew/opt/fzf'
-        endif
-        Plug 'junegunn/fzf.vim'
-    else  " Install it as a local plugin
-        Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-        Plug 'junegunn/fzf.vim'
-    end
+    " FZF {{{ "
+        " Fuzzy files, tags, life.
+        if has('mac') && executable('fzf')  " Install `fzf` with homebrew
+            if filereadable('/usr/local/opt/fzf')
+                Plug '/usr/local/opt/fzf'
+            else
+                " M1 macs
+                Plug '/opt/homebrew/opt/fzf'
+            end
+            Plug 'junegunn/fzf.vim'
+        else  " Install it as a local plugin
+            Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+            Plug 'junegunn/fzf.vim'
+        end
+    " }}} FZF "
 
-    " Wiki
-    Plug 'lervag/wiki.vim'
-    Plug 'lervag/lists.vim'
-    if executable('rg')
-        Plug 'aldur/notational-fzf-vim'
-    end
+    " Wiki {{{ "
+        Plug 'lervag/wiki.vim'
+        Plug 'lervag/lists.vim'
+        if executable('rg')
+            Plug 'aldur/notational-fzf-vim'
+        end
+    " }}} Wiki "
 
-    " Appearance and Statusline
+    " Statusline
     Plug 'itchyny/lightline.vim'                  " Configure the statusbar
 
+    " Colorscheme
     Plug 'sainnhe/sonokai'                        " Based on Monokai pro
 
     Plug 'folke/zen-mode.nvim'
@@ -128,22 +132,25 @@
         Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 
         " Algorand's TEAL
+        " No need for `for` since we wrote it :)
         Plug 'aldur/vim-algorand-teal'
 
         " Solidity
         Plug 'TovarishFin/vim-solidity', { 'for': 'solidity' }
 
         " Terraform
-        Plug 'hashivim/vim-terraform'
+        Plug 'hashivim/vim-terraform',  { 'for': 'terraform' }
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
 
-    Plug 'neovim/nvim-lspconfig', b:has_nvim_python3 ? {  } : { 'on': [] }
-    Plug 'ray-x/lsp_signature.nvim', b:has_nvim_python3 ? {  } : { 'on': [] }
-    Plug 'kosayoda/nvim-lightbulb', b:has_nvim_python3 ? {  } : { 'on': [] }
+    " LSP {{{
+        Plug 'neovim/nvim-lspconfig', b:has_nvim_python3 ? {  } : { 'on': [] }
+        Plug 'ray-x/lsp_signature.nvim', b:has_nvim_python3 ? {  } : { 'on': [] }
+        Plug 'kosayoda/nvim-lightbulb', b:has_nvim_python3 ? {  } : { 'on': [] }
+    " }}} LSP
 
-    " Completion {{{ "
+    " Completion {{{
         Plug 'hrsh7th/cmp-nvim-lsp', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'hrsh7th/cmp-buffer', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'hrsh7th/nvim-cmp', b:has_nvim_python3 ? {  } : { 'on': [] }
@@ -151,11 +158,11 @@
         Plug 'hrsh7th/cmp-nvim-lua', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'hrsh7th/cmp-cmdline', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'quangnguyen30192/cmp-nvim-tags', b:has_nvim_python3 ? {  } : { 'on': [] }
-    " }}} Completion "
+    " }}} Completion
 
     if executable('ctags')
         Plug 'ludovicchabant/vim-gutentags'            " Automatic tag management
-    endif
+    end
 
     " Snippets  {{{
         " Conditionally load `ultisnips` if on `nvim` with `python3`.
@@ -168,12 +175,14 @@
         Plug 'quangnguyen30192/cmp-nvim-ultisnips', b:has_nvim_python3 ? {  } : { 'on': [] }
     " }}}
 
-    " Update treesitter parsers when updating the plugin itself
-    Plug 'nvim-treesitter/nvim-treesitter',
-                \ b:has_nvim_python3 ? { 'do': ':TSUpdate' }
-                \ : { 'on': []}
-    Plug 'nvim-treesitter/nvim-treesitter-textobjects'
-    Plug 'romgrk/nvim-treesitter-context'
+    " Treesitter {{{ "
+        " Update treesitter parsers when updating the plugin itself
+        Plug 'nvim-treesitter/nvim-treesitter',
+                    \ b:has_nvim_python3 ? { 'do': ':TSUpdate' }
+                    \ : { 'on': []}
+        Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+        Plug 'romgrk/nvim-treesitter-context'
+    " }}} Treesitter "
 
     " Highlight last yanked object.
     " nvim provides this out of the box.
