@@ -1,18 +1,34 @@
-let g:neovide_input_use_logo=v:true
-let g:neovide_remember_window_size=v:true
-let g:neovide_cursor_animation_length=0.02
-let g:neovide_cursor_trail_length=0.01
+if !exists('g:neovide')
+    finish
+endif
+
+lua vim.o.guifont = "FiraCode Nerd Font:h14"
+
+let g:neovide_remember_window_size = v:true
+let g:neovide_hide_mouse_when_typing = v:true
+let g:neovide_input_macos_alt_is_meta = v:true
 
 nnoremap <D-w> :bd<cr>
 
-" Integration with macOS clipboard
-" https://github.com/neovide/neovide/issues/113#issuecomment-826091133
-nmap <D-c> "+y
-vmap <D-c> "+y
-nmap <D-v> "+p
-inoremap <D-v> <c-r>+
-cnoremap <D-v> <c-r>+
-tnoremap <D-v> '<C-\><C-N>"+pi'
-
 nnoremap <C-6> <C-^>
 
+lua << EOF
+    vim.g.neovide_input_use_logo = 1 -- enable use of the logo (cmd) key
+    vim.keymap.set('v', '<D-c>', '"+y') -- Copy
+    vim.keymap.set('n', '<D-v>', '"+P') -- Paste normal mode
+    vim.keymap.set('v', '<D-v>', '"+P') -- Paste visual mode
+    vim.keymap.set('c', '<D-v>', '<C-R>+') -- Paste command mode
+    vim.keymap.set('i', '<D-v>', '<ESC>"+P') -- Paste insert mode
+    vim.keymap.set('!', '<D-v>', '<C-R>+')
+    vim.keymap.set('t', '<D-v>', '<C-\\><C-O>"+P')
+EOF
+
+let g:neovide_scale_factor=1.0
+function! ChangeScaleFactor(delta) abort
+    let g:neovide_scale_factor = g:neovide_scale_factor * a:delta
+endfunction
+nnoremap <expr><D-=> ChangeScaleFactor(1.1)
+nnoremap <expr><D--> ChangeScaleFactor(1/1.1)
+
+let g:neovide_transparency=1.0
+let g:neovide_transparency_point=0.1
