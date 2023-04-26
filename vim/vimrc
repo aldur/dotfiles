@@ -70,6 +70,7 @@
         Plug 'tpope/vim-rhubarb'                       " Allow `Gbrowse` for Github
     end
 
+    Plug 'ryvnf/readline.vim'
     Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
 
     " FZF {{{ "
@@ -89,7 +90,7 @@
     " }}} FZF "
 
     " Wiki {{{ "
-        Plug 'lervag/wiki.vim'
+        Plug 'lervag/wiki.vim', { 'tag': 'v0.6' }
         Plug 'lervag/lists.vim'
         if executable('rg')
             Plug 'aldur/notational-fzf-vim'
@@ -252,6 +253,7 @@
         let g:wiki_root = '~/Documents/Notes'
         let g:wiki_filetypes = ['md']
         let g:wiki_link_target_type = 'md'
+        let g:wiki_link_extension = ''
 
         " Disable unused mappings
         let g:wiki_mappings_global = {
