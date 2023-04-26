@@ -16,12 +16,11 @@ lua << EOF
     vim.g.neovide_input_use_logo = 1 -- enable use of the logo (cmd) key
     vim.keymap.set('v', '<D-c>', '"+y') -- Copy
 
-    vim.keymap.set('n', '<D-v>', '"+P') -- Paste normal mode
-    vim.keymap.set('v', '<D-v>', '"+P') -- Paste visual mode
-    vim.keymap.set('c', '<D-v>', '<C-R>+') -- Paste command mode
-    vim.keymap.set('i', '<D-v>', '<ESC>"+pa') -- Paste insert mode
-    -- vim.keymap.set('!', '<D-v>', '<C-R>+')
-    vim.keymap.set('t', '<D-v>', '<C-\\><C-O>"+P')
+    -- Paste
+    vim.keymap.set({'n', 'v'}, '<D-v>', '"+P') -- normal/visual mode
+    vim.keymap.set('c', '<D-v>', '<C-R>+') -- command mode
+    vim.keymap.set('i', '<D-v>', '<ESC>"+pa') -- insert mode
+    vim.keymap.set('t', '<D-v>', '<C-\\><C-O>"+P')  -- terminal mode
 EOF
 
 let g:neovide_scale_factor=1.0
