@@ -68,6 +68,9 @@ local default_on_attach = function(client, bufnr)
 
     -- Mnemonic for Info
     vim.keymap.set('n', '<leader>i', vim.lsp.buf.hover, bufopts)
+    -- Trying this.
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+
     vim.keymap.set({'n', 'x'}, '<leader>c', vim.lsp.buf.code_action, bufopts)
 
     vim.keymap.set('n', '<leader>f',
@@ -148,7 +151,8 @@ local efm_languages = {
     xml = {require 'efm/xmltidy'},
     solidity = {require 'efm/prettier_solidity', require 'efm/solhint'},
     typescript = {require 'efm/prettier_typescript'},
-    javascript = {require 'efm/prettier_javascript'}
+    javascript = {require 'efm/prettier_javascript'},
+    yaml = {require 'efm/cfnlint'},
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
 efm_languages['sh.env'] = vim.deepcopy(efm_languages['sh'])
