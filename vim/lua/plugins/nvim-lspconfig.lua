@@ -151,12 +151,15 @@ local efm_languages = {
     xml = {require 'efm/xmltidy'},
     solidity = {require 'efm/prettier_solidity', require 'efm/solhint'},
     typescript = {require 'efm/prettier_typescript'},
-    javascript = {require 'efm/prettier_javascript'},
-    yaml = {require 'efm/cfnlint'},
+    javascript = {require 'efm/prettier_javascript'}
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
+
 efm_languages['sh.env'] = vim.deepcopy(efm_languages['sh'])
 table.insert(efm_languages['sh.env'], require 'efm/dotenv')
+
+efm_languages['yaml.cloudformation'] = {require 'efm/cfnlint'}
+
 efm_languages['c'] = vim.deepcopy(efm_languages['cpp'])
 
 lspconfig.efm.setup(extend_config({
