@@ -25,7 +25,7 @@ output=/Users/aldur/Documents/reMarkablePages/
 
 export PATH="$PATH:/opt/homebrew/bin/"
 
-echo Processing "$input_file_path"...
+echo "$(date -Iseconds)" - Processing "$input_file_path"...
 
 notebook_file=$(dirname "$input_file_path")
 notebook_metadata="$notebook_file".metadata
