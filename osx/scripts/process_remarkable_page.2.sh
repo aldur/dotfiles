@@ -25,7 +25,13 @@ output=/Users/aldur/Documents/reMarkablePages/
 
 export PATH="$PATH:/opt/homebrew/bin/"
 
-echo "$(date -Iseconds)" - Processing "$input_file_path"...
+# Echoes to both STDOUT and STDERR
+echo "$(date -Iseconds)" - "$$" - "$PPID" - Processing "$input_file_path"... | tee /dev/stderr
+
+if [[ $input_file_path == *"/.stversions/"* ]]; then
+	echo "Skipping '.stsversions' file $input_file_path..."
+	exit 0
+fi
 
 notebook_file=$(dirname "$input_file_path")
 notebook_metadata="$notebook_file".metadata
