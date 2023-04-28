@@ -343,6 +343,7 @@ lspconfig.eslint.setup(extend_config({
 
 -- Terraform
 lspconfig.terraformls.setup(default_lsp_config)
+lspconfig.tflint.setup(default_lsp_config)
 
 local buffer_options_default = require('plugins.utils').buffer_options_default
 
