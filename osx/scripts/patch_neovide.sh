@@ -44,9 +44,9 @@ cat <<EOF >$NEOVIDE_SERVER
 
 NVIM_SOCKET=$NVIM_SOCKET
 if [ ! -S \$NVIM_SOCKET ]; then
-    $NEOVIDE_EXECUTABLE --noidle -- --listen \$NVIM_SOCKET \$@
+    $NEOVIDE_EXECUTABLE --noidle -- --listen \$NVIM_SOCKET +"cd ~" "\$@"
 else
-    nvim --server \$NVIM_SOCKET --remote \$(readlink -f \$@ | tr '\n' ' ' | sed 's/ $/\n/')
+    nvim --server \$NVIM_SOCKET --remote "\$(readlink -f "\$@" | tr '\n' ' ' | sed 's/ $/\n/')"
     open -a Neovide  # Ensures front
 fi
 EOF
