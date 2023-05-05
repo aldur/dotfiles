@@ -9,11 +9,6 @@ function! aldur#find_root#find_root() abort
         return fnamemodify(FugitiveGitDir(), ':p:h:h')
     endif
 
-    " If it's a terminal, then we default to cwd
-    if l:root =~# 'term://'
-        return getcwd()
-    endif
-
     let l:base = '%:p:h'
     if &filetype ==# 'netrw' && exists('b:netrw_curdir')
         let l:base = b:netrw_curdir
@@ -26,6 +21,11 @@ function! aldur#find_root#find_root() abort
     catch
         let l:root = expand(l:base, 1)
     endtry
+
+    " If it's a terminal, then we default to cwd
+    if l:root =~# 'term://'
+        return getcwd()
+    endif
 
     return l:root
 endfunction
