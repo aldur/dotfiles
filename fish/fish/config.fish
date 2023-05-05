@@ -7,7 +7,7 @@ abbr -a ls gls --color=tty
 abbr -a ssh autossh
 abbr -a ta tmux -CC new -ADs
 abbr -a tls tmux ls
-abbr -a vim vimr
+abbr -a vim neovide
 
 # Source Google Cloud SKD
 if test -f /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.fish.inc
