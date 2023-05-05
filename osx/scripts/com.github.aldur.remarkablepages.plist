@@ -5,8 +5,11 @@
     <dict>
         <key>Label</key>
         <string>com.github.aldur.remarkablepages</string>
-        <key>Program</key>
-        <string>/Users/aldur/.dotfiles/osx/scripts/process_remarkable_page_launchd.sh</string>
+        <key>ProgramArguments</key>
+        <array>
+            <string>/bin/bash</string>
+            <string>/Users/aldur/.dotfiles/osx/scripts/process_remarkable_page_launchd.sh</string>
+        </array>
         <key>KeepAlive</key>
         <true />
         <key>RunAtLoad</key>
