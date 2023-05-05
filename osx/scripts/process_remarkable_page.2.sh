@@ -18,7 +18,12 @@ cleanup() {
 	trap - SIGINT SIGTERM ERR EXIT
 }
 
-# brew install librsvg qpdf
+# Requires:
+# $ brew install librsvg qpdf
+# lines-are-rusty (with your patch)
+# Bash having full-disk-access (if running through launchd)
+
+# set -x # DEBUG, print failing command
 
 input_file_path=$1
 output=/Users/aldur/Documents/reMarkablePages/
