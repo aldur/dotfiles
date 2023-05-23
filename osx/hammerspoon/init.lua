@@ -388,7 +388,7 @@ hs.fnutils.each({{"-", false}, {"=", true}}, function(k)
     end)
 end)
 
-local function focusOrSwitch(bundleID)
+local function launchFocusOrSwitchBack(bundleID)
     if bundleID == nil then return end
     local window = hs.window.focusedWindow()
     if window and window:application():bundleID() == bundleID then
@@ -402,9 +402,8 @@ end
 hs.fnutils.each({
     {'B', 'com.apple.Safari'}, {'W', 'com.kapeli.dashdoc'},
     {'G', 'com.culturedcode.ThingsMac'}, {'X', 'com.tinyspeck.slackmacgap'}
-},
-                function(k)
-    hs.hotkey.bind(hyper, k[1], function() focusOrSwitch(k[2]) end)
+}, function(k)
+    hs.hotkey.bind(hyper, k[1], function() launchFocusOrSwitchBack(k[2]) end)
 end)
 
 local function getMeetingClients()
@@ -427,7 +426,7 @@ end
 
 -- Focus/launch most commonly used applications across multiple options.
 hs.fnutils.each({
-    {'M', {'com.spotify.client', 'tv.plex.plexamp'}},
+    {'M', {'tv.plex.plexamp', 'com.spotify.client'}},
     {'T', {'com.neovide.neovide', 'com.qvacua.VimR'}},
     {
         'P',
@@ -437,13 +436,13 @@ hs.fnutils.each({
     hs.hotkey.bind(hyper, k[1], function()
         for _, bundleID in pairs(k[2]) do
             if hs.application.get(bundleID) ~= nil then
-                focusOrSwitch(bundleID)
+                launchFocusOrSwitchBack(bundleID)
                 return
             end
         end
 
         -- Fallback to open and focus the first one.
-        focusOrSwitch(k[2][1])
+        launchFocusOrSwitchBack(k[2][1])
     end)
 end)
 
