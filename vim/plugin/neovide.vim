@@ -12,16 +12,7 @@ nnoremap <D-w> :bd<cr>
 
 nnoremap <C-6> <C-^>
 
-lua << EOF
-    vim.g.neovide_input_use_logo = 1 -- enable use of the logo (cmd) key
-    vim.keymap.set('v', '<D-c>', '"+y') -- Copy
-
-    -- Paste
-    vim.keymap.set({'n', 'v'}, '<D-v>', '"+P') -- normal/visual mode
-    vim.keymap.set('c', '<D-v>', '<C-R>+') -- command mode
-    vim.keymap.set('i', '<D-v>', '<ESC>"+pa') -- insert mode
-    vim.keymap.set('t', '<D-v>', '<C-\\><C-O>"+P')  -- terminal mode
-EOF
+lua require('plugins/neovide')
 
 let g:neovide_scale_factor=1.0
 function! ChangeScaleFactor(delta) abort
