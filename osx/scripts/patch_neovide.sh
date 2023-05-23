@@ -27,14 +27,13 @@ PATH=/opt/homebrew/bin:$PATH
 # Needed for `readlink`
 PATH=/opt/homebrew/opt/coreutils/libexec/gnubin/readlink:$PATH
 
-if ! NEOVIDE_PATH=$(which neovide); then
-	echo "Can't find Neovide's executable on PATH!"
-	exit 1
-fi
-
-if ! test -L "$NEOVIDE_PATH"; then
-	echo "Neovide on PATH is not a symlink!"
-	exit 1
+if NEOVIDE_PATH=$(which neovide); then
+	if ! test -L "$NEOVIDE_PATH"; then
+		echo "Neovide is on PATH, but is not a symlink!"
+		exit 1
+	fi
+else
+	NEOVIDE_PATH=$(brew --prefix)/bin/neovide
 fi
 
 NVIM_SOCKET=/tmp/neovide.socket
