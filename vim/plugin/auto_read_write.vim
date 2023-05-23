@@ -3,7 +3,7 @@ set autoread
 
 " And trigger it when files changes on disk outside of VIM
 " We ignore `nofile` buffers to make sure that this works in the command-line window
-autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * if (mode() != 'c' && &buftype != 'nofile') | checktime | endif
+autocmd vimrc FocusGained,BufEnter,TabEnter,CursorHold,CursorHoldI * if (mode() != 'c' && &buftype != 'nofile') | checktime | endif
 autocmd vimrc FileChangedShellPost *
             \ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
 
