@@ -154,9 +154,7 @@ local efm_languages = {
     javascript = {require 'efm/prettier_javascript'}
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
-
-efm_languages['sh.env'] = vim.deepcopy(efm_languages['sh'])
-table.insert(efm_languages['sh.env'], require 'efm/dotenv')
+efm_languages['sh.env'] = {require 'efm/dotenv', require 'efm/shfmt'} -- We don't want shellcheck here.
 
 efm_languages['yaml.cloudformation'] = {require 'efm/cfnlint'}
 
