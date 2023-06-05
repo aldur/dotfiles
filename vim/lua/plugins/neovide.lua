@@ -9,7 +9,7 @@ vim.keymap.set('i', '<D-v>', function()
     -- new line.
     -- This: puts its, removes the additional line, places the curosr at the
     -- end of the put tet.
-    if vim.fn.getreg('+'):find("\n") ~= nil then return '<ESC>"+gp`[kJ`]a' end
+    if vim.fn.getreg('+'):find("\n") ~= nil then return '<ESC>"+gp`]a' end
     return '<ESC>"+gpa'
 end, {expr = true}) -- insert mode
 vim.keymap.set('t', '<D-v>', '<C-\\><C-O>"+gP') -- terminal mode
