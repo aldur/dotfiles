@@ -14,7 +14,6 @@ SETUVAR --export HOMEBREW_NO_INSECURE_REDIRECT:1
 SETUVAR --export MANPAGER:nvim\x20\x2bMan\x21
 SETUVAR --export --path RIPGREP_CONFIG_PATH:/Users/aldur/\x2eripgreprc
 SETUVAR --export SSH_AUTH_SOCK:/Users/aldur/Library/Containers/com\x2emaxgoedjen\x2eSecretive\x2eSecretAgent/Data/socket\x2essh
-SETUVAR --export VISUAL:neovide
 SETUVAR __fish_initialized:3400
 SETUVAR _fish_abbr_gc:git\x20commit
 SETUVAR _fish_abbr_gco:git\x20checkout\x20\x28git\x20branch\x20\x2d\x2dall\x20\x7c\x20fzf\x20\x7c\x20tr\x20\x2dd\x20\x27\x5b\x3aspace\x3a\x5d\x27\x29
