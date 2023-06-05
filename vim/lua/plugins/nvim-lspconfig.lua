@@ -151,10 +151,10 @@ local efm_languages = {
     xml = {require 'efm/xmltidy'},
     solidity = {require 'efm/prettier_solidity', require 'efm/solhint'},
     typescript = {require 'efm/prettier_typescript'},
-    javascript = {require 'efm/prettier_javascript'}
+    javascript = {require 'efm/prettier_javascript'},
+    env = {require 'efm/dotenv', require 'efm/shfmt'} -- We don't want shellcheck here.
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
-efm_languages['sh.env'] = {require 'efm/dotenv', require 'efm/shfmt'} -- We don't want shellcheck here.
 
 efm_languages['yaml.cloudformation'] = {require 'efm/cfnlint'}
 
