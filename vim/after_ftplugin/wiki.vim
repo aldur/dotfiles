@@ -9,3 +9,6 @@ xnoremap <silent><buffer> <leader>wp :WikiExportHTML<CR>
 nnoremap <silent><buffer> <leader>wr :call aldur#wiki#rename_no_ask()<CR>
 " Overwrite default command
 command! -buffer WikiPageRename         call aldur#wiki#rename_no_ask()
+
+nmap <silent><buffer> gx <plug>(wiki-link-follow)
+nmap <silent><buffer> gf <plug>(wiki-link-follow)
