@@ -84,3 +84,9 @@ nnoremap <silent><buffer> K :<C-u>call aldur#dictionary#dictionary('')<CR>
 xnoremap <silent><buffer> K :<C-u>call aldur#dictionary#dictionary('')<CR>
 
 nmap <silent><buffer> gx <plug>(wiki-link-follow)
+
+setlocal foldmethod=expr
+setlocal foldexpr=nvim_treesitter#foldexpr()
+setlocal nofoldenable
+setlocal foldnestmax=5
+setlocal foldminlines=1
