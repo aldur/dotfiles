@@ -46,8 +46,10 @@
     endif
     call plug#begin('~/.vim/plugged')
 
+    " 2023-06-06: Tried disabling this when using `nvim` and `treesitter`
+    " Plug 'Konfekt/FastFold'                        " Better fold refresh
+
     " The list of installed plugins
-    Plug 'Konfekt/FastFold'                        " Better fold refresh
     Plug 'keith/investigate.vim'                   " Smart documentation finder
     Plug 'romainl/vim-qf'                          " Fix the quickfix
     Plug 'tmsvg/pear-tree'                         " Auto-pair
