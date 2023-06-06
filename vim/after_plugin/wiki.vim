@@ -12,7 +12,6 @@ if exists(':NV')
 else
     nmap <silent> <leader>n <plug>(wiki-fzf-pages)
 endif
-nnoremap <expr><silent><leader>wt ':e ' . g:wiki_root . '/Tasklist.md <CR>'
 
 " This mapping will recursively search for notes, remove the "Notes" folder
 " path and remove the `.md` extension.
