@@ -92,7 +92,7 @@
     " }}} FZF "
 
     " Wiki {{{ "
-        Plug 'lervag/wiki.vim', { 'tag': 'v0.6' }
+        Plug 'lervag/wiki.vim', { 'tag': 'v0.7' }
         Plug 'lervag/lists.vim'
         if executable('rg')
             Plug 'aldur/notational-fzf-vim'
@@ -249,36 +249,38 @@
 
     " lists.vim {{{
         let g:lists_filetypes = ['md']
+        let g:lists_todos = ['TODO', 'DONE']
     " }}}
 
-    " vim.wiki {{{
-        let g:wiki_root = '~/Documents/Notes'
-        let g:wiki_filetypes = ['md']
+    " wiki.vim {{{
+        let g:wiki_root = '~/Documents/Notes'  " will be expanded later on
+        let g:wiki_filetypes = ['md']  " default
+
         let g:wiki_link_target_type = 'md'
         let g:wiki_link_extension = ''
 
+        let g:wiki_select_method='fzf'
+
         " Disable unused mappings
         let g:wiki_mappings_global = {
-                    \ '<plug>(wiki-index)' : '<plug>',
-                    \ '<plug>(wiki-open)' : '<plug>',
-                    \ '<plug>(wiki-reload)' : '<plug>',
-                    \ '<plug>(wiki-page-toc)' : '<plug>',
-                    \ '<plug>(wiki-page-toc-local)' : '<plug>',
-                    \ '<plug>(wiki-page-rename)' : '<plug>',
-                    \ '<plug>(wiki-tag-list)' : '<plug>',
-                    \ '<plug>(wiki-tag-reload)' : '<plug>',
-                    \ '<plug>(wiki-tag-search)' : '<plug>',
-                    \ '<plug>(wiki-link-next)' : '<plug>',
-                    \ '<plug>(wiki-link-prev)' : '<plug>',
-                    \ '<plug>(wiki-link-toggle)' : '<plug>',
-                    \ '<plug>(wiki-link-open)' : '<plug>',
-                    \ '<plug>(wiki-export)' : '<plug>',
-                    \ '<plug>(wiki-rename)' : '<plug>',
+                    \ '<plug>(wiki-index)' : '',
+                    \ '<plug>(wiki-open)' : '',
+                    \ '<plug>(wiki-reload)' : '',
                     \}
 
-        let g:wiki_mappings_local = g:wiki_mappings_global
-
-        let g:wiki_list_todos = ['TODO', 'DONE']
+        let g:wiki_mappings_local = {
+                    \ '<plug>(wiki-page-toc)' : '',
+                    \ '<plug>(wiki-page-toc-local)' : '',
+                    \ '<plug>(wiki-page-rename)' : '',
+                    \ '<plug>(wiki-tag-list)' : '',
+                    \ '<plug>(wiki-tag-reload)' : '',
+                    \ '<plug>(wiki-tag-search)' : '',
+                    \ '<plug>(wiki-link-next)' : '',
+                    \ '<plug>(wiki-link-prev)' : '',
+                    \ '<plug>(wiki-link-toggle)' : '',
+                    \ '<plug>(wiki-export)' : '',
+                    \ '<plug>(wiki-rename)' : '',
+                    \}
 
         function! TemplateWrapper(context) abort
             call aldur#wiki#template(a:context)
@@ -296,9 +298,6 @@
             \   'source_func': function('TemplateWrapper')
             \ },
             \ ]
-
-        " Fix temporary error in creating links.
-        " let g:wiki_map_link_create = 'aldur#wiki#map_link_create'
 
         " Configure `notational-fzf-vim`
         let g:nv_main_directory = g:wiki_root
