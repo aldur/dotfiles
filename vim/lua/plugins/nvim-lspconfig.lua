@@ -385,17 +385,68 @@ vim.fn.sign_define('LightBulbSign', {
     numhl = "QuickFixLine"
 })
 
-require('nvim-lightbulb').setup {
-    ignore = {'pylsp'}, -- LSP client names to ignore
-    sign = {
-        enabled = true,
-        priority = 10 -- Priority of the gutter sign
-    },
-    float = {enabled = false},
-    virtual_text = {enabled = false},
-    status_text = {enabled = false},
-    autocmd = {enabled = true} -- Automatically create `autocmd` to update sign
-}
+local LB_SIGN_GROUP = "nvim-lightbulb"
+local LB_SIGN_NAME = "LightBulbSign"
+local LB_SIGN_PRIORITY = 10
+local LB_CLIENTS_TO_IGNORE = {'pylsp'}
+
+function M._update_sign(priority, old_line, new_line, bufnr)
+    bufnr = bufnr or "%"
+
+    if old_line then
+        vim.fn.sign_unplace(LB_SIGN_GROUP, {id = old_line, buffer = bufnr})
+
+        -- Update current lightbulb line
+        vim.b.lightbulb_line = nil
+    end
+
+    -- Avoid redrawing lightbulb if code action line did not change
+    if new_line and (vim.b.lightbulb_line ~= new_line) then
+        vim.fn.sign_place(new_line, LB_SIGN_GROUP, LB_SIGN_NAME, bufnr,
+                          {lnum = new_line, priority = priority})
+        -- Update current lightbulb line
+        vim.b.lightbulb_line = new_line
+    end
+end
+
+-- Taken from https://github.com/neovim/nvim-lspconfig/wiki/Code-Actions
+function M.code_action_listener()
+    local context = {diagnostics = vim.lsp.diagnostic.get_line_diagnostics()}
+    local params = vim.lsp.util.make_range_params()
+    params.context = context
+
+    local bufnr = vim.api.nvim_get_current_buf()
+    local line = params.range.start.line
+
+    vim.lsp.buf_request_all(0, 'textDocument/codeAction', params,
+                            function(responses)
+        local has_actions = false
+        for client_id, resp in pairs(responses) do
+            if resp.result and not LB_CLIENTS_TO_IGNORE[client_id] and
+                not vim.tbl_isempty(resp.result) then
+                has_actions = true
+                break
+            end
+        end
+
+        if has_actions then
+            M._update_sign(LB_SIGN_PRIORITY, vim.b.lightbulb_line, line + 1, bufnr)
+        else
+            M._update_sign(LB_SIGN_PRIORITY, vim.b.lightbulb_line, nil, bufnr)
+        end
+    end)
+end
+
+function M.code_action_autocmd()
+    local id = vim.api.nvim_create_augroup("LightBulb", {})
+    vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {
+        pattern = {"*"},
+        group = id,
+        callback = M.code_action_listener
+    })
+end
+
+M.code_action_autocmd() -- Thsi creates the autocmd to trigger the lightbulb
 
 local function close_loclist_if_no_diagnostic()
     if #vim.diagnostic.get(0) == 0 then vim.cmd("lclose") end
