@@ -277,6 +277,7 @@
                     \ '<plug>(wiki-link-next)' : '',
                     \ '<plug>(wiki-link-prev)' : '',
                     \ '<plug>(wiki-link-toggle)' : '',
+                    \ '<plug>(wiki-link-follow)' : '',
                     \ '<plug>(wiki-export)' : '',
                     \ '<plug>(wiki-rename)' : '',
                     \}
