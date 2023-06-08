@@ -12,6 +12,7 @@ git:
 	git config --global user.email "adrianodl@hotmail.it"
 	git config --global commit.verbose true
 	git config --global push.default current
+	git config --global push.autoSetupRemote true
 	git config --global pull.default current
 	git config --global push.followTags true
 	git config --global core.excludesfile ~/.gitignore_global
