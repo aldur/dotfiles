@@ -454,6 +454,17 @@ end
 
 -- Taken from https://github.com/neovim/nvim-lspconfig/wiki/Code-Actions
 function M.code_action_listener()
+    -- Check for code action capability
+    local code_action_cap_found = false
+    for _, client in pairs(vim.lsp.buf_get_clients()) do
+        if client and not LB_CLIENTS_TO_IGNORE[client.name] and
+            client.supports_method("textDocument/codeAction") then
+            code_action_cap_found = true
+            break
+        end
+    end
+
+    if not code_action_cap_found then return end
     local params = vim.lsp.util.make_range_params()
 
     local bufnr = vim.api.nvim_get_current_buf()
