@@ -4,7 +4,7 @@ local util = require('lspconfig/util')
 local M = {}
 
 -- Running `pipenv` in a subshell is expensive, so we cache the result.
--- Reset it w/ `lua require('plugins/nvim-lspconfig')`
+-- Reset it w/ `lua require('plugins/lspconfig')`
 M.venv_cache = {}
 
 local function find_python_venv(workspace_rootdir)
