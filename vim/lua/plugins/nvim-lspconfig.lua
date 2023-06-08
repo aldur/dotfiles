@@ -411,12 +411,13 @@ end
 
 -- Taken from https://github.com/neovim/nvim-lspconfig/wiki/Code-Actions
 function M.code_action_listener()
-    local context = {diagnostics = vim.lsp.diagnostic.get_line_diagnostics()}
     local params = vim.lsp.util.make_range_params()
-    params.context = context
 
     local bufnr = vim.api.nvim_get_current_buf()
     local line = params.range.start.line
+
+    local context = {diagnostics = vim.diagnostic.get(0, {lnum = line})}
+    params.context = context
 
     vim.lsp.buf_request_all(0, 'textDocument/codeAction', params,
                             function(responses)
@@ -430,7 +431,8 @@ function M.code_action_listener()
         end
 
         if has_actions then
-            M._update_sign(LB_SIGN_PRIORITY, vim.b.lightbulb_line, line + 1, bufnr)
+            M._update_sign(LB_SIGN_PRIORITY, vim.b.lightbulb_line, line + 1,
+                           bufnr)
         else
             M._update_sign(LB_SIGN_PRIORITY, vim.b.lightbulb_line, nil, bufnr)
         end
