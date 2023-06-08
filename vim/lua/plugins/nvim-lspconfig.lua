@@ -52,7 +52,7 @@ default_lsp_config.capabilities = vim.tbl_deep_extend('force',
 -- Setup everything on lsp attach
 local default_on_attach = function(client, bufnr)
     -- Enable completion triggered by <c-x><c-o>
-    vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
+    vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc' -- luacheck: ignore 122
 
     require("lsp_signature").on_attach({
         -- This is mandatory, otherwise border config won't get registered.
@@ -68,26 +68,45 @@ local default_on_attach = function(client, bufnr)
         vim.keymap.set('n', '<leader>u', vim.lsp.buf.references, bufopts)
     end
 
-    -- Mnemonic for Info
-    vim.keymap.set('n', '<leader>i', vim.lsp.buf.hover, bufopts)
     -- Trying this.
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+    -- Call it twice to jump into the window.
+    if client.server_capabilities.hoverProvider then
+        vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+    end
 
-    vim.keymap.set({'n', 'x'}, '<leader>c', vim.lsp.buf.code_action, bufopts)
+    if client.server_capabilities.codeActionProvider then
+        vim.keymap
+            .set({'n', 'x'}, '<leader>c', vim.lsp.buf.code_action, bufopts)
+    end
 
-    vim.keymap.set('n', '<leader>f',
-                   function() vim.lsp.buf.format({async = true}) end, bufopts)
-    vim.keymap.set({'n', 'x'}, 'gq', function()
-        vim.lsp.buf.format({async = false, timeout_ms = 1000})
-    end)
+    if client.server_capabilities.documentFormattingProvider then
+        vim.keymap.set('n', '<leader>f',
+                       function() vim.lsp.buf.format({async = true}) end,
+                       bufopts)
+    end
 
-    vim.keymap.set('n', '<c-]>', vim.lsp.buf.definition, bufopts)
+    if client.server_capabilities.documentRangeFormattingProvider then
+        local f = function()
+            vim.lsp.buf.format({async = false, timeout_ms = 1000})
+        end
+        vim.keymap.set({'n', 'x'}, 'gq', f)
+    end
+
+    -- This overrides the default mapping to look up `tags`
+    if client.server_capabilities.gotoDefinitionProvider then
+        vim.keymap.set('n', '<c-]>', vim.lsp.buf.definition, bufopts)
+    end
 
     -- Our LSP configuration places diagnostic in the loclist.
     -- This overrides the default commands to go to prev/next element in the
     -- loclist. It has the advantage to take the cursor position into consideration.
-    vim.keymap.set('n', '[l', vim.diagnostic.goto_prev, bufopts)
-    vim.keymap.set('n', ']l', vim.diagnostic.goto_next, bufopts)
+    local diagnostic_goto_opts = {float = false}
+    vim.keymap.set('n', '[l', function()
+        vim.diagnostic.goto_prev(diagnostic_goto_opts)
+    end, bufopts)
+    vim.keymap.set('n', ']l', function()
+        vim.diagnostic.goto_next(diagnostic_goto_opts)
+    end, bufopts)
 end
 
 default_lsp_config.on_attach = default_on_attach
@@ -184,18 +203,47 @@ lspconfig.efm.setup(extend_config({
     single_file_support = true
 }))
 
--- https://github.com/mjlbach/defaults.nvim/blob/master/init.lua#L245
--- Make runtime files discoverable to the server
-local runtime_path = vim.split(package.path, ';')
-table.insert(runtime_path, 'lua/?.lua')
-table.insert(runtime_path, 'lua/?/init.lua')
-
 -- https://www.chrisatmachine.com/Neovim/28-neovim-lua-development/
 lspconfig.lua_ls.setup(extend_config({
     on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = false
         client.server_capabilities.documentRangeFormattingProvider = false
         default_on_attach(client, bufnr)
+    end,
+    on_init = function(client)
+        local path = client.workspace_folders[1].name
+
+        if path:find('.vim', 1, true) or path:find('.dotfiles/vim', 1, true) then
+            _G.info_message(
+                "Overriding lua_lsp configuration for vim lua files.")
+
+            -- https://github.com/mjlbach/defaults.nvim/blob/master/init.lua#L245
+            -- Make runtime files discoverable to the server
+            local runtime_path = vim.split(package.path, ';')
+            table.insert(runtime_path, 'lua/?.lua')
+            table.insert(runtime_path, 'lua/?/init.lua')
+
+            -- Tell the language server which version of Lua you're using
+            -- (most likely LuaJIT in the case of Neovim)
+            client.config.settings.Lua.runtime.version = "LuaJIT"
+            -- Setup your lua path
+            client.config.settings.Lua.runtime.path = runtime_path
+            -- Get the language server to recognize the `vim` global
+            client.config.settings.Lua.diagnostics.globals = {'vim'}
+
+            -- Make the server aware of Neovim runtime files
+            local f = vim.api.nvim_get_runtime_file
+            client.config.settings.Lua.workspace.library = f('', true)
+
+            -- WARNING: An error here will not be printed, so it will be very
+            -- difficult to debug.
+            -- If you need to debug, use this as a canary.
+            -- vim.print(client.config)
+        end
+
+        client.notify("workspace/didChangeConfiguration",
+                      {settings = client.config.settings})
+        return true
     end,
     -- NOTE: If you need to debug the LSP.
     -- cmd = {
@@ -204,22 +252,9 @@ lspconfig.lua_ls.setup(extend_config({
     -- },
     settings = {
         Lua = {
-            runtime = {
-                -- Tell the language server which version of Lua you're using
-                -- (most likely LuaJIT in the case of Neovim)
-                version = 'LuaJIT',
-                -- Setup your lua path
-                path = runtime_path
-            },
-            diagnostics = {
-                -- Get the language server to recognize the `vim` global
-                globals = {'vim', 'hs'}
-            },
-            workspace = {
-                -- Make the server aware of Neovim runtime files
-                library = vim.api.nvim_get_runtime_file('', true),
-                checkThirdParty = false
-            },
+            runtime = {version = 'Lua 5.4'},
+            workspace = {checkThirdParty = false},
+            diagnostics = {globals = {}},
             telemetry = {enable = false}
         }
     }
@@ -405,7 +440,7 @@ function M._update_sign(priority, old_line, new_line, bufnr)
         vim.fn.sign_unplace(LB_SIGN_GROUP, {id = old_line, buffer = bufnr})
 
         -- Update current lightbulb line
-        vim.b.lightbulb_line = nil
+        vim.b.lightbulb_line = nil -- luacheck: ignore 122
     end
 
     -- Avoid redrawing lightbulb if code action line did not change
@@ -413,7 +448,7 @@ function M._update_sign(priority, old_line, new_line, bufnr)
         vim.fn.sign_place(new_line, LB_SIGN_GROUP, LB_SIGN_NAME, bufnr,
                           {lnum = new_line, priority = priority})
         -- Update current lightbulb line
-        vim.b.lightbulb_line = new_line
+        vim.b.lightbulb_line = new_line -- luacheck: ignore 122
     end
 end
 

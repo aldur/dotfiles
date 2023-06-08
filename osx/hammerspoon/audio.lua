@@ -1,5 +1,3 @@
--- luacheck: globals hs
--- luacheck: globals globals
 local logger = hs.logger.new('mic')
 logger.level = 3
 

@@ -1,6 +1,4 @@
 return {
-    lintCommand = "luacheck - --read-globals vim --formatter plain --codes --filename ${INPUT}",
-    lintStdin = true,
-    lintIgnoreExitCode = true,
+    lintCommand = "pushd $(dirname ${INPUT}) && luacheck --formatter plain --codes ${INPUT}",
     lintFormats = {'%f:%l:%c: %m'}
 }

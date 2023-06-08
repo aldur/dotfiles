@@ -1,2 +1,3 @@
-std = "min"
-globals = { 'import', 'config', 'hs', 'globals' }
+std = "lua54"
+globals = {'import', 'config', 'hs', 'Globals'}
+
