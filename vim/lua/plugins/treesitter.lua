@@ -1,5 +1,4 @@
--- luacheck: globals vim.g
-vim.g.ts_highlight_lua = true
+vim.g.ts_highlight_lua = true  -- luacheck: ignore 122
 
 -- https://github.com/nvim-treesitter/nvim-treesitter#modules
 require'nvim-treesitter.configs'.setup {

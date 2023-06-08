@@ -1,6 +1,3 @@
--- luacheck: globals hs
--- luacheck: globals globals
-
 local logger = hs.logger.new('pocket')
 local secrets = require('secrets')
 

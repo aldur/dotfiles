@@ -5,7 +5,6 @@
 --- Download: [https://github.com/Hammerspoon/Spoons/raw/master/Spoons/Seal.spoon.zip](https://github.com/Hammerspoon/Spoons/raw/master/Spoons/Seal.spoon.zip)
 
 -- luacheck: ignore 631
--- luacheck: globals hs
 
 local obj = {}
 obj.__index = obj

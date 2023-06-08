@@ -1,5 +1,4 @@
 -- Original credits: https://github.com/VFS/.hammerspoon/blob/master/tools/clipboard.lua
--- luacheck: globals hs
 -- luacheck: ignore module
 local pasteboard_name = 'com.aldur.clipboard'
 local archive_name = 'com.aldur.clipboard.archive'

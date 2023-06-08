@@ -4,8 +4,6 @@
 local obj = {}
 obj.__index = obj
 
--- luacheck: globals hs
-
 -- Metadata
 obj.name = "Emojis"
 obj.version = "1.0"

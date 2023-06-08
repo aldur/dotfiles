@@ -1,5 +1,4 @@
 -- luacheck: no self
--- luacheck: globals hs
 
 local obj = {}
 obj.__index = obj
