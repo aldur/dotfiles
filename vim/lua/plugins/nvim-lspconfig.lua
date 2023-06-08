@@ -51,10 +51,12 @@ default_lsp_config.capabilities = vim.tbl_deep_extend('force',
 
 -- Setup everything on lsp attach
 local default_on_attach = function(client, bufnr)
-    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+    -- Enable completion triggered by <c-x><c-o>
+    vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
-    require"lsp_signature".on_attach({
-        bind = true, -- This is mandatory, otherwise border config won't get registered.
+    require("lsp_signature").on_attach({
+        -- This is mandatory, otherwise border config won't get registered.
+        bind = true,
         handler_opts = {border = "single"}
     })
 
@@ -80,6 +82,12 @@ local default_on_attach = function(client, bufnr)
     end)
 
     vim.keymap.set('n', '<c-]>', vim.lsp.buf.definition, bufopts)
+
+    -- Our LSP configuration places diagnostic in the loclist.
+    -- This overrides the default commands to go to prev/next element in the
+    -- loclist. It has the advantage to take the cursor position into consideration.
+    vim.keymap.set('n', '[l', vim.diagnostic.goto_prev, bufopts)
+    vim.keymap.set('n', ']l', vim.diagnostic.goto_next, bufopts)
 end
 
 default_lsp_config.on_attach = default_on_attach
