@@ -72,7 +72,6 @@
         Plug 'tpope/vim-rhubarb'                       " Allow `Gbrowse` for Github
     end
 
-    Plug 'ryvnf/readline.vim'
     Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
 
     " FZF {{{ "
