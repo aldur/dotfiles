@@ -91,7 +91,11 @@
     " }}} FZF "
 
     " Wiki {{{ "
-        Plug 'lervag/wiki.vim', { 'tag': 'v0.7' }
+        " Plug 'lervag/wiki.vim', { 'tag': 'v0.7' }
+        " 'til commit `4f0bc3db6ffdd0529766f1c4ba6ab658e8a25a4d` gets included
+        " in a release.
+        Plug 'lervag/wiki.vim'
+
         Plug 'lervag/lists.vim'
         if executable('rg')
             Plug 'aldur/notational-fzf-vim'
@@ -252,10 +256,12 @@
 
     " wiki.vim {{{
         let g:wiki_root = '~/Documents/Notes'  " will be expanded later on
-        let g:wiki_filetypes = ['md']  " default
-
-        let g:wiki_link_target_type = 'md'
-        let g:wiki_link_extension = ''
+        let g:wiki_link_creation = {
+                    \ 'md': {
+                    \   'link_type': 'md',
+                    \   'url_extension': '',
+                    \ },
+                    \}
 
         let g:wiki_select_method='fzf'
 
