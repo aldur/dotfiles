@@ -27,6 +27,7 @@ nnoremap Q <Nop>
 
 " When going back and forth in history, match prefixes
 " Source: https://github.com/mhinz/vim-galore/issues/148
+" NOTE: This will be over-written by `cmp`
 cnoremap <expr> <c-n> wildmenumode() ? "<c-n>" : "<down>"
 cnoremap <expr> <c-p> wildmenumode() ? "<c-p>" : "<up>"
 
