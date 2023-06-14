@@ -179,7 +179,8 @@ local efm_languages = {
     solidity = {require 'efm/prettier_solidity', require 'efm/solhint'},
     typescript = {require 'efm/prettier_typescript'},
     javascript = {require 'efm/prettier_javascript'},
-    env = {require 'efm/dotenv', require 'efm/shfmt'} -- We don't want shellcheck here.
+    env = {require 'efm/dotenv', require 'efm/shfmt'}, -- We don't want shellcheck here.
+    caddyfile = {require 'efm/caddyfile'}
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
 
