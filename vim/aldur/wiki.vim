@@ -28,7 +28,7 @@ function! aldur#wiki#rename_no_ask() abort
     redraw!
     echo 'Enter new name (without extension) [empty cancels]:'
     let l:name = input('> ', expand('%:p:t:r'))
-    if empty(l:name)
+    if !empty(l:name)
         call wiki#page#rename({'new_name': l:name})
     endif
 endfunction
