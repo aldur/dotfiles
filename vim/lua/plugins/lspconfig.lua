@@ -97,20 +97,22 @@ local default_on_attach = function(client, bufnr)
     end
 
     -- This overrides the default mapping to look up `tags`
-    if client.server_capabilities.gotoDefinitionProvider then
+    if client.server_capabilities.definitionProvider then
         vim.keymap.set('n', '<c-]>', vim.lsp.buf.definition, bufopts)
     end
 
     -- Our LSP configuration places diagnostic in the loclist.
     -- This overrides the default commands to go to prev/next element in the
     -- loclist. It has the advantage to take the cursor position into consideration.
-    local diagnostic_goto_opts = {float = false}
-    vim.keymap.set('n', '[l', function()
-        vim.diagnostic.goto_prev(diagnostic_goto_opts)
-    end, bufopts)
-    vim.keymap.set('n', ']l', function()
-        vim.diagnostic.goto_next(diagnostic_goto_opts)
-    end, bufopts)
+    if client.server_capabilities.diagnosticProvider then
+        local diagnostic_goto_opts = {float = false}
+        vim.keymap.set('n', '[l', function()
+            vim.diagnostic.goto_prev(diagnostic_goto_opts)
+        end, bufopts)
+        vim.keymap.set('n', ']l', function()
+            vim.diagnostic.goto_next(diagnostic_goto_opts)
+        end, bufopts)
+    end
 end
 
 default_lsp_config.on_attach = default_on_attach
@@ -145,12 +147,14 @@ end
 lspconfig.pylsp.setup(extend_config({
     on_attach = function(client, bufnr)
         -- Disable all non-required features as we also use Black/efm/pyright.
+        -- https://microsoft.github.io/language-server-protocol/specifications
+        -- /lsp/3.17/specification/#textDocument_hover
         client.server_capabilities.documentFormattingProvider = false
         client.server_capabilities.completionProvider = false
         client.server_capabilities.documentHighlightProvider = false
         client.server_capabilities.documentRangeFormattingProvider = false
         client.server_capabilities.referencesProvider = false
-        client.server_capabilities.gotoDefinitionProvider = false
+        client.server_capabilities.definitionProvider = false
         client.server_capabilities.executeCommandProvider = true
         client.server_capabilities.documentSymbolProvider = false
         client.server_capabilities.hoverProvider = false
@@ -436,7 +440,7 @@ vim.fn.sign_define('LightBulbSign', {
 local LB_SIGN_GROUP = "nvim-lightbulb"
 local LB_SIGN_NAME = "LightBulbSign"
 local LB_SIGN_PRIORITY = 10
-local LB_CLIENTS_TO_IGNORE = {'pylsp'}
+M.LB_CLIENTS_TO_IGNORE = {'pylsp'}
 
 function M._update_sign(priority, old_line, new_line, bufnr)
     bufnr = bufnr or "%"
@@ -462,7 +466,7 @@ function M.code_action_listener()
     -- Check for code action capability
     local code_action_cap_found = false
     for _, client in pairs(vim.lsp.buf_get_clients()) do
-        if client and not LB_CLIENTS_TO_IGNORE[client.name] and
+        if client and not vim.tbl_contains(M.LB_CLIENTS_TO_IGNORE, client.name) and
             client.supports_method("textDocument/codeAction") then
             code_action_cap_found = true
             break
@@ -482,7 +486,8 @@ function M.code_action_listener()
                             function(responses)
         local has_actions = false
         for client_id, resp in pairs(responses) do
-            if resp.result and not LB_CLIENTS_TO_IGNORE[client_id] and
+            if resp.result and
+                vim.tbl_contains(M.LB_CLIENTS_TO_IGNORE, client_id) and
                 not vim.tbl_isempty(resp.result) then
                 has_actions = true
                 break
