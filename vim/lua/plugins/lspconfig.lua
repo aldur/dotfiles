@@ -52,7 +52,11 @@ default_lsp_config.capabilities = vim.tbl_deep_extend('force',
 -- Setup everything on lsp attach
 local default_on_attach = function(client, bufnr)
     -- Enable completion triggered by <c-x><c-o>
-    vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc' -- luacheck: ignore 122
+    -- NOTE: No need for this, `nvim` does it better.
+    -- It also sets `tagfunc` and `format{prg,expr}`.
+    -- https://github.com/neovim/neovim/blob/
+    -- bbb934e7755a3b6f14c4d94334b8f54c63daebf1/runtime/lua/vim/lsp.lua#L974
+    -- vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
     require("lsp_signature").on_attach({
         -- This is mandatory, otherwise border config won't get registered.
