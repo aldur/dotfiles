@@ -10,7 +10,8 @@ vim.keymap.set('i', '<D-v>', function()
     -- This: puts its, removes the additional line, places the curosr at the
     -- end of the put tet.
     if vim.fn.getreg('+'):find("\n") ~= nil then return '<ESC>"+gp`]a' end
+    local _, c = unpack(vim.api.nvim_win_get_cursor(0))
+    if c == 0 then return '<ESC>"+gPi' end
     return '<ESC>"+gpa'
 end, {expr = true}) -- insert mode
 vim.keymap.set('t', '<D-v>', '<C-\\><C-O>"+gP') -- terminal mode
-
