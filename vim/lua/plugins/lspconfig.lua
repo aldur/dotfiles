@@ -49,62 +49,67 @@ default_lsp_config.capabilities = vim.tbl_deep_extend('force',
                                                       default_lsp_config.capabilities,
                                                       require('cmp_nvim_lsp').default_capabilities())
 
--- Setup everything on lsp attach
-local default_on_attach = function(client, bufnr)
-    -- Enable completion triggered by <c-x><c-o>
-    -- NOTE: No need for this, `nvim` does it better.
-    -- It also sets `tagfunc` and `format{prg,expr}`.
-    -- https://github.com/neovim/neovim/blob/
-    -- bbb934e7755a3b6f14c4d94334b8f54c63daebf1/runtime/lua/vim/lsp.lua#L974
-    -- vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
+vim.api.nvim_create_autocmd('LspAttach', {
+    callback = function(args)
+        local bufnr = args.buf
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
 
-    require("lsp_signature").on_attach({
-        -- This is mandatory, otherwise border config won't get registered.
-        bind = true,
-        handler_opts = {border = "single"}
-    })
+        -- Enable completion triggered by <c-x><c-o>
+        -- NOTE: No need for this, `nvim` does it better.
+        -- It also sets `tagfunc` and `format{prg,expr}`.
+        -- https://github.com/neovim/neovim/blob/
+        -- bbb934e7755a3b6f14c4d94334b8f54c63daebf1/runtime/lua/vim/lsp.lua#L974
+        -- vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
-    -- Mappings
-    local bufopts = {noremap = true, silent = true, buffer = bufnr}
+        require("lsp_signature").on_attach({
+            -- This is mandatory, otherwise border config won't get registered.
+            bind = true,
+            handler_opts = {border = "single"}
+        })
 
-    if client.server_capabilities.referencesProvider then
-        -- Mnemonic for Usages
-        vim.keymap.set('n', '<leader>u', vim.lsp.buf.references, bufopts)
-    end
+        -- Mappings
+        local bufopts = {noremap = true, silent = true, buffer = bufnr}
 
-    -- Trying this.
-    -- Call it twice to jump into the window.
-    if client.server_capabilities.hoverProvider then
-        vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-    end
-
-    if client.server_capabilities.codeActionProvider then
-        vim.keymap
-            .set({'n', 'x'}, '<leader>c', vim.lsp.buf.code_action, bufopts)
-    end
-
-    if client.server_capabilities.documentFormattingProvider then
-        vim.keymap.set('n', '<leader>f',
-                       function() vim.lsp.buf.format({async = true}) end,
-                       bufopts)
-    end
-
-    if client.server_capabilities.documentRangeFormattingProvider then
-        local f = function()
-            vim.lsp.buf.format({async = false, timeout_ms = 1000})
+        if client.server_capabilities.referencesProvider then
+            -- Mnemonic for Usages
+            vim.keymap.set('n', '<leader>u', vim.lsp.buf.references, bufopts)
         end
-        vim.keymap.set({'n', 'x'}, 'gq', f)
-    end
 
-    -- This overrides the default mapping to look up `tags`
-    if client.server_capabilities.definitionProvider then
-        vim.keymap.set('n', '<c-]>', vim.lsp.buf.definition, bufopts)
-    end
+        -- Trying this.
+        -- Call it twice to jump into the window.
+        if client.server_capabilities.hoverProvider then
+            vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+        end
 
-    -- Our LSP configuration places diagnostic in the loclist.
-    -- This overrides the default commands to go to prev/next element in the
-    -- loclist. It has the advantage to take the cursor position into consideration.
-    if client.server_capabilities.diagnosticProvider then
+        if client.server_capabilities.codeActionProvider then
+            vim.keymap.set({'n', 'x'}, '<leader>c', vim.lsp.buf.code_action,
+                           bufopts)
+        end
+
+        if client.server_capabilities.documentFormattingProvider then
+            vim.keymap.set('n', '<leader>f',
+                           function()
+                vim.lsp.buf.format({async = true})
+            end, bufopts)
+        end
+
+        -- NOTE: This should not be required since `nvim` sets `formatexpr`
+        -- if client.server_capabilities.documentRangeFormattingProvider then
+        --     local f = function()
+        --         vim.lsp.buf.format({async = false, timeout_ms = 1000})
+        --     end
+        --     vim.keymap.set({'n', 'x'}, 'gq', f)
+        -- end
+
+        -- NOTE: This should not be required since `nvim` sets `tagsfunc`
+        -- This overrides the default mapping to look up `tags`
+        -- if client.server_capabilities.definitionProvider then
+        --     vim.keymap.set('n', '<c-]>', vim.lsp.buf.definition, bufopts)
+        -- end
+
+        -- Our LSP configuration places diagnostic in the loclist.
+        -- This overrides the default commands to go to prev/next element in the
+        -- loclist. It has the advantage to take the cursor position into consideration.
         local diagnostic_goto_opts = {float = false}
         vim.keymap.set('n', '[l', function()
             vim.diagnostic.goto_prev(diagnostic_goto_opts)
@@ -113,10 +118,27 @@ local default_on_attach = function(client, bufnr)
             vim.diagnostic.goto_next(diagnostic_goto_opts)
         end, bufopts)
     end
-end
+})
 
+vim.api.nvim_create_autocmd("LspDetach", {
+    callback = function(_)
+        -- local client = vim.lsp.get_client_by_id(args.data.client_id)
+        -- Do something with the client
+
+        -- TODO: Unset keymaps.
+        -- vim.cmd("setlocal tagfunc< omnifunc<")
+
+        -- Here we refresh buffer diagnostic to avoid stale ones
+        -- (from the LSP that was detached).
+        vim.diagnostic.reset()
+        vim.diagnostic.get(0)
+    end
+})
+
+-- In case you need to setup additional things on attach, here you have a
+-- default function. Takes `client` and `bufnr`.
+local default_on_attach = function(_, _) end
 default_lsp_config.on_attach = default_on_attach
--- default_lsp_config.flags = {debounce_text_changes = 200}
 
 local function extend_config(tbl)
     return vim.tbl_deep_extend('force', default_lsp_config, tbl)
@@ -323,7 +345,14 @@ lspconfig.rust_analyzer.setup(extend_config({
         ["rust-analyzer"] = {
             imports = {granularity = {group = "module"}, prefix = "self"},
             cargo = {buildScripts = {enable = true}},
-            procMacro = {enable = true}
+            procMacro = {enable = true},
+            checkOnSave = {
+                allFeatures = true,
+                overrideCommand = {
+                    'cargo', 'clippy', '--workspace', '--message-format=json',
+                    '--all-targets', '--all-features'
+                }
+            }
         }
     },
     cmd = {"rustup", "run", "stable", "rust-analyzer"}
