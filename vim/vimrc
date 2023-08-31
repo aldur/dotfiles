@@ -147,6 +147,9 @@
 
         " Caddyfile
         Plug 'isobit/vim-caddyfile', { 'for': 'caddyfile'}
+
+        " nix
+        Plug 'LnL7/vim-nix', { 'for': 'nix' }
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
@@ -281,7 +284,7 @@
                     \ '<plug>(wiki-tag-search)' : '',
                     \ '<plug>(wiki-link-next)' : '',
                     \ '<plug>(wiki-link-prev)' : '',
-                    \ '<plug>(wiki-link-toggle)' : '',
+                    \ '<plug>(wiki-link-transform)' : '',
                     \ '<plug>(wiki-link-follow)' : '',
                     \ '<plug>(wiki-export)' : '',
                     \ '<plug>(wiki-rename)' : '',

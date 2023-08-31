@@ -404,6 +404,7 @@ lspconfig.ltex.setup(extend_config({
 lspconfig.ccls.setup(default_lsp_config)
 
 -- cargo install rnix-lsp
+-- or nix profile install nixpkgs#rnix-lsp
 lspconfig.rnix.setup(default_lsp_config)
 
 -- https://github.com/artempyanykh/marksman
