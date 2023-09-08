@@ -6,6 +6,9 @@ let g:gutentags_cache_dir = $HOME . '/.vim_backups/tags/'
 " We take matter into our own hands
 let g:gutentags_add_default_project_roots = 0
 
+" This helps if the plugin isn't loaded.
+let g:gutentags_project_root = get(g:, 'gutentags_project_root', [])
+
 " We only use `git` as SVC
 call add(g:gutentags_project_root, '.git')
 
