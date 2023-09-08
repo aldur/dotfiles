@@ -206,6 +206,7 @@ local efm_languages = {
     cpp = {require 'efm/astyle'},
     json = {require 'efm/jq'},
     xml = {require 'efm/xmltidy'},
+    html = {require 'efm/htmltidy'},
     solidity = {require 'efm/prettier_solidity', require 'efm/solhint'},
     typescript = {require 'efm/prettier_typescript'},
     javascript = {require 'efm/prettier_javascript'},
