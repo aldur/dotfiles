@@ -429,13 +429,13 @@ lspconfig.tflint.setup(default_lsp_config)
 local buffer_options_default = require('plugins.utils').buffer_options_default
 
 function M.signs_enabled(bufnr)
-    return buffer_options_default(bufnr, 'show_signs', true) == true
+    return buffer_options_default(bufnr, 'show_signs', 1) == 1
 end
 function M.virtual_text_enabled(bufnr)
-    return buffer_options_default(bufnr, 'show_virtual_text', true) == true
+    return buffer_options_default(bufnr, 'show_virtual_text', 1) == 1
 end
 function M.update_in_insert_enabled(bufnr)
-    return buffer_options_default(bufnr, 'update_in_insert', false) == true
+    return buffer_options_default(bufnr, 'update_in_insert', 0) == 1
 end
 
 M.diagnostic_config = {
