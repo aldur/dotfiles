@@ -78,6 +78,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         -- Call twice to jump into the window.
         vim.keymap.set('n', 'K', function()
             local lnum, cnum = unpack(vim.api.nvim_win_get_cursor(0))
+            -- XXX: For some reasons, have to subtract 1 to nvim's line.
             local diagnostics = vim.diagnostic.get(0, {lnum = lnum - 1})
 
             -- Diagnostic, if any.
