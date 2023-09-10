@@ -15,7 +15,7 @@ end
 
 function M.configure_signs()
     -- _G.info_message("Configuring signs...")
-    local highlights = {Error = "ErrorMsg", Hint = "MoreMsg", Info = "ModeMsg"}
+    local highlights = {Error = "Title", Hint = "MoreMsg", Info = "ModeMsg"}
 
     for type, hl in pairs(highlights) do
         -- https://github.com/neovim/nvim-lspconfig/wiki/
