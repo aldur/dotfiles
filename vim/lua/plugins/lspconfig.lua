@@ -401,10 +401,13 @@ local default_ltex_configuration =
 
 -- Markdown, LaTeX
 lspconfig.ltex.setup(extend_config({
+    flags = {debounce_text_changes = 1000},
+    -- cmd = {"ltex-ls", "--log-file=/tmp/ltex.log"},
     settings = {
         ltex = {
             dictionary = {
-                -- Couldn't make this work, unfortunately, so added `MORFOLOGIK_RULE_EN_US`.
+                -- Couldn't make this work, unfortunately, so added
+                -- `MORFOLOGIK_RULE_EN_US`.
                 ['en-US'] = {[[:~/.vim/spell/en.utf-8.add]]}
             },
             additionalRules = {motherTongue = "it"},
@@ -418,7 +421,8 @@ lspconfig.ltex.setup(extend_config({
                     AutoLink = "dummy",
                     Code = "dummy"
                 }
-            }
+            },
+            checkFrequency = "edit"
         }
     },
 
@@ -451,6 +455,7 @@ if vim.fn.executable('marksman') == 1 then
         root_dir = util.root_pattern(".git", ".marksman.toml", ".enable_ctags"),
         on_attach = function(client, bufnr)
             client.server_capabilities.codeActionProvider = false
+            client.server_capabilities.hoverProvider = false
             default_on_attach(client, bufnr)
         end,
         cmd = {"marksman", "server"}
