@@ -535,7 +535,6 @@ function M.code_action_listener()
     if not code_action_cap_found then return end
     local params = vim.lsp.util.make_range_params()
 
-    local bufnr = vim.api.nvim_get_current_buf()
     local line = params.range.start.line
 
     local context = {diagnostics = vim.diagnostic.get(0, {lnum = line})}
@@ -546,7 +545,7 @@ function M.code_action_listener()
         local has_actions = false
         for client_id, resp in pairs(responses) do
             if resp.result and
-                vim.tbl_contains(M.LB_CLIENTS_TO_IGNORE, client_id) and
+                not vim.tbl_contains(M.LB_CLIENTS_TO_IGNORE, client_id) and
                 not vim.tbl_isempty(resp.result) then
                 has_actions = true
                 break
@@ -554,10 +553,9 @@ function M.code_action_listener()
         end
 
         if has_actions then
-            M._update_sign(LB_SIGN_PRIORITY, vim.b.lightbulb_line, line + 1,
-                           bufnr)
+            M._update_sign(LB_SIGN_PRIORITY, vim.b.lightbulb_line, line + 1)
         else
-            M._update_sign(LB_SIGN_PRIORITY, vim.b.lightbulb_line, nil, bufnr)
+            M._update_sign(LB_SIGN_PRIORITY, vim.b.lightbulb_line, nil)
         end
     end)
 end
