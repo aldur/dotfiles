@@ -4,7 +4,21 @@ local util = require('lspconfig/util')
 local M = {}
 
 require("fidget").setup {
-    -- options
+    fmt = {
+        max_messages = 3,
+        task = -- function to format each task line
+        function(task_name, message, percentage)
+            if message == "Started" then
+                message = "..."
+            elseif message == "Completed" then
+                return nil -- Avoid spam
+            else
+                message = string.format(": %s", string.lower(message))
+            end
+            return string.format("%s%s %s", task_name, message, percentage and
+                                     string.format(" (%s%%)", percentage) or "")
+        end
+    }
 }
 
 -- Running `pipenv` in a subshell is expensive, so we cache the result.
