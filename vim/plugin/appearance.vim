@@ -15,6 +15,7 @@ let g:sonokai_style = 'atlantis'
 let g:sonokai_enable_italic = 1
 let g:sonokai_better_performance = 1
 let g:sonokai_show_eob = 0
+let g:sonokai_diagnostic_virtual_text = 1
 
 silent! colorscheme sonokai
 
