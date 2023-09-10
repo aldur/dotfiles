@@ -75,11 +75,29 @@ vim.api.nvim_create_autocmd('LspAttach', {
             vim.keymap.set('n', '<leader>u', vim.lsp.buf.references, bufopts)
         end
 
-        -- Trying this.
-        -- Call it twice to jump into the window.
-        if client.server_capabilities.hoverProvider then
-            vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-        end
+        -- Call twice to jump into the window.
+        vim.keymap.set('n', 'K', function()
+            local lnum, cnum = unpack(vim.api.nvim_win_get_cursor(0))
+            local diagnostics = vim.diagnostic.get(0, {lnum = lnum - 1})
+
+            -- Diagnostic, if any.
+            if #diagnostics then
+                for _, d in ipairs(diagnostics) do
+                    if cnum >= d["col"] and cnum < d["end_col"] then
+                        -- Found, early exit.
+                        return vim.diagnostic.open_float()
+                    end
+                end
+            end
+
+            if client.server_capabilities.hoverProvider then
+                -- Hover, if available.
+                vim.lsp.buf.hover()
+            else
+                -- Fallback to `investigate` plugin.
+                vim.fn['investigate#Investigate']('n')
+            end
+        end, bufopts)
 
         if client.server_capabilities.codeActionProvider then
             vim.keymap.set({'n', 'x'}, '<leader>c', vim.lsp.buf.code_action,
@@ -432,7 +450,7 @@ function M.signs_enabled(bufnr)
     return buffer_options_default(bufnr, 'show_signs', 1) == 1
 end
 function M.virtual_text_enabled(bufnr)
-    return buffer_options_default(bufnr, 'show_virtual_text', 1) == 1
+    return buffer_options_default(bufnr, 'show_virtual_text', 0) == 1
 end
 function M.update_in_insert_enabled(bufnr)
     return buffer_options_default(bufnr, 'update_in_insert', 0) == 1
