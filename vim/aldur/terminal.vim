@@ -8,9 +8,10 @@ let t:aldur_terminal_termbuf_id = -2
 let t:aldur_terminal_term_win = 0
 
 " This can be overriden per tab by `t:term_height_percentage`.
-let g:aldur#terminal#term_height_percentage = 0.40
+let g:aldur#terminal#term_height_percentage = 0.60
 
-function! aldur#terminal#toggle() abort
+" An optional argument, if true will do (1 - height), in percentage.
+function! aldur#terminal#toggle(...) abort
     if !has('nvim')
         return v:false
     endif
@@ -24,6 +25,11 @@ function! aldur#terminal#toggle() abort
         let l:term_height_percentage = get(t:,
                     \ 'term_height_percentage',
                     \ g:aldur#terminal#term_height_percentage)
+
+        if a:0 > 0 && a:1
+            let l:term_height_percentage = 0 - l:term_height_percentage
+        endif
+
         exec 'resize ' . string(&lines * l:term_height_percentage)
         try
             exec 'buffer ' . t:aldur_terminal_termbuf
@@ -32,8 +38,10 @@ function! aldur#terminal#toggle() abort
             let t:aldur_terminal_termbuf = bufnr('')
         endtry
         let t:aldur_terminal_term_win = win_getid()
-        setlocal nobuflisted
-        startinsert
 
+        setlocal nobuflisted
+        setlocal noswapfile
+
+        startinsert
     endif
 endfunction
