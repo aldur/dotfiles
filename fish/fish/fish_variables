@@ -1,6 +1,7 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
 SETUVAR --export ALGORAND_DATA:/Users/aldur/node/data
+SETUVAR --export VIRTUAL_ENV_DISABLE_PROMPT:1
 SETUVAR --export AUTOSSH_PORT:0
 SETUVAR --export EDITOR:nvim
 SETUVAR --export FZF_ALT_C_COMMAND:fd\x20\x2dd\x2010\x20\x2d\x2dhidden\x20\x2d\x2dfollow\x20\x2d\x2dexclude\x20\x2egit\x20\x2d\x2dexclude\x20\x2esvn\x20\x2d\x2dignore\x2dfile\x20\x7e/\x2egitignore_global\x20\x2d\x2dtype\x20d
