@@ -158,6 +158,7 @@
         Plug 'neovim/nvim-lspconfig', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'ray-x/lsp_signature.nvim', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'j-hui/fidget.nvim', b:has_nvim_python3 ? { 'tag': 'legacy' } : { 'on': [] }
+        Plug 'weilbith/nvim-code-action-menu', b:has_nvim_python3 ? {  } : { 'on': [] }
     " }}} LSP
 
     " Completion {{{

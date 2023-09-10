@@ -119,7 +119,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
         end, bufopts)
 
         if client.server_capabilities.codeActionProvider then
-            vim.keymap.set({'n', 'x'}, '<leader>c', vim.lsp.buf.code_action,
+            vim.keymap.set({'n', 'x'}, 'gK',
+                           require('code_action_menu').open_code_action_menu,
                            bufopts)
         end
 
