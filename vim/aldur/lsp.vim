@@ -20,7 +20,7 @@ function aldur#lsp#toggle_signs() abort
         call v:lua.info_message("Disabling signs.")
     endif
 
-    let b:show_signs = !b:show_signs
+    let b:show_signs = !b:lsp_signs
     lua require('plugins/lspconfig').reload_config()
 endfunction
 
