@@ -36,6 +36,11 @@ function fish_prompt --description 'Write out the prompt'
         set -a virtualenv (set_color yellow) "#" (basename "$VIRTUAL_ENV") " "
     end
 
+    set -l nested ""
+    if test $SHLVL -gt 1
+        set -a nested (set_color yellow) "↳" " "
+    end
+
     # Time
     set -l time (set_color "8787ff") (date +'%T') " " 
 
@@ -47,6 +52,6 @@ function fish_prompt --description 'Write out the prompt'
         set -a prompt_status (__fish_print_pipestatus "" " " "|" (set_color $fish_color_status) (set_color --bold $fish_color_status) $last_pipestatus)
     end 
 
-    echo -e -n -s $prompt_status $virtualenv $time (set_color $fish_color_user) "$USER" $normal @ (set_color $color_host) (prompt_hostname) $normal ' ' (set_color $color_cwd) (prompt_pwd) $normal (fish_git_prompt) $normal (set_color --bold blue) "
+    echo -e -n -s $prompt_status $nested $virtualenv $time (set_color $fish_color_user) "$USER" $normal @ (set_color $color_host) (prompt_hostname) $normal ' ' (set_color $color_cwd) (prompt_pwd) $normal (fish_git_prompt) $normal (set_color --bold blue) "
     » "
 end
