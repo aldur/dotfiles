@@ -429,7 +429,12 @@ lspconfig.rnix.setup(default_lsp_config)
 -- https://github.com/artempyanykh/marksman
 if vim.fn.executable('marksman') == 1 then
     lspconfig.marksman.setup(extend_config({
-        root_dir = util.root_pattern(".git", ".marksman.toml", ".enable_ctags")
+        root_dir = util.root_pattern(".git", ".marksman.toml", ".enable_ctags"),
+        on_attach = function(client, bufnr)
+            client.server_capabilities.codeActionProvider = false
+            default_on_attach(client, bufnr)
+        end,
+        cmd = {"marksman", "server"}
     }))
 end
 
