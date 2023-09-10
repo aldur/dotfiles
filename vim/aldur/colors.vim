@@ -10,7 +10,7 @@ function! aldur#colors#customize_sonokai() abort
     " The parameter is a valid value for `g:sonokai_style`,
     let l:palette = sonokai#get_palette(
                 \ get(g:, 'sonokai_style', "default"),
-                \ get(g:, 'soookai_colors_override', {})
+                \ get(g:, 'sonokai_colors_override', {})
                 \ )
     " Define a highlight group.
     " The first parameter is the name of a highlight group,
@@ -28,4 +28,11 @@ function! aldur#colors#customize_sonokai() abort
     call sonokai#highlight('Debug', l:palette.red, l:palette.bg0, 'bold')
     " DONE is bold and green
     call sonokai#highlight('Done', l:palette.green, l:palette.bg0, 'bold')
+
+    " NOTE: we override this, so
+    " `g:sonokai_diagnostic_text_highlight` won't work.
+    call sonokai#highlight('ErrorText', l:palette.none, l:palette.diff_red)
+    call sonokai#highlight('WarningText', l:palette.none, l:palette.diff_yellow)
+    call sonokai#highlight('InfoText', l:palette.none, l:palette.diff_blue)
+    call sonokai#highlight('HintText', l:palette.none, l:palette.diff_green)
 endfunction
