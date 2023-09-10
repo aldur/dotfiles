@@ -36,4 +36,8 @@ endif
 
 nnoremap <silent> <C-z> :<C-U>call aldur#terminal#toggle()<CR>
 tnoremap <silent> <C-z> <c-\><c-n>:<C-U>call aldur#terminal#toggle()<CR>
-nnoremap <silent> <C-w>t :<C-U>vsplit <bar> terminal<CR>:startinsert<CR>
+
+" Reset the terminal (close, re-open)
+tnoremap <silent> <leader>cd <c-\><c-n>:<C-U>bd! %<bar>call aldur#terminal#toggle()<CR>
+
+" nnoremap <silent> <C-w>t :<C-U>vsplit <bar> terminal<CR>:startinsert<CR>
