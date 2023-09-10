@@ -3,6 +3,10 @@ local lspconfig = require 'lspconfig'
 local util = require('lspconfig/util')
 local M = {}
 
+require("fidget").setup {
+    -- options
+}
+
 -- Running `pipenv` in a subshell is expensive, so we cache the result.
 -- Reset it w/ `lua require('plugins/lspconfig')`
 M.venv_cache = {}
