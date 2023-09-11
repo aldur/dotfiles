@@ -513,12 +513,12 @@ vim.fn.sign_define('LightBulbSign', {
     text = "",
     texthl = "",
     linehl = "",
-    numhl = "QuickFixLine"
+    numhl = "DiagnosticOk"
 })
 
 local LB_SIGN_GROUP = "nvim-lightbulb"
 local LB_SIGN_NAME = "LightBulbSign"
-local LB_SIGN_PRIORITY = 10
+local LB_SIGN_PRIORITY = 25
 M.LB_CLIENTS_TO_IGNORE = {'pylsp'}
 
 function M._update_sign(priority, old_line, new_line, bufnr)
