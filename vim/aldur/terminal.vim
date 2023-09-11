@@ -6,6 +6,7 @@
 let t:aldur_terminal_termbuf = 0
 let t:aldur_terminal_termbuf_id = -2
 let t:aldur_terminal_term_win = 0
+let t:aldur_terminal_term_win_height = -1
 
 " This can be overriden per tab by `t:term_height_percentage`.
 let g:aldur#terminal#term_height_percentage = 0.60
@@ -19,18 +20,32 @@ function! aldur#terminal#toggle(...) abort
     let l:project_root = aldur#find_root#find_root()
 
     if exists('t:aldur_terminal_term_win') && win_gotoid(t:aldur_terminal_term_win)
+        let t:aldur_terminal_term_win_height = winheight(t:aldur_terminal_term_win)
         hide
     else
         botright new
-        let l:term_height_percentage = get(t:,
-                    \ 'term_height_percentage',
-                    \ g:aldur#terminal#term_height_percentage)
 
-        if a:0 > 0 && a:1
-            let l:term_height_percentage = 0 - l:term_height_percentage
+        " If no height was set
+        if t:aldur_terminal_term_win_height == -1
+            " Get default
+            let l:term_height_percentage = get(t:,
+                        \ 'term_height_percentage',
+                        \ g:aldur#terminal#term_height_percentage)
+
+            " Find out whether you want to invert it
+            if a:0 > 0 && a:1
+                let l:term_height_percentage = 0 - l:term_height_percentage
+            endif
+
+            " Compute the height
+            let l:height = &lines * l:term_height_percentage
+        else
+            " Restore previous height
+            let l:height = t:aldur_terminal_term_win_height
         endif
 
-        exec 'resize ' . string(&lines * l:term_height_percentage)
+        exec 'resize ' . string(height)
+
         try
             exec 'buffer ' . t:aldur_terminal_termbuf
         catch
