@@ -1,4 +1,4 @@
-vim.g.ts_highlight_lua = true  -- luacheck: ignore 122
+vim.g.ts_highlight_lua = true -- luacheck: ignore 122
 
 -- https://github.com/nvim-treesitter/nvim-treesitter#modules
 require'nvim-treesitter.configs'.setup {
@@ -31,7 +31,10 @@ require'nvim-treesitter.configs'.setup {
 
                 -- "a" is a mnemonic for argument.
                 ["aa"] = "@parameter.outer",
-                ["ia"] = "@parameter.inner"
+                ["ia"] = "@parameter.inner",
+
+                ["ar"] = "@returntype",
+                ["ir"] = "@returntype"
             }
         },
         move = {
@@ -40,22 +43,26 @@ require'nvim-treesitter.configs'.setup {
             goto_next_start = {
                 ["]m"] = "@function.outer",
                 ["]f"] = "@function.outer",
-                ["]c"] = "@class.outer"
+                ["]c"] = "@class.outer",
+                ["]r"] = "@returntype"
             },
             goto_next_end = {
                 ["]M"] = "@function.outer",
                 ["]F"] = "@function.outer",
-                ["]C"] = "@class.outer"
+                ["]C"] = "@class.outer",
+                ["]R"] = "@returntype"
             },
             goto_previous_start = {
                 ["[m"] = "@function.outer",
                 ["[f"] = "@function.outer",
-                ["[c"] = "@class.outer"
+                ["[c"] = "@class.outer",
+                ["[r"] = "@returntype"
             },
             goto_previous_end = {
                 ["[M"] = "@function.outer",
                 ["[F"] = "@function.outer",
-                ["[C"] = "@class.outer"
+                ["[C"] = "@class.outer",
+                ["[R"] = "@returntype"
             }
         }
     }
