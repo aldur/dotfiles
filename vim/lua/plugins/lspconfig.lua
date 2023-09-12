@@ -450,7 +450,10 @@ lspconfig.ccls.setup(default_lsp_config)
 
 -- cargo install rnix-lsp
 -- or nix profile install nixpkgs#rnix-lsp
-lspconfig.rnix.setup(default_lsp_config)
+-- lspconfig.rnix.setup(default_lsp_config)
+
+-- nix profile install nixpkgs#nil
+lspconfig.nil_ls.setup(default_lsp_config)
 
 -- https://github.com/artempyanykh/marksman
 if vim.fn.executable('marksman') == 1 then
