@@ -13,7 +13,9 @@ require("fidget").setup {
             elseif message == "Completed" then
                 return nil -- Avoid spam
             else
-                message = string.format(": %s", string.lower(message))
+                if message then
+                    message = string.format(": %s", string.lower(message))
+                end
             end
             return string.format("%s%s %s", task_name, message, percentage and
                                      string.format(" (%s%%)", percentage) or "")
