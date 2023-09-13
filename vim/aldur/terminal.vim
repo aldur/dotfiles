@@ -26,7 +26,7 @@ function! aldur#terminal#toggle(...) abort
         botright new
 
         " If no height was set
-        if t:aldur_terminal_term_win_height == -1
+        if get(t:, 'aldur_terminal_term_win_height', -1) == -1
             " Get default
             let l:term_height_percentage = get(t:,
                         \ 'term_height_percentage',
