@@ -150,6 +150,9 @@
 
         " nix
         Plug 'LnL7/vim-nix', { 'for': 'nix' }
+
+        " manually loaded, see `plugin/jukit.vim`
+        Plug 'luk400/vim-jukit', { 'on': []}
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
