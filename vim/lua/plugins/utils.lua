@@ -34,4 +34,47 @@ function M.configure_signs()
     end
 end
 
+-- If current Lua buffer is in `runtimepath`, reload it.
+function M.reload_package()
+    local filetype = vim.bo.filetype -- Get the current file's filetype
+    if filetype ~= "lua" then
+        error("Current file is not a Lua file.")
+        return
+    end
+
+    local current_file = vim.fn.expand("%:p") -- Get the full path of the current file
+
+    -- HACK
+    -- Most of the time, I'll be editing in my `~/.dotfiles` folder.
+    current_file = current_file:gsub("%.dotfiles/vim", ".vim")
+
+    local runtimepath = vim.o.runtimepath -- Get the runtimepath as a string
+
+    -- Split the runtimepath into a table of paths
+    local paths = vim.split(runtimepath, ",")
+
+    -- Check if the current file's expanded path starts with any of the expanded runtimepath paths
+    for _, path in ipairs(paths) do
+        local expanded_path = vim.fn.expand(path)
+        expanded_path = vim.loop.fs_realpath(expanded_path)
+
+        local prefix = expanded_path
+
+        if current_file:match("^" .. prefix) then
+            local stripped_path =
+                current_file:gsub("^" .. prefix .. "/lua/", ""):gsub(".lua$", "")
+
+            vim.notify(string.format("Reloading package '%s'.", stripped_path),
+                       vim.log.levels.INFO)
+            package.loaded[stripped_path] = nil
+            require(stripped_path)
+
+            -- NOTE: We stop at the first match.
+            return
+        end
+    end
+
+    error("Current file is not in runtimepath.")
+end
+
 return M
