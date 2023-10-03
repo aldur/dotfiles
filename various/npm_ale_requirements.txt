@@ -1,5 +1,6 @@
 prettier
 prettier-plugin-solidity
+sql-formatter
 vim-language-server
 typescript
 typescript-language-server

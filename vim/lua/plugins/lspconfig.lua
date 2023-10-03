@@ -250,8 +250,10 @@ local efm_languages = {
     solidity = {require 'efm/prettier_solidity', require 'efm/solhint'},
     typescript = {require 'efm/prettier_typescript'},
     javascript = {require 'efm/prettier_javascript'},
+    scss = {require 'efm/prettier_scss'},
     env = {require 'efm/dotenv', require 'efm/shfmt'}, -- We don't want shellcheck here.
-    caddyfile = {require 'efm/caddyfile'}
+    caddyfile = {require 'efm/caddyfile'},
+    sql = {require 'efm/sql'}
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
 
@@ -452,8 +454,10 @@ lspconfig.ccls.setup(default_lsp_config)
 -- or nix profile install nixpkgs#rnix-lsp
 -- lspconfig.rnix.setup(default_lsp_config)
 
--- nix profile install nixpkgs#nil
-lspconfig.nil_ls.setup(default_lsp_config)
+-- nix profile install nixpkgs#nil nixpkgs#nixpkgs-fmt
+lspconfig.nil_ls.setup(extend_config({
+    settings = {["nil"] = {formatting = {command = {"nixpkgs-fmt"}}}}
+}))
 
 -- https://github.com/artempyanykh/marksman
 if vim.fn.executable('marksman') == 1 then
@@ -478,6 +482,13 @@ lspconfig.eslint.setup(extend_config({
 -- Terraform
 lspconfig.terraformls.setup(default_lsp_config)
 lspconfig.tflint.setup(default_lsp_config)
+
+-- cssls
+-- Enable (broadcasting) snippet capability for completion
+local cssls_config = extend_config({})
+cssls_config.capabilities.textDocument.completion.completionItem.snippetSupport =
+    true
+lspconfig.cssls.setup(cssls_config)
 
 local buffer_options_default = require('plugins.utils').buffer_options_default
 

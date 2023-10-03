@@ -1,6 +1,6 @@
 return {
     -- efm can't ignore exit code for formatters
-    formatCommand = "tidy --indent yes --wrap-attributes yes -ashtml" ..
+    formatCommand = "tidy --indent yes --wrap-attributes yes --doctype omit " ..
         " --wrap 100 --quiet yes --show-errors 0 ${INPUT} || true",
     formatStdin = false,
     lintCommand = "tidy --markup no --quiet yes",
