@@ -247,9 +247,8 @@ Globals.wfilters.finder =
     wf.copy(wf.defaultCurrentSpace):setDefaultFilter(false):setAppFilter(
         'Finder'):subscribe(wf.windowDestroyed, function(_, _, _)
         -- Finder always keeps a background window open.
-        if #hs.application('com.apple.finder'):allWindows() == 1 then
-            focusLastFocused()
-        end
+        local f = hs.application('com.apple.finder')
+        if f and #f:allWindows() == 1 then focusLastFocused() end
     end)
 -- }}}
 
