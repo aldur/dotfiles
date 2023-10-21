@@ -1,6 +1,7 @@
 -- Original credits to https://github.com/tomaskallup/dotfiles/blob/master/nvim/lua/plugins/nvim-lspconfig.lua
 local lspconfig = require 'lspconfig'
 local util = require('lspconfig/util')
+local python = require('plugins/python')
 local M = {}
 
 require("fidget").setup {
@@ -22,46 +23,6 @@ require("fidget").setup {
         end
     }
 }
-
--- Running `pipenv` in a subshell is expensive, so we cache the result.
--- Reset it w/ `lua require('plugins/lspconfig')`
-M.venv_cache = {}
-
-local function find_python_venv(workspace_rootdir)
-    -- Use activated virtualenv.
-    if vim.env.VIRTUAL_ENV then return vim.env.VIRTUAL_ENV end
-
-    -- Try looking in cache.
-    if M.venv_cache[workspace_rootdir] then
-        return M.venv_cache[workspace_rootdir]
-    end
-
-    -- Find and use virtualenv from pipenv in workspace directory.
-    local match = vim.fn.glob(util.path.join(workspace_rootdir, 'Pipfile'))
-    if match ~= '' then
-        local venv = vim.fn.trim(vim.fn.system(
-                                     'PIPENV_PIPFILE=' .. match ..
-                                         ' pipenv -q --venv'))
-
-        local msg = "Activating Pipenv at " .. venv
-        _G.info_message(msg)
-
-        M.venv_cache[workspace_rootdir] = venv
-
-        return venv
-    end
-
-    return nil
-end
-
--- https://github.com/neovim/nvim-lspconfig/issues/500#issuecomment-876700701
-local function find_python_path(workspace_rootdir)
-    local venv = find_python_venv(workspace_rootdir)
-    if venv then return util.path.join(venv, 'bin', 'python') end
-
-    -- Fallback to system Python.
-    return vim.fn.exepath('python3') or vim.fn.exepath('python') or 'python'
-end
 
 local default_lsp_config = lspconfig.util.default_config
 
@@ -187,14 +148,14 @@ end
 -- Python pyright
 lspconfig.pyright.setup(extend_config({
     before_init = function(_, config)
-        config.settings.python.pythonPath = find_python_path(config.root_dir)
+        config.settings.python.pythonPath = python.find_python_path(config.root_dir)
     end
 }))
 
 -- Inspired by:
 -- https://github.com/python-lsp/python-lsp-server/pull/68
 local function pylsp_cmd_env(workspace)
-    local venv = find_python_venv(workspace)
+    local venv = python.find_python_venv(workspace)
     if venv then
         return {
             VIRTUAL_ENV = venv,
@@ -449,10 +410,6 @@ lspconfig.ltex.setup(extend_config({
 -- lspconfig.solc.setup(default_lsp_config)
 
 lspconfig.ccls.setup(default_lsp_config)
-
--- cargo install rnix-lsp
--- or nix profile install nixpkgs#rnix-lsp
--- lspconfig.rnix.setup(default_lsp_config)
 
 -- nix profile install nixpkgs#nil nixpkgs#nixpkgs-fmt
 lspconfig.nil_ls.setup(extend_config({
