@@ -477,13 +477,23 @@ Globals.emojis:bindHotkeys({toggle = {hyper, 'e'}})
 -- Launch iTerm2 by pressing alt-space
 -- Showing/hiding the window is managed within iTerm itself
 local function launchOrFocusITerm()
-    local iTerms = hs.application.applicationsForBundleID(
-                       'com.googlecode.iterm2')
+    local iTermBudleID = 'com.googlecode.iterm2'
+    local iTerms = hs.application.applicationsForBundleID(iTermBudleID)
     assert(#iTerms <= 1)
 
     if #iTerms == 0 then
         hs.application.open('com.googlecode.iterm2')
     else
+        -- Bufgix for Safari 17.0
+        local focusedWindow = hs.window.focusedWindow()
+        if focusedWindow then
+            local focusedApp = focusedWindow:application()
+            if focusedApp and focusedApp:bundleID() == 'com.apple.Safari' then
+                launchFocusOrSwitchBack(iTermBudleID)
+                return
+            end
+        end
+
         -- Pass the hotkey through.
         Globals.iTermHotkey:disable()
         hs.eventtap.keyStroke({'alt'}, 'space')
