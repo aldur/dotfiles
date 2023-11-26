@@ -1,0 +1,8 @@
+services:
+  nix:
+    # image: nixos/nix:latest
+    tty: true
+    build: ./debian
+    volumes:
+      - "./nix/nix.conf:/etc/nix/nix.conf"
+      - "./nixos/:/nixos"
