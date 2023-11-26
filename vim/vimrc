@@ -53,7 +53,7 @@
     Plug 'keith/investigate.vim'                   " Smart documentation finder
     Plug 'romainl/vim-qf'                          " Fix the quickfix
     Plug 'tmsvg/pear-tree'                         " Auto-pair
-    Plug 'tommcdo/vim-lion'                        " Add gl/gL to align text
+    Plug 'tommcdo/vim-lion'                        " Add gR to align text
 
     Plug 'tpope/vim-commentary'                    " Toggle comments
     Plug 'tpope/vim-repeat'                        " Enable '.' for plugin actions
@@ -156,6 +156,9 @@
 
         " liquid
         Plug 'tpope/vim-liquid', { 'for': 'liquid'}
+
+        " Beancount
+        Plug 'nathangrigg/vim-beancount', { 'for': 'beancount'}
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
@@ -175,6 +178,7 @@
         Plug 'hrsh7th/cmp-nvim-lua', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'hrsh7th/cmp-cmdline', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'quangnguyen30192/cmp-nvim-tags', b:has_nvim_python3 ? {  } : { 'on': [] }
+        Plug 'hrsh7th/cmp-omni', b:has_nvim_python3 ? {  } : { 'on': [] }
     " }}} Completion
 
     if executable('ctags')

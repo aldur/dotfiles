@@ -148,7 +148,8 @@ end
 -- Python pyright
 lspconfig.pyright.setup(extend_config({
     before_init = function(_, config)
-        config.settings.python.pythonPath = python.find_python_path(config.root_dir)
+        config.settings.python.pythonPath =
+            python.find_python_path(config.root_dir)
     end
 }))
 
@@ -214,7 +215,8 @@ local efm_languages = {
     scss = {require 'efm/prettier_scss'},
     env = {require 'efm/dotenv', require 'efm/shfmt'}, -- We don't want shellcheck here.
     caddyfile = {require 'efm/caddyfile'},
-    sql = {require 'efm/sql'}
+    sql = {require 'efm/sql'},
+    beancount = {require 'efm/bean-format'}
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
 
@@ -446,6 +448,12 @@ local cssls_config = extend_config({})
 cssls_config.capabilities.textDocument.completion.completionItem.snippetSupport =
     true
 lspconfig.cssls.setup(cssls_config)
+
+-- beancount
+-- nix profile install nixpkgs#beancount-language-server
+-- lspconfig.beancount.setup {
+--     init_options = {journal_file = "~/Documents/Beans/index.beancount"}
+-- }
 
 local buffer_options_default = require('plugins.utils').buffer_options_default
 

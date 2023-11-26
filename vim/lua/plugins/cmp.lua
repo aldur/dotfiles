@@ -133,12 +133,17 @@ local md_sources = {
 -- Extend `md_sources` by appending the other sources.
 for _, source in pairs(default_sources) do
     -- NOTE: You can't use `tbl_deep_extend` because it doesn't work on lists.
+    -- NOTE: You can't use `list_extend` because we want to skip `buffer`.
     if source.name == 'buffer' then goto continue end
     table.insert(md_sources, source)
     ::continue::
 end
 
 cmp.setup.filetype({'markdown.wiki', 'markdown'}, {sources = md_sources})
+
+local beancount_sources = {{name = 'omni'}}
+vim.list_extend(beancount_sources, default_sources)
+cmp.setup.filetype({'beancount'}, {sources = beancount_sources})
 
 cmp.setup({
     formatting = {
