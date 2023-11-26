@@ -12,6 +12,8 @@ if shopt | grep globstar; then
 	shopt -s nullglob globstar || true
 fi
 
+# Magic script to get this script's directory.
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 NEOVIDE_APP=/Applications/Neovide.app
 NEOVIDE_PLIST=$NEOVIDE_APP/Contents/Info.plist
 NEOVIDE_EXECUTABLE=$NEOVIDE_APP/Contents/MacOS/neovide
@@ -57,6 +59,8 @@ ln -sf $NEOVIDE_SERVER "$NEOVIDE_PATH"
 cp $NEOVIDE_PLIST $NEOVIDE_PLIST.back
 # https://www.marcosantadev.com/manage-plist-files-plistbuddy/
 /usr/libexec/PlistBuddy -c "Set CFBundleExecutable $(basename $NEOVIDE_SERVER)" $NEOVIDE_PLIST
+
+cp "$SCRIPT_DIR"/neovide.icns $NEOVIDE_APP/Contents/Resources/neovide.icns
 
 # https://superuser.com/questions/271678/how-do-i-pass-command-line-arguments-to-dock-items
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f $NEOVIDE_APP
