@@ -178,7 +178,7 @@
         Plug 'hrsh7th/cmp-nvim-lua', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'hrsh7th/cmp-cmdline', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'quangnguyen30192/cmp-nvim-tags', b:has_nvim_python3 ? {  } : { 'on': [] }
-        Plug 'hrsh7th/cmp-omni', b:has_nvim_python3 ? {  } : { 'on': [] }
+        Plug 'crispgm/cmp-beancount', b:has_nvim_python3 ? {  } : { 'on': [] }
     " }}} Completion
 
     if executable('ctags')
