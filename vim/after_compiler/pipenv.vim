@@ -4,7 +4,7 @@ if !executable('pipenv')
     finish
 endif
 
-let current_compiler = 'pipenv'
+let g:current_compiler = 'pipenv'
 
 let s:cpo_save = &cpoptions
 set cpoptions-=C
