@@ -26,8 +26,6 @@ fi
 
 # Ensure's homebrew's PATH
 PATH=/opt/homebrew/bin:$PATH
-# Needed for `readlink`
-PATH=/opt/homebrew/opt/coreutils/libexec/gnubin/readlink:$PATH
 
 if NEOVIDE_PATH=$(which neovide); then
 	if ! test -L "$NEOVIDE_PATH"; then
@@ -43,11 +41,15 @@ NVIM_SOCKET=/tmp/neovide.socket
 cat <<EOF >$NEOVIDE_SERVER
 #!/bin/sh
 
+# Needed for realpath
+PATH=/opt/homebrew/opt/coreutils/libexec/gnubin/realpath:$PATH
+export PATH
+
 NVIM_SOCKET=$NVIM_SOCKET
 if [ ! -S \$NVIM_SOCKET ]; then
-    $NEOVIDE_EXECUTABLE --noidle -- --listen \$NVIM_SOCKET +"cd ~" "\$@"
+    $NEOVIDE_EXECUTABLE --no-idle --frame=transparent --grid=90x90 --title-hidden -- --listen \$NVIM_SOCKET +"cd ~" "\$@"
 else
-    nvim --server \$NVIM_SOCKET --remote "\$(readlink -f "\$@" | tr '\n' ' ' | sed 's/ $/\n/')"
+    nvim --server \$NVIM_SOCKET --remote "\$(/opt/homebrew/opt/coreutils/libexec/gnubin/realpath -m "\$@" | tr '\n' ' ' | sed 's/ $/\n/')"
     open -a Neovide  # Ensures front
 fi
 EOF
