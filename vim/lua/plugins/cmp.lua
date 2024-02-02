@@ -141,7 +141,9 @@ end
 
 cmp.setup.filetype({'markdown.wiki', 'markdown'}, {sources = md_sources})
 
-local beancount_sources = {{name = 'omni'}}
+local beancount_sources = {
+    {name = 'beancount', option = {account = '~/Documents/Beans/index.beancount'}}
+}
 vim.list_extend(beancount_sources, default_sources)
 cmp.setup.filetype({'beancount'}, {sources = beancount_sources})
 
