@@ -1,7 +1,7 @@
 --langdef=Swift
 --langmap=Swift:.swift
---regex-swift=/(var|let)[ \t]+([^:=<]+).*$/\2/,variable/
---regex-swift=/func[ \t]+([^\(\)<]+)\([^\(\)]*\)/\1/,function/
---regex-swift=/class[ \t]+([^:\{<]+).*$/\1/,class/
---regex-swift=/struct[ \t]+([^:\{<]+).*$/\1/,struct/
---regex-swift=/protocol[ \t]+([^:\{<]+).*$/\1/,protocol/
+--regex-swift=/(var|let)[ \t]+([^:=<]+).*$/\2/v,variable/
+--regex-swift=/func[ \t]+([^\(\)<]+)\([^\(\)]*\)/\1/f,function/
+--regex-swift=/class[ \t]+([^:\{<]+).*$/\1/c,class/
+--regex-swift=/struct[ \t]+([^:\{<]+).*$/\1/s,struct/
+--regex-swift=/protocol[ \t]+([^:\{<]+).*$/\1/p,protocol/
