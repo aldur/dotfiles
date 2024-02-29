@@ -425,7 +425,7 @@ end
 
 -- Focus/launch most commonly used applications across multiple options.
 hs.fnutils.each({
-    {'M', {'tv.plex.plexamp', 'com.spotify.client'}},
+    {'M', {'tv.plex.plexamp', 'com.apple.Music'}},
     {'T', {'com.neovide.neovide', 'com.qvacua.VimR'}},
     {
         'P',
