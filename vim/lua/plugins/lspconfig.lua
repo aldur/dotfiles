@@ -208,7 +208,6 @@ local efm_languages = {
     cpp = {require 'efm/astyle'},
     json = {require 'efm/jq'},
     xml = {require 'efm/xmltidy'},
-    html = {require 'efm/htmltidy'},
     solidity = {require 'efm/prettier_solidity', require 'efm/solhint'},
     typescript = {require 'efm/prettier_typescript'},
     javascript = {require 'efm/prettier_javascript'},
@@ -449,10 +448,20 @@ cssls_config.capabilities.textDocument.completion.completionItem.snippetSupport 
     true
 lspconfig.cssls.setup(cssls_config)
 
+-- html
+-- Enable (broadcasting) snippet capability for completion
+local html_config = extend_config({})
+html_config.capabilities.textDocument.completion.completionItem.snippetSupport =
+    true
+lspconfig.html.setup(html_config)
+
+-- Liquid
+lspconfig.theme_check.setup(default_lsp_config)
+
 -- beancount
 -- nix profile install nixpkgs#beancount-language-server
 -- lspconfig.beancount.setup {
---     init_options = {journal_file = "~/Documents/Beans/index.beancount"}
+--     init_options = {journal_file = "/Users/aldur/Documents/Beans/index.beancount"}
 -- }
 
 local buffer_options_default = require('plugins.utils').buffer_options_default
