@@ -156,9 +156,6 @@
 
         " liquid
         Plug 'tpope/vim-liquid', { 'for': 'liquid'}
-
-        " Beancount
-        Plug 'nathangrigg/vim-beancount', { 'for': 'beancount'}
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
