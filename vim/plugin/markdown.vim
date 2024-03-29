@@ -16,6 +16,7 @@ map <Plug> <Plug>Markdown_MoveToParentHeader
 map <Plug> <Plug>Markdown_MoveToCurHeader
 map <Plug> <Plug>Markdown_MoveToPreviousHeader
 map <Plug> <Plug>Markdown_MoveToNextHeader
+map <Plug> <Plug>Markdown_OpenUrlUnderCursor
 
 if has('mac')
     let g:investigate_use_command_for_markdown = 0
