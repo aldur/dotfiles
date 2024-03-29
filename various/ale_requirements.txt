@@ -7,4 +7,3 @@ timefhuman
 python-lsp-server[all]
 pyflakes
 beancount
-vscode-langservers-extracted
