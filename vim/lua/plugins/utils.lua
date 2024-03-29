@@ -1,9 +1,15 @@
 local M = {}
 
+M._nerdfont = nil
+
 function M.is_nerdfont()
+    if M._nerdfont ~= nil then return M._nerdfont end
+
     -- If there's a Nerd Font set, display fancy icons.
     local guifont = vim.opt.guifont:get()
-    return #guifont == 1 and guifont[1]:lower():find('nerd', 0, true) ~= nil
+    M._nerdfont = #guifont == 1 and guifont[1]:lower():find('nerd', 0, true) ~=
+                      nil
+    return M._nerdfont
 end
 
 function M.buffer_options_default(bufnr, name, default)
