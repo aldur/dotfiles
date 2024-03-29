@@ -71,8 +71,6 @@ end
 local function format_if_nerdfont(vim_item)
     -- If there's a Nerd Font set, display fancy icons.
     if require('plugins.utils').is_nerdfont() then
-        -- This concatenates the icons with the name of the item kind
-        -- return string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind)
         return kind_icons[vim_item.kind]
     end
     return vim_item.kind
@@ -142,7 +140,11 @@ end
 cmp.setup.filetype({'markdown.wiki', 'markdown'}, {sources = md_sources})
 
 local beancount_sources = {
-    {name = 'beancount', option = {account = '~/Documents/Beans/index.beancount'}}
+    {
+        name = 'beancount',
+        option = {account = '~/Documents/Beans/index.beancount'},
+        max_item_count = 10
+    }
 }
 vim.list_extend(beancount_sources, default_sources)
 cmp.setup.filetype({'beancount'}, {sources = beancount_sources})
