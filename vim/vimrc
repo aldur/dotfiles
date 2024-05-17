@@ -56,13 +56,16 @@
     Plug 'tommcdo/vim-lion'                        " Add gR to align text
 
     " from tpope import *
-    Plug 'tpope/vim-commentary'                    " Toggle comments
     Plug 'tpope/vim-repeat'                        " Enable '.' for plugin actions
     Plug 'tpope/vim-surround'                      " All about surrounding
     Plug 'tpope/vim-scriptease'                    " Easier plugin development
     Plug 'tpope/vim-unimpaired'                    " Complementary mappings
     Plug 'tpope/vim-dispatch'                      " Async job execution
     Plug 'tpope/vim-speeddating'                   " C-a / C-x for dates
+
+    if !has('nvim')
+        Plug 'tpope/vim-commentary'                    " Toggle comments
+    endif
 
     " This does multiple things:
     " - :%Subvert/facilit{y,ies}/building{,s}/g
