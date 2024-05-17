@@ -47,7 +47,7 @@ export PATH
 
 NVIM_SOCKET=$NVIM_SOCKET
 if [ ! -S \$NVIM_SOCKET ]; then
-    $NEOVIDE_EXECUTABLE --no-idle --frame=transparent --grid=90x90 --title-hidden -- --listen \$NVIM_SOCKET +"cd ~" "\$@"
+    $NEOVIDE_EXECUTABLE --frame=transparent --title-hidden -- --listen \$NVIM_SOCKET --cmd "cd ~" "\$@"
 else
     nvim --server \$NVIM_SOCKET --remote "\$(/opt/homebrew/opt/coreutils/libexec/gnubin/realpath -m "\$@" | tr '\n' ' ' | sed 's/ $/\n/')"
     open -a Neovide  # Ensures front
