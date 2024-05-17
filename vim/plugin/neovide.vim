@@ -6,7 +6,7 @@ lua vim.o.guifont = "FiraCode Nerd Font:h14"
 
 let g:neovide_remember_window_size = v:true
 let g:neovide_hide_mouse_when_typing = v:false
-let g:neovide_input_macos_alt_is_meta = v:true
+let g:neovide_input_macos_option_key_is_meta = 'only_left'
 
 nnoremap <D-w> :bd<cr>
 
