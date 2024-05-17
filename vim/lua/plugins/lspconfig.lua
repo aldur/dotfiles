@@ -33,7 +33,9 @@ default_lsp_config.capabilities = vim.tbl_deep_extend('force',
 vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(args)
         local bufnr = args.buf
+
         local client = vim.lsp.get_client_by_id(args.data.client_id)
+        if client == nil then return end
 
         -- Enable completion triggered by <c-x><c-o>
         -- NOTE: No need for this, `nvim` does it better.
@@ -534,7 +536,7 @@ end
 function M.code_action_listener()
     -- Check for code action capability
     local code_action_cap_found = false
-    for _, client in pairs(vim.lsp.buf_get_clients()) do
+    for _, client in pairs(vim.lsp.get_clients()) do
         if client and not vim.tbl_contains(M.LB_CLIENTS_TO_IGNORE, client.name) and
             client.supports_method("textDocument/codeAction") then
             code_action_cap_found = true
