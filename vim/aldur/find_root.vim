@@ -1,4 +1,8 @@
 function! aldur#find_root#find_root() abort
+    if aldur#find_root#pwd_is_root()
+        return getcwd()
+    endif
+
     if &filetype ==# 'fugitive'
         " If `fugitive` buffer,
         " expand(%:p:h, 1) gets us fugitive://dir/.git which doesn't work e.g.
@@ -34,4 +38,16 @@ function! aldur#find_root#cd_to_root() abort
     let l:root = aldur#find_root#find_root()
     execute 'cd ' l:root
     pwd
+endfunction
+
+function! aldur#find_root#toggle_pwd_is_root() abort
+    if !exists('w:pwd_is_root')
+        let w:pwd_is_root = v:false
+    endif
+
+    let w:pwd_is_root = !w:pwd_is_root
+endfunction
+
+function! aldur#find_root#pwd_is_root() abort
+    return get(w:, "pwd_is_root", 0) == 1
 endfunction

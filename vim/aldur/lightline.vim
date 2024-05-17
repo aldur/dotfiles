@@ -31,6 +31,10 @@ function! aldur#lightline#read_only()
     return &readonly ? '' : ''
 endfunction
 
+function! aldur#lightline#pwd_is_root()
+    return aldur#find_root#pwd_is_root() ? '🌳' : ''
+endfunction
+
 function! aldur#lightline#git_branch()
     let branch = FugitiveStatusline()
     if !empty(branch)

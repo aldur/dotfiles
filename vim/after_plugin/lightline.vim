@@ -20,6 +20,7 @@ let g:lightline.component_expand = {
 let g:lightline.component_function = {
             \ 'gitbranch': 'aldur#lightline#git_branch',
             \ 'readonly': 'aldur#lightline#read_only',
+            \ 'pwd_is_root': 'aldur#lightline#pwd_is_root',
             \ 'filename': 'aldur#lightline#filename',
             \ 'filetype': 'aldur#lightline#filetype',
             \ 'spell': 'aldur#lightline#spell',
@@ -48,7 +49,7 @@ let g:lightline.component_type = {
 " Setup the active status bar
 let g:lightline.active = {
             \ 'left' : [ [ 'mode', 'paste', 'spell'                        ],
-            \            [ 'readonly', 'filename'                          ],
+            \            [ 'readonly', 'pwd_is_root', 'filename'           ],
             \            [ 'gitbranch'                                     ] ],
             \ 'right': [ [ 'syntax_error', 'syntax_warning', 'syntax_info' ],
             \            [ 'lineinfo'                                      ],

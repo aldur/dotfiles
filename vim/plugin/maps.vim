@@ -1,5 +1,6 @@
 " Quickly change current working directory to buffer's
 nnoremap <leader>cd :call aldur#find_root#cd_to_root()<CR>
+nnoremap <leader>cr :call aldur#find_root#toggle_pwd_is_root()<CR>
 
 " Remap VIM 0 to first non-blank character
 map 0 ^
