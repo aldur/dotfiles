@@ -23,5 +23,5 @@ function aldur#netrw#open_link_or_file() abort
 
     let l:to_open = trim(l:to_open)
 
-    execute '!open ' . shellescape(l:to_open, 1)
+    lua vim.ui.open(shellescape(l:to_open, 1))
 endfunction
