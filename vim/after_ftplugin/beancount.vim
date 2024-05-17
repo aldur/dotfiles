@@ -3,7 +3,7 @@ compiler poetry-beancount
 setlocal formatprg=bean-format
 
 setlocal comments=b:;
-setlocal commentstring=;%s
+setlocal commentstring=;\ %s
 
 setlocal iskeyword+=:
 
