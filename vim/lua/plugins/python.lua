@@ -29,6 +29,20 @@ function M.find_python_venv(workspace_rootdir)
         return venv
     end
 
+    match = vim.fn.glob(util.path.join(workspace_rootdir, 'poetry.lock'))
+    if match ~= '' then
+        local venv = vim.fn.trim(vim.fn.system(
+                                     'poetry env info -p -C ' ..
+                                         workspace_rootdir))
+
+        local msg = "Activating poetry venv at " .. venv
+        _G.info_message(msg)
+
+        M.venv_cache[workspace_rootdir] = venv
+
+        return venv
+    end
+
     return nil
 end
 
