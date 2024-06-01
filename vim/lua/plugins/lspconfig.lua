@@ -85,8 +85,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
         if client.server_capabilities.codeActionProvider then
             vim.keymap.set({'n', 'x'}, 'gK',
-                           require('code_action_menu').open_code_action_menu,
-                           bufopts)
+                           require("actions-preview").code_actions, bufopts)
         end
 
         if client.server_capabilities.documentFormattingProvider then
