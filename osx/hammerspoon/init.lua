@@ -505,12 +505,6 @@ Globals.iTermHotkey =
 
 -- }}}
 
--- Pocket {{{
-
-require('pocket')
-
--- }}}
-
 -- Audio input/output {{{
 
 Globals.audio = require('audio')
