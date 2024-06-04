@@ -6,31 +6,6 @@ obj.__icon = hs.image.imageFromAppBundle('org.hammerspoon.Hammerspoon')
 obj.__logger = hs.logger.new(obj.__name)
 obj.__caffeine = nil
 
-function obj.clipboardToPocket()
-    local success, _, _ = hs.applescript(
-                              [[do shell script "open hammerspoon://pocket"]])
-    if not success then
-        obj.__logger.e(
-            'Got an error while opening Hammerspoon/Pocket url handler.')
-    end
-end
-
-function obj.clipboardToTermBin()
-    local success, output, _ = hs.applescript(
-                                   [[do shell script "pbpaste | nc termbin.com 9999"]])
-    if not success then
-        obj.__logger.e('Got an error while sending clipboard to TermBin.');
-        return
-    end
-
-    success, _, _ = hs.applescript(string.format(
-                                       [[do shell script "open '%s'"]], output))
-    if not success then
-        obj.__logger.e('Got an error while opening TermBin url.');
-        return
-    end
-end
-
 function obj.clipboardToFile()
     local success, _, _ = hs.applescript(
                               [[do shell script "open 'hammerspoon://clipboard?clipboard=/tmp/clipboard.json&archive=/tmp/archive.json'"]])
@@ -92,8 +67,6 @@ function obj.toggleCaffeine()
 end
 
 obj.cmds = {
-    {text = 'Clipboard to Pocket', type = 'clipboardToPocket'},
-    {text = 'Clipboard to TermBin', type = 'clipboardToTermBin'},
     {text = 'Save Clipboard to File', type = 'clipboardToFile'},
     {text = 'Clear Clipboard', type = 'clearClipboard'},
     {text = 'Archive Clipboard', type = 'archiveClipboard'},
