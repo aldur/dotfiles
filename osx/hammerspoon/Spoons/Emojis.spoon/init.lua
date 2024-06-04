@@ -37,9 +37,10 @@ function obj.callback(choice)
         lastApplication = lastFocused[1]:application()
     end
 
-    if lastApplication ~= nil and hs.fnutils.contains(
-        {'com.qvacua.VimR', 'com.googlecode.iterm2', 'com.apple.Safari'}, lastApplication:bundleID()
-    ) then
+    if lastApplication ~= nil and hs.fnutils.contains({
+        'com.qvacua.VimR', 'com.googlecode.iterm2', 'com.apple.Safari',
+        'com.neovide.neovide'
+    }, lastApplication:bundleID()) then
         -- Some applications do not seem to handle "typing" emojis.
         -- In those cases, we put them in the pasteboard, paste them, and then restore the status.
         local previousContent = hs.pasteboard.getContents()
@@ -50,7 +51,6 @@ function obj.callback(choice)
         hs.eventtap.keyStrokes(choice.char)
     end
 end
-
 
 function obj:init()
     -- is the emojis file available?
@@ -64,45 +64,42 @@ function obj:init()
         self.choices = mod
     else
         self.choices = {}
-        for _, emoji in pairs(hs.json.decode(io.open(self.spoonPath .. "/emojis/emoji.json"):read())) do
+        for _, emoji in pairs(hs.json.decode(
+                                  io.open(self.spoonPath .. "/emojis/emoji.json"):read())) do
             -- Skip different skin tones
-            if string.match(emoji.name, 'skin tone') then goto continue end
+            if string.match(emoji.name, 'skin tone') then
+                goto continue
+            end
 
             local subTexts = {emoji.shortname}
             for _, k in pairs(emoji.keywords) do
                 -- Skip `uc*` and repeated shortname
-                if not string.match(k, '^uc[0-9]+$') and ':' .. k .. ':' ~= emoji.shortname then
-                    subTexts[#subTexts+1] = k
+                if not string.match(k, '^uc[0-9]+$') and ':' .. k .. ':' ~=
+                    emoji.shortname then
+                    subTexts[#subTexts + 1] = k
                 end
             end
 
             local subText = table.concat(subTexts, ", ")
             local split = hs.fnutils.imap(
-                    hs.fnutils.split(emoji.code_points.fully_qualified, "-"),
-                    function(s) return tonumber(s, 16) end
-                )
+                              hs.fnutils.split(emoji.code_points.fully_qualified,
+                                               "-"),
+                              function(s) return tonumber(s, 16) end)
             local chars = hs.utf8.codepointToUTF8(table.unpack(split))
             assert(chars)
 
-            table.insert(
-                self.choices,
-                {
-                    text = emoji["name"]:gsub("^%l", string.upper),
-                    subText = subText,
-                    image_path = emoji["code_points"]["base"],
-                    char = chars,
-                    order = tonumber(emoji["order"])
-                }
-            )
+            table.insert(self.choices, {
+                text = emoji["name"]:gsub("^%l", string.upper),
+                subText = subText,
+                image_path = emoji["code_points"]["base"],
+                char = chars,
+                order = tonumber(emoji["order"])
+            })
 
             ::continue::
         end
-        table.sort(
-            self.choices,
-            function(a, b)
-                return a["order"] < b["order"]
-            end
-        )
+        table.sort(self.choices,
+                   function(a, b) return a["order"] < b["order"] end)
 
         print("Emojis Spoon: Saving emojis... ")
         table.save(self.choices, obj.emojisTablePath) -- luacheck: ignore
@@ -111,7 +108,9 @@ function obj:init()
     -- inject all images now
     for _, ch in pairs(self.choices) do
         if ch["image_path"] then
-            ch["image"] = hs.image.imageFromPath(self.spoonPath .. "/emojis/png/" .. ch["image_path"] .. ".png")
+            ch["image"] = hs.image.imageFromPath(self.spoonPath ..
+                                                     "/emojis/png/" ..
+                                                     ch["image_path"] .. ".png")
             assert(ch["image"])
         end
     end
@@ -134,24 +133,17 @@ end
 --- Returns:
 ---  * The Emojis object
 function obj:bindHotkeys(mapping)
-    if self.hotkey then
-        self.hotkey:delete()
-    end
+    if self.hotkey then self.hotkey:delete() end
     local toggleMods = mapping["toggle"][1]
     local toggleKey = mapping["toggle"][2]
 
-    self.hotkey =
-        hs.hotkey.new(
-        toggleMods,
-        toggleKey,
-        function()
-            if self.chooser:isVisible() then
-                self.chooser:hide()
-            else
-                self.chooser:show()
-            end
+    self.hotkey = hs.hotkey.new(toggleMods, toggleKey, function()
+        if self.chooser:isVisible() then
+            self.chooser:hide()
+        else
+            self.chooser:show()
         end
-    ):enable()
+    end):enable()
 
     return self
 end
