@@ -98,7 +98,6 @@ obj.cmds = {
     {text = 'Clear Clipboard', type = 'clearClipboard'},
     {text = 'Archive Clipboard', type = 'archiveClipboard'},
     {text = 'Toggle Caffeine', type = 'toggleCaffeine'},
-    {text = 'Create Meeting Note', type = 'meetingNote'},
     {text = 'Connect to Headphones', type = 'connectToHeadphones'}
 }
 
