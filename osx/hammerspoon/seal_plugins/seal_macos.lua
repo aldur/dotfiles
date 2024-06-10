@@ -1,10 +1,11 @@
 -- luacheck: no self
-
 local obj = {}
 obj.__index = obj
 obj.__name = 'seal_macos'
 obj.__icon = hs.image.imageFromAppBundle('com.apple.systempreferences')
 obj.__logger = hs.logger.new(obj.__name)
+
+local task = require("task")
 
 function obj.ejectAll()
     local success, _, _ = hs.applescript([[do shell script "umount -A"]])
@@ -14,23 +15,29 @@ function obj.ejectAll()
 end
 
 function obj.ejectAllLocal()
-    local success, _, _ = hs.applescript(
-        -- luacheck: no max line length
-        [[tell application "Finder" to eject (every disk whose ejectable is true and local volume is true and free space is not equal to 0)]])
+    local success, _, _ = hs.applescript( -- luacheck: no max line length
+
+                              [[tell application "Finder" to eject (every disk whose ejectable is true and local volume is true and free space is not equal to 0)]])
     if not success then
         obj.__logger.e('Got an error while ejecting all local disks.')
     end
 end
 
 function obj.emptyTrash()
-    local success, _, _ = hs.applescript([[tell application "Finder" to empty the trash]])
-    if not success then
-        obj.__logger.e('Got an error while emptying the trash.')
+    local f = function()
+        local success, _, _ = hs.applescript(
+                                  [[tell application "Finder" to empty the trash]])
+        if not success then
+            obj.__logger.e('Got an error while emptying the trash.')
+        end
     end
+
+    task.spawn(f)
 end
 
 function obj.toggleDarkMode()
-    local success, is_dark, _ = hs.applescript([[tell application "System Events"
+    local success, is_dark, _ = hs.applescript(
+                                    [[tell application "System Events"
                 tell appearance preferences
                         get dark mode
                 end tell
@@ -59,9 +66,7 @@ function obj.toggleDarkMode()
     end
 end
 
-function obj.lock()
-    hs.eventtap.keyStroke({"cmd", "ctrl"}, "q")
-end
+function obj.lock() hs.eventtap.keyStroke({"cmd", "ctrl"}, "q") end
 
 function obj.sleep()
     local success, _, _ = hs.applescript([[do shell script "pmset sleepnow"]])
@@ -76,11 +81,12 @@ end
 
 function obj.toggleBluetooth()
     -- Requires `brew install blueutil`.
-    local path =  "/usr/local/bin/blueutil"
+    local path = "/usr/local/bin/blueutil"
     if hs.fs.displayName(path) == nil then
-        path =  "/opt/homebrew/bin/blueutil"
+        path = "/opt/homebrew/bin/blueutil"
     end
-    local success, result, _ = hs.applescript([[do shell script " ]] .. path .. [["]])
+    local success, result, _ = hs.applescript(
+                                   [[do shell script " ]] .. path .. [["]])
     if not success then
         obj.__logger.e('Got an error while determining Bluetooth power state.')
         return
@@ -115,26 +121,28 @@ function obj.toggleMenuBar()
     if not result then obj.__logger.e('Error while toggling the Menu Bar.') end
 end
 
-
 obj.cmds = {
-    {text='Toggle WiFi', type='toggleWiFi'},
-    {text='Toggle Bluetooth', type='toggleBluetooth'},
-    {text='Lock', type='lock'},
-    {text='Sleep', type='sleep'},
-    {text='Empty Trash', type='emptyTrash'},
-    {text='Toggle Dark Mode', type='toggleDarkMode'},
-    {text='Eject All Disks', type='ejectAll'},
-    {text='Eject All Local Disks', type='ejectAllLocal'},
-    {text='Toggle Menu Bar', type='toggleMenuBar'},
+    {text = 'Toggle WiFi', type = 'toggleWiFi'},
+    {text = 'Toggle Bluetooth', type = 'toggleBluetooth'},
+    {text = 'Lock', type = 'lock'}, {text = 'Sleep', type = 'sleep'},
+    {text = 'Empty Trash', type = 'emptyTrash'},
+    {text = 'Toggle Dark Mode', type = 'toggleDarkMode'},
+    {text = 'Eject All Disks', type = 'ejectAll'},
+    {text = 'Eject All Local Disks', type = 'ejectAllLocal'},
+    {text = 'Toggle Menu Bar', type = 'toggleMenuBar'}
 }
 
 function obj:commands()
-    return {mac={
-            cmd='mac', fn=obj.choicesMacOS,
-            name='MacOS command',
-            description="Send a MacOS command",
-            plugin=obj.__name, icon=obj.__icon,
-    }}
+    return {
+        mac = {
+            cmd = 'mac',
+            fn = obj.choicesMacOS,
+            name = 'MacOS command',
+            description = "Send a MacOS command",
+            plugin = obj.__name,
+            icon = obj.__icon
+        }
+    }
 end
 
 function obj:bare() return nil end
@@ -145,7 +153,7 @@ function obj.choicesMacOS(query)
 
     for _, command in pairs(obj.cmds) do
         if (string.match(command.text:lower(), query) or
-                string.match((command.subText or ''):lower(), query)) then
+            string.match((command.subText or ''):lower(), query)) then
             command['plugin'] = obj.__name
             command['image'] = obj.__icon
             table.insert(choices, command)
