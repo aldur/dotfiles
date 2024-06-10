@@ -250,23 +250,27 @@ Globals.wfilters.finder =
         local f = hs.application('com.apple.finder')
         if f and #f:allWindows() == 1 then focusLastFocused() end
     end)
+
+Globals.watcher.mail = hs.application.watcher.new(
+                           function(_, event, application)
+        if event ~= hs.application.watcher.activated then return end
+        if application:bundleID() ~= "com.apple.mail" then return end
+        if #application:allWindows() > 0 then return end
+        hs.eventtap.keyStroke({'cmd'}, '0')
+    end):start()
 -- }}}
 
 -- Emojis {{{
 
 Globals.emojis = hs.loadSpoon('Emojis')
+Globals.emojis:bindHotkeys({toggle = {hyper, 'e'}})
 
 -- }}}
 
 -- Seal {{{
 
 Globals.seal = hs.loadSpoon('Seal')
-Globals.seal:loadPlugins({
-    -- 'tunnelblick',
-    -- 'network_locations',
-    'snippets', 'macos', 'hammerspoon', -- 'zoom',
-    'shortcuts'
-})
+Globals.seal:loadPlugins({'snippets', 'macos', 'hammerspoon', 'shortcuts'})
 Globals.seal:bindHotkeys({toggle = {hyper, 'space'}})
 Globals.seal:start()
 
@@ -276,6 +280,7 @@ Globals.seal:start()
 
 -- Configuration reload
 hs.hotkey.bind(hyper_shift, "r", function()
+    logger.i("Starting reload...") -- Useful for timings
     cleanup()
     hs.reload()
 end)
@@ -465,10 +470,6 @@ end
 hs.hotkey.bind(hyper_shift, "p", function()
     hs.network.ping.ping("8.8.8.8", 1, 0.01, 0.5, "any", pingResult)
 end)
-
--- Emoji chooser
-
-Globals.emojis:bindHotkeys({toggle = {hyper, 'e'}})
 
 -- }}}
 
