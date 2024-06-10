@@ -1,22 +1,25 @@
 -- luacheck: no self
-
 local obj = {}
 obj.__index = obj
 obj.__name = 'seal_shortcuts'
 obj.__icon = hs.image.imageFromAppBundle('com.apple.shortcuts')
 obj.__logger = hs.logger.new(obj.__name)
 
-
 obj.shortcuts = hs.shortcuts.list()
 
+local task = require('task')
 
 function obj:commands()
-    return {short={
-            cmd='short', fn=obj.choicesShortcuts,
-            name='Shortcuts',
-            description="Run a Shortcut",
-            plugin=obj.__name, icon=obj.__icon,
-    }}
+    return {
+        short = {
+            cmd = 'short',
+            fn = obj.choicesShortcuts,
+            name = 'Shortcuts',
+            description = "Run a Shortcut",
+            plugin = obj.__name,
+            icon = obj.__icon
+        }
+    }
 end
 
 function obj:bare() return nil end
@@ -43,7 +46,7 @@ end
 
 function obj.completionCallback(row_info)
     if not row_info then return end
-    hs.shortcuts.run(row_info.text)
+    task.spawn(function() hs.shortcuts.run(row_info.text) end)
 end
 
 return obj

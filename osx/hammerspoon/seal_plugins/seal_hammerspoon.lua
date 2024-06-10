@@ -36,14 +36,19 @@ end
 local secrets = require("secrets")
 obj.headphones_mac = secrets.headphones_mac
 
+local task = require("task")
+
 function obj.connectToHeadphones()
-    local success, _, errors = hs.applescript(
-                                   [[do shell script "/opt/homebrew/bin/blueutil --connect ]] ..
-                                       secrets.headphones_mac .. [["]])
-    if not success then
-        obj.__logger.e('Got an error while connecting to headphones: ' ..
-                           errors['OSAScriptErrorMessageKey'])
+    local function f()
+        local success, _, errors = hs.applescript(
+                                       [[do shell script "/opt/homebrew/bin/blueutil --connect ]] ..
+                                           secrets.headphones_mac .. [["]])
+        if not success then
+            obj.__logger.e('Got an error while connecting to headphones: ' ..
+                               errors['OSAScriptErrorMessageKey'])
+        end
     end
+    task.spawn(f)
 end
 
 function obj.showCaffeineMenubar(isEnabled)
