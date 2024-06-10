@@ -142,7 +142,7 @@ cmp.setup.filetype({'markdown.wiki', 'markdown'}, {sources = md_sources})
 local beancount_sources = {
     {
         name = 'beancount',
-        option = {account = '~/Documents/Beans/index.beancount'},
+        -- option = {account = '~/Documents/Beans/index.beancount'},
         max_item_count = 10
     }
 }
