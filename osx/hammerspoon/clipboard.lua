@@ -118,6 +118,7 @@ end
 -- Clears the clipboard and history
 local function clearAll()
     module.clipboard_history = {}
+    assert(hs.settings.clear(pasteboard_name))
     hs.settings.set(pasteboard_name, module.clipboard_history)
     hs.pasteboard.clearContents()
     updateChoices()
