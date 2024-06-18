@@ -36,11 +36,9 @@ cask "spotify"
 
 cask_args require_sha: true
 
-cask "vimr"
 cask "slack"
 cask "vlc"
 cask "appcleaner"
-cask "plex-media-player"
 cask "calibre"
 cask "hammerspoon"
 cask "iterm2"
