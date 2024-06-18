@@ -18,6 +18,7 @@
             beancount
             bibtool
             black
+            cargo
             deno
             dockerfile-language-server-nodejs
             dotenv-linter
