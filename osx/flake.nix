@@ -38,6 +38,7 @@
             pgformatter
             pyright
             ripgrep
+            rust-analyzer
             shfmt
             solc
             sqlint
