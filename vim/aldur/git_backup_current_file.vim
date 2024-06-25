@@ -5,18 +5,6 @@ if isdirectory(s:custom_backup_dir) == 0 && executable('git')
     call system('chmod 700 ' . s:custom_backup_dir)
 endif
 
-function! s:OnEvent(job_id, data, event) dict
-    if a:event == 'stdout'
-        let str = self.shell.' stdout: '.join(a:data)
-    elseif a:event == 'stderr'
-        let str = self.shell.' stderr: '.join(a:data)
-    else
-        let str = self.shell.' exited'
-    endif
-
-    call append(line('$'), str)
-endfunction
-
 let s:buffer = ""
 
 function! s:Receive(_job_id, data, event) abort
@@ -24,8 +12,8 @@ function! s:Receive(_job_id, data, event) abort
     let s:buffer .= "\n"
     if a:event ==# 'exit'
         if a:data != 0
-            echom echoerr('Unexpected exit code: %s', string(a:data))
-            echom echoerr(s:buffer)
+            echoerr printf('Unexpected exit code: %s', string(a:data))
+            echoerr s:buffer
         endif
     endif
 endfunction
@@ -58,7 +46,7 @@ function! aldur#git_backup_current_file#backup() abort
     let l:cmd = 'cp "' . l:file . '" "' . l:backup_file . '"; '
     let l:cmd .= 'cd "' . l:backup_dir . '"; '
     let l:cmd .= 'git add "' . l:backup_file . '"; '
-    let l:cmd .= 'git commit --no-gpg-sign -m "Backup ' . l:file . '"; '
+    let l:cmd .= 'git diff-index --quiet HEAD || git commit --no-gpg-sign -m "Backup ' . l:file . '"; '
 
     if has('nvim')
         let s:buffer = ""
