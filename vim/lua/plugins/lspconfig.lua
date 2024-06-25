@@ -345,6 +345,11 @@ lspconfig.yamlls.setup(extend_config({
     }
 }))
 
+local rust_analyzer_cmd = {"rustup", "run", "stable", "rust-analyzer"}
+if vim.fn.executable('rust-analyzer') == 1 then
+    rust_analyzer_cmd = {"rust-analyzer"}
+end
+
 -- Rust
 lspconfig.rust_analyzer.setup(extend_config({
     settings = {
@@ -362,7 +367,7 @@ lspconfig.rust_analyzer.setup(extend_config({
             }
         }
     },
-    cmd = {"rustup", "run", "stable", "rust-analyzer"}
+    cmd = rust_analyzer_cmd
 }))
 
 local default_ltex_configuration =
