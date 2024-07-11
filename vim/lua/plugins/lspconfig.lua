@@ -539,11 +539,11 @@ end
 
 -- Taken from https://github.com/neovim/nvim-lspconfig/wiki/Code-Actions
 function M.code_action_listener()
+    local method = "textDocument/codeAction"
     -- Check for code action capability
     local code_action_cap_found = false
-    for _, client in pairs(vim.lsp.get_clients()) do
-        if client and not vim.tbl_contains(M.LB_CLIENTS_TO_IGNORE, client.name) and
-            client.supports_method("textDocument/codeAction") then
+    for _, client in pairs(vim.lsp.get_clients({bufnr = 0, method = method})) do
+        if not vim.tbl_contains(M.LB_CLIENTS_TO_IGNORE, client.name) then
             code_action_cap_found = true
             break
         end
@@ -557,8 +557,7 @@ function M.code_action_listener()
     local context = {diagnostics = vim.diagnostic.get(0, {lnum = line})}
     params.context = context
 
-    vim.lsp.buf_request_all(0, 'textDocument/codeAction', params,
-                            function(responses)
+    vim.lsp.buf_request_all(0, method, params, function(responses)
         local has_actions = false
         for client_id, resp in pairs(responses) do
             if resp.result and
