@@ -41,8 +41,6 @@ end
 
 function obj.completionCallback(row_info)
     if row_info then hs.pasteboard.setContents(row_info.snippet) end
-    local lastFocused = hs.window.filter.defaultCurrentSpace:getWindows(hs.window.filter.sortByFocusedLast)
-    if #lastFocused > 0 then lastFocused[1]:focus() end
 end
 
 return obj
