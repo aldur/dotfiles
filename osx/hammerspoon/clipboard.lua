@@ -71,6 +71,7 @@ updateChoices()
 -- Add `item`
 local function toClipboard(item)
     -- Look for a copy of this element in the clipboard, and remove it if it's there.
+    -- NOTE: This runs in linear time, every time something gets pasted.
     for i, v in pairs(module.clipboard_history) do
         if v.text == item then
             table.remove(module.clipboard_history, i)
