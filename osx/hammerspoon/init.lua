@@ -242,6 +242,29 @@ end
 
 -- Window filters {{{
 
+-- hs.window.filter._showCandidates()
+local w_to_ignores = {
+    "WindowManager", "Control Centre", "Wallpaper", "talagent",
+    "Notification Centre", "Dock Extra", "Stats", "TextInputMenuAgent",
+    "SecretAgent", "Adobe Content Synchronizer Finder Extension",
+    "Shortcuts Events", "Karabiner-NotificationWindow", "Universal Control",
+    "Mail Networking", "Mail Graphics and Media", "universalAccessAuthWarn",
+    "UserNotificationCenter", "com.apple.hiservices-xpcservice",
+    "MobileDeviceUpdater", "AutoFillPanelService", "Mail (Finder) Networking",
+    "Adobe Content Synchronizer Finder Extension",
+    "Google Chrome Helper (Plugin)", "Safari Graphics and Media",
+    "AXVisualSupportAgent", "CoreLocationAgent",
+    "SoftwareUpdateNotificationManager", "Single Sign-On", "coreautha",
+    "TextInputSwitcher", "DockHelper", "OSDUIHelper",
+    "Safari Service Worker (skiff.com)", "Tailscale",
+    "AccessibilityVisualsAgent", "Safari Web Content (Prewarmed)",
+    "Dash Networking", "Dash Web Content", "Dash Graphics and Media",
+    "Safari Web Content (Cached)", "com.apple.WebKit.WebContent",
+    "Safari Web Content"
+}
+
+for _, name in pairs(w_to_ignores) do hs.window.filter.ignoreAlways[name] = true end
+
 -- Focus last window when closing Finder.
 Globals.wfilters.finder =
     wf.copy(wf.defaultCurrentSpace):setDefaultFilter(false):setAppFilter(
