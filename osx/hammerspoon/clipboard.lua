@@ -6,6 +6,7 @@ local logger = hs.logger.new('clipboard')
 local module = {
     frequency = 1.0, -- Clipboar polling frequency.
     chooser_max_size = 100, -- Number of elements to store in the chooser.
+    chooser_max_display_size = 80, -- Number of characters to show in the chooser.
     element_max_length = 10000, -- Maximum length of elements to store.
 
     trim = true, -- Strip leading/trailing whitespace
@@ -46,7 +47,7 @@ local function clearLastItem()
 end
 
 module.chooser = hs.chooser.new(function(row_info)
-    if row_info then hs.pasteboard.setContents(row_info['text']) end
+    if row_info then hs.pasteboard.setContents(row_info['entry']) end
 end)
 
 local image = hs.image.imageFromPath("icons/clipboard.png")
@@ -54,7 +55,11 @@ local image = hs.image.imageFromPath("icons/clipboard.png")
 local function updateChoices()
     local choices = {}
     for _, v in pairs(module.clipboard_history) do
-        table.insert(choices, {text = v.text, image = image})
+        local text = v.text
+        if string.len(text) > module.chooser_max_display_size then
+            text = string.sub(text, 1, module.chooser_max_display_size) .. '...'
+        end
+        table.insert(choices, {text = text, image = image, entry = v.text})
     end
     module.chooser:choices(choices)
     module.chooser:rows(math.min(9, #choices)) -- Show at most 9 rows of elements in the chooser.
