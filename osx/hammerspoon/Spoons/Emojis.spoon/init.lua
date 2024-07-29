@@ -25,13 +25,11 @@ obj.hotkey = nil
 
 dofile(obj.spoonPath .. "/table.lua")
 
-local wf = hs.window.filter.defaultCurrentSpace
-
 function obj.callback(choice)
     if not choice then return end
 
     local lastApplication = nil
-    local lastFocused = wf:getWindows(wf.sortByFocusedLast)
+    local lastFocused = require("hs.libchooser")._lastFocused
     if #lastFocused > 0 then
         lastFocused[1]:focus()
         lastApplication = lastFocused[1]:application()
