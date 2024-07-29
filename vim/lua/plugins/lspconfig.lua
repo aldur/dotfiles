@@ -471,6 +471,15 @@ lspconfig.theme_check.setup(default_lsp_config)
 --     init_options = {journal_file = "/Users/aldur/Documents/Beans/index.beancount"}
 -- }
 
+-- clarinet
+-- brew install clarinet
+require('clarinet') -- Adds clarinet LSP
+lspconfig.clarinet.setup(default_lsp_config)
+
+-- texlab
+-- brew install texlab
+lspconfig.texlab.setup(default_lsp_config)
+
 local buffer_options_default = require('plugins.utils').buffer_options_default
 
 function M.signs_enabled(bufnr)
