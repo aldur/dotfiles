@@ -22,8 +22,7 @@ local module = {
     },
 
     -- You don't need to edit anything below this line.
-    last_focused_window = nil,
-    clipboard_history = hs.settings.get(pasteboard_name) or {},
+    clipboard_history = hs.settings.get(pasteboard_name) or {}
 }
 
 -- Internal method: Verify whether the pasteboard contents matches one of the identifiers that need to be ignored.
@@ -48,7 +47,6 @@ end
 
 module.chooser = hs.chooser.new(function(row_info)
     if row_info then hs.pasteboard.setContents(row_info['text']) end
-    if module.last_focused_window then module.last_focused_window:focus() end
 end)
 
 local image = hs.image.imageFromPath("icons/clipboard.png")
@@ -126,11 +124,7 @@ function module.toggle()
     local chooser = module.chooser
     if chooser:isVisible() then
         chooser:hide()
-        if module.last_focused_window then
-            module.last_focused_window:focus()
-        end
     else
-        module.last_focused_window = hs.window.focusedWindow()
         updateChoices()
         chooser:show()
     end
