@@ -1,10 +1,9 @@
 if has('nvim')
-    lua require('plugins/lspconfig')
+    lua require('plugins/lspconfig')  -- Side effects, autocmds
 
     " Inspired by how lightline.vim refreshes the statusline.
     autocmd vimrc DiagnosticChanged *
-                \ call lightline#update() |
-                \ lua require('plugins/lspconfig').on_diagnostic_changed()
+                \ call lightline#update()
 
     lua require('plugins/utils').configure_signs()
 

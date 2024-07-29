@@ -585,15 +585,36 @@ function M.code_action_autocmd()
     })
 end
 
-M.code_action_autocmd() -- Thsi creates the autocmd to trigger the lightbulb
+M.code_action_autocmd() -- This creates the autocmd to trigger the lightbulb
 
-local function close_loclist_if_no_diagnostic()
-    if #vim.diagnostic.get(0) == 0 then vim.cmd("lclose") end
+function M.diagnostic_autocmd()
+    local group = vim.api.nvim_create_augroup("QFDiagnostic", {})
+
+    local on_diagnostic_changed = function(diagnostics)
+        if #diagnostics then
+            vim.diagnostic.setloclist({open = false})
+        else
+            vim.cmd("lclose")
+        end
+    end
+
+    vim.api.nvim_create_autocmd({'DiagnosticChanged'}, {
+        group = group,
+        callback = function(args)
+            if (args and args.data) then
+                on_diagnostic_changed(args.data.diagnostics)
+            end
+        end
+    })
+
+    vim.api.nvim_create_autocmd({'BufEnter'}, {
+        group = group,
+        callback = function()
+            on_diagnostic_changed(vim.diagnostic.get(0))
+        end
+    })
 end
 
-function M.on_diagnostic_changed()
-    vim.diagnostic.setloclist({open = false})
-    close_loclist_if_no_diagnostic()
-end
+M.diagnostic_autocmd() -- This creates the autocmd to populate / update the QF with the diagnostics
 
 return M
