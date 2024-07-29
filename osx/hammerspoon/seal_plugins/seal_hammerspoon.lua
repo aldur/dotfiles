@@ -8,7 +8,7 @@ obj.__caffeine = nil
 
 function obj.clipboardToFile()
     local success, _, _ = hs.applescript(
-                              [[do shell script "open 'hammerspoon://clipboard?clipboard=/tmp/clipboard.json&archive=/tmp/archive.json'"]])
+                              [[do shell script "open 'hammerspoon://clipboard?clipboard=/tmp/clipboard.json"]])
     if not success then
         obj.__logger.e(
             'Got an error while opening Hammerspoon/Clipboard url handler.')
@@ -18,15 +18,6 @@ end
 function obj.clearClipboard()
     local success, _, _ = hs.applescript(
                               [[do shell script "open 'hammerspoon://clipboard?clear_all=True'"]])
-    if not success then
-        obj.__logger.e(
-            'Got an error while opening Hammerspoon/Clipboard url handler.')
-    end
-end
-
-function obj.archiveClipboard()
-    local success, _, _ = hs.applescript(
-                              [[do shell script "open 'hammerspoon://clipboard?archive_all=True'"]])
     if not success then
         obj.__logger.e(
             'Got an error while opening Hammerspoon/Clipboard url handler.')
@@ -74,7 +65,6 @@ end
 obj.cmds = {
     {text = 'Save Clipboard to File', type = 'clipboardToFile'},
     {text = 'Clear Clipboard', type = 'clearClipboard'},
-    {text = 'Archive Clipboard', type = 'archiveClipboard'},
     {text = 'Toggle Caffeine', type = 'toggleCaffeine'},
     {text = 'Connect to Headphones', type = 'connectToHeadphones'}
 }

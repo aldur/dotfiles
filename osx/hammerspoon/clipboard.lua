@@ -1,14 +1,12 @@
 -- Original credits: https://github.com/VFS/.hammerspoon/blob/master/tools/clipboard.lua
 -- luacheck: ignore module
 local pasteboard_name = 'com.aldur.clipboard'
-local archive_name = 'com.aldur.clipboard.archive'
 local logger = hs.logger.new('clipboard')
 
 local module = {
     frequency = 1.0, -- Clipboar polling frequency.
     chooser_max_size = 1000, -- Number of elements to store in the chooser.
     element_max_length = 10000, -- Maximum length of elements to store.
-    archive_max_size = 20000, -- Store additional n items in the 'archive'
 
     trim = true, -- Strip leading/trailing whitespace
 
@@ -26,7 +24,6 @@ local module = {
     -- You don't need to edit anything below this line.
     last_focused_window = nil,
     clipboard_history = hs.settings.get(pasteboard_name) or {},
-    archive = hs.settings.get(archive_name) or {}
 }
 
 -- Internal method: Verify whether the pasteboard contents matches one of the identifiers that need to be ignored.
@@ -40,23 +37,6 @@ local function shouldBeStored()
         if module.ignore[v] then return false end
     end
     return true
-end
-
--- Archives/clears the clipboard and history
-local function archiveAll()
-    while (#module.clipboard_history > 0) do
-        table.insert(module.archive, 1, table.remove(module.clipboard_history))
-    end
-
-    while (#module.archive >= module.archive_max_size) do
-        table.remove(module.archive)
-    end
-
-    hs.settings.set(archive_name, module.archive)
-    hs.settings.set(pasteboard_name, module.clipboard_history)
-
-    hs.pasteboard.clearContents()
-    module.chooser:choices(module.clipboard_history)
 end
 
 -- Clears the last added to the history
@@ -100,19 +80,13 @@ local function toClipboard(item)
 
     -- Make sure that the clipboard size respects the requirements.
     while (#module.clipboard_history >= module.chooser_max_size) do
-        table.insert(module.archive, 1, table.remove(module.clipboard_history))
-    end
-
-    -- Make sure that the archive size respects the requirements.
-    while (#module.archive >= module.archive_max_size) do
-        table.remove(module.archive)
+        table.remove(module.clipboard_history)
     end
 
     updateChoices()
 
-    -- Store the updated clipboard/archive.
+    -- Store the updated clipboard
     hs.settings.set(pasteboard_name, module.clipboard_history)
-    hs.settings.set(archive_name, module.archive)
 end
 
 -- Clears the clipboard and history
@@ -166,24 +140,14 @@ hs.urlevent.bind('clipboard', function(_, params)
     if params.clear_all then
         logger.i('Clearing the clipboard.')
         clearAll()
-    elseif params.archive_all then
-        logger.i('Archiving the clipboard.')
-        archiveAll()
     else
         assert(params.clipboard)
         logger.i('Storing the clipboard.')
 
         local f = io.open(params.clipboard, 'w')
+        assert(f ~= nil)
         f:write(hs.json.encode(module.clipboard_history, true))
         f:close()
-
-        if params.archive then
-            logger.i('Storing the archive.')
-            f = io.open(params.archive, 'w')
-            f:write(hs.json.encode(module.archive, true))
-            f:close()
-        end
-
     end
 
     hs.window.frontmostWindow():focus() -- Always focus frontmost window before returning
