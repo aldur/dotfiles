@@ -1,4 +1,12 @@
-require("zen-mode").setup({
+local z = require("zen-mode")
+
+local function width_from_columns()
+    if vim.o.columns > 200 then return 100 end
+
+    return vim.o.columns * 0.6
+end
+
+z.setup({
     window = {
         backdrop = 1, -- shade the backdrop of the Zen window. Set to 1 to keep the same as Normal
 
@@ -6,7 +14,7 @@ require("zen-mode").setup({
         -- * an absolute number of cells when > 1
         -- * a percentage of the width / height of the editor when <= 1
         -- * a function that returns the width or the height
-        width = 80, -- width of the Zen window
+        width = width_from_columns, -- width of the Zen window
         height = 0.85, -- height of the Zen window
 
         -- by default, no options are changed for the Zen window
@@ -42,7 +50,28 @@ require("zen-mode").setup({
         }
     },
     -- callback where you can add custom code when the Zen window opens
-    on_open = function(_) end,
+    on_open = function(_)
+        -- ZenBg gets computed too early. This re-computes it at the right time.
+        vim.cmd("highlight clear ZenBg")
+        local config = require("zen-mode.config")
+        config.colors(config.options)
+    end,
     -- callback where you can add custom code when the Zen window closes
     on_close = function() end
 })
+
+-- Allow calling `ZenMode 0.8` to get 80% width window.
+vim.api.nvim_create_user_command('ZenMode', function(command)
+    local nargs = #command.fargs
+    local width = nil
+    if nargs > 0 then
+        width = command.fargs[1]
+        width = tonumber(width)
+    end
+    if width ~= nil then
+        -- If open, re-open it with desired width
+        z.close()
+        return z.open({window = {width = width}})
+    end
+    return z.toggle()
+end, {nargs = "?"})
