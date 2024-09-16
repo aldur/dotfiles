@@ -55,11 +55,13 @@ local image = hs.image.imageFromPath("icons/clipboard.png")
 local function updateChoices()
     local choices = {}
     for _, v in pairs(module.clipboard_history) do
-        local text = v.text
-        if string.len(text) > module.chooser_max_display_size then
-            text = string.sub(text, 1, module.chooser_max_display_size) .. '...'
+        local trimmed_text = v.text
+        if string.len(trimmed_text) > module.chooser_max_display_size then
+            trimmed_text = string.sub(trimmed_text, 1,
+                                      module.chooser_max_display_size) .. '...'
         end
-        table.insert(choices, {text = text, image = image, entry = v.text})
+        table.insert(choices,
+                     {text = trimmed_text, image = image, entry = v.text})
     end
     module.chooser:choices(choices)
     module.chooser:rows(math.min(9, #choices)) -- Show at most 9 rows of elements in the chooser.
@@ -69,8 +71,9 @@ module.chooser:placeholderText("Query your clipboard history here...")
 updateChoices()
 
 -- Add `item`
-local function toClipboard(item)
-    -- Look for a copy of this element in the clipboard, and remove it if it's there.
+local function toClipboardHistory(item)
+    -- Look for a copy of this element in the clipboard history, and remove it
+    -- if it's there so we can add it to the top.
     -- NOTE: This runs in linear time, every time something gets pasted.
     for i, v in pairs(module.clipboard_history) do
         if v.text == item then
@@ -102,7 +105,7 @@ local function clearAll()
     updateChoices()
 end
 
-local function storeCopy(current_clipboard)
+local function storeOnCopy(current_clipboard)
     if not shouldBeStored() then return end
 
     if not current_clipboard then
@@ -118,13 +121,13 @@ local function storeCopy(current_clipboard)
         end
         if not current_clipboard or current_clipboard == '' then return end
 
-        toClipboard(current_clipboard)
+        toClipboardHistory(current_clipboard)
     end
 end
 
 -- Set watched frequency.
 hs.pasteboard.watcher.interval(module.frequency)
-module.watcher = hs.pasteboard.watcher.new(storeCopy)
+module.watcher = hs.pasteboard.watcher.new(storeOnCopy)
 
 function module.toggle()
     local chooser = module.chooser
