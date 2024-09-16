@@ -75,3 +75,7 @@ aldur.xcuserdatad
 # Latex #
 #########
 *-eps-converted-to.pdf
+
+# Rust #
+# Generated files
+/target/
