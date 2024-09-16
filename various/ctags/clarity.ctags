@@ -1,0 +1,9 @@
+--langdef=clarity
+--langmap=clarity:.clar
+
+--regex-clarity=/\((define-public|define-private|define-read-only)[ \t]+\(([a-zA-Z0-9_\-]+)/\2/f,function/
+--regex-clarity=/\(define-constant[ \t]+([a-zA-Z0-9_\-]+)/\1/c,constant/
+--regex-clarity=/\(define-map[ \t]+([a-zA-Z0-9_\-]+)/\1/m,map/
+--regex-clarity=/\(define-data-var[ \t]+([a-zA-Z0-9_\-]+)/\1/v,variable/
+--regex-clarity=/\(define-non-fungible-token[ \t]+([a-zA-Z0-9_\-]+)/\1/t,token/
+--regex-clarity=/\(define-fungible-token[ \t]+([a-zA-Z0-9_\-]+)/\1/t,token/
