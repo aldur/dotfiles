@@ -428,10 +428,14 @@ end
 -- Focus/launch most commonly used applications.
 hs.fnutils.each({
     {'B', 'com.apple.Safari'}, {'W', 'com.kapeli.dashdoc'},
-    {'G', 'com.culturedcode.ThingsMac'}, {'X', 'com.tinyspeck.slackmacgap'}
+    {'G', 'com.culturedcode.ThingsMac'}, {'X', 'com.tinyspeck.slackmacgap'},
+    {'I', 'com.apple.MobileSMS'}
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function() launchFocusOrSwitchBack(k[2]) end)
 end)
+
+hs.hotkey.bind("cmd", [[\]],
+               function() launchFocusOrSwitchBack("com.bitwarden.desktop") end)
 
 local function getMeetingClients()
     local clients = {
