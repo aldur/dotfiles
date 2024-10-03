@@ -79,3 +79,6 @@ aldur.xcuserdatad
 # Rust #
 # Generated files
 /target/
+
+# Node
+node_modules
