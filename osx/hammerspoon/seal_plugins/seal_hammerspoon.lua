@@ -62,10 +62,13 @@ function obj.toggleCaffeine()
     obj.showCaffeineMenubar(hs.caffeinate.toggle('displayIdle'))
 end
 
+function obj.toggleForceBuiltInInput() require("audio").toggleForceBuiltInInput() end
+
 obj.cmds = {
     {text = 'Save Clipboard to File', type = 'clipboardToFile'},
     {text = 'Clear Clipboard', type = 'clearClipboard'},
     {text = 'Toggle Caffeine', type = 'toggleCaffeine'},
+    {text = 'Toggle Force Built-in Input', type = 'toggleForceBuiltInInput'},
     {text = 'Connect to Headphones', type = 'connectToHeadphones'}
 }
 

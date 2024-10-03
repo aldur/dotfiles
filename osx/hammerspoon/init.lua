@@ -536,7 +536,7 @@ Globals.iTermHotkey =
 -- Audio input/output {{{
 
 Globals.audio = require('audio')
-hs.hotkey.bind(hyper, "a", Globals.audio.toggleAudioInput)
+hs.hotkey.bind(hyper, "a", Globals.audio.toggleInputMute)
 
 -- }}}
 
