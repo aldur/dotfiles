@@ -157,7 +157,6 @@
             caskArgs.require_sha = true;
 
             taps = [
-              "remko/age-plugin-se"
               "shopify/shopify"
             ];
             brews = [
@@ -187,6 +186,7 @@
               "tailscale"
               "the-unarchiver"
               "vlc"
+              "notion"
             ];
             masApps = {
               "Drafts" = 1435957248;
@@ -196,7 +196,7 @@
         };
     in
     {
-      darwinConfigurations.Ares = nix-darwin.lib.darwinSystem {
+      darwinConfigurations.Maui = nix-darwin.lib.darwinSystem {
         modules = [
           configuration
         ];
