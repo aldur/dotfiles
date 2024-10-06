@@ -2,7 +2,7 @@ include ../include.mk
 
 DOTFILES = psqlrc radare2rc curlrc gdbinit inputrc ideavimrc chktexrc pylintrc gitignore_global gitattributes_global weechat mdlrc mdlstyle.rb ripgreprc solhint.json
 CONFIG_FILES = flake8 pycodestyle ctags fd marksman nix
-ALL = $(DOTFILES) $(CONFIG_FILES) _yamllint _bat vale git gpg.conf scdaemon.conf
+ALL = $(DOTFILES) $(CONFIG_FILES) _yamllint _bat git gpg.conf scdaemon.conf
 
 .PHONY: $(ALL)
 all: $(ALL)
@@ -58,9 +58,6 @@ _yamllint: yamllint
 _bat: bat
 	mkdir -p ${HOME}/.config/$</
 	$(LN) $(shell readlink -f $<) ${HOME}/.config/$</config
-
-vale:
-	$(MAKE) -C $@
 
 gpg.conf scdaemon.conf:
 	mkdir -p ${HOME}/.gnupg
