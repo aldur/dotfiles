@@ -473,8 +473,10 @@ lspconfig.theme_check.setup(default_lsp_config)
 
 -- clarinet
 -- brew install clarinet
-require('clarinet') -- Adds clarinet LSP
-lspconfig.clarinet.setup(default_lsp_config)
+if vim.fn.executable('clarinet') == 1 then
+    require('clarinet') -- Adds clarinet LSP
+    lspconfig.clarinet.setup(default_lsp_config)
+end
 
 -- texlab
 -- brew install texlab

@@ -1,4 +1,5 @@
 brew "astyle"
+brew "clarinet"
 brew "bib-tool"
 brew "deno"
 brew "dotenv-linter"
