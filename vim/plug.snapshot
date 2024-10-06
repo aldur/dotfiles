@@ -4,7 +4,7 @@
 " or execute: vim -S snapshot.vim
 
 silent! let g:plugs['actions-preview.nvim'].commit = 'e8d41b608e24319548637685c7cfa66fadaff2b2'
-silent! let g:plugs['cmp-beancount'].commit = 'ffe4318e2a3936e7e25ba519e95e2388a94898ed'
+silent! let g:plugs['cmp-beancount'].commit = '29e2329'
 silent! let g:plugs['cmp-buffer'].commit = '3022dbc9166796b644a841a02de8dd1cc1d311fa'
 silent! let g:plugs['cmp-cmdline'].commit = 'd250c63aa13ead745e3a40f61fdd3470efde3923'
 silent! let g:plugs['cmp-nvim-lsp'].commit = '39e2eda76828d88b773cc27a3f61d2ad782c922d'
