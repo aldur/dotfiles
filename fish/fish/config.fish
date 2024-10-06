@@ -9,11 +9,6 @@ abbr -a ta tmux -CC new -ADs
 abbr -a tls tmux ls
 abbr -a vim neovide
 
-# Source Google Cloud SKD
-if test -f /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.fish.inc
-    source /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.fish.inc
-end
-
 # Override macOS ssh-agent with yubikey-agent
 # We need to do this here since macOS sets a universal variable, so we shadow
 # it this way.
