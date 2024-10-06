@@ -161,6 +161,9 @@
 
         " liquid
         Plug 'tpope/vim-liquid', { 'for': 'liquid'}
+
+        " Clarity
+        Plug 'aldur/clarity.nvim'
     " }}}
 
     let b:has_nvim_python3 = has('nvim') && has('python3')
@@ -175,9 +178,9 @@
     " }}} LSP
 
     " Completion {{{
+        Plug 'hrsh7th/nvim-cmp', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'hrsh7th/cmp-nvim-lsp', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'hrsh7th/cmp-buffer', b:has_nvim_python3 ? {  } : { 'on': [] }
-        Plug 'hrsh7th/nvim-cmp', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'hrsh7th/cmp-path', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'hrsh7th/cmp-nvim-lua', b:has_nvim_python3 ? {  } : { 'on': [] }
         Plug 'hrsh7th/cmp-cmdline', b:has_nvim_python3 ? {  } : { 'on': [] }
@@ -213,6 +216,8 @@
     " nvim provides this out of the box.
     Plug 'machakann/vim-highlightedyank',
                 \ b:has_nvim_python3 ? { 'on': []} : {}
+
+    Plug 'David-Kunz/gen.nvim'
 
     " ...Vim-plug is done
     call plug#end()
