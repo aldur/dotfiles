@@ -25,10 +25,25 @@ gpg-agent.conf:
 
 macos-preferences:
 	# Faster dock autohide
+	defaults write com.apple.dock "autohide" -bool "true"
 	defaults write com.apple.dock autohide-delay -float 0
 	defaults write com.apple.dock autohide-time-modifier -float 0.15
-	killall Dock
 
 	# This needs logging out and in
 	defaults write -g InitialKeyRepeat -int 10
 	defaults write -g KeyRepeat -int 1
+
+	# Three fingers drag
+	defaults write com.apple.AppleMultitouchTrackpad "TrackpadThreeFingerDrag" -bool "true"
+
+	# Digital clock
+	defaults write com.apple.menuextra.clock "DateFormat" -string "\"d MMM HH:mm:ss\""
+
+	# Do not rearrange spaces
+	defaults write com.apple.dock "mru-spaces" -bool "false"
+
+	# Do not warn on changing file extension
+	defaults write com.apple.finder "FXEnableExtensionChangeWarning" -bool "false"
+
+	killall Finder
+	killall Dock
