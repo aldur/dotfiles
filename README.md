@@ -9,7 +9,7 @@ Different platforms have different requirements.
 ### git-crypt
 
 Some files of this repository have been encrypted.
-Decrypt them with `git-crypt unlock` before running `make`.
+Decrypt them with `git-crypt unlock <symmetric_key>` before running `make`.
 
 ### macOS
 
@@ -19,8 +19,7 @@ On macOS, first install `homebrew`. Then:
 $ git clone https://github.com/aldur/dotfiles .dotfiles
 $ brew install git make gpg coreutils git-crypt
 $ PATH="$(brew --prefix)/opt/coreutils/libexec/gnubin:$PATH"
-$ gpg --import email.gpg
-$ git-crypt unlock
+$ git-crypt unlock <symmetric_key>
 $ gmake requirements #optional
 ```
 
