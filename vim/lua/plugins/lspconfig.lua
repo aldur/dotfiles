@@ -628,4 +628,12 @@ end
 
 M.diagnostic_autocmd() -- This creates the autocmd to populate / update the QF with the diagnostics
 
+-- HACK: Experimental, disable LSP for `gen.nvim` buffers.
+local group = vim.api.nvim_create_augroup("GenNvimLSP", {})
+vim.api.nvim_create_autocmd({'BufEnter', 'BufNewFile'}, {
+    group = group,
+    pattern = '^gen.nvim$',
+    callback = function() vim.defer_fn(function() vim.cmd 'LspStop' end, 100) end
+})
+
 return M

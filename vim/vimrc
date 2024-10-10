@@ -46,14 +46,14 @@
     endif
     call plug#begin('~/.vim/plugged')
 
-    " 2023-06-06: Tried disabling this when using `nvim` and `treesitter`
-    " Plug 'Konfekt/FastFold'                        " Better fold refresh
-
     " The list of installed plugins
     Plug 'keith/investigate.vim'                   " Smart documentation finder
     Plug 'romainl/vim-qf'                          " Fix the quickfix
     Plug 'tmsvg/pear-tree'                         " Auto-pair
     Plug 'tommcdo/vim-lion'                        " Add gR to align text
+    Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
+    Plug 'folke/zen-mode.nvim'
+    Plug 'David-Kunz/gen.nvim'
 
     " from tpope import *
     Plug 'tpope/vim-repeat'                        " Enable '.' for plugin actions
@@ -77,8 +77,6 @@
         Plug 'tpope/vim-rhubarb'                       " Allow `Gbrowse` for Github
     end
 
-    Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
-
     " FZF {{{ "
         " Fuzzy files, tags, life.
         if has('mac') && executable('fzf')  " Install `fzf` with homebrew
@@ -93,6 +91,8 @@
             Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
             Plug 'junegunn/fzf.vim'
         end
+
+        Plug 'stevearc/dressing.nvim'
     " }}} FZF "
 
     " Wiki {{{ "
@@ -109,8 +109,6 @@
 
     " Colorscheme
     Plug 'sainnhe/sonokai'                        " Based on Monokai pro
-
-    Plug 'folke/zen-mode.nvim'
 
     " Language specific plugins {{{
         " Proper Python indent
@@ -216,8 +214,6 @@
     " nvim provides this out of the box.
     Plug 'machakann/vim-highlightedyank',
                 \ b:has_nvim_python3 ? { 'on': []} : {}
-
-    Plug 'David-Kunz/gen.nvim'
 
     " ...Vim-plug is done
     call plug#end()
