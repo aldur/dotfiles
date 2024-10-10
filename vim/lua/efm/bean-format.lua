@@ -1,4 +1,4 @@
 return {
-    formatCommand = "bean-format -c 70",
+    formatCommand = "bean-format -c 70 -",
     formatStdin = true,
 }
