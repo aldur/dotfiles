@@ -1,7 +1,9 @@
 function fish_prompt --description 'Write out the prompt'
     set -l last_pipestatus $pipestatus
-    set -l last_status $status
+    set -lx __fish_last_status $status # Export for __fish_print_pipestatus.
     set -l normal (set_color normal)
+    set -q fish_color_status
+    or set -g fish_color_status red
 
     # Color the prompt differently when we're root
     set -l color_cwd $fish_color_cwd
@@ -45,11 +47,15 @@ function fish_prompt --description 'Write out the prompt'
     set -l time (set_color "8787ff") (date +'%T') " " 
 
     # Write pipestatus
-    set -l prompt_status ""
-    if test (count $pipestatus) -eq 1 && test $last_status -eq 1
-        set -a prompt_status (set_color --bold $fish_color_status) "✖ "
+    # https://github.com/fish-shell/fish-shell/blob/edaf011ab1e4ae4fe4b7b0c66a23418c80096d8c/share/functions/fish_prompt.fish
+    if test (count $pipestatus) -eq 1 && test $__fish_last_status -eq 1
+        set -l prompt_status (set_color --bold $fish_color_status) "✖ "
     else
-        set -a prompt_status (__fish_print_pipestatus "" " " "|" (set_color $fish_color_status) (set_color --bold $fish_color_status) $last_pipestatus)
+        set __fish_prompt_status_generation $status_generation
+        set -l bold_flag --bold
+        set -l status_color (set_color $fish_color_status)
+        set -l statusb_color (set_color $bold_flag $fish_color_status)
+        set -l prompt_status (__fish_print_pipestatus "" " " "|" "$status_color" "$statusb_color" $last_pipestatus)
     end 
 
     echo -e -n -s $prompt_status $nested $virtualenv $time (set_color $fish_color_user) "$USER" $normal @ (set_color $color_host) (prompt_hostname) $normal ' ' (set_color $color_cwd) (prompt_pwd) $normal (fish_git_prompt) $normal (set_color --bold blue) "
