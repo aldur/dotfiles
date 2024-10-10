@@ -4,3 +4,8 @@
 "     " Removes the `*.o` pattern as, somehow, hides more than it should.
 "     let g:netrw_list_hide = substitute(netrw_gitignore#Hide(), ',.\*\\.o', '', '')  " Hide git-ignored files
 " endif
+
+" Since we use this to move to window on right.
+if hasmapto('<Plug>NetrwRefresh')
+    unmap <buffer> <C-l>
+endif
