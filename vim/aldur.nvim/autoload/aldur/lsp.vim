@@ -36,3 +36,16 @@ function aldur#lsp#toggle_update_in_insert() abort
     let b:update_in_insert = !l:lsp_uii
     lua require('plugins/lspconfig').reload_config()
 endfunction
+
+function aldur#lsp#toggle_underline() abort
+    let l:lsp_underline_enabled = v:lua.require('plugins/lspconfig').underline_enabled(bufnr("%"))
+
+    if !l:lsp_underline_enabled
+        call v:lua.info_message("Enabling underline.")
+    else
+        call v:lua.info_message("Disabling underline.")
+    endif
+
+    let b:show_diagnostic_underline = !l:lsp_underline_enabled
+    lua require('plugins/lspconfig').reload_config()
+endfunction

@@ -37,13 +37,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
         local client = vim.lsp.get_client_by_id(args.data.client_id)
         if client == nil then return end
 
-        -- Enable completion triggered by <c-x><c-o>
-        -- NOTE: No need for this, `nvim` does it better.
-        -- It also sets `tagfunc` and `format{prg,expr}`.
-        -- https://github.com/neovim/neovim/blob/
-        -- bbb934e7755a3b6f14c4d94334b8f54c63daebf1/runtime/lua/vim/lsp.lua#L974
-        -- vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
-
         require("lsp_signature").on_attach({
             -- This is mandatory, otherwise border config won't get registered.
             bind = true,
@@ -94,20 +87,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
                 vim.lsp.buf.format({async = true})
             end, bufopts)
         end
-
-        -- NOTE: This should not be required since `nvim` sets `formatexpr`
-        -- if client.server_capabilities.documentRangeFormattingProvider then
-        --     local f = function()
-        --         vim.lsp.buf.format({async = false, timeout_ms = 1000})
-        --     end
-        --     vim.keymap.set({'n', 'x'}, 'gq', f)
-        -- end
-
-        -- NOTE: This should not be required since `nvim` sets `tagsfunc`
-        -- This overrides the default mapping to look up `tags`
-        -- if client.server_capabilities.definitionProvider then
-        --     vim.keymap.set('n', '<c-]>', vim.lsp.buf.definition, bufopts)
-        -- end
 
         -- Our LSP configuration places diagnostic in the loclist.
         -- This overrides the default commands to go to prev/next element in the
@@ -301,24 +280,13 @@ lspconfig.lua_ls.setup(extend_config({
 lspconfig.gopls.setup(default_lsp_config)
 
 -- JavaScript/TypeScript
--- Only formatting, as it's faster than `prettier`.
--- lspconfig.denols.setup(extend_config({
---     on_attach = function(client, bufnr)
---         for k, _ in pairs(client.server_capabilities) do
---             client.server_capabilities[k] = false
---         end
---         client.server_capabilities.documentFormattingProvider = true
---         on_attach(client, bufnr)
---     end,
--- }))
-
--- JavaScript/TypeScript
 -- This has an executable called `typescript-language-server` that wraps `tsserver`.
 -- For JS, you'll need to crate a `jsconfig.json` file in the root directory:
+-- FIXME
 -- https://github.com/tsconfig/bases/blob/main/bases/node16.json
 local npm_path = '/usr/local/bin/npm'
 if vim.fn.filereadable(npm_path) == 0 then npm_path = '/opt/homebrew/bin/npm' end
-lspconfig.tsserver.setup(extend_config({
+lspconfig.ts_ls.setup(extend_config({
     init_options = {npmLocation = npm_path},
     on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = false
@@ -493,6 +461,9 @@ end
 function M.update_in_insert_enabled(bufnr)
     return buffer_options_default(bufnr, 'update_in_insert', 0) == 1
 end
+function M.underline_enabled(bufnr)
+    return buffer_options_default(bufnr, 'show_diagnostic_underline', 1) == 1
+end
 
 M.diagnostic_config = {
     virtual_text = function(_, bufnr)
@@ -503,6 +474,8 @@ M.diagnostic_config = {
     end,
 
     signs = function(_, bufnr) return M.signs_enabled(bufnr) end,
+
+    underline = function(_, bufnr) return M.underline_enabled(bufnr) end,
 
     -- delay update diagnostics
     update_in_insert = function(_, bufnr)
