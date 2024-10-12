@@ -11,6 +11,7 @@
   vimPlugins.vim-gutentags # Tag management
   vimPlugins.fzf-vim
   vimPlugins.zen-mode-nvim
+  vimPlugins.dressing-nvim
 
   # Tim Pope
   vimPlugins.vim-repeat # '.' for plugin actions
@@ -52,9 +53,9 @@
   # LSP
   vimPlugins.nvim-lspconfig
   vimPlugins.lsp_signature-nvim
-  vimPlugins.fidget-nvim
+  # vimPlugins.fidget-nvim
   vimPlugins.actions-preview-nvim
-  # vimPlugins.nui-nvim
+  vimPlugins.nui-nvim
 
   # Snippets
   vimPlugins.ultisnips
@@ -72,6 +73,7 @@
   vimPlugins.cmp-nvim-ultisnips
 ] ++ (with pkgs;
 [
+  # TODO: Bump this and use vimPlugins packaged
   (vimUtils.buildVimPlugin {
     name = "wiki.vim";
     src = fetchFromGitHub {
@@ -79,6 +81,16 @@
       repo = "wiki.vim";
       rev = "v0.8";
       hash = "sha256-E+hGi7DTsGqGHi7VrcdOxCYQIa5Wy2Fu0yLa3ASiaAA=";
+    };
+  })
+  # TODO: Bump this and use vimPlugins packaged
+  (vimUtils.buildVimPlugin {
+    name = "fidget.nvim";
+    src = fetchFromGitHub {
+      owner = "j-hui";
+      repo = "fidget.nvim";
+      rev = "0ba1e16d07627532b6cae915cc992ecac249fb97";
+      hash = "sha256-rmJgfrEr/PYBq0S7j3tzRZvxi7PMMaAo0k528miXOQc=";
     };
   })
   (vimUtils.buildVimPlugin {
