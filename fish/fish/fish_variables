@@ -1,30 +1,6 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
-SETUVAR --export AUTOSSH_PORT:0
-SETUVAR --export EDITOR:nvim
-SETUVAR --export FZF_ALT_C_COMMAND:fd\x20\x2dd\x2010\x20\x2d\x2dhidden\x20\x2d\x2dfollow\x20\x2d\x2dexclude\x20\x2egit\x20\x2d\x2dexclude\x20\x2esvn\x20\x2d\x2dignore\x2dfile\x20\x7e/\x2egitignore_global\x20\x2d\x2dtype\x20d
-SETUVAR --export FZF_CTRL_T_COMMAND:fd\x20\x2dd\x2010\x20\x2d\x2dhidden\x20\x2d\x2dfollow\x20\x2d\x2dexclude\x20\x2egit\x20\x2d\x2dexclude\x20\x2esvn\x20\x2d\x2dignore\x2dfile\x20\x7e/\x2egitignore_global
-SETUVAR --export FZF_DEFAULT_COMMAND:fd\x20\x2dd\x2010\x20\x2d\x2dhidden\x20\x2d\x2dfollow\x20\x2d\x2dexclude\x20\x2egit\x20\x2d\x2dexclude\x20\x2esvn\x20\x2d\x2dignore\x2dfile\x20\x7e/\x2egitignore_global
-SETUVAR --export FZF_DEFAULT_OPTS:\x2d\x2dbind\x20alt\x2dp\x3atoggle\x2dpreview
-SETUVAR --export HOMEBREW_CASK_OPTS:\x2d\x2drequire\x2dsha
-SETUVAR --export HOMEBREW_NO_ANALYTICS:1
-SETUVAR --export HOMEBREW_NO_AUTO_UPDATE:1
-SETUVAR --export HOMEBREW_NO_INSECURE_REDIRECT:1
-SETUVAR --export MANPAGER:nvim\x20\x2bMan\x21
-SETUVAR --export --path RIPGREP_CONFIG_PATH:/Users/aldur/\x2eripgreprc
-SETUVAR --export SSH_AUTH_SOCK:/Users/aldur/Library/Containers/com\x2emaxgoedjen\x2eSecretive\x2eSecretAgent/Data/socket\x2essh
-SETUVAR --export VIRTUAL_ENV_DISABLE_PROMPT:1
 SETUVAR __fish_initialized:3400
-SETUVAR _fish_abbr_gc:git\x20commit
-SETUVAR _fish_abbr_gco:git\x20checkout\x20\x28git\x20branch\x20\x2d\x2dall\x20\x7c\x20fzf\x20\x7c\x20tr\x20\x2dd\x20\x27\x5b\x3aspace\x3a\x5d\x27\x29
-SETUVAR _fish_abbr_gd:git\x20diff
-SETUVAR _fish_abbr_gp:git\x20push
-SETUVAR _fish_abbr_gst:git\x20status
-SETUVAR _fish_abbr_ls:gls\x20\x2d\x2dcolor\x3dtty
-SETUVAR _fish_abbr_ssh:autossh
-SETUVAR _fish_abbr_ta:tmux\x20\x2dCC\x20new\x20\x2dADs
-SETUVAR _fish_abbr_tls:tmux\x20ls
-SETUVAR _fish_abbr_vim:vimr
 SETUVAR fish_color_autosuggestion:9e9e9e
 SETUVAR fish_color_cancel:normal
 SETUVAR fish_color_command:e4e4e4
@@ -37,9 +13,11 @@ SETUVAR fish_color_escape:00a6b2
 SETUVAR fish_color_history_current:normal
 SETUVAR fish_color_host:\x2d\x2dbold\x1egreen
 SETUVAR fish_color_host_remote:yellow
+SETUVAR fish_color_keyword:\x1d
 SETUVAR fish_color_match:normal
 SETUVAR fish_color_normal:normal
 SETUVAR fish_color_operator:00a6b2
+SETUVAR fish_color_option:\x1d
 SETUVAR fish_color_param:ffffff
 SETUVAR fish_color_quote:657b83
 SETUVAR fish_color_redirection:ff87ff
@@ -48,11 +26,17 @@ SETUVAR fish_color_selection:c0c0c0
 SETUVAR fish_color_status:red
 SETUVAR fish_color_user:\x2d\x2dbold\x1ered
 SETUVAR fish_color_valid_path:normal
-SETUVAR fish_greeting:\x1d
 SETUVAR fish_key_bindings:fish_vi_key_bindings
+SETUVAR fish_pager_color_background:\x1d
 SETUVAR fish_pager_color_completion:normal
 SETUVAR fish_pager_color_description:B3A06D\x1eyellow
 SETUVAR fish_pager_color_prefix:white\x1e\x2d\x2dbold\x1e\x2d\x2dunderline
 SETUVAR fish_pager_color_progress:brwhite\x1e\x2d\x2dbackground\x3dcyan
+SETUVAR fish_pager_color_secondary_background:\x1d
+SETUVAR fish_pager_color_secondary_completion:\x1d
+SETUVAR fish_pager_color_secondary_description:\x1d
+SETUVAR fish_pager_color_secondary_prefix:\x1d
 SETUVAR fish_pager_color_selected_background:\x2dr
-SETUVAR fish_user_paths:/opt/homebrew/sbin\x1e/opt/homebrew/bin\x1e/Users/aldur/go/bin
+SETUVAR fish_pager_color_selected_completion:\x1d
+SETUVAR fish_pager_color_selected_description:\x1d
+SETUVAR fish_pager_color_selected_prefix:\x1d

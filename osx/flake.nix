@@ -109,18 +109,58 @@
 
           environment.variables = {
             EDITOR = "nvim";
+
+            LANG="en_US.UTF-8";
+            LC_CTYPE="en_US.UTF-8";
+
+            # Override macOS ssh-agent with Secretive (installed from `brew`)
+            SSH_AUTH_SOCK = "$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh";
+            AUTOSSH_PORT = "0";
+
+            HOMEBREW_NO_INSECURE_REDIRECT = "1";
+            HOMEBREW_CASK_OPTS = "--require-sha";
+            HOMEBREW_NO_AUTO_UPDATE = "1";
+            HOMEBREW_NO_ANALYTICS = "1";
+
+            FZF_DEFAULT_OPTS = "--bind alt-p:toggle-preview";
+            FZF_DEFAULT_COMMAND = "fd -d 10 --hidden --follow --exclude .git --exclude .svn --ignore-file ~/.gitignore_global";
+            FZF_ALT_C_COMMAND = "fd -d 10 --hidden --follow --exclude .git --exclude .svn --ignore-file ~/.gitignore_global --type d";
+            FZF_CTRL_T_COMMAND = "fd -d 10 --hidden --follow --exclude .git --exclude .svn --ignore-file ~/.gitignore_global";
+
+            RIPGREP_CONFIG_PATH = "/Users/aldur/.ripgreprc";
+
+            PAGER = "less -R";
+            MANPAGER = "nvim +Man!";
+
+            VIRTUAL_ENV_DISABLE_PROMPT="1";
           };
 
+          environment.shellAliases = {
+            gst = "git status";
+            gp = "git push";
+            gls = "ls --color=tty";
+            ssh = "autossh";
+            ta = "tmux -CC new -ADs";
+            tls = "tmux ls";
+            vim = "neovide";
+          };
+
+          programs.bash.enable = true;
           programs.zsh.enable = true;
 
-          # See https://github.com/LnL7/nix-darwin/issues/122#issuecomment-1782971499
+          # See
+          # https://github.com/LnL7/nix-darwin/issues/122#issuecomment-1782971499
           # if this doesn't work at first
           programs.fish.enable = true;
+
+          programs.direnv.enable = true;
+          programs.direnv.nix-direnv.enable = true;
 
           environment.systemPackages = with pkgs; [
             age
             age-plugin-yubikey
             autossh
+            bashInteractive
             bat
             blueutil
             cmake
