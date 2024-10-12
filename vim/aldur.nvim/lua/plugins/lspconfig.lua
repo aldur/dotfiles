@@ -4,6 +4,8 @@ local util = require('lspconfig/util')
 local python = require('plugins/python')
 local M = {}
 
+require('plugins/fidget')
+
 local default_lsp_config = lspconfig.util.default_config
 
 default_lsp_config.capabilities = vim.tbl_deep_extend('force',
