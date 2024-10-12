@@ -4,26 +4,6 @@ local util = require('lspconfig/util')
 local python = require('plugins/python')
 local M = {}
 
-require("fidget").setup {
-    fmt = {
-        max_messages = 3,
-        task = -- function to format each task line
-        function(task_name, message, percentage)
-            if message == "Started" then
-                message = "..."
-            elseif message == "Completed" then
-                return nil -- Avoid spam
-            else
-                if message then
-                    message = string.format(": %s", string.lower(message))
-                end
-            end
-            return string.format("%s%s %s", task_name, message, percentage and
-                                     string.format(" (%s%%)", percentage) or "")
-        end
-    }
-}
-
 local default_lsp_config = lspconfig.util.default_config
 
 default_lsp_config.capabilities = vim.tbl_deep_extend('force',
@@ -195,7 +175,7 @@ local efm_languages = {
     env = {require 'efm/dotenv', require 'efm/shfmt'}, -- We don't want shellcheck here.
     caddyfile = {require 'efm/caddyfile'},
     sql = {require 'efm/sql'},
-    beancount = {require 'efm/bean-format'}
+    beancount = {require 'efm/bean-format'},
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
 
@@ -336,7 +316,7 @@ lspconfig.rust_analyzer.setup(extend_config({
     end,
     on_new_config = function(new_config, new_root_dir)
         -- `direnv` is a no-op
-        _G.info_message("Switching to new root directory " .. new_root_dir)
+        _G.info_message("Switching to new root directory '" .. new_root_dir "'.")
         new_config['cmd'] = {"direnv", "exec", new_root_dir, "rust-analyzer"}
     end
 }))
@@ -353,6 +333,7 @@ lspconfig.ltex.setup(extend_config({
             dictionary = {
                 -- Couldn't make this work, unfortunately, so added
                 -- `MORFOLOGIK_RULE_EN_US`.
+                -- FIXME
                 ['en-US'] = {[[:~/.vim/spell/en.utf-8.add]]}
             },
             additionalRules = {motherTongue = "it"},
