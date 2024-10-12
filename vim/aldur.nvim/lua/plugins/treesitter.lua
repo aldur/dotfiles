@@ -2,9 +2,11 @@ vim.g.ts_highlight_lua = true -- luacheck: ignore 122
 
 -- https://github.com/nvim-treesitter/nvim-treesitter#modules
 require'nvim-treesitter.configs'.setup {
-    ensure_installed = "all",
+    ensure_installed = {},  -- nix takes care of this
     ignore_install = {},
     highlight = {enable = true},
+    sync_install = false,
+    auto_install = false,
     indent = {enable = true, disable = {"python", "markdown"}},
     incremental_selection = {
         enable = false
