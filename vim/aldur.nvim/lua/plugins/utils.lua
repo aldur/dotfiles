@@ -66,7 +66,7 @@ function M.reload_package()
 
         local prefix = expanded_path
 
-        if current_file:match("^" .. prefix) then
+        if prefix ~= nil and current_file:match("^" .. prefix) then
             local stripped_path =
                 current_file:gsub("^" .. prefix .. "/lua/", ""):gsub(".lua$", "")
 
