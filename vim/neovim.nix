@@ -10,6 +10,7 @@ let
     coreutils
     fd
     git
+    perl
     ripgrep
     which
     universal-ctags
@@ -35,6 +36,7 @@ let
     luarocks
     marksman
     mdl
+    nix
     nil
     nixpkgs-fmt
     pgformatter
@@ -68,6 +70,19 @@ let
     # nodePackages.prettier-plugin-solidity
     nodePackages.sql-formatter
     nodePackages.typescript-language-server
+  ] ++ [
+    (import
+      ../nix/packages/solhint/default.nix
+      { inherit pkgs; }).solhint
+
+    (pkgs.callPackage
+      ../nix/packages/sol/sol.nix
+      { }).sol
+
+    # TODO
+    # (import
+    #   ../nix/packages/mermaid-filter/default.nix
+    #   { inherit pkgs; }).mermaid-filter
   ];
 
   plugins = (import ./plugins.nix) pkgs;
@@ -142,7 +157,7 @@ pkgs.symlinkJoin {
   nativeBuildInputs = [ pkgs.makeWrapper ];
   postBuild = ''
     wrapProgram $out/bin/nvim \
-      --set PATH ${lib.makeBinPath devTools} \
+      --set PATH ${lib.makeBinPath (devTools ++ ["$out"])} \
       --add-flags '-u' \
       --add-flags '${./init.vim}' \
       --add-flags '--cmd' \
