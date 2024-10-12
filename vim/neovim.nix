@@ -8,10 +8,13 @@ let
     bashInteractive
     bat
     coreutils
+    curl
     direnv
     fd
+    fzf
     git
     nix-direnv
+    openssh # required to sign commits
     perl
     ripgrep
     which
@@ -29,6 +32,7 @@ let
     dockerfile-language-server-nodejs
     dotenv-linter
     efm-langserver
+    fish  # to lint fish files
     hadolint
     html-tidy
     libxml2
