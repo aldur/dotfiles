@@ -48,19 +48,15 @@ function! aldur#git_backup_current_file#backup() abort
     let l:cmd .= 'git add "' . l:backup_file . '"; '
     let l:cmd .= 'git diff-index --quiet HEAD || git commit --no-gpg-sign -m "Backup ' . l:file . '"; '
 
-    if has('nvim')
-        let s:buffer = ""
-        let l:callbacks = {
-                    \ 'on_stdout': function('s:Receive'),
-                    \ 'on_stderr': function('s:Receive'),
-                    \ 'on_exit': function('s:Receive')
-                    \ }
+    let s:buffer = ""
+    let l:callbacks = {
+                \ 'on_stdout': function('s:Receive'),
+                \ 'on_stderr': function('s:Receive'),
+                \ 'on_exit': function('s:Receive')
+                \ }
 
-        let l:result = jobstart(['bash', '-c', l:cmd], l:callbacks)
-        if l:result <= 0
-            echoerr "Invalid l:result returned by jobstart for `git_backup_current_file`."
-        endif
-    else
-        call job_start(l:cmd)
+    let l:result = jobstart(['bash', '-c', l:cmd], l:callbacks)
+    if l:result <= 0
+        echoerr "Invalid l:result returned by jobstart for `git_backup_current_file`."
     endif
 endfunction

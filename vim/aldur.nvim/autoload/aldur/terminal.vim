@@ -13,10 +13,6 @@ let g:aldur#terminal#term_height_percentage = 0.60
 
 " An optional argument, if true will do (1 - height), in percentage.
 function! aldur#terminal#toggle(...) abort
-    if !has('nvim')
-        return v:false
-    endif
-
     let l:project_root = aldur#find_root#find_root()
 
     if exists('t:aldur_terminal_term_win') && win_gotoid(t:aldur_terminal_term_win)

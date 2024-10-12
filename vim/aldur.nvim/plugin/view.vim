@@ -7,11 +7,7 @@ endif
 "  "y (or <y for nvim):  will save up to y lines for each register
 "  %    :  saves and restores the buffer list
 "  n... :  where to save the viminfo files
-if has('nvim')
-    set shada='250,<100,%,n~/.vim_backups/nviminfo
-else
-    set viminfo='100,\"100,%,n~/.vim_backups/viminfo
-endif
+set shada='250,<100,%,n~/.vim_backups/nviminfo
 
 set viewdir=~/.vim_backups/view
 

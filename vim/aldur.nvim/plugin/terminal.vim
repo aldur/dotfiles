@@ -15,24 +15,22 @@ let g:terminal_color_13 = '#bc99ff'
 let g:terminal_color_14 = '#75dff2'
 let g:terminal_color_15 = '#feffff'
 
-if has('nvim')
-    " https://github.com/junegunn/fzf.vim/issues/544
-    " FZF uses Escape keys to close the window
-    autocmd vimrc TermOpen *
-                \ setlocal nonumber norelativenumber |
-                \ tnoremap <buffer> <Esc><Esc> <c-\><c-n> |
-                \ nnoremap <silent><buffer> <leader><space> :<c-U>Files<CR> |
-                \ nnoremap <silent><buffer> <leader>bd :<c-U>bdelete!<CR>
-    autocmd vimrc FileType fzf tunmap <buffer> <Esc><Esc>
+" https://github.com/junegunn/fzf.vim/issues/544
+" FZF uses Escape keys to close the window
+autocmd vimrc TermOpen *
+            \ setlocal nonumber norelativenumber |
+            \ tnoremap <buffer> <Esc><Esc> <c-\><c-n> |
+            \ nnoremap <silent><buffer> <leader><space> :<c-U>Files<CR> |
+            \ nnoremap <silent><buffer> <leader>bd :<c-U>bdelete!<CR>
+autocmd vimrc FileType fzf tunmap <buffer> <Esc><Esc>
 
-    " Lower the timeout because of the `<Esc><Esc>` quirk.
-    " This resets `timeoutlen` to default when leaving.
-    autocmd vimrc TermEnter *
-                \ let s:timeoutlen = &timeoutlen |
-                \ let &timeoutlen = 200
-    autocmd vimrc TermLeave *
-                \ let &timeoutlen = s:timeoutlen
-endif
+" Lower the timeout because of the `<Esc><Esc>` quirk.
+" This resets `timeoutlen` to default when leaving.
+autocmd vimrc TermEnter *
+            \ let s:timeoutlen = &timeoutlen |
+            \ let &timeoutlen = 200
+autocmd vimrc TermLeave *
+            \ let &timeoutlen = s:timeoutlen
 
 nnoremap <silent> <C-z> :<C-U>call aldur#terminal#toggle()<CR>
 tnoremap <silent> <C-z> <c-\><c-n>:<C-U>call aldur#terminal#toggle()<CR>

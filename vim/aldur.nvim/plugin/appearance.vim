@@ -58,19 +58,14 @@ set noshowmode   " Do not show mode indicator below status bar
 
 call aldur#appearance#setlaststatus()
 
-if has('nvim')
-    " Restore terminal cursor when nvim leaves.
-    autocmd vimrc VimLeave * set guicursor=a:hor10-blinkon0
-endif
+" Restore terminal cursor when nvim leaves.
+autocmd vimrc VimLeave * set guicursor=a:hor10-blinkon0
 
 set scrolloff=8       " don't scroll any closer to top/bottom
 set sidescrolloff=5   " don't scroll any closer to left/right
 
 " No annoying sound on errors
 set noerrorbells novisualbell
-if !has('nvim') " nvim ignores t_vb
-    autocmd vimrc GUIEnter * set visualbell t_vb=
-end
 
 " Allow the cursor to be one more the last char.
 set virtualedit=onemore
