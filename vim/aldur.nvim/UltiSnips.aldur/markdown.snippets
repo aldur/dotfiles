@@ -1,0 +1,36 @@
+# For your future reference, these are UltiSnips snippets
+priority 1
+
+global !p
+from vimsnippets import foldmarker
+def reference_at_bottom(ref_id):
+    snip.buffer.append([''])
+    vim.command('normal G')
+    snip.expand_anon(f'[{ref_id}]: $3`!v @+`')
+def footnote_at_bottom(fnt_id):
+    snip.buffer.append([''])
+    vim.command('normal G')
+    snip.expand_anon(f'[^{fnt_id}]:$2')
+endglobal
+
+extends markdown
+
+snippet foldp "Insert a vim fold marker pair" b
+<!-- ${1:Fold description} `!p snip.rv = foldmarker()[0]` -->
+${2:${VISUAL:Content}}
+<!--`!p snip.rv = foldmarker()[1]` $1 -->
+endsnippet
+
+post_jump "if snip.tabstop == 0: reference_at_bottom(snip.tabstops[2].current_text)"
+snippet refl "Reference Link (clip)"
+[${1:${VISUAL:Text}}][${2:id}]$0
+endsnippet
+
+post_jump "if snip.tabstop == 0: footnote_at_bottom(snip.tabstops[1].current_text)"
+snippet fnt "Footnote"
+[^${1:${VISUAL:Footnote}}]$0
+endsnippet
+
+snippet [c "Link (clip)"
+[${1:link}](${2:`!v @+`})
+endsnippet

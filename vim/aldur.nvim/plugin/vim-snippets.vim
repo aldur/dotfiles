@@ -4,7 +4,10 @@ let g:UltiSnipsJumpForwardTrigger                   = '<C-j>'
 let g:UltiSnipsJumpBackwardTrigger                  = '<C-k>'
 
 " Give higher priority to UltiSnips specific snippets over SnipMate ones
-let g:UltiSnipsSnippetDirectories=[$HOME . '/.vim/UltiSnips', $HOME . '/.vim/plugged/vim-snippets/UltiSnips']
+" XXX: As of 2024-10-11, the above comment is now outdated.
+" What this does is simply give YOUR snippet higher priority,
+" while still loading all other snippets.
+let g:UltiSnipsSnippetDirectories=["UltiSnips.aldur", "UltiSnips"]
 let g:UltiSnipsEnableSnipMate=1
 
 " Snippets variables
