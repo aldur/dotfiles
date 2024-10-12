@@ -313,11 +313,6 @@ lspconfig.yamlls.setup(extend_config({
     }
 }))
 
-local rust_analyzer_cmd = {"rustup", "run", "stable", "rust-analyzer"}
-if vim.fn.executable('rust-analyzer') == 1 then
-    rust_analyzer_cmd = {"rust-analyzer"}
-end
-
 -- Rust
 lspconfig.rust_analyzer.setup(extend_config({
     settings = {
@@ -335,11 +330,19 @@ lspconfig.rust_analyzer.setup(extend_config({
             }
         }
     },
-    cmd = rust_analyzer_cmd
+    on_attach = function(client, bufnr)
+        vim.lsp.inlay_hint.enable(true, {bufnr = bufnr})
+        default_on_attach(client, bufnr)
+    end,
+    on_new_config = function(new_config, new_root_dir)
+        -- `direnv` is a no-op
+        _G.info_message("Switching to new root directory " .. new_root_dir)
+        new_config['cmd'] = {"direnv", "exec", new_root_dir, "rust-analyzer"}
+    end
 }))
 
 local default_ltex_configuration =
-    require'lspconfig/server_configurations/ltex'.default_config
+    require'lspconfig/configs/ltex'.default_config
 
 -- Markdown, LaTeX
 lspconfig.ltex.setup(extend_config({

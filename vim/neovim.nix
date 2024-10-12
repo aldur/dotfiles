@@ -8,8 +8,10 @@ let
     bashInteractive
     bat
     coreutils
+    direnv
     fd
     git
+    nix-direnv
     perl
     ripgrep
     which
