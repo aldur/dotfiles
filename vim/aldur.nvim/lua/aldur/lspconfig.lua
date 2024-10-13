@@ -1,4 +1,5 @@
--- Original credits to https://github.com/tomaskallup/dotfiles/blob/master/nvim/lua/plugins/nvim-lspconfig.lua
+-- Original credits to
+-- https://github.com/tomaskallup/dotfiles/blob/master/nvim/lua/plugins/nvim-lspconfig.lua
 local lspconfig = require 'lspconfig'
 local util = require('lspconfig.util')
 local python = require('aldur.python')
@@ -271,7 +272,7 @@ lspconfig.ts_ls.setup(extend_config({
     on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = false
         default_on_attach(client, bufnr)
-    end,
+    end
 }))
 
 -- Docker
@@ -363,23 +364,20 @@ lspconfig.ltex.setup(extend_config({
 
 lspconfig.ccls.setup(default_lsp_config)
 
--- nix profile install nixpkgs#nil nixpkgs#nixpkgs-fmt
 lspconfig.nil_ls.setup(extend_config({
     settings = {["nil"] = {formatting = {command = {"nixpkgs-fmt"}}}}
 }))
 
 -- https://github.com/artempyanykh/marksman
-if vim.fn.executable('marksman') == 1 then
-    lspconfig.marksman.setup(extend_config({
-        root_dir = util.root_pattern(".git", ".marksman.toml", ".enable_ctags"),
-        on_attach = function(client, bufnr)
-            client.server_capabilities.codeActionProvider = false
-            client.server_capabilities.hoverProvider = false
-            default_on_attach(client, bufnr)
-        end,
-        cmd = {"marksman", "server"}
-    }))
-end
+lspconfig.marksman.setup(extend_config({
+    root_dir = util.root_pattern(".git", ".marksman.toml", ".enable_ctags"),
+    on_attach = function(client, bufnr)
+        client.server_capabilities.codeActionProvider = false
+        client.server_capabilities.hoverProvider = false
+        default_on_attach(client, bufnr)
+    end,
+    cmd = {"marksman", "server"}
+}))
 
 lspconfig.eslint.setup(extend_config({
     on_attach = function(client, bufnr)
@@ -409,13 +407,8 @@ lspconfig.html.setup(html_config)
 -- Liquid
 lspconfig.theme_check.setup(default_lsp_config)
 
--- beancount
--- nix profile install nixpkgs#beancount-language-server
--- lspconfig.beancount.setup {
---     init_options = {journal_file = "/Users/aldur/Documents/Beans/index.beancount"}
--- }
-
 -- clarinet
+-- FIXME
 -- brew install clarinet
 if vim.fn.executable('clarinet') == 1 then
     require('clarinet') -- Adds clarinet LSP
@@ -423,7 +416,6 @@ if vim.fn.executable('clarinet') == 1 then
 end
 
 -- texlab
--- brew install texlab
 lspconfig.texlab.setup(default_lsp_config)
 
 local buffer_options_default = require('aldur.utils').buffer_options_default
