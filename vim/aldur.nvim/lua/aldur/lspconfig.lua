@@ -170,7 +170,9 @@ local efm_languages = {
     cpp = {require 'aldur.efm.astyle'},
     json = {require 'aldur.efm.jq'},
     xml = {require 'aldur.efm.xmltidy'},
-    solidity = {require 'aldur.efm.prettier_solidity', require 'aldur.efm.solhint'},
+    solidity = {
+        require 'aldur.efm.prettier_solidity', require 'aldur.efm.solhint'
+    },
     typescript = {require 'aldur.efm.prettier_typescript'},
     javascript = {require 'aldur.efm.prettier_javascript'},
     scss = {require 'aldur.efm.prettier_scss'},
@@ -264,20 +266,12 @@ lspconfig.gopls.setup(default_lsp_config)
 -- JavaScript/TypeScript
 -- This has an executable called `typescript-language-server` that wraps `tsserver`.
 -- For JS, you'll need to crate a `jsconfig.json` file in the root directory:
--- FIXME
 -- https://github.com/tsconfig/bases/blob/main/bases/node16.json
-local npm_path = '/usr/local/bin/npm'
-if vim.fn.filereadable(npm_path) == 0 then npm_path = '/opt/homebrew/bin/npm' end
 lspconfig.ts_ls.setup(extend_config({
-    init_options = {npmLocation = npm_path},
     on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = false
         default_on_attach(client, bufnr)
-    end
-    -- cmd = {
-    --     "typescript-language-server", "--stdio", "--tsserver-log-file",
-    --     "/Users/adriano/tsserver.log", "--tsserver-log-verbosity", "verbose"
-    -- }
+    end,
 }))
 
 -- Docker
