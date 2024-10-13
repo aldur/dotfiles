@@ -2,6 +2,8 @@
 " vim: set foldlevel=0 foldmethod=marker spell formatoptions=jcrql:
 " }}}
 
+" Use this file to initialize things _before_ any other plugin is loaded.
+
 " Initialization {{{
     " Define a global autogroup used through the entire vimrc
     augroup vimrc
@@ -17,14 +19,6 @@
         let g:loaded_ruby_provider = 0  "   Disable Ruby support.
         let g:loaded_node_provider = 0  "   Disable nodeJS support.
         let g:loaded_perl_provider = 0  "   Disable Perl support
-
-        " # TODO
-        " Path to homebrew Python3 for nvim
-        if filereadable('/usr/local/bin/python3')
-            let g:python3_host_prog = '/usr/local/bin/python3'
-        elseif filereadable('/opt/homebrew/bin/python3')
-            let g:python3_host_prog = '/opt/homebrew/bin/python3'
-        end
 
         " Disable some of VIM standard plugins
         let g:loaded_2html_plugin = 1  " Disable tohtml.vim
