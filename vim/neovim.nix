@@ -13,6 +13,7 @@ let
     fd
     fzf
     git
+    jq
     nix-direnv
     openssh # required to sign commits
     perl
@@ -20,6 +21,8 @@ let
     which
     universal-ctags
 
+    (python3.withPackages
+      (ps: [ ps.pynvim ]))
     # LSPs
 
     # mermaid-filter # TODO
@@ -32,7 +35,7 @@ let
     dockerfile-language-server-nodejs
     dotenv-linter
     efm-langserver
-    fish  # to lint fish files
+    fish # to lint fish files
     hadolint
     html-tidy
     libxml2
@@ -45,6 +48,7 @@ let
     nix
     nil
     nixpkgs-fmt
+    nodejs
     pgformatter
     pyright
     ripgrep
@@ -163,7 +167,7 @@ pkgs.symlinkJoin {
   nativeBuildInputs = [ pkgs.makeWrapper ];
   postBuild = ''
     wrapProgram $out/bin/nvim \
-      --set PATH ${lib.makeBinPath (devTools ++ ["$out"])} \
+      --set PATH ${lib.makeBinPath devTools} \
       --add-flags '-u' \
       --add-flags '${./init.vim}' \
       --add-flags '--cmd' \
