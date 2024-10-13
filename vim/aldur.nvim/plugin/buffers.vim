@@ -4,7 +4,7 @@ set hidden  " Allows to change buffer without saving
 nnoremap <leader>bd :bdelete<cr>
 
 " Close all the buffers
-nnoremap <leader>ba :%bdelete<cr>
+nnoremap <leader>ba :%bdelete!<cr>
 
 " Specify the behavior when switching between buffers
 set switchbuf=useopen,uselast
