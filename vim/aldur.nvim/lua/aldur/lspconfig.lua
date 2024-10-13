@@ -1,10 +1,10 @@
 -- Original credits to https://github.com/tomaskallup/dotfiles/blob/master/nvim/lua/plugins/nvim-lspconfig.lua
 local lspconfig = require 'lspconfig'
-local util = require('lspconfig/util')
-local python = require('plugins/python')
+local util = require('lspconfig.util')
+local python = require('aldur.python')
 local M = {}
 
-require('plugins/fidget')
+require('aldur.fidget')
 
 local default_lsp_config = lspconfig.util.default_config
 
@@ -160,28 +160,28 @@ lspconfig.vimls.setup(extend_config({flags = {debounce_text_changes = 500}}))
 
 -- Formatting/linting via efm
 local efm_languages = {
-    markdown = {require 'efm/mdl', require 'efm/prettier_markdown'},
-    lua = {require 'efm/luafmt', require 'efm/luacheck'},
-    python = {require 'efm/black'},
-    dockerfile = {require 'efm/hadolint'},
-    vim = {require 'efm/vint'},
-    sh = {require 'efm/shellcheck', require 'efm/shfmt'},
-    bib = {require 'efm/bibtool'},
-    cpp = {require 'efm/astyle'},
-    json = {require 'efm/jq'},
-    xml = {require 'efm/xmltidy'},
-    solidity = {require 'efm/prettier_solidity', require 'efm/solhint'},
-    typescript = {require 'efm/prettier_typescript'},
-    javascript = {require 'efm/prettier_javascript'},
-    scss = {require 'efm/prettier_scss'},
-    env = {require 'efm/dotenv', require 'efm/shfmt'}, -- We don't want shellcheck here.
-    caddyfile = {require 'efm/caddyfile'},
-    sql = {require 'efm/sql'},
-    beancount = {require 'efm/bean-format'},
+    markdown = {require 'aldur.efm.mdl', require 'aldur.efm.prettier_markdown'},
+    lua = {require 'aldur.efm.luafmt', require 'aldur.efm.luacheck'},
+    python = {require 'aldur.efm.black'},
+    dockerfile = {require 'aldur.efm.hadolint'},
+    vim = {require 'aldur.efm.vint'},
+    sh = {require 'aldur.efm.shellcheck', require 'aldur.efm.shfmt'},
+    bib = {require 'aldur.efm.bibtool'},
+    cpp = {require 'aldur.efm.astyle'},
+    json = {require 'aldur.efm.jq'},
+    xml = {require 'aldur.efm.xmltidy'},
+    solidity = {require 'aldur.efm.prettier_solidity', require 'aldur.efm.solhint'},
+    typescript = {require 'aldur.efm.prettier_typescript'},
+    javascript = {require 'aldur.efm.prettier_javascript'},
+    scss = {require 'aldur.efm.prettier_scss'},
+    env = {require 'aldur.efm.dotenv', require 'aldur.efm.shfmt'}, -- We don't want shellcheck here.
+    caddyfile = {require 'aldur.efm.caddyfile'},
+    sql = {require 'aldur.efm.sql'},
+    beancount = {require 'aldur.efm.bean-format'}
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
 
-efm_languages['yaml.cloudformation'] = {require 'efm/cfnlint'}
+efm_languages['yaml.cloudformation'] = {require 'aldur.efm.cfnlint'}
 
 efm_languages['c'] = vim.deepcopy(efm_languages['cpp'])
 
@@ -436,7 +436,7 @@ end
 -- brew install texlab
 lspconfig.texlab.setup(default_lsp_config)
 
-local buffer_options_default = require('plugins.utils').buffer_options_default
+local buffer_options_default = require('aldur.utils').buffer_options_default
 
 function M.signs_enabled(bufnr)
     return buffer_options_default(bufnr, 'show_signs', 1) == 1

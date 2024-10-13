@@ -11,4 +11,4 @@ set completeopt=menuone,noselect
 
 set shortmess+=c " Quiet completions
 
-lua require('plugins/cmp')
+lua require('aldur.cmp')

@@ -2,7 +2,7 @@ local M = {}
 local util = require('lspconfig/util')
 
 -- Running `pipenv` in a subshell is expensive, so we cache the result.
--- Reset it w/ `lua require('plugins/python').venv_cache = {}`
+-- Reset it w/ `lua require('aldur/python').venv_cache = {}`
 M.venv_cache = {}
 
 function M.find_python_venv(workspace_rootdir)

@@ -12,7 +12,7 @@ nnoremap <D-w> :bd<cr>
 
 nnoremap <C-6> <C-^>
 
-lua require('plugins/neovide')
+lua require('aldur.neovide')
 
 let g:neovide_scale_factor=1.0
 function! ChangeScaleFactor(delta) abort

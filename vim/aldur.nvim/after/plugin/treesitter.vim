@@ -1,4 +1,4 @@
-lua require('plugins/treesitter')
+lua require('aldur.treesitter')
 
 " This tries to fix an issue where UltiSnips would not load the correct
 " snippets, e.g. reporting `markdown_inline` for Markdown and, as a

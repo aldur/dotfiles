@@ -6,7 +6,7 @@ function aldur#jukit#jukit() abort
 
     let l:root = aldur#find_root#find_root()
 
-    let g:jukit_shell_cmd = luaeval("require('plugins/python').executable_path('" . root . "', 'ipython3')")
+    let g:jukit_shell_cmd = luaeval("require('aldur/python').executable_path('" . root . "', 'ipython3')")
     echomsg "Setting iPython3 path to " . g:jukit_shell_cmd
 
     " This works, but it's not perfect.

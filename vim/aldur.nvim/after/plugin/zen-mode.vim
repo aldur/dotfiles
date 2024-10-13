@@ -1,2 +1,2 @@
-lua require('plugins/zen-mode')
+lua require('aldur.zen-mode')
 nnoremap <leader>z :ZenMode<CR>

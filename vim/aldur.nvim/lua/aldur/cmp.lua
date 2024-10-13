@@ -49,8 +49,8 @@ end
 -- Disabled as currently buggy.
 -- cmp.register_source('notes', require'plugins/cmp_notes'.new())
 
-cmp.register_source('note_tags', require'plugins/cmp_note_tags'.new())
-cmp.register_source('note_headers', require'plugins/cmp_md_headers'.new())
+cmp.register_source('note_tags', require'aldur.cmp_note_tags'.new())
+cmp.register_source('note_headers', require'aldur.cmp_md_headers'.new())
 
 local default_map_modes = {'i', 's', 'c'}
 
@@ -70,7 +70,7 @@ end
 
 local function format_if_nerdfont(vim_item)
     -- If there's a Nerd Font set, display fancy icons.
-    if require('plugins.utils').is_nerdfont() then
+    if require('aldur.utils').is_nerdfont() then
         return kind_icons[vim_item.kind]
     end
     return vim_item.kind
