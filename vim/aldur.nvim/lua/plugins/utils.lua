@@ -40,8 +40,9 @@ function M.configure_signs()
     end
 end
 
--- If current Lua buffer is in `runtimepath`, reload it.
-function M.reload_package()
+-- If current Lua buffer has been `require`d, reload it.
+-- See `:h lua-module-load` for more.
+function M.reload_module()
     local filetype = vim.bo.filetype -- Get the current file's filetype
     if filetype ~= "lua" then
         error("Current file is not a Lua file.")
@@ -51,36 +52,42 @@ function M.reload_package()
     local current_file = vim.fn.expand("%:p") -- Get the full path of the current file
 
     -- HACK
-    -- Most of the time, I'll be editing in my `~/.dotfiles` folder.
-    current_file = current_file:gsub("%.dotfiles/vim", ".vim")
+    -- We know from `:h require()` that modules get pushed to `package.loaded`.
+    -- A modukle stored at lua/foo/bar.lua will be stored with key `foo.bar`.
+    -- Anything _before_ `lua` must be part of `runtimepath`
+    -- NOTE that:
+    -- Nvim searches for |:runtime| files in:
+    -- 1. all paths in 'runtimepath'
+    -- 2. all "pack/*/start/*" dirs
+    -- See `:h runtime-search-path`.
+    --
+    -- So what do we do? Well, we hack it.
+    -- Find the latest occurrence of `/lua/*.lua` in our file.
+    -- Assume that's our module.
+    -- Try to force reload it.
+    --
+    -- Incidentally, this works also to replace modules loaded from `nix` store
+    -- with a corresponding module loaded from `~/.dotfiles`
 
-    local runtimepath = vim.o.runtimepath -- Get the runtimepath as a string
-
-    -- Split the runtimepath into a table of paths
-    local paths = vim.split(runtimepath, ",")
-
-    -- Check if the current file's expanded path starts with any of the expanded runtimepath paths
-    for _, path in ipairs(paths) do
-        local expanded_path = vim.fn.expand(path)
-        expanded_path = vim.loop.fs_realpath(expanded_path)
-
-        local prefix = expanded_path
-
-        if prefix ~= nil and current_file:match("^" .. prefix) then
-            local stripped_path =
-                current_file:gsub("^" .. prefix .. "/lua/", ""):gsub(".lua$", "")
-
-            vim.notify(string.format("Reloading package '%s'.", stripped_path),
-                       vim.log.levels.INFO)
-            package.loaded[stripped_path] = nil
-            require(stripped_path)
-
-            -- NOTE: We stop at the first match.
-            return
-        end
+    -- NOTE: We need to reverse to make sure we find the latest occurrence.
+    local maybe_module = current_file:reverse():match("^aul%.(.*)/aul/")
+    if maybe_module == nil then
+        error("Current file is not on Lua's module path.")
+        return
     end
 
-    error("Current file is not in runtimepath.")
+    maybe_module = maybe_module:reverse():gsub("/", ".")
+
+    if package.loaded[maybe_module] == nil then
+        error("Guessed module '" .. maybe_module .. "' was not on loaded.")
+        return
+    end
+
+    package.loaded[maybe_module] = nil
+    require(maybe_module)
+
+    vim.notify(string.format("Reloading module '%s'.", maybe_module),
+               vim.log.levels.INFO)
 end
 
 return M
