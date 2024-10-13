@@ -1,7 +1,3 @@
-if exists(':FZF') == 0
-    finish
-endif
-
 let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 0.4, 'relative': v:false, 'yoffset': 1.0, 'border': 'sharp' } }
 
 " Override the Rg command so that it searches in the current project root
@@ -13,10 +9,8 @@ command! -bang -nargs=? -complete=dir RgCd call aldur#fzf#rg_cd(<q-args>, <bang>
 " Experimental own version of notational-fzf
 command! -nargs=* -bang RGNotes call aldur#fzf#rg_notes(<q-args>, <bang>0)
 
-if exists(':G')
-    " Switch `git` branch through `fzf`
-    command! -nargs=* -bang Gbranches call aldur#fzf#git_checkout_branch(<q-args>, <bang>0)
-endif
+" Switch `git` branch through `fzf`
+command! -nargs=* -bang Gbranches call aldur#fzf#git_checkout_branch(<q-args>, <bang>0)
 
 nnoremap <silent> <leader><space> :<c-U>execute 'Files' aldur#find_root#find_root()<CR>
 nnoremap <silent> <leader>a :Buffers<CR>
