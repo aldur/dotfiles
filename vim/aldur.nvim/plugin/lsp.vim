@@ -9,3 +9,5 @@ command! ToggleVirtualText call aldur#lsp#toggle_virtual_text()
 command! ToggleSigns call aldur#lsp#toggle_signs()
 command! ToggleUpdateInInsert call aldur#lsp#toggle_update_in_insert()
 command! ToggleUnderline call aldur#lsp#toggle_underline()
+
+command! ToggleAllDiagnostics lua vim.diagnostic.enable(not vim.diagnostic.is_enabled({nsid=nil, bufnr=0}), {nsid=nil, bufnr=0})
