@@ -16,6 +16,8 @@ let
     jq
     nix-direnv
     openssh # required to sign commits
+    pandoc
+    # mermaid-filter
     perl
     ripgrep
     which
@@ -23,9 +25,9 @@ let
 
     (python3.withPackages
       (ps: [ ps.pynvim ]))
-    # LSPs
 
-    # mermaid-filter # TODO
+    # --- LSPs ---
+
     astyle
     beancount
     bibtool
