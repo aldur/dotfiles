@@ -552,7 +552,7 @@ function M.diagnostic_autocmd()
         vim.diagnostic.setloclist({open = false, title = loclist_title})
 
         if #diagnostics == 0 then
-            vim.cmd("lclose")
+            vim.cmd("silent! lclose")
         end
 
         -- Inspired by how lightline.vim refreshes the statusline.
