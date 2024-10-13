@@ -541,7 +541,9 @@ function M.code_action_listener()
 end
 
 function M.code_action_autocmd()
-    local id = vim.api.nvim_create_augroup("LightBulb", {})
+    local name = "LightBulb"
+    pcall(vim.api.nvim_del_augroup_by_name, name)
+    local id = vim.api.nvim_create_augroup(name, {})
     vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {
         pattern = {"*"},
         group = id,
@@ -552,14 +554,21 @@ end
 M.code_action_autocmd() -- This creates the autocmd to trigger the lightbulb
 
 function M.diagnostic_autocmd()
-    local group = vim.api.nvim_create_augroup("QFDiagnostic", {})
+    local name = "QFDiagnostic"
+    pcall(vim.api.nvim_del_augroup_by_name, name)
+    local group = vim.api.nvim_create_augroup(name, {})
 
-    local on_diagnostic_changed = function(diagnostics)
-        if #diagnostics then
-            vim.diagnostic.setloclist({open = false})
-        else
+    local loclist_title = "LSP Diagnostics"
+
+    local function on_diagnostic_changed(diagnostics)
+        vim.diagnostic.setloclist({open = false, title = loclist_title})
+
+        if #diagnostics == 0 then
             vim.cmd("lclose")
         end
+
+        -- Inspired by how lightline.vim refreshes the statusline.
+        vim.fn["lightline#update"]()
     end
 
     vim.api.nvim_create_autocmd({'DiagnosticChanged'}, {
@@ -571,20 +580,24 @@ function M.diagnostic_autocmd()
         end
     })
 
-    vim.api.nvim_create_autocmd({'BufEnter'}, {
-        group = group,
-        callback = function()
-            if vim.w.quickfix_title == "Diagnostics" and vim.bo.buftype ==
-                'quickfix' then return end
-            on_diagnostic_changed(vim.diagnostic.get(0))
-        end
-    })
+    -- vim.api.nvim_create_autocmd({'BufEnter'}, {
+    --     group = group,
+    --     callback = function()
+    --         if vim.w.quickfix_title == loclist_title and vim.bo.buftype ==
+    --             'quickfix' then
+    --             return _G.info_message("Ignoring quickfix...")
+    --         end
+    --         on_diagnostic_changed(vim.diagnostic.get(0))
+    --     end
+    -- })
 end
 
 M.diagnostic_autocmd() -- This creates the autocmd to populate / update the QF with the diagnostics
 
 -- HACK: Experimental, disable LSP for `gen.nvim` buffers.
-local group = vim.api.nvim_create_augroup("GenNvimLSP", {})
+local name = "GenNvimLSP"
+pcall(vim.api.nvim_del_augroup_by_name, name)
+local group = vim.api.nvim_create_augroup(name, {})
 vim.api.nvim_create_autocmd({'BufEnter', 'BufNewFile'}, {
     group = group,
     pattern = '^gen.nvim$',
