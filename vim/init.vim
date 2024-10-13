@@ -80,6 +80,10 @@
         let g:lion_map_right = 'gR'  " Prevent conflict with vim.wiki
     " }}}
 
+    " pear-tree {{{
+        let g:pear_tree_ft_disabled = ['DressingInput']
+    " }}}
+
     " lists.vim {{{
         let g:lists_filetypes = ['md']
         let g:lists_todos = ['TODO', 'DONE']
