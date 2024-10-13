@@ -75,3 +75,5 @@ vim.api.nvim_create_user_command('ZenMode', function(command)
     end
     return z.toggle()
 end, {nargs = "?"})
+
+vim.keymap.set('n', '<leader>z', "<cmd>ZenModeM<cr>")
