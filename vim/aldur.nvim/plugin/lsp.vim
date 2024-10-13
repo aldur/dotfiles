@@ -1,4 +1,4 @@
-lua require('plugins/lspconfig')  -- Side effects, autocmds
+lua require('plugins.lspconfig')  -- Side effects, autocmds
 
 " Inspired by how lightline.vim refreshes the statusline.
 autocmd vimrc DiagnosticChanged *
