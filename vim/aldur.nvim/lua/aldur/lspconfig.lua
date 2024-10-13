@@ -320,22 +320,18 @@ lspconfig.rust_analyzer.setup(extend_config({
 local default_ltex_configuration =
     require'lspconfig/configs/ltex'.default_config
 
+local spell_directory = vim.fn.stdpath("data") .. "/spell/"
+
 -- Markdown, LaTeX
 lspconfig.ltex.setup(extend_config({
     flags = {debounce_text_changes = 1000},
-    -- cmd = {"ltex-ls", "--log-file=/tmp/ltex.log"},
     settings = {
         ltex = {
             dictionary = {
-                -- Couldn't make this work, unfortunately, so added
-                -- `MORFOLOGIK_RULE_EN_US`.
-                -- FIXME
-                ['en-US'] = {[[:~/.vim/spell/en.utf-8.add]]}
+                ['en-US'] = {":" .. spell_directory .. "en.utf-8.add"}
             },
             additionalRules = {motherTongue = "it"},
-            disabledRules = {
-                ['en-US'] = {"WHITESPACE_RULE", "MORFOLOGIK_RULE_EN_US"}
-            },
+            disabledRules = {['en-US'] = {"WHITESPACE_RULE"}},
             markdown = {
                 nodes = {
                     CodeBlock = "ignore",
