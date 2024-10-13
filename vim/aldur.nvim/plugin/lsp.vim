@@ -1,9 +1,4 @@
 lua require('aldur.lspconfig')  -- Side effects, autocmds
-
-" Inspired by how lightline.vim refreshes the statusline.
-autocmd vimrc DiagnosticChanged *
-            \ call lightline#update()
-
 lua require('aldur.utils').configure_signs()
 
 command! Hover lua vim.lsp.buf.hover()
