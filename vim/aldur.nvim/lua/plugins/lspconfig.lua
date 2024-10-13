@@ -580,6 +580,8 @@ function M.diagnostic_autocmd()
     vim.api.nvim_create_autocmd({'BufEnter'}, {
         group = group,
         callback = function()
+            if vim.w.quickfix_title == "Diagnostics" and vim.bo.buftype ==
+                'quickfix' then return end
             on_diagnostic_changed(vim.diagnostic.get(0))
         end
     })
