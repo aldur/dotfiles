@@ -87,14 +87,24 @@
 
     " wiki.vim {{{
         let g:wiki_root = '~/Documents/Notes'  " will be expanded later on
+
+        let g:wiki_select_method = {
+                    \ 'pages': function('wiki#fzf#pages'),
+                    \ 'tags': function('wiki#fzf#tags'),
+                    \ 'toc': function('wiki#fzf#toc'),
+                    \ 'links': function('wiki#fzf#links'),
+                    \}
+
+        let g:wiki_fzf_force_create_key = 'ctrl-x'
+        let g:wiki_fzf_pages_opts = '--preview "bat {1}"'
+        let g:wiki_fzf_tags_opts = '--preview "bat --color=always {2..}"'
+
         let g:wiki_link_creation = {
                     \ 'md': {
                     \   'link_type': 'md',
                     \   'url_extension': '',
                     \ },
                     \}
-
-        let g:wiki_select_method='fzf'
 
         " Disable unused mappings
         let g:wiki_mappings_global = {

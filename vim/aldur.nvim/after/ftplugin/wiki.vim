@@ -15,3 +15,5 @@ setlocal omnifunc=wiki#complete#omnicomplete
 
 nmap <silent><buffer> gf <plug>(wiki-link-follow)
 nmap <silent><buffer> ge <plug>(wiki-link-follow)
+
+inoremap <silent><buffer> <c-x><c-n> <C-o>:WikiLinkAdd<CR>
