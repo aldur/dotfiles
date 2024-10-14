@@ -83,40 +83,40 @@
       hash = "sha256-L7x4B6/URT2ocZNZKLmaqLP5RhRWackq0148nUiRq7k=";
     };
   })
-  (vimUtils.buildVimPlugin {
-    name = "genn.nvim";
+  (vimUtils.buildVimPlugin rec {
+    name = "gen.nvim";
     src = fetchFromGitHub {
       owner = "David-Kunz";
-      repo = "gen.nvim";
+      repo = name;
       rev = "83f1d6b6ffa6a6f32f6a93a33adc853f27541a94";
       hash = "sha256-rBUltJdluSseNUiTfjBZyuBwrGrASWbW1ROVdcAW6ug=";
     };
   })
-  (vimUtils.buildVimPlugin {
+  (vimUtils.buildVimPlugin rec {
     name = "notational-fzf-vim";
     src = fetchFromGitHub {
       owner = "aldur";
-      repo = "notational-fzf-vim";
+      repo = name;
       rev = "07f39d9f9dcabaead436001e8b9a1535d996a6d9";
       hash = "sha256-NStUBDmaVM6zieBvVRXbVxCVrIstgAIyqkbj2oYAwGo=";
     };
   })
-  (vimUtils.buildVimPlugin {
+  (vimUtils.buildVimPlugin rec {
     name = "vim-markdown";
     src = fetchFromGitHub {
       owner = "aldur";
-      repo = "vim-markdown";
+      repo = name;
       rev = "9fa61d2f5a1d28bc877e328b13ebdc3cac0d0f0e";
-      hash = "sha256-rIO/UuSbdwHjRLbHoUC2ke9BaxQkssmyYc6TlmxgFU8";
+      hash = "sha256-8pbPvTsFuJoWTeHGEa9Lm+aIkgeSVd56+hV95G1lg/0=";
     };
   })
-  (vimUtils.buildVimPlugin {
+  (vimUtils.buildVimPlugin rec {
     name = "vim-algorand-teal";
     src = fetchFromGitHub {
       owner = "aldur";
-      repo = "vim-algorand-teal";
+      repo = name;
       rev = "436308c2724f6389e6347543d7e0699cdf202a3e";
-      hash = "sha256-rIO/UuSbdwHjRLbHoUC2ke9BaxQkssmyYc6TlmxgFU8";
+      hash = "sha256-VzTd29lks0ofpgRRcxv8OlnU2O9t/TPvoR0LtteEFVs=";
     };
   })
   (
@@ -129,7 +129,7 @@
             owner = "aldur";
             repo = "clarity.nvim";
             rev = "86444d23bec2a810311da4cee4028317d67d630c";
-            hash = "sha256-rIO/UuSbdwHjRLbHoUC2ke9BaxQkssmyYc6TlmxgFU8";
+            hash = "sha256-rIO/UuSbdwHjRLbHoUC2ke9BaxQkssmyYc6TlmxgFU8=";
           };
         })
         (pkgs.neovimUtils.grammarToPlugin (pkgs.tree-sitter.buildGrammar rec {
