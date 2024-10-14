@@ -119,13 +119,30 @@
       hash = "sha256-rIO/UuSbdwHjRLbHoUC2ke9BaxQkssmyYc6TlmxgFU8";
     };
   })
-  (vimUtils.buildVimPlugin {
-    name = "clarity.nvim";
-    src = fetchFromGitHub {
-      owner = "aldur";
-      repo = "clarity.nvim";
-      rev = "86444d23bec2a810311da4cee4028317d67d630c";
-      hash = "sha256-rIO/UuSbdwHjRLbHoUC2ke9BaxQkssmyYc6TlmxgFU8";
-    };
-  })
+  (
+    pkgs.symlinkJoin {
+      name = "clarity.nvim_treesitter";
+      paths = [
+        (vimUtils.buildVimPlugin {
+          name = "clarity.nvim";
+          src = fetchFromGitHub {
+            owner = "aldur";
+            repo = "clarity.nvim";
+            rev = "86444d23bec2a810311da4cee4028317d67d630c";
+            hash = "sha256-rIO/UuSbdwHjRLbHoUC2ke9BaxQkssmyYc6TlmxgFU8";
+          };
+        })
+        (pkgs.neovimUtils.grammarToPlugin (pkgs.tree-sitter.buildGrammar rec {
+          language = "clarity";
+          version = "ca24ba8e2866c025293f8b07c66df332fdd15d5e";
+          src = fetchFromGitHub {
+            owner = "xlittlerag";
+            repo = "tree-sitter-${language}";
+            rev = version;
+            hash = "sha256-EHFxtOtJyAo/cyjpD9MVmxOGAjDbWx8CbHUww64NKE4=";
+          };
+        }))
+      ];
+    }
+  )
 ])
