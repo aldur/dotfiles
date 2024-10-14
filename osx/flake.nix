@@ -91,40 +91,45 @@
           programs.direnv.enable = true;
           programs.direnv.nix-direnv.enable = true;
 
-          environment.systemPackages = with pkgs; [
-            age
-            age-plugin-yubikey
-            autossh
-            bashInteractive
-            bat
-            blueutil
-            cmake
-            coreutils-prefixed
-            curl
-            diff-so-fancy
-            exiftool
-            fd
-            fzf
-            git
-            git-crypt
-            gnupg
-            htop
-            jq
-            neovim
-            node2nix
-            pandoc
-            pinentry_mac
-            poetry
-            pv
-            python3
-            reattach-to-user-namespace
-            rig
-            ripgrep
-            ripgrep-all
-            tmux
-            tree
-            universal-ctags
-          ];
+          environment.systemPackages = with pkgs;
+            [
+              age
+              age-plugin-yubikey
+              autossh
+              bashInteractive
+              bat
+              blueutil
+              cmake
+              coreutils-prefixed
+              curl
+              diff-so-fancy
+              exiftool
+              fd
+              fzf
+              git
+              git-crypt
+              gnupg
+              htop
+              jq
+              neovim
+              node2nix
+              pandoc
+              pinentry_mac
+              poetry
+              pv
+              python3
+              reattach-to-user-namespace
+              rig
+              ripgrep
+              ripgrep-all
+              tmux
+              tree
+              universal-ctags
+            ] ++ [
+              (pkgs.callPackage
+                ../nix/packages/age-plugin-se/age-plugin-se.nix
+                { }).age-plugin-se
+            ];
 
           security.pam.enableSudoTouchIdAuth = true;
 
@@ -139,7 +144,6 @@
               "shopify/shopify"
             ];
             brews = [
-              "age-plugin-se"
               "theme-check"
 
               {
