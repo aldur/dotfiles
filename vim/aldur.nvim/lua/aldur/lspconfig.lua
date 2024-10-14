@@ -3,9 +3,11 @@
 local lspconfig = require 'lspconfig'
 local util = require('lspconfig.util')
 local python = require('aldur.python')
+
 local M = {}
 
 require('aldur.fidget')
+require('aldur.code_action') -- Side effects, autocmd
 
 local default_lsp_config = lspconfig.util.default_config
 
