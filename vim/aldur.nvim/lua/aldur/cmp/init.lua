@@ -47,10 +47,10 @@ local check_back_space = function()
 end
 
 -- Disabled as currently buggy.
--- cmp.register_source('notes', require'plugins/cmp_notes'.new())
+-- cmp.register_source('notes', require'aldur.cmp.notes'.new())
 
-cmp.register_source('note_tags', require'aldur.cmp_note_tags'.new())
-cmp.register_source('note_headers', require'aldur.cmp_md_headers'.new())
+cmp.register_source('note_tags', require'aldur.cmp.note_tags'.new())
+cmp.register_source('note_headers', require'aldur.cmp.md_headers'.new())
 
 local default_map_modes = {'i', 's', 'c'}
 
