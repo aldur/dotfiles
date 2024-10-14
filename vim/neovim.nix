@@ -196,7 +196,7 @@ pkgs.symlinkJoin {
       --add-flags '-u' \
       --add-flags '${./init.vim}' \
       --add-flags '--cmd' \
-      --add-flags "'set packpath^=${packpath} | set runtimepath^=${packpath} | set runtimepath^=${spellpath}'" \
+      --add-flags "'set packpath^=${packpath} | set runtimepath^=${spellpath}'" \
       --set-default NVIM_APPNAME nvim-aldur
   '';
 
