@@ -78,7 +78,10 @@ aldur.xcuserdatad
 
 # Rust #
 # Generated files
-/target/
+target/
 
 # Node
 node_modules
+
+# Direnv
+.direnv
