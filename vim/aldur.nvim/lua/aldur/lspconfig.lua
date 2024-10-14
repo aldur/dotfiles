@@ -236,9 +236,10 @@ lspconfig.lua_ls.setup(extend_config({
             local f = vim.api.nvim_get_runtime_file
             client.config.settings.Lua.workspace.library = f('', true)
 
-            -- WARNING: An error here will not be printed, so it will be very
-            -- difficult to debug.
-            -- If you need to debug, use this as a canary.
+            -- WARNING:
+            -- Error here, or in all `on_*` functions, will not be printed!
+            -- Things will be very difficult to debug.
+            -- If you need to debug, use canaries, e.g.:
             -- vim.print(client.config)
         end
 
@@ -312,8 +313,9 @@ lspconfig.rust_analyzer.setup(extend_config({
         default_on_attach(client, bufnr)
     end,
     on_new_config = function(new_config, new_root_dir)
-        -- `direnv` is a no-op
-        _G.info_message("Switching to new root directory '" .. new_root_dir "'.")
+        -- `direnv` is a no-op if not configured
+        _G.info_message("Switching to new root directory '" .. new_root_dir ..
+                            "'.")
         new_config['cmd'] = {"direnv", "exec", new_root_dir, "rust-analyzer"}
     end
 }))
