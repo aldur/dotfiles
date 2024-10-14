@@ -12,73 +12,6 @@
   outputs = inputs@{ self, nix-darwin, nixpkgs }:
     let
       configuration = { pkgs, ... }:
-        let
-          devPackages = with pkgs; [
-            astyle
-            beancount
-            bibtool
-            black
-            cargo
-            deno
-            dockerfile-language-server-nodejs
-            dotenv-linter
-            efm-langserver
-            hadolint
-            html-tidy
-            libxml2
-            ltex-ls
-            lua-language-server
-            luarocks
-            luaformatter
-            marksman
-            # mermaid-filter # TODO
-            mdl
-            nil
-            nixpkgs-fmt
-            pgformatter
-            pyright
-            ripgrep
-            rust-analyzer
-            shfmt
-            solc
-            sqlint
-            terraform-ls
-            texlab
-            tflint
-            vale
-            vim-vint
-            vim-language-server
-            vscode-langservers-extracted
-            typescript
-            yamlfix
-            yamllint
-            yaml-language-server
-
-            luaPackages.luacheck
-
-            python312Packages.cfn-lint
-            python312Packages.pynvim
-            python312Packages.pyflakes
-            python312Packages.python-lsp-server
-
-            nodePackages.prettier
-            # nodePackages.prettier-plugin-solidity
-            nodePackages.sql-formatter
-            nodePackages.typescript-language-server
-
-            # Install through `pip`
-            # timefhuman
-          ] ++ [
-            (import
-              ../nix/packages/solhint/default.nix
-              { inherit pkgs; }).solhint
-
-            # TODO
-            # (import
-            #   ../nix/packages/mermaid-filter/default.nix
-            #   { inherit pkgs; }).mermaid-filter
-          ];
-        in
         {
           # Auto upgrade nix package and the daemon service.
           services.nix-daemon.enable = true;
@@ -110,8 +43,8 @@
           environment.variables = {
             EDITOR = "nvim";
 
-            LANG="en_US.UTF-8";
-            LC_CTYPE="en_US.UTF-8";
+            LANG = "en_US.UTF-8";
+            LC_CTYPE = "en_US.UTF-8";
 
             # Override macOS ssh-agent with Secretive (installed from `brew`)
             SSH_AUTH_SOCK = "$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh";
@@ -132,7 +65,7 @@
             PAGER = "less -R";
             MANPAGER = "nvim +Man!";
 
-            VIRTUAL_ENV_DISABLE_PROMPT="1";
+            VIRTUAL_ENV_DISABLE_PROMPT = "1";
           };
 
           environment.shellAliases = {
@@ -143,6 +76,8 @@
             ta = "tmux -CC new -ADs";
             tls = "tmux ls";
             vim = "neovide";
+
+            neovide = "/Applications/Neovide.app/Contents/MacOS/neovide_server.sh";
           };
 
           programs.bash.enable = true;
@@ -164,11 +99,14 @@
             bat
             blueutil
             cmake
+            coreutils-prefixed
             curl
             diff-so-fancy
             exiftool
             fd
             fzf
+            git
+            git-crypt
             gnupg
             htop
             jq
@@ -176,6 +114,7 @@
             node2nix
             pandoc
             pinentry_mac
+            poetry
             pv
             python3
             reattach-to-user-namespace
@@ -185,7 +124,7 @@
             tmux
             tree
             universal-ctags
-          ] ++ devPackages;
+          ];
 
           security.pam.enableSudoTouchIdAuth = true;
 
@@ -209,30 +148,8 @@
                 restart_service = "changed";
               }
             ];
-            casks = [
-              "appcleaner"
-              "bruno"  # nix pkgs does not currently build on macOS
-              "calibre"
-              "dash"
-              "disk-inventory-x"
-              "font-fira-code-nerd-font"
-              "google-chrome"
-              "hammerspoon"
-              "iterm2"
-              "karabiner-elements"
-              "secretive"
-              "slack"
-              "stats"
-              "tailscale"
-              "the-unarchiver"
-              "vlc"
-              "notion"
-            ];
-            masApps = {
-              "Drafts" = 1435957248;
-              "Things" = 904280696;
-              "Aiko" = 1672085276;
-            };
+            casks = import ./casks.nix;
+            masApps = import ./masApps.nix;
           };
         };
     in
