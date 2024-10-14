@@ -249,6 +249,40 @@ lspconfig.lua_ls.setup(extend_config({
                       {settings = client.config.settings})
         return true
     end,
+    on_new_config = function(new_config, new_root_dir)
+        if new_root_dir then
+            ---@diagnostic disable-next-line: undefined-field
+            if vim.uv.fs_stat(new_root_dir .. '/.luarc.json') or
+                vim.uv.fs_stat(new_root_dir .. '/.luarc.jsonc') then
+                return
+            end
+        end
+
+        if new_root_dir:find('.dotfiles/vim', 1, true) then
+            _G.info_message(
+                "Overriding lua_lsp configuration for vim lua files.")
+
+            -- https://github.com/mjlbach/defaults.nvim/blob/master/init.lua#L245
+            -- Make runtime files discoverable to the server
+            local runtime_path = vim.split(package.path, ';')
+            table.insert(runtime_path, 'lua/?.lua')
+            table.insert(runtime_path, 'lua/?/init.lua')
+
+            new_config.settings.Lua = vim.tbl_deep_extend('force',
+                                                          new_config.config
+                                                              .settings.Lua, {
+                runtime = {version = 'LuaJIT', path = runtime_path},
+                diagnostics = {globals = 'vim'},
+                workspace = {library = vim.api.nvim_get_runtime_file('', true)}
+            })
+
+            -- WARNING:
+            -- Error here, or in all `on_*` functions, will not be printed!
+            -- Things will be very difficult to debug.
+            -- If you need to debug, use canaries, e.g.:
+            -- vim.print(client.config)
+        end
+    end,
     -- NOTE: If you need to debug the LSP.
     -- cmd = {
     --     "lua-language-server", "--logpath", "/tmp/.cache/lua-language-server/",
