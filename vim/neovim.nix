@@ -13,6 +13,7 @@ let
     fd
     fzf
     git
+    git-crypt
     jq
     nix-direnv
     openssh # required to sign commits
@@ -127,6 +128,26 @@ let
     '';
   };
 
+  usrBinInPath = name: pkgs.stdenv.mkDerivation
+    {
+      name = "${name}";
+      src = builtins.toPath "/usr/bin/${name}";
+      phases = [ "installPhase" ];
+      installPhase = ''
+        runHook preInstall
+        mkdir -p $out/bin
+        ln -s $src $out/bin/${name}
+        runHook postInstall
+      '';
+    };
+
+  usrBins =
+    (lib.optionals pkgs.stdenv.isDarwin [
+      (usrBinInPath "open")
+      (usrBinInPath "pbpaste")
+      (usrBinInPath "pbcopy")
+    ]);
+
   spells = builtins.attrValues (builtins.mapAttrs (name: spellHash: (getSpell name spellHash)) {
     "it.latin1.spl" = "sha256:05sxffxdasmszd9r2xzw5w70jd41qs1kb02b122m9cccgbhkf8dz";
     "it.latin1.sug" = "sha256:1b4swv4khh7s4lp1w6dq6arjhni3649cxbm0pmfrcy0q1i0yyfmx";
@@ -169,7 +190,9 @@ pkgs.symlinkJoin {
   nativeBuildInputs = [ pkgs.makeWrapper ];
   postBuild = ''
     wrapProgram $out/bin/nvim \
-      --set PATH ${lib.makeBinPath devTools} \
+      --set PATH ${lib.makeBinPath (
+          devTools ++ ["$out"] ++ usrBins
+        )} \
       --add-flags '-u' \
       --add-flags '${./init.vim}' \
       --add-flags '--cmd' \
