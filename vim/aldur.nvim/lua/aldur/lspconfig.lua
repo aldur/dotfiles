@@ -323,7 +323,7 @@ lspconfig.rust_analyzer.setup(extend_config({
 local default_ltex_configuration =
     require'lspconfig/configs/ltex'.default_config
 
-local spell_directory = vim.fn.stdpath("data") .. "/spell/"
+local spell_directory = vim.fn.stdpath("data") .. "/site/spell/"
 
 -- Markdown, LaTeX
 lspconfig.ltex.setup(extend_config({
