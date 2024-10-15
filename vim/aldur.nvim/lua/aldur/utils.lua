@@ -12,13 +12,6 @@ function M.is_nerdfont()
     return M._nerdfont
 end
 
-function M.buffer_options_default(bufnr, name, default)
-    local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, name)
-    -- If not set, rely on the default value.
-    if not ok then return default end
-    return result
-end
-
 function M.configure_signs()
     -- _G.info_message("Configuring signs...")
     local highlights = {Error = "Title", Hint = "MoreMsg", Info = "ModeMsg"}
@@ -50,6 +43,8 @@ function M.reload_module()
     end
 
     local current_file = vim.fn.expand("%:p") -- Get the full path of the current file
+
+    -- FIXME: This won't work for modules called `init.lua`.
 
     -- HACK
     -- We know from `:h require()` that modules get pushed to `package.loaded`.

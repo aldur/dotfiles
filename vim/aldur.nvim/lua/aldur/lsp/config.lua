@@ -6,100 +6,11 @@ local python = require('aldur.python')
 
 local M = {}
 
-require('aldur.fidget')
-require('aldur.code_action') -- Side effects, autocmd
-
 local default_lsp_config = lspconfig.util.default_config
 
 default_lsp_config.capabilities = vim.tbl_deep_extend('force',
                                                       default_lsp_config.capabilities,
                                                       require('cmp_nvim_lsp').default_capabilities())
-
-vim.api.nvim_create_autocmd('LspAttach', {
-    callback = function(args)
-        local bufnr = args.buf
-
-        local client = vim.lsp.get_client_by_id(args.data.client_id)
-        if client == nil then return end
-
-        require("lsp_signature").on_attach({
-            -- This is mandatory, otherwise border config won't get registered.
-            bind = true,
-            handler_opts = {border = "single"}
-        })
-
-        -- Mappings
-        local bufopts = {noremap = true, silent = true, buffer = bufnr}
-
-        if client.server_capabilities.referencesProvider then
-            -- Mnemonic for Usages
-            vim.keymap.set('n', '<leader>u', vim.lsp.buf.references, bufopts)
-        end
-
-        -- Call twice to jump into the window.
-        vim.keymap.set('n', 'K', function()
-            local lnum, cnum = unpack(vim.api.nvim_win_get_cursor(0))
-            -- XXX: For some reasons, have to subtract 1 to nvim's line.
-            local diagnostics = vim.diagnostic.get(0, {lnum = lnum - 1})
-
-            -- Diagnostic, if any.
-            if #diagnostics then
-                for _, d in ipairs(diagnostics) do
-                    if cnum >= d["col"] and cnum < d["end_col"] then
-                        -- Found, early exit.
-                        return vim.diagnostic.open_float()
-                    end
-                end
-            end
-
-            if client.server_capabilities.hoverProvider then
-                -- Hover, if available.
-                vim.lsp.buf.hover()
-            else
-                -- Fallback to `investigate` plugin.
-                vim.fn['investigate#Investigate']('n')
-            end
-        end, bufopts)
-
-        if client.server_capabilities.codeActionProvider then
-            vim.keymap.set({'n', 'x'}, 'gK',
-                           require("actions-preview").code_actions, bufopts)
-        end
-
-        if client.server_capabilities.documentFormattingProvider then
-            vim.keymap.set('n', '<leader>f',
-                           function()
-                vim.lsp.buf.format({async = true})
-            end, bufopts)
-        end
-
-        -- Our LSP configuration places diagnostic in the loclist.
-        -- This overrides the default commands to go to prev/next element in the
-        -- loclist. It has the advantage to take the cursor position into consideration.
-        local diagnostic_goto_opts = {float = false}
-        vim.keymap.set('n', '[l', function()
-            vim.diagnostic.goto_prev(diagnostic_goto_opts)
-        end, bufopts)
-        vim.keymap.set('n', ']l', function()
-            vim.diagnostic.goto_next(diagnostic_goto_opts)
-        end, bufopts)
-    end
-})
-
-vim.api.nvim_create_autocmd("LspDetach", {
-    callback = function(_)
-        -- local client = vim.lsp.get_client_by_id(args.data.client_id)
-        -- Do something with the client
-
-        -- TODO: Unset keymaps.
-        -- vim.cmd("setlocal tagfunc< omnifunc<")
-
-        -- Here we refresh buffer diagnostic to avoid stale ones
-        -- (from the LSP that was detached).
-        vim.diagnostic.reset()
-        vim.diagnostic.get(0)
-    end
-})
 
 -- In case you need to setup additional things on attach, here you have a
 -- default function. Takes `client` and `bufnr`.
@@ -185,9 +96,7 @@ local efm_languages = {
     beancount = {require 'aldur.efm.bean-format'}
 }
 efm_languages['markdown.wiki'] = efm_languages['markdown']
-
 efm_languages['yaml.cloudformation'] = {require 'aldur.efm.cfnlint'}
-
 efm_languages['c'] = vim.deepcopy(efm_languages['cpp'])
 
 lspconfig.efm.setup(extend_config({
@@ -206,7 +115,6 @@ lspconfig.efm.setup(extend_config({
     single_file_support = true
 }))
 
--- https://www.chrisatmachine.com/Neovim/28-neovim-lua-development/
 lspconfig.lua_ls.setup(extend_config({
     on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = false
@@ -253,6 +161,7 @@ lspconfig.lua_ls.setup(extend_config({
         if new_root_dir then
             ---@diagnostic disable-next-line: undefined-field
             if vim.uv.fs_stat(new_root_dir .. '/.luarc.json') or
+                ---@diagnostic disable-next-line: undefined-field
                 vim.uv.fs_stat(new_root_dir .. '/.luarc.jsonc') then
                 return
             end
@@ -298,7 +207,6 @@ lspconfig.lua_ls.setup(extend_config({
     }
 }))
 
--- https://github.com/golang/tools/blob/master/gopls/doc/vim.md#neovim-config
 lspconfig.gopls.setup(default_lsp_config)
 
 -- JavaScript/TypeScript
@@ -335,12 +243,12 @@ lspconfig.rust_analyzer.setup(extend_config({
             cargo = {buildScripts = {enable = true}},
             procMacro = {enable = true},
             checkOnSave = {
-                allFeatures = true,
-                overrideCommand = {
-                    'cargo', 'clippy', '--workspace', '--message-format=json',
-                    '--all-targets', '--all-features', '--', '-W',
-                    'clippy::pedantic'
-                }
+                allFeatures = true
+                -- overrideCommand = {
+                --     'cargo', 'clippy', '--workspace', '--message-format=json',
+                --     '--all-targets', '--all-features', '--', '-W',
+                --     'clippy::pedantic'
+                -- }
             }
         }
     },
@@ -395,10 +303,6 @@ lspconfig.ltex.setup(extend_config({
                                     default_ltex_configuration.filetypes,
                                     {'markdown.wiki'})
 }))
-
--- Solidity
--- Currently very buggy.
--- lspconfig.solc.setup(default_lsp_config)
 
 lspconfig.ccls.setup(default_lsp_config)
 
@@ -455,170 +359,6 @@ end
 
 -- texlab
 lspconfig.texlab.setup(default_lsp_config)
-
-local buffer_options_default = require('aldur.utils').buffer_options_default
-
-function M.signs_enabled(bufnr)
-    return buffer_options_default(bufnr, 'show_signs', 1) == 1
-end
-function M.virtual_text_enabled(bufnr)
-    return buffer_options_default(bufnr, 'show_virtual_text', 0) == 1
-end
-function M.update_in_insert_enabled(bufnr)
-    return buffer_options_default(bufnr, 'update_in_insert', 0) == 1
-end
-function M.underline_enabled(bufnr)
-    return buffer_options_default(bufnr, 'show_diagnostic_underline', 1) == 1
-end
-
-M.diagnostic_config = {
-    virtual_text = function(_, bufnr)
-        if M.virtual_text_enabled(bufnr) then
-            return {prefix = '●', source = "if_many"}
-        end
-        return false
-    end,
-
-    signs = function(_, bufnr) return M.signs_enabled(bufnr) end,
-
-    underline = function(_, bufnr) return M.underline_enabled(bufnr) end,
-
-    -- delay update diagnostics
-    update_in_insert = function(_, bufnr)
-        return M.update_in_insert_enabled(bufnr)
-    end,
-
-    severity_sort = true
-}
-
-function M.reload_config() vim.diagnostic.config(M.diagnostic_config) end
-
-M.reload_config() -- First time initialization.
-
--- Remove annoying highlight and lightbulb, just color the line.
-vim.fn.sign_define('LightBulbSign', {
-    text = "",
-    texthl = "",
-    linehl = "",
-    numhl = "DiagnosticOk"
-})
-
-local LB_SIGN_GROUP = "nvim-lightbulb"
-local LB_SIGN_NAME = "LightBulbSign"
-local LB_SIGN_PRIORITY = 25
-M.LB_CLIENTS_TO_IGNORE = {'pylsp'}
-
-function M._update_sign(priority, old_line, new_line, bufnr)
-    bufnr = bufnr or "%"
-
-    if old_line then
-        vim.fn.sign_unplace(LB_SIGN_GROUP, {id = old_line, buffer = bufnr})
-
-        -- Update current lightbulb line
-        vim.b.lightbulb_line = nil -- luacheck: ignore 122
-    end
-
-    -- Avoid redrawing lightbulb if code action line did not change
-    if new_line and (vim.b.lightbulb_line ~= new_line) then
-        vim.fn.sign_place(new_line, LB_SIGN_GROUP, LB_SIGN_NAME, bufnr,
-                          {lnum = new_line, priority = priority})
-        -- Update current lightbulb line
-        vim.b.lightbulb_line = new_line -- luacheck: ignore 122
-    end
-end
-
--- Taken from https://github.com/neovim/nvim-lspconfig/wiki/Code-Actions
-function M.code_action_listener()
-    local method = "textDocument/codeAction"
-    -- Check for code action capability
-    local code_action_cap_found = false
-    for _, client in pairs(vim.lsp.get_clients({bufnr = 0, method = method})) do
-        if not vim.tbl_contains(M.LB_CLIENTS_TO_IGNORE, client.name) then
-            code_action_cap_found = true
-            break
-        end
-    end
-
-    if not code_action_cap_found then return end
-    local params = vim.lsp.util.make_range_params()
-
-    local line = params.range.start.line
-
-    local context = {diagnostics = vim.diagnostic.get(0, {lnum = line})}
-    params.context = context
-
-    vim.lsp.buf_request_all(0, method, params, function(responses)
-        local has_actions = false
-        for client_id, resp in pairs(responses) do
-            if resp.result and
-                not vim.tbl_contains(M.LB_CLIENTS_TO_IGNORE, client_id) and
-                not vim.tbl_isempty(resp.result) then
-                has_actions = true
-                break
-            end
-        end
-
-        if has_actions then
-            M._update_sign(LB_SIGN_PRIORITY, vim.b.lightbulb_line, line + 1)
-        else
-            M._update_sign(LB_SIGN_PRIORITY, vim.b.lightbulb_line, nil)
-        end
-    end)
-end
-
-function M.code_action_autocmd()
-    local name = "LightBulb"
-    pcall(vim.api.nvim_del_augroup_by_name, name)
-    local id = vim.api.nvim_create_augroup(name, {})
-    vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {
-        pattern = {"*"},
-        group = id,
-        callback = M.code_action_listener
-    })
-end
-
-M.code_action_autocmd() -- This creates the autocmd to trigger the lightbulb
-
-function M.diagnostic_autocmd()
-    local name = "QFDiagnostic"
-    pcall(vim.api.nvim_del_augroup_by_name, name)
-    local group = vim.api.nvim_create_augroup(name, {})
-
-    local loclist_title = "LSP Diagnostics"
-
-    local function on_diagnostic_changed(diagnostics)
-        vim.diagnostic.setloclist({open = false, title = loclist_title})
-
-        if #diagnostics == 0 then
-            vim.cmd("silent! lclose")
-        end
-
-        -- Inspired by how lightline.vim refreshes the statusline.
-        vim.fn["lightline#update"]()
-    end
-
-    vim.api.nvim_create_autocmd({'DiagnosticChanged'}, {
-        group = group,
-        callback = function(args)
-            if (args and args.data) then
-                on_diagnostic_changed(args.data.diagnostics)
-            end
-        end
-    })
-
-    -- vim.api.nvim_create_autocmd({'BufEnter'}, {
-    --     group = group,
-    --     callback = function()
-    --         if vim.w.quickfix_title == loclist_title and vim.bo.buftype ==
-    --             'quickfix' then
-    --             return _G.info_message("Ignoring quickfix...")
-    --         end
-    --         on_diagnostic_changed(vim.diagnostic.get(0))
-    --     end
-    -- })
-end
-
-M.diagnostic_autocmd() -- This creates the autocmd to populate / update the QF with the diagnostics
 
 -- HACK: Experimental, disable LSP for `gen.nvim` buffers.
 local name = "GenNvimLSP"
