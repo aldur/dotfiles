@@ -252,10 +252,6 @@ lspconfig.rust_analyzer.setup(extend_config({
             }
         }
     },
-    on_attach = function(client, bufnr)
-        vim.lsp.inlay_hint.enable(true, {bufnr = bufnr})
-        default_on_attach(client, bufnr)
-    end,
     on_new_config = function(new_config, new_root_dir)
         -- `direnv` is a no-op if not configured
         _G.info_message("Switching to new root directory '" .. new_root_dir ..

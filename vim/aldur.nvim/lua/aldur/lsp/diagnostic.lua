@@ -42,9 +42,11 @@ M.diagnostic_autocmd()
 
 local default_buffer_config = {
     -- variable, default value, command (+Toggle)
-    {'signs', true, 'Signs'}, {'virtual_text', false, 'VirtualText'},
-    {'update_in_insert', false, 'UpdateInInsert'},
-    {'underline', true, "Underline"}
+    {'signs', true, 'Signs'}, --
+    {'virtual_text', false, 'VirtualText'}, --
+    {'update_in_insert', false, 'UpdateInInsert'}, --
+    {'underline', true, "Underline"}, --
+    {'inlay_hint', true, "InlayHint"}
 }
 
 M.buffer_config_getters = {}
@@ -87,23 +89,27 @@ vim.api.nvim_create_user_command("ToggleAllDiagnostics", function(_)
     vim.diagnostic.enable(not vim.diagnostic.is_enabled(opts), opts)
 end, {bang = true})
 
-M.diagnostic_config = {
-    virtual_text = function(_, bufnr)
-        if M.buffer_config_getters.virtual_text(_, bufnr) then
-            return {prefix = '●', source = "if_many"}
-        end
-        return false
-    end,
+function M.reload_config()
+    vim.diagnostic.config({
+        virtual_text = function(_, bufnr)
+            if M.buffer_config_getters.virtual_text(_, bufnr) then
+                return {prefix = '●', source = "if_many"}
+            end
+            ---@diagnostic disable-next-line: return-type-mismatch
+            return false
+        end,
 
-    signs = M.buffer_config_getters.signs,
-    underline = M.buffer_config_getters.underline,
+        signs = M.buffer_config_getters.signs,
+        underline = M.buffer_config_getters.underline,
 
-    -- delay update diagnostics
-    update_in_insert = M.buffer_config_getters.update_in_insert,
+        -- delay update diagnostics
+        update_in_insert = M.buffer_config_getters.update_in_insert,
 
-    severity_sort = true
-}
+        severity_sort = true
+    })
 
-function M.reload_config() vim.diagnostic.config(M.diagnostic_config) end
+    local inlay_hint = M.buffer_config_getters.inlay_hint()
+    vim.lsp.inlay_hint.enable(inlay_hint)
+end
 
 M.reload_config() -- First time initialization.
