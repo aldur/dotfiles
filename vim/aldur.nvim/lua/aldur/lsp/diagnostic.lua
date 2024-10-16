@@ -5,11 +5,11 @@ function M.diagnostic_autocmd()
     pcall(vim.api.nvim_del_augroup_by_name, name)
     local group = vim.api.nvim_create_augroup(name, {})
 
-    local loclist_title = "LSP Diagnostics"
+    -- local loclist_title = "LSP Diagnostics"
 
     ---@diagnostic disable-next-line: unused-local
     local function on_diagnostic_changed(_diagnostics)
-        vim.diagnostic.setloclist({open = false, title = loclist_title})
+        -- vim.diagnostic.setloclist({open = false, title = loclist_title})
         -- if #diagnostics == 0 then vim.cmd("silent! lclose") end
 
         -- Inspired by how lightline.vim refreshes the statusline.

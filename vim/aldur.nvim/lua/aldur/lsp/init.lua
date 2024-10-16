@@ -70,6 +70,13 @@ local function on_attach_callback(args)
     vim.keymap.set('n', ']l', function()
         vim.diagnostic.goto_next(diagnostic_goto_opts)
     end, bufopts)
+
+    vim.keymap.set("n", "<Leader>lo", function()
+        vim.diagnostic.setloclist({open = false})
+        local window = vim.api.nvim_get_current_win()
+        vim.cmd.lwindow()
+        vim.api.nvim_set_current_win(window)
+    end, {buffer = bufnr})
 end
 
 vim.api.nvim_create_autocmd('LspAttach', {callback = on_attach_callback})
