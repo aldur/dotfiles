@@ -12,7 +12,8 @@ local function on_attach_callback(args)
     require("lsp_signature").on_attach({
         -- This is mandatory, otherwise border config won't get registered.
         bind = true,
-        handler_opts = {border = "single"}
+        handler_opts = {border = "single"},
+        bufnr
     })
 
     -- Mappings
