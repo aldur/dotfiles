@@ -44,8 +44,6 @@ function M.reload_module()
 
     local current_file = vim.fn.expand("%:p") -- Get the full path of the current file
 
-    -- FIXME: This won't work for modules called `init.lua`.
-
     -- HACK
     -- We know from `:h require()` that modules get pushed to `package.loaded`.
     -- A modukle stored at lua/foo/bar.lua will be stored with key `foo.bar`.
@@ -65,21 +63,31 @@ function M.reload_module()
     -- with a corresponding module loaded from `~/.dotfiles`
 
     -- NOTE: We need to reverse to make sure we find the latest occurrence.
-    local maybe_module = current_file:reverse():match("^aul%.(.*)/aul/")
+    local module_runtimepath, maybe_module = current_file:match("(.*)/lua/(.*)%.lua")
+
     if maybe_module == nil then
-        error("Current file is not on Lua's module path.")
+        error("Current file is not on Lua's module path (searched '" ..
+                  maybe_module .. "').")
         return
     end
 
-    maybe_module = maybe_module:reverse():gsub("/", ".")
+    -- NOTE: We drop `/init.lua` suffix since it you can just load its
+    -- containing module: `require("foo/bar")` instead of
+    -- `require("foo/bar/init")`
+    maybe_module = maybe_module:gsub("/init$", ""):gsub("/", ".")
 
     if package.loaded[maybe_module] == nil then
         error("Guessed module '" .. maybe_module .. "' was not on loaded.")
         return
     end
 
+    local old_runtimepath = vim.opt.runtimepath
+    vim.opt.runtimepath:prepend{module_runtimepath}
+
     package.loaded[maybe_module] = nil
     require(maybe_module)
+
+    vim.opt.runtimepath = old_runtimepath
 
     vim.notify(string.format("Reloading module '%s'.", maybe_module),
                vim.log.levels.INFO)
