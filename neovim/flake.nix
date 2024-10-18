@@ -15,8 +15,8 @@
       in
       {
         packages = rec {
-          nvim = pkgs.callPackage ./neovim.nix { };
-          default = nvim;
+          neovim = pkgs.callPackage ./neovim.nix { };
+          default = neovim;
         };
       });
 }
