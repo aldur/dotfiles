@@ -1,6 +1,6 @@
 include ../include.mk
 
-DOTFILES = psqlrc radare2rc curlrc gdbinit inputrc ideavimrc chktexrc pylintrc gitignore_global gitattributes_global weechat mdlrc mdlstyle.rb ripgreprc solhint.json
+DOTFILES = psqlrc radare2rc curlrc gdbinit inputrc chktexrc pylintrc gitignore_global gitattributes_global mdlrc mdlstyle.rb ripgreprc solhint.json
 CONFIG_FILES = flake8 pycodestyle ctags fd marksman nix
 ALL = $(DOTFILES) $(CONFIG_FILES) _yamllint _bat git gpg.conf scdaemon.conf
 
