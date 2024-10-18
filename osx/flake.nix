@@ -89,9 +89,9 @@
             ssh = "autossh";
             ta = "tmux -CC new -ADs";
             tls = "tmux ls";
-            vim = "neovide";
 
-            neovide = "/Applications/Neovide.app/Contents/MacOS/neovide_server.sh";
+            vim = "neovide";
+            neovide = "'/Applications/Nix Apps/Neovide.app/Contents/MacOS/neovide_server.sh'";
           };
 
           programs.bash.enable = true;
