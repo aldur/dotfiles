@@ -17,4 +17,4 @@ nnoremap <silent> gx :call aldur#netrw#open_link_or_file()<cr>
 " https://vim.fandom.com/wiki/Open_file_under_cursor#Adjusting_isfname
 set isfname+=32
 
-nnoremap - :Explore<cr>
+nnoremap - m'<cmd>Explore<cr>
