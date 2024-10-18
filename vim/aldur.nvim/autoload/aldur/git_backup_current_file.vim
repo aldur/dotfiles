@@ -1,9 +1,35 @@
 let s:custom_backup_dir = $HOME . '/.vim_backups/git_backups/'
-if isdirectory(s:custom_backup_dir) == 0 && executable('git')
-    call mkdir(s:custom_backup_dir, 'p')
-    call system('git init ' . s:custom_backup_dir)
-    call system('chmod 700 ' . s:custom_backup_dir)
-endif
+let s:author = '-c user.name="nvim backup" -c user.email="nvim_backup@localhost"'
+
+function! s:Init() abort
+    if isdirectory(s:custom_backup_dir) == 0 && executable('git')
+        call mkdir(s:custom_backup_dir, 'p')
+        call system('git init ' . s:custom_backup_dir)
+        if v:shell_error
+            echoerr 'could not init git directory'
+            call s:Disarm()
+            return
+        endif
+        call system('chmod 700 ' . s:custom_backup_dir)
+        if v:shell_error
+            echoerr 'could not chmod git directory'
+            call s:Disarm()
+            return
+        endif
+        call system('git ' . s:author . ' -C ' . s:custom_backup_dir . ' commit --allow-empty -m "Initial commit"')
+        if v:shell_error
+            echoerr 'could not create initial commit'
+            call s:Disarm()
+            return
+        endif
+    endif
+endfunction
+
+call s:Init()
+
+function! s:Disarm() abort
+    autocmd! GitBackupCurrentFile
+endfunction
 
 let s:buffer = ""
 
@@ -14,6 +40,7 @@ function! s:Receive(_job_id, data, event) abort
         if a:data != 0
             echoerr printf('Unexpected exit code: %s', string(a:data))
             echoerr s:buffer
+            call s:Disarm()
         endif
     endif
 endfunction
@@ -43,10 +70,12 @@ function! aldur#git_backup_current_file#backup() abort
         call mkdir(l:file_dir, 'p')
     endif
 
-    let l:cmd = 'cp "' . l:file . '" "' . l:backup_file . '"; '
+    let l:cmd = 'GIT_COMMITTER_NAME="nvim backups"; '
+    let l:cmd .= 'GIT_COMMITTER_EMAIL="nvim_backups@localhost"; '
+    let l:cmd .= 'cp "' . l:file . '" "' . l:backup_file . '"; '
     let l:cmd .= 'cd "' . l:backup_dir . '"; '
     let l:cmd .= 'git add "' . l:backup_file . '"; '
-    let l:cmd .= 'git diff-index --quiet HEAD || git commit --no-gpg-sign -m "Backup ' . l:file . '"; '
+    let l:cmd .= 'git diff-index --quiet HEAD -- || git commit --no-gpg-sign -m "Backup ' . l:file . '"; '
 
     let s:buffer = ""
     let l:callbacks = {
@@ -58,5 +87,6 @@ function! aldur#git_backup_current_file#backup() abort
     let l:result = jobstart(['bash', '-c', l:cmd], l:callbacks)
     if l:result <= 0
         echoerr "Invalid l:result returned by jobstart for `git_backup_current_file`."
+        call s:Disarm()
     endif
 endfunction
