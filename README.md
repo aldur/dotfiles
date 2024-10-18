@@ -34,6 +34,6 @@ $ make
 ## Running `neovim` through `nix`
 
 ```bash
-nix run "git+https://github.com/aldur/dotfiles?ref=vim_nix&dir=vim"
+nix run "git+https://github.com/aldur/dotfiles?dir=neovim"
 ```
 

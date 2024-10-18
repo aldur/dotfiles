@@ -38,7 +38,7 @@
 
             overlays = [
               (final: prev: {
-                neovim = (prev.callPackage ../vim/neovim.nix { });
+                neovim = (prev.callPackage ../neovim/neovim.nix { });
               })
             ];
 

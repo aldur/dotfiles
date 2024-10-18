@@ -1,6 +1,6 @@
 include include.mk
 
-TARGETS = vim various ssh fish
+TARGETS = neovim various ssh fish
 
 UNAME_S := $(shell uname -s)
 
