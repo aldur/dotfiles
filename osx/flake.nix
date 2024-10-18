@@ -11,11 +11,16 @@
 
   outputs = inputs@{ self, nix-darwin, nixpkgs }:
     let
+      user = "aldur";
       configuration = { pkgs, ... }:
         {
           # Auto upgrade nix package and the daemon service.
           services.nix-daemon.enable = true;
           nix.package = pkgs.nix;
+          programs.nix-index.enable = true;
+
+          nix.settings.allowed-users = [ user ];
+          nix.settings.trusted-users = [ "root" ];
 
           # Necessary for using flakes on this system.
           nix.settings.experimental-features = "nix-command flakes";
@@ -42,9 +47,9 @@
 
           # Declare the user that will be running `nix-darwin`.
           # NOTE: This won't be executed if the user already exists.
-          users.users.aldur = {
-            name = "aldur";
-            home = "/Users/aldur";
+          users.users.${user} = {
+            name = user;
+            home = "/Users/${user}";
             shell = pkgs.fish;
           };
 
@@ -68,7 +73,7 @@
             FZF_ALT_C_COMMAND = "fd -d 10 --hidden --follow --exclude .git --exclude .svn --ignore-file ~/.gitignore_global --type d";
             FZF_CTRL_T_COMMAND = "fd -d 10 --hidden --follow --exclude .git --exclude .svn --ignore-file ~/.gitignore_global";
 
-            RIPGREP_CONFIG_PATH = "/Users/aldur/.ripgreprc";
+            RIPGREP_CONFIG_PATH = "/Users/${user}/.ripgreprc";
 
             PAGER = "less -R";
             MANPAGER = "nvim +Man!";
