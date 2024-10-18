@@ -28,6 +28,7 @@ endfunction
 call s:Init()
 
 function! s:Disarm() abort
+    echomsg "Error detected, disarming automatic git backups..."
     autocmd! GitBackupCurrentFile
 endfunction
 
