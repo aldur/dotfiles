@@ -146,6 +146,7 @@ let
       (usrBinInPath "open")
       (usrBinInPath "pbpaste")
       (usrBinInPath "pbcopy")
+      (usrBinInPath "man")
     ]);
 
   spells = builtins.attrValues (builtins.mapAttrs (name: spellHash: (getSpell name spellHash)) {
