@@ -26,11 +26,19 @@
           # before changing: `darwin-rebuild changelog`.
           system.stateVersion = 4;
 
-          # The platform the configuration will be used on.
-          # If you're on an Intel system, replace with "x86_64-darwin"
-          nixpkgs.hostPlatform = "aarch64-darwin";
+          nixpkgs = {
+            # The platform the configuration will be used on.
+            # If you're on an Intel system, replace with "x86_64-darwin"
+            hostPlatform = "aarch64-darwin";
 
-          # nixpkgs.config.allowUnsupportedSystem = true;
+            overlays = [
+              (final: prev: {
+                neovim = (prev.callPackage ../vim/neovim.nix { });
+              })
+            ];
+
+            # config.allowUnsupportedSystem = true;
+          };
 
           # Declare the user that will be running `nix-darwin`.
           # NOTE: This won't be executed if the user already exists.
@@ -102,7 +110,7 @@
               cmake
               coreutils-prefixed
               curl
-              diff-so-fancy
+              diffstat
               exiftool
               fd
               fzf
@@ -125,6 +133,7 @@
               tmux
               tree
               universal-ctags
+              watch
             ] ++ [
               (pkgs.callPackage
                 ../nix/packages/age-plugin-se/age-plugin-se.nix
