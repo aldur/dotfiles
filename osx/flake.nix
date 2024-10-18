@@ -125,6 +125,7 @@
               gnupg
               htop
               jq
+              less
               neovide
               neovim
               node2nix
