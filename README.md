@@ -30,3 +30,10 @@ Simply run `make` from the top-level directory.
 ```bash
 $ make
 ```
+
+## Running `neovim` through `nix`
+
+```bash
+nix run "git+https://github.com/aldur/dotfiles?ref=vim_nix&dir=vim"
+```
+
