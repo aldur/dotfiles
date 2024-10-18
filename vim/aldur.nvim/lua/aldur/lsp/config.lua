@@ -257,24 +257,24 @@ lspconfig.rust_analyzer.setup(extend_config({
         _G.info_message("Switching to new root directory '" .. new_root_dir ..
                             "'.")
         new_config['cmd'] = {"direnv", "exec", new_root_dir, "rust-analyzer"}
+        new_config['cmd_cwd'] = new_root_dir
     end
 }))
 
 local default_ltex_configuration =
     require'lspconfig/configs/ltex'.default_config
 
-local spell_directory = vim.fn.stdpath("data") .. "/site/spell/"
-
 -- Markdown, LaTeX
 lspconfig.ltex.setup(extend_config({
-    flags = {debounce_text_changes = 1000},
     settings = {
         ltex = {
-            dictionary = {
-                ['en-US'] = {":" .. spell_directory .. "en.utf-8.add"}
+            additionalRules = {motherTongue = "it", enablePickyRules = true},
+            disabledRules = {
+                ['en-US'] = {
+                    "WHITESPACE_RULE", "MORFOLOGIK_RULE_EN_US",
+                    "MORFOLOGIK_RULE_IT_IT"
+                }
             },
-            additionalRules = {motherTongue = "it"},
-            disabledRules = {['en-US'] = {"WHITESPACE_RULE"}},
             markdown = {
                 nodes = {
                     CodeBlock = "ignore",
@@ -282,8 +282,7 @@ lspconfig.ltex.setup(extend_config({
                     AutoLink = "dummy",
                     Code = "dummy"
                 }
-            },
-            checkFrequency = "edit"
+            }
         }
     },
 
@@ -299,6 +298,15 @@ lspconfig.ltex.setup(extend_config({
                                     default_ltex_configuration.filetypes,
                                     {'markdown.wiki'})
 }))
+
+-- NOTE: Tried to make `ltex` work with default `vim` dictionary, to no result.
+-- This plugin handles its own dictionary (why?!).
+-- The MORFOLOGIK_RULE_EN_US is disabled anyway, so that shouldn't bother us.
+---@diagnostic disable-next-line: missing-fields
+require("ltex_extra").setup({
+    load_langs = {'en-US', 'it-IT'},
+    path = vim.fn.stdpath("data") .. "/ltex"
+})
 
 lspconfig.ccls.setup(default_lsp_config)
 
