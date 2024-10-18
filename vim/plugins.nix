@@ -75,6 +75,15 @@
 ] ++ (with pkgs;
 [
   (vimUtils.buildVimPlugin {
+    name = "ltex_extra-nvim";
+    src = fetchFromGitHub {
+      owner = "barreiroleo";
+      repo = "ltex_extra.nvim";
+      rev = "57192d7ae5ba8cef3c10e90f2cd62d4a7cdaab69";
+      hash = "sha256-sjYCAJkDSX+TPEtdMNgFXqcgv43/7Q48haanP5QycT0=";
+    };
+  })
+  (vimUtils.buildVimPlugin {
     name = "lists.vim";
     src = fetchFromGitHub {
       owner = "lervag";
