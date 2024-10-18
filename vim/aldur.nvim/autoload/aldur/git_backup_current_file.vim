@@ -70,12 +70,11 @@ function! aldur#git_backup_current_file#backup() abort
         call mkdir(l:file_dir, 'p')
     endif
 
-    let l:cmd = 'GIT_COMMITTER_NAME="nvim backups"; '
-    let l:cmd .= 'GIT_COMMITTER_EMAIL="nvim_backups@localhost"; '
+    let l:cmd = ''
     let l:cmd .= 'cp "' . l:file . '" "' . l:backup_file . '"; '
     let l:cmd .= 'cd "' . l:backup_dir . '"; '
     let l:cmd .= 'git add "' . l:backup_file . '"; '
-    let l:cmd .= 'git diff-index --quiet HEAD -- || git commit --no-gpg-sign -m "Backup ' . l:file . '"; '
+    let l:cmd .= 'git diff-index --quiet HEAD -- || git ' . s:author . ' commit --no-gpg-sign -m "Backup ' . l:file . '"; '
 
     let s:buffer = ""
     let l:callbacks = {
