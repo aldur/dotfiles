@@ -125,6 +125,7 @@
               gnupg
               htop
               jq
+              neovide
               neovim
               node2nix
               pandoc
@@ -150,17 +151,15 @@
 
           homebrew = {
             enable = true;
-            # onActivation.cleanup = "uninstall";
+            onActivation.cleanup = "zap";
 
             caskArgs.no_quarantine = true;
             caskArgs.require_sha = true;
 
             taps = [
-              "shopify/shopify"
+              "homebrew/services"
             ];
             brews = [
-              "theme-check"
-
               {
                 name = "syncthing";
                 start_service = true;
