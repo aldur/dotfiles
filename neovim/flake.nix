@@ -1,5 +1,5 @@
 {
-  description = "nix-darwin configuration";
+  description = "aldur's nvim configuration";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
