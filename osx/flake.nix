@@ -128,6 +128,7 @@
               neovide
               neovim
               node2nix
+              ollama
               pandoc
               pinentry_mac
               poetry
