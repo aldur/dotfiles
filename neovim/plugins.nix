@@ -95,10 +95,10 @@
   (vimUtils.buildVimPlugin rec {
     name = "gen.nvim";
     src = fetchFromGitHub {
-      owner = "David-Kunz";
+      owner = "aldur";
       repo = name;
-      rev = "83f1d6b6ffa6a6f32f6a93a33adc853f27541a94";
-      hash = "sha256-rBUltJdluSseNUiTfjBZyuBwrGrASWbW1ROVdcAW6ug=";
+      rev = "7ebb4f1";
+      hash = "sha256-jYUJO5vdoWHrxeZN30H5+zvWTePgmEnHig52fnVXrg8=";
     };
   })
   (vimUtils.buildVimPlugin rec {
@@ -111,12 +111,12 @@
     };
   })
   (vimUtils.buildVimPlugin rec {
-    name = "vim-markdown";
+    name = "tinymd.nvim";
     src = fetchFromGitHub {
       owner = "aldur";
       repo = name;
-      rev = "9fa61d2f5a1d28bc877e328b13ebdc3cac0d0f0e";
-      hash = "sha256-8pbPvTsFuJoWTeHGEa9Lm+aIkgeSVd56+hV95G1lg/0=";
+      rev = "1034238f75427076fa1a2745f8b83fa3cee6c623";
+      hash = "sha256-C0NEGvTkVO8UGFgCxYMDJf8gtiObkMoldkFXq1PVCW0=";
     };
   })
   (vimUtils.buildVimPlugin rec {

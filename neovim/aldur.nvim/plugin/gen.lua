@@ -1,10 +1,11 @@
 require('gen').setup({
     model = "nemotron",
-    show_prompt = true,
+    show_prompt = "full",
     show_model = true,
     no_auto_close = true,
     debug = false,
-    display_mode = "split"
+    display_mode = "split",
+    result_filetype = "markdown.gen"
 })
 
 vim.keymap.set({'n', 'v'}, '<leader>g', '<cmd>Gen <CR>', {noremap = true})
@@ -34,7 +35,6 @@ require('gen').prompts['Links_to_References'] = {
 
         $text
     ]],
-    replace = true
 }
 
 require('gen').prompts['Explain_Code'] = {
