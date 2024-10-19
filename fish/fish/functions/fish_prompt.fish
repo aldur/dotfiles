@@ -49,7 +49,7 @@ function fish_prompt --description 'Write out the prompt'
     # Write pipestatus
     # https://github.com/fish-shell/fish-shell/blob/edaf011ab1e4ae4fe4b7b0c66a23418c80096d8c/share/functions/fish_prompt.fish
     set -l prompt_status ""
-    if test (count $pipestatus) -eq 1 && test $last_status -eq 1
+    if test (count $pipestatus) -eq 1 && test $__fish_last_status -eq 1
         set -a prompt_status (set_color --bold $fish_color_status) "✖ "
     else
         set __fish_prompt_status_generation $status_generation
