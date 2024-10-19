@@ -26,8 +26,8 @@ function! aldur#find_root#find_root() abort
         let l:root = expand(l:base, 1)
     endtry
 
-    " If it's a terminal, then we default to cwd
-    if l:root =~# 'term://'
+    " If it's a terminal or a health window, then we default to cwd
+    if l:root =~# 'term://' || expand("%") =~# 'health://'
         return getcwd()
     endif
 
