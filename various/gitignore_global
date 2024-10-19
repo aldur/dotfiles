@@ -85,3 +85,6 @@ node_modules
 
 # Direnv
 .direnv
+
+# Nix
+result
