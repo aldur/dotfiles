@@ -97,3 +97,11 @@ end
 vim.api.nvim_create_autocmd("LspDetach", {callback = on_detach_callback})
 
 require('aldur.lsp.config') -- Side effects, autocmd
+
+vim.api.nvim_create_user_command('LspTrace', function(_)
+    _G.info_message("Enabling LSP tracing...")
+    vim.lsp.set_log_level 'trace'
+    if vim.fn.has 'nvim-0.5.1' == 1 then
+        require('vim.lsp.log').set_format_func(vim.inspect)
+    end
+end, {})

@@ -244,10 +244,7 @@ lspconfig.ltex.setup(extend_config({
         ltex = {
             additionalRules = {motherTongue = "it", enablePickyRules = true},
             disabledRules = {
-                ['en-US'] = {
-                    "WHITESPACE_RULE", "MORFOLOGIK_RULE_EN_US",
-                    "MORFOLOGIK_RULE_IT_IT"
-                }
+                ['en-US'] = {"WHITESPACE_RULE", "MORFOLOGIK_RULE_EN_US"}
             },
             markdown = {
                 nodes = {
