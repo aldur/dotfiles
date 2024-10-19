@@ -11,12 +11,16 @@
   outputs =
     { nixpkgs, flake-utils, ... }:
     let
-      pkgsForSystem = system: nixpkgs.legacyPackages.${system};
-      pythonEnv = pkgsForSystem.python312.withPackages (ps: with ps; [ tiktoken ]);
+      pkgsForSystem = system: import nixpkgs {
+        inherit system;
+      };
 
       count-tokens = pkgs: pkgs.stdenv.mkDerivation {
         name = "count-tokens-0.1";
-        propagatedBuildInputs = [ pythonEnv ];
+        propagatedBuildInputs = [
+          (pkgs.python312.withPackages
+            (ps: with ps; [ tiktoken ]))
+        ];
         dontUnpack = true;
         installPhase = "install -Dm755 ${./count_tokens.py} $out/bin/count-tokens";
       };
@@ -27,7 +31,7 @@
         rec {
           legacyPackages = pkgsForSystem system;
           devShells.default = legacyPackages.mkShell {
-            buildInputs = [ pythonEnv ];
+            inherit (count-tokens legacyPackages) propagatedBuildInputs;
           };
           packages.default = count-tokens legacyPackages;
         }
