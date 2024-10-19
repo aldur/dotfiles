@@ -34,6 +34,7 @@ let
     bibtool
     black
     cargo
+    clippy
     deno
     dockerfile-language-server-nodejs
     dotenv-linter
@@ -57,6 +58,7 @@ let
     ripgrep
     rust-analyzer
     rustfmt
+    rustc
     shfmt
     solc
     sqlint
@@ -147,6 +149,8 @@ let
       (usrBinInPath "pbpaste")
       (usrBinInPath "pbcopy")
       (usrBinInPath "man")
+      (usrBinInPath "cc")
+      (usrBinInPath "strip")
     ]);
 
   spells = builtins.attrValues (builtins.mapAttrs (name: spellHash: (getSpell name spellHash)) {
