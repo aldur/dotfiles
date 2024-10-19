@@ -81,7 +81,7 @@ end
 
 function obj.toggleBluetooth()
     -- Requires `brew install blueutil`.
-    local path = "/usr/local/bin/blueutil"
+    local path = "/run/current-system/sw/bin/blueutil"
     if hs.fs.displayName(path) == nil then
         path = "/opt/homebrew/bin/blueutil"
     end

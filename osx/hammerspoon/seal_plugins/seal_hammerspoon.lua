@@ -30,9 +30,14 @@ obj.headphones_mac = secrets.headphones_mac
 local task = require("task")
 
 function obj.connectToHeadphones()
+    local path = "/run/current-system/sw/bin/blueutil"
+    if hs.fs.displayName(path) == nil then
+        path = "/opt/homebrew/bin/blueutil"
+    end
     local function f()
         local success, _, errors = hs.applescript(
-                                       [[do shell script "/opt/homebrew/bin/blueutil --connect ]] ..
+                                       [[do shell script "]] .. path ..
+                                           [[ --connect ]] ..
                                            secrets.headphones_mac .. [["]])
         if not success then
             obj.__logger.e('Got an error while connecting to headphones: ' ..
