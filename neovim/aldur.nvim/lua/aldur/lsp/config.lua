@@ -335,14 +335,4 @@ end
 -- texlab
 lspconfig.texlab.setup(default_lsp_config)
 
--- HACK: Experimental, disable LSP for `gen.nvim` buffers.
-local name = "GenNvimLSP"
-pcall(vim.api.nvim_del_augroup_by_name, name)
-local group = vim.api.nvim_create_augroup(name, {})
-vim.api.nvim_create_autocmd({'BufEnter', 'BufNewFile'}, {
-    group = group,
-    pattern = '^gen.nvim$',
-    callback = function() vim.defer_fn(function() vim.cmd 'LspStop' end, 100) end
-})
-
 return M
