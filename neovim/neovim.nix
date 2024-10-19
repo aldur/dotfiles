@@ -66,7 +66,6 @@ let
     texlab
     tflint
     typescript
-    vale
     vim-language-server
     vim-vint
     vscode-langservers-extracted
