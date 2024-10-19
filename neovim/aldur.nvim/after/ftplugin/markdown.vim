@@ -17,9 +17,12 @@ let b:surround_105 = "_\r_"  " i - italic
 let b:pear_tree_repeatable_expand = 0
 
 " Disable pairs for [, instead rely on snippets.
-if has_key(b:pear_tree_pairs, '[')
-    call remove(b:pear_tree_pairs, '[')
-endif
+let b:pear_tree_did_markdown_ftplugin = 1
+let b:pear_tree_pairs = extend(deepcopy(g:pear_tree_pairs), {
+            \ '`': {'closer': '`'},
+            \ '```': {'closer': '```'}
+            \ }, 'keep')
+call remove(b:pear_tree_pairs, '[')
 let b:pear_tree_pairs['_'] = {'closer': '_'}
 let b:pear_tree_pairs['*'] = {'closer': '*'}
 
