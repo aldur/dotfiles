@@ -124,7 +124,7 @@ lspconfig.lua_ls.setup(extend_config({
     on_init = function(client)
         local path = client.workspace_folders[1].name
 
-        if path:find('.vim', 1, true) or path:find('.dotfiles/vim', 1, true) then
+        if path:find('.vim', 1, true) or path:find('.dotfiles/neovim', 1, true) then
             _G.info_message(
                 "Overriding lua_lsp configuration for vim lua files.")
 
