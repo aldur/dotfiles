@@ -1,8 +1,12 @@
 function flakify
     if not test -e flake.nix
-        nix flake new -t github:nix-community/nix-direnv .
-    else if not test -f .envrc
+        cp $HOME/.config/fish/functions/template.flake.nix flake.nix
+    end
+    if not test -f .envrc
         echo "use flake" > .envrc && direnv allow
     end
-    exec $EDITOR flake.nix
+    if test -e .git
+        git add flake.nix
+    end
+    neovide flake.nix
 end
