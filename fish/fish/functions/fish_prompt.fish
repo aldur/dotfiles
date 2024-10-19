@@ -38,9 +38,12 @@ function fish_prompt --description 'Write out the prompt'
         set -a virtualenv (set_color yellow) "#" (basename "$VIRTUAL_ENV") " "
     end
 
+    # Visually show nested shells
     set -l nested ""
     if test $SHLVL -gt 1
-        set -a nested (set_color yellow) "↳" " "
+        for i in (seq 2 $SHLVL)
+            set -a nested (set_color yellow) "↳" " "
+        end
     end
 
     # Time
