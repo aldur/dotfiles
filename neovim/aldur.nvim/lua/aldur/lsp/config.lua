@@ -324,9 +324,6 @@ html_config.capabilities.textDocument.completion.completionItem.snippetSupport =
     true
 lspconfig.html.setup(html_config)
 
--- Liquid
-lspconfig.theme_check.setup(default_lsp_config)
-
 -- clarinet
 -- FIXME
 -- brew install clarinet
