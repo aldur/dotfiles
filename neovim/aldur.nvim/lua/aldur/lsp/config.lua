@@ -235,32 +235,6 @@ lspconfig.yamlls.setup(extend_config({
     }
 }))
 
--- Rust
-lspconfig.rust_analyzer.setup(extend_config({
-    settings = {
-        ["rust-analyzer"] = {
-            imports = {granularity = {group = "module"}, prefix = "self"},
-            cargo = {buildScripts = {enable = true}},
-            procMacro = {enable = true},
-            checkOnSave = {
-                allFeatures = true
-                -- overrideCommand = {
-                --     'cargo', 'clippy', '--workspace', '--message-format=json',
-                --     '--all-targets', '--all-features', '--', '-W',
-                --     'clippy::pedantic'
-                -- }
-            }
-        }
-    },
-    on_new_config = function(new_config, new_root_dir)
-        -- `direnv` is a no-op if not configured
-        _G.info_message("Switching to new root directory '" .. new_root_dir ..
-                            "'.")
-        new_config['cmd'] = {"direnv", "exec", new_root_dir, "rust-analyzer"}
-        new_config['cmd_cwd'] = new_root_dir
-    end
-}))
-
 local default_ltex_configuration =
     require'lspconfig/configs/ltex'.default_config
 

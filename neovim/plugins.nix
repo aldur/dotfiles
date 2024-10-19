@@ -35,18 +35,18 @@
   vimPlugins.sonokai # based on Monokai pro
 
   # language specific
-  vimPlugins.vim-python-pep8-indent
-  vimPlugins.vimtex
-  vimPlugins.vim-go
-  vimPlugins.swift-vim
-  vimPlugins.vim-fish
   vimPlugins.kotlin-vim
   vimPlugins.nginx-vim
-  vimPlugins.rust-vim
+  vimPlugins.rustaceanvim
+  vimPlugins.swift-vim
+  vimPlugins.vim-caddyfile
+  vimPlugins.vim-fish
+  vimPlugins.vim-go
+  vimPlugins.vim-nix
+  vimPlugins.vim-python-pep8-indent
   vimPlugins.vim-solidity
   vimPlugins.vim-terraform
-  vimPlugins.vim-caddyfile
-  vimPlugins.vim-nix
+  vimPlugins.vimtex
 
   # TODO: Manually load it
   # vimPlugins.vim-jukit
