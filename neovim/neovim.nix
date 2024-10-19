@@ -188,6 +188,17 @@ let
       spells
     }
   '';
+
+  shell = pkgs.wrapFish {
+    localConfig = ''
+      if ! status is-interactive
+            eval "$(direnv export fish)"
+      else
+            echo 'Remember, this is a wrapped version of fish specific for `nvim`.'
+            echo 'Evaluating direnv (if any)...'
+      end
+    '';
+  };
 in
 pkgs.symlinkJoin {
   name = "nvim";
@@ -198,6 +209,7 @@ pkgs.symlinkJoin {
       --set PATH ${lib.makeBinPath (
           devTools ++ ["$out"] ++ usrBins
         )} \
+      --set SHELL ${shell}/bin/fish \
       --add-flags '-u' \
       --add-flags '${./init.vim}' \
       --add-flags '--cmd' \
