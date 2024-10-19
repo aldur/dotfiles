@@ -25,7 +25,7 @@ let
     universal-ctags
 
     (python3.withPackages
-      (ps: [ ps.pynvim ]))
+      (ps: with ps; [ pynvim beancount ]))
 
     # --- LSPs ---
 
@@ -76,7 +76,6 @@ let
     luaPackages.luacheck
 
     python312Packages.cfn-lint
-    python312Packages.pynvim
     python312Packages.pyflakes
     python312Packages.python-lsp-server
 
