@@ -15,7 +15,7 @@ require'nvim-treesitter.configs'.setup {
     highlight = {enable = true},
     sync_install = false,
     auto_install = false,
-    indent = {enable = true, disable = {"python", "markdown"}},
+    indent = {enable = true, disable = {"python", "markdown", "nix"}},
     incremental_selection = {
         enable = false
         -- keymaps = {
@@ -47,7 +47,7 @@ require'nvim-treesitter.configs'.setup {
                 ["ir"] = "@returntype",
 
                 ["a`"] = "@block.outer",
-                ["i`"] = "@block.inner",
+                ["i`"] = "@block.inner"
             }
         },
         move = {
@@ -59,7 +59,7 @@ require'nvim-treesitter.configs'.setup {
                 ["]r"] = "@returntype",
                 ["]c"] = "@class.outer",
                 ["]]"] = "@class.outer",
-                ["]`"] = "@block.outer",
+                ["]`"] = "@block.outer"
             },
             goto_next_end = {
                 ["]M"] = "@function.outer",
@@ -73,7 +73,7 @@ require'nvim-treesitter.configs'.setup {
                 ["[r"] = "@returntype",
                 ["[c"] = "@class.outer",
                 ["[["] = "@class.outer",
-                ["[`"] = "@block.outer",
+                ["[`"] = "@block.outer"
             },
             goto_previous_end = {
                 ["[M"] = "@function.outer",
