@@ -7,9 +7,13 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    tiktoken = {
+      url = "git+file:.?dir=nix/packages/tiktoken";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs }:
+  outputs = inputs@{ self, nix-darwin, nixpkgs, tiktoken }:
     let
       user = "aldur";
       configuration = { pkgs, ... }:
@@ -22,6 +26,11 @@
           nix.settings.allowed-users = [ user ];
           nix.settings.trusted-users = [ "root" ];
           nix.settings.sandbox = false;
+
+          # Not working on macOS?
+          # nix.extraOptions = ''
+          #   plugin-files = ${pkgs.nix-doc}/lib/libnix_doc_plugin.so
+          # '';
 
           # Necessary for using flakes on this system.
           nix.settings.experimental-features = "nix-command flakes";
@@ -40,7 +49,9 @@
             overlays = [
               (final: prev: {
                 neovim = (prev.callPackage ../neovim/neovim.nix { });
+                neovim-vanilla = prev.neovim;
               })
+              tiktoken.overlays.default
             ];
 
             # config.allowUnsupportedSystem = true;
@@ -126,8 +137,8 @@
               htop
               jq
               less
-              neovide
               neovim
+              nix-doc
               node2nix
               ollama
               pandoc
@@ -143,10 +154,18 @@
               tree
               universal-ctags
               watch
+              yubikey-agent
+            ] ++ [
+              (neovide.override {
+                # Only used for checks
+                neovim = neovim-vanilla;
+              })
             ] ++ [
               (pkgs.callPackage
                 ../nix/packages/age-plugin-se/age-plugin-se.nix
                 { }).age-plugin-se
+            ] ++ [
+              count-tokens
             ];
 
           security.pam.enableSudoTouchIdAuth = true;
