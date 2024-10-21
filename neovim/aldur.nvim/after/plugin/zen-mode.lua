@@ -6,6 +6,10 @@ local function width_from_columns()
     return vim.o.columns * 0.6
 end
 
+local diagnostic_opts = {nsid = nil, bufnr = 0}
+local diagnostic_was_enabled = nil
+local spellbad_hl = nil
+
 z.setup({
     window = {
         backdrop = 1, -- shade the backdrop of the Zen window. Set to 1 to keep the same as Normal
@@ -55,9 +59,29 @@ z.setup({
         vim.cmd("highlight clear ZenBg")
         local config = require("zen-mode.config")
         config.colors(config.options)
+
+        diagnostic_was_enabled = vim.diagnostic.is_enabled(diagnostic_opts)
+        vim.diagnostic.enable(false, diagnostic_opts)
+
+        spellbad_hl = vim.api
+                          .nvim_get_hl(0, {name = "SpellBad", create = false})
+
+        local new_spellbad_hl = vim.deepcopy(spellbad_hl)
+        new_spellbad_hl.undercurl = nil;
+        new_spellbad_hl.cterm.undercurl = nil;
+        ---@diagnostic disable-next-line: param-type-mismatch
+        vim.api.nvim_set_hl(0, "SpellBad", new_spellbad_hl)
     end,
     -- callback where you can add custom code when the Zen window closes
-    on_close = function() end
+    on_close = function()
+        if diagnostic_was_enabled then
+            vim.diagnostic.enable(true, diagnostic_opts)
+        end
+        if spellbad_hl then
+            -- Restore previous one
+            vim.api.nvim_set_hl(0, "SpellBad", spellbad_hl)
+        end
+    end
 })
 
 -- Allow calling `ZenMode 0.8` to get 80% width window.
