@@ -7,6 +7,11 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # NOTE: This input is locked. That means that if you update `tiktoken`,
+    # you'll need to update its lock as well for changes to be fetched.
+    # Might be better to restructure `tiktoken` to import it with `import`.
+    # See: https://github.com/NixOS/nix/issues/3978
     tiktoken = {
       url = "git+file:.?dir=nix/packages/tiktoken";
       inputs.nixpkgs.follows = "nixpkgs";
