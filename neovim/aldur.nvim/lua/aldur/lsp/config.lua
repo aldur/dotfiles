@@ -238,13 +238,24 @@ lspconfig.yamlls.setup(extend_config({
 local default_ltex_configuration =
     require'lspconfig/configs/ltex'.default_config
 
+local ltex_disabled_rules = {
+    "WHITESPACE_RULE", -- "MORFOLOGIK_RULE_EN_US",
+    "EN_QUOTES"
+}
+
 -- Markdown, LaTeX
 lspconfig.ltex.setup(extend_config({
     settings = {
         ltex = {
-            additionalRules = {motherTongue = "it", enablePickyRules = true},
+            additionalRules = {
+                motherTongue = "it"
+                -- NOTE: This needs to be disabled, otherwise the rules it enables
+                -- can't be disabled.
+                -- enablePickyRules = true
+            },
             disabledRules = {
-                ['en-US'] = {"WHITESPACE_RULE", "MORFOLOGIK_RULE_EN_US"}
+                ['en-US'] = ltex_disabled_rules,
+                it = ltex_disabled_rules
             },
             markdown = {
                 nodes = {
@@ -272,10 +283,9 @@ lspconfig.ltex.setup(extend_config({
 
 -- NOTE: Tried to make `ltex` work with default `vim` dictionary, to no result.
 -- This plugin handles its own dictionary (why?!).
--- The MORFOLOGIK_RULE_EN_US is disabled anyway, so that shouldn't bother us.
 ---@diagnostic disable-next-line: missing-fields
 require("ltex_extra").setup({
-    load_langs = {'en-US', 'it-IT'},
+    load_langs = {'en-US', 'it'},
     path = vim.fn.stdpath("data") .. "/ltex"
 })
 
