@@ -46,8 +46,8 @@ require'nvim-treesitter.configs'.setup {
                 ["ar"] = "@returntype",
                 ["ir"] = "@returntype",
 
-                ["a`"] = "@block.outer",
-                ["i`"] = "@block.inner"
+                ["ay"] = "@block.outer",
+                ["iy"] = "@block.inner"
             }
         },
         move = {
@@ -59,7 +59,7 @@ require'nvim-treesitter.configs'.setup {
                 ["]r"] = "@returntype",
                 ["]c"] = "@class.outer",
                 ["]]"] = "@class.outer",
-                ["]`"] = "@block.outer"
+                ["]y"] = "@block.outer"
             },
             goto_next_end = {
                 ["]M"] = "@function.outer",
@@ -73,7 +73,7 @@ require'nvim-treesitter.configs'.setup {
                 ["[r"] = "@returntype",
                 ["[c"] = "@class.outer",
                 ["[["] = "@class.outer",
-                ["[`"] = "@block.outer"
+                ["[y"] = "@block.outer"
             },
             goto_previous_end = {
                 ["[M"] = "@function.outer",
