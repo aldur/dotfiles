@@ -129,10 +129,10 @@ let
     '';
   };
 
-  usrBinInPath = name: pkgs.stdenv.mkDerivation
+  binToPath = prefix: name: pkgs.stdenv.mkDerivation
     {
       name = "${name}";
-      src = builtins.toPath "/usr/bin/${name}";
+      src = builtins.toPath "${prefix}/${name}";
       phases = [ "installPhase" ];
       installPhase = ''
         runHook preInstall
@@ -142,15 +142,31 @@ let
       '';
     };
 
-  usrBins =
-    (lib.optionals pkgs.stdenv.isDarwin [
-      (usrBinInPath "open")
-      (usrBinInPath "pbpaste")
-      (usrBinInPath "pbcopy")
-      (usrBinInPath "man")
-      (usrBinInPath "cc")
-      (usrBinInPath "strip")
-    ]);
+  additionallyInPath =
+    (lib.optionals pkgs.stdenv.isDarwin
+      (
+        let
+          usrBinToPath = binToPath "/usr/bin";
+        in
+        [
+          (usrBinToPath "open")
+          (usrBinToPath "pbpaste")
+          (usrBinToPath "pbcopy")
+          (usrBinToPath "man")
+          (usrBinToPath "cc")
+          (usrBinToPath "strip")
+        ]
+      )) ++
+    (lib.optionals (pkgs.stdenv.isLinux && builtins.pathExists "/etc/NIXOS") (
+      let
+        currentSystemToPath = binToPath "/run/current-system/sw/bin";
+      in
+      [
+        # NOTE: We need to ensure this is in path
+        (currentSystemToPath "man")
+      ]
+    ))
+  ;
 
   spells = builtins.attrValues (builtins.mapAttrs (name: spellHash: (getSpell name spellHash)) {
     "it.latin1.spl" = "sha256:05sxffxdasmszd9r2xzw5w70jd41qs1kb02b122m9cccgbhkf8dz";
@@ -206,7 +222,7 @@ pkgs.symlinkJoin {
   postBuild = ''
     wrapProgram $out/bin/nvim \
       --set PATH ${lib.makeBinPath (
-          devTools ++ ["$out"] ++ usrBins
+          devTools ++ ["$out"] ++ additionallyInPath
         )} \
       --set SHELL ${shell}/bin/fish \
       --add-flags '-u' \
