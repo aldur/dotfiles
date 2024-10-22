@@ -15,5 +15,11 @@ fi
 trap cleanup SIGINT SIGTERM ERR EXIT
 
 cleanup() {
+	ARG=$?
 	trap - SIGINT SIGTERM ERR EXIT
+	exit $ARG
 }
+
+if [[ -n ${DEBUG+x} ]]; then
+	set -x
+fi
