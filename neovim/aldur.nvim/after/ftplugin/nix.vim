@@ -1,1 +1,1 @@
-setlocal formatoptions+='r'
+setlocal formatoptions+=r
