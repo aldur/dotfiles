@@ -60,6 +60,7 @@ let
     rustfmt
     rustc
     shfmt
+    shellcheck
     solc
     sqlint
     terraform-ls
