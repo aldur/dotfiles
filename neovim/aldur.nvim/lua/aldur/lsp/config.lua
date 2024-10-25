@@ -77,12 +77,18 @@ local efm_languages = {
     markdown = {require 'aldur.efm.mdl', require 'aldur.efm.prettier_markdown'},
     lua = {require 'aldur.efm.luafmt', require 'aldur.efm.luacheck'},
     python = {require 'aldur.efm.black'},
-    dockerfile = {require 'aldur.efm.hadolint'},
-    vim = {require 'aldur.efm.vint'},
-    sh = {require 'aldur.efm.shellcheck', require 'aldur.efm.shfmt'},
+    dockerfile = {require('efmls-configs.linters.hadolint')},
+    vim = {require 'efmls-configs.linters.vint'},
+    sh = {
+        require 'efmls-configs.linters.shellcheck',
+        require 'efmls-configs.formatters.shfmt'
+    },
     bib = {require 'aldur.efm.bibtool'},
     cpp = {require 'aldur.efm.astyle'},
-    json = {require 'aldur.efm.jq'},
+    json = {
+        require 'efmls-configs.formatters.jq',
+        require 'efmls-configs.linters.jq'
+    },
     xml = {require 'aldur.efm.xmltidy'},
     solidity = {
         require 'aldur.efm.prettier_solidity', require 'aldur.efm.solhint'
@@ -90,7 +96,10 @@ local efm_languages = {
     typescript = {require 'aldur.efm.prettier_typescript'},
     javascript = {require 'aldur.efm.prettier_javascript'},
     scss = {require 'aldur.efm.prettier_scss'},
-    env = {require 'aldur.efm.dotenv', require 'aldur.efm.shfmt'}, -- We don't want shellcheck here.
+    env = {
+        -- We don't want shellcheck here.
+        require 'aldur.efm.dotenv', require 'efmls-configs.formatters.shfmt'
+    },
     caddyfile = {require 'aldur.efm.caddyfile'},
     sql = {require 'aldur.efm.sql'},
     beancount = {require 'aldur.efm.bean-format'}
@@ -103,14 +112,15 @@ lspconfig.efm.setup(extend_config({
     filetypes = vim.tbl_keys(efm_languages),
     init_options = {
         documentFormatting = true,
+        documentRangeFormatting = true,
         codeAction = true,
         completion = true,
         hover = true
     },
     settings = {
-        languages = efm_languages
-        -- log_level = 1,
-        -- log_file = '~/efm.log',
+        languages = efm_languages,
+        log_level = 1,
+        log_file = '/tmp/efm.log'
     },
     single_file_support = true
 }))
