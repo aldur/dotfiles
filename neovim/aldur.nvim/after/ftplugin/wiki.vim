@@ -16,4 +16,11 @@ setlocal omnifunc=wiki#complete#omnicomplete
 nmap <silent><buffer> gf <plug>(wiki-link-follow)
 nmap <silent><buffer> ge <plug>(wiki-link-follow)
 
-inoremap <silent><buffer> <c-x><c-n> <C-o>:WikiLinkAdd<CR>
+" This mapping will recursively search for notes, remove the "Notes" folder
+" path and remove the `.md` extension.
+" Note that this replaces *i_CTRL-X_CTRL-N*
+" Note that this also replaces the mapping from `WikiLinkAdd`,
+" because this correctly searches attachments.
+" inoremap <silent><buffer> <c-x><c-n> <C-o>:WikiLinkAdd<CR>
+inoremap <expr> <plug>(fzf-complete-note)      fzf#vim#complete#path($FZF_DEFAULT_COMMAND . " --search-path " . g:wiki_root . " \| sed 's#^" . g:wiki_root . "/##' \| sed 's#.md$##'")
+imap <silent><buffer> <c-x><c-n> <plug>(fzf-complete-note)
