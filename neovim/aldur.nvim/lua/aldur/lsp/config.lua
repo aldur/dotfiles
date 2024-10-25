@@ -249,8 +249,7 @@ local default_ltex_configuration =
     require'lspconfig/configs/ltex'.default_config
 
 local ltex_disabled_rules = {
-    "WHITESPACE_RULE", -- "MORFOLOGIK_RULE_EN_US",
-    "EN_QUOTES"
+    "WHITESPACE_RULE", "MORFOLOGIK_RULE_EN_US", "EN_QUOTES"
 }
 
 -- Markdown, LaTeX
