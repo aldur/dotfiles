@@ -11,4 +11,4 @@ setlocal iskeyword+=-
 setlocal formatoptions+=r
 setlocal formatoptions+=o
 
-command -buffer ReloadCompletions w | lua require'plugins/beancount'.reload_beancount_completions()
+command -buffer ReloadCompletions w | lua require'aldur.beancount'.reload_beancount_completions()
