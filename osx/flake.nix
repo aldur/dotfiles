@@ -101,8 +101,13 @@
           environment.shellAliases = {
             gst = "git status";
             gp = "git push";
-            gls = "ls --color=tty";
+            gss = "git switch $(git branch -r | fzf | sed 's|origin/||' | xargs)";
+            gc = "git commit";
+
+            ls = "ls --color=tty";
+
             ssh = "autossh";
+
             ta = "tmux -CC new -ADs";
             tls = "tmux ls";
 
@@ -129,10 +134,9 @@
               bashInteractive
               bat
               blueutil
-              cmake
               coreutils-prefixed
               curl
-              diffstat
+              difftastic
               exiftool
               fd
               fzf
@@ -144,7 +148,6 @@
               less
               neovim
               nix-doc
-              node2nix
               ollama
               pandoc
               pinentry_mac
