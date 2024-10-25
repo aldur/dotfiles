@@ -1,1 +1,7 @@
-autocmd vimrc BufRead,BufNewFile *.env set filetype=env
+lua <<EOF
+vim.filetype.add({
+    pattern = {
+        [".*%.env"] = 'env'
+    },
+})
+EOF
