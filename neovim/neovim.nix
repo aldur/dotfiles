@@ -27,9 +27,16 @@ let
     (python3.withPackages
       (ps: with ps; [ pynvim beancount ]))
 
+    # FIXME
+    # The following are required to make calls to `neovide`
+    # from `neovim` itself work.
+    coreutils-prefixed
+    gnused
+
     # --- LSPs ---
 
     astyle
+    autotools-language-server
     beancount
     bibtool
     black
