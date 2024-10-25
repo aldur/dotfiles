@@ -17,13 +17,13 @@ require'nvim-treesitter.configs'.setup {
     auto_install = false,
     indent = {enable = true, disable = {"python", "markdown", "nix"}},
     incremental_selection = {
-        enable = false
-        -- keymaps = {
-        --    init_selection = "gnn",
-        --    node_incremental = "gnn",
-        --    node_decremental = "gnN",
-        --    scope_incremental = "grc",
-        -- }
+        enable = true,
+        keymaps = {
+           init_selection = "gnn",
+           node_incremental = "gnn",
+           node_decremental = "gnN",
+           scope_incremental = "grc",
+        }
     },
     textobjects = {
         select = {
