@@ -299,6 +299,7 @@ require("ltex_extra").setup({
 })
 
 lspconfig.ccls.setup(default_lsp_config)
+lspconfig.autotools_ls.setup(default_lsp_config)
 
 lspconfig.nil_ls.setup(extend_config({
     settings = {["nil"] = {formatting = {command = {"nixpkgs-fmt"}}}}

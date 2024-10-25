@@ -1,77 +1,78 @@
-{ pkgs, ... }: with pkgs; [
-  vimPlugins.nvim-treesitter.withAllGrammars
-  vimPlugins.nvim-treesitter-textobjects
-  vimPlugins.nvim-treesitter-context
+{ pkgs, ... }: with pkgs.vimPlugins; [
+  nvim-treesitter.withAllGrammars
+  nvim-treesitter-textobjects
+  nvim-treesitter-context
 
-  vimPlugins.investigate-vim # Smart documentation finder
-  vimPlugins.vim-qf # Fix the quickfix
-  vimPlugins.pear-tree # Auto-pair
-  vimPlugins.vim-lion # gR<symbol> to align text
-  vimPlugins.undotree # UndotreeToggle
-  vimPlugins.vim-gutentags # Tag management
-  vimPlugins.fzf-vim
-  vimPlugins.zen-mode-nvim
-  vimPlugins.dressing-nvim
-  vimPlugins.wiki-vim
+  investigate-vim # Smart documentation finder
+  vim-qf # Fix the quickfix
+  pear-tree # Auto-pair
+  vim-lion # gR<symbol> to align text
+  undotree # UndotreeToggle
+  vim-gutentags # Tag management
+  fzf-vim
+  zen-mode-nvim
+  dressing-nvim
+  wiki-vim
 
   # Tim Pope
-  vimPlugins.vim-repeat # '.' for plugin actions
-  vimPlugins.vim-surround # all about surrounding
-  vimPlugins.vim-scriptease # easier plugin development
-  vimPlugins.vim-unimpaired #complementary mappings
-  vimPlugins.vim-dispatch # async job execution
-  vimPlugins.vim-speeddating # C-a / C-x for dates
+  vim-repeat # '.' for plugin actions
+  vim-surround # all about surrounding
+  vim-scriptease # easier plugin development
+  vim-unimpaired #complementary mappings
+  vim-dispatch # async job execution
+  vim-speeddating # C-a / C-x for dates
 
   # - :%Subvert/facilit{y,ies}/building{,s}/g
   # - fooBar -> `crs` -> foo_bar
-  vimPlugins.vim-abolish
+  vim-abolish
 
   # Git integration
-  vimPlugins.vim-fugitive # git wrapper
-  vimPlugins.vim-rhubarb # GBrowse for GitHub
+  vim-fugitive # git wrapper
+  vim-rhubarb # GBrowse for GitHub
 
   # UI
-  vimPlugins.lightline-vim # statusbar
-  vimPlugins.sonokai # based on Monokai pro
+  lightline-vim # statusbar
+  sonokai # based on Monokai pro
 
   # language specific
-  vimPlugins.kotlin-vim
-  vimPlugins.nginx-vim
-  vimPlugins.rustaceanvim
-  vimPlugins.swift-vim
-  vimPlugins.vim-caddyfile
-  vimPlugins.vim-fish
-  vimPlugins.vim-go
-  vimPlugins.vim-nix
-  vimPlugins.vim-python-pep8-indent
-  vimPlugins.vim-solidity
-  vimPlugins.vim-terraform
-  vimPlugins.vimtex
+  kotlin-vim
+  nginx-vim
+  rustaceanvim
+  swift-vim
+  vim-caddyfile
+  vim-fish
+  vim-go
+  vim-nix
+  vim-python-pep8-indent
+  vim-solidity
+  vim-terraform
+  vimtex
 
   # TODO: Manually load it
-  # vimPlugins.vim-jukit
+  # vim-jukit
 
   # LSP
-  vimPlugins.nvim-lspconfig
-  vimPlugins.lsp_signature-nvim
-  vimPlugins.fidget-nvim
-  vimPlugins.actions-preview-nvim
-  vimPlugins.nui-nvim
+  nvim-lspconfig
+  lsp_signature-nvim
+  fidget-nvim
+  actions-preview-nvim
+  nui-nvim
+  efmls-configs-nvim
 
   # Snippets
-  vimPlugins.ultisnips
-  vimPlugins.vim-snippets
+  ultisnips
+  vim-snippets
 
   # Completion
-  vimPlugins.nvim-cmp
-  vimPlugins.cmp-nvim-lsp
-  vimPlugins.cmp-buffer
-  vimPlugins.cmp-path
-  vimPlugins.cmp-nvim-lua
-  vimPlugins.cmp-cmdline
-  vimPlugins.cmp-nvim-tags
-  vimPlugins.cmp-beancount
-  vimPlugins.cmp-nvim-ultisnips
+  nvim-cmp
+  cmp-nvim-lsp
+  cmp-buffer
+  cmp-path
+  cmp-nvim-lua
+  cmp-cmdline
+  cmp-nvim-tags
+  cmp-beancount
+  cmp-nvim-ultisnips
 ] ++ (with pkgs;
 [
   (vimUtils.buildVimPlugin {
