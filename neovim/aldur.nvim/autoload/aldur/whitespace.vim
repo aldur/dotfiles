@@ -11,4 +11,6 @@ function! aldur#whitespace#settab(tabsize) abort
     let &l:softtabstop = a:tabsize
     let &l:shiftwidth = a:tabsize
     setlocal expandtab
+
+    return " tabstop< softtabstop< shiftwidth< expandtab<"
 endfunction
