@@ -31,3 +31,4 @@ cnoremap <expr> <c-p> wildmenumode() ? "<c-p>" : "<up>"
 
 " Send the current filepath and line number to the clipboard (+ register).
 command! FilepathToClipboard let @+ = expand('%') . ':' . line('.')
+command! Rm call aldur#rm#rm_current()
