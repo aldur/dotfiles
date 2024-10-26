@@ -17,4 +17,8 @@ nnoremap <silent> gx :call aldur#netrw#open_link_or_file()<cr>
 " https://vim.fandom.com/wiki/Open_file_under_cursor#Adjusting_isfname
 set isfname+=32
 
+" Set a mark before opening `Explore` so you can jump back with <C-o>
 nnoremap - m'<cmd>Explore<cr>
+
+" Default to open current file's directory
+cnoreabbrev Lexplore Lexplore %:h
