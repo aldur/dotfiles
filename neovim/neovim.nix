@@ -214,6 +214,9 @@ let
   shell = pkgs.wrapFish {
     localConfig = ''
       if ! status is-interactive
+            # https://esham.io/2023/10/direnv
+            # export DIRENV_LOG_FORMAT=""
+            # direnv hook fish | source
             eval "$(direnv export fish)"
       else
             echo 'Remember, this is a wrapped version of fish specific for `nvim`.'
@@ -231,7 +234,7 @@ pkgs.symlinkJoin {
       --set PATH ${lib.makeBinPath (
           devTools ++ ["$out"] ++ additionallyInPath
         )} \
-      --set SHELL ${shell}/bin/fish \
+      --set DIRENVSHELL ${shell}/bin/fish \
       --add-flags '-u' \
       --add-flags '${./init.vim}' \
       --add-flags '--cmd' \
