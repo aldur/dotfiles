@@ -40,7 +40,15 @@ function! aldur#find_root#cd_to_root() abort
     pwd
 endfunction
 
-function! aldur#find_root#toggle_pwd_is_root() abort
+function! aldur#find_root#lcd_to_root() abort
+    let l:root = aldur#find_root#find_root()
+    execute 'lcd ' l:root
+    pwd
+endfunction
+
+" When toggled, overrides `root` directory with cwd.
+" All tools relying on `root` directory (eg FZF), will instaed use cwd.
+function! aldur#find_root#toggle_override_root_with_pwd() abort
     if !exists('w:pwd_is_root')
         let w:pwd_is_root = v:false
     endif

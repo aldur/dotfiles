@@ -28,11 +28,21 @@ scriptencoding utf-8
 
 
 function! aldur#lightline#read_only()
-    return &readonly ? '' : ''
+    return (&readonly || !&modifiable) ? '' : ''
+endfunction
+
+function! aldur#lightline#pwd()
+    let suffix = substitute(getcwd(), $HOME, "", "")
+    return substitute(suffix, "^/", "", "")
 endfunction
 
 function! aldur#lightline#pwd_is_root()
-    return aldur#find_root#pwd_is_root() ? '🌳' : ''
+    return aldur#find_root#pwd_is_root() ? '🫚' : ''
+endfunction
+
+function! aldur#lightline#direnv_shell_enabled()
+    let is_enabled = v:lua.require'aldur.direnv'.shell_is_enabled()
+    return is_enabled ? '🏗️' : ''
 endfunction
 
 function! aldur#lightline#git_branch()
@@ -59,6 +69,13 @@ function! aldur#lightline#filename()
     let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
     let modified = &modified ? ' +' : ''
     return filename . modified
+endfunction
+
+function! aldur#lightline#tabname_or_filename(cnt)
+    if has_key(g:lightline.tabnames, a:cnt)
+        return g:lightline.tabnames[a:cnt]
+    endif
+    return lightline#tab#filename(a:cnt)
 endfunction
 
 function! aldur#lightline#filetype()

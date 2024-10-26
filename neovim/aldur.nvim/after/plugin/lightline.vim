@@ -4,6 +4,23 @@ end
 
 let g:lightline = {}
 
+let g:lightline.tabnames = {}
+
+lua <<EOF
+vim.api.nvim_create_user_command('SetTabName', function(opts)
+    local name = opts.fargs[1]
+    local tab_index = vim.fn['tabpagenr']()
+
+    -- Setting dictionary fields in Lua does not write them back to nvim.
+    -- See :h lua-vim-variables
+    local lightline = vim.g.lightline
+    lightline.tabnames[tostring(tab_index)] = name
+    vim.g.lightline = lightline
+
+    vim.fn['lightline#highlight']()
+end, {desc="Assign a name to a tab.", force=true, nargs=1})
+EOF
+
 " === Setup the lightline colorscheme ===
 if g:colors_name == 'sonokai'
     let g:lightline.colorscheme = 'sonokai'
@@ -21,6 +38,8 @@ let g:lightline.component_function = {
             \ 'gitbranch': 'aldur#lightline#git_branch',
             \ 'readonly': 'aldur#lightline#read_only',
             \ 'pwd_is_root': 'aldur#lightline#pwd_is_root',
+            \ 'pwd': 'aldur#lightline#pwd',
+            \ 'direnv_shell_enabled': 'aldur#lightline#direnv_shell_enabled',
             \ 'filename': 'aldur#lightline#filename',
             \ 'filetype': 'aldur#lightline#filetype',
             \ 'spell': 'aldur#lightline#spell',
@@ -36,7 +55,6 @@ let g:lightline.component = {
 let g:lightline.component_visible_condition = {
     \ 'fileencoding': '&fenc!=#"utf-8"',
     \ 'fileformat': '&ff!=#"unix"',
-    \ 'treesitter': 'aldur#lightline#treesitter()!=""'
     \ }
 
 let g:lightline.component_type = {
@@ -48,14 +66,12 @@ let g:lightline.component_type = {
 
 " Setup the active status bar
 let g:lightline.active = {
-            \ 'left' : [ [ 'mode', 'paste', 'spell'                        ],
-            \            [ 'readonly', 'pwd_is_root', 'filename'           ],
-            \            [ 'gitbranch'                                     ] ],
-            \ 'right': [ [ 'syntax_error', 'syntax_warning', 'syntax_info' ],
-            \            [ 'lineinfo'                                      ],
-            \            [ 'fileformat', 'fileencoding', 'filetype'        ],
-            \            [ 'treesitter'                                    ],
-            \            [ 'virtualenv'                                    ] ] }
+            \ 'left' : [ [ 'mode', 'paste', 'spell'                                      ],
+            \            [ 'readonly', 'pwd_is_root', 'direnv_shell_enabled','filename'  ],
+            \            [ 'gitbranch', 'pwd'                                            ] ],
+            \ 'right': [ [ 'syntax_error', 'syntax_warning', 'syntax_info'               ],
+            \            [ 'lineinfo'                                                    ],
+            \            [ 'fileformat', 'fileencoding', 'filetype'                      ] ] }
 
 " Setup the inactive status bar
 let g:lightline.inactive = {
@@ -75,8 +91,12 @@ let g:lightline.tabline = {
         \ 'right': [ ] }
 
 let g:lightline.tab = {
-    \ 'active': [ 'filename', 'modified' ],
-    \ 'inactive': [ 'tabnum', 'filename', 'modified' ] }
+    \ 'active': [ 'tabname_or_filename'],
+    \ 'inactive': [ 'tabnum', 'tabname_or_filename'] }
+
+let g:lightline.tab_component_function = {
+		      \ 'tabname_or_filename': 'aldur#lightline#tabname_or_filename'
+              \    }
 
 let g:lightline.mode_map = {
             \ 'n' : 'NRM',
