@@ -21,4 +21,4 @@ set isfname+=32
 nnoremap - m'<cmd>Explore<cr>
 
 " Default to open current file's directory
-cnoreabbrev Lexplore Lexplore %:h
+cnoreabbrev <expr> Lexplore  (getcmdtype() ==# ':' && getcmdline() ==# 'Lexplore')  ? 'Lexplore %:h'  : 'Lexplore'
