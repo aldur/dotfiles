@@ -43,7 +43,7 @@ cat <<EOF >"$NEOVIDE_SERVER"
 
 NVIM_SOCKET=$NVIM_SOCKET
 if [ ! -S \$NVIM_SOCKET ]; then
-    "$NEOVIDE_EXECUTABLE" --frame=transparent --title-hidden --neovim-bin "$NVIM_BINARY" -- --listen \$NVIM_SOCKET --cmd "cd ~" "\$@"
+    "$NEOVIDE_EXECUTABLE" --frame=transparent --no-tabs --title-hidden --neovim-bin "$NVIM_BINARY" -- --listen \$NVIM_SOCKET --cmd "cd ~" "\$@"
 else
     "$NVIM_BINARY" --server \$NVIM_SOCKET --remote "\$(grealpath -m "\$@" | tr '\n' ' ' | sed 's/ $/\n/')"
     open -a Neovide  # Ensures front
