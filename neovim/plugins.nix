@@ -98,8 +98,8 @@
     src = fetchFromGitHub {
       owner = "aldur";
       repo = name;
-      rev = "7ebb4f1";
-      hash = "sha256-jYUJO5vdoWHrxeZN30H5+zvWTePgmEnHig52fnVXrg8=";
+      rev = "fa8e149c6ead647244c9ee86eb17dfcf48284ffb";
+      hash = "sha256-ZHFyXkhTv236NEFbTsCv+6/L9xED34B6YC4AKwq9Kf0=";
     };
   })
   (vimUtils.buildVimPlugin rec {
