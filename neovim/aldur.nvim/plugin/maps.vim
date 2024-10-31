@@ -4,7 +4,7 @@ nnoremap <silent> <leader>cl :call aldur#find_root#lcd_to_root()<CR>
 nnoremap <silent> <leader>cr :call aldur#find_root#toggle_override_root_with_pwd()<CR>
 nnoremap <silent> <leader>cc :lua require'aldur.direnv'.toggle_shell()<CR>
 
-cnoreabbrev <expr> lcd  (getcmdtype() ==# ':' && getcmdline() ==# 'lcd')  ? 'lcd %:h'  : 'lcd'
+call aldur#abbr#cnoreabbrev("lcd", "lcd %:h")
 
 " Remap VIM 0 to first non-blank character
 map 0 ^
