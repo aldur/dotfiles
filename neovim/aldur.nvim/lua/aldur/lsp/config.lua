@@ -1,25 +1,29 @@
+-- vim: foldmethod=marker foldmarker=[[[,]]]
 -- Original credits to
 -- https://github.com/tomaskallup/dotfiles/blob/master/nvim/lua/plugins/nvim-lspconfig.lua
 local lspconfig = require 'lspconfig'
 local util = require('lspconfig.util')
-local python = require('aldur.python')
 
 local M = {}
 
-local default_lsp_config = lspconfig.util.default_config
+local default_cfg = lspconfig.util.default_config
 
-default_lsp_config.capabilities = vim.tbl_deep_extend('force',
-                                                      default_lsp_config.capabilities,
-                                                      require('cmp_nvim_lsp').default_capabilities())
+default_cfg.capabilities = vim.tbl_deep_extend('force',
+                                               default_cfg.capabilities,
+                                               require('cmp_nvim_lsp').default_capabilities())
 
 -- In case you need to setup additional things on attach, here you have a
 -- default function. Takes `client` and `bufnr`.
 local default_on_attach = function(_, _) end
-default_lsp_config.on_attach = default_on_attach
+default_cfg.on_attach = default_on_attach
 
 local function extend_config(tbl)
-    return vim.tbl_deep_extend('force', default_lsp_config, tbl)
+    return vim.tbl_deep_extend('force', default_cfg, tbl)
 end
+
+-- Python [[[1
+
+local python = require('aldur.python')
 
 -- Python pyright
 lspconfig.pyright.setup(extend_config({
@@ -69,8 +73,9 @@ lspconfig.pylsp.setup(extend_config({
     end
 }))
 
--- Vim lsp
-lspconfig.vimls.setup(extend_config({flags = {debounce_text_changes = 500}}))
+-- ]]]
+
+-- EFM [[[1
 
 -- Formatting/linting via efm
 local efm_languages = {
@@ -124,6 +129,10 @@ lspconfig.efm.setup(extend_config({
     },
     single_file_support = true
 }))
+
+-- ]]]
+
+-- lua [[[1
 
 lspconfig.lua_ls.setup(extend_config({
     on_attach = function(client, bufnr)
@@ -217,33 +226,9 @@ lspconfig.lua_ls.setup(extend_config({
     }
 }))
 
-lspconfig.gopls.setup(default_lsp_config)
+-- ]]]
 
--- JavaScript/TypeScript
--- This has an executable called `typescript-language-server` that wraps `tsserver`.
--- For JS, you'll need to crate a `jsconfig.json` file in the root directory:
--- https://github.com/tsconfig/bases/blob/main/bases/node16.json
-lspconfig.ts_ls.setup(extend_config({
-    on_attach = function(client, bufnr)
-        client.server_capabilities.documentFormattingProvider = false
-        default_on_attach(client, bufnr)
-    end
-}))
-
--- Docker
-lspconfig.dockerls.setup(default_lsp_config)
-
--- YAML
-lspconfig.yamlls.setup(extend_config({
-    on_attach = function(client, bufnr)
-        client.server_capabilities.documentFormattingProvider = true
-        default_on_attach(client, bufnr)
-    end,
-    settings = {
-        redhat = {telemetry = {enabled = false}},
-        yaml = {keyOrdering = false}
-    }
-}))
+-- ltex [[[1
 
 local default_ltex_configuration =
     require'lspconfig/configs/ltex'.default_config
@@ -287,7 +272,15 @@ lspconfig.ltex.setup(extend_config({
 
     filetypes = vim.tbl_deep_extend('force',
                                     default_ltex_configuration.filetypes,
-                                    {'markdown.wiki'})
+                                    {'markdown.wiki'}),
+
+    ---@diagnostic disable-next-line: unused-local
+    on_attach = function(_client, _bufnr)
+        require("ltex_extra").push_setting("disabledRules", "en-US",
+                                           ltex_disabled_rules)
+        require("ltex_extra").push_setting("disabledRules", "it",
+                                           ltex_disabled_rules)
+    end
 }))
 
 -- NOTE: Tried to make `ltex` work with default `vim` dictionary, to no result.
@@ -298,12 +291,37 @@ require("ltex_extra").setup({
     path = vim.fn.stdpath("data") .. "/ltex"
 })
 
-lspconfig.ccls.setup(default_lsp_config)
-lspconfig.autotools_ls.setup(default_lsp_config)
+-- ]]]
+
+-- nix [[[1
+
+lspconfig.autotools_ls.setup(default_cfg)
 
 lspconfig.nil_ls.setup(extend_config({
-    settings = {["nil"] = {formatting = {command = {"nixpkgs-fmt"}}}}
+    settings = {["nil"] = {formatting = {command = {"nixfmt"}}}}
 }))
+
+-- nixd
+lspconfig.nixd.setup({
+    cmd = {"nixd"},
+    settings = {
+        nixd = {
+            nixpkgs = {expr = "import <nixpkgs> { }"},
+            -- formatting = {command = {"nixfmt"}},
+            options = {
+                nixos = {
+                    -- TODO: Make this generic!
+                    -- https://github.com/nix-community/nixd/issues/608
+                    expr = '(builtins.getFlake "/Users/aldur/.dotfiles/osx/").darwinConfigurations.Maui.options'
+                }
+            }
+        }
+    }
+})
+
+-- ]]]
+
+-- markdown [[[1
 
 -- https://github.com/artempyanykh/marksman
 lspconfig.marksman.setup(extend_config({
@@ -316,6 +334,20 @@ lspconfig.marksman.setup(extend_config({
     cmd = {"marksman", "server"}
 }))
 
+-- ]]]
+
+-- LaTeX [[[1
+
+-- texlab
+lspconfig.texlab.setup(default_cfg)
+
+-- Vim lsp
+lspconfig.vimls.setup(extend_config({flags = {debounce_text_changes = 500}}))
+
+-- ]]]
+
+-- JavaScript/TypeScript [[[1
+
 lspconfig.eslint.setup(extend_config({
     on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = true
@@ -323,9 +355,40 @@ lspconfig.eslint.setup(extend_config({
     end
 }))
 
+-- JavaScript/TypeScript
+-- This has an executable called `typescript-language-server` that wraps `tsserver`.
+-- For JS, you'll need to crate a `jsconfig.json` file in the root directory:
+-- https://github.com/tsconfig/bases/blob/main/bases/node16.json
+lspconfig.ts_ls.setup(extend_config({
+    on_attach = function(client, bufnr)
+        client.server_capabilities.documentFormattingProvider = false
+        default_on_attach(client, bufnr)
+    end
+}))
+
+-- ]]]
+
+-- Terraform [[[1
+
 -- Terraform
-lspconfig.terraformls.setup(default_lsp_config)
-lspconfig.tflint.setup(default_lsp_config)
+lspconfig.terraformls.setup(default_cfg)
+lspconfig.tflint.setup(default_cfg)
+
+-- ]]]
+
+-- C/C++ [[[1
+
+lspconfig.ccls.setup(default_cfg)
+
+-- ]]]
+
+-- HTML / CSS [[[1
+
+-- Enable (broadcasting) snippet capability for completion
+local html_config = extend_config({})
+html_config.capabilities.textDocument.completion.completionItem.snippetSupport =
+    true
+lspconfig.html.setup(html_config)
 
 -- cssls
 -- Enable (broadcasting) snippet capability for completion
@@ -334,22 +397,44 @@ cssls_config.capabilities.textDocument.completion.completionItem.snippetSupport 
     true
 lspconfig.cssls.setup(cssls_config)
 
--- html
--- Enable (broadcasting) snippet capability for completion
-local html_config = extend_config({})
-html_config.capabilities.textDocument.completion.completionItem.snippetSupport =
-    true
-lspconfig.html.setup(html_config)
+-- ]]]
 
--- clarinet
--- FIXME
+-- Go [[[1
+
+lspconfig.gopls.setup(default_cfg)
+
+-- ]]]
+
+-- Docker [[[1
+
+lspconfig.dockerls.setup(default_cfg)
+
+-- ]]]
+
+-- YAML [[[1
+
+lspconfig.yamlls.setup(extend_config({
+    on_attach = function(client, bufnr)
+        client.server_capabilities.documentFormattingProvider = true
+        default_on_attach(client, bufnr)
+    end,
+    settings = {
+        redhat = {telemetry = {enabled = false}},
+        yaml = {keyOrdering = false}
+    }
+}))
+
+-- ]]]
+
+-- Clarity [[[
+-- IXME
 -- brew install clarinet
-if vim.fn.executable('clarinet') == 1 then
-    require('clarinet') -- Adds clarinet LSP
-    lspconfig.clarinet.setup(default_lsp_config)
-end
+require('clarinet') -- Adds clarinet LSP
+lspconfig.clarinet.setup(extend_config({
+    cmd = {'/run/current-system/sw/bin/bash', '/tmp/wrapper.sh'},
+    init_options = {completion = true}
+}))
 
--- texlab
-lspconfig.texlab.setup(default_lsp_config)
+-- ]]]
 
 return M

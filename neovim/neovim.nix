@@ -9,6 +9,7 @@ let
     bat
     coreutils
     curl
+    diffutils
     direnv
     fd
     fzf
@@ -57,11 +58,13 @@ let
     marksman
     mdl
     nix
+    nixd
     nil
-    nixpkgs-fmt
+    nixfmt-rfc-style
     nodejs
     pgformatter
     pyright
+    poetry
     ripgrep
     rust-analyzer
     rustfmt
@@ -213,14 +216,14 @@ let
 
   shell = pkgs.wrapFish {
     localConfig = ''
+      # https://esham.io/2023/10/direnv
+      export DIRENV_LOG_FORMAT=""
       if ! status is-interactive
-            # https://esham.io/2023/10/direnv
-            # export DIRENV_LOG_FORMAT=""
             # direnv hook fish | source
-            eval "$(direnv export fish)"
+            # $(direnv export fish)"
+            direnv export fish | source
       else
             echo 'Remember, this is a wrapped version of fish specific for `nvim`.'
-            echo 'Evaluating direnv (if any)...'
       end
     '';
   };
