@@ -6,7 +6,6 @@ with pkgs.vimPlugins;
   nvim-treesitter-context
 
   investigate-vim # Smart documentation finder
-  vim-qf # Fix the quickfix
   pear-tree # Auto-pair
   vim-lion # gR<symbol> to align text
   undotree # UndotreeToggle
@@ -15,6 +14,17 @@ with pkgs.vimPlugins;
   zen-mode-nvim
   dressing-nvim
   wiki-vim
+
+  # Fix the quickfix
+  (vim-qf.overrideAttrs {
+    patches = [
+      # TODO: Remove me if 131 gets merged.
+      (pkgs.fetchurl {
+        url = "https://github.com/romainl/vim-qf/pull/131.patch";
+        hash = "sha256-fTdPK+PnuYxef1ha1e1h9uwSCO6NRqRZMkHkXKRtYKc=";
+      })
+    ];
+  })
 
   # Tim Pope
   vim-repeat # '.' for plugin actions
