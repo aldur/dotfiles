@@ -11,7 +11,14 @@ local function extend_config(tbl)
 end
 
 default_cfg = extend_config({
-    capabilities = require('cmp_nvim_lsp').default_capabilities()
+    capabilities = require('cmp_nvim_lsp').default_capabilities(),
+    on_init = function(client, _)
+        -- Disabling full semantic highlight as I am not using it for the time
+        -- being.
+        -- https://gist.github.com/swarn/fb37d9eefe1bc616c2a7e476c0bc0316?
+        --   permalink_comment_id=5210704#gistcomment-5210704
+        client.server_capabilities.semanticTokensProvider = nil
+    end
 })
 
 -- In case you need to setup additional things on attach, here is a default
