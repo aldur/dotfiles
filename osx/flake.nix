@@ -77,7 +77,7 @@
             LC_CTYPE = "en_US.UTF-8";
 
             # https://esham.io/2023/10/direnv
-            DIRENV_LOG_FORMAT = "$'\033[2mdirenv: %s\033[0m'";
+            DIRENV_LOG_FORMAT = ''$(printf "\033[2mdirenv: %%s\033[0m")'';
 
             # Override macOS ssh-agent with Secretive (installed from `brew`)
             SSH_AUTH_SOCK = "$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh";
