@@ -18,10 +18,17 @@
     };
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs, tiktoken }:
+  outputs =
+    inputs@{
+      self,
+      nix-darwin,
+      nixpkgs,
+      tiktoken,
+    }:
     let
       user = "aldur";
-      configuration = { pkgs, ... }:
+      configuration =
+        { pkgs, ... }:
         {
           # Auto upgrade nix package and the daemon service.
           services.nix-daemon.enable = true;
@@ -129,7 +136,8 @@
           programs.direnv.enable = true;
           programs.direnv.nix-direnv.enable = true;
 
-          environment.systemPackages = with pkgs;
+          environment.systemPackages =
+            with pkgs;
             [
               age
               age-plugin-yubikey
@@ -166,16 +174,17 @@
               universal-ctags
               watch
               yubikey-agent
-            ] ++ [
+            ]
+            ++ [
               (neovide.override {
                 # Only used for checks
                 neovim = neovim-vanilla;
               })
-            ] ++ [
-              (pkgs.callPackage
-                ../nix/packages/age-plugin-se/age-plugin-se.nix
-                { }).age-plugin-se
-            ] ++ [
+            ]
+            ++ [
+              (pkgs.callPackage ../nix/packages/age-plugin-se/age-plugin-se.nix { }).age-plugin-se
+            ]
+            ++ [
               count-tokens
             ];
 
