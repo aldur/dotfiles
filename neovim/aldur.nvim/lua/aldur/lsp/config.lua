@@ -257,6 +257,13 @@ lspconfig.lua_ls.setup(extend_config({
 local default_ltex_configuration =
     require'lspconfig/configs/ltex'.default_config
 
+local ltex_filetypes = default_ltex_configuration.filetypes
+
+for idx, ft in ipairs(ltex_filetypes) do
+    if ft == 'gitcommit' then table.remove(ltex_filetypes, idx) end
+end
+ltex_filetypes = vim.tbl_deep_extend('force', ltex_filetypes, {'markdown.wiki'})
+
 local ltex_disabled_rules = {
     "WHITESPACE_RULE", "MORFOLOGIK_RULE_EN_US", "EN_QUOTES"
 }
@@ -286,6 +293,8 @@ lspconfig.ltex.setup(extend_config({
         }
     },
 
+    filetypes = ltex_filetypes,
+
     -- https://github.com/neovim/nvim-lspconfig/blob/
     -- 7d5a6dc46dd2ebaeb74b573922f289ae33089fe7/lua/lspconfig/
     -- server_configurations/ltex.lua#L23
@@ -293,10 +302,6 @@ lspconfig.ltex.setup(extend_config({
         if filetype == 'markdown.wiki' then return 'markdown' end
         return default_ltex_configuration.get_language_id(_, filetype)
     end,
-
-    filetypes = vim.tbl_deep_extend('force',
-                                    default_ltex_configuration.filetypes,
-                                    {'markdown.wiki'}),
 
     ---@diagnostic disable-next-line: unused-local
     on_attach = function(_client, _bufnr)
