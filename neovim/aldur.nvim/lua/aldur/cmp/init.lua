@@ -191,7 +191,8 @@ cmp.setup.cmdline(':', {
             -- Here we are manually disabling it for the commands we typically
             -- use which require a path.
             option = {ignore_cmds = {'Man', '!', 'edit'}},
-            max_item_count = 10
+            max_item_count = 10,
+            matching = {disallow_symbol_nonprefix_matching = false}
         }
     }),
     mapping = cmp.mapping.preset.cmdline()
