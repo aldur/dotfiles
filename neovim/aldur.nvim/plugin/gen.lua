@@ -12,7 +12,9 @@ vim.api.nvim_create_user_command('GenSelectModel',
                                  function() require("gen").select_model() end,
                                  {})
 
-vim.keymap.set({'n', 'v'}, '<leader>g', '<cmd>Gen <CR>', {noremap = true})
+-- NOTE: You want `:`, not `<cmd>`, because you want to work on ranges too and
+-- `<cmd>` does not change mode.
+vim.keymap.set({'n', 'x'}, '<leader>g', ':Gen<CR>', {noremap = true})
 
 require('gen').prompts['Links_to_References'] = {
     prompt = [[
