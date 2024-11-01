@@ -3,7 +3,7 @@ local z = require("zen-mode")
 local function width_from_columns()
     if vim.o.columns > 200 then return 100 end
 
-    return vim.o.columns * 0.6
+    return math.max(vim.o.columns * 0.6, 80)
 end
 
 local diagnostic_opts = {nsid = nil, bufnr = 0}
