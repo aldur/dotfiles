@@ -118,9 +118,8 @@ local visible_buffers_source = {
 
 local default_sources = {
     -- Sorted by priority.
-    {name = 'nvim_lsp'}, {name = 'nvim_lua'},
-    {name = 'ultisnips', keyword_length = 2}, visible_buffers_source,
-    {name = 'path'}
+    {name = 'nvim_lsp'}, {name = 'ultisnips', keyword_length = 2},
+    visible_buffers_source, {name = 'path'}
 }
 
 local md_sources = {
@@ -139,14 +138,16 @@ end
 
 cmp.setup.filetype({'markdown.wiki', 'markdown'}, {sources = md_sources})
 
-local beancount_sources = {
-    {
-        name = 'beancount',
-        -- option = {account = '~/Documents/Beans/index.beancount'},
-        max_item_count = 10
-    }
-}
-vim.list_extend(beancount_sources, default_sources)
+-- NOTE: I am doing this as good practice, but the plugin is well-behaved and
+-- disables itself on other buffers.
+local vim_lua_sources = {{name = 'nvim_lua'}}
+vim.list_extend(vim_lua_sources, default_sources)
+cmp.setup.filetype({'lua', 'vim'}, {sources = vim_lua_sources})
+
+local beancount_sources = {{name = 'beancount', max_item_count = 10}}
+-- NOTE: Because `beancount` files are usually pretty big,
+-- we are purposedly leaving out _other_ sources and just using its own.
+-- vim.list_extend(beancount_sources, default_sources)
 cmp.setup.filetype({'beancount'}, {sources = beancount_sources})
 
 cmp.setup({
