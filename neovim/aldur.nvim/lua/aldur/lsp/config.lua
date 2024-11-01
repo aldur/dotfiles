@@ -1,25 +1,49 @@
 -- vim: foldmethod=marker foldmarker=[[[,]]]
 -- Original credits to
 -- https://github.com/tomaskallup/dotfiles/blob/master/nvim/lua/plugins/nvim-lspconfig.lua
-local lspconfig = require 'lspconfig'
-local util = require('lspconfig.util')
-
 local M = {}
 
-local default_cfg = lspconfig.util.default_config
-
-default_cfg.capabilities = vim.tbl_deep_extend('force',
-                                               default_cfg.capabilities,
-                                               require('cmp_nvim_lsp').default_capabilities())
-
--- In case you need to setup additional things on attach, here you have a
--- default function. Takes `client` and `bufnr`.
-local default_on_attach = function(_, _) end
-default_cfg.on_attach = default_on_attach
+local util = require('lspconfig.util')
+local default_cfg = util.default_config
 
 local function extend_config(tbl)
     return vim.tbl_deep_extend('force', default_cfg, tbl)
 end
+
+default_cfg = extend_config({
+    capabilities = require('cmp_nvim_lsp').default_capabilities()
+})
+
+-- In case you need to setup additional things on attach, here is a default
+-- function. It takes `client` and `bufnr`.
+default_cfg.on_attach = function(_, _) end
+
+local TRACE = vim.log.levels.TRACE
+local INFO = vim.log.levels.INFO
+local function log(msg, level)
+    if level == nil then level = INFO end
+    if level > vim.log.levels.TRACE or vim.lsp.log.get_level() <= level then
+        vim.notify("LSP: " .. msg, level)
+    end
+end
+
+util.on_setup = util.add_hook_before(util.on_setup, function(config, _)
+    local function direnv_on_new_config(new_config, new_root_dir)
+        log("Switching to new root directory '" .. new_root_dir .. "'.", TRACE)
+        -- NOTE: `cmd` here has been "sanitized" to its full path.
+        local cmd = vim.list_extend({"direnv", "exec", new_root_dir},
+                                    new_config.cmd)
+        log("Switching to new cmd: '" .. vim.inspect(cmd), TRACE)
+        new_config['cmd'] = cmd
+        new_config['cmd_cwd'] = new_root_dir
+        -- TODO: We could be using `cmd_env` instead.
+    end
+
+    config.on_new_config = util.add_hook_after(config.on_new_config,
+                                               direnv_on_new_config)
+end)
+
+local lspconfig = require('lspconfig')
 
 -- Python [[[1
 
@@ -66,7 +90,7 @@ lspconfig.pylsp.setup(extend_config({
         client.server_capabilities.signatureHelpProvider = false
         client.server_capabilities.codeLensProvider = false
         client.server_capabilities.codeActionProvider = true
-        default_on_attach(client, bufnr)
+        default_cfg.on_attach(client, bufnr)
     end,
     on_new_config = function(new_config, new_root_dir)
         new_config['cmd_env'] = pylsp_cmd_env(new_root_dir)
@@ -76,6 +100,8 @@ lspconfig.pylsp.setup(extend_config({
 -- ]]]
 
 -- EFM [[[1
+local vint = require 'efmls-configs.linters.vint'
+vint.lintCommand = vint.lintCommand .. " --enable-neovim"
 
 -- Formatting/linting via efm
 local efm_languages = {
@@ -83,7 +109,7 @@ local efm_languages = {
     lua = {require 'aldur.efm.luafmt', require 'aldur.efm.luacheck'},
     python = {require 'aldur.efm.black'},
     dockerfile = {require('efmls-configs.linters.hadolint')},
-    vim = {require 'efmls-configs.linters.vint'},
+    vim = {vint},
     sh = {
         require 'efmls-configs.linters.shellcheck',
         require 'efmls-configs.formatters.shfmt'
@@ -138,14 +164,13 @@ lspconfig.lua_ls.setup(extend_config({
     on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = false
         client.server_capabilities.documentRangeFormattingProvider = false
-        default_on_attach(client, bufnr)
+        default_cfg.on_attach(client, bufnr)
     end,
     on_init = function(client)
         local path = client.workspace_folders[1].name
 
         if path:find('.vim', 1, true) or path:find('.dotfiles/neovim', 1, true) then
-            _G.info_message(
-                "Overriding lua_lsp configuration for vim lua files.")
+            log("Overriding lua_lsp configuration for vim lua files.")
 
             -- https://github.com/mjlbach/defaults.nvim/blob/master/init.lua#L245
             -- Make runtime files discoverable to the server
@@ -187,8 +212,7 @@ lspconfig.lua_ls.setup(extend_config({
         end
 
         if new_root_dir:find('.dotfiles/vim', 1, true) then
-            _G.info_message(
-                "Overriding lua_lsp configuration for vim lua files.")
+            log("Overriding lua_lsp configuration for vim lua files.")
 
             -- https://github.com/mjlbach/defaults.nvim/blob/master/init.lua#L245
             -- Make runtime files discoverable to the server
@@ -329,7 +353,7 @@ lspconfig.marksman.setup(extend_config({
     on_attach = function(client, bufnr)
         client.server_capabilities.codeActionProvider = false
         client.server_capabilities.hoverProvider = false
-        default_on_attach(client, bufnr)
+        default_cfg.on_attach(client, bufnr)
     end,
     cmd = {"marksman", "server"}
 }))
@@ -351,7 +375,7 @@ lspconfig.vimls.setup(extend_config({flags = {debounce_text_changes = 500}}))
 lspconfig.eslint.setup(extend_config({
     on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = true
-        default_on_attach(client, bufnr)
+        default_cfg.on_attach(client, bufnr)
     end
 }))
 
@@ -362,7 +386,7 @@ lspconfig.eslint.setup(extend_config({
 lspconfig.ts_ls.setup(extend_config({
     on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = false
-        default_on_attach(client, bufnr)
+        default_cfg.on_attach(client, bufnr)
     end
 }))
 
@@ -416,7 +440,7 @@ lspconfig.dockerls.setup(default_cfg)
 lspconfig.yamlls.setup(extend_config({
     on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = true
-        default_on_attach(client, bufnr)
+        default_cfg.on_attach(client, bufnr)
     end,
     settings = {
         redhat = {telemetry = {enabled = false}},
@@ -427,7 +451,7 @@ lspconfig.yamlls.setup(extend_config({
 -- ]]]
 
 -- Clarity [[[
--- IXME
+-- FIXME
 -- brew install clarinet
 require('clarinet') -- Adds clarinet LSP
 lspconfig.clarinet.setup(extend_config({
@@ -436,5 +460,27 @@ lspconfig.clarinet.setup(extend_config({
 }))
 
 -- ]]]
+
+-- Rust [[[[
+
+vim.g.rustaceanvim = {
+    server = {
+        cmd = function()
+            local rustacean_config = require('rustaceanvim.config.internal')
+            local logfile = rustacean_config.server.logfile
+            local bufnr = vim.api.nvim_get_current_buf()
+            local bufname = vim.api.nvim_buf_get_name(bufnr)
+            local root_dir = rustacean_config.server.root_dir(bufname)
+            vim.notify("Overriding rustacean_config with direnv " .. root_dir,
+                       vim.log.levels.INFO)
+            return {
+                "direnv", "exec", root_dir, 'rust-analyzer', '--log-file',
+                logfile
+            }
+        end
+    }
+}
+
+-- ]]]]
 
 return M
