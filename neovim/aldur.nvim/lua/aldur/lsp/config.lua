@@ -167,47 +167,49 @@ lspconfig.efm.setup(extend_config({
 
 -- lua [[[1
 
+local lua_ls_on_init = function(client)
+    local path = client.workspace_folders[1].name
+
+    if path:find('.vim', 1, true) or path:find('.dotfiles/neovim', 1, true) then
+        log("Overriding lua_lsp configuration for vim lua files.")
+
+        -- https://github.com/mjlbach/defaults.nvim/blob/master/init.lua#L245
+        -- Make runtime files discoverable to the server
+        local runtime_path = vim.split(package.path, ';')
+        table.insert(runtime_path, 'lua/?.lua')
+        table.insert(runtime_path, 'lua/?/init.lua')
+
+        -- Tell the language server which version of Lua you're using
+        -- (most likely LuaJIT in the case of Neovim)
+        client.config.settings.Lua.runtime.version = "LuaJIT"
+        -- Setup your lua path
+        client.config.settings.Lua.runtime.path = runtime_path
+        -- Get the language server to recognize the `vim` global
+        client.config.settings.Lua.diagnostics.globals = {'vim'}
+
+        -- Make the server aware of Neovim runtime files
+        local f = vim.api.nvim_get_runtime_file
+        client.config.settings.Lua.workspace.library = f('', true)
+
+        -- WARNING:
+        -- Error here, or in all `on_*` functions, will not be printed!
+        -- Things will be very difficult to debug.
+        -- If you need to debug, use canaries, e.g.:
+        -- vim.print(client.config)
+    end
+
+    client.notify("workspace/didChangeConfiguration",
+                  {settings = client.config.settings})
+    return true
+end
+
 lspconfig.lua_ls.setup(extend_config({
     on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = false
         client.server_capabilities.documentRangeFormattingProvider = false
         default_cfg.on_attach(client, bufnr)
     end,
-    on_init = function(client)
-        local path = client.workspace_folders[1].name
-
-        if path:find('.vim', 1, true) or path:find('.dotfiles/neovim', 1, true) then
-            log("Overriding lua_lsp configuration for vim lua files.")
-
-            -- https://github.com/mjlbach/defaults.nvim/blob/master/init.lua#L245
-            -- Make runtime files discoverable to the server
-            local runtime_path = vim.split(package.path, ';')
-            table.insert(runtime_path, 'lua/?.lua')
-            table.insert(runtime_path, 'lua/?/init.lua')
-
-            -- Tell the language server which version of Lua you're using
-            -- (most likely LuaJIT in the case of Neovim)
-            client.config.settings.Lua.runtime.version = "LuaJIT"
-            -- Setup your lua path
-            client.config.settings.Lua.runtime.path = runtime_path
-            -- Get the language server to recognize the `vim` global
-            client.config.settings.Lua.diagnostics.globals = {'vim'}
-
-            -- Make the server aware of Neovim runtime files
-            local f = vim.api.nvim_get_runtime_file
-            client.config.settings.Lua.workspace.library = f('', true)
-
-            -- WARNING:
-            -- Error here, or in all `on_*` functions, will not be printed!
-            -- Things will be very difficult to debug.
-            -- If you need to debug, use canaries, e.g.:
-            -- vim.print(client.config)
-        end
-
-        client.notify("workspace/didChangeConfiguration",
-                      {settings = client.config.settings})
-        return true
-    end,
+    on_init = util.add_hook_before(default_cfg.on_init, lua_ls_on_init),
     on_new_config = function(new_config, new_root_dir)
         if new_root_dir then
             ---@diagnostic disable-next-line: undefined-field
