@@ -448,6 +448,12 @@ lspconfig.gopls.setup(default_cfg)
 lspconfig.dockerls.setup(default_cfg)
 
 -- ]]]
+--
+-- Beancount [[[1
+
+lspconfig.beancount.setup(default_cfg)
+
+-- ]]]
 
 -- YAML [[[1
 
