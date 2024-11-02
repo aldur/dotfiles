@@ -1,0 +1,76 @@
+{
+  "Link": {
+    "prefix": [
+      "l",
+      "link"
+    ],
+    "body": [
+      "[${1:text}](${2:url}) ${0}"
+    ],
+    "description": "Add a link"
+  },
+  "Reference": {
+    "prefix": [
+      "r",
+      "reference",
+      "rfr"
+    ],
+    "body": [
+      "[${1:text}][${2:reference}] ${0}",
+      "",
+      "[${2:reference}]: ${3:reference_text}"
+    ],
+    "description": "Add a link reference"
+  },
+  "URL": {
+    "prefix": [
+      "u",
+      "url"
+    ],
+    "body": [
+      "<${1}> ${0}"
+    ],
+    "description": "Add url"
+  },
+  "Image": {
+    "prefix": "img",
+    "body": [
+      "![${1:alt text}](${2:path}) ${0}"
+    ],
+    "description": "Add image"
+  },
+  "Insert table": {
+    "prefix": [
+      "table",
+      "tbl"
+    ],
+    "body": [
+      "| ${1:Column1} | ${2:Column2} | ${3:Column3} |",
+      "| ------------- | -------------- | -------------- |",
+      "| ${4:Item1} | ${5:Item1} | ${6:Item1} |",
+      "${0}"
+    ],
+    "description": "Insert table with 2 rows and 3 columns. First row is heading."
+  },
+  "References": {
+    "prefix": "refh",
+    "body": [
+      "## References",
+      "",
+      "- [${1:text}](${2:url}) ${0}"
+    ],
+    "description": "Reference under header"
+  },
+  "Footnote": {
+    "prefix": [
+      "fnt",
+      "footnote"
+    ],
+    "body": [
+      "[^${1:reference}] ${0}",
+      "",
+      "[^${1:reference}]: ${2:text}"
+    ],
+    "description": "Reference under header"
+  }
+}

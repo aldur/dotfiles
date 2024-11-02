@@ -1,0 +1,25 @@
+{
+  "name": "aldurs-snippets",
+  "engines": {
+    "vscode": "^1.11.0"
+  },
+  "contributes": {
+    "snippets": [
+      {
+        "language": [
+          "markdown",
+          "global",
+          "all"
+        ],
+        "path": "./global.json"
+      },
+      {
+        "language": [
+          "markdown",
+          "rmd"
+        ],
+        "path": "./markdown.json"
+      }
+    ]
+  }
+}
