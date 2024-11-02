@@ -24,3 +24,7 @@ nmap <silent><buffer> ge <plug>(wiki-link-follow)
 " inoremap <silent><buffer> <c-x><c-n> <C-o>:WikiLinkAdd<CR>
 inoremap <expr> <plug>(fzf-complete-note)      fzf#vim#complete#path($FZF_DEFAULT_COMMAND . " --search-path " . g:wiki_root . " \| sed 's#^" . g:wiki_root . "/##' \| sed 's#.md$##'")
 imap <silent><buffer> <c-x><c-n> <plug>(fzf-complete-note)
+
+" NOTE: This overrides a `vim` mapping, see :h gr
+nnoremap <buffer><silent> gr :LinkConvertSingle<cr>
+xnoremap <buffer><silent> gr :LinkConvertRange<cr>

@@ -105,6 +105,15 @@ with pkgs.vimPlugins;
       hash = "sha256-L7x4B6/URT2ocZNZKLmaqLP5RhRWackq0148nUiRq7k=";
     };
   })
+  (vimUtils.buildVimPlugin {
+    name = "link.vim";
+    src = fetchFromGitHub {
+      owner = "qadzek";
+      repo = "link.vim";
+      rev = "8cbc27a10fdef262fc91d40c54c78b36df1c44ce";
+      hash = "sha256-EjPfkcgYhxcDCNfAX9lepFzKUFGpG36L1qKKt6peNrk=";
+    };
+  })
   (vimUtils.buildVimPlugin rec {
     name = "gen.nvim";
     src = fetchFromGitHub {
