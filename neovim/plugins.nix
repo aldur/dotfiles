@@ -18,7 +18,7 @@ with pkgs.vimPlugins;
   # Fix the quickfix
   (vim-qf.overrideAttrs {
     patches = [
-      # TODO: Remove me if 131 gets merged.
+      # TODO: Remove this if 131 gets merged.
       (pkgs.fetchurl {
         url = "https://github.com/romainl/vim-qf/pull/131.patch";
         hash = "sha256-fTdPK+PnuYxef1ha1e1h9uwSCO6NRqRZMkHkXKRtYKc=";
@@ -72,8 +72,7 @@ with pkgs.vimPlugins;
   efmls-configs-nvim
 
   # Snippets
-  ultisnips
-  vim-snippets
+  nvim-snippets
 
   # Completion
   nvim-cmp
@@ -82,9 +81,7 @@ with pkgs.vimPlugins;
   cmp-path
   cmp-nvim-lua
   cmp-cmdline
-  cmp-nvim-tags
   cmp-beancount
-  cmp-nvim-ultisnips
 ]
 ++ (with pkgs; [
   (vimUtils.buildVimPlugin {

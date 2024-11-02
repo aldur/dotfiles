@@ -32,7 +32,7 @@ local kind_icons = {
 local menu_identifiers = {
     buffer = "[Buf]",
     nvim_lsp = "[LSP]",
-    ultisnips = "[Snips]",
+    snippets = "[Snips]",
     nvim_lua = "[Lua]",
     -- notes = "[Notes]",
     note_tags = "[NTags]",
@@ -59,6 +59,8 @@ local function default_tab_mapping(fallback)
         -- If completion menu is open, `tab` trigger completion of the
         -- selected item (or the first one if only one is open.)
         cmp.confirm({select = true})
+    elseif vim.snippet.active({direction = 1}) then
+        vim.schedule(function() vim.snippet.jump(1) end)
     elseif check_back_space() then
         -- If it has backspace behind, fallback a literal tab.
         fallback()
@@ -118,7 +120,7 @@ local visible_buffers_source = {
 
 local default_sources = {
     -- Sorted by priority.
-    {name = 'nvim_lsp'}, {name = 'ultisnips', keyword_length = 2},
+    {name = 'nvim_lsp'}, {name = 'snippets', keyword_length = 2},
     visible_buffers_source, {name = 'path'}
 }
 
@@ -161,7 +163,7 @@ cmp.setup({
             return vim_item
         end
     },
-    snippet = {expand = function(args) vim.fn["UltiSnips#Anon"](args.body) end},
+    snippet = {expand = function(args) vim.snippet.expand(args.body) end},
     mapping = cmp.mapping.preset.insert({
         ['<C-e>'] = cmp.mapping(function(fallback)
             -- First close the popup, then send `c-e`.
