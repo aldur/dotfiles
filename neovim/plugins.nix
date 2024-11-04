@@ -13,7 +13,6 @@ with pkgs.vimPlugins;
   fzf-vim
   zen-mode-nvim
   dressing-nvim
-  wiki-vim
 
   # Fix the quickfix
   (vim-qf.overrideAttrs {
@@ -91,6 +90,15 @@ with pkgs.vimPlugins;
       repo = "ltex_extra.nvim";
       rev = "57192d7ae5ba8cef3c10e90f2cd62d4a7cdaab69"; # dev branch
       hash = "sha256-sjYCAJkDSX+TPEtdMNgFXqcgv43/7Q48haanP5QycT0=";
+    };
+  })
+  (vimUtils.buildVimPlugin {
+    name = "wiki-vim";
+    src = fetchFromGitHub {
+      owner = "lervag";
+      repo = "wiki.vim";
+      rev = "197282b271a4b829a3d3645d6fa5bf4180c413fd";
+      hash = "sha256-GSGebXjAnKhh9WD0ZPrVWMmbtTdN/Zgr2achGmWjaR8";
     };
   })
   (vimUtils.buildVimPlugin {
