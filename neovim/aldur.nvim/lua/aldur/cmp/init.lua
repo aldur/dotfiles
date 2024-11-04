@@ -118,10 +118,12 @@ local visible_buffers_source = {
     option = {get_bufnrs = visible_buffers_only}
 }
 
+local snippets_source = {name = 'snippets', keyword_length = 2}
+
 local default_sources = {
     -- Sorted by priority.
-    {name = 'nvim_lsp'}, {name = 'snippets', keyword_length = 2},
-    visible_buffers_source, {name = 'path'}
+    {name = 'nvim_lsp'}, snippets_source, visible_buffers_source,
+    {name = 'path'}
 }
 
 local md_sources = {
@@ -146,7 +148,9 @@ local vim_lua_sources = {{name = 'nvim_lua'}}
 vim.list_extend(vim_lua_sources, default_sources)
 cmp.setup.filetype({'lua', 'vim'}, {sources = vim_lua_sources})
 
-local beancount_sources = {{name = 'beancount', max_item_count = 10}}
+local beancount_sources = {
+    {name = 'beancount', max_item_count = 10}, snippets_source
+}
 -- NOTE: Because `beancount` files are usually pretty big,
 -- we are purposedly leaving out _other_ sources and just using its own.
 -- vim.list_extend(beancount_sources, default_sources)
