@@ -5,7 +5,7 @@ local logger = hs.logger.new('clipboard')
 
 local module = {
     frequency = 1.0, -- Clipboar polling frequency.
-    chooser_max_size = 100, -- Number of elements to store in the chooser.
+    chooser_max_size = 512, -- Number of elements to store in the chooser.
     chooser_max_display_size = 80, -- Number of characters to show in the chooser.
     element_max_length = 10000, -- Maximum length of elements to store.
 
