@@ -7,7 +7,8 @@ end
 
 function source:is_available()
     -- Only enable this for `markdown`.
-    local filetypes = vim.split(vim.bo.filetype, '.', true)
+    local filetypes = vim.split(vim.bo.filetype, '.',
+                                {plain = true, trimempty = true})
     return vim.tbl_contains(filetypes, 'markdown')
 end
 

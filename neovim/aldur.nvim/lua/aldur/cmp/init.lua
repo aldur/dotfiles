@@ -34,7 +34,7 @@ local menu_identifiers = {
     nvim_lsp = "[LSP]",
     snippets = "[Snips]",
     nvim_lua = "[Lua]",
-    -- notes = "[Notes]",
+    notes = "[Notes]",
     note_tags = "[NTags]",
     note_headers = "[NHead]",
     path = "[Path]",
@@ -47,8 +47,7 @@ local check_back_space = function()
 end
 
 -- Disabled as currently buggy.
--- cmp.register_source('notes', require'aldur.cmp.notes'.new())
-
+cmp.register_source('notes', require'aldur.cmp.notes'.new())
 cmp.register_source('note_tags', require'aldur.cmp.note_tags'.new())
 cmp.register_source('note_headers', require('aldur.cmp.md_headers'))
 
@@ -127,8 +126,8 @@ local default_sources = {
 }
 
 local md_sources = {
-    -- {name = 'notes'}, -- Does not currently work well.
-    {name = 'note_tags', max_item_count = 5}, {name = 'note_headers'}
+    {name = 'notes'}, {name = 'note_tags', max_item_count = 5},
+    {name = 'note_headers'}
 }
 
 -- Extend `md_sources` by appending the other sources.
