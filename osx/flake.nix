@@ -19,11 +19,11 @@
   };
 
   outputs =
-    inputs@{
+    {
       self,
       nix-darwin,
-      nixpkgs,
       tiktoken,
+      ...
     }:
     let
       user = "aldur";
@@ -210,6 +210,74 @@
             casks = import ./casks.nix;
             masApps = import ./masApps.nix;
           };
+
+          launchd = {
+            user = {
+              agents = {
+                ollama = {
+                  command = "${pkgs.ollama}/bin/ollama serve";
+                  serviceConfig = {
+                    KeepAlive = true;
+                    RunAtLoad = true;
+                  };
+                };
+              };
+            };
+          };
+
+          system.defaults = {
+            dock.autohide = true;
+            dock.autohide-delay = 0.0;
+            dock.autohide-time-modifier = 0.15;
+            dock.mru-spaces = false;
+
+            finder.AppleShowAllExtensions = true;
+            # Do not warn on changing file extension
+            finder.FXEnableExtensionChangeWarning = false;
+
+            finder.FXPreferredViewStyle = "clmv";
+
+            screencapture.location = "~/Pictures/screenshots";
+
+            screensaver.askForPassword = true;
+            screensaver.askForPasswordDelay = 0;
+
+            NSGlobalDomain.AppleInterfaceStyle = "Dark";
+            NSGlobalDomain.InitialKeyRepeat = 10;
+            NSGlobalDomain.KeyRepeat = 1;
+
+            CustomSystemPreferences = {
+              "com.apple.AppleMultitouchTrackpad" = {
+                "TrackpadThreeFingerDrag" = true;
+              };
+              "com.apple.menuextra.clock" = {
+                "DateFormat" = "\"d MMM HH:mm:ss\"";
+              };
+              "com.apple.desktopservices" = {
+                # Avoid creating .DS_Store files on network or USB volumes
+                DSDontWriteNetworkStores = true;
+                DSDontWriteUSBStores = true;
+              };
+              "com.apple.AdLib" = {
+                allowApplePersonalizedAdvertising = false;
+              };
+              "com.apple.SoftwareUpdate" = {
+                AutomaticCheckEnabled = true;
+                # Check for software updates daily, not just once per week
+                ScheduleFrequency = 1;
+                # Download newly available updates in background
+                AutomaticDownload = 1;
+                # Install System data files & security updates
+                CriticalUpdateInstall = 1;
+              };
+              # Turn on app auto-update
+              "com.apple.commerce".AutoUpdate = true;
+            };
+          };
+          system.activationScripts.postUserActivation.text = ''
+            # Following line should allow us to avoid a logout/login cycle
+            /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+          '';
         };
     in
     {
