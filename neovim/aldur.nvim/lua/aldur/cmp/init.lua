@@ -153,7 +153,7 @@ local beancount_sources = {
 -- NOTE: Because `beancount` files are usually pretty big,
 -- we are purposedly leaving out _other_ sources and just using its own.
 -- vim.list_extend(beancount_sources, default_sources)
-cmp.setup.filetype({'beancount'}, {sources = beancount_sources})
+-- cmp.setup.filetype({'beancount'}, {sources = beancount_sources})
 
 cmp.setup({
     formatting = {
