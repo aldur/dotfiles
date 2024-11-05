@@ -85,3 +85,7 @@ endfunction
 function! aldur#lightline#spell()
     return winwidth(0) > 70 ? (&spell?&spelllang:'') : ''
 endfunction
+
+function! aldur#lightline#llm_processing()
+    return get(g:, "code_companion_processing", v:false) ? '🦙...' : ''
+endfunction

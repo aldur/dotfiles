@@ -13,6 +13,7 @@ with pkgs.vimPlugins;
   fzf-vim
   zen-mode-nvim
   dressing-nvim
+  plenary-nvim # Required by CodeCompanion
 
   # Fix the quickfix
   (vim-qf.overrideAttrs {
@@ -84,15 +85,6 @@ with pkgs.vimPlugins;
 ]
 ++ (with pkgs; [
   (vimUtils.buildVimPlugin {
-    name = "ltex_extra-nvim";
-    src = fetchFromGitHub {
-      owner = "barreiroleo";
-      repo = "ltex_extra.nvim";
-      rev = "57192d7ae5ba8cef3c10e90f2cd62d4a7cdaab69"; # dev branch
-      hash = "sha256-sjYCAJkDSX+TPEtdMNgFXqcgv43/7Q48haanP5QycT0=";
-    };
-  })
-  (vimUtils.buildVimPlugin {
     name = "wiki-vim";
     src = fetchFromGitHub {
       owner = "lervag";
@@ -119,15 +111,20 @@ with pkgs.vimPlugins;
       hash = "sha256-EjPfkcgYhxcDCNfAX9lepFzKUFGpG36L1qKKt6peNrk=";
     };
   })
-  (vimUtils.buildVimPlugin rec {
-    name = "gen.nvim";
-    src = fetchFromGitHub {
-      owner = "aldur";
-      repo = name;
-      rev = "fa8e149c6ead647244c9ee86eb17dfcf48284ffb";
-      hash = "sha256-ZHFyXkhTv236NEFbTsCv+6/L9xED34B6YC4AKwq9Kf0=";
-    };
-  })
+  (
+    let
+      name = "codecompanion.nvim";
+    in
+    vimUtils.buildVimPlugin {
+      name = builtins.replaceStrings [ "." ] [ "-" ] name;
+      src = fetchFromGitHub {
+        owner = "olimorris";
+        repo = name;
+        rev = "v9.1.0";
+        hash = "sha256-vcynog/gcAuiawthis78qWL4VlMcFpN2vt5KvRpgDww=";
+      };
+    }
+  )
   (vimUtils.buildVimPlugin rec {
     name = "notational-fzf-vim";
     src = fetchFromGitHub {
@@ -144,15 +141,6 @@ with pkgs.vimPlugins;
       repo = name;
       rev = "1034238f75427076fa1a2745f8b83fa3cee6c623";
       hash = "sha256-C0NEGvTkVO8UGFgCxYMDJf8gtiObkMoldkFXq1PVCW0=";
-    };
-  })
-  (vimUtils.buildVimPlugin rec {
-    name = "vim-algorand-teal";
-    src = fetchFromGitHub {
-      owner = "aldur";
-      repo = name;
-      rev = "436308c2724f6389e6347543d7e0699cdf202a3e";
-      hash = "sha256-VzTd29lks0ofpgRRcxv8OlnU2O9t/TPvoR0LtteEFVs=";
     };
   })
   (pkgs.symlinkJoin {
