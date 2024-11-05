@@ -17,7 +17,7 @@ command -buffer ReloadBeancountCompletions w | lua require'aldur.beancount'.relo
 
 lua<<EOF
 -- https://github.com/polarmutex/neovim-flake/blob/main/pkgs/polar-init-config/ftplugin/beancount.lua
-vim.keymap.set({"n", "v"}, "<Leader>mc", ":s/txn/*/gc<CR>", {
+vim.keymap.set({"n", "v"}, "mc", ":s/txn/*/gc<CR>", {
     desc = "beancount-nvim: mark transactions as reconciled",
     noremap = true,
     silent = true,
