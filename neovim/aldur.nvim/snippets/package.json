@@ -19,6 +19,18 @@
           "rmd"
         ],
         "path": "./markdown.json"
+      },
+      {
+        "language": [
+          "beancount"
+        ],
+        "path": "./beancount.json"
+      },
+      {
+        "language": [
+          "nix"
+        ],
+        "path": "./nix.json"
       }
     ]
   }
