@@ -10,6 +10,13 @@ local function extend_config(tbl)
     return vim.tbl_deep_extend('force', default_cfg, tbl)
 end
 
+local function extend_with_filetypes(cfg, filetypes_to_extend,
+                                     lsp_default_config)
+    local filetypes = cfg.filetypes or lsp_default_config.filetypes
+    cfg.filetypes = vim.tbl_deep_extend('force', filetypes, filetypes_to_extend)
+    return cfg
+end
+
 default_cfg = extend_config({
     capabilities = require('cmp_nvim_lsp').default_capabilities(),
     on_init = function(client, _)
@@ -113,7 +120,9 @@ vint.lintCommand = vint.lintCommand .. " --enable-neovim"
 -- Formatting/linting via efm
 local efm_languages = {
     markdown = {require 'aldur.efm.mdl', require 'aldur.efm.prettier_markdown'},
-    lua = {require 'aldur.efm.luafmt', require 'aldur.efm.luacheck'},
+    lua = {
+        require 'aldur.efm.luafmt' -- require 'aldur.efm.luacheck'
+    },
     python = {require 'aldur.efm.black'},
     dockerfile = {require('efmls-configs.linters.hadolint')},
     vim = {vint},
@@ -310,24 +319,24 @@ lspconfig.ltex.setup(extend_config({
     get_language_id = function(_, filetype)
         if filetype == 'markdown.wiki' then return 'markdown' end
         return default_ltex_configuration.get_language_id(_, filetype)
-    end,
+    end
 
     ---@diagnostic disable-next-line: unused-local
-    on_attach = function(_client, _bufnr)
-        require("ltex_extra").push_setting("disabledRules", "en-US",
-                                           ltex_disabled_rules)
-        require("ltex_extra").push_setting("disabledRules", "it",
-                                           ltex_disabled_rules)
-    end
+    -- on_attach = function(_client, _bufnr)
+    --     require("ltex_extra").push_setting("disabledRules", "en-US",
+    --                                        ltex_disabled_rules)
+    --     require("ltex_extra").push_setting("disabledRules", "it",
+    --                                        ltex_disabled_rules)
+    -- end
 }))
 
 -- NOTE: Tried to make `ltex` work with default `vim` dictionary, to no result.
 -- This plugin handles its own dictionary (why?!).
 ---@diagnostic disable-next-line: missing-fields
-require("ltex_extra").setup({
-    load_langs = {'en-US', 'it'},
-    path = vim.fn.stdpath("data") .. "/ltex"
-})
+-- require("ltex_extra").setup({
+--     load_langs = {'en-US', 'it'},
+--     path = vim.fn.stdpath("data") .. "/ltex"
+-- })
 
 -- ]]]
 
@@ -368,9 +377,35 @@ lspconfig.marksman.setup(extend_config({
         client.server_capabilities.codeActionProvider = false
         client.server_capabilities.hoverProvider = false
         default_cfg.on_attach(client, bufnr)
-    end,
-    cmd = {"marksman", "server"}
+    end
 }))
+
+-- Harper [[[1
+
+lspconfig.harper_ls.setup(extend_with_filetypes(extend_config({
+    settings = {
+        ["harper-ls"] = {
+            linters = {
+                spell_check = true,
+                spelled_numbers = false,
+                an_a = true,
+                sentence_capitalization = true,
+                unclosed_quotes = true,
+                wrong_quotes = false,
+                long_sentences = true,
+                repeated_words = true,
+                spaces = true,
+                matcher = true,
+                correct_number_suffix = true,
+                number_suffix_capitalization = true,
+                multiple_sequential_pronouns = true,
+                linking_verbs = true,
+                avoid_curses = true,
+                terminating_conjunctions = true
+            }
+        }
+    }
+}), {"markdown.wiki"}, require'lspconfig/configs/harper_ls'.default_config))
 
 -- ]]]
 
@@ -378,6 +413,10 @@ lspconfig.marksman.setup(extend_config({
 
 -- texlab
 lspconfig.texlab.setup(default_cfg)
+
+-- ]]]
+
+-- Vim [[[1
 
 -- Vim lsp
 lspconfig.vimls.setup(extend_config({flags = {debounce_text_changes = 500}}))
@@ -448,7 +487,7 @@ lspconfig.gopls.setup(default_cfg)
 lspconfig.dockerls.setup(default_cfg)
 
 -- ]]]
---
+
 -- Beancount [[[1
 
 lspconfig.beancount.setup(default_cfg)
@@ -472,7 +511,6 @@ lspconfig.yamlls.setup(extend_config({
 
 -- Clarity [[[
 -- FIXME
--- brew install clarinet
 require('clarinet') -- Adds clarinet LSP
 lspconfig.clarinet.setup(extend_config({
     cmd = {'/run/current-system/sw/bin/bash', '/tmp/wrapper.sh'},
@@ -490,6 +528,7 @@ vim.g.rustaceanvim = {
             local logfile = rustacean_config.server.logfile
             local bufnr = vim.api.nvim_get_current_buf()
             local bufname = vim.api.nvim_buf_get_name(bufnr)
+            ---@diagnostic disable-next-line: missing-parameter
             local root_dir = rustacean_config.server.root_dir(bufname)
             vim.notify("Overriding rustacean_config with direnv " .. root_dir,
                        vim.log.levels.INFO)

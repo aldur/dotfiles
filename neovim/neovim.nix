@@ -56,6 +56,7 @@ let
       efm-langserver
       fish # to lint fish files
       hadolint
+      harper
       html-tidy
       libxml2
       ltex-ls
@@ -106,6 +107,7 @@ let
       (import ../nix/packages/solhint/default.nix { inherit pkgs; }).solhint
 
       (pkgs.callPackage ../nix/packages/sol/sol.nix { }).sol
+      (pkgs.callPackage ../nix/packages/clarinet/clarinet.nix { }).clarinet
 
       # TODO
       # (import
