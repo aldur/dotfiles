@@ -47,3 +47,7 @@ setlocal foldexpr=nvim_treesitter#foldexpr()
 setlocal nofoldenable
 setlocal foldnestmax=5
 setlocal foldminlines=1
+
+" NOTE: This overrides a `vim` mapping, see :h gr
+nnoremap <buffer><silent> gr :LinkConvertSingle<cr>
+xnoremap <buffer><silent> gr :LinkConvertRange<cr>
