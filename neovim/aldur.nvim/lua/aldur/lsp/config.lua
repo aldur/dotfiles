@@ -490,7 +490,13 @@ lspconfig.dockerls.setup(default_cfg)
 
 -- Beancount [[[1
 
-lspconfig.beancount.setup(default_cfg)
+lspconfig.beancount.setup(extend_config({
+    on_attach = function(client, bufnr)
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
+        default_cfg.on_attach(client, bufnr)
+    end
+}))
 
 -- ]]]
 
