@@ -29,10 +29,11 @@ function obj.callback(choice)
     if not choice then return end
 
     local lastApplication = nil
-    local lastFocused = require("hs.libchooser")._lastFocused
-    if #lastFocused > 0 then
-        lastFocused[1]:focus()
-        lastApplication = lastFocused[1]:application()
+    local frontmostWindow = require("hs.window").frontmostWindow()
+
+    if frontmostWindow then
+        frontmostWindow:focus()
+        lastApplication = frontmostWindow:application()
     end
 
     if lastApplication ~= nil and hs.fnutils.contains({
