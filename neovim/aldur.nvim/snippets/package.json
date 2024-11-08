@@ -31,6 +31,12 @@
           "nix"
         ],
         "path": "./nix.json"
+      },
+      {
+        "language": [
+          "python"
+        ],
+        "path": "./python.json"
       }
     ]
   }

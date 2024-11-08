@@ -1,0 +1,22 @@
+{
+  "#!/usr/bin/env pythonX": {
+    "prefix": "#!",
+    "body": [
+      "#!/usr/bin/env python3",
+      "# -*- coding: utf-8 -*-"
+    ],
+    "description": "Shebang line for the first python in PATH"
+  },
+  "if __name__ == __main__": {
+    "prefix": "ifmain",
+    "body": [
+      "if __name__ == \"__main__\":",
+      "\t${1:main()}"
+    ],
+    "description": "Execute code if the file is executed directly"
+  },
+  "Pretty print": {
+    "prefix": "pprint",
+    "body": "__import__('pprint').pprint(${1:expression})$0"
+  }
+}
