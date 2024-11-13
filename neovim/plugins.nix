@@ -11,6 +11,7 @@ with pkgs.vimPlugins;
   undotree # UndotreeToggle
   vim-gutentags # Tag management
   fzf-vim
+  fzf-lua
   zen-mode-nvim
   dressing-nvim
   plenary-nvim # Required by CodeCompanion
