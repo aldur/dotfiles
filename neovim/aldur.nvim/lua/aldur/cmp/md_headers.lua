@@ -24,8 +24,6 @@ function source:complete(request, callback)
 
     local input = string.sub(request.context.cursor_before_line, end_)
 
-    print(input)
-
     local success, tags = pcall(vim.fn.getcompletion, input, "tag")
 
     if not success then
