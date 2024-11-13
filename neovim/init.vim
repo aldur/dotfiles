@@ -148,12 +148,6 @@
             \   'source_func': function('TemplateWrapper')
             \ },
             \ ]
-
-        " Configure `notational-fzf-vim`
-        let g:nv_main_directory = g:wiki_root
-        let g:nv_search_paths = [g:wiki_root, ]  " This is for backward-compatibility only
-        let g:nv_create_note_window = 'edit'
-        let g:nv_use_short_pathnames = 0
     " }}}
 " }}}
 

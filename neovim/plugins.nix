@@ -127,15 +127,6 @@ with pkgs.vimPlugins;
     }
   )
   (vimUtils.buildVimPlugin rec {
-    name = "notational-fzf-vim";
-    src = fetchFromGitHub {
-      owner = "aldur";
-      repo = name;
-      rev = "07f39d9f9dcabaead436001e8b9a1535d996a6d9";
-      hash = "sha256-NStUBDmaVM6zieBvVRXbVxCVrIstgAIyqkbj2oYAwGo=";
-    };
-  })
-  (vimUtils.buildVimPlugin rec {
     name = "tinymd.nvim";
     src = fetchFromGitHub {
       owner = "aldur";
