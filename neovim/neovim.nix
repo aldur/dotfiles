@@ -80,6 +80,11 @@ let
       shellcheck
       solc
       sqlint
+      (opentofu.overrideAttrs (old: {
+        postInstall = old.postInstall + ''
+          ln -s $out/bin/tofu $out/bin/terraform
+        '';
+      }))
       terraform-ls
       texlab
       tflint
