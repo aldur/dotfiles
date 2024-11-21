@@ -63,11 +63,14 @@ function M.reload_module()
     -- with a corresponding module loaded from `~/.dotfiles`
 
     -- NOTE: We need to reverse to make sure we find the latest occurrence.
-    local module_runtimepath, maybe_module = current_file:match("(.*)/lua/(.*)%.lua")
+    local module_runtimepath, maybe_module = current_file:match(
+                                                 "(.*)/lua/(.*)%.lua")
 
     if maybe_module == nil then
-        error("Current file is not on Lua's module path (searched '" ..
-                  maybe_module .. "').")
+        -- If it is not a module, we can just re-execute it.
+        vim.notify(string.format("Re-executing file '%s'.", current_file),
+                   vim.log.levels.INFO)
+        vim.cmd([[luafile %]])
         return
     end
 
