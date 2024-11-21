@@ -529,6 +529,19 @@ lspconfig.clarinet.setup(extend_config({
 
 vim.g.rustaceanvim = {
     server = {
+        auto_attach = function(bufnr)
+            -- This is taken verbatim from `rustaceanvim.config.internal`.
+            -- We only check the first two options, without calling `cmd`,
+            -- that would have the following `vim.notify` line executed twice.
+            -- NOTE: Remove this if you remove `vim.notify` as default behavior will be
+            -- good enough.
+            if #vim.bo[bufnr].buftype > 0 then return false end
+            local path = vim.api.nvim_buf_get_name(bufnr)
+            if not require('rustaceanvim.os').is_valid_file_path(path) then
+                return false
+            end
+            return true
+        end,
         cmd = function()
             local rustacean_config = require('rustaceanvim.config.internal')
             local logfile = rustacean_config.server.logfile
