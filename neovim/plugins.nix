@@ -10,9 +10,9 @@ with pkgs.vimPlugins;
   vim-lion # gR<symbol> to align text
   undotree # UndotreeToggle
   vim-gutentags # Tag management
-  fzf-vim
   fzf-lua
   zen-mode-nvim
+  trouble-nvim
   dressing-nvim
   plenary-nvim # Required by CodeCompanion
 
