@@ -237,7 +237,7 @@
 
             finder.FXPreferredViewStyle = "clmv";
 
-            screencapture.location = "~/Pictures/screenshots";
+            screencapture.location = "~/Documents/Screenshots";
 
             screensaver.askForPassword = true;
             screensaver.askForPasswordDelay = 0;
