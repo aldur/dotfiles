@@ -251,7 +251,11 @@
                 "TrackpadThreeFingerDrag" = true;
               };
               "com.apple.menuextra.clock" = {
-                "DateFormat" = "\"d MMM HH:mm:ss\"";
+                Show24Hour = 1;
+                ShowAMPM = 0;
+                ShowDate = 0;
+                ShowDayOfWeek = 1;
+                ShowSeconds = 0;
               };
               "com.apple.desktopservices" = {
                 # Avoid creating .DS_Store files on network or USB volumes
