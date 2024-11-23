@@ -67,8 +67,8 @@ z.setup({
                           .nvim_get_hl(0, {name = "SpellBad", create = false})
 
         local new_spellbad_hl = vim.deepcopy(spellbad_hl)
-        new_spellbad_hl.undercurl = nil;
-        new_spellbad_hl.cterm.undercurl = nil;
+        new_spellbad_hl.undercurl = nil
+        new_spellbad_hl.cterm.undercurl = nil
         ---@diagnostic disable-next-line: param-type-mismatch
         vim.api.nvim_set_hl(0, "SpellBad", new_spellbad_hl)
     end,
