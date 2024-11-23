@@ -382,7 +382,7 @@ lspconfig.marksman.setup(extend_config({
 
 -- Harper [[[1
 
-lspconfig.harper_ls.setup(extend_with_filetypes(extend_config({
+lspconfig.harper_ls.setup(extend_config({
     settings = {
         ["harper-ls"] = {
             linters = {
@@ -404,8 +404,9 @@ lspconfig.harper_ls.setup(extend_with_filetypes(extend_config({
                 terminating_conjunctions = true
             }
         }
-    }
-}), {"markdown.wiki"}, require'lspconfig/configs/harper_ls'.default_config))
+    },
+    filetypes = {"markdown", "markdown.wiki"} -- Annoyingly, `harper` tries to lint all files.
+}))
 
 -- ]]]
 
