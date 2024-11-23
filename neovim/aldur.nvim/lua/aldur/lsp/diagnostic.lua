@@ -5,36 +5,12 @@ function M.diagnostic_autocmd()
     pcall(vim.api.nvim_del_augroup_by_name, name)
     local group = vim.api.nvim_create_augroup(name, {})
 
-    -- local loclist_title = "LSP Diagnostics"
-
-    ---@diagnostic disable-next-line: unused-local
-    local function on_diagnostic_changed(_diagnostics)
-        -- vim.diagnostic.setloclist({open = false, title = loclist_title})
-        -- if #diagnostics == 0 then vim.cmd("silent! lclose") end
-
-        -- Inspired by how lightline.vim refreshes the statusline.
-        vim.fn["lightline#update"]()
-    end
-
     vim.api.nvim_create_autocmd({'DiagnosticChanged'}, {
         group = group,
         callback = function(args)
-            if (args and args.data) then
-                on_diagnostic_changed(args.data.diagnostics)
-            end
+            if (args and args.data) then vim.fn["lightline#update"]() end
         end
     })
-
-    -- vim.api.nvim_create_autocmd({'BufEnter'}, {
-    --     group = group,
-    --     callback = function()
-    --         if vim.w.quickfix_title == loclist_title and vim.bo.buftype ==
-    --             'quickfix' then
-    --             return _G.info_message("Ignoring quickfix...")
-    --         end
-    --         on_diagnostic_changed(vim.diagnostic.get(0))
-    --     end
-    -- })
 end
 --
 -- NOTE: This creates the autocmd to populate / update the QF with the diagnostics
@@ -111,5 +87,27 @@ function M.reload_config()
     local inlay_hint = M.buffer_config_getters.inlay_hint()
     vim.lsp.inlay_hint.enable(inlay_hint)
 end
+
+function M.configure_highlights()
+    for _, value in ipairs({
+        "DiagnosticUnderlineHint", "DiagnosticUnderlineWarn",
+        "DiagnosticUnderlineError"
+    }) do
+        local hl = vim.api.nvim_get_hl(0, {name = value, create = false})
+
+        local new_hl = vim.deepcopy(hl)
+
+        new_hl.underline = true
+        new_hl.undercurl = nil
+
+        new_hl.cterm.underline = true
+        new_hl.cterm.undercurl = nil
+
+        ---@diagnostic disable-next-line: param-type-mismatch
+        vim.api.nvim_set_hl(0, value, new_hl)
+    end
+end
+
+M.configure_highlights()
 
 M.reload_config() -- First time initialization.
