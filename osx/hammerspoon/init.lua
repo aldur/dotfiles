@@ -440,6 +440,7 @@ hs.hotkey.bind("cmd", [[\]],
 local function getMeetingClients()
     local clients = {
         'com.google.Chrome.app.kjgfgldnnfoeklkmfkjfagphfepbbdan', -- Google Meet?
+        'com.apple.FaceTime',
         'us.zoom.xos', 'com.cisco.webexmeetingsapp', 'com.webex.meetingmanager',
         'com.microsoft.teams'
     }
