@@ -323,6 +323,10 @@ hs.hotkey.bind(hyper_shift, "v", function()
     hs.eventtap.keyStrokes(hs.pasteboard.getContents())
 end)
 
+hs.hotkey.bind(hyper_shift, "d", function()
+    hs.eventtap.keyStrokes(os.date("%Y-%m-%d"))
+end)
+
 -- Grid Snapping Mode {{{
 
 local h = hs.hotkey.modal.new(hyper, 'q')
