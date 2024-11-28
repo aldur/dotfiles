@@ -16,6 +16,9 @@ with pkgs.vimPlugins;
   dressing-nvim
   plenary-nvim # Required by CodeCompanion
 
+  nvim-tree-lua
+  oil-nvim
+
   # Fix the quickfix
   (vim-qf.overrideAttrs {
     patches = [

@@ -14,10 +14,6 @@ function! aldur#find_root#find_root() abort
     endif
 
     let l:base = '%:p:h'
-    if &filetype ==# 'netrw' && exists('b:netrw_curdir')
-        let l:base = b:netrw_curdir
-    endif
-
     try
         " If possible, execute FZF from the current project root.
         " We're using gutentags#get_project_root for the task.
@@ -27,7 +23,7 @@ function! aldur#find_root#find_root() abort
     endtry
 
     " If it's a terminal or a health window, then we default to cwd
-    if l:root =~# 'term://' || expand("%") =~# 'health://'
+    if l:root =~# 'term://' || expand('%') =~# 'health://'
         return getcwd()
     endif
 
@@ -57,5 +53,5 @@ function! aldur#find_root#toggle_override_root_with_pwd() abort
 endfunction
 
 function! aldur#find_root#pwd_is_root() abort
-    return get(w:, "pwd_is_root", 0) == 1
+    return get(w:, 'pwd_is_root', 0) == 1
 endfunction

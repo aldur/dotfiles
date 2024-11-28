@@ -10,11 +10,6 @@ autocmd vimrc FileChangedShellPost *
 " Auto save on :next, :edit, :quit, etc.
 set autowriteall  " Implies `autowrite`
 
-" When transparently editing remote buffers through Netrw, we disable `autowriteall`
-" This sets `autowriteall` in the else because on 2022-09-23 you found out
-" that netrw set noautowrite on its own.
-autocmd vimrc BufEnter * if exists('b:netrw_lastfile') | setlocal noautowriteall | else | setlocal autowriteall | endif
-
 " Add buffer to v:oldfiles
 autocmd vimrc BufNew * :call aldur#auto_read_write#add_to_oldfiles()
 
