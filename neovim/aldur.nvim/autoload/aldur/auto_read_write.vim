@@ -1,5 +1,5 @@
 function! aldur#auto_read_write#write_gently() abort
-    if &previewwindow || &buftype ==# 'nofile' || &buftype ==# 'nowrite'
+    if &previewwindow || &buftype ==# 'nofile' || &buftype ==# 'nowrite' || filereadable(expand('%:p')) == v:false
         return
     end
 
