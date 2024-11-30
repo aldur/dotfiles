@@ -28,7 +28,11 @@ require("nvim-tree").setup({
     on_attach = nvim_tree_on_attach,
     reload_on_bufenter = true,
     diagnostics = {enable = true},
-    actions = {change_dir = {enable = false}}
+    actions = {
+        change_dir = {enable = false},
+        open_file = {window_picker = {enable = false}}
+    },
+    git = {disable_for_dirs = {'nixpkgs'}}
 })
 
 vim.keymap.set("n", "-", function()
@@ -39,4 +43,6 @@ vim.keymap.set("n", "-", function()
     })
 end, {noremap = true, silent = true, desc = "Open nvim-tree with current root."})
 
-require("oil").setup()
+require("oil").setup({
+    default_file_explorer = false -- Defer to nvim-tree
+})
