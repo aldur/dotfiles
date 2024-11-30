@@ -1,8 +1,15 @@
 local function nvim_tree_on_attach(bufnr)
     local api = require "nvim-tree.api"
 
-    vim.api.nvim_create_autocmd('BufDelete', {
-        callback = function(state) vim.opt.shada:append(state.file) end
+    vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {
+        callback = function()
+            local root = vim.fn['aldur#find_root#find_root']()
+            local maybe_git_dir = root .. "/.git"
+            if vim.fn.isdirectory(maybe_git_dir) then
+                vim.b.git_dir = maybe_git_dir
+            end
+        end,
+        buffer = bufnr
     })
 
     -- default mappings
