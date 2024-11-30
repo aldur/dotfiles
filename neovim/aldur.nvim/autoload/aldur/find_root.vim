@@ -14,12 +14,20 @@ function! aldur#find_root#find_root() abort
     endif
 
     let l:base = '%:p:h'
+
+    if &filetype ==# 'NvimTree'
+        let l:base = luaeval('require("nvim-tree.core").get_cwd()')
+    endif
+
+    let l:base = expand(l:base, 1)
+
+    " TODO: we might need to do the same for oil.nvim
+
     try
-        " If possible, execute FZF from the current project root.
         " We're using gutentags#get_project_root for the task.
-        let l:root = gutentags#get_project_root(expand(l:base, 1))
+        let l:root = gutentags#get_project_root(l:base)
     catch
-        let l:root = expand(l:base, 1)
+        let l:root = l:base
     endtry
 
     " If it's a terminal or a health window, then we default to cwd
