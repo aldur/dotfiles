@@ -40,12 +40,12 @@ end
 
 local fzf_default_command = vim.env.FZF_DEFAULT_COMMAND
 if fzf_default_command ~= nil and fzf_default_command ~= '' then
-    vim.keymap.set({"n", "v", "i"}, "<C-x><C-f>", function()
+    vim.keymap.set({"v", "i"}, "<C-x><C-f>", function()
         fzf.complete_path({cmd = fzf_default_command})
     end, {silent = true, desc = "Fuzzy complete path"})
 end
 
-vim.keymap.set({"n", "v", "i"}, "<C-x><C-k>", function()
+vim.keymap.set({"v", "i"}, "<C-x><C-k>", function()
     local dictionary = vim.o.dictionary
     if dictionary == "" or dictionary == nil then
         dictionary = "/usr/share/dict/words"
