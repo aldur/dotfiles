@@ -10,7 +10,7 @@
         autocmd!
     augroup end
 
-    " {{{ Providers
+    " {{{ Providers and native plugins
         " This needs to be done before loading plugins, as they might
         " require/load providers.
 
@@ -27,6 +27,9 @@
         let g:loaded_tarPlugin = 1  " Disable tar
         let g:loaded_getscriptPlugin = 1  " Disable getscript
         let g:loaded_zipPlugin = 1  " Disable zip
+
+        let g:loaded_netrw = 1
+        let g:loaded_netrwPlugin = 1
     " }}}
 
     packadd! matchit
