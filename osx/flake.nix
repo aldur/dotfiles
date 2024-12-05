@@ -7,22 +7,12 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # NOTE: This input is locked. That means that if you update `tiktoken`,
-    # you'll need to update its lock as well for changes to be fetched.
-    # Might be better to restructure `tiktoken` to import it with `import`.
-    # See: https://github.com/NixOS/nix/issues/3978
-    tiktoken = {
-      url = "git+file:.?dir=nix/packages/tiktoken";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
     {
       self,
       nix-darwin,
-      tiktoken,
       ...
     }:
     let
@@ -63,7 +53,6 @@
                 neovim = (prev.callPackage ../neovim/neovim.nix { });
                 neovim-vanilla = prev.neovim;
               })
-              tiktoken.overlays.default
             ];
 
             # config.allowUnsupportedSystem = true;
@@ -183,9 +172,7 @@
             ]
             ++ [
               (pkgs.callPackage ../nix/packages/age-plugin-se/age-plugin-se.nix { }).age-plugin-se
-            ]
-            ++ [
-              count-tokens
+              (pkgs.callPackage ../nix/packages/tiktoken/tiktoken.nix { })
             ];
 
           security.pam.enableSudoTouchIdAuth = true;
