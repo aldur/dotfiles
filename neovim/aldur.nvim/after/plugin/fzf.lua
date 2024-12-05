@@ -30,7 +30,9 @@ local mappings = {
     T = fzf.tags,
     h = fzf.oldfiles,
     [':'] = fzf.command_history,
-    u = fzf.grep_cword -- NOTE: LSPs will override this.
+    u = function()
+        fzf.grep_cword({cwd = vim.fn['aldur#find_root#find_root']()})
+    end -- NOTE: LSPs will override this.
 }
 
 for key, value in pairs(mappings) do
