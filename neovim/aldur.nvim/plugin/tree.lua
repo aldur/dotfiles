@@ -34,12 +34,15 @@ require("nvim-tree").setup({
     disable_netrw = true, -- Just to be sure, it is also disabled in `init.vim`.
     on_attach = nvim_tree_on_attach,
     reload_on_bufenter = true,
-    diagnostics = {enable = true},
+    diagnostics = {enable = false},
     actions = {
         change_dir = {enable = false},
         open_file = {window_picker = {enable = false}}
     },
-    git = {disable_for_dirs = {'nixpkgs'}}
+    -- Disabling what results in very bad performance and freezes
+    git = {enable = false},
+    filesystem_watchers = {enable = false},
+    modified = {enable = false},
 })
 
 vim.keymap.set("n", "-", function()
