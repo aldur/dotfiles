@@ -21,5 +21,10 @@ local config = require("fzf-lua.config")
 local actions = require("trouble.sources.fzf").actions
 config.defaults.actions.files["ctrl-t"] = actions.open
 
-vim.keymap.set("n", "<leader>xx", "<cmd>Trouble project_diagnostics toggle<cr>",
+vim.keymap.set("n", "<leader>xx",
+               "<cmd>Trouble project_diagnostics toggle filter.buf=0<cr>",
                {noremap = true, silent = true})
+
+vim.keymap.set("n", "<leader>xX", "<cmd>Trouble project_diagnostics toggle<cr>",
+               {noremap = true, silent = true})
+
