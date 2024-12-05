@@ -48,6 +48,7 @@ let
       bibtool
       black
       cargo
+      ccls
       clippy
       deno
       dockerfile-language-server-nodejs
