@@ -7,7 +7,7 @@ set autoread
 autocmd vimrc FocusGained,BufEnter,TabEnter,CursorHold,CursorHoldI *
             \ if (mode() != 'c' && &buftype != 'nofile' && filereadable(expand('%:p'))) | checktime | endif
 autocmd vimrc FileChangedShellPost *
-            \ echohl WarningMsg | if (!filereadable(expand('%:p'))) | echo "File deleted outside of nvim." | else | echo "File changed on disk. Buffer reloaded." | endif | echohl None
+            \ echohl WarningMsg | if (!filereadable(expand('%:p'))) | echo "File deleted outside of nvim." | else | echo "File changed on disk. Buffer " . bufnr('<abuf>') . " reloaded." | endif | echohl None
 
 " Auto save on :next, :edit, :quit, etc.
 set autowriteall  " Implies `autowrite`
