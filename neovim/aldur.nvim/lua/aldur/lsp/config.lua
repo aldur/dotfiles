@@ -10,13 +10,6 @@ local function extend_config(tbl)
     return vim.tbl_deep_extend('force', default_cfg, tbl)
 end
 
-local function extend_with_filetypes(cfg, filetypes_to_extend,
-                                     lsp_default_config)
-    local filetypes = cfg.filetypes or lsp_default_config.filetypes
-    cfg.filetypes = vim.tbl_deep_extend('force', filetypes, filetypes_to_extend)
-    return cfg
-end
-
 default_cfg = extend_config({
     capabilities = require('cmp_nvim_lsp').default_capabilities(),
     on_init = function(client, _)
@@ -63,52 +56,42 @@ local lspconfig = require('lspconfig')
 
 local python = require('aldur.python')
 
--- Python pyright
-lspconfig.pyright.setup(extend_config({
+-- https://github.com/DetachHead/basedpyright
+lspconfig.basedpyright.setup(extend_config({
     before_init = function(_, config)
-        config.settings.python.pythonPath =
-            python.find_python_path(config.root_dir)
-    end
+        config.settings.python = {
+            pythonPath = python.find_python_path(config.root_dir)
+        }
+        config.python = config.settings.python
+    end,
+    basedpyright = {
+        -- Using Ruff's import organizer
+        disableOrganizeImports = true,
+        analysis = {
+            autoImportCompletions  = true,
+        }
+    }
 }))
 
--- Inspired by:
--- https://github.com/python-lsp/python-lsp-server/pull/68
-local function pylsp_cmd_env(workspace)
-    local venv = python.find_python_venv(workspace)
-    if venv then
-        return {
-            VIRTUAL_ENV = venv,
-            PATH = util.path.join(venv, 'bin') .. ':' .. vim.env.PATH
+lspconfig.ruff.setup(extend_config({
+    -- TODO: Point to Python path
+    -- trace = 'messages',
+    init_options = {
+        settings = {
+            -- logLevel = 'debug',
+            lineLength = 100,
+            lint = {
+                select = {
+                    "E", -- pycodestyle
+                    "F", -- Pyflakes
+                    "UP", -- pyupgrade
+                    "B", -- flake8-bugbear
+                    "SIM", -- flake8-simplify
+                    "I" -- isort
+                }
+            }
         }
-    end
-
-    return {}
-end
-
--- https://github.com/python-lsp/python-lsp-server
-lspconfig.pylsp.setup(extend_config({
-    on_attach = function(client, bufnr)
-        -- Disable all non-required features as we also use Black/efm/pyright.
-        -- https://microsoft.github.io/language-server-protocol/specifications
-        -- /lsp/3.17/specification/#textDocument_hover
-        client.server_capabilities.documentFormattingProvider = false
-        client.server_capabilities.completionProvider = false
-        client.server_capabilities.documentHighlightProvider = false
-        client.server_capabilities.documentRangeFormattingProvider = false
-        client.server_capabilities.referencesProvider = false
-        client.server_capabilities.definitionProvider = false
-        client.server_capabilities.executeCommandProvider = true
-        client.server_capabilities.documentSymbolProvider = false
-        client.server_capabilities.hoverProvider = false
-        client.server_capabilities.renameProvider = false
-        client.server_capabilities.signatureHelpProvider = false
-        client.server_capabilities.codeLensProvider = false
-        client.server_capabilities.codeActionProvider = true
-        default_cfg.on_attach(client, bufnr)
-    end,
-    on_new_config = function(new_config, new_root_dir)
-        new_config['cmd_env'] = pylsp_cmd_env(new_root_dir)
-    end
+    }
 }))
 
 -- ]]]
@@ -123,7 +106,6 @@ local efm_languages = {
     lua = {
         require 'aldur.efm.luafmt' -- require 'aldur.efm.luacheck'
     },
-    python = {require 'aldur.efm.black'},
     dockerfile = {require('efmls-configs.linters.hadolint')},
     vim = {vint},
     sh = {
@@ -379,6 +361,8 @@ lspconfig.marksman.setup(extend_config({
         default_cfg.on_attach(client, bufnr)
     end
 }))
+
+-- ]]]
 
 -- Harper [[[1
 

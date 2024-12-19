@@ -38,6 +38,7 @@ local menu_identifiers = {
     note_tags = "[NTags]",
     note_headers = "[NHead]",
     path = "[Path]",
+    async_path = "[Path]",
     cmdline = "[Cmd]"
 }
 
@@ -122,7 +123,7 @@ local snippets_source = {name = 'snippets', keyword_length = 2}
 local default_sources = {
     -- Sorted by priority.
     {name = 'nvim_lsp'}, snippets_source, visible_buffers_source,
-    {name = 'path'}
+    {name = 'async_path'}, {name = 'nvim_lsp_signature_help'}
 }
 
 local md_sources = {
@@ -148,18 +149,29 @@ vim.list_extend(vim_lua_sources, default_sources)
 cmp.setup.filetype({'lua', 'vim'}, {sources = vim_lua_sources})
 
 local beancount_sources = {
-    {name = 'beancount', max_item_count = 10}, snippets_source
+    -- {name = 'beancount', max_item_count = 10},
+    snippets_source, {name = 'nvim_lsp'}, {name = 'async_path'}
 }
 -- NOTE: Because `beancount` files are usually pretty big,
 -- we are purposedly leaving out _other_ sources and just using its own.
--- vim.list_extend(beancount_sources, default_sources)
--- cmp.setup.filetype({'beancount'}, {sources = beancount_sources})
+cmp.setup.filetype({'beancount'}, {sources = beancount_sources})
 
 cmp.setup({
     formatting = {
         format = function(entry, vim_item)
             -- Kind icons
             vim_item.kind = format_if_nerdfont(vim_item)
+
+            -- Truncate if too long.
+            -- https://github.com/Abstract-IDE/Abstract/blob/
+            -- 6758bb3d1dd04523e996abd72513d6053116f761/lua/plugins/nvim-cmp.lua#L87C1-L87C30
+            local MAX_LABEL_WIDTH = 50
+            local label = vim_item.abbr
+            local truncated_label = vim.fn
+                                        .strcharpart(label, 0, MAX_LABEL_WIDTH)
+            if truncated_label ~= label then
+                vim_item.abbr = truncated_label .. '…'
+            end
 
             -- Source
             vim_item.menu = (menu_identifiers)[entry.source.name]
@@ -186,7 +198,7 @@ cmp.setup({
 cmp.setup.cmdline(':', {
     sources = cmp.config.sources({
         -- Double brackets because this creates `group_index`es
-        {name = 'path', max_item_count = 10}
+        {name = 'async_path', max_item_count = 10}
     }, {
         -- Same here, another group
         {

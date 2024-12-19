@@ -14,33 +14,50 @@ function M.find_python_venv(workspace_rootdir)
         return M.venv_cache[workspace_rootdir]
     end
 
-    -- Find and use virtualenv from pipenv in workspace directory.
-    local match = vim.fn.glob(util.path.join(workspace_rootdir, 'Pipfile'))
-    if match ~= '' then
-        local venv = vim.fn.trim(vim.fn.system(
-                                     'PIPENV_PIPFILE=' .. match ..
-                                         ' pipenv -q --venv'))
-
-        local msg = "Activating Pipenv at " .. venv
+    local local_venv = util.path.join(workspace_rootdir, '.venv')
+    if vim.fn.isdirectory(local_venv) then
+        local msg = "Found local virtualenv at " .. local_venv
         _G.info_message(msg)
 
-        M.venv_cache[workspace_rootdir] = venv
+        M.venv_cache[workspace_rootdir] = local_venv
+        return local_venv
+    end
 
-        return venv
+    -- Find and use virtualenv from pipenv in workspace directory.
+    local match = vim.fn.glob(util.path.join(workspace_rootdir, 'Pipfile'))
+    if match ~= '' and vim.fn.executable('pipenv') then
+        local venv_cmd = vim.system({"pipenv", "-q", "--venv"}, {
+            text = true,
+            env = {PIPENV_PIPFILE = match}
+        }):wait()
+
+        if venv_cmd.code == 0 then
+            local venv = vim.fn.trim(venv_cmd.stdout)
+
+            local msg = "Activating Pipenv at " .. venv
+            _G.info_message(msg)
+
+            M.venv_cache[workspace_rootdir] = venv
+
+            return venv
+        end
     end
 
     match = vim.fn.glob(util.path.join(workspace_rootdir, 'poetry.lock'))
-    if match ~= '' then
-        local venv = vim.fn.trim(vim.fn.system(
-                                     'poetry env info -p -C ' ..
-                                         workspace_rootdir))
+    if match ~= '' and vim.fn.executable('poetry') then
+        local venv_cmd = vim.system({
+            'poetry', 'env', 'info', '-p', '-C', workspace_rootdir
+        }, {text = true}):wait()
 
-        local msg = "Activating poetry venv at " .. venv
-        _G.info_message(msg)
+        if venv_cmd.code == 0 then
+            local venv = vim.fn.trim(venv_cmd.stdout)
+            local msg = "Activating poetry venv at " .. venv
+            _G.info_message(msg)
 
-        M.venv_cache[workspace_rootdir] = venv
+            M.venv_cache[workspace_rootdir] = venv
 
-        return venv
+            return venv
+        end
     end
 
     return nil

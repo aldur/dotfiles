@@ -14,7 +14,9 @@ with pkgs.vimPlugins;
   zen-mode-nvim
   trouble-nvim
   dressing-nvim
+
   plenary-nvim # Required by CodeCompanion
+  codecompanion-nvim
 
   nvim-tree-lua
   oil-nvim
@@ -45,9 +47,11 @@ with pkgs.vimPlugins;
   # Git integration
   vim-fugitive # git wrapper
   vim-rhubarb # GBrowse for GitHub
+  diffview-nvim
 
   # UI
   lightline-vim # statusbar
+
   sonokai # based on Monokai pro
 
   # language specific
@@ -69,11 +73,10 @@ with pkgs.vimPlugins;
 
   # LSP
   nvim-lspconfig
-  lsp_signature-nvim
   fidget-nvim
-  actions-preview-nvim
   nui-nvim
   efmls-configs-nvim
+  nvim-lightbulb
 
   # Snippets
   nvim-snippets
@@ -82,10 +85,11 @@ with pkgs.vimPlugins;
   nvim-cmp
   cmp-nvim-lsp
   cmp-buffer
-  cmp-path
+  cmp-async-path
   cmp-nvim-lua
   cmp-cmdline
   cmp-beancount
+  cmp-nvim-lsp-signature-help
 ]
 ++ (with pkgs; [
   (vimUtils.buildVimPlugin {
@@ -115,27 +119,13 @@ with pkgs.vimPlugins;
       hash = "sha256-EjPfkcgYhxcDCNfAX9lepFzKUFGpG36L1qKKt6peNrk=";
     };
   })
-  (
-    let
-      name = "codecompanion.nvim";
-    in
-    vimUtils.buildVimPlugin {
-      name = builtins.replaceStrings [ "." ] [ "-" ] name;
-      src = fetchFromGitHub {
-        owner = "olimorris";
-        repo = name;
-        rev = "v9.1.0";
-        hash = "sha256-vcynog/gcAuiawthis78qWL4VlMcFpN2vt5KvRpgDww=";
-      };
-    }
-  )
   (vimUtils.buildVimPlugin rec {
     name = "tinymd.nvim";
     src = fetchFromGitHub {
       owner = "aldur";
       repo = name;
-      rev = "1034238f75427076fa1a2745f8b83fa3cee6c623";
-      hash = "sha256-C0NEGvTkVO8UGFgCxYMDJf8gtiObkMoldkFXq1PVCW0=";
+      rev = "ea6dda792313fce3fd7f0c95cbce1faccde6e826";
+      hash = "sha256-4PzNCmzC0JJNXX9FT81713sKT8QAZaPnlbhaYSp+LsQ=";
     };
   })
   (pkgs.symlinkJoin {

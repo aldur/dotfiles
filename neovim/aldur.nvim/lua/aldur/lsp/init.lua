@@ -1,6 +1,5 @@
 require('aldur.fidget')
-require('aldur.code_action') -- Side effects, autocmd
-
+require('aldur.code_action') -- Side effects, lightbulb
 require('aldur.lsp.diagnostic') -- Side effects, autocmd
 
 local function on_attach_callback(args)
@@ -8,13 +7,6 @@ local function on_attach_callback(args)
 
     local client = vim.lsp.get_client_by_id(args.data.client_id)
     if client == nil then return end
-
-    require("lsp_signature").on_attach({
-        -- This is mandatory, otherwise border config won't get registered.
-        bind = true,
-        handler_opts = {border = "single"},
-        bufnr
-    })
 
     -- Mappings
     local bufopts = {noremap = true, silent = true, buffer = bufnr}
@@ -50,8 +42,8 @@ local function on_attach_callback(args)
     end, bufopts)
 
     if client.server_capabilities.codeActionProvider then
-        vim.keymap.set({'n', 'x'}, 'gK',
-                       require("actions-preview").code_actions, bufopts)
+        vim.keymap.set({'n', 'x'}, 'gK', require("fzf-lua").lsp_code_actions,
+                       bufopts)
     end
 
     if client.server_capabilities.documentFormattingProvider then
