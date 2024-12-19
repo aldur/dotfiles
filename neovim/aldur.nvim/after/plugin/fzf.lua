@@ -13,7 +13,8 @@ fzf.setup({
             ["<M-S-p>"] = "toggle-preview-cw"
         },
         fzf = {true, ["alt-p"] = "toggle-preview"}
-    }
+    },
+    lsp = {code_actions = {previewer = "codeaction_native"}}
 })
 
 vim.keymap.set("n", "<leader><space>", function()
@@ -27,7 +28,18 @@ end, {noremap = true, silent = true, desc = "FZF rg in project."})
 local mappings = {
     bb = fzf.buffers,
     tt = fzf.btags,
-    T = fzf.tags,
+    T = function()
+        -- Make th displayed tag path relative to the project root.
+        local cwd = vim.fn['aldur#find_root#find_root']()
+
+        local tags = vim.fn.expand(vim.fn.tagfiles()[1])
+        if not tags:match("^/") then
+            tags = vim.fn.getcwd() .. "/" .. tags
+        end
+
+        fzf.tags({cwd = cwd, ctags_file = tags})
+    end,
+    -- T = fzf.tags,
     h = fzf.oldfiles,
     [':'] = fzf.command_history,
     u = function()
@@ -85,4 +97,7 @@ vim.api.nvim_create_user_command("Snippets", function()
 
     fzf.fzf_exec(to_show)
 end, {})
+
+vim.api.nvim_create_user_command("GBranches", function() fzf.git_branches() end,
+                                 {})
 
