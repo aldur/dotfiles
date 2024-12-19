@@ -52,6 +52,19 @@
               (final: prev: {
                 neovim = (prev.callPackage ../neovim/neovim.nix { });
                 neovim-vanilla = prev.neovim;
+                ollama = (
+                  prev.ollama.overrideAttrs (old: rec {
+                    # TODO: Remove me once 0.5 gets released
+                    version = "0.5.0-rc1";
+                    src = prev.fetchFromGitHub {
+                      owner = "ollama";
+                      repo = "ollama";
+                      rev = "v${version}";
+                      hash = "sha256-WbRs7CdPKIEqxJUZjPT4ZzuWBl+OfGu2dzwjNVrSgVw=";
+                      fetchSubmodules = true;
+                    };
+                  })
+                );
               })
             ];
 
@@ -139,6 +152,7 @@
               difftastic
               exiftool
               fd
+              ffmpeg
               fzf
               git
               git-crypt
@@ -149,6 +163,7 @@
               neovim
               nix-doc
               ollama
+              open-webui
               pandoc
               pinentry_mac
               poetry
@@ -173,6 +188,7 @@
             ++ [
               (pkgs.callPackage ../nix/packages/age-plugin-se/age-plugin-se.nix { }).age-plugin-se
               (pkgs.callPackage ../nix/packages/tiktoken/tiktoken.nix { })
+              (pkgs.callPackage ../nix/packages/llmcat/llmcat.nix { })
             ];
 
           security.pam.enableSudoTouchIdAuth = true;
@@ -206,6 +222,32 @@
                   serviceConfig = {
                     KeepAlive = true;
                     RunAtLoad = true;
+                  };
+                  environment = {
+                    OLLAMA_FLASH_ATTENTION = "1";
+                    OLLAMA_KV_CACHE_TYPE = "q8_0";
+                  };
+                };
+                open-webui = {
+                  command = "${pkgs.open-webui}/bin/open-webui serve --host 127.0.0.1";
+                  serviceConfig = {
+                    KeepAlive = true;
+                    RunAtLoad = true;
+                    StandardErrorPath = "/tmp/open-webui/std.err";
+                    StandardOutPath = "/tmp/open-webui/std.log";
+                    WorkingDirectory = "/Users/${user}/.cache/open-webui/";
+                  };
+                  environment = {
+                    ENV = "prod";
+                    WEBUI_AUTH = "False";
+                    DATA_DIR = "/Users/${user}/.cache/open-webui/data";
+                    ENABLE_SIGNUP = "False";
+                    ENABLE_COMMUNITY_SHARING = "False";
+                    ENABLE_MESSAGE_RATING = "False";
+                    ENABLE_EVALUATION_ARENA_MODELS = "False";
+                    ENABLE_OPENAI_API = "False";
+                    SAFE_MODE = "True";
+                    WEBUI_SECRET_KEY = "t0p-s3cr3t";
                   };
                 };
               };
