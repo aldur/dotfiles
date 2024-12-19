@@ -9,8 +9,8 @@ end
 
 require("codecompanion").setup({
     strategies = {
-        chat = {adapter = "qwen2.5:32b"},
-        inline = {adapter = "qwen2.5:32b"}
+        chat = {adapter = "qwen2.5-coder:32b"},
+        inline = {adapter = "qwen2.5-coder:32b"}
     },
     display = {chat = {show_settings = true}},
     adapters = {
