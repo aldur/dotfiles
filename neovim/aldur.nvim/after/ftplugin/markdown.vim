@@ -51,3 +51,6 @@ setlocal foldminlines=1
 " NOTE: This overrides a `vim` mapping, see :h gr
 nnoremap <buffer><silent> gr :LinkConvertSingle<cr>
 xnoremap <buffer><silent> gr :LinkConvertRange<cr>
+
+" Make it so that if you are on a header, you will decrease its level, otherwise open `NvimTreeOpen`
+nnoremap <silent><buffer><expr> - tinymd#get_current_header_level() > -1 ? ':call tinymd#decrease_header_level()<cr>' : ':NvimTreeOpen<cr>'
