@@ -7,10 +7,12 @@ let
     with pkgs;
     [
       # Core tools
+      # mermaid-filter
       bashInteractive
       bat
       coreutils
       curl
+      delta
       diffutils
       direnv
       fd
@@ -18,14 +20,14 @@ let
       git
       git-crypt
       jq
+      less
       nix-direnv
       openssh # required to sign commits
       pandoc
-      # mermaid-filter
       perl
       ripgrep
-      which
       universal-ctags
+      which
 
       (python3.withPackages (
         ps: with ps; [
@@ -43,10 +45,10 @@ let
 
       astyle
       autotools-language-server
+      basedpyright
       beancount
       beancount-language-server
       bibtool
-      black
       cargo
       ccls
       clippy
@@ -71,9 +73,9 @@ let
       nixfmt-rfc-style
       nodejs
       pgformatter
-      pyright
       poetry
       ripgrep
+      ruff
       rust-analyzer
       rustfmt
       rustc
@@ -82,9 +84,11 @@ let
       solc
       sqlint
       (opentofu.overrideAttrs (old: {
-        postInstall = old.postInstall + ''
-          ln -s $out/bin/tofu $out/bin/terraform
-        '';
+        postInstall =
+          old.postInstall
+          + ''
+            ln -s $out/bin/tofu $out/bin/terraform
+          '';
       }))
       terraform-ls
       texlab
@@ -100,12 +104,10 @@ let
       luaPackages.luacheck
 
       python312Packages.cfn-lint
-      python312Packages.pyflakes
-      python312Packages.python-lsp-server
 
       nodePackages.prettier
-      # nodePackages.prettier-plugin-solidity
       nodePackages.sql-formatter
+      # nodePackages.prettier-plugin-solidity
       nodePackages.typescript-language-server
     ]
     ++ [
@@ -242,6 +244,7 @@ pkgs.symlinkJoin {
     wrapProgram $out/bin/nvim \
       --set PATH ${lib.makeBinPath (devTools ++ [ "$out" ] ++ additionallyInPath)} \
       --set DIRENVSHELL ${shell}/bin/fish \
+      --set DIRENV_LOG_FORMAT "direnv: %s" \
       --add-flags '-u' \
       --add-flags '${./init.vim}' \
       --add-flags '--cmd' \
