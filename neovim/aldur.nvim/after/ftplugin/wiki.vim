@@ -22,5 +22,14 @@ nmap <silent><buffer> ge <plug>(wiki-link-follow)
 " Note that this also replaces the mapping from `WikiLinkAdd`,
 " because this correctly searches attachments.
 " inoremap <silent><buffer> <c-x><c-n> <C-o>:WikiLinkAdd<CR>
-inoremap <expr> <plug>(fzf-complete-note)      fzf#vim#complete#path($FZF_DEFAULT_COMMAND . " --search-path " . g:wiki_root . " \| sed 's#^" . g:wiki_root . "/##' \| sed 's#.md$##'")
-imap <silent><buffer> <c-x><c-n> <plug>(fzf-complete-note)
+lua << EOF
+local fzf_default_command = vim.env.FZF_DEFAULT_COMMAND
+if fzf_default_command ~= nil and fzf_default_command ~= '' then
+    vim.keymap.set({"v", "i"}, "<C-x><C-n>", function()
+        local fzf = require('fzf-lua')
+        fzf.complete_path({
+            cmd = fzf_default_command .. " --search-path " .. vim.g.wiki_root .. "| sed 's#^" .. vim.g.wiki_root .. "/##' | sed 's#.md$##'"
+        })
+    end, {silent = true, desc = "Fuzzy complete note path", buffer = true})
+end
+EOF
