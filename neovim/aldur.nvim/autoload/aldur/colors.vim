@@ -35,4 +35,8 @@ function! aldur#colors#customize_sonokai() abort
     call sonokai#highlight('WarningText', l:palette.none, l:palette.diff_yellow)
     call sonokai#highlight('InfoText', l:palette.none, l:palette.diff_blue)
     call sonokai#highlight('HintText', l:palette.none, l:palette.diff_green)
+
+    " Found a background GUI color manually and then used
+    " https://gist.github.com/localhostdotdev/8a6ad86e190865016ab5e0bc0197ab93
+    call sonokai#highlight('DiffText', l:palette.fg, ['#396674', '60'])
 endfunction
