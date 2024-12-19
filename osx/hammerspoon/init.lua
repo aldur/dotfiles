@@ -433,7 +433,7 @@ end
 hs.fnutils.each({
     {'B', 'com.apple.Safari'}, {'W', 'com.kapeli.dashdoc'},
     {'G', 'com.culturedcode.ThingsMac'}, {'X', 'com.tinyspeck.slackmacgap'},
-    {'I', 'com.apple.MobileSMS'}
+    {'I', 'com.apple.MobileSMS'}, {'F', 'com.apple.finder'}
 }, function(k)
     hs.hotkey.bind(hyper, k[1], function() launchFocusOrSwitchBack(k[2]) end)
 end)
