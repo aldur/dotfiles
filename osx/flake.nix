@@ -52,19 +52,19 @@
               (final: prev: {
                 neovim = (prev.callPackage ../neovim/neovim.nix { });
                 neovim-vanilla = prev.neovim;
-                ollama = (
-                  prev.ollama.overrideAttrs (old: rec {
-                    # TODO: Remove me once 0.5 gets released
-                    version = "0.5.0-rc1";
-                    src = prev.fetchFromGitHub {
-                      owner = "ollama";
-                      repo = "ollama";
-                      rev = "v${version}";
-                      hash = "sha256-WbRs7CdPKIEqxJUZjPT4ZzuWBl+OfGu2dzwjNVrSgVw=";
-                      fetchSubmodules = true;
-                    };
-                  })
-                );
+                # ollama = (
+                #   prev.ollama.overrideAttrs (old: rec {
+                #     # TODO: Remove me once 0.5 gets released
+                #     version = "0.5.0-rc1";
+                #     src = prev.fetchFromGitHub {
+                #       owner = "ollama";
+                #       repo = "ollama";
+                #       rev = "v${version}";
+                #       hash = "sha256-WbRs7CdPKIEqxJUZjPT4ZzuWBl+OfGu2dzwjNVrSgVw=";
+                #       fetchSubmodules = true;
+                #     };
+                #   })
+                # );
               })
             ];
 
