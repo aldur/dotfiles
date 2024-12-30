@@ -16,9 +16,10 @@
               "darwin-arm64"
               "sha256-fG3oKBt780NAI5wNh49lO7YumbRYigBHtRVAjaIfKUc="
             ];
+            # FIXME: This won't work because `clarinet` is dynamically linked.
             x86_64-linux = [
               "linux-x64-glibc"
-              "sha256-ivbTcJBrzwgu2mLAoJqjqWqNMXGdsYiDQ7wgs22U7AU="
+              "sha256-o6JNpWTqCIGJGD65na6JU7dM0Y0EPuaeKHRfy3xfnuo="
             ];
             x86_64-darwin = [
               "darwin-x64"
