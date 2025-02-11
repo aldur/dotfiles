@@ -2,7 +2,7 @@ if !exists('g:neovide')
     finish
 endif
 
-lua vim.o.guifont = "FiraCode Nerd Font:h14"
+lua vim.o.guifont = "FiraCode Nerd Font:h12"
 
 let g:neovide_remember_window_size = v:true
 let g:neovide_hide_mouse_when_typing = v:false
