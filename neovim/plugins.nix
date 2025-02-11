@@ -52,6 +52,8 @@ with pkgs.vimPlugins;
   # UI
   lightline-vim # statusbar
 
+  wiki-vim
+
   sonokai # based on Monokai pro
 
   # language specific
@@ -93,15 +95,6 @@ with pkgs.vimPlugins;
 ]
 ++ (with pkgs; [
   (vimUtils.buildVimPlugin {
-    name = "wiki-vim";
-    src = fetchFromGitHub {
-      owner = "lervag";
-      repo = "wiki.vim";
-      rev = "197282b271a4b829a3d3645d6fa5bf4180c413fd";
-      hash = "sha256-GSGebXjAnKhh9WD0ZPrVWMmbtTdN/Zgr2achGmWjaR8";
-    };
-  })
-  (vimUtils.buildVimPlugin {
     name = "lists.vim";
     src = fetchFromGitHub {
       owner = "lervag";
@@ -124,8 +117,8 @@ with pkgs.vimPlugins;
     src = fetchFromGitHub {
       owner = "aldur";
       repo = name;
-      rev = "ea6dda792313fce3fd7f0c95cbce1faccde6e826";
-      hash = "sha256-4PzNCmzC0JJNXX9FT81713sKT8QAZaPnlbhaYSp+LsQ=";
+      rev = "f1caf374827de0e01a7bc90bdb6761fcbfab3b1f";
+      hash = "sha256-Sl+L3fQMs/YsVllDuJpmwFNGtaDeta5okH3Kl5+xI1g=";
     };
   })
   (pkgs.symlinkJoin {
@@ -139,6 +132,7 @@ with pkgs.vimPlugins;
           rev = "86444d23bec2a810311da4cee4028317d67d630c";
           hash = "sha256-rIO/UuSbdwHjRLbHoUC2ke9BaxQkssmyYc6TlmxgFU8=";
         };
+        doCheck = false; # Missing runtime dependencies for "require" check
       })
       (pkgs.neovimUtils.grammarToPlugin (
         pkgs.tree-sitter.buildGrammar rec {
