@@ -67,9 +67,7 @@ lspconfig.basedpyright.setup(extend_config({
     basedpyright = {
         -- Using Ruff's import organizer
         disableOrganizeImports = true,
-        analysis = {
-            autoImportCompletions  = true,
-        }
+        analysis = {autoImportCompletions = true}
     }
 }))
 
@@ -534,12 +532,18 @@ vim.g.rustaceanvim = {
             local bufname = vim.api.nvim_buf_get_name(bufnr)
             ---@diagnostic disable-next-line: missing-parameter
             local root_dir = rustacean_config.server.root_dir(bufname)
+            local default_cmd = {
+                'rust-analyzer', '--log-file', logfile
+            }
+            if root_dir == nil then
+                vim.notify(
+                    "No root dir detected, no override of `rustacean_config`.",
+                    vim.log.levels.INFO)
+                return default_cmd
+            end
             vim.notify("Overriding rustacean_config with direnv " .. root_dir,
                        vim.log.levels.INFO)
-            return {
-                "direnv", "exec", root_dir, 'rust-analyzer', '--log-file',
-                logfile
-            }
+            return vim.list_extend({"direnv", "exec", root_dir}, default_cmd)
         end
     }
 }
