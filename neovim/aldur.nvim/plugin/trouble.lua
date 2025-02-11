@@ -16,11 +16,6 @@ require('trouble').setup({
     }
 })
 
--- Pressing `ctrl-t` will load the result in trouble.
-local config = require("fzf-lua.config")
-local actions = require("trouble.sources.fzf").actions
-config.defaults.actions.files["ctrl-t"] = actions.open
-
 vim.keymap.set("n", "<leader>xx",
                "<cmd>Trouble project_diagnostics toggle filter.buf=0<cr>",
                {noremap = true, silent = true})
