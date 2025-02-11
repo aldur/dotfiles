@@ -1,11 +1,14 @@
 local fzf = require('fzf-lua')
+local actions = require("fzf-lua.actions")
+
 fzf.setup({
     fzf_colors = true,
-    winopts = {preview = {default = "bat"}},
-    winopts_fn = function()
+    winopts = {
         -- Make it full-width on smaller windows.
-        return {width = vim.o.columns > 100 and 0.80 or 1}
-    end,
+        -- XXX This needs a function, but unclear how to make that work after deprecation.
+        -- width = vim.o.columns > 100 and 0.80 or 1,
+        preview = {default = "bat"}
+    },
     keymap = {
         builtin = {
             true,
@@ -21,9 +24,21 @@ vim.keymap.set("n", "<leader><space>", function()
     fzf.files({cwd = vim.fn['aldur#find_root#find_root']()})
 end, {noremap = true, silent = true, desc = "FZF files in project."})
 
-vim.keymap.set("n", "<leader>r", function()
-    fzf.grep_project({cwd = vim.fn['aldur#find_root#find_root']()})
-end, {noremap = true, silent = true, desc = "FZF rg in project."})
+local grep_options = function()
+    return {
+        cwd = vim.fn['aldur#find_root#find_root'](),
+        actions = {
+            ["ctrl-i"] = {actions.toggle_ignore},
+            ["ctrl-h"] = {actions.toggle_hidden}
+        },
+        rg_opts = "--hidden " ..
+            require('fzf-lua.defaults').defaults.grep.rg_opts
+    }
+end
+
+vim.keymap.set("n", "<leader>r",
+               function() fzf.grep_project(grep_options()) end,
+               {noremap = true, silent = true, desc = "FZF rg in project."})
 
 local mappings = {
     bb = fzf.buffers,
@@ -42,9 +57,7 @@ local mappings = {
     -- T = fzf.tags,
     h = fzf.oldfiles,
     [':'] = fzf.command_history,
-    u = function()
-        fzf.grep_cword({cwd = vim.fn['aldur#find_root#find_root']()})
-    end -- NOTE: LSPs will override this.
+    u = function() fzf.grep_cword(grep_options()) end -- NOTE: LSPs will override this.
 }
 
 for key, value in pairs(mappings) do
@@ -101,3 +114,7 @@ end, {})
 vim.api.nvim_create_user_command("GBranches", function() fzf.git_branches() end,
                                  {})
 
+-- Pressing `ctrl-t` will load the result in trouble.
+local config = require("fzf-lua.config")
+local trouble_actions = require("trouble.sources.fzf").actions
+config.defaults.actions.files["ctrl-t"] = trouble_actions.open
