@@ -26,7 +26,8 @@ require("codecompanion").setup({
         end,
         ["llama3.2"] = ollama_model("llama3.2:latest"),
         ["qwen2.5:32b"] = ollama_model("qwen2.5:32b"),
-        ["qwen2.5-coder:32b"] = ollama_model("qwen2.5-coder:32b")
+        ["qwen2.5-coder:32b"] = ollama_model("qwen2.5-coder:32b"),
+        ["phi4:14b"] = ollama_model("phi4:14b")
     }
 })
 
@@ -45,16 +46,26 @@ vim.api.nvim_set_keymap("v", "ga", "<cmd>CodeCompanionChat Add<cr>",
 
 -- Expand 'cc' into 'CodeCompanion' in the command line
 vim.cmd([[cab cc CodeCompanion]])
+vim.cmd([[cab ccc CodeCompanionChat]])
 
 local group = vim.api.nvim_create_augroup("CodeCompanionHooks", {})
+
+local progress = require("fidget.progress")
+local handle = nil
+
 vim.api.nvim_create_autocmd({"User"}, {
     pattern = "CodeCompanionRequest*",
     group = group,
     callback = function(request)
         if request.match == "CodeCompanionRequestStarted" then
-            vim.g.code_companion_processing = true
-        elseif request.match == "CodeCompanionRequestFinished" then
-            vim.g.code_companion_processing = false
+            handle = progress.handle.create({
+                title = "CodeCompanion",
+                message = "Request started",
+                lsp_client = {name = "Ollama"},
+                percentage = 0
+            })
+        else
+            if handle then handle:finish() end
         end
     end
 })

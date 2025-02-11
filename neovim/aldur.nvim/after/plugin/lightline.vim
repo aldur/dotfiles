@@ -32,7 +32,6 @@ let g:lightline.component_expand = {
             \ 'syntax_error': 'aldur#lightline#lsp_error',
             \ 'syntax_warning': 'aldur#lightline#lsp_warning',
             \ 'syntax_info': 'aldur#lightline#lsp_info',
-            \ 'llm_processing': 'aldur#lightline#llm_processing',
             \ }
 
 let g:lightline.component_function = {
@@ -63,7 +62,6 @@ let g:lightline.component_type = {
             \ 'syntax_error': 'error',
             \ 'syntax_warning': 'warning',
             \ 'syntax_info': 'info',
-            \ 'llm_processing': 'info',
             \ }
 
 " Setup the active status bar
@@ -71,7 +69,7 @@ let g:lightline.active = {
             \ 'left' : [ [ 'mode', 'paste', 'spell'                                          ],
             \            [ 'readonly', 'pwd_is_root', 'direnv_shell_enabled','filename'      ],
             \            [ 'gitbranch', 'pwd'                                                ] ],
-            \ 'right': [ [ 'llm_processing', 'syntax_error', 'syntax_warning', 'syntax_info' ],
+            \ 'right': [ [ 'syntax_error', 'syntax_warning', 'syntax_info' ],
             \            [ 'lineinfo'                                                        ],
             \            [ 'fileformat', 'fileencoding', 'filetype'                          ] ] }
 
