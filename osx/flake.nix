@@ -2,10 +2,26 @@
   description = "nix-darwin configuration";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs";
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+
+    # Declarative tap management
+    homebrew-core = {
+      url = "github:homebrew/homebrew-core";
+      flake = false;
+    };
+    homebrew-cask = {
+      url = "github:homebrew/homebrew-cask";
+      flake = false;
+    };
+    homebrew-bundle = {
+      url = "github:homebrew/homebrew-bundle";
+      flake = false;
     };
   };
 
@@ -13,6 +29,10 @@
     {
       self,
       nix-darwin,
+      nix-homebrew,
+      homebrew-core,
+      homebrew-cask,
+      homebrew-bundle,
       ...
     }:
     let
@@ -22,7 +42,7 @@
         {
           # Auto upgrade nix package and the daemon service.
           services.nix-daemon.enable = true;
-          nix.package = pkgs.nix;
+          nix.package = pkgs.nixVersions.latest;
           programs.nix-index.enable = true;
 
           nix.settings.allowed-users = [ user ];
@@ -52,19 +72,6 @@
               (final: prev: {
                 neovim = (prev.callPackage ../neovim/neovim.nix { });
                 neovim-vanilla = prev.neovim;
-                # ollama = (
-                #   prev.ollama.overrideAttrs (old: rec {
-                #     # TODO: Remove me once 0.5 gets released
-                #     version = "0.5.0-rc1";
-                #     src = prev.fetchFromGitHub {
-                #       owner = "ollama";
-                #       repo = "ollama";
-                #       rev = "v${version}";
-                #       hash = "sha256-WbRs7CdPKIEqxJUZjPT4ZzuWBl+OfGu2dzwjNVrSgVw=";
-                #       fetchSubmodules = true;
-                #     };
-                #   })
-                # );
               })
             ];
 
@@ -116,15 +123,15 @@
             gss = "git switch $(git branch -r | fzf | sed 's|origin/||' | xargs)";
             gc = "git commit";
 
-            ls = "ls --color=tty";
+            ls = "ls --color=auto";
 
             ssh = "autossh";
 
             ta = "tmux -CC new -ADs";
             tls = "tmux ls";
 
-            vim = "neovide";
-            neovide = "'/Applications/Nix Apps/Neovide.app/Contents/MacOS/neovide_server.sh'";
+            vim = "nvim";
+            neovide = "/opt/homebrew/bin/neovide";
           };
 
           programs.bash.enable = true;
@@ -162,8 +169,9 @@
               less
               neovim
               nix-doc
+              nix-search
               ollama
-              open-webui
+              # open-webui
               pandoc
               pinentry_mac
               poetry
@@ -173,6 +181,7 @@
               rig
               ripgrep
               ripgrep-all
+              syncthing
               tmux
               tree
               universal-ctags
@@ -180,10 +189,11 @@
               yubikey-agent
             ]
             ++ [
-              (neovide.override {
-                # Only used for checks
-                neovim = neovim-vanilla;
-              })
+              # (neovide.override {
+              #   # Only used for checks
+              #   neovim = neovim-vanilla;
+              # })
+              # (pkgs.callPackage ../nix/packages/neovide/neovide.nix { })
             ]
             ++ [
               (pkgs.callPackage ../nix/packages/age-plugin-se/age-plugin-se.nix { }).age-plugin-se
@@ -200,16 +210,6 @@
             caskArgs.no_quarantine = true;
             caskArgs.require_sha = true;
 
-            taps = [
-              "homebrew/services"
-            ];
-            brews = [
-              {
-                name = "syncthing";
-                start_service = true;
-                restart_service = "changed";
-              }
-            ];
             casks = import ./casks.nix;
             masApps = import ./masApps.nix;
           };
@@ -228,33 +228,56 @@
                     OLLAMA_KV_CACHE_TYPE = "q8_0";
                   };
                 };
-                open-webui = {
-                  command = "${pkgs.open-webui}/bin/open-webui serve --host 127.0.0.1";
+                syncthing = {
+                  command = "${pkgs.syncthing}/bin/syncthing -no-browser -no-restart";
                   serviceConfig = {
                     KeepAlive = true;
                     RunAtLoad = true;
-                    StandardErrorPath = "/tmp/open-webui/std.err";
-                    StandardOutPath = "/tmp/open-webui/std.log";
-                    WorkingDirectory = "/Users/${user}/.cache/open-webui/";
-                  };
-                  environment = {
-                    ENV = "prod";
-                    WEBUI_AUTH = "False";
-                    DATA_DIR = "/Users/${user}/.cache/open-webui/data";
-                    ENABLE_SIGNUP = "False";
-                    ENABLE_COMMUNITY_SHARING = "False";
-                    ENABLE_MESSAGE_RATING = "False";
-                    ENABLE_EVALUATION_ARENA_MODELS = "False";
-                    ENABLE_OPENAI_API = "False";
-                    SAFE_MODE = "True";
-                    WEBUI_SECRET_KEY = "t0p-s3cr3t";
                   };
                 };
+                # nvim = {
+                #   command = "${pkgs.neovim}/bin/nvim --headless --listen /tmp/nvim.sock";
+                #   serviceConfig = {
+                #     KeepAlive = true;
+                #     RunAtLoad = true;
+                #     WorkingDirectory = "/Users/${user}";
+                #     StandardErrorPath = "/tmp/nvim/std.err";
+                #     StandardOutPath = "/tmp/nvim/std.log";
+                #   };
+                # };
+                # open-webui = {
+                #   command = "${pkgs.open-webui}/bin/open-webui serve --host 127.0.0.1";
+                #   serviceConfig = {
+                #     KeepAlive = true;
+                #     RunAtLoad = true;
+                #     StandardErrorPath = "/tmp/open-webui/std.err";
+                #     StandardOutPath = "/tmp/open-webui/std.log";
+                #     WorkingDirectory = "/Users/${user}/.cache/open-webui/";
+                #   };
+                #   environment = {
+                #     ENV = "prod";
+                #     WEBUI_AUTH = "False";
+                #     DATA_DIR = "/Users/${user}/.cache/open-webui/data";
+                #     ENABLE_SIGNUP = "False";
+                #     ENABLE_COMMUNITY_SHARING = "False";
+                #     ENABLE_MESSAGE_RATING = "False";
+                #     ENABLE_EVALUATION_ARENA_MODELS = "False";
+                #     ENABLE_OPENAI_API = "False";
+                #     SAFE_MODE = "True";
+                #     WEBUI_SECRET_KEY = "t0p-s3cr3t";
+                #   };
+                # };
               };
             };
           };
 
           system.defaults = {
+            alf = {
+              loggingenabled = 1;
+              globalstate = 1;
+              stealthenabled = 1;
+            };
+
             dock.autohide = true;
             dock.autohide-delay = 0.0;
             dock.autohide-time-modifier = 0.15;
@@ -317,6 +340,39 @@
       darwinConfigurations.Maui = nix-darwin.lib.darwinSystem {
         modules = [
           configuration
+          nix-homebrew.darwinModules.nix-homebrew
+          {
+            nix-homebrew = {
+              # User owning the Homebrew prefix
+              inherit user;
+
+              # Install Homebrew under the default prefix
+              enable = true;
+
+              # Apple Silicon Only: Also install Homebrew under the default Intel prefix for Rosetta 2
+              enableRosetta = true;
+
+              # Automatically migrate existing Homebrew installations
+              autoMigrate = true;
+
+              taps = {
+                "homebrew/homebrew-core" = homebrew-core;
+                "homebrew/homebrew-cask" = homebrew-cask;
+                "homebrew/homebrew-bundle" = homebrew-bundle;
+              };
+
+              # Optional: Enable fully-declarative tap management
+              #
+              # With mutableTaps disabled, taps can no longer be added imperatively with `brew tap`.
+              mutableTaps = false;
+            };
+          }
+          (
+            { config, ... }:
+            {
+              homebrew.taps = builtins.attrNames config.nix-homebrew.taps;
+            }
+          )
         ];
       };
     };
