@@ -9,6 +9,8 @@
     };
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+    nix-homebrew.inputs.nix-darwin.follows = "nix-darwin";
+    nix-homebrew.inputs.nixpkgs.follows = "nixpkgs";
 
     # Declarative tap management
     homebrew-core = {
@@ -28,6 +30,7 @@
   outputs =
     {
       self,
+      nixpkgs,
       nix-darwin,
       nix-homebrew,
       homebrew-core,
@@ -37,6 +40,24 @@
     }:
     let
       user = "aldur";
+      system = "aarch64-darwin";
+
+      # https://wiki.nixos.org/wiki/Nixpkgs/Patching_Nixpkgs
+      pkgs' =
+        (import nixpkgs {
+          inherit system;
+        }).applyPatches
+          {
+            name = "nixpkgs-patched";
+            src = nixpkgs;
+            patches = [
+              (builtins.fetchurl {
+                url = "https://github.com/NixOS/nixpkgs/pull/381031.patch";
+                sha256 = "sha256-tB+YdXOdNNJcsROnwHX8MIATKXiB2jNSNwI/I7zzHeg=";
+              })
+            ];
+          };
+
       configuration =
         { pkgs, ... }:
         {
@@ -61,21 +82,37 @@
 
           # Used for backwards compatibility. please read the changelog
           # before changing: `darwin-rebuild changelog`.
-          system.stateVersion = 4;
+          system.stateVersion = 6;
 
           nixpkgs = {
             # The platform the configuration will be used on.
             # If you're on an Intel system, replace with "x86_64-darwin"
-            hostPlatform = "aarch64-darwin";
+            hostPlatform = system;
 
             overlays = [
               (final: prev: {
                 neovim = (prev.callPackage ../neovim/neovim.nix { });
                 neovim-vanilla = prev.neovim;
               })
+              (final: prev: {
+                neovide = prev.neovide.overrideAttrs (old: {
+                  src = pkgs.fetchFromGitHub {
+                    owner = "neovide";
+                    repo = "neovide";
+                    rev = old.version;
+                    hash = "sha256-p0CTFq2H0LUu04FIy/Q6F+LEUifGTgbaYHx1iDkeAAE=";
+                    postFetch = ''
+                      rm $out/assets/neovide-1024.png
+                      cp ${self}/neovide-1024.png $out/assets/neovide-1024.png
+                    '';
+                  };
+                });
+              })
             ];
 
             # config.allowUnsupportedSystem = true;
+
+            pkgs = import pkgs' { inherit system; };
           };
 
           # Declare the user that will be running `nix-darwin`.
@@ -171,7 +208,7 @@
               nix-doc
               nix-search
               ollama
-              # open-webui
+              open-webui
               pandoc
               pinentry_mac
               poetry
@@ -189,11 +226,12 @@
               yubikey-agent
             ]
             ++ [
-              # (neovide.override {
-              #   # Only used for checks
-              #   neovim = neovim-vanilla;
-              # })
+              (neovide.override {
+                # Only used for checks
+                neovim = neovim-vanilla;
+              })
               # (pkgs.callPackage ../nix/packages/neovide/neovide.nix { })
+              golden-cheetah
             ]
             ++ [
               (pkgs.callPackage ../nix/packages/age-plugin-se/age-plugin-se.nix { }).age-plugin-se
@@ -245,28 +283,28 @@
                 #     StandardOutPath = "/tmp/nvim/std.log";
                 #   };
                 # };
-                # open-webui = {
-                #   command = "${pkgs.open-webui}/bin/open-webui serve --host 127.0.0.1";
-                #   serviceConfig = {
-                #     KeepAlive = true;
-                #     RunAtLoad = true;
-                #     StandardErrorPath = "/tmp/open-webui/std.err";
-                #     StandardOutPath = "/tmp/open-webui/std.log";
-                #     WorkingDirectory = "/Users/${user}/.cache/open-webui/";
-                #   };
-                #   environment = {
-                #     ENV = "prod";
-                #     WEBUI_AUTH = "False";
-                #     DATA_DIR = "/Users/${user}/.cache/open-webui/data";
-                #     ENABLE_SIGNUP = "False";
-                #     ENABLE_COMMUNITY_SHARING = "False";
-                #     ENABLE_MESSAGE_RATING = "False";
-                #     ENABLE_EVALUATION_ARENA_MODELS = "False";
-                #     ENABLE_OPENAI_API = "False";
-                #     SAFE_MODE = "True";
-                #     WEBUI_SECRET_KEY = "t0p-s3cr3t";
-                #   };
-                # };
+                open-webui = {
+                  command = "${pkgs.open-webui}/bin/open-webui serve --host 127.0.0.1";
+                  serviceConfig = {
+                    KeepAlive = true;
+                    RunAtLoad = true;
+                    StandardErrorPath = "/tmp/open-webui/std.err";
+                    StandardOutPath = "/tmp/open-webui/std.log";
+                    WorkingDirectory = "/Users/${user}/.cache/open-webui/";
+                  };
+                  environment = {
+                    ENV = "prod";
+                    WEBUI_AUTH = "False";
+                    DATA_DIR = "/Users/${user}/.cache/open-webui/data";
+                    ENABLE_SIGNUP = "False";
+                    ENABLE_COMMUNITY_SHARING = "False";
+                    ENABLE_MESSAGE_RATING = "False";
+                    ENABLE_EVALUATION_ARENA_MODELS = "False";
+                    ENABLE_OPENAI_API = "False";
+                    SAFE_MODE = "True";
+                    WEBUI_SECRET_KEY = "t0p-s3cr3t";
+                  };
+                };
               };
             };
           };
@@ -365,6 +403,12 @@
               #
               # With mutableTaps disabled, taps can no longer be added imperatively with `brew tap`.
               mutableTaps = false;
+
+              # Disable this so that homebrew executables don't get on our PATH
+              # (we only use homebrew for casks anyway)
+              enableFishIntegration = false;
+              enableBashIntegration = false;
+              enableZshIntegration = false;
             };
           }
           (
