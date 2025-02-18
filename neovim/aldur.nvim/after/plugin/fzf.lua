@@ -2,6 +2,7 @@ local fzf = require('fzf-lua')
 local actions = require("fzf-lua.actions")
 
 fzf.setup({
+    "hide",
     fzf_colors = true,
     winopts = {
         -- Make it full-width on smaller windows.
@@ -32,7 +33,8 @@ local grep_options = function()
             ["ctrl-h"] = {actions.toggle_hidden}
         },
         rg_opts = "--hidden " ..
-            require('fzf-lua.defaults').defaults.grep.rg_opts
+            require('fzf-lua.defaults').defaults.grep.rg_opts,
+        resume = true
     }
 end
 
