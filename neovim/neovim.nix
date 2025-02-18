@@ -141,7 +141,7 @@ let
       pname = "${name}";
       version = "201901191939";
       src = builtins.fetchurl {
-        url = "http://ftp.vim.org/vim/runtime/spell/${name}";
+        url = "https://ftp.nluug.nl/pub/vim/runtime/spell/${name}";
         sha256 = spellHash;
       };
       phases = [ "installPhase" ];
