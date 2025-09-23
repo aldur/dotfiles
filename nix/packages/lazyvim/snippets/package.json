@@ -1,0 +1,14 @@
+{
+  "name": "aldurs-snippets",
+  "contributes": {
+    "snippets": [
+      {
+        "language": [
+          "markdown",
+          "rmd"
+        ],
+        "path": "./markdown.json"
+      }
+    ]
+  }
+}

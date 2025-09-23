@@ -1,0 +1,76 @@
+{
+  "Link": {
+    "prefix": [
+      "l",
+      "link"
+    ],
+    "body": [
+      "[${1:text}](${2:url}) ${0}"
+    ],
+    "description": "Add a link"
+  },
+  "Reference": {
+    "prefix": [
+      "r",
+      "reference",
+      "rfr"
+    ],
+    "body": [
+      "[${1:text}][${2:reference}] ${0}",
+      "",
+      "[${2:reference}]: ${3:reference_text}"
+    ],
+    "description": "Add a link reference"
+  },
+  "URL": {
+    "prefix": [
+      "u",
+      "url"
+    ],
+    "body": [
+      "<${1}> ${0}"
+    ],
+    "description": "Add url"
+  },
+  "Image": {
+    "prefix": "img",
+    "body": [
+      "![${1:alt text}](${2:path}) ${0}"
+    ],
+    "description": "Add image"
+  },
+  "References": {
+    "prefix": "refh",
+    "body": [
+      "## References",
+      "",
+      "- [${1:text}](${2:url}) ${0}"
+    ],
+    "description": "Reference under header"
+  },
+  "Footnote": {
+    "prefix": [
+      "fnt",
+      "footnote"
+    ],
+    "body": [
+      "[^${1:reference}] ${0}",
+      "",
+      "[^${1:reference}]: ${2:text}"
+    ],
+    "description": "Reference under header"
+  },
+  "Collapsible": {
+    "prefix": [
+      "collapsible",
+      "details"
+    ],
+    "body": [
+        "<details markdown=1>",
+        "<summary markdown=span>${1:summary}</summary>",
+        "${0}",
+        "</details>"
+    ],
+    "description": "Reference under header"
+  }
+}

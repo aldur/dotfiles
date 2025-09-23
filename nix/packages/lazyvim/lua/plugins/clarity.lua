@@ -1,0 +1,3 @@
+return {
+    {'aldur/clarity.nvim'},
+}
