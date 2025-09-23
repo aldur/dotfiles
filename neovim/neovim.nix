@@ -1,5 +1,9 @@
 # https://ayats.org/blog/neovim-wrapper
-{ pkgs, lib }:
+{
+  pkgs,
+  lib,
+  nvim-package ? pkgs.neovim-unwrapped,
+}:
 let
   packageName = "aldur.nvim";
 
@@ -8,6 +12,7 @@ let
     [
       # Core tools
       # mermaid-filter
+      atuin
       bashInteractive
       bat
       coreutils
@@ -35,16 +40,12 @@ let
         ]
       ))
 
-      # FIXME
-      # The following are required to make calls to `neovide`
-      # from `neovim` itself work.
-      coreutils-prefixed
-      gnused
-
       # --- LSPs ---
 
+      # Broken due to https://github.com/neomutt/lsp-tree-sitter/issues/4
+      # autotools-language-server
+
       astyle
-      autotools-language-server
       basedpyright
       beancount
       beancount-language-server
@@ -57,9 +58,11 @@ let
       dotenv-linter
       efm-langserver
       fish # to lint fish files
+      fish-lsp
       hadolint
       harper
       html-tidy
+      jinja-lsp
       libxml2
       ltex-ls
       lua-language-server
@@ -67,9 +70,9 @@ let
       luarocks
       marksman
       mdl
+      nil
       nix
       nixd
-      nil
       nixfmt-rfc-style
       nodejs
       pgformatter
@@ -77,12 +80,13 @@ let
       ripgrep
       ruff
       rust-analyzer
-      rustfmt
       rustc
-      shfmt
+      rustfmt
       shellcheck
+      shfmt
       solc
       sqlint
+      superhtml
       (opentofu.overrideAttrs (old: {
         postInstall =
           old.postInstall
@@ -109,6 +113,31 @@ let
       nodePackages.sql-formatter
       # nodePackages.prettier-plugin-solidity
       nodePackages.typescript-language-server
+
+      # (iwe.override (
+      #   let
+      #     rp = pkgs.rustPlatform;
+      #   in
+      #   {
+      #     rustPlatform = rp // {
+      #       buildRustPackage =
+      #         args:
+      #         rp.buildRustPackage (
+      #           args
+      #           // rec {
+      #             version = "0.0.27";
+      #             src = fetchFromGitHub {
+      #               owner = "iwe-org";
+      #               repo = "iwe";
+      #               tag = "iwe-v${version}";
+      #               hash = "sha256-4qKZnJa7rBMReWJO7iutp9SOKKL5BrxbZQySdogD03s=";
+      #             };
+      #             cargoHash = "sha256-pakgzQ268WNjIM0ykKm9s3x0uCj4Z+H3/c9+2hWjx10=";
+      #           }
+      #         );
+      #     };
+      #   }
+      # ))
     ]
     ++ [
       (import ../nix/packages/solhint/default.nix { inherit pkgs; }).solhint
@@ -179,6 +208,7 @@ let
         (usrBinToPath "man")
         (usrBinToPath "cc")
         (usrBinToPath "strip")
+        (usrBinToPath "trash")
       ]
     ))
     ++ (lib.optionals (pkgs.stdenv.isLinux && builtins.pathExists "/etc/NIXOS") (
@@ -197,6 +227,10 @@ let
       "it.latin1.sug" = "sha256:1b4swv4khh7s4lp1w6dq6arjhni3649cxbm0pmfrcy0q1i0yyfmx";
       "it.utf-8.spl" = "sha256:04vlmri8fsza38w7pvkslyi3qrlzyb1c3f0a1iwm6vc37s8361yq";
       "it.utf-8.sug" = "sha256:0jnf4hkpr4hjwpc8yl9l5dddah6qs3sg9ym8fmmr4w4jlxhigfz0";
+      "es.latin1.spl" = "sha256:0h8lhir0yk2zcs8rjn2xdsj2y533kdz7aramsnv0syaw1y82mhq7";
+      "es.latin1.sug" = "sha256:0jryzc3l1n4yfrf43cx188h0xmk5qfpzc4dqnxn627dx57gn799b";
+      "es.utf-8.spl" = "sha256:1qvv6sp4d25p1542vk0xf6argimlss9c7yh7y8dsby2wjan3fdln";
+      "es.utf-8.sug" = "sha256:0v5x05438r8aym2lclvndmjbshsfzzxjhqq80pljlg35m9w383z7";
     }
   );
 
@@ -238,7 +272,7 @@ let
 in
 pkgs.symlinkJoin {
   name = "nvim";
-  paths = [ pkgs.neovim-unwrapped ];
+  paths = [ nvim-package ];
   nativeBuildInputs = [ pkgs.makeWrapper ];
   postBuild = ''
     wrapProgram $out/bin/nvim \

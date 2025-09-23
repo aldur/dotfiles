@@ -9,7 +9,6 @@ setlocal iskeyword+=:
 setlocal iskeyword+=-
 
 setlocal formatoptions+=r
-setlocal formatoptions+=o
 
 let b:undo_ftplugin = 'setlocal iskeyword< formatprg< comments< commentstring< formatoptions<'
 

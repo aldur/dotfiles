@@ -76,4 +76,4 @@ set noequalalways
 " Set minimum height and width for windows
 " set winminheight=10 winminwidth=10
 
-autocmd vimrc TextYankPost * silent! lua vim.highlight.on_yank()
+autocmd vimrc TextYankPost * silent! lua vim.hl.on_yank()

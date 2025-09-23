@@ -11,14 +11,14 @@ local function extend_config(tbl)
 end
 
 default_cfg = extend_config({
-    capabilities = require('cmp_nvim_lsp').default_capabilities(),
     on_init = function(client, _)
         -- Disabling full semantic highlight as I am not using it for the time
         -- being.
         -- https://gist.github.com/swarn/fb37d9eefe1bc616c2a7e476c0bc0316?
         --   permalink_comment_id=5210704#gistcomment-5210704
         client.server_capabilities.semanticTokensProvider = nil
-    end
+    end,
+    capabilities = require('blink.cmp').get_lsp_capabilities()
 })
 
 -- In case you need to setup additional things on attach, here is a default
@@ -154,102 +154,6 @@ lspconfig.efm.setup(extend_config({
 
 -- ]]]
 
--- lua [[[1
-
-local lua_ls_on_init = function(client)
-    local path = client.workspace_folders[1].name
-
-    if path:find('.vim', 1, true) or path:find('.dotfiles/neovim', 1, true) then
-        log("Overriding lua_lsp configuration for vim lua files.")
-
-        -- https://github.com/mjlbach/defaults.nvim/blob/master/init.lua#L245
-        -- Make runtime files discoverable to the server
-        local runtime_path = vim.split(package.path, ';')
-        table.insert(runtime_path, 'lua/?.lua')
-        table.insert(runtime_path, 'lua/?/init.lua')
-
-        -- Tell the language server which version of Lua you're using
-        -- (most likely LuaJIT in the case of Neovim)
-        client.config.settings.Lua.runtime.version = "LuaJIT"
-        -- Setup your lua path
-        client.config.settings.Lua.runtime.path = runtime_path
-        -- Get the language server to recognize the `vim` global
-        client.config.settings.Lua.diagnostics.globals = {'vim'}
-
-        -- Make the server aware of Neovim runtime files
-        local f = vim.api.nvim_get_runtime_file
-        client.config.settings.Lua.workspace.library = f('', true)
-
-        -- WARNING:
-        -- Error here, or in all `on_*` functions, will not be printed!
-        -- Things will be very difficult to debug.
-        -- If you need to debug, use canaries, e.g.:
-        -- vim.print(client.config)
-    end
-
-    client.notify("workspace/didChangeConfiguration",
-                  {settings = client.config.settings})
-    return true
-end
-
-lspconfig.lua_ls.setup(extend_config({
-    on_attach = function(client, bufnr)
-        client.server_capabilities.documentFormattingProvider = false
-        client.server_capabilities.documentRangeFormattingProvider = false
-        default_cfg.on_attach(client, bufnr)
-    end,
-    on_init = util.add_hook_before(default_cfg.on_init, lua_ls_on_init),
-    on_new_config = function(new_config, new_root_dir)
-        if new_root_dir then
-            ---@diagnostic disable-next-line: undefined-field
-            if vim.uv.fs_stat(new_root_dir .. '/.luarc.json') or
-                ---@diagnostic disable-next-line: undefined-field
-                vim.uv.fs_stat(new_root_dir .. '/.luarc.jsonc') then
-                return
-            end
-        end
-
-        if new_root_dir:find('.dotfiles/vim', 1, true) then
-            log("Overriding lua_lsp configuration for vim lua files.")
-
-            -- https://github.com/mjlbach/defaults.nvim/blob/master/init.lua#L245
-            -- Make runtime files discoverable to the server
-            local runtime_path = vim.split(package.path, ';')
-            table.insert(runtime_path, 'lua/?.lua')
-            table.insert(runtime_path, 'lua/?/init.lua')
-
-            new_config.settings.Lua = vim.tbl_deep_extend('force',
-                                                          new_config.config
-                                                              .settings.Lua, {
-                runtime = {version = 'LuaJIT', path = runtime_path},
-                diagnostics = {globals = 'vim'},
-                workspace = {library = vim.api.nvim_get_runtime_file('', true)}
-            })
-
-            -- WARNING:
-            -- Error here, or in all `on_*` functions, will not be printed!
-            -- Things will be very difficult to debug.
-            -- If you need to debug, use canaries, e.g.:
-            -- vim.print(client.config)
-        end
-    end,
-    -- NOTE: If you need to debug the LSP.
-    -- cmd = {
-    --     "lua-language-server", "--logpath", "/tmp/.cache/lua-language-server/",
-    --     "--metapath", "/tmp/.cache/lua-language-server/meta/"
-    -- },
-    settings = {
-        Lua = {
-            runtime = {version = 'Lua 5.4'},
-            workspace = {checkThirdParty = false},
-            diagnostics = {globals = {}},
-            telemetry = {enable = false}
-        }
-    }
-}))
-
--- ]]]
-
 -- ltex [[[1
 
 local default_ltex_configuration =
@@ -258,7 +162,9 @@ local default_ltex_configuration =
 local ltex_filetypes = default_ltex_configuration.filetypes
 
 for idx, ft in ipairs(ltex_filetypes) do
-    if ft == 'gitcommit' then table.remove(ltex_filetypes, idx) end
+    if ft == 'gitcommit' or ft == 'html' then
+        table.remove(ltex_filetypes, idx)
+    end
 end
 ltex_filetypes = vim.tbl_deep_extend('force', ltex_filetypes, {'markdown.wiki'})
 
@@ -325,7 +231,12 @@ lspconfig.ltex.setup(extend_config({
 lspconfig.autotools_ls.setup(default_cfg)
 
 lspconfig.nil_ls.setup(extend_config({
-    settings = {["nil"] = {formatting = {command = {"nixfmt"}}}}
+    settings = {
+        ["nil"] = {
+            formatting = {command = {"nixfmt"}},
+            nix = {flake = {autoArchive = false}}
+        }
+    }
 }))
 
 -- nixd
@@ -457,6 +368,8 @@ cssls_config.capabilities.textDocument.completion.completionItem.snippetSupport 
     true
 lspconfig.cssls.setup(cssls_config)
 
+lspconfig.superhtml.setup(default_cfg)
+
 -- ]]]
 
 -- Go [[[1
@@ -508,6 +421,20 @@ lspconfig.clarinet.setup(extend_config({
 
 -- ]]]
 
+-- Fish [[[
+
+lspconfig.fish_lsp.setup(default_cfg)
+
+-- ]]]
+
+-- Jinja [[[
+
+-- NOTE: This will require configuring the LSP from a `.toml` file, per
+-- project.
+lspconfig.jinja_lsp.setup(default_cfg)
+
+-- ]]]
+
 -- Rust [[[[
 
 vim.g.rustaceanvim = {
@@ -532,9 +459,7 @@ vim.g.rustaceanvim = {
             local bufname = vim.api.nvim_buf_get_name(bufnr)
             ---@diagnostic disable-next-line: missing-parameter
             local root_dir = rustacean_config.server.root_dir(bufname)
-            local default_cmd = {
-                'rust-analyzer', '--log-file', logfile
-            }
+            local default_cmd = {'rust-analyzer', '--log-file', logfile}
             if root_dir == nil then
                 vim.notify(
                     "No root dir detected, no override of `rustacean_config`.",
@@ -549,5 +474,43 @@ vim.g.rustaceanvim = {
 }
 
 -- ]]]]
+
+-- lua [[[1
+
+require("lazydev").setup({
+    library = {
+        -- Library paths can be absolute
+        "~/.dotfiles/neovim",
+        -- Only load luvit types when the `vim.uv` word is found
+        {path = "${3rd}/luv/library", words = {"vim%.uv"}}
+    }
+    -- enabled = function(root_dir)
+    --     return root_dir:find('.vim', 1, true) or
+    --                root_dir:find('.dotfiles/neovim', 1, true)
+    -- end
+})
+
+lspconfig.lua_ls.setup(extend_config({
+    on_attach = function(client, bufnr)
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
+        default_cfg.on_attach(client, bufnr)
+    end,
+    -- NOTE: If you need to debug the LSP.
+    -- cmd = {
+    --     "lua-language-server", "--logpath", "/tmp/.cache/lua-language-server/",
+    --     "--metapath", "/tmp/.cache/lua-language-server/meta/"
+    -- },
+    settings = {
+        Lua = {
+            runtime = {version = 'Lua 5.4'},
+            workspace = {checkThirdParty = false},
+            diagnostics = {globals = {}},
+            telemetry = {enable = false}
+        }
+    }
+}))
+
+-- ]]]
 
 return M

@@ -20,6 +20,7 @@ local default_buffer_config = {
     -- variable, default value, command (+Toggle)
     {'signs', true, 'Signs'}, --
     {'virtual_text', false, 'VirtualText'}, --
+    {'virtual_lines', true, 'VirtualLines'}, --
     {'update_in_insert', false, 'UpdateInInsert'}, --
     {'underline', true, "Underline"}, --
     {'inlay_hint', true, "InlayHint"}
@@ -75,7 +76,34 @@ function M.reload_config()
             return false
         end,
 
-        signs = M.buffer_config_getters.signs,
+        virtual_lines = function(_, bufnr)
+            if M.buffer_config_getters.virtual_lines(_, bufnr) then
+                return {current_line = true}
+            end
+            ---@diagnostic disable-next-line: return-type-mismatch
+            return false
+        end,
+
+        signs = function(_, bufnr)
+            if M.buffer_config_getters.signs(_, bufnr) then
+                return {
+                    text = {
+                        [vim.diagnostic.severity.ERROR] = "",
+                        [vim.diagnostic.severity.HINT] = "",
+                        [vim.diagnostic.severity.INFO] = "",
+                        [vim.diagnostic.severity.WARN] = ""
+                    },
+                    numhl = {
+                        [vim.diagnostic.severity.ERROR] = "Title",
+                        [vim.diagnostic.severity.HINT] = "MoreMsg",
+                        [vim.diagnostic.severity.INFO] = "ModeMsg",
+                        [vim.diagnostic.severity.WARN] = "WarningMsg"
+                    }
+                }
+            end
+            ---@diagnostic disable-next-line: return-type-mismatch
+            return false
+        end,
         underline = M.buffer_config_getters.underline,
 
         -- delay update diagnostics

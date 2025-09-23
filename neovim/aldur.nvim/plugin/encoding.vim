@@ -1,5 +1,6 @@
 if &modifiable
-    set fileencoding=utf-8                         " The encoding written to file.
+    " The encoding written to file.
+    set fileencoding=utf-8
 end
 
 " End of line (unix EOL is preferred over the dos one and before the mac one).

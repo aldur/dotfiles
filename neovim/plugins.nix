@@ -52,11 +52,14 @@ with pkgs.vimPlugins;
   # UI
   lightline-vim # statusbar
 
+  # Wiki
   wiki-vim
 
+  # Colorscheme
   sonokai # based on Monokai pro
 
   # language specific
+  jinja-vim
   kotlin-vim
   nginx-vim
   rustaceanvim
@@ -80,18 +83,11 @@ with pkgs.vimPlugins;
   efmls-configs-nvim
   nvim-lightbulb
 
-  # Snippets
-  nvim-snippets
-
   # Completion
-  nvim-cmp
-  cmp-nvim-lsp
-  cmp-buffer
-  cmp-async-path
-  cmp-nvim-lua
-  cmp-cmdline
-  cmp-beancount
-  cmp-nvim-lsp-signature-help
+  blink-cmp
+  blink-ripgrep-nvim
+
+  lazydev-nvim
 ]
 ++ (with pkgs; [
   (vimUtils.buildVimPlugin {

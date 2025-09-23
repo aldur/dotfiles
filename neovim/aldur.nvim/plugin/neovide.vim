@@ -2,7 +2,7 @@ if !exists('g:neovide')
     finish
 endif
 
-lua vim.o.guifont = "FiraCode Nerd Font:h12"
+lua vim.o.guifont = "FiraCode Nerd Font:h10"
 
 let g:neovide_remember_window_size = v:true
 let g:neovide_hide_mouse_when_typing = v:false
@@ -21,7 +21,7 @@ endfunction
 nnoremap <expr><D-=> ChangeScaleFactor(1.1)
 nnoremap <expr><D--> ChangeScaleFactor(1/1.1)
 
-let g:neovide_transparency=1.0
+let g:neovide_opacity=1.0
 let g:neovide_transparency_point=0.1
 
 let g:neovide_floating_shadow = v:false

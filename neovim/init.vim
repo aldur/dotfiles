@@ -72,9 +72,6 @@
 
 " Plugin settings {{{
     " Investigate {{{
-        " Use Dash on macOS (if available)
-        let g:investigate_use_dash=1
-
         nnoremap <silent> K :call investigate#Investigate('n')<CR>
         vnoremap <silent> K :call investigate#Investigate('v')<CR>
     " }}}

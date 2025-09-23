@@ -1,7 +1,3 @@
-" if !exists(':LatexCompile')
-"     finish
-" endif
-
 let g:tex_flavor = 'latex'  " Open '.tex' files as 'tex' and not 'plaintex'.
 let g:vimtex_quickfix_mode = 2  " Auto-open quickfix with no focus.
 

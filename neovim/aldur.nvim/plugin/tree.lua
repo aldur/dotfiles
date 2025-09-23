@@ -42,16 +42,14 @@ require("nvim-tree").setup({
     -- Disabling what results in very bad performance and freezes
     git = {enable = false},
     filesystem_watchers = {enable = false},
-    modified = {enable = false},
+    modified = {enable = false}
 })
 
-vim.keymap.set("n", "-", function()
-    local api = require "nvim-tree.api"
-    api.tree.open({
-        path = vim.fn['aldur#find_root#find_root'](),
-        find_file = true
-    })
-end, {noremap = true, silent = true, desc = "Open nvim-tree with current root."})
+vim.keymap.set("n", "-", require"aldur.tree".open_tree_at_root, {
+    noremap = true,
+    silent = true,
+    desc = "Open nvim-tree with current root."
+})
 
 require("oil").setup({
     default_file_explorer = false -- Defer to nvim-tree

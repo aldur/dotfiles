@@ -1,6 +1,7 @@
 " set complete+=k
 " set complete+=kspell
 set completeopt=menuone,noselect
+set completeopt+=fuzzy
 
 " This enables Dictionary completion in deoplete
 " In standard VIM completion,this should not be required as it defaults to the
@@ -11,4 +12,4 @@ set completeopt=menuone,noselect
 
 set shortmess+=c " Quiet completions
 
-lua require('aldur.cmp')
+lua require('aldur.completions')

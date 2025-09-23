@@ -1,5 +1,6 @@
 local fzf = require('fzf-lua')
 local actions = require("fzf-lua.actions")
+local defaults = require('fzf-lua.defaults').defaults
 
 fzf.setup({
     "hide",
@@ -21,6 +22,8 @@ fzf.setup({
     lsp = {code_actions = {previewer = "codeaction_native"}}
 })
 
+fzf.setup_fzfvim_cmds()
+
 vim.keymap.set("n", "<leader><space>", function()
     fzf.files({cwd = vim.fn['aldur#find_root#find_root']()})
 end, {noremap = true, silent = true, desc = "FZF files in project."})
@@ -28,12 +31,12 @@ end, {noremap = true, silent = true, desc = "FZF files in project."})
 local grep_options = function()
     return {
         cwd = vim.fn['aldur#find_root#find_root'](),
-        actions = {
-            ["ctrl-i"] = {actions.toggle_ignore},
+        actions = vim.tbl_extend('keep', {
+            -- NOTE: ctrl-i conflicts with `<tab>` and will prevent you from toggling items
+            ["ctrl-l"] = {actions.toggle_ignore},
             ["ctrl-h"] = {actions.toggle_hidden}
-        },
-        rg_opts = "--hidden " ..
-            require('fzf-lua.defaults').defaults.grep.rg_opts,
+        }, defaults.grep.actions),
+        rg_opts = "--hidden " .. defaults.grep.rg_opts,
         resume = true
     }
 end

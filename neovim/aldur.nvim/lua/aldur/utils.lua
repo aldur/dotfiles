@@ -12,27 +12,6 @@ function M.is_nerdfont()
     return M._nerdfont
 end
 
-function M.configure_signs()
-    -- _G.info_message("Configuring signs...")
-    local highlights = {Error = "Title", Hint = "MoreMsg", Info = "ModeMsg"}
-
-    for type, hl in pairs(highlights) do
-        -- https://github.com/neovim/nvim-lspconfig/wiki/
-        -- UI-Customization#change-diagnostic-symbols-in-the-sign-column-gutter
-        local sign = "DiagnosticSign" .. type
-        if vim.fn.sign_define(sign, {numhl = hl, text = ""}) ~= 0 then
-            _G.warning_message("Couldn't set sign " .. type)
-        end
-    end
-
-    -- "Warn" -> "WarningMsg"
-    -- Special treatment
-    if vim.fn.sign_define("DiagnosticSignWarn",
-                          {numhl = "WarningMsg", text = ""}) ~= 0 then
-        _G.warning_message("Couldn't set sign " .. type)
-    end
-end
-
 -- If current Lua buffer has been `require`d, reload it.
 -- See `:h lua-module-load` for more.
 function M.reload_module()

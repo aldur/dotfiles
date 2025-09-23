@@ -4,17 +4,10 @@ require('aldur.lsp.diagnostic') -- Side effects, autocmd
 
 local function on_attach_callback(args)
     local bufnr = args.buf
-
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    if client == nil then return end
+    local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
 
     -- Mappings
     local bufopts = {noremap = true, silent = true, buffer = bufnr}
-
-    if client.server_capabilities.referencesProvider then
-        -- Mnemonic for Usages
-        vim.keymap.set('n', '<leader>u', vim.lsp.buf.references, bufopts)
-    end
 
     -- Call twice to jump into the window.
     vim.keymap.set('n', 'K', function()
@@ -42,7 +35,12 @@ local function on_attach_callback(args)
     end, bufopts)
 
     if client.server_capabilities.codeActionProvider then
-        vim.keymap.set({'n', 'x'}, 'gK', require("fzf-lua").lsp_code_actions,
+        vim.keymap.set({'n', 'x'}, 'gra', require("fzf-lua").lsp_code_actions,
+                       bufopts)
+    end
+
+    if client.server_capabilities.documentSymbolProvider then
+        vim.keymap.set({'n', 'x'}, 'gO', require("fzf-lua").lsp_document_symbols,
                        bufopts)
     end
 
@@ -52,26 +50,28 @@ local function on_attach_callback(args)
                        bufopts)
     end
 
-    -- Our LSP configuration places diagnostic in the loclist.
-    -- This overrides the default commands to go to prev/next element in the
-    -- loclist. It has the advantage to take the cursor position into consideration.
-    local diagnostic_goto_opts = {float = false}
-    vim.keymap.set('n', '[l', function()
-        vim.diagnostic.goto_prev(diagnostic_goto_opts)
-    end, bufopts)
-    vim.keymap.set('n', ']l', function()
-        vim.diagnostic.goto_next(diagnostic_goto_opts)
-    end, bufopts)
-
     vim.keymap.set("n", "<Leader>lo", function()
         vim.diagnostic.setloclist({open = false})
         local window = vim.api.nvim_get_current_win()
         vim.cmd.lwindow()
         vim.api.nvim_set_current_win(window)
     end, {buffer = bufnr})
+
+    if client:supports_method('textDocument/foldingRange') then
+        local win = vim.api.nvim_get_current_win()
+        vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
+    end
+
+    if client:supports_method('textDocument/completion') then
+        vim.lsp.completion.enable(true, client.id, args.buf,
+                                  {autotrigger = true})
+    end
 end
 
-vim.api.nvim_create_autocmd('LspAttach', {callback = on_attach_callback})
+vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('aldur.lsp', {}),
+    callback = on_attach_callback
+})
 
 local function on_detach_callback(_)
     -- local client = vim.lsp.get_client_by_id(args.data.client_id)

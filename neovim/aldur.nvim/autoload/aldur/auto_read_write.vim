@@ -6,6 +6,16 @@ function! aldur#auto_read_write#write_gently() abort
     silent! w
 endf
 
+function! aldur#auto_read_write#log_file_changed(bufnr) abort
+    echohl WarningMsg
+    if (!filereadable(expand('%:p')))
+        echo 'File deleted outside of nvim.'
+    else
+        echo 'File changed on disk. Buffer ' . a:bufnr . ' reloaded.'
+    endif
+    echohl None
+endfunction
+
 " Add the current file path to v:oldfiles
 function! aldur#auto_read_write#add_to_oldfiles() abort
     let l:current_path = expand('%:p')

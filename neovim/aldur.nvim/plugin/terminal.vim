@@ -20,7 +20,6 @@ let g:terminal_color_15 = '#feffff'
 autocmd vimrc TermOpen *
             \ setlocal nonumber norelativenumber |
             \ tnoremap <buffer> <Esc><Esc> <c-\><c-n> |
-            \ nnoremap <silent><buffer> <leader><space> :<c-U>Files<CR> |
             \ nnoremap <silent><buffer> <leader>bd :<c-U>bdelete!<CR>
 autocmd vimrc FileType fzf tunmap <buffer> <Esc><Esc>
 
@@ -38,4 +37,22 @@ tnoremap <silent> <C-z> <c-\><c-n>:<C-U>call aldur#terminal#toggle()<CR>
 " Reset the terminal (close, re-open)
 tnoremap <silent> <leader>cd <c-\><c-n>:<C-U>bd! %<bar>call aldur#terminal#toggle()<CR>
 
-" nnoremap <silent> <C-w>t :<C-U>vsplit <bar> terminal<CR>:startinsert<CR>
+" Add terminal prompt marker -- see `:h shell-prompt-signs`
+lua << EOF
+    vim.api.nvim_create_autocmd('TermOpen', {
+      group = vim.api.nvim_create_augroup('aldur.term_open', {}),
+      command = 'setlocal signcolumn=auto',
+    })
+    local ns = vim.api.nvim_create_namespace('aldur_terminal_prompt')
+    vim.api.nvim_create_autocmd('TermRequest', {
+      callback = function(args)
+        if string.match(args.data.sequence, '^\027]133;A') then
+          local lnum = args.data.cursor[1]
+          vim.api.nvim_buf_set_extmark(args.buf, ns, lnum - 1, 0, {
+            sign_text = '▶',
+            sign_hl_group = 'SpecialChar',
+          })
+        end
+      end,
+    })
+EOF

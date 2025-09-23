@@ -26,8 +26,6 @@ call remove(b:pear_tree_pairs, '[')
 let b:pear_tree_pairs['_'] = {'closer': '_'}
 let b:pear_tree_pairs['*'] = {'closer': '*'}
 
-nnoremap <silent><buffer> gO :<c-U>BLines ^#<CR>
-
 iabbrev <buffer> e' è
 iabbrev <buffer> cioe' cioè
 iabbrev <buffer> c'e' c'è
@@ -53,4 +51,4 @@ nnoremap <buffer><silent> gr :LinkConvertSingle<cr>
 xnoremap <buffer><silent> gr :LinkConvertRange<cr>
 
 " Make it so that if you are on a header, you will decrease its level, otherwise open `NvimTreeOpen`
-nnoremap <silent><buffer><expr> - tinymd#get_current_header_level() > -1 ? ':call tinymd#decrease_header_level()<cr>' : ':NvimTreeOpen<cr>'
+nnoremap <silent><buffer><expr> - tinymd#get_current_header_level() > -1 ? ':call tinymd#decrease_header_level()<cr>' : ':lua require"aldur.tree".open_tree_at_root()<cr>'

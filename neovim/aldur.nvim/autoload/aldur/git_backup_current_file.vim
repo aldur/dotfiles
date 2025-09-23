@@ -28,14 +28,14 @@ endfunction
 call s:Init()
 
 function! s:Disarm() abort
-    echomsg "Error detected, disarming automatic git backups..."
+    echomsg 'Error detected, disarming automatic git backups...'
     autocmd! GitBackupCurrentFile
 endfunction
 
-let s:buffer = ""
+let s:buffer = ''
 
 function! s:Receive(_job_id, data, event) abort
-    let s:buffer .= a:event . " " . string(a:data)
+    let s:buffer .= a:event . ' ' . string(a:data)
     let s:buffer .= "\n"
     if a:event ==# 'exit'
         if a:data != 0
@@ -64,6 +64,10 @@ function! aldur#git_backup_current_file#backup() abort
         return
     endif
 
+    if l:file =~# '^/private/.*\.fish$'
+        return
+    endif
+
     let l:file_dir = l:backup_dir . expand('%:p:h')
     let l:backup_file = l:backup_dir . l:file
 
@@ -72,12 +76,12 @@ function! aldur#git_backup_current_file#backup() abort
     endif
 
     let l:cmd = ''
-    let l:cmd .= 'cp "' . l:file . '" "' . l:backup_file . '"; '
-    let l:cmd .= 'cd "' . l:backup_dir . '"; '
-    let l:cmd .= 'git add "' . l:backup_file . '"; '
+    let l:cmd .= 'cp "' . l:file . '" "' . l:backup_file . '" && '
+    let l:cmd .= 'cd "' . l:backup_dir . '" && '
+    let l:cmd .= 'git add "' . l:backup_file . '" && '
     let l:cmd .= 'git diff-index --quiet HEAD -- || git ' . s:author . ' commit --no-gpg-sign -m "Backup ' . l:file . '"; '
 
-    let s:buffer = ""
+    let s:buffer = ''
     let l:callbacks = {
                 \ 'on_stdout': function('s:Receive'),
                 \ 'on_stderr': function('s:Receive'),
@@ -86,7 +90,7 @@ function! aldur#git_backup_current_file#backup() abort
 
     let l:result = jobstart(['bash', '-c', l:cmd], l:callbacks)
     if l:result <= 0
-        echoerr "Invalid l:result returned by jobstart for `git_backup_current_file`."
+        echoerr 'Invalid l:result returned by jobstart for `git_backup_current_file`.'
         call s:Disarm()
     endif
 endfunction
