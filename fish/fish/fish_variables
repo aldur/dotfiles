@@ -1,6 +1,11 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
-SETUVAR __fish_initialized:3400
+SETUVAR ZO_CMD:zo
+SETUVAR Z_CMD:z
+SETUVAR Z_DATA:/Users/aldur/\x2elocal/share/z/data
+SETUVAR Z_DATA_DIR:/Users/aldur/\x2elocal/share/z
+SETUVAR Z_EXCLUDE:\x5e/Users/aldur\x24
+SETUVAR __fish_initialized:3800
 SETUVAR fish_color_autosuggestion:9e9e9e
 SETUVAR fish_color_cancel:normal
 SETUVAR fish_color_command:e4e4e4

@@ -8,5 +8,5 @@ function flakify
     if test -e .git
         git add flake.nix
     end
-    neovide flake.nix
+     nvim flake.nix
 end

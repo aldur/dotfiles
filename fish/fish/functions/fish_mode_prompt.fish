@@ -2,16 +2,16 @@ function fish_mode_prompt
   switch $fish_bind_mode
     case default
       set_color --bold green
-      echo 'NORMAL '
+      echo 'NRM '
     case insert
       set_color --bold '#c6e2ff'
-      echo 'INSERT '
+      echo 'INS '
     case replace_one
       set_color --bold red
-      echo 'REPLACE '
+      echo 'RPL '
     case visual
       set_color --bold orange
-      echo 'VISUAL '
+      echo 'VSL '
     case '*'
       set_color --bold red
       echo '? '

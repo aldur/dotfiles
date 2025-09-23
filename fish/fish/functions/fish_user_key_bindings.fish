@@ -7,9 +7,6 @@ function fish_user_key_bindings
     # The argument specifies the initial mode (insert, "default" or visual).
     fish_vi_key_bindings --no-erase insert
 
-    # Add FZF mappings
-    fzf_key_bindings
-
     # <c-f> accepts suggestion
     for mode in insert default visual
         bind -M $mode \cf forward-char
