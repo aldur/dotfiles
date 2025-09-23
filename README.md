@@ -1,7 +1,5 @@
 # Dotfiles
 
-A collection of my configuration / dotfiles.
-
 ## Requirements
 
 Different platforms have different requirements.
@@ -23,6 +21,8 @@ $ git-crypt unlock <symmetric_key>
 $ gmake requirements #optional
 ```
 
+### NixOS
+
 ## Install
 
 Simply run `make` from the top-level directory.
@@ -31,9 +31,16 @@ Simply run `make` from the top-level directory.
 $ make
 ```
 
-## Running `neovim` through `nix`
+## Nix Flakes
+
+### `lazyvim`
+
+```bash
+nix run "git+https://github.com/aldur/dotfiles?dir=nix#lazyvim"
+```
+
+### `neovim`
 
 ```bash
 nix run "git+https://github.com/aldur/dotfiles?dir=neovim"
 ```
-
