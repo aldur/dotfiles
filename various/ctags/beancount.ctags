@@ -1,4 +1,4 @@
 --langdef=Beancount
 --langmap=Beancount:.beancount
---regex-Beancount=/^[0-9]{4}-[0-9]{2}-[0-9]{2}[ \t]+open[ \t]+([A-Za-z0-9:]+)/\1/a,account/
---regex-Beancount=/^[0-9]{4}-[0-9]{2}-[0-9]{2}[ \t]+commodity[ \t]+([A-Za-z0-9]+)/\1/c,commodity/
+--regex-Beancount=/^[0-9]{4}-[0-9]{2}-[0-9]{2}[ \t]+open[ \t]+([A-Za-z0-9:-]+)/\1/a,account/
+--regex-Beancount=/^[0-9]{4}-[0-9]{2}-[0-9]{2}[ \t]+commodity[ \t]+([A-Za-z0-9.-]+)/\1/c,commodity/
