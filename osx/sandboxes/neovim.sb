@@ -1,0 +1,60 @@
+; vim: set filetype=scheme:
+(version 1)
+
+; Deny by default.
+(deny default)
+(debug deny)  ; Not sure if effective, but it doesn't hurt either.
+
+(allow process*)
+(allow ipc*)
+(allow sysctl*)
+(allow mach*)
+(allow iokit*)
+(allow user-preference*)
+(allow pseudo-tty)
+
+(deny process-info*)
+(allow process-info* (target self))
+
+(deny nvram*)
+
+; Some LSPs need this.
+; (deny dynamic-code-generation)
+
+; Other LSPs need this.
+(allow signal)
+
+; To open browser, etc.
+(allow lsopen)
+
+; --- Network ---
+; We `deny all`, so this shouldn't be necessary.
+(deny network*
+    (local udp)
+    (remote udp)
+    (local tcp)
+    (remote tcp))
+
+(allow network-bind network-outbound (subpath "/private/tmp/nvim.root/"))  ; fzf-lua
+(allow network-bind network-outbound (regex #"nvim\.aldur"))  ; Neovide
+(allow network-bind network-outbound (regex #"nvim-aldur"))  ; Neovide
+(allow network-outbound (regex #"^/Users/.*/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh$"))  ; Secretive
+(allow network-outbound (remote tcp "localhost:11434"))  ; Ollama
+
+; --- /Network ---
+
+(deny mach-lookup 
+      (global-name "com.apple.trustd")
+      (global-name "com.apple.trustd.agent")
+      )
+
+; Allow files in general, but restrict a few paths.
+(allow file*)
+(deny file-read*
+	(subpath "/private/var/db/mds/")
+	(subpath "/private/var/db/crls/")
+	(subpath "/private/var/protected/")
+	(subpath "/System/Library/Security/")
+	(subpath "/Library/Keychains/")
+	(regex #"/Users/[^/]*/\.ssh/")
+)

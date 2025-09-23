@@ -1,0 +1,68 @@
+; vi:ft=scheme
+(version 1)
+
+; Deny by default.
+(deny default)
+(debug deny)  ; Not sure if effective, but it doesn't hurt either.
+
+; Standard
+(allow process*)
+(allow ipc*)
+(allow sysctl*)
+(allow mach*)
+(allow iokit*)
+(allow pseudo-tty)
+
+; Process info
+(deny process-info*)
+(allow process-info* (target self))
+
+(deny nvram*)
+
+; Some LSPs need this.
+(allow signal)
+
+; To open browser, etc.
+(allow lsopen)
+
+; --- Network ---
+; We `deny all`, so this shouldn't be necessary.
+(deny network*
+    (local udp)
+    (remote udp)
+    (local tcp)
+    (remote tcp))
+
+; Secretive
+(allow network-outbound (regex #"^/Users/.*/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh$"))
+; --- /Network ---
+
+; --- Files ---
+(allow file*)
+(deny file-write*)
+
+(allow file-write-data (subpath "/dev"))
+
+(allow file-write* (subpath "/private/tmp/"))
+(allow file-write* (subpath "/var/folders/"))
+(allow file-write* (subpath "/private/var/folders/"))
+
+(allow file-write* (subpath "/Users/aldur/Library/Caches/"))
+(allow file-write* (subpath "/Users/aldur/.cache"))
+(allow file-write* (subpath "/Users/aldur/.config/lazyvim"))
+(allow file-write* (subpath "/Users/aldur/.local/state/lazyvim"))
+(allow file-write* (subpath "/Users/aldur/.local/share"))
+(allow file-write* (subpath "/Users/aldur/.cargo"))
+
+; Allow
+(allow file-write* (subpath "/Users/aldur/Work/"))
+
+(deny file-read*
+	(subpath "/private/var/db/mds/")
+	(subpath "/private/var/db/crls/")
+	(subpath "/private/var/protected/")
+	(subpath "/System/Library/Security/")
+	(subpath "/Library/Keychains/")
+	(regex #"/Users/[^/]*/\.ssh/")
+)
+; --- /Files ---

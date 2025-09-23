@@ -1,0 +1,15 @@
+; vim: set filetype=scheme:
+(version 1)
+
+(allow default)
+(debug deny)  ; Not sure if effective, but it doesn't hurt either.
+(debug allow)  ; Not sure if effective, but it doesn't hurt either.
+
+(deny network*
+    (local udp)
+    (remote udp)
+    (local tcp)
+    (remote tcp))
+
+(allow network-bind network-inbound (local tcp "localhost:8080"))
+(allow network-outbound (remote tcp "localhost:11434"))  ; Ollama

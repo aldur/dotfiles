@@ -2,15 +2,18 @@
   description = "nix-darwin configuration";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-rosetta-builder = {
+      url = "github:cpick/nix-rosetta-builder";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
-    nix-homebrew.inputs.nix-darwin.follows = "nix-darwin";
-    nix-homebrew.inputs.nixpkgs.follows = "nixpkgs";
 
     # Declarative tap management
     homebrew-core = {
@@ -25,6 +28,13 @@
       url = "github:homebrew/homebrew-bundle";
       flake = false;
     };
+
+    nixCats.url = "github:BirdeeHub/nixCats-nvim";
+
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -33,94 +43,90 @@
       nixpkgs,
       nix-darwin,
       nix-homebrew,
-      homebrew-core,
-      homebrew-cask,
-      homebrew-bundle,
+      nix-rosetta-builder,
+      nix-index-database,
       ...
-    }:
+    }@inputs:
     let
       user = "aldur";
       system = "aarch64-darwin";
 
       # https://wiki.nixos.org/wiki/Nixpkgs/Patching_Nixpkgs
       pkgs' =
+        config: pkgs:
         (import nixpkgs {
           inherit system;
+          nixpkgs.config.allowUnfreePredicate = (
+            pkg: builtins.elem (pkgs.lib.getName pkg) config.nixpkgs.allowUnfreeByName
+          );
         }).applyPatches
           {
             name = "nixpkgs-patched";
             src = nixpkgs;
             patches = [
-              (builtins.fetchurl {
-                url = "https://github.com/NixOS/nixpkgs/pull/381031.patch";
-                sha256 = "sha256-tB+YdXOdNNJcsROnwHX8MIATKXiB2jNSNwI/I7zzHeg=";
-              })
+              # (builtins.fetchurl {
+              #   url = "https://github.com/NixOS/nixpkgs/pull/404770.patch";
+              #   sha256 = "sha256:0bkrd8dg7f5q8fyw8z390pfywmkjnsd9xxcwnybsgchhj02rk3pw";
+              # })
             ];
           };
 
       configuration =
-        { pkgs, ... }:
+        { cfg, pkgs, ... }:
+        let
+          python3 = pkgs.python3;
+        in
         {
-          # Auto upgrade nix package and the daemon service.
-          services.nix-daemon.enable = true;
-          nix.package = pkgs.nixVersions.latest;
-          programs.nix-index.enable = true;
+          imports = [
+            ../nix/modules/darwin
+            ../nix/modules/development.nix
+            ../nix/modules/direnv.nix
+            ../nix/modules/environment.nix
+            ../nix/modules/fish.nix
+            ../nix/modules/nix.nix
+            ../nix/modules/nix_search.nix
+            ../nix/modules/users.nix
+          ];
 
-          nix.settings.allowed-users = [ user ];
-          nix.settings.trusted-users = [ "root" ];
-          nix.settings.sandbox = false;
+          system.primaryUser = user;
 
-          # Not working on macOS?
-          # nix.extraOptions = ''
-          #   plugin-files = ${pkgs.nix-doc}/lib/libnix_doc_plugin.so
-          # '';
+          _module.args = { inherit user system inputs; };
 
-          # Necessary for using flakes on this system.
-          nix.settings.experimental-features = "nix-command flakes";
+          programs.better-nix-search.enable = true;
+          programs.syncthing.enable = true;
+          programs.ollama.enable = false;
+          programs.open-webui.enable = false;
 
           system.configurationRevision = self.rev or self.dirtyRev or null;
 
-          # Used for backwards compatibility. please read the changelog
-          # before changing: `darwin-rebuild changelog`.
-          system.stateVersion = 6;
+          # See: https://github.com/nix-darwin/nix-darwin/issues/1307
+          nix.optimise.automatic = pkgs.lib.mkForce false;
+          nix.gc.automatic = pkgs.lib.mkForce false;
+          nix.settings.auto-optimise-store = pkgs.lib.mkForce false;
 
           nixpkgs = {
-            # The platform the configuration will be used on.
-            # If you're on an Intel system, replace with "x86_64-darwin"
-            hostPlatform = system;
-
             overlays = [
+              (import ./overlays/neovide.nix)
+              (import ./overlays/neovim.nix)
+              (import ./overlays/lazyvim.nix { inherit inputs pkgs; })
+              (import ./overlays/zeal.nix)
+              (import ../nix/overlays/packages.nix)
               (final: prev: {
-                neovim = (prev.callPackage ../neovim/neovim.nix { });
-                neovim-vanilla = prev.neovim;
-              })
-              (final: prev: {
-                neovide = prev.neovide.overrideAttrs (old: {
-                  src = pkgs.fetchFromGitHub {
-                    owner = "neovide";
-                    repo = "neovide";
-                    rev = old.version;
-                    hash = "sha256-p0CTFq2H0LUu04FIy/Q6F+LEUifGTgbaYHx1iDkeAAE=";
-                    postFetch = ''
-                      rm $out/assets/neovide-1024.png
-                      cp ${self}/neovide-1024.png $out/assets/neovide-1024.png
-                    '';
-                  };
-                });
+                # FIXME: Broken on macOS
+                # https://github.com/NixOS/nixpkgs/pull/392430/files
+                pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+                  (python-final: python-prev: {
+                    pgvector = python-prev.pgvector.overridePythonAttrs (oldAttrs: {
+                      doCheck = false;
+                      nativeCheckInputs = [ ];
+                    });
+                  })
+                ];
               })
             ];
 
-            # config.allowUnsupportedSystem = true;
-
-            pkgs = import pkgs' { inherit system; };
-          };
-
-          # Declare the user that will be running `nix-darwin`.
-          # NOTE: This won't be executed if the user already exists.
-          users.users.${user} = {
-            name = user;
-            home = "/Users/${user}";
-            shell = pkgs.fish;
+            # NOTE: No need to set `hostPlatform` since we set `pkgs`.
+            pkgs = import (pkgs' cfg pkgs) { inherit system; };
           };
 
           environment.variables = {
@@ -129,17 +135,9 @@
             LANG = "en_US.UTF-8";
             LC_CTYPE = "en_US.UTF-8";
 
-            # https://esham.io/2023/10/direnv
-            DIRENV_LOG_FORMAT = ''$(printf "\033[2mdirenv: %%s\033[0m")'';
-
             # Override macOS ssh-agent with Secretive (installed from `brew`)
             SSH_AUTH_SOCK = "$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh";
             AUTOSSH_PORT = "0";
-
-            HOMEBREW_NO_INSECURE_REDIRECT = "1";
-            HOMEBREW_CASK_OPTS = "--require-sha";
-            HOMEBREW_NO_AUTO_UPDATE = "1";
-            HOMEBREW_NO_ANALYTICS = "1";
 
             FZF_DEFAULT_OPTS = "--bind alt-p:toggle-preview";
             FZF_DEFAULT_COMMAND = "fd -d 10 --hidden --follow --exclude .git --exclude .svn --ignore-file ~/.gitignore_global";
@@ -154,269 +152,98 @@
             VIRTUAL_ENV_DISABLE_PROMPT = "1";
           };
 
+          # macOS-specific aliases
           environment.shellAliases = {
-            gst = "git status";
-            gp = "git push";
-            gss = "git switch $(git branch -r | fzf | sed 's|origin/||' | xargs)";
-            gc = "git commit";
-
-            ls = "ls --color=auto";
-
             ssh = "autossh";
 
-            ta = "tmux -CC new -ADs";
-            tls = "tmux ls";
-
             vim = "nvim";
-            neovide = "/opt/homebrew/bin/neovide";
+            neovide = "open -a Neovide";
+
+            tailscale = "/Applications/Tailscale.app/Contents/MacOS/Tailscale";
+
+            faraday = "sandbox-exec -p '(version 1)(allow default)(deny network*)'";
+            sandbox = "sandbox-exec -p '(version 1)(allow default)(deny network*)(deny file-read-data (regex \"^/Users/'$USER'/(Documents|Desktop|Developer|Movies|Music|Pictures)\"))'";
           };
 
           programs.bash.enable = true;
           programs.zsh.enable = true;
 
-          # See
-          # https://github.com/LnL7/nix-darwin/issues/122#issuecomment-1782971499
-          # if this doesn't work at first
-          programs.fish.enable = true;
-
-          programs.direnv.enable = true;
-          programs.direnv.nix-direnv.enable = true;
+          programs.fish.interactiveShellInit = ''
+            ${pkgs.lib.getExe pkgs.atuin} init fish | source
+          '';
 
           environment.systemPackages =
             with pkgs;
             [
-              age
+              # macOS-specific
+              atuin # Until we use home manager
+              fzf # Until we use home manager
               age-plugin-yubikey
-              autossh
-              bashInteractive
-              bat
               blueutil
-              coreutils-prefixed
-              curl
-              difftastic
-              exiftool
-              fd
-              ffmpeg
-              fzf
-              git
               git-crypt
               gnupg
-              htop
-              jq
-              less
-              neovim
-              nix-doc
-              nix-search
               ollama
-              open-webui
+
+              # llm
+              (python312.withPackages (ps: [
+                ps.llm
+                ps.llm-ollama
+                ps.llm-gguf
+                llm-mlx
+              ]))
+              strip-tags
+              files-to-prompt
+              # /llm
+
               pandoc
               pinentry_mac
-              poetry
-              pv
               python3
-              reattach-to-user-namespace
               rig
-              ripgrep
-              ripgrep-all
+              ffmpeg
+              exiftool
+              reattach-to-user-namespace
               syncthing
-              tmux
-              tree
-              universal-ctags
-              watch
               yubikey-agent
+              age-plugin-se
             ]
             ++ [
-              (neovide.override {
-                # Only used for checks
-                neovim = neovim-vanilla;
-              })
-              # (pkgs.callPackage ../nix/packages/neovide/neovide.nix { })
-              golden-cheetah
+              # GUI from nix
+              golden-cheetah-bin
+              # zeal-qt6
+              maccy
             ]
             ++ [
-              (pkgs.callPackage ../nix/packages/age-plugin-se/age-plugin-se.nix { }).age-plugin-se
-              (pkgs.callPackage ../nix/packages/tiktoken/tiktoken.nix { })
-              (pkgs.callPackage ../nix/packages/llmcat/llmcat.nix { })
+              # nvim
+              neovim
+              neovide
+              lazyvim
+            ]
+            ++ [
+              # bundled packages
+              tiktoken
+              llmcat
             ];
-
-          security.pam.enableSudoTouchIdAuth = true;
-
-          homebrew = {
-            enable = true;
-            onActivation.cleanup = "zap";
-
-            caskArgs.no_quarantine = true;
-            caskArgs.require_sha = true;
-
-            casks = import ./casks.nix;
-            masApps = import ./masApps.nix;
-          };
-
-          launchd = {
-            user = {
-              agents = {
-                ollama = {
-                  command = "${pkgs.ollama}/bin/ollama serve";
-                  serviceConfig = {
-                    KeepAlive = true;
-                    RunAtLoad = true;
-                  };
-                  environment = {
-                    OLLAMA_FLASH_ATTENTION = "1";
-                    OLLAMA_KV_CACHE_TYPE = "q8_0";
-                  };
-                };
-                syncthing = {
-                  command = "${pkgs.syncthing}/bin/syncthing -no-browser -no-restart";
-                  serviceConfig = {
-                    KeepAlive = true;
-                    RunAtLoad = true;
-                  };
-                };
-                # nvim = {
-                #   command = "${pkgs.neovim}/bin/nvim --headless --listen /tmp/nvim.sock";
-                #   serviceConfig = {
-                #     KeepAlive = true;
-                #     RunAtLoad = true;
-                #     WorkingDirectory = "/Users/${user}";
-                #     StandardErrorPath = "/tmp/nvim/std.err";
-                #     StandardOutPath = "/tmp/nvim/std.log";
-                #   };
-                # };
-                open-webui = {
-                  command = "${pkgs.open-webui}/bin/open-webui serve --host 127.0.0.1";
-                  serviceConfig = {
-                    KeepAlive = true;
-                    RunAtLoad = true;
-                    StandardErrorPath = "/tmp/open-webui/std.err";
-                    StandardOutPath = "/tmp/open-webui/std.log";
-                    WorkingDirectory = "/Users/${user}/.cache/open-webui/";
-                  };
-                  environment = {
-                    ENV = "prod";
-                    WEBUI_AUTH = "False";
-                    DATA_DIR = "/Users/${user}/.cache/open-webui/data";
-                    ENABLE_SIGNUP = "False";
-                    ENABLE_COMMUNITY_SHARING = "False";
-                    ENABLE_MESSAGE_RATING = "False";
-                    ENABLE_EVALUATION_ARENA_MODELS = "False";
-                    ENABLE_OPENAI_API = "False";
-                    SAFE_MODE = "True";
-                    WEBUI_SECRET_KEY = "t0p-s3cr3t";
-                  };
-                };
-              };
-            };
-          };
-
-          system.defaults = {
-            alf = {
-              loggingenabled = 1;
-              globalstate = 1;
-              stealthenabled = 1;
-            };
-
-            dock.autohide = true;
-            dock.autohide-delay = 0.0;
-            dock.autohide-time-modifier = 0.15;
-            dock.mru-spaces = false;
-
-            finder.AppleShowAllExtensions = true;
-            # Do not warn on changing file extension
-            finder.FXEnableExtensionChangeWarning = false;
-
-            finder.FXPreferredViewStyle = "clmv";
-
-            screencapture.location = "~/Documents/Screenshots";
-
-            screensaver.askForPassword = true;
-            screensaver.askForPasswordDelay = 0;
-
-            NSGlobalDomain.AppleInterfaceStyle = "Dark";
-            NSGlobalDomain.InitialKeyRepeat = 10;
-            NSGlobalDomain.KeyRepeat = 1;
-
-            CustomSystemPreferences = {
-              "com.apple.AppleMultitouchTrackpad" = {
-                "TrackpadThreeFingerDrag" = true;
-              };
-              "com.apple.menuextra.clock" = {
-                Show24Hour = 1;
-                ShowAMPM = 0;
-                ShowDate = 0;
-                ShowDayOfWeek = 1;
-                ShowSeconds = 0;
-              };
-              "com.apple.desktopservices" = {
-                # Avoid creating .DS_Store files on network or USB volumes
-                DSDontWriteNetworkStores = true;
-                DSDontWriteUSBStores = true;
-              };
-              "com.apple.AdLib" = {
-                allowApplePersonalizedAdvertising = false;
-              };
-              "com.apple.SoftwareUpdate" = {
-                AutomaticCheckEnabled = true;
-                # Check for software updates daily, not just once per week
-                ScheduleFrequency = 1;
-                # Download newly available updates in background
-                AutomaticDownload = 1;
-                # Install System data files & security updates
-                CriticalUpdateInstall = 1;
-              };
-              # Turn on app auto-update
-              "com.apple.commerce".AutoUpdate = true;
-            };
-          };
-          system.activationScripts.postUserActivation.text = ''
-            # Following line should allow us to avoid a logout/login cycle
-            /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
-          '';
         };
     in
     {
       darwinConfigurations.Maui = nix-darwin.lib.darwinSystem {
         modules = [
           configuration
+
           nix-homebrew.darwinModules.nix-homebrew
+          nix-index-database.darwinModules.nix-index
+
+          # An existing Linux builder is needed to initially bootstrap `nix-rosetta-builder`.
+          # If one isn't already available: comment out the `nix-rosetta-builder` module below,
+          # uncomment this `linux-builder` module, and run `darwin-rebuild switch`:
+          # { nix.linux-builder.enable = true; }
+          # Then: uncomment `nix-rosetta-builder`, remove `linux-builder`, and `darwin-rebuild switch`
+          # a second time. Subsequently, `nix-rosetta-builder` can rebuild itself.
+          nix-rosetta-builder.darwinModules.default
           {
-            nix-homebrew = {
-              # User owning the Homebrew prefix
-              inherit user;
-
-              # Install Homebrew under the default prefix
-              enable = true;
-
-              # Apple Silicon Only: Also install Homebrew under the default Intel prefix for Rosetta 2
-              enableRosetta = true;
-
-              # Automatically migrate existing Homebrew installations
-              autoMigrate = true;
-
-              taps = {
-                "homebrew/homebrew-core" = homebrew-core;
-                "homebrew/homebrew-cask" = homebrew-cask;
-                "homebrew/homebrew-bundle" = homebrew-bundle;
-              };
-
-              # Optional: Enable fully-declarative tap management
-              #
-              # With mutableTaps disabled, taps can no longer be added imperatively with `brew tap`.
-              mutableTaps = false;
-
-              # Disable this so that homebrew executables don't get on our PATH
-              # (we only use homebrew for casks anyway)
-              enableFishIntegration = false;
-              enableBashIntegration = false;
-              enableZshIntegration = false;
-            };
+            # see available options in module.nix's `options.nix-rosetta-builder`
+            nix-rosetta-builder.onDemand = true;
           }
-          (
-            { config, ... }:
-            {
-              homebrew.taps = builtins.attrNames config.nix-homebrew.taps;
-            }
-          )
         ];
       };
     };

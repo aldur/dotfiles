@@ -1,2 +1,0 @@
-casks.nix filter=git-crypt diff=git-crypt
-masApps.nix filter=git-crypt diff=git-crypt

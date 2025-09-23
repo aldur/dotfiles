@@ -1,5 +1,5 @@
 $pdf_mode = 1;
-$pdf_previewer = "open -ga /Applications/Skim.app";
+$pdf_previewer = "open -ga /System/Applications/Preview.app";
 $pdflatex = 'pdflatex -file-line-error -shell-escape -synctex=1 %O %S';
 
 add_cus_dep('glo', 'gls', 0, 'run_makeglossaries');
