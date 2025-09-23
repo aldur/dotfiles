@@ -1,7 +1,7 @@
 include ../include.mk
 
 DOTFILES = psqlrc radare2rc curlrc gdbinit inputrc chktexrc pylintrc gitignore_global gitattributes_global mdlrc mdlstyle.rb ripgreprc solhint.json
-CONFIG_FILES = flake8 pycodestyle ctags fd marksman nix
+CONFIG_FILES = flake8 pycodestyle ctags fd marksman
 ALL = $(DOTFILES) $(CONFIG_FILES) _yamllint _bat git gpg.conf scdaemon.conf
 
 .PHONY: $(ALL)
@@ -40,7 +40,6 @@ git:
 	git config --global transfer.fsckobjects true
 	git config --global fetch.fsckobjects true
 	git config --global receive.fsckObjects true
-	git config --global branch.sort -committerdate
 
 	git config --global --add url.git@github.com:.insteadOf https://github.com/
 
@@ -54,6 +53,10 @@ $(CONFIG_FILES):
 _yamllint: yamllint
 	mkdir -p ${HOME}/.config/$</
 	$(LN) $(shell readlink -f $<) ${HOME}/.config/$</config
+
+_ruff: ruff
+	mkdir -p ${HOME}/.config/$</
+	$(LN) $(shell readlink -f $<) ${HOME}/.config/$</pyproject.toml
 
 _bat: bat
 	mkdir -p ${HOME}/.config/$</
