@@ -38,19 +38,23 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  outputs = { flake-utils, nixpkgs, home-manager, nix-index-database, ... }@inputs:
-    let
-      modules = [
-        ./configuration.nix
-      ];
-      specialArgs = { inherit inputs; };
-    in flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    { flake-utils, nixpkgs, home-manager, nix-index-database, ... }@inputs:
+    (flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
         nixCatsLazyVim =
           (pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; });
         defaultPackage = nixCatsLazyVim.defaultPackage;
-      in {
-        packages = inputs.nixCats.utils.mkAllWithDefault defaultPackage;
-      });
+      in { packages = inputs.nixCats.utils.mkAllWithDefault defaultPackage; }))
+    // {
+
+      templates = {
+        vm-nogui = {
+          path = ./base_hosts/qemu;
+          description = "A QEMU VM";
+        };
+      };
+
+    };
 }

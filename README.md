@@ -23,22 +23,30 @@ that pulls [./nix/flake.nix] as an input.
 
 Most NixOS modules assume the username to be `aldur`.
 
-### Nix packages
+### Templates
+
+#### QEMU VM
+
+```bash
+nix flake init --template github:aldur/dotfiles#vm-nogui
+```
+
+### Packages
 
 #### `lazyvim`
 
 A slightly customized [LazyVim setup](https://www.lazyvim.org).
 
 ```bash
-nix run "git+https://github.com/aldur/dotfiles?dir=nix#lazyvim"
+nix run "github:aldur/dotfiles?dir=nix#lazyvim"
 ```
 
 #### `neovim`
 
-My (previous) `nvim` setup.
+My (previous) `nvim` setup. Technically is its own Flake.
 
 ```bash
-nix run "git+https://github.com/aldur/dotfiles?dir=neovim"
+nix run "github:aldur/dotfiles?dir=neovim"
 ```
 
 ## Makefile
