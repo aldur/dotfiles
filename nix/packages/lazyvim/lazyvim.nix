@@ -29,6 +29,14 @@ let
     # aliases = [ defaultPackageName ];
   };
 
+  allCategories = {
+    general = true;
+    rust = true;
+    go = true;
+    typescript = true;
+    solidity = true;
+  };
+
   packageDefinitions = {
     ${defaultPackageName} =
       {
@@ -36,12 +44,7 @@ let
       }:
       {
         inherit settings;
-        categories = {
-          general = true;
-          rust = true;
-          go = true;
-          typescript = true;
-        };
+        categories = allCategories;
         extra = { };
       };
     "${defaultPackageName}-nightly" =
@@ -52,12 +55,7 @@ let
         settings = settings // {
           neovim-unwrapped = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
         };
-        categories = {
-          general = true;
-          rust = true;
-          go = true;
-          typescript = true;
-        };
+        categories = allCategories;
         extra = { };
       };
     "${defaultPackageName}-light" =
