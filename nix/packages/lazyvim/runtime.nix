@@ -2,7 +2,13 @@
 # `nix-store -qR (nix build --no-link --print-out-paths .#lazyvim-light)| xargs du -hd0 | sort -rh | head`
 { pkgs }:
 (with pkgs; {
-  general = [
+  general = lib.optionals pkgs.stdenv.isLinux [
+    # Fixes the following:
+    # ⚠️ WARNING libuv-watchdirs has known performance issues. 
+    # Consider installing inotify-tools.
+    inotify-tools
+  ] ++ [
+
     ast-grep
     basedpyright
     beancount # bean-format

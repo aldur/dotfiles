@@ -5,7 +5,7 @@ return {
 	-- vim.g.trouble_lualine = true
 	{ "nvim-lualine/lualine.nvim", dependencies = { "folke/trouble.nvim" } },
 	{
-		"echasnovski/mini.surround",
+		"nvim-mini/mini.surround",
 		opts = {
 			mappings = {
 				add = "gsa",

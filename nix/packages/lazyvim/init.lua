@@ -34,8 +34,8 @@ require("nixCatsUtils.lazyCat").setup(
 		{ import = "plugins.lazy_extras" },
 
 		-- Now, disable `mason` while using `nix`.
-		{ "williamboman/mason-lspconfig.nvim", enabled = lazyAdd(true, false) },
-		{ "williamboman/mason.nvim", enabled = lazyAdd(true, false) },
+		{ "mason-org/mason-lspconfig.nvim", enabled = lazyAdd(true, false) },
+		{ "mason-org/mason.nvim", enabled = lazyAdd(true, false) },
 
 		-- Convenience to make editing `lua` files easier.
 		{
