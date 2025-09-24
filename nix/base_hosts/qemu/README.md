@@ -2,6 +2,14 @@
 
 This Flake allows creating a NixOS, QEMU VM with the modules of this repository.
 
+To run, just use `nix run`.
+
+If you want to run it it against a full repository clone:
+
+```bash
+nix run --override-input aldur-dotfiles ../../ .
+```
+
 ## `hostPkgs`
 
 Thanks to [`hostPkgs`](https://github.com/NixOS/nixpkgs/blob/554be6495561ff07b6c724047bdd7e0716aa7b46/nixos/modules/virtualisation/qemu-vm.nix#L25), the VM host can be either Linux or macOS (through [`nix-rosetta-builder`](https://github.com/cpick/nix-rosetta-builder)).
