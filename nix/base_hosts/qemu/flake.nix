@@ -25,13 +25,14 @@
     in aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system:
       let pkgs = import aldur-dotfiles.inputs.nixpkgs { inherit system; };
       in {
-        packages = {
+        packages = rec {
           vm-nogui = nixos-generators.nixosGenerate {
             system = "aarch64-linux";
             specialArgs = specialArgs // { hostPkgs = pkgs; };
             modules = modules ++ [ ({ ... }: { imports = [ ./qemu.nix ]; }) ];
             format = "vm-nogui";
           };
+          default = vm-nogui;
         };
       });
 }
