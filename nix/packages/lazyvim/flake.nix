@@ -1,41 +1,22 @@
 {
   description = "LazyVim in `nix`";
 
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixCats.url = "github:BirdeeHub/nixCats-nvim";
+  inputs = { aldur-dotfiles = { url = "git+file://../../../..?dir=nix"; }; };
 
-    neovim-nightly-overlay = {
-      url = "github:nix-community/neovim-nightly-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.git-hooks.follows = "";
-      inputs.flake-compat.follows = "";
-      inputs.treefmt-nix.follows = "";
-      inputs.hercules-ci-effects.follows = "";
-    };
-  };
-
-  outputs =
-    {
-      nixpkgs,
-      nixCats,
-      ...
-    }@inputs:
+  outputs = { aldur-dotfiles, ... }:
     let
-      inherit (nixCats) utils;
+      inherit (aldur-dotfiles.inputs.nixCats) utils;
+      nixpkgs = aldur-dotfiles.inputs.nixpkgs;
       forEachSystem = utils.eachSystem nixpkgs.lib.platforms.all;
-    in
-    forEachSystem (
-      system:
+    in forEachSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        nixCatsLazyVim = (pkgs.callPackage ./lazyvim.nix { inherit inputs; });
+        nixCatsLazyVim =
+          (pkgs.callPackage ./lazyvim.nix { inherit (aldur-dotfiles) inputs; });
         defaultPackage = nixCatsLazyVim.defaultPackage;
         overlays = nixCatsLazyVim.overlays;
-      in
-      {
+      in {
         inherit overlays;
         packages = utils.mkAllWithDefault defaultPackage;
-      }
-    );
+      });
 }

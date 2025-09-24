@@ -3,8 +3,8 @@
 
   inputs = {
     aldur-dotfiles = {
-      url = "git+file://../../../..?dir=nix";
-      # url = "github:aldur/dotfiles?dir=nix";
+      # url = "git+file://../../../..?dir=nix";
+      url = "github:aldur/dotfiles?dir=nix";
     };
 
     nixos-generators = {

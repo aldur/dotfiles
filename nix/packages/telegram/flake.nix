@@ -1,26 +1,15 @@
 {
   description = "A simple Telegram notifier.";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  inputs.systems.url = "github:nix-systems/default";
-  inputs.flake-utils = {
-    url = "github:numtide/flake-utils";
-    inputs.systems.follows = "systems";
-  };
+  inputs = { aldur-dotfiles = { url = "git+file://../../../..?dir=nix"; }; };
 
-  outputs =
-    { nixpkgs, flake-utils, ... }:
+  outputs = { aldur-dotfiles, ... }:
     let
-      telegram =
-        pkgs:
+      telegram = pkgs:
         pkgs.stdenv.mkDerivation rec {
           name = "telegram";
-          nativeBuildInputs = [
-            pkgs.makeWrapper
-          ];
-          buildIputs = [
-            pkgs.curl
-          ];
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+          buildIputs = [ pkgs.curl ];
           src = ./telegram.sh;
           dontUnpack = true;
           buildPhase = ''
@@ -31,16 +20,10 @@
               --set PATH ${pkgs.lib.makeBinPath buildIputs}
           '';
         };
-    in
-    flake-utils.lib.eachDefaultSystem (system: rec {
-      legacyPackages = import nixpkgs {
-        inherit system;
-      };
+    in aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system: rec {
+      legacyPackages = import aldur-dotfiles.inputs.nixpkgs { inherit system; };
       packages.default = telegram legacyPackages;
-    })
-    // {
-      overlays.default = final: prev: {
-        count-tokens = (telegram prev);
-      };
+    }) // {
+      overlays.default = final: prev: { count-tokens = (telegram prev); };
     };
 }

@@ -46,7 +46,7 @@ nix run "github:aldur/dotfiles?dir=nix#lazyvim"
 My (previous) `nvim` setup. Technically is its own Flake.
 
 ```bash
-nix run "github:aldur/dotfiles?dir=neovim"
+nix run "github:aldur/dotfiles?dir=nix#nvim"
 ```
 
 ## Makefile
