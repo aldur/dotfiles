@@ -11,7 +11,10 @@ let
   };
 in
 {
-  imports = [ inputs.clipshare.homeManagerModules.default ];
+  imports = [
+    inputs.clipshare.homeManagerModules.default
+    ./modules/home/w3m.nix
+  ];
 
   home.username = "aldur";
   home.homeDirectory = "/home/aldur";
