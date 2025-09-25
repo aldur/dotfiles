@@ -39,20 +39,32 @@
     };
   };
   outputs =
-    { flake-utils, nixpkgs, home-manager, nix-index-database, ... }@inputs:
-    (flake-utils.lib.eachDefaultSystem (system:
+    {
+      flake-utils,
+      nixpkgs,
+      ...
+    }@inputs:
+    (flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = import nixpkgs { inherit system; };
-        nixCatsLazyVim =
-          (pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; });
+        nixCatsLazyVim = (pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; });
         defaultPackage = nixCatsLazyVim.defaultPackage;
-      in { packages = inputs.nixCats.utils.mkAllWithDefault defaultPackage; }))
+      in
+      {
+        packages = inputs.nixCats.utils.mkAllWithDefault defaultPackage;
+      }
+    ))
     // {
 
       templates = {
         vm-nogui = {
           path = ./base_hosts/qemu;
           description = "A QEMU VM";
+        };
+        lxc-nixos = {
+          path = ./base_hosts/lxc-nixos;
+          description = "An lxc-nixos container to run in ChromeOS Crostini";
         };
       };
 
