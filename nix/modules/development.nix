@@ -7,6 +7,7 @@
 with lib;
 let
   claudeCfg = config.programs.aldur.claude-code;
+  geminiCfg = config.programs.aldur.gemini-cli;
 
   # CLI utils useful for development.
   basePackages = with pkgs; [
@@ -17,7 +18,9 @@ let
     universal-ctags
     watch
   ];
-  extraPackages = (lib.optionals claudeCfg.enable [ pkgs.claude-code ]) ++ [ pkgs.gemini-cli ];
+  extraPackages =
+    (lib.optionals claudeCfg.enable [ pkgs.claude-code ])
+    ++ (lib.optionals geminiCfg.enable [ pkgs.gemini-cli ]);
 in
 {
   imports = [
@@ -27,6 +30,10 @@ in
 
   options.programs.aldur.claude-code = {
     enable = mkEnableOption "claude-code";
+  };
+
+  options.programs.aldur.gemini-cli = {
+    enable = mkEnableOption "gemini-cli";
   };
 
   config = {
