@@ -21,7 +21,3 @@ Thanks to [`hostPkgs`](https://github.com/NixOS/nixpkgs/blob/554be6495561ff07b6c
 The keys you'll find in this folder are only used within the `qemu` VM, which
 is not exposed to the network but just to the host. Having them hard-coded
 avoids needing to re-verify the guest fingerprint for every new VM.
-
-## Authorized keys
-
-Add your keys to [`./authorized_keys.nix`](`./authorized_keys.nix`).
