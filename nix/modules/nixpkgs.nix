@@ -15,5 +15,6 @@ with lib;
   config.nixpkgs.overlays = [
     (import ../overlays/yubikey-agent.nix)
     (import ../overlays/beancount-language-server.nix)
+    (import ../overlays/packages.nix)
   ];
 }

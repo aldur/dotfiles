@@ -26,6 +26,7 @@ in
   imports = [
     ./cli.nix
     ./nixpkgs.nix
+    ./dash.nix
   ];
 
   options.programs.aldur.claude-code = {
