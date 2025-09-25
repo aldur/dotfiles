@@ -8,13 +8,14 @@ let
   basePackages = with pkgs; [
     dashp
     dasht
+    w3m
   ];
 
-  dashDocsetsDir = ".local/share/dasht/docsets/.keep";
+  dashDocsetsDir = ".local/share/dasht/docsets";
 
   download-nix-docsets = pkgs.writeShellApplication {
     name = "download-nix-docsets";
-    runtimeInputs = [
+    runtimeInputs = with pkgs; [
       curl
       gnutar
     ];
@@ -29,10 +30,12 @@ in
   home-manager.users.aldur =
     { ... }:
     {
-      home.file.${dashDocsetsDir} = (pkgs.writeText "");
+      home.file."${dashDocsetsDir}/.keep".text = "";
       home.sessionVariables = {
-        DASHT_DOCSETS_DIR = "~/${dashDocsetsDir}";
+        DASHT_DOCSETS_DIR = "/home/aldur/${dashDocsetsDir}";
       };
-      home.packages = [ download-nix-docsets ];
+      home.packages = [
+        download-nix-docsets
+      ];
     };
 }
