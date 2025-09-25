@@ -2,6 +2,7 @@
   pkgs,
   lib,
   config,
+  inputs,
   ...
 }:
 with lib;
@@ -10,6 +11,10 @@ let
   cfg = config.programs.${name};
 in
 {
+  imports = [
+    inputs.nix-index-database.nixosModules.nix-index
+  ];
+
   options.programs.${name} = {
     enable = mkEnableOption "Better Nix search";
   };

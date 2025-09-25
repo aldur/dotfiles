@@ -27,30 +27,34 @@
     ./modules/lazyvim.nix
 
     inputs.agenix.nixosModules.default
-    ./modules/agenix.nix # Configure identities
-
-    inputs.nix-index-database.nixosModules.nix-index
+    ./modules/agenix.nix
 
     inputs.home-manager.nixosModules.home-manager
-    ({ config, ... }: {
+    (
+      { config, ... }:
+      {
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
 
-          # Optionally, use home-manager.extraSpecialArgs to pass
-          # arguments to home.nix
-          home-manager.extraSpecialArgs = {
-              stateVersion = config.system.stateVersion;
-              inherit inputs;
-          };
+        # Optionally, use home-manager.extraSpecialArgs to pass
+        # arguments to home.nix
+        home-manager.extraSpecialArgs = {
+          stateVersion = config.system.stateVersion;
+          inherit inputs;
+        };
 
-          home-manager.users.aldur = ./home.nix;
-      })
+        home-manager.users.aldur = ./home.nix;
+      }
+    )
 
-    ({ config, pkgs, ... }: {
-        nixpkgs.config.allowUnfreePredicate = (pkg:
-        builtins.elem (pkgs.lib.getName pkg)
-        config.nixpkgs.allowUnfreeByName);
-    })
+    (
+      { config, pkgs, ... }:
+      {
+        nixpkgs.config.allowUnfreePredicate = (
+          pkg: builtins.elem (pkgs.lib.getName pkg) config.nixpkgs.allowUnfreeByName
+        );
+      }
+    )
   ];
 
   # By default we use DHCP
