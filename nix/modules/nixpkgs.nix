@@ -1,9 +1,5 @@
-{
-  lib,
-  ...
-}:
-with lib;
-{
+{ lib, ... }:
+with lib; {
   options.nixpkgs = {
     allowUnfreeByName = mkOption {
       type = with types; listOf str;
@@ -12,9 +8,15 @@ with lib;
     };
   };
 
-  config.nixpkgs.overlays = [
-    (import ../overlays/yubikey-agent.nix)
-    (import ../overlays/beancount-language-server.nix)
-    (import ../overlays/packages.nix)
-  ];
+  config.nixpkgs = {
+    overlays = [
+      (import ../overlays/yubikey-agent.nix)
+      (import ../overlays/beancount-language-server.nix)
+      (import ../overlays/packages.nix)
+    ];
+
+    config.allowUnfreePredicate = (pkg:
+      builtins.elem (pkgs.lib.getName pkg) config.nixpkgs.allowUnfreeByName);
+  };
+
 }

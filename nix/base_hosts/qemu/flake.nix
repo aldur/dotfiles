@@ -14,7 +14,7 @@
   };
   outputs = { nixos-generators, aldur-dotfiles, ... }:
     let
-      modules = [ "${aldur-dotfiles}/configuration.nix" ];
+      modules = [ "${aldur-dotfiles}/modules/nixos/configuration.nix" ];
 
       # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
       specialArgs =

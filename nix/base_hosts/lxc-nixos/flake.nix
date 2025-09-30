@@ -18,18 +18,10 @@
       inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
     };
   };
-  outputs =
-    {
-      nixos-generators,
-      aldur-dotfiles,
-      nixos-crostini,
-      ...
-    }:
+  outputs = { nixos-generators, aldur-dotfiles, nixos-crostini, ... }:
     let
-      modules = [
-        "${aldur-dotfiles}/configuration.nix"
-        ./lxc.nix
-      ];
+      modules =
+        [ "${aldur-dotfiles}/modules/nixos/configuration.nix" ./lxc.nix ];
 
       # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
       specialArgs =
@@ -40,14 +32,10 @@
             inherit nixos-crostini;
             self = aldur-dotfiles;
           };
-        in
-        {
-          inherit inputs;
-        };
+        in { inherit inputs; };
 
       nixpkgs = aldur-dotfiles.inputs.nixpkgs;
-    in
-    aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system: {
+    in aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system: {
       packages = rec {
         lxc = nixos-generators.nixosGenerate {
           inherit system specialArgs modules;
@@ -61,22 +49,15 @@
 
         default = lxc;
       };
-    })
-    // (
-      let
-        generator =
-          system:
-          nixpkgs.lib.nixosSystem {
-            inherit specialArgs system modules;
-          };
+    }) // (let
+      generator = system:
+        nixpkgs.lib.nixosSystem { inherit specialArgs system modules; };
 
-        lxc-nixos = generator "aarch64-linux";
-      in
-      {
-        # Having this allows rebuilding the image _within_ the container.
-        nixosConfigurations.lxc-nixos = lxc-nixos;
-        nixosConfigurations.lxc-nixos-arm = lxc-nixos;
-        nixosConfigurations.lxc-nixos-x86 = generator "x86_64-linux";
-      }
-    );
+      lxc-nixos = generator "aarch64-linux";
+    in {
+      # Having this allows rebuilding the image _within_ the container.
+      nixosConfigurations.lxc-nixos = lxc-nixos;
+      nixosConfigurations.lxc-nixos-arm = lxc-nixos;
+      nixosConfigurations.lxc-nixos-x86 = generator "x86_64-linux";
+    });
 }

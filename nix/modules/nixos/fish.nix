@@ -1,5 +1,1 @@
-{ pkgs, ... }:
-{
-  documentation.man.generateCaches = false;
-  users.defaultUserShell = pkgs.fish;
-}
+{ pkgs, ... }: { users.defaultUserShell = pkgs.fish; }
