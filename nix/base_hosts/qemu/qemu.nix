@@ -1,4 +1,4 @@
-{ config, hostPkgs, inputs, ... }: {
+{ config, hostPkgs, inputs, lib, ... }: {
   imports = [ "${inputs.self}/modules/current_system_flake.nix" ];
 
   virtualisation.diskSize = 64 * 1024;
@@ -18,6 +18,8 @@
 
   programs.aldur.lazyvim.enable = true;
   programs.aldur.lazyvim.packageNames = [ "lazyvim" ];
+
+  programs.aldur.claude-code.enable = true;
 
   programs.better-nix-search.enable = true;
 
@@ -46,4 +48,8 @@
   # Disable virtual console
   systemd.services."autovt@".enable = false;
   systemd.services."getty@".enable = false;
+
+  # Overwrite since it does more harm than good
+  # https://github.com/nix-community/nixos-generators/blob/032decf9db65efed428afd2fa39d80f7089085eb/formats/vm-nogui.nix#L20C3-L20C29
+  environment.loginShellInit = lib.mkForce "";
 }
