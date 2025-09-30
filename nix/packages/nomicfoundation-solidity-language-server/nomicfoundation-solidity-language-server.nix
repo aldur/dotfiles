@@ -1,10 +1,4 @@
-{
-  buildNpmPackage,
-  fetchFromGitHub,
-  pkg-config,
-  libsecret,
-  breakpointHook,
-}:
+{ buildNpmPackage, fetchFromGitHub, pkg-config, libsecret, }:
 
 buildNpmPackage (finalAttrs: {
   pname = "nomicfoundation-solidity-language-server";
@@ -28,14 +22,9 @@ buildNpmPackage (finalAttrs: {
 
   npmDepsHash = "sha256-bLP5kVpfRIvHPCutUvTz5MFal6g5fimzXGNdQEhB+Lw=";
 
-  nativeBuildInputs = [
-    pkg-config
-    breakpointHook
-  ];
+  nativeBuildInputs = [ pkg-config ];
 
-  buildInputs = [
-    libsecret
-  ];
+  buildInputs = [ libsecret ];
 
   env = {
     SOLIDITY_GA_SECRET = "dummy-secret";
