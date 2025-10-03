@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, inputs, stateVersion, ... }:
 let
   gpgKeys = pkgs.fetchurl {
     url = "https://github.com/aldur.gpg";
@@ -6,6 +6,8 @@ let
   };
 in {
   imports = [ inputs.clipshare.homeManagerModules.default ./w3m.nix ];
+
+  home.stateVersion = stateVersion;
 
   home.username = "aldur";
   home.packages = [ ];
@@ -72,13 +74,13 @@ in {
       tag.gpgsign = true;
       gpg.format = "ssh";
 
+      # NOTE: This will default to the _second_ key offered by the agent.
       gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | tail -n 1)'";
     };
   };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
-  home.stateVersion = "25.05";
 
   programs.atuin = {
     enable = true;
