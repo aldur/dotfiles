@@ -1,20 +1,8 @@
-{ config, hostPkgs, inputs, lib, ... }: {
-  imports = [ "${inputs.self}/modules/current_system_flake.nix" ];
-
-  virtualisation.diskSize = 64 * 1024;
-
-  # By default `nix` builds under /tmp, which is constrained by RAM size:
-  # https://discourse.nixos.org/t/
-  # no-space-left-on-device-error-when-rebuilding-but-plenty-of-storage-available/43862/9
-  virtualisation.memorySize = 16 * 1024;
-  virtualisation.cores = 8;
-
-  # Instead, write to the machine's filesystem.
-  virtualisation.writableStoreUseTmpfs = false;
-
-  # This allows building from macOS
-  virtualisation.qemu.package = hostPkgs.qemu;
-  virtualisation.host.pkgs = hostPkgs;
+{ config, inputs, lib, ... }: {
+  imports = [
+    "${inputs.self}/modules/current_system_flake.nix"
+    "${inputs.self}/modules/nixos/pragmatism.nix"
+  ];
 
   programs.aldur.lazyvim.enable = true;
   programs.aldur.lazyvim.packageNames = [ "lazyvim" ];
@@ -50,6 +38,7 @@
   systemd.services."getty@".enable = false;
 
   # Overwrite since it does more harm than good
-  # https://github.com/nix-community/nixos-generators/blob/032decf9db65efed428afd2fa39d80f7089085eb/formats/vm-nogui.nix#L20C3-L20C29
+  # https://github.com/nix-community/nixos-generators/blob/
+  # 032decf9db65efed428afd2fa39d80f7089085eb/formats/vm-nogui.nix#L20C3-L20C29
   environment.loginShellInit = lib.mkForce "";
 }
