@@ -75,3 +75,4 @@ require("nixCatsUtils.lazyCat").setup(
 )
 
 require("lsp")
+require("terminal")
