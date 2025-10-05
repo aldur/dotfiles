@@ -97,8 +97,8 @@
             src = pkgs.fetchFromGitHub {
               owner = "aldur";
               repo = "clarity.nvim";
-              rev = "8454b987490174d53fcd0942c9634d7ca0ffc443";
-              hash = "sha256-s9SoX9ZjiWX4FnPToH0ujp5kUs5/e9Jue7RncUyqCl0=";
+              rev = "727318ce294f96713a2d093d253e0704d729be74";
+              hash = "sha256-6U0rvT76O5qO/0eQPUGoCqcddaQ5L6aKzMaddPmy6TI=";
             };
             doCheck = false; # Missing runtime dependencies for "require" check
           })

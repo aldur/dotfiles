@@ -32,6 +32,11 @@
       inputs.hercules-ci-effects.follows = "";
     };
 
+    nvim-treesitter-main = {
+      url = "github:iofq/nvim-treesitter-main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     clipshare = {
       url = "github:aldur/clipshare";
       inputs.flake-utils.follows = "flake-utils";
