@@ -58,10 +58,11 @@ require("nixCatsUtils.lazyCat").setup(
 			opts_extend = lazyAdd(nil, false),
 			opts = {
 				ensure_installed = lazyAdd("all", {}),
-				auto_install = lazyAdd(true, false),
-				sync_install = lazyAdd(true, false),
 				-- TinyMD.nvim does a better job at indenting lists.
 				indent = { disable = { "markdown" } },
+
+				-- FIXME: https://github.com/iofq/nvim-treesitter-main/issues/4
+				install_dir = vim.api.nvim_list_runtime_paths()[3],
 			},
 		},
 		{
