@@ -43,7 +43,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  outputs = { flake-utils, nixpkgs, ... }@inputs:
+  outputs = { self, flake-utils, nixpkgs, ... }@inputs:
     (flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
@@ -64,5 +64,15 @@
         };
       };
 
+      # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
+      specialArgs =
+        # This ugly thing ensures that, when descendant flakes (e.g. those in `base_hosts`)
+        # will use this flake, all (this flake) inputs will be correctly passed
+        # as arguments to the modules.
+        let thisFlakeInputs = inputs // { inherit self; };
+        in { inputs = thisFlakeInputs; };
+
+      nixosModules.default = ./modules/nixos/configuration.nix;
+      darwinModules.default = ./modules/darwin/configuration.nix;
     };
 }

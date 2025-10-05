@@ -14,16 +14,9 @@
   };
   outputs = { nixos-generators, aldur-dotfiles, ... }:
     let
-      modules =
-        [ "${aldur-dotfiles}/modules/nixos/configuration.nix" ./qemu.nix ];
+      modules = [ aldur-dotfiles.nixosModules.default ./qemu.nix ];
       targetSystem = "aarch64-linux";
-
-      # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
-      specialArgs =
-        # This ugly thing is ensuring all the right inputs go to `aldur-dotfiles`,
-        # including itself.
-        let inputs = aldur-dotfiles.inputs // { self = aldur-dotfiles; };
-        in { inherit inputs; };
+      specialArgs = aldur-dotfiles.specialArgs;
     in aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system:
       let pkgs = import aldur-dotfiles.inputs.nixpkgs { inherit system; };
       in {

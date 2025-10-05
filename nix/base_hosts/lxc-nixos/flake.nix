@@ -20,21 +20,14 @@
   };
   outputs = { nixos-generators, aldur-dotfiles, nixos-crostini, ... }:
     let
-      modules =
-        [ "${aldur-dotfiles}/modules/nixos/configuration.nix" ./lxc.nix ];
-
-      # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
-      specialArgs =
-        # This ugly thing is ensuring all the right inputs go to `aldur-dotfiles`,
-        # including itself.
-        let
-          inputs = aldur-dotfiles.inputs // {
-            inherit nixos-crostini;
-            self = aldur-dotfiles;
-          };
-        in { inherit inputs; };
+      modules = [ aldur-dotfiles.nixosModules.default ./lxc.nix ];
 
       nixpkgs = aldur-dotfiles.inputs.nixpkgs;
+      specialArgs = {
+        inputs = aldur-dotfiles.specialArgs.inputs // {
+          inherit nixos-crostini;
+        };
+      };
     in aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system: {
       packages = rec {
         lxc = nixos-generators.nixosGenerate {
