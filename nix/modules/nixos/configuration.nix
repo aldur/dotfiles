@@ -3,13 +3,14 @@
   imports = [
     ../../configuration.nix
 
+    ./agenix.nix
+    ./default_editor.nix
+    ./documentation.nix
     ./fish.nix
+    ./locales.nix
     ./security.nix
     ./ssh.nix
     ./users.nix
-    ./locales.nix
-    ./default_editor.nix
-    ./agenix.nix
 
     # NixOS-specific modules go here.
     inputs.home-manager.nixosModules.home-manager
