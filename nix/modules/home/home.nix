@@ -44,6 +44,14 @@ in {
     userName = "aldur";
     userEmail = "aldur@users.noreply.github.com";
 
+    difftastic = {
+      # enabled by default for `git diff`
+      # enabled with `--ext-diff` to git show and git log -p 
+      enable = true;
+      enableAsDifftool = true;
+      background = "dark";
+    };
+
     extraConfig = {
       commit.verbose = true;
 
