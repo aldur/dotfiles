@@ -113,4 +113,6 @@ in {
       trust = 5;
     }];
   };
+
+  home.file."Documents/Notes/.marksman.toml".text = "";
 }
