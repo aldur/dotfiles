@@ -37,24 +37,20 @@
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    dashp = {
+      url = "github:aldur/dashp";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
-  outputs =
-    {
-      flake-utils,
-      nixpkgs,
-      ...
-    }@inputs:
-    (flake-utils.lib.eachDefaultSystem (
-      system:
+  outputs = { flake-utils, nixpkgs, ... }@inputs:
+    (flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        nixCatsLazyVim = (pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; });
+        nixCatsLazyVim =
+          (pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; });
         defaultPackage = nixCatsLazyVim.defaultPackage;
-      in
-      {
-        packages = inputs.nixCats.utils.mkAllWithDefault defaultPackage;
-      }
-    ))
+      in { packages = inputs.nixCats.utils.mkAllWithDefault defaultPackage; }))
     // {
 
       templates = {

@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, inputs, ... }:
 with lib; {
   options.nixpkgs = {
     allowUnfreeByName = mkOption {
@@ -13,6 +13,8 @@ with lib; {
       (import ../overlays/yubikey-agent.nix)
       (import ../overlays/beancount-language-server.nix)
       (import ../overlays/packages.nix)
+
+      inputs.dashp.overlays.default
     ];
 
     config.allowUnfreePredicate = (pkg:
