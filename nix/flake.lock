@@ -37,16 +37,36 @@
         ]
       },
       "locked": {
-        "lastModified": 1754309147,
-        "narHash": "sha256-ncaBvWVCiFFAv66JmswZ+/x+ALPLBC5GA4jiswjr48k=",
+        "lastModified": 1759663844,
+        "narHash": "sha256-n8KK6iZw2td/YSuvu7nKiCkZcsiLLN69v/iJT7SW9CE=",
         "owner": "aldur",
         "repo": "clipshare",
-        "rev": "7184db776f42a964f73d15efbc9cf1c8d5d7a989",
+        "rev": "4e1de8ca9bb56afd63bd55943987d8d38eca4b05",
         "type": "github"
       },
       "original": {
         "owner": "aldur",
         "repo": "clipshare",
+        "type": "github"
+      }
+    },
+    "dashp": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1759654643,
+        "narHash": "sha256-SHFjYHHT7BmNLRL9mgfB/9qyp5xQeI/YCxCPePPg9j0=",
+        "owner": "aldur",
+        "repo": "dashp",
+        "rev": "200647e0dbabaf5de1cfd5e8d13df7a7f5940aa1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "aldur",
+        "repo": "dashp",
         "type": "github"
       }
     },
@@ -207,6 +227,7 @@
       "inputs": {
         "agenix": "agenix",
         "clipshare": "clipshare",
+        "dashp": "dashp",
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
