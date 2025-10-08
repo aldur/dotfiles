@@ -1,7 +1,13 @@
-{ config, inputs, lib, ... }: {
+{ config, inputs, lib, modulesPath, ... }: {
   imports = [
     "${inputs.self}/modules/current_system_flake.nix"
     "${inputs.self}/modules/nixos/pragmatism.nix"
+
+    # This is not technically required since the `vm-nogui` format already
+    # imports this modules.
+    # However, this way we can rebuild the NixOS image from
+    # _within_ the VM.
+    "${modulesPath}/virtualisation/qemu-vm.nix"
   ];
 
   programs.aldur.lazyvim.enable = true;
