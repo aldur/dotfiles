@@ -49,7 +49,7 @@ in {
       # enabled with `--ext-diff` to git show and git log -p 
       enable = true;
       enableAsDifftool = true;
-      background = "dark";
+      options.background = "dark";
     };
 
     extraConfig = {

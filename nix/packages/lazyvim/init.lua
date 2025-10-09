@@ -58,8 +58,6 @@ require("nixCatsUtils.lazyCat").setup(
 			opts_extend = lazyAdd(nil, false),
 			opts = {
 				ensure_installed = lazyAdd("all", {}),
-				auto_install = lazyAdd(true, false),
-				sync_install = lazyAdd(true, false),
 				-- TinyMD.nvim does a better job at indenting lists.
 				indent = { disable = { "markdown" } },
 			},
