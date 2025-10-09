@@ -64,8 +64,7 @@ let
 in {
   "${defaultPackageName}" = defaultPackage;
 
-  defaultModule = utils.mkNixosModules moduleArgs // {
-    moduleNamespace = [ "programs" "aldur" "lazyvim" ];
-  };
+  defaultModule = utils.mkNixosModules
+    (moduleArgs // { moduleNamespace = [ "programs" "aldur" "lazyvim" ]; });
   defaultHomeModule = utils.mkHomeModules moduleArgs;
 }
