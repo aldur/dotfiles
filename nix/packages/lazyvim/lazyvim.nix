@@ -3,6 +3,8 @@ let
   inherit (inputs.nixCats) utils;
   luaPath = ./.;
 
+  dependencyOverlays = (import ./overlays inputs);
+
   categoryDefinitions = { pkgs, ... }: {
     lspsAndRuntimeDeps = pkgs.callPackage ./runtime.nix { };
     startupPlugins = pkgs.callPackage ./plugins.nix { };
@@ -51,18 +53,19 @@ let
   };
 
   nixCatsBuilder =
-    utils.baseBuilder luaPath { inherit pkgs; } categoryDefinitions
-    packageDefinitions;
+    utils.baseBuilder luaPath { inherit pkgs dependencyOverlays; }
+    categoryDefinitions packageDefinitions;
 
   defaultPackage = nixCatsBuilder defaultPackageName;
+  moduleArgs = {
+    inherit luaPath defaultPackageName categoryDefinitions packageDefinitions
+      dependencyOverlays;
+  };
 in {
   "${defaultPackageName}" = defaultPackage;
 
-  defaultModule = utils.mkNixosModules {
+  defaultModule = utils.mkNixosModules moduleArgs // {
     moduleNamespace = [ "programs" "aldur" "lazyvim" ];
-    inherit luaPath defaultPackageName categoryDefinitions packageDefinitions;
   };
-  defaultHomeModule = utils.mkHomeModules {
-    inherit luaPath defaultPackageName categoryDefinitions packageDefinitions;
-  };
+  defaultHomeModule = utils.mkHomeModules moduleArgs;
 }

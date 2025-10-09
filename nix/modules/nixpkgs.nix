@@ -15,9 +15,6 @@ with lib; {
       (import ../overlays/packages.nix)
 
       inputs.dashp.overlays.default
-
-      # TODO: https://github.com/NixOS/nixpkgs/issues/415438#issuecomment-3214388033
-      inputs.nvim-treesitter-main.overlays.default
     ];
 
     config.allowUnfreePredicate = (pkg:
