@@ -53,9 +53,11 @@ let
   nixCatsBuilder =
     utils.baseBuilder luaPath { inherit pkgs; } categoryDefinitions
     packageDefinitions;
-in {
-  inherit defaultPackageName;
+
   defaultPackage = nixCatsBuilder defaultPackageName;
+in {
+  "${defaultPackageName}" = defaultPackage;
+
   defaultModule = utils.mkNixosModules {
     moduleNamespace = [ "programs" "aldur" "lazyvim" ];
     inherit luaPath defaultPackageName categoryDefinitions packageDefinitions;

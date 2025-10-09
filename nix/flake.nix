@@ -52,32 +52,31 @@
     (flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        nixCatsLazyVim =
-          (pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; });
-        defaultPackage = nixCatsLazyVim.defaultPackage;
-      in { packages = inputs.nixCats.utils.mkAllWithDefault defaultPackage; }))
-    // {
+        lazyvim = (pkgs.callPackage ./packages/lazyvim/lazyvim.nix {
+          inherit inputs;
+        }).lazyvim;
+      in { packages = { inherit lazyvim; }; })) // {
 
-      templates = {
-        vm-nogui = {
-          path = ./base_hosts/qemu;
-          description = "A QEMU VM";
+        templates = {
+          vm-nogui = {
+            path = ./base_hosts/qemu;
+            description = "A QEMU VM";
+          };
+          lxc-nixos = {
+            path = ./base_hosts/lxc-nixos;
+            description = "An lxc-nixos container to run in ChromeOS Crostini";
+          };
         };
-        lxc-nixos = {
-          path = ./base_hosts/lxc-nixos;
-          description = "An lxc-nixos container to run in ChromeOS Crostini";
-        };
+
+        # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
+        specialArgs =
+          # This ugly thing ensures that, when descendant flakes (e.g. those in `base_hosts`)
+          # will use this flake, all (this flake) inputs will be correctly passed
+          # as arguments to the modules.
+          let thisFlakeInputs = inputs // { inherit self; };
+          in { inputs = thisFlakeInputs; };
+
+        nixosModules.default = ./modules/nixos/configuration.nix;
+        darwinModules.default = ./modules/darwin/configuration.nix;
       };
-
-      # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
-      specialArgs =
-        # This ugly thing ensures that, when descendant flakes (e.g. those in `base_hosts`)
-        # will use this flake, all (this flake) inputs will be correctly passed
-        # as arguments to the modules.
-        let thisFlakeInputs = inputs // { inherit self; };
-        in { inputs = thisFlakeInputs; };
-
-      nixosModules.default = ./modules/nixos/configuration.nix;
-      darwinModules.default = ./modules/darwin/configuration.nix;
-    };
 }
