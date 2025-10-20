@@ -9,6 +9,6 @@
 
   # https://github.com/direnv/direnv/issues/1418
   home-manager.users.aldur = { ... }: {
-    home.file.".config/direnv/direnvrc".text = "";
+    home.file.".config/direnv/direnv.toml".text = "";
   };
 }
