@@ -28,7 +28,7 @@ Most NixOS modules assume the username to be `aldur`.
 #### QEMU VM
 
 ```bash
-nix flake init --template github:aldur/dotfiles#vm-nogui
+nix flake init --template github:aldur/dotfiles?dir=nix#vm-nogui
 ```
 
 ### Packages
