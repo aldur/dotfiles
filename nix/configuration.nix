@@ -7,7 +7,6 @@
     ./modules/cli.nix
     ./modules/development.nix
     ./modules/dict.nix
-    ./modules/direnv.nix
     ./modules/environment.nix
     ./modules/fish.nix
     ./modules/lazyvim.nix

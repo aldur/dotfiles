@@ -5,7 +5,8 @@ let
     sha256 = "sha256-x1H++Oqax/ZacnsTgurRFWI9I+/E7wb5pj8PXf7fhmw=";
   };
 in {
-  imports = [ inputs.clipshare.homeManagerModules.default ./w3m.nix ];
+  imports =
+    [ inputs.clipshare.homeManagerModules.default ./w3m.nix ./direnv.nix ];
 
   home.stateVersion = stateVersion;
 
