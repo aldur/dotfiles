@@ -41,6 +41,12 @@ A slightly customized [LazyVim setup](https://www.lazyvim.org).
 nix run "github:aldur/dotfiles?dir=nix#lazyvim"
 ```
 
+Or its light version:
+
+```bash
+nix run "github:aldur/dotfiles?dir=nix#lazyvim-light"
+```
+
 #### `neovim`
 
 My (previous) `nvim` setup. Technically is its own Flake.

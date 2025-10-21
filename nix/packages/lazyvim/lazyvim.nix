@@ -29,6 +29,8 @@ let
     go = true;
     typescript = true;
     solidity = true;
+    beancount = true;
+    nix = true;
   };
 
   packageDefinitions = {
@@ -63,6 +65,7 @@ let
   };
 in {
   "${defaultPackageName}" = defaultPackage;
+  "${defaultPackageName}-light" = nixCatsBuilder "${defaultPackageName}-light";
 
   defaultModule = utils.mkNixosModules
     (moduleArgs // { moduleNamespace = [ "programs" "aldur" "lazyvim" ]; });

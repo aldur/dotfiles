@@ -51,11 +51,23 @@
   outputs = { self, flake-utils, nixpkgs, ... }@inputs:
     (flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = import nixpkgs { inherit system; };
-        lazyvim = (pkgs.callPackage ./packages/lazyvim/lazyvim.nix {
-          inherit inputs;
-        }).lazyvim;
-      in { packages = { inherit lazyvim; }; })) // {
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            (import ./overlays/packages.nix)
+            (import ./overlays/beancount-language-server.nix)
+          ];
+        };
+        lazyvims =
+          (pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; });
+      in {
+        packages = {
+          inherit (lazyvims) lazyvim lazyvim-light;
+          inherit (pkgs)
+            beancount-language-server # from aldur/beancount-language-server
+            nomicfoundation-solidity-language-server;
+        };
+      })) // {
 
         templates = {
           vm-nogui = {
