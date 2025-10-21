@@ -4,24 +4,18 @@
 (with pkgs; {
   general = lib.optionals pkgs.stdenv.isLinux [
     # Fixes the following:
-    # ⚠️ WARNING libuv-watchdirs has known performance issues. 
-    # Consider installing inotify-tools.
+    # `libuv-watchdirs has known performance issues. Consider installing inotify-tools.`
     inotify-tools
   ] ++ [
 
     ast-grep
     basedpyright
-    beancount # bean-format
-    beancount-language-server
     curl
     fd
     git
     harper
     lua-language-server
     marksman
-    markdownlint-cli2
-    nil
-    nixfmt-classic
     prettierd
     ripgrep
     ruff
@@ -56,4 +50,6 @@
       ../nomicfoundation-solidity-language-server/nomicfoundation-solidity-language-server.nix
       { })
   ];
+  nix = [ nil nixfmt-rfc-style ];
+  beancount = [ beancount beancount-language-server ];
 })
