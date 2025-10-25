@@ -38,19 +38,15 @@
           modules = modules ++ [ crostiniModule ];
           format = "lxc";
         };
+        default = crostini-lxc;
 
         crostini-lxc-metadata = nixos-generators.nixosGenerate {
           inherit system specialArgs modules;
           format = "lxc-metadata";
         };
 
-        baguette-image = let
-          config = self.nixosConfigurations.baguette-nixos.config;
-          img = config.system.build.btrfsImage;
-        in nixpkgs.lib.overrideDerivation img
-        (old: { requiredSystemFeatures = [ ]; }); # Disable `kvm` requirement.
-
-        default = crostini-lxc;
+        baguette-image =
+          self.nixosConfigurations.baguette-nixos.config.system.build.btrfsImage;
       };
     }) // (let
       generator = system: module:
