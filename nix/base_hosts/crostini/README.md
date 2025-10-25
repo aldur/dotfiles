@@ -1,13 +1,14 @@
-# `lxc` guest
+# ChromeOS Crostini guest
 
-This Flake allows creating a NixOS LXC container with the modules of this
-repository plus [what it takes][0] to run in [ChromeOS Crostini][1].
+This Flake allows creating a NixOS guest (LXC container or Baguette image) with
+the modules of this repository plus [what it takes][0] to run in [ChromeOS
+Crostini][1].
 
 ## SSH keys
 
 ### Guest
 
-The keys you'll find in this folder are only used within the `lxc` container,
+The keys you'll find in this folder are only used within the container/VM,
 which is not exposed to the network but just to the host. Having them
 hard-coded avoids needing to re-verify the guest fingerprint for every new
 container instantiation.
