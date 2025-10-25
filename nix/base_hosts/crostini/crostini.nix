@@ -1,10 +1,6 @@
 { pkgs, config, inputs, ... }: {
-  imports = [
-    "${inputs.self}/modules/current_system_flake.nix"
-    inputs.nixos-crostini.nixosModules.default
-  ];
+  imports = [ "${inputs.self}/modules/current_system_flake.nix" ];
 
-  networking.hostName = "lxc-nixos";
   hardware.graphics.enable = true;
 
   programs.aldur.lazyvim.enable = true;
