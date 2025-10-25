@@ -1,6 +1,8 @@
 { pkgs, config, inputs, ... }: {
   imports = [ "${inputs.self}/modules/current_system_flake.nix" ];
 
+  virtualisation.diskImageSize = 10240; # 10GB img for Baguette
+
   hardware.graphics.enable = true;
 
   programs.aldur.lazyvim.enable = true;
