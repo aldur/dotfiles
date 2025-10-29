@@ -1,6 +1,7 @@
 {
   config,
   user,
+  lib,
   ...
 }:
 {
@@ -9,22 +10,17 @@
     ./launchd/ollama.nix
     ./launchd/open-webui.nix
     ./launchd/syncthing.nix
+    ./security.nix
+    ./defaults.nix
   ];
 
   nix.settings = {
-    allowed-users = [ user ];
     sandbox = false; # On macOS, sandbox doesn't play well :(
   };
 
   users.users.${user} = {
     home = "/Users/${user}";
   };
-
-  # Enable TouchID for sudo
-  security.pam.services.sudo_local.touchIdAuth = true;
-
-  # https://github.com/LnL7/nix-darwin/issues/1041
-  services.karabiner-elements.enable = false;
 
   # Used for backwards compatibility. please read the changelog
   # before changing: `darwin-rebuild changelog`.
@@ -34,7 +30,7 @@
     let
       home = config.users.users.aldur.home;
     in
-    ''
+    lib.mkBefore ''
       # Configure TimeMachine exclusions
       # WARNING: This will _not_ remove exclusions, do it manually if you need to with
       # sudo tmutil removeexclusion -p <path>
@@ -95,73 +91,5 @@
       find /Applications/Nix\ Apps/ -name "*.app" -exec sh -c 'echo "Registering application $1" && /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f $(readlink -f "$1")' sh {} \;
 
       killall Dock
-    ''
-    + ''
-      # Following line should allow us to avoid a logout/login cycle
-      /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
     '';
-
-  networking.applicationFirewall = {
-    enable = true;
-    blockAllIncoming = true;
-  };
-
-  system.defaults = {
-    dock.autohide = true;
-    dock.autohide-delay = 0.0;
-    dock.autohide-time-modifier = 0.15;
-    dock.mru-spaces = false;
-
-    finder.AppleShowAllExtensions = true;
-    # Do not warn on changing file extension
-    finder.FXEnableExtensionChangeWarning = false;
-
-    finder.FXPreferredViewStyle = "clmv";
-
-    screencapture.location = "~/Documents/Screenshots";
-
-    screensaver.askForPassword = true;
-    screensaver.askForPasswordDelay = 0;
-
-    NSGlobalDomain.AppleInterfaceStyle = "Dark";
-    NSGlobalDomain.InitialKeyRepeat = 10;
-    NSGlobalDomain.KeyRepeat = 1;
-
-    # ctrl+cmd to drag
-    NSGlobalDomain.NSWindowShouldDragOnGesture = true;
-    NSGlobalDomain.NSAutomaticWindowAnimationsEnabled = false;
-
-    CustomSystemPreferences = {
-      "com.apple.AppleMultitouchTrackpad" = {
-        "TrackpadThreeFingerDrag" = true;
-      };
-      "com.apple.menuextra.clock" = {
-        Show24Hour = 1;
-        ShowAMPM = 0;
-        ShowDate = 0;
-        ShowDayOfWeek = 1;
-        ShowSeconds = 0;
-      };
-      "com.apple.desktopservices" = {
-        # Avoid creating .DS_Store files on network or USB volumes
-        DSDontWriteNetworkStores = true;
-        DSDontWriteUSBStores = true;
-      };
-      "com.apple.AdLib" = {
-        allowApplePersonalizedAdvertising = false;
-      };
-      "com.apple.SoftwareUpdate" = {
-        AutomaticCheckEnabled = true;
-        # Check for software updates daily, not just once per week
-        ScheduleFrequency = 1;
-        # Download newly available updates in background
-        AutomaticDownload = 1;
-        # Install System data files & security updates
-        CriticalUpdateInstall = 1;
-      };
-      # Turn on app auto-update
-      "com.apple.commerce".AutoUpdate = true;
-    };
-  };
-
 }
