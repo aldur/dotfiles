@@ -1,15 +1,17 @@
-{ inputs, pkgs, }:
+{ inputs, pkgs }:
 let
   inherit (inputs.nixCats) utils;
   luaPath = ./.;
 
   dependencyOverlays = (import ./overlays inputs);
 
-  categoryDefinitions = { pkgs, ... }: {
-    lspsAndRuntimeDeps = pkgs.callPackage ./runtime.nix { };
-    startupPlugins = pkgs.callPackage ./plugins.nix { };
-    environmentVariables = pkgs.callPackage ./environment.nix { };
-  };
+  categoryDefinitions =
+    { pkgs, ... }:
+    {
+      lspsAndRuntimeDeps = pkgs.callPackage ./runtime.nix { };
+      startupPlugins = pkgs.callPackage ./plugins.nix { };
+      environmentVariables = pkgs.callPackage ./environment.nix { };
+    };
 
   defaultPackageName = "lazyvim";
 
@@ -34,40 +36,60 @@ let
   };
 
   packageDefinitions = {
-    ${defaultPackageName} = { ... }: {
-      inherit settings;
-      categories = allCategories;
-      extra = { };
-    };
-    "${defaultPackageName}-nightly" = { ... }: {
-      settings = settings // {
-        neovim-unwrapped =
-          inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    ${defaultPackageName} =
+      { ... }:
+      {
+        inherit settings;
+        categories = allCategories;
+        extra = { };
       };
-      categories = allCategories;
-      extra = { };
-    };
-    "${defaultPackageName}-light" = { ... }: {
-      inherit settings;
-      categories = { general = true; };
-      extra = { };
-    };
+    "${defaultPackageName}-nightly" =
+      { ... }:
+      {
+        settings = settings // {
+          neovim-unwrapped =
+            inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        };
+        categories = allCategories;
+        extra = { };
+      };
+    "${defaultPackageName}-light" =
+      { ... }:
+      {
+        inherit settings;
+        categories = {
+          general = true;
+        };
+        extra = { };
+      };
   };
 
-  nixCatsBuilder =
-    utils.baseBuilder luaPath { inherit pkgs dependencyOverlays; }
-    categoryDefinitions packageDefinitions;
+  nixCatsBuilder = utils.baseBuilder luaPath {
+    inherit pkgs dependencyOverlays;
+  } categoryDefinitions packageDefinitions;
 
   defaultPackage = nixCatsBuilder defaultPackageName;
   moduleArgs = {
-    inherit luaPath defaultPackageName categoryDefinitions packageDefinitions
-      dependencyOverlays;
+    inherit
+      luaPath
+      defaultPackageName
+      categoryDefinitions
+      packageDefinitions
+      dependencyOverlays
+      ;
+  }
+  // {
+    moduleNamespace = [
+      "programs"
+      "aldur"
+      "lazyvim"
+    ];
   };
-in {
+in
+{
   "${defaultPackageName}" = defaultPackage;
   "${defaultPackageName}-light" = nixCatsBuilder "${defaultPackageName}-light";
 
-  defaultModule = utils.mkNixosModules
-    (moduleArgs // { moduleNamespace = [ "programs" "aldur" "lazyvim" ]; });
+  defaultModule = utils.mkNixosModules moduleArgs;
   defaultHomeModule = utils.mkHomeModules moduleArgs;
 }
