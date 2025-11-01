@@ -3,7 +3,7 @@ let
   inherit (inputs.nixCats) utils;
   luaPath = ./.;
 
-  dependencyOverlays = (import ./overlays inputs);
+  dependencyOverlays = import ./overlays inputs;
 
   categoryDefinitions =
     { pkgs, ... }:
@@ -36,32 +36,26 @@ let
   };
 
   packageDefinitions = {
-    ${defaultPackageName} =
-      { ... }:
-      {
-        inherit settings;
-        categories = allCategories;
-        extra = { };
+    ${defaultPackageName} = _: {
+      inherit settings;
+      categories = allCategories;
+      extra = { };
+    };
+    "${defaultPackageName}-nightly" = _: {
+      settings = settings // {
+        neovim-unwrapped =
+          inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default;
       };
-    "${defaultPackageName}-nightly" =
-      { ... }:
-      {
-        settings = settings // {
-          neovim-unwrapped =
-            inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default;
-        };
-        categories = allCategories;
-        extra = { };
+      categories = allCategories;
+      extra = { };
+    };
+    "${defaultPackageName}-light" = _: {
+      inherit settings;
+      categories = {
+        general = true;
       };
-    "${defaultPackageName}-light" =
-      { ... }:
-      {
-        inherit settings;
-        categories = {
-          general = true;
-        };
-        extra = { };
-      };
+      extra = { };
+    };
   };
 
   nixCatsBuilder = utils.baseBuilder luaPath {
