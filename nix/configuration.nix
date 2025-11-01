@@ -14,21 +14,29 @@
     ./modules/nix_search.nix
     ./modules/users.nix
 
-    ({ config, ... }: {
-      home-manager.useGlobalPkgs = true;
-      home-manager.useUserPackages = true;
+    (
+      { config, ... }:
+      {
+        home-manager.useGlobalPkgs = true;
+        home-manager.useUserPackages = true;
+        home-manager.backupFileExtension = "home-manager-backup";
 
-      # Optionally, use home-manager.extraSpecialArgs to pass
-      # arguments to home.nix
-      home-manager.extraSpecialArgs = {
-        stateVersion = config.system.stateVersion;
-        inherit inputs;
-      };
-    })
+        # Optionally, use home-manager.extraSpecialArgs to pass
+        # arguments to home.nix
+        home-manager.extraSpecialArgs = {
+          stateVersion = config.system.stateVersion;
+          inherit inputs;
+        };
+      }
+    )
 
-    ({ config, pkgs, ... }: {
-      nixpkgs.config.allowUnfreePredicate = (pkg:
-        builtins.elem (pkgs.lib.getName pkg) config.nixpkgs.allowUnfreeByName);
-    })
+    (
+      { config, pkgs, ... }:
+      {
+        nixpkgs.config.allowUnfreePredicate = (
+          pkg: builtins.elem (pkgs.lib.getName pkg) config.nixpkgs.allowUnfreeByName
+        );
+      }
+    )
   ];
 }
