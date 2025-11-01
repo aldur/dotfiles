@@ -2,7 +2,7 @@
 (
   final: prev:
   let
-    lazyvim = (prev.callPackage ../../nix/packages/lazyvim/lazyvim.nix { inherit inputs pkgs; });
+    lazyvim = (prev.callPackage ../../packages/lazyvim/lazyvim.nix { inherit inputs pkgs; });
     name = "lazyvim";
   in
   {
@@ -16,7 +16,7 @@
 
         # Jail nvim
         text = ''
-          sandbox-exec -f ${../sandboxes/lazyvim.sb} ${name} "$@"
+          sandbox-exec -f ${../../../osx/sandboxes/lazyvim.sb} ${name} "$@"
         '';
       }
     );
