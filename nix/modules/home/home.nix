@@ -1,12 +1,22 @@
-{ pkgs, inputs, stateVersion, ... }:
+{
+  pkgs,
+  inputs,
+  stateVersion,
+  ...
+}:
 let
   gpgKeys = pkgs.fetchurl {
     url = "https://github.com/aldur.gpg";
     sha256 = "sha256-x1H++Oqax/ZacnsTgurRFWI9I+/E7wb5pj8PXf7fhmw=";
   };
-in {
-  imports =
-    [ inputs.clipshare.homeManagerModules.default ./w3m.nix ./direnv.nix ];
+in
+{
+  imports = [
+    inputs.clipshare.homeManagerModules.default
+    ./w3m.nix
+    ./direnv.nix
+    ./manpager.nix
+  ];
 
   home.stateVersion = stateVersion;
 
@@ -21,8 +31,7 @@ in {
     '';
     functions = {
       fish_hybrid_key_bindings = {
-        description =
-          "Vi-style bindings that inherit emacs-style bindings in all modes";
+        description = "Vi-style bindings that inherit emacs-style bindings in all modes";
         body = ''
           for mode in default insert visual
               fish_default_key_bindings -M $mode
@@ -34,10 +43,12 @@ in {
         '';
       };
     };
-    plugins = [{
-      name = "z";
-      src = pkgs.fishPlugins.z;
-    }];
+    plugins = [
+      {
+        name = "z";
+        src = pkgs.fishPlugins.z;
+      }
+    ];
   };
 
   programs.git = {
@@ -47,7 +58,7 @@ in {
 
     difftastic = {
       # enabled by default for `git diff`
-      # enabled with `--ext-diff` to git show and git log -p 
+      # enabled with `--ext-diff` to git show and git log -p
       enable = true;
       enableAsDifftool = true;
       options.background = "dark";
@@ -94,10 +105,14 @@ in {
   programs.atuin = {
     enable = true;
     daemon.enable = true;
-    settings = { enter_accept = false; };
+    settings = {
+      enter_accept = false;
+    };
   };
 
-  programs.fzf = { enable = true; };
+  programs.fzf = {
+    enable = true;
+  };
 
   programs.tmux = {
     enable = true;
@@ -116,11 +131,15 @@ in {
 
   programs.gpg = {
     enable = true;
-    scdaemonSettings = { pcsc-shared = true; };
-    publicKeys = [{
-      source = "${gpgKeys}";
-      trust = 5;
-    }];
+    scdaemonSettings = {
+      pcsc-shared = true;
+    };
+    publicKeys = [
+      {
+        source = "${gpgKeys}";
+        trust = 5;
+      }
+    ];
   };
 
   home.file."Documents/Notes/.marksman.toml".text = "";
