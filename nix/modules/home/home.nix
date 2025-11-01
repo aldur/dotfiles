@@ -16,6 +16,7 @@ in
     ./w3m.nix
     ./direnv.nix
     ./manpager.nix
+    ./llm.nix
   ];
 
   home.stateVersion = stateVersion;
@@ -51,20 +52,24 @@ in
     ];
   };
 
+  programs.difftastic = {
+    # enabled by default for `git diff`
+    # enabled with `--ext-diff` to git show and git log -p
+    enable = true;
+
+    git.enable = true;
+    git.diffToolMode = false;
+  };
+
   programs.git = {
     enable = true;
-    userName = "aldur";
-    userEmail = "aldur@users.noreply.github.com";
 
-    difftastic = {
-      # enabled by default for `git diff`
-      # enabled with `--ext-diff` to git show and git log -p
-      enable = true;
-      enableAsDifftool = true;
-      options.background = "dark";
-    };
+    settings = {
+      user = {
+        name = "aldur";
+        email = "aldur@users.noreply.github.com";
+      };
 
-    extraConfig = {
       commit.verbose = true;
 
       push.default = "current";
