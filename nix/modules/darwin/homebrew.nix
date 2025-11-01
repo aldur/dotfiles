@@ -1,9 +1,12 @@
-{ inputs, config, user, lib, ... }:
+{ inputs, config, lib, ... }:
 let
   name = "homebrew";
   cfg = config.programs.${name};
 in {
-  imports = [ ./casks.nix ./masApps.nix ];
+  imports = [
+    inputs.nix-homebrew.darwinModules.nix-homebrew
+    # ./casks.nix ./masApps.nix 
+  ];
 
   options.programs.${name} = {
     enable = lib.mkEnableOption "Homebrew integration";
@@ -22,7 +25,8 @@ in {
 
     nix-homebrew = {
       # User owning the Homebrew prefix
-      inherit user;
+      # NOTE: Hardcoded to `aldur`
+      user = config.users.users.aldur.name;
 
       # Install Homebrew under the default prefix
       enable = true;

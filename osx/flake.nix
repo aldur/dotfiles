@@ -37,46 +37,33 @@
     };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      nix-darwin,
-      nix-homebrew,
-      nix-rosetta-builder,
-      nix-index-database,
-      ...
-    }@inputs:
+  outputs = { self, nixpkgs, nix-darwin, nix-homebrew, nix-rosetta-builder
+    , nix-index-database, ... }@inputs:
     let
       user = "aldur";
       system = "aarch64-darwin";
 
       # https://wiki.nixos.org/wiki/Nixpkgs/Patching_Nixpkgs
-      pkgs' =
-        config: pkgs:
+      pkgs' = config: pkgs:
         (import nixpkgs {
           inherit system;
-          nixpkgs.config.allowUnfreePredicate = (
-            pkg: builtins.elem (pkgs.lib.getName pkg) config.nixpkgs.allowUnfreeByName
-          );
-        }).applyPatches
-          {
-            name = "nixpkgs-patched";
-            src = nixpkgs;
-            patches = [
-              # (builtins.fetchurl {
-              #   url = "https://github.com/NixOS/nixpkgs/pull/404770.patch";
-              #   sha256 = "sha256:0bkrd8dg7f5q8fyw8z390pfywmkjnsd9xxcwnybsgchhj02rk3pw";
-              # })
-            ];
-          };
+          nixpkgs.config.allowUnfreePredicate = (pkg:
+            builtins.elem (pkgs.lib.getName pkg)
+            config.nixpkgs.allowUnfreeByName);
+        }).applyPatches {
+          name = "nixpkgs-patched";
+          src = nixpkgs;
+          patches = [
+            # (builtins.fetchurl {
+            #   url = "https://github.com/NixOS/nixpkgs/pull/404770.patch";
+            #   sha256 = "sha256:0bkrd8dg7f5q8fyw8z390pfywmkjnsd9xxcwnybsgchhj02rk3pw";
+            # })
+          ];
+        };
 
-      configuration =
-        { cfg, pkgs, ... }:
-        let
-          python3 = pkgs.python3;
-        in
-        {
+      configuration = { cfg, pkgs, ... }:
+        let python3 = pkgs.python3;
+        in {
           imports = [
             ../nix/modules/darwin
             ../nix/modules/development.nix
@@ -116,10 +103,11 @@
                 # https://github.com/NixOS/nixpkgs/pull/392430/files
                 pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
                   (python-final: python-prev: {
-                    pgvector = python-prev.pgvector.overridePythonAttrs (oldAttrs: {
-                      doCheck = false;
-                      nativeCheckInputs = [ ];
-                    });
+                    pgvector = python-prev.pgvector.overridePythonAttrs
+                      (oldAttrs: {
+                        doCheck = false;
+                        nativeCheckInputs = [ ];
+                      });
                   })
                 ];
               })
@@ -136,13 +124,17 @@
             LC_CTYPE = "en_US.UTF-8";
 
             # Override macOS ssh-agent with Secretive (installed from `brew`)
-            SSH_AUTH_SOCK = "$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh";
+            SSH_AUTH_SOCK =
+              "$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh";
             AUTOSSH_PORT = "0";
 
             FZF_DEFAULT_OPTS = "--bind alt-p:toggle-preview";
-            FZF_DEFAULT_COMMAND = "fd -d 10 --hidden --follow --exclude .git --exclude .svn --ignore-file ~/.gitignore_global";
-            FZF_ALT_C_COMMAND = "fd -d 10 --hidden --follow --exclude .git --exclude .svn --ignore-file ~/.gitignore_global --type d";
-            FZF_CTRL_T_COMMAND = "fd -d 10 --hidden --follow --exclude .git --exclude .svn --ignore-file ~/.gitignore_global";
+            FZF_DEFAULT_COMMAND =
+              "fd -d 10 --hidden --follow --exclude .git --exclude .svn --ignore-file ~/.gitignore_global";
+            FZF_ALT_C_COMMAND =
+              "fd -d 10 --hidden --follow --exclude .git --exclude .svn --ignore-file ~/.gitignore_global --type d";
+            FZF_CTRL_T_COMMAND =
+              "fd -d 10 --hidden --follow --exclude .git --exclude .svn --ignore-file ~/.gitignore_global";
 
             RIPGREP_CONFIG_PATH = "/Users/${user}/.ripgreprc";
 
@@ -161,8 +153,10 @@
 
             tailscale = "/Applications/Tailscale.app/Contents/MacOS/Tailscale";
 
-            faraday = "sandbox-exec -p '(version 1)(allow default)(deny network*)'";
-            sandbox = "sandbox-exec -p '(version 1)(allow default)(deny network*)(deny file-read-data (regex \"^/Users/'$USER'/(Documents|Desktop|Developer|Movies|Music|Pictures)\"))'";
+            faraday =
+              "sandbox-exec -p '(version 1)(allow default)(deny network*)'";
+            sandbox =
+              "sandbox-exec -p '(version 1)(allow default)(deny network*)(deny file-read-data (regex \"^/Users/'$USER'/(Documents|Desktop|Developer|Movies|Music|Pictures)\"))'";
           };
 
           programs.bash.enable = true;
@@ -172,8 +166,7 @@
             ${pkgs.lib.getExe pkgs.atuin} init fish | source
           '';
 
-          environment.systemPackages =
-            with pkgs;
+          environment.systemPackages = with pkgs;
             [
               # macOS-specific
               atuin # Until we use home manager
@@ -185,12 +178,8 @@
               ollama
 
               # llm
-              (python312.withPackages (ps: [
-                ps.llm
-                ps.llm-ollama
-                ps.llm-gguf
-                llm-mlx
-              ]))
+              (python312.withPackages
+                (ps: [ ps.llm ps.llm-ollama ps.llm-gguf llm-mlx ]))
               strip-tags
               files-to-prompt
               # /llm
@@ -205,27 +194,23 @@
               syncthing
               yubikey-agent
               age-plugin-se
-            ]
-            ++ [
+            ] ++ [
               # GUI from nix
               golden-cheetah-bin
               # zeal-qt6
               maccy
-            ]
-            ++ [
+            ] ++ [
               # nvim
               neovim
               neovide
               lazyvim
-            ]
-            ++ [
+            ] ++ [
               # bundled packages
               tiktoken
               llmcat
             ];
         };
-    in
-    {
+    in {
       darwinConfigurations.Maui = nix-darwin.lib.darwinSystem {
         modules = [
           configuration

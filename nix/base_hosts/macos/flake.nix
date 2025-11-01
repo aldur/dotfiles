@@ -7,15 +7,40 @@
       url = "github:aldur/dotfiles?dir=nix";
     };
 
-    nix-darwin.url = "github:nix-darwin/nix-darwin/master";
-    nix-darwin.inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin/master";
+      inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
+    };
+
+    nix-rosetta-builder = {
+      url = "github:cpick/nix-rosetta-builder";
+      inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
+    };
+
+    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+
+    # Declarative tap management
+    homebrew-core = {
+      url = "github:homebrew/homebrew-core";
+      flake = false;
+    };
+
+    homebrew-cask = {
+      url = "github:homebrew/homebrew-cask";
+      flake = false;
+    };
+
+    homebrew-bundle = {
+      url = "github:homebrew/homebrew-bundle";
+      flake = false;
+    };
   };
-  outputs = { nix-darwin, aldur-dotfiles, ... }:
+  outputs = { nix-darwin, aldur-dotfiles, ... }@inputs:
     let
       modules =
         [ "${aldur-dotfiles}/modules/darwin/configuration.nix" ./macos.nix ];
 
-      specialArgs = aldur-dotfiles.specialArgs;
+      specialArgs = { inputs = aldur-dotfiles.specialArgs.inputs // inputs; };
     in {
       darwinConfigurations."macOS" =
         nix-darwin.lib.darwinSystem { inherit specialArgs modules; };

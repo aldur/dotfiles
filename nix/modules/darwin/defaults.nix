@@ -1,5 +1,4 @@
-{ ... }:
-{
+{ ... }: {
   system.defaults = {
     dock.autohide = true;
     dock.autohide-delay = 0.0;
@@ -43,9 +42,7 @@
         DSDontWriteNetworkStores = true;
         DSDontWriteUSBStores = true;
       };
-      "com.apple.AdLib" = {
-        allowApplePersonalizedAdvertising = false;
-      };
+      "com.apple.AdLib" = { allowApplePersonalizedAdvertising = false; };
       "com.apple.SoftwareUpdate" = {
         AutomaticCheckEnabled = true;
         # Check for software updates daily, not just once per week

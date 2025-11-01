@@ -1,19 +1,19 @@
 # macOS-specific configuration
 { inputs, ... }:
-let
-  user = "aldur";
-in
-{
+let user = "aldur";
+in {
   imports = [
     ../../configuration.nix
 
     inputs.home-manager.darwinModules.home-manager
     inputs.nix-index-database.darwinModules.nix-index
 
-    ./security.nix
     ./defaults.nix
-    ./packages.nix
+    ./homebrew.nix
     ./keyboard.nix
+    ./linux-builder.nix
+    ./packages.nix
+    ./security.nix
   ];
 
   # Used for backwards compatibility, please read the changelog before changing.
