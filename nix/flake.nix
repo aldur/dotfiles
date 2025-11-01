@@ -61,7 +61,7 @@
           inherit (lazyvims) lazyvim lazyvim-light;
           inherit (pkgs)
             beancount-language-server # from aldur/beancount-language-server
-            nomicfoundation-solidity-language-server;
+            nomicfoundation-solidity-language-server llm-mlx;
         };
       })) // {
 
