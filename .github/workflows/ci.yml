@@ -11,16 +11,26 @@ concurrency:
 
 permissions:
   contents: read
- 
+
 jobs:
-  nix-ci:
+  nixos-ci:
     runs-on: ubuntu-24.04-arm
-    # Include this block to log in to FlakeHub and access private flakes
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - uses: DeterminateSystems/determinate-nix-action@dbda91f6efef3ee627f56175120aa9543687d830  # v3.11.2
       - uses: DeterminateSystems/flake-checker-action@3164002371bc90729c68af0e24d5aacf20d7c9f6  # v12
       - run: nix flake check --all-systems ./nix
 
-      # Test building QEMU VM
+      # Test building QEMU VM configuration
       - run: nix build --override-input aldur-dotfiles ./nix ./nix/base_hosts/qemu#vm-nogui
+
+  nix-darwin-ci:
+    runs-on: macos-26  # arm, beta
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: DeterminateSystems/determinate-nix-action@dbda91f6efef3ee627f56175120aa9543687d830  # v3.11.2
+      - uses: DeterminateSystems/flake-checker-action@3164002371bc90729c68af0e24d5aacf20d7c9f6  # v12
+      - run: nix flake check --all-systems ./nix
+
+      # Test building nix-darwin configuration
+      - run: nix build --override-input aldur-dotfiles ./nix ./nix/base_hosts/macos#darwinConfigurations.macOS.system
