@@ -1,10 +1,6 @@
-{
-  config,
-  user,
-  lib,
-  ...
-}:
-{
+# Note: This was used _before_ switching to the shared configuration.
+# Left here for backwards compatibility.
+{ config, user, lib, ... }: {
   imports = [
     ./homebrew.nix
     ./launchd/ollama.nix
@@ -18,19 +14,15 @@
     sandbox = false; # On macOS, sandbox doesn't play well :(
   };
 
-  users.users.${user} = {
-    home = "/Users/${user}";
-  };
+  users.users.${user} = { home = "/Users/${user}"; };
 
   # Used for backwards compatibility. please read the changelog
   # before changing: `darwin-rebuild changelog`.
   system.stateVersion = 6;
 
   system.activationScripts.postActivation.text =
-    let
-      home = config.users.users.aldur.home;
-    in
-    lib.mkBefore ''
+    let home = config.users.users.aldur.home;
+    in lib.mkBefore ''
       # Configure TimeMachine exclusions
       # WARNING: This will _not_ remove exclusions, do it manually if you need to with
       # sudo tmutil removeexclusion -p <path>
