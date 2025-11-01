@@ -10,7 +10,7 @@
         packages = rec {
           neovim-nightly = pkgs.callPackage ./neovim.nix {
             nvim-package =
-              aldur-dotfiles.inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
+              aldur-dotfiles.inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default;
           };
           neovim = pkgs.callPackage ./neovim.nix { };
           default = neovim;

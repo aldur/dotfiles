@@ -42,7 +42,7 @@ let
     "${defaultPackageName}-nightly" = { ... }: {
       settings = settings // {
         neovim-unwrapped =
-          inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
+          inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default;
       };
       categories = allCategories;
       extra = { };
