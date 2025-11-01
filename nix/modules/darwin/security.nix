@@ -1,12 +1,6 @@
-{
-  user,
-  ...
-}:
-{
+{ config, ... }: {
   # Restrict `nix` user
-  nix.settings = {
-    allowed-users = [ user ];
-  };
+  nix.settings = { allowed-users = [ config.users.users.aldur.name ]; };
 
   # Enable TouchID for sudo
   security.pam.services.sudo_local.touchIdAuth = true;
