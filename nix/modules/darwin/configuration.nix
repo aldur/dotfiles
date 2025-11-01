@@ -1,7 +1,9 @@
 # macOS-specific configuration
 { inputs, ... }:
-let user = "aldur";
-in {
+let
+  user = "aldur";
+in
+{
   imports = [
     ../../configuration.nix
 
@@ -11,7 +13,6 @@ in {
     ./defaults.nix
     ./homebrew.nix
     ./keyboard.nix
-    ./linux-builder.nix
     ./packages.nix
     ./security.nix
   ];
