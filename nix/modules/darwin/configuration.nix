@@ -13,6 +13,7 @@ in
     ./defaults.nix
     ./homebrew.nix
     ./keyboard.nix
+    ./nixpkgs.nix
     ./packages.nix
     ./security.nix
   ];

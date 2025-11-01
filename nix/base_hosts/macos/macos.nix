@@ -20,15 +20,21 @@
     casks = [ ];
   };
 
-  home-manager.users.aldur =
-    { ... }:
-    {
+  home-manager.users.aldur = _: {
+    programs = {
       # Set to true for https://github.com/simonw/llm and plugins support
-      programs.llm.enable = false;
+      llm.enable = false;
 
-      home.packages = with pkgs; [ git-crypt ];
-
-      programs.aldur.lazyvim.enable = true;
-      programs.aldur.lazyvim.packageNames = [ "lazyvim" ];
+      aldur.lazyvim.enable = true;
+      aldur.lazyvim.packageNames = [ "lazyvim" ];
     };
+
+    home.packages = with pkgs; [
+      git-crypt
+
+      # In case you want to jail lazyvim
+      # Disable `aldur.lazyvim.enable`.
+      # jailed-lazyvim
+    ];
+  };
 }
