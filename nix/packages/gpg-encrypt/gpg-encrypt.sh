@@ -93,38 +93,39 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Determine recipients from email
-RECIPIENTS=()
+# Fall back to default email if not specified
+if [ -z "$EMAIL" ]; then
+	EMAIL="${GPG_ENCRYPT_DEFAULT_EMAIL:-}"
+fi
 
-if [ -n "$EMAIL" ]; then
-	# Use specified email to find keys in GPG keyring
-	# Get all key fingerprints associated with this email
-	while IFS= read -r fpr; do
-		[[ -z "$fpr" ]] && continue
-		RECIPIENTS+=("$fpr")
-	done < <(gpg --batch --with-colons --list-keys "$EMAIL" 2>/dev/null | grep '^fpr' | cut -d: -f10)
-
-	if [ ${#RECIPIENTS[@]} -eq 0 ]; then
-		echo "Error: No keys found in GPG keyring for email '$EMAIL'."
-		echo "Make sure the keys are imported with: gpg --import <keyfile>"
-		exit 1
-	fi
-elif [ -n "${GPG_ENCRYPT_DEFAULT_EMAIL:-}" ]; then
-	# Fall back to default email (set by Nix wrapper)
-	EMAIL="${GPG_ENCRYPT_DEFAULT_EMAIL}"
-
-	while IFS= read -r fpr; do
-		[[ -z "$fpr" ]] && continue
-		RECIPIENTS+=("$fpr")
-	done < <(gpg --batch --with-colons --list-keys "$EMAIL" 2>/dev/null | grep '^fpr' | cut -d: -f10)
-
-	if [ ${#RECIPIENTS[@]} -eq 0 ]; then
-		echo "Error: No keys found in GPG keyring for default email '$EMAIL'."
-		echo "Make sure the keys are imported with: gpg --import <keyfile>"
-		exit 1
-	fi
-else
+if [ -z "$EMAIL" ]; then
 	echo "Error: No encryption recipient email specified."
 	echo "Use --email option or set GPG_ENCRYPT_EMAIL/GPG_ENCRYPT_DEFAULT_EMAIL environment variable."
+	exit 1
+fi
+
+# Get all primary key fingerprints (only 'pub' keys, not 'sub' keys) for the email
+RECIPIENTS=()
+PREV_LINE=""
+while IFS= read -r line; do
+	TYPE=$(echo "$line" | cut -d: -f1)
+
+	if [[ "$TYPE" == "pub" ]]; then
+		PREV_LINE="$line"
+	elif [[ "$TYPE" == "fpr" ]] && [[ -n "$PREV_LINE" ]]; then
+		# This fingerprint belongs to a primary key
+		FPR=$(echo "$line" | cut -d: -f10)
+		[[ -n "$FPR" ]] && RECIPIENTS+=("$FPR")
+		PREV_LINE=""
+	elif [[ "$TYPE" == "sub" ]]; then
+		# Reset if we hit a subkey - we don't want subkey fingerprints
+		PREV_LINE=""
+	fi
+done < <(gpg --batch --with-colons --list-keys "$EMAIL" 2>/dev/null)
+
+if [ ${#RECIPIENTS[@]} -eq 0 ]; then
+	echo "Error: No primary keys found in GPG keyring for email '$EMAIL'."
+	echo "Make sure the keys are imported with: gpg --import <keyfile>"
 	exit 1
 fi
 
