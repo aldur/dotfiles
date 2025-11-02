@@ -19,133 +19,141 @@ in
     ./llm.nix
   ];
 
-  home.stateVersion = stateVersion;
+  home = {
+    inherit stateVersion;
 
-  home.username = "aldur";
-  home.packages = [ ];
+    username = "aldur";
+    packages = [ pkgs.gpg-encrypt ];
 
-  programs.fish = {
-    enable = true;
-    interactiveShellInit = ''
-      set fish_greeting # Disable greeting
-      set -g fish_key_bindings fish_hybrid_key_bindings
-    '';
-    functions = {
-      fish_hybrid_key_bindings = {
-        description = "Vi-style bindings that inherit emacs-style bindings in all modes";
-        body = ''
-          for mode in default insert visual
-              fish_default_key_bindings -M $mode
-          end
-          fish_vi_key_bindings --no-erase
-
-          # https://github.com/fish-shell/fish-shell/issues/11082
-          bind -M insert ctrl-n down-or-search
-        '';
-      };
-    };
-    plugins = [
-      {
-        name = "z";
-        src = pkgs.fishPlugins.z;
-      }
-    ];
+    file."Documents/Notes/.marksman.toml".text = "";
   };
 
-  programs.difftastic = {
-    # enabled by default for `git diff`
-    # enabled with `--ext-diff` to git show and git log -p
-    enable = true;
+  programs = {
+    fish = {
+      enable = true;
 
-    git.enable = true;
-    git.diffToolMode = false;
-  };
+      interactiveShellInit = ''
+        set fish_greeting # Disable greeting
+        set -g fish_key_bindings fish_hybrid_key_bindings
+      '';
 
-  programs.git = {
-    enable = true;
+      functions = {
+        fish_hybrid_key_bindings = {
+          description = "Vi-style bindings that inherit emacs-style bindings in all modes";
+          body = ''
+            for mode in default insert visual
+                fish_default_key_bindings -M $mode
+            end
+            fish_vi_key_bindings --no-erase
 
-    settings = {
-      user = {
-        name = "aldur";
-        email = "aldur@users.noreply.github.com";
+            # https://github.com/fish-shell/fish-shell/issues/11082
+            bind -M insert ctrl-n down-or-search
+          '';
+        };
       };
 
-      commit.verbose = true;
+      plugins = [
+        {
+          name = "z";
+          src = pkgs.fishPlugins.z;
+        }
+      ];
+    };
 
-      push.default = "current";
-      push.autoSetupRemote = true;
-      push.followTags = true;
+    difftastic = {
+      # enabled by default for `git diff`
+      # enabled with `--ext-diff` to git show and git log -p
+      enable = true;
 
-      pull.default = "current";
-      pull.rebase = true;
+      git.enable = true;
+      git.diffToolMode = false;
+    };
 
-      rebase.autoStash = true;
+    git = {
+      enable = true;
 
-      rerere.enabled = true;
-      rerere.autoUpdate = true;
+      settings = {
+        user = {
+          name = "aldur";
+          email = "aldur@users.noreply.github.com";
+        };
 
-      # https://blog.gitbutler.com/git-tips-2-new-stuff-in-git/
-      column.ui = "auto";
-      branch.sort = "-committerdate";
+        commit.verbose = true;
+        push = {
+          default = "current";
+          autoSetupRemote = true;
+          followTags = true;
+        };
 
-      # https://jvns.ca/blog/2024/02/16/popular-git-config-options/
-      merge.conflictStyle = "zdiff3";
-      diff.algorithm = "histogram";
-      transfer.fsckobjects = true;
-      fetch.fsckobjects = true;
-      receive.fsckObjects = true;
+        pull.default = "current";
+        pull.rebase = true;
 
-      commit.gpgsign = true;
-      tag.gpgsign = true;
-      gpg.format = "ssh";
+        rebase.autoStash = true;
 
-      # NOTE: This will default to the _second_ key offered by the agent.
-      gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | tail -n 1)'";
+        rerere.enabled = true;
+        rerere.autoUpdate = true;
+
+        # https://blog.gitbutler.com/git-tips-2-new-stuff-in-git/
+        column.ui = "auto";
+        branch.sort = "-committerdate";
+
+        # https://jvns.ca/blog/2024/02/16/popular-git-config-options/
+        merge.conflictStyle = "zdiff3";
+        diff.algorithm = "histogram";
+        transfer.fsckobjects = true;
+        fetch.fsckobjects = true;
+        receive.fsckObjects = true;
+
+        commit.gpgsign = true;
+        tag.gpgsign = true;
+        gpg.format = "ssh";
+
+        # NOTE: This will default to the _second_ key offered by the agent.
+        gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | tail -n 1)'";
+      };
+    };
+
+    # Let Home Manager install and manage itself.
+    home-manager.enable = true;
+
+    atuin = {
+      enable = true;
+      daemon.enable = true;
+      settings = {
+        enter_accept = false;
+      };
+    };
+
+    fzf = {
+      enable = true;
+    };
+
+    tmux = {
+      enable = true;
+
+      extraConfig = ''
+        set -g default-terminal "screen-256color"
+
+        # as required by nvim
+        set-option -g focus-events on
+        # make nvim autoread work
+        set-option -a terminal-features ',screen256color:RGB'
+
+        set-option -sg escape-time 10
+      '';
+    };
+
+    gpg = {
+      enable = true;
+      scdaemonSettings = {
+        pcsc-shared = true;
+      };
+      publicKeys = [
+        {
+          source = "${gpgKeys}";
+          trust = 5;
+        }
+      ];
     };
   };
-
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
-
-  programs.atuin = {
-    enable = true;
-    daemon.enable = true;
-    settings = {
-      enter_accept = false;
-    };
-  };
-
-  programs.fzf = {
-    enable = true;
-  };
-
-  programs.tmux = {
-    enable = true;
-
-    extraConfig = ''
-      set -g default-terminal "screen-256color"
-
-      # as required by nvim
-      set-option -g focus-events on
-      # make nvim autoread work
-      set-option -a terminal-features ',screen256color:RGB'
-
-      set-option -sg escape-time 10
-    '';
-  };
-
-  programs.gpg = {
-    enable = true;
-    scdaemonSettings = {
-      pcsc-shared = true;
-    };
-    publicKeys = [
-      {
-        source = "${gpgKeys}";
-        trust = 5;
-      }
-    ];
-  };
-
-  home.file."Documents/Notes/.marksman.toml".text = "";
 }
