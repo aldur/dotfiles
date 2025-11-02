@@ -9,7 +9,7 @@
 
   # dependencies
   llm,
-  mlx-lm
+  mlx-lm,
 }:
 
 buildPythonPackage rec {
@@ -24,10 +24,10 @@ buildPythonPackage rec {
   };
 
   patches = [
-      (fetchurl {
-        url = "https://github.com/simonw/llm-mlx/pull/20.patch";
-        hash = "sha256-tqIpCfzHAUTuhiewNNVlBdYSV10iuYoZUhnp6klaNRs=";
-      })
+    (fetchurl {
+      url = "https://github.com/simonw/llm-mlx/pull/20.patch";
+      hash = "sha256-J3+Y55MQpNaIuFOvcZL9huWQ/n8W2zEmo/9IkMClAUU=";
+    })
   ];
 
   build-system = [
