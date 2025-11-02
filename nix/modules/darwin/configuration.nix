@@ -14,6 +14,7 @@ in
     ./homebrew.nix
     ./keyboard.nix
     ./nixpkgs.nix
+    ./linux-builder.nix
     ./packages.nix
     ./security.nix
   ];

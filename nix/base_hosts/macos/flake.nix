@@ -12,6 +12,11 @@
       inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
     };
 
+    nix-rosetta-builder = {
+      url = "github:cpick/nix-rosetta-builder";
+      inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
+    };
+
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
     # Declarative tap management
