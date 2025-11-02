@@ -114,7 +114,7 @@ in
         gpg.format = "ssh";
 
         # NOTE: This will default to the _second_ key offered by the agent.
-        gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | tail -n 1)'";
+        gpg.ssh.defaultKeyCommand = lib.mkDefault "sh -c 'echo key::$(ssh-add -L | tail -n 1)'";
       };
     };
 
@@ -159,8 +159,6 @@ in
           trust = 5;
         }
       ];
-      # NOTE: This will default to the _second_ key offered by the agent.
-      gpg.ssh.defaultKeyCommand = lib.mkDefault "sh -c 'echo key::$(ssh-add -L | tail -n 1)'";
     };
   };
 }
