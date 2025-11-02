@@ -16,10 +16,12 @@
     };
     agenix = {
       url = "github:ryantm/agenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.darwin.follows = "";
-      inputs.home-manager.follows = "home-manager";
-      inputs.systems.follows = "systems";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        darwin.follows = "";
+        home-manager.follows = "home-manager";
+        systems.follows = "systems";
+      };
     };
 
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
@@ -43,9 +45,30 @@
       url = "github:aldur/dashp";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    detnix = {
+      url = "github:DeterminateSystems/nix-src";
+      inputs = {
+        # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2505";
+        nixpkgs.follows = "nixpkgs";
+
+        nixpkgs-regression.follows = "";
+        nixpkgs-23-11.follows = "";
+        flake-parts.follows = "";
+        git-hooks-nix.follows = "";
+      };
+
+    };
   };
-  outputs = { self, flake-utils, nixpkgs, ... }@inputs:
-    (flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      flake-utils,
+      nixpkgs,
+      ...
+    }@inputs:
+    (flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = import nixpkgs {
           inherit system;
@@ -54,37 +77,46 @@
             (import ./overlays/beancount-language-server.nix)
           ];
         };
-        lazyvims =
-          (pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; });
-      in {
+        lazyvims = pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; };
+      in
+      {
         packages = {
           inherit (lazyvims) lazyvim lazyvim-light;
           inherit (pkgs)
             beancount-language-server # from aldur/beancount-language-server
-            nomicfoundation-solidity-language-server;
+            nomicfoundation-solidity-language-server
+            ;
         };
-      })) // {
+      }
+    ))
+    // {
 
-        templates = {
-          vm-nogui = {
-            path = ./base_hosts/qemu;
-            description = "A QEMU VM";
-          };
-          lxc-nixos = {
-            path = ./base_hosts/lxc-nixos;
-            description = "An lxc-nixos container to run in ChromeOS Crostini";
-          };
+      templates = {
+        vm-nogui = {
+          path = ./base_hosts/qemu;
+          description = "A QEMU VM";
         };
-
-        # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
-        specialArgs =
-          # This ugly thing ensures that, when descendant flakes (e.g. those in `base_hosts`)
-          # will use this flake, all (this flake) inputs will be correctly passed
-          # as arguments to the modules.
-          let thisFlakeInputs = inputs // { inherit self; };
-          in { inputs = thisFlakeInputs; };
-
-        nixosModules.default = ./modules/nixos/configuration.nix;
-        darwinModules.default = ./modules/darwin/configuration.nix;
+        lxc-nixos = {
+          path = ./base_hosts/lxc-nixos;
+          description = "An lxc-nixos container to run in ChromeOS Crostini";
+        };
       };
+
+      # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
+      specialArgs =
+        # This ugly thing ensures that, when descendant flakes (e.g. those in `base_hosts`)
+        # will use this flake, all (this flake) inputs will be correctly passed
+        # as arguments to the modules.
+        let
+          thisFlakeInputs = inputs // {
+            inherit self;
+          };
+        in
+        {
+          inputs = thisFlakeInputs;
+        };
+
+      nixosModules.default = ./modules/nixos/configuration.nix;
+      darwinModules.default = ./modules/darwin/configuration.nix;
+    };
 }
