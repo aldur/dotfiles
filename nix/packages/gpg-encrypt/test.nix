@@ -44,7 +44,6 @@ stdenv.mkDerivation {
 
       # Extract the key fingerprint
       KEY_FPR=$(${gnupg}/bin/gpg --with-colons --list-keys "test$i@example.com" | grep '^fpr' | head -1 | cut -d: -f10)
-      echo "$KEY_FPR" >> "$TESTDIR/all-keys.txt"
       echo "  Generated key $i: $KEY_FPR"
 
       # Export public key and import into encryption keyring
@@ -59,24 +58,22 @@ stdenv.mkDerivation {
     echo "  Test message: $TEST_MESSAGE"
 
     echo ""
-    echo "Step 3: Encrypting with all 3 recipients..."
-    # Use the gpg-encrypt tool with the keys file
-    # Set GNUPGHOME to the encryption keyring that has all public keys
-    if ! GNUPGHOME="$ENCRYPT_GNUPGHOME" ${gpg-encrypt}/bin/gpg-encrypt --keys-file "$TESTDIR/all-keys.txt" \
-      --output "$TESTDIR/encrypted.gpg" \
-      "$TESTDIR/plaintext.txt" 2>&1; then
-      echo "ERROR: Encryption command failed"
-      exit 1
-    fi
-
-    if [ ! -f "$TESTDIR/encrypted.gpg" ]; then
-      echo "ERROR: Encryption failed - no output file created"
-      exit 1
-    fi
-    echo "  ✓ Encryption successful"
+    echo "Step 3: Encrypting using --email for each recipient..."
+    # Test encrypting to each individual email
+    for i in 1 2 3; do
+      echo -n "  Encrypting with test$i@example.com... "
+      if ! GNUPGHOME="$ENCRYPT_GNUPGHOME" ${gpg-encrypt}/bin/gpg-encrypt --email "test$i@example.com" \
+        --output "$TESTDIR/encrypted-$i.gpg" \
+        "$TESTDIR/plaintext.txt" 2>&1; then
+        echo "✗ FAILED"
+        exit 1
+      fi
+      echo "✓"
+    done
+    echo "  ✓ Email-based encryption successful"
 
     echo ""
-    echo "Step 4: Verifying each key can decrypt..."
+    echo "Step 4: Verifying each key can decrypt its encrypted file..."
     SUCCESS_COUNT=0
     for i in 1 2 3; do
       GNUPGHOME_DIR="$TESTDIR/gnupg-$i"
@@ -84,8 +81,8 @@ stdenv.mkDerivation {
 
       echo -n "  Testing key $i (test$i@example.com)... "
 
-      # Attempt to decrypt
-      DECRYPTED=$(${gnupg}/bin/gpg --batch --decrypt "$TESTDIR/encrypted.gpg" 2>/dev/null || echo "DECRYPT_FAILED")
+      # Attempt to decrypt the email-specific encrypted version
+      DECRYPTED=$(${gnupg}/bin/gpg --batch --decrypt "$TESTDIR/encrypted-$i.gpg" 2>/dev/null || echo "DECRYPT_FAILED")
 
       if [ "$DECRYPTED" = "$TEST_MESSAGE" ]; then
         echo "✓ SUCCESS"
@@ -102,8 +99,8 @@ stdenv.mkDerivation {
     if [ $SUCCESS_COUNT -eq 3 ]; then
       echo "=== All Tests Passed! ==="
       echo "  ✓ Generated 3 GPG keys"
-      echo "  ✓ Encrypted with all recipients"
-      echo "  ✓ All 3 keys can decrypt successfully"
+      echo "  ✓ Encrypted with --email (per recipient)"
+      echo "  ✓ All 3 keys can decrypt their encrypted message"
       echo ""
 
       # Create success marker

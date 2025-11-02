@@ -29,12 +29,12 @@ usage() {
 	cat <<EOF
 Usage: $0 [OPTIONS] [FILE]
 
-Encrypt data using GPG with a set of recipient keys loaded from a file.
+Encrypt data using GPG with recipient keys from your GPG keyring.
 
 OPTIONS:
-  --keys-file FILE    File containing GPG key IDs/emails (one per line)
-                      Can also be set via GPG_KEYS_FILE environment variable
-                      If not specified, uses default keys (when installed via Nix)
+  --email EMAIL       Encrypt to all keys associated with this email address
+                      Can also be set via GPG_ENCRYPT_EMAIL environment variable
+                      If not specified, uses default email (when installed via Nix)
   --output FILE       Write output to FILE instead of default location
   -h, --help         Display this help and exit
 
@@ -45,28 +45,28 @@ BEHAVIOR:
   - When outputting to stdout and input exceeds 1KB, prompts for confirmation
 
 EXAMPLES:
-  # Encrypt stdin to stdout
-  echo "secret" | $0 --keys-file keys.txt
+  # Encrypt stdin to stdout (using default email)
+  echo "secret" | $0
+
+  # Encrypt to specific email
+  echo "secret" | $0 --email user@example.com
 
   # Encrypt a file
-  $0 --keys-file keys.txt document.txt
-
-  # Encrypt with custom output
-  $0 --keys-file keys.txt --output encrypted.gpg document.txt
+  $0 --email user@example.com document.txt
 
 EOF
 	exit 0
 }
 
 # Parse arguments
-KEYS_FILE="${GPG_KEYS_FILE:-}"
+EMAIL="${GPG_ENCRYPT_EMAIL:-}"
 OUTPUT_FILE=""
 INPUT_FILE=""
 
 while [[ $# -gt 0 ]]; do
 	case $1 in
-		--keys-file)
-			KEYS_FILE="$2"
+		--email)
+			EMAIL="$2"
 			shift 2
 			;;
 		--output)
@@ -92,32 +92,39 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
-# Validate keys file
-# Fall back to default keys file if available (set by Nix wrapper)
-if [ -z "$KEYS_FILE" ]; then
-	if [ -n "${GPG_ENCRYPT_DEFAULT_KEYS:-}" ] && [ -f "$GPG_ENCRYPT_DEFAULT_KEYS" ]; then
-		KEYS_FILE="$GPG_ENCRYPT_DEFAULT_KEYS"
-	else
-		echo "Error: Keys file not specified. Use --keys-file option or set GPG_KEYS_FILE environment variable."
+# Determine recipients from email
+RECIPIENTS=()
+
+if [ -n "$EMAIL" ]; then
+	# Use specified email to find keys in GPG keyring
+	# Get all key fingerprints associated with this email
+	while IFS= read -r fpr; do
+		[[ -z "$fpr" ]] && continue
+		RECIPIENTS+=("$fpr")
+	done < <(gpg --batch --with-colons --list-keys "$EMAIL" 2>/dev/null | grep '^fpr' | cut -d: -f10)
+
+	if [ ${#RECIPIENTS[@]} -eq 0 ]; then
+		echo "Error: No keys found in GPG keyring for email '$EMAIL'."
+		echo "Make sure the keys are imported with: gpg --import <keyfile>"
 		exit 1
 	fi
-fi
+elif [ -n "${GPG_ENCRYPT_DEFAULT_EMAIL:-}" ]; then
+	# Fall back to default email (set by Nix wrapper)
+	EMAIL="${GPG_ENCRYPT_DEFAULT_EMAIL}"
 
-if [ ! -f "$KEYS_FILE" ]; then
-	echo "Error: Keys file '$KEYS_FILE' not found."
-	exit 1
-fi
+	while IFS= read -r fpr; do
+		[[ -z "$fpr" ]] && continue
+		RECIPIENTS+=("$fpr")
+	done < <(gpg --batch --with-colons --list-keys "$EMAIL" 2>/dev/null | grep '^fpr' | cut -d: -f10)
 
-# Read keys from file (skip empty lines and comments)
-RECIPIENTS=()
-while IFS= read -r line; do
-	# Skip empty lines and comments
-	[[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
-	RECIPIENTS+=("$line")
-done < "$KEYS_FILE"
-
-if [ ${#RECIPIENTS[@]} -eq 0 ]; then
-	echo "Error: No valid recipient keys found in '$KEYS_FILE'."
+	if [ ${#RECIPIENTS[@]} -eq 0 ]; then
+		echo "Error: No keys found in GPG keyring for default email '$EMAIL'."
+		echo "Make sure the keys are imported with: gpg --import <keyfile>"
+		exit 1
+	fi
+else
+	echo "Error: No encryption recipient email specified."
+	echo "Use --email option or set GPG_ENCRYPT_EMAIL/GPG_ENCRYPT_DEFAULT_EMAIL environment variable."
 	exit 1
 fi
 
