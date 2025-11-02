@@ -53,6 +53,10 @@ in
         };
       };
 
+      pet = {
+        enable = true;
+      };
+
       plugins = [
         {
           name = "z";
@@ -91,7 +95,6 @@ in
 
         rebase.autoStash = true;
 
-<<<<<<< HEAD
         rerere.enabled = true;
         rerere.autoUpdate = true;
 
