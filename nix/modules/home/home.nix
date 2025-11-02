@@ -2,6 +2,7 @@
   pkgs,
   inputs,
   stateVersion,
+  lib,
   ...
 }:
 let
@@ -90,6 +91,7 @@ in
 
         rebase.autoStash = true;
 
+<<<<<<< HEAD
         rerere.enabled = true;
         rerere.autoUpdate = true;
 
@@ -154,6 +156,8 @@ in
           trust = 5;
         }
       ];
+      # NOTE: This will default to the _second_ key offered by the agent.
+      gpg.ssh.defaultKeyCommand = lib.mkDefault "sh -c 'echo key::$(ssh-add -L | tail -n 1)'";
     };
   };
 }

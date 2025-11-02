@@ -1,4 +1,11 @@
-{ config, inputs, lib, modulesPath, ... }: {
+{
+  config,
+  inputs,
+  lib,
+  modulesPath,
+  ...
+}:
+{
   imports = [
     "${inputs.self}/modules/current_system_flake.nix"
     "${inputs.self}/modules/nixos/pragmatism.nix"
@@ -10,19 +17,27 @@
     "${modulesPath}/virtualisation/qemu-vm.nix"
   ];
 
-  programs.aldur.lazyvim.enable = true;
-  programs.aldur.lazyvim.packageNames = [ "lazyvim" ];
+  programs = {
+    aldur = {
+      lazyvim.enable = true;
+      lazyvim.packageNames = [ "lazyvim" ];
 
-  programs.aldur.claude-code.enable = true;
+      claude-code.enable = true;
+    };
 
-  programs.better-nix-search.enable = true;
+    better-nix-search.enable = true;
+  };
 
   networking.hostName = "qemu-nixos";
 
   services.getty.autologinUser = config.users.users.aldur.name;
   security.sudo-rs.wheelNeedsPassword = false;
 
-  environment = { sessionVariables = { TERM = "screen-256color"; }; };
+  environment = {
+    sessionVariables = {
+      TERM = "screen-256color";
+    };
+  };
 
   environment.etc = {
     "ssh/ssh_host_ed25519_key" = {
@@ -47,4 +62,8 @@
   # https://github.com/nix-community/nixos-generators/blob/
   # 032decf9db65efed428afd2fa39d80f7089085eb/formats/vm-nogui.nix#L20C3-L20C29
   environment.loginShellInit = lib.mkForce "";
+
+  home-manager.users.aldur = _: {
+    programs.git.settings.gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | grep -i sign)'";
+  };
 }
