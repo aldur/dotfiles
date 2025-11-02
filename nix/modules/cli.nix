@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   # CLI utils we want available on all systems.
   environment.systemPackages = with pkgs; [
     age
@@ -18,6 +19,7 @@
     rig
     ripgrep
     tmux
+    totp-cli # use with `instance`
     tree
   ];
 }
