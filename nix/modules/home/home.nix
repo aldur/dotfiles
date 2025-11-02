@@ -53,16 +53,16 @@ in
         };
       };
 
-      pet = {
-        enable = true;
-      };
-
       plugins = [
         {
           name = "z";
           src = pkgs.fishPlugins.z;
         }
       ];
+    };
+
+    pet = {
+      enable = true;
     };
 
     difftastic = {
