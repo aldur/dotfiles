@@ -156,7 +156,7 @@ in
       publicKeys = [
         {
           source = "${gpgKeys}";
-          trust = 5;
+          trust = "ultimate";
         }
       ];
     };
