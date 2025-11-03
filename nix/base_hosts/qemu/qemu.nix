@@ -3,6 +3,7 @@
   inputs,
   lib,
   modulesPath,
+  pkgs,
   ...
 }:
 {
@@ -66,4 +67,6 @@
   home-manager.users.aldur = _: {
     programs.git.settings.gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | grep -i sign)'";
   };
+
+  users.users.aldur.openssh.authorizedKeys.keys = inputs.self.utils.${pkgs.stdenv.system}.github-keys;
 }

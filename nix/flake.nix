@@ -87,6 +87,10 @@
             nomicfoundation-solidity-language-server
             ;
         };
+
+        utils = {
+          github-keys = pkgs.callPackage ./utils/github-keys.nix { };
+        };
       }
     ))
     // {

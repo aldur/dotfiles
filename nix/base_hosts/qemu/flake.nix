@@ -51,6 +51,9 @@
                   # pkgs refers to the host's packages
                   qemu.package = pkgs.qemu;
                   host.pkgs = pkgs;
+
+                  # NOTE: This makes it so that _no change is ever written to disk_!
+                  # qemu.options = [ "-snapshot" ];
                 };
               })
             ];
