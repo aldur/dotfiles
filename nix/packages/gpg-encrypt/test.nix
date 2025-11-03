@@ -49,6 +49,9 @@ stdenv.mkDerivation {
       # Export public key and import into encryption keyring
       ${gnupg}/bin/gpg --export "test$i@example.com" > "$TESTDIR/pubkey-$i.gpg"
       GNUPGHOME="$ENCRYPT_GNUPGHOME" ${gnupg}/bin/gpg --batch --import "$TESTDIR/pubkey-$i.gpg" 2>&1 | grep -v "^gpg:" || true
+
+      # Set ultimate trust on the imported key
+      echo "$KEY_FPR:6:" | GNUPGHOME="$ENCRYPT_GNUPGHOME" ${gnupg}/bin/gpg --batch --import-ownertrust 2>&1 | grep -v "^gpg:" || true
     done
 
     echo ""

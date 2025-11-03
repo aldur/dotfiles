@@ -105,8 +105,11 @@ if [ -z "$EMAIL" ]; then
 fi
 
 # Get all primary key fingerprints (only 'pub' keys, not 'sub' keys) for the email
+# Also verify that all keys have ultimate trust
 RECIPIENTS=()
 PREV_LINE=""
+UNTRUSTED_KEYS=()
+
 while IFS= read -r line; do
 	TYPE=$(echo "$line" | cut -d: -f1)
 
@@ -115,6 +118,15 @@ while IFS= read -r line; do
 	elif [[ "$TYPE" == "fpr" ]] && [[ -n "$PREV_LINE" ]]; then
 		# This fingerprint belongs to a primary key
 		FPR=$(echo "$line" | cut -d: -f10)
+
+		# Check trust level (field 2 of the pub line)
+		TRUST=$(echo "$PREV_LINE" | cut -d: -f2)
+
+		if [[ "$TRUST" != "u" ]]; then
+			# Trust level is not ultimate
+			UNTRUSTED_KEYS+=("$FPR (trust: $TRUST)")
+		fi
+
 		[[ -n "$FPR" ]] && RECIPIENTS+=("$FPR")
 		PREV_LINE=""
 	elif [[ "$TYPE" == "sub" ]]; then
@@ -126,6 +138,20 @@ done < <(gpg --batch --with-colons --list-keys "$EMAIL" 2>/dev/null)
 if [ ${#RECIPIENTS[@]} -eq 0 ]; then
 	echo "Error: No primary keys found in GPG keyring for email '$EMAIL'."
 	echo "Make sure the keys are imported with: gpg --import <keyfile>"
+	exit 1
+fi
+
+if [ ${#UNTRUSTED_KEYS[@]} -gt 0 ]; then
+	echo "Error: Found ${#UNTRUSTED_KEYS[@]} key(s) without ultimate trust for email '$EMAIL':"
+	for key in "${UNTRUSTED_KEYS[@]}"; do
+		echo "  $key"
+	done
+	echo ""
+	echo "All keys must have ultimate trust. Set trust with:"
+	echo "  gpg --edit-key <KEY_ID>"
+	echo "  trust"
+	echo "  5 (ultimate)"
+	echo "  quit"
 	exit 1
 fi
 
