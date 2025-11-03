@@ -27,12 +27,13 @@ let
 
   allCategories = {
     general = true;
-    rust = true;
+
+    beancount = false;
     go = true;
-    typescript = true;
-    solidity = true;
-    beancount = true;
     nix = true;
+    rust = true;
+    solidity = true;
+    typescript = true;
   };
 
   packageDefinitions = {
