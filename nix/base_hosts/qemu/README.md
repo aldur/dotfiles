@@ -12,7 +12,7 @@ nix run --override-input aldur-dotfiles ../../ .
 
 ## `hostPkgs`
 
-Thanks to [`hostPkgs`](https://github.com/NixOS/nixpkgs/blob/554be6495561ff07b6c724047bdd7e0716aa7b46/nixos/modules/virtualisation/qemu-vm.nix#L25), the VM host can be either Linux or macOS (through [`nix-rosetta-builder`](https://github.com/cpick/nix-rosetta-builder)).
+Thanks to [`hostPkgs`][0], the VM host can be either Linux or macOS (through [`nix-rosetta-builder`][1]).
 
 ## SSH keys
 
@@ -21,3 +21,6 @@ Thanks to [`hostPkgs`](https://github.com/NixOS/nixpkgs/blob/554be6495561ff07b6c
 The keys you'll find in this folder are only used within the `qemu` VM, which
 is not exposed to the network but just to the host. Having them hard-coded
 avoids needing to re-verify the guest fingerprint for every new VM.
+
+[0]: https://github.com/NixOS/nixpkgs/blob/554be6495561ff07b6c724047bdd7e0716aa7b46/nixos/modules/virtualisation/qemu-vm.nix#L25
+[1]: https://github.com/cpick/nix-rosetta-builder
