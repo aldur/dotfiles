@@ -12,47 +12,58 @@
       inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
     };
   };
-  outputs = { nixos-generators, aldur-dotfiles, ... }:
+  outputs =
+    { nixos-generators, aldur-dotfiles, ... }:
     let
-      modules = [ aldur-dotfiles.nixosModules.default ./qemu.nix ];
+      modules = [
+        aldur-dotfiles.nixosModules.default
+        ./qemu.nix
+      ];
       targetSystem = "aarch64-linux";
-      specialArgs = aldur-dotfiles.specialArgs;
-    in aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = import aldur-dotfiles.inputs.nixpkgs { inherit system; };
-      in {
+      inherit (aldur-dotfiles) specialArgs;
+    in
+    aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = import aldur-dotfiles.inputs.nixpkgs { inherit system; };
+      in
+      {
         packages = rec {
           vm-nogui = nixos-generators.nixosGenerate {
             inherit specialArgs;
             system = targetSystem;
             modules = modules ++ [
               # Let's setup the VM
-              ({ ... }: {
-                virtualisation.diskSize = 64 * 1024;
-                virtualisation.cores = 8;
+              (_: {
+                virtualisation = {
+                  diskSize = 64 * 1024;
+                  cores = 8;
 
-                # By default `nix` builds under /tmp, which is constrained by RAM size:
-                # https://discourse.nixos.org/t/
-                # no-space-left-on-device-error-when-rebuilding-but-plenty-of-storage-available/43862/9
-                virtualisation.memorySize = 16 * 1024;
+                  # By default `nix` builds under /tmp, which is constrained by RAM size:
+                  # https://discourse.nixos.org/t/
+                  # no-space-left-on-device-error-when-rebuilding-but-plenty-of-storage-available/43862/9
+                  memorySize = 16 * 1024;
 
-                # Instead, write to the machine's filesystem.
-                virtualisation.writableStoreUseTmpfs = false;
+                  # Instead, write to the machine's filesystem.
+                  writableStoreUseTmpfs = false;
 
-                # This allows building from macOS
-                # pkgs refers to the host's packages
-                virtualisation.qemu.package = pkgs.qemu;
-                virtualisation.host.pkgs = pkgs;
+                  # This allows building from macOS
+                  # pkgs refers to the host's packages
+                  qemu.package = pkgs.qemu;
+                  host.pkgs = pkgs;
+                };
               })
             ];
             format = "vm-nogui";
           };
           default = vm-nogui;
         };
-      }) // {
-        nixosConfigurations.qemu-nixos =
-          aldur-dotfiles.inputs.nixpkgs.lib.nixosSystem {
-            inherit specialArgs modules;
-            system = targetSystem;
-          };
+      }
+    )
+    // {
+      nixosConfigurations.qemu-nixos = aldur-dotfiles.inputs.nixpkgs.lib.nixosSystem {
+        inherit specialArgs modules;
+        system = targetSystem;
       };
+    };
 }
