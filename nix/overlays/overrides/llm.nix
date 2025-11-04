@@ -24,27 +24,9 @@ final: prev: {
             "tests/test_models.py::TestModels::test_gated_delta_masked"
           ];
       });
-      mlx = pythonPrev.mlx.overrideAttrs (oldAttrs: rec {
-        version = "0.29.3";
-
-        src = prev.fetchFromGitHub {
-          owner = "ml-explore";
-          repo = "mlx";
-          tag = "v${version}";
-          hash = "sha256-QcT+D0Zc9OqaLXcgUO9BKgrThIIle2b5Ajb0sk/8HGA=";
-        };
-
-        patches = [
-          (prev.replaceVars ./llm-darwin-build-fixes.patch {
-            sdkVersion = prev.apple-sdk_15.version;
-          })
-        ];
-
-        postPatch = oldAttrs.postPatch + ''
-          substituteInPlace pyproject.toml \
-          --replace-fail "cmake>=3.25,<4.1" "cmake>=3.25"
-        '';
-      });
+      mlx = prev.callPackage ../../packages/mlx/default.nix {
+        inherit (pythonFinal) buildPythonPackage fetchPypi;
+      };
     };
   };
 }
