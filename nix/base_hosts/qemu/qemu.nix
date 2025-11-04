@@ -26,7 +26,6 @@
       claude-code.enable = true;
     };
 
-    better-nix-search.enable = true;
   };
 
   networking.hostName = "qemu-nixos";
@@ -66,6 +65,8 @@
 
   home-manager.users.aldur = _: {
     programs.git.settings.gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | grep -i sign)'";
+
+    better-nix-search.enable = true;
   };
 
   users.users.aldur.openssh.authorizedKeys.keys = inputs.self.utils.${pkgs.stdenv.system}.github-keys;
