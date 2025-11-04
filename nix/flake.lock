@@ -70,6 +70,30 @@
         "type": "github"
       }
     },
+    "detnix": {
+      "inputs": {
+        "flake-parts": [],
+        "git-hooks-nix": [],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "nixpkgs-23-11": [],
+        "nixpkgs-regression": []
+      },
+      "locked": {
+        "lastModified": 1762270300,
+        "narHash": "sha256-Xs9co8n9poThprZ+ElvasyyBjPR3TcrSztO0PHhJ1eg=",
+        "owner": "DeterminateSystems",
+        "repo": "nix-src",
+        "rev": "530c34cfad1df09a437eaada074e3c585eb4e1d3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "DeterminateSystems",
+        "repo": "nix-src",
+        "type": "github"
+      }
+    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": [
@@ -280,6 +304,7 @@
         "agenix": "agenix",
         "clipshare": "clipshare",
         "dashp": "dashp",
+        "detnix": "detnix",
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
