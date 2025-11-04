@@ -72,10 +72,7 @@
       let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [
-            (import ./overlays/packages.nix)
-            (import ./overlays/beancount-language-server.nix)
-          ];
+          overlays = import ./overlays/default.nix;
         };
         lazyvims = pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; };
       in

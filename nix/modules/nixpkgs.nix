@@ -1,5 +1,6 @@
 { lib, inputs, ... }:
-with lib; {
+with lib;
+{
   options.nixpkgs = {
     allowUnfreeByName = mkOption {
       type = with types; listOf str;
@@ -9,16 +10,12 @@ with lib; {
   };
 
   config.nixpkgs = {
-    overlays = [
-      (import ../overlays/yubikey-agent.nix)
-      (import ../overlays/beancount-language-server.nix)
-      (import ../overlays/packages.nix)
-
+    overlays = (import ../overlays/default.nix) ++ [
       inputs.dashp.overlays.default
     ];
 
-    config.allowUnfreePredicate = (pkg:
-      builtins.elem (pkgs.lib.getName pkg) config.nixpkgs.allowUnfreeByName);
+    config.allowUnfreePredicate =
+      pkg: builtins.elem (pkgs.lib.getName pkg) config.nixpkgs.allowUnfreeByName;
   };
 
 }
