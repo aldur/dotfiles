@@ -14,17 +14,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = with pkgs; [
-      (python313.withPackages (
-        ps:
-        [
-          ps.llm
-          ps.llm-ollama
-          ps.llm-gguf
-          llm-mlx
-        ]
-        ++ lib.optional stdenv.isDarwin llm-mlx
-      ))
-    ];
+    home.packages = [ pkgs.llmWithPlugins ];
   };
 }

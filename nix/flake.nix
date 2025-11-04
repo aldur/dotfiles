@@ -72,7 +72,7 @@
       let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = import ./overlays/default.nix;
+          overlays = import ./overlays;
         };
         lazyvims = pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; };
       in
@@ -83,6 +83,7 @@
             beancount-language-server # from aldur/beancount-language-server
             nomicfoundation-solidity-language-server
             ;
+          llm = pkgs.llmWithPlugins;
         };
 
         utils = {
