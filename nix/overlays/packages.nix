@@ -5,14 +5,13 @@ final: prev: {
       { };
 
   gpg-encrypt = prev.callPackage ../packages/gpg-encrypt/gpg-encrypt.nix { };
-  totp-cli = final.callPackage ../packages/totp-cli-ephemeral/default.nix {
+  totp-cli = final.callPackage ../packages/totp-cli-ephemeral {
     inherit (prev) totp-cli symlinkJoin makeWrapper;
   };
 
   tiktoken = prev.callPackage ../packages/tiktoken/tiktoken.nix { };
   llmcat = prev.callPackage ../packages/llmcat/llmcat.nix { };
-  llm-mlx = prev.callPackage ../packages/llm-mlx/default.nix { };
-  mlx = prev.callPackage ../packages/mlx { };
+
   llmWithPlugins = prev.python3.withPackages (
     ps:
     [
@@ -20,6 +19,8 @@ final: prev: {
       ps.llm-ollama
       ps.llm-gguf
     ]
-    ++ prev.lib.optional prev.stdenv.isDarwin final.llm-mlx
+    ++ prev.lib.optional (prev.stdenv.isDarwin && prev.stdenv.isAarch64) (
+      prev.callPackage ../packages/llm-mlx { }
+    )
   );
 }
