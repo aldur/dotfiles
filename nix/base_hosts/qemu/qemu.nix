@@ -63,9 +63,8 @@
   # 032decf9db65efed428afd2fa39d80f7089085eb/formats/vm-nogui.nix#L20C3-L20C29
   environment.loginShellInit = lib.mkForce "";
 
-  home-manager.users.aldur = _: {
-    programs.git.settings.gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | grep -i sign)'";
-
+  home-manager.users.aldur.programs = _: {
+    git.settings.gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | grep -i sign)'";
     better-nix-search.enable = true;
   };
 
