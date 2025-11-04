@@ -1,9 +1,16 @@
-{ pkgs ? (import <nixpkgs> { }) }:
+{
+  pkgs ? (import <nixpkgs> { }),
+}:
 let
-  mlx-lm = pkgs.python312Packages.mlx-lm;
+  inherit (pkgs.python313Packages) mlx-lm;
   llm-mlx = pkgs.callPackage ./llm-mlx.nix {
-    inherit (pkgs.python312Packages)
-      buildPythonPackage setuptools setuptools-scm llm;
+    inherit (pkgs.python313Packages)
+      buildPythonPackage
+      setuptools
+      setuptools-scm
+      llm
+      ;
     inherit mlx-lm;
   };
-in llm-mlx
+in
+llm-mlx
