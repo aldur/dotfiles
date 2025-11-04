@@ -18,6 +18,7 @@ in
     ./direnv.nix
     ./manpager.nix
     ./llm.nix
+    ./nix_search.nix
   ];
 
   home = {

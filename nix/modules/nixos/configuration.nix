@@ -1,5 +1,11 @@
 # NixOS-specific configuration
-{ inputs, lib, config, ... }: {
+{
+  inputs,
+  lib,
+  config,
+  ...
+}:
+{
   imports = [
     ../../configuration.nix
 
@@ -14,7 +20,6 @@
 
     # NixOS-specific modules go here.
     inputs.home-manager.nixosModules.home-manager
-    inputs.nix-index-database.nixosModules.nix-index
     inputs.agenix.nixosModules.default
   ];
 

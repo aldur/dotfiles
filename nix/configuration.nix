@@ -11,7 +11,6 @@
     ./modules/fish.nix
     ./modules/lazyvim.nix
     ./modules/nix.nix
-    ./modules/nix_search.nix
     ./modules/users.nix
 
     (
