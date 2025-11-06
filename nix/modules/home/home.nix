@@ -112,6 +112,7 @@ in
 
         commit.gpgsign = true;
         tag.gpgsign = true;
+        tag.forceSignAnnotated = true;
         gpg.format = "ssh";
 
         # NOTE: This will default to the _second_ key offered by the agent.
