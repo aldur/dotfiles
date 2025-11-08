@@ -9,6 +9,7 @@ final: prev: {
     inherit (prev) totp-cli symlinkJoin makeWrapper;
   };
 
+  shrinkpdf = prev.callPackage ../packages/shrinkpdf/shrinkpdf.nix { };
   tiktoken = prev.callPackage ../packages/tiktoken/tiktoken.nix { };
   llmcat = prev.callPackage ../packages/llmcat/llmcat.nix { };
 
