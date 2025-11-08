@@ -5,9 +5,7 @@ final: prev: {
       { };
 
   gpg-encrypt = prev.callPackage ../packages/gpg-encrypt/gpg-encrypt.nix { };
-  totp-cli = final.callPackage ../packages/totp-cli-ephemeral {
-    inherit (prev) totp-cli symlinkJoin makeWrapper;
-  };
+  totp-cli = final.callPackage ../packages/totp-cli-ephemeral { };
 
   shrinkpdf = prev.callPackage ../packages/shrinkpdf/shrinkpdf.nix { };
   tiktoken = prev.callPackage ../packages/tiktoken/tiktoken.nix { };
@@ -24,4 +22,8 @@ final: prev: {
       prev.callPackage ../packages/llm-mlx { }
     )
   );
+
+  markdownlint-cli2 = final.callPackage ../packages/markdownlint-cli2 {
+    markdownlint-cli2-unwrapped = prev.markdownlint-cli2;
+  };
 }

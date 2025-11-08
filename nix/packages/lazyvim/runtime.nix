@@ -17,6 +17,7 @@
       git
       harper
       lua-language-server
+      markdownlint-cli2
       marksman
       prettierd
       ripgrep

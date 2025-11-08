@@ -72,5 +72,50 @@
         "</details>"
     ],
     "description": "Reference under header"
+  },
+  "Markdownlint Disable Next Line": {
+    "prefix": [
+      "mdln",
+      "mdl-next"
+    ],
+    "body": [
+      "<!-- markdownlint-disable-next-line ${1:MD033} -->",
+      "${0}"
+    ],
+    "description": "Disable markdownlint rule for next line"
+  },
+  "Markdownlint Disable Section": {
+    "prefix": [
+      "mdls",
+      "mdl-section"
+    ],
+    "body": [
+      "<!-- markdownlint-disable ${1:MD033} -->",
+      "${0}",
+      "<!-- markdownlint-enable ${1:MD033} -->"
+    ],
+    "description": "Disable markdownlint rule for a section"
+  },
+  "Markdownlint Disable All Next Line": {
+    "prefix": [
+      "mdla",
+      "mdl-all"
+    ],
+    "body": [
+      "<!-- markdownlint-disable-next-line -->",
+      "${0}"
+    ],
+    "description": "Disable all markdownlint rules for next line"
+  },
+  "Markdownlint Disable File": {
+    "prefix": [
+      "mdlf",
+      "mdl-file"
+    ],
+    "body": [
+      "<!-- markdownlint-disable ${1:MD033} -->",
+      "${0}"
+    ],
+    "description": "Disable markdownlint rule for entire file"
   }
 }
