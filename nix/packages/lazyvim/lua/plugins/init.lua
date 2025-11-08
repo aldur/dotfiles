@@ -18,7 +18,6 @@ return {
 			},
 		},
 	},
-	{ "tpope/vim-fugitive", cmd = "G" },
 	{
 		"folke/todo-comments.nvim",
 		opts = {

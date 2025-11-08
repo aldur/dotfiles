@@ -1,6 +1,6 @@
 { inputs, pkgs, ... }:
 let
-  lazyvim = (import ../packages/lazyvim/lazyvim.nix { inherit inputs pkgs; });
+  lazyvim = import ../packages/lazyvim/lazyvim.nix { inherit inputs pkgs; };
 in
 {
   imports = [
