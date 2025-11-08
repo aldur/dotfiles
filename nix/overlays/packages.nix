@@ -5,7 +5,7 @@ final: prev: {
       { };
 
   gpg-encrypt = prev.callPackage ../packages/gpg-encrypt/gpg-encrypt.nix { };
-  totp-cli = final.callPackage ../packages/totp-cli-ephemeral { };
+  totp-cli = final.callPackage ../packages/totp-cli-ephemeral { inherit (prev) totp-cli; };
 
   shrinkpdf = prev.callPackage ../packages/shrinkpdf/shrinkpdf.nix { };
   tiktoken = prev.callPackage ../packages/tiktoken/tiktoken.nix { };
