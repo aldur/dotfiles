@@ -2,9 +2,49 @@
 
 This Flake allows creating a NixOS, QEMU VM with the modules of this repository.
 
-To run, just use `nix run`.
+## Quick Start with Home Manager Module
 
-If you want to run it it against a full repository clone:
+If you have the `programs.qemu-vm` home manager module enabled, you can use the
+`qemu-vm` CLI:
+
+```bash
+# Start VM with SSH forwarded to localhost:2222
+qemu-vm -p 22:2222
+
+# Start VM with custom location and multiple ports
+qemu-vm -d /data/my-vm -p 22:2222 -p 80:8080
+
+# Start VM with custom configuration
+qemu-vm -c ~/my-config.nix -p 22:2222
+
+# Rebuild and start with more resources
+qemu-vm --build --memory 8192 --cores 4 -p 22:2222
+
+# Show all options
+qemu-vm --help
+```
+
+Enable the module in your home manager configuration:
+
+```nix
+programs.qemu-vm = {
+  enable = true;
+  # Optional: customize defaults
+  defaultMemory = 4096;  # MB
+  defaultCores = 4;
+  # vmFlakeRef defaults to self#nixosConfigurations.qemu
+};
+```
+
+## Flake usage
+
+To run using the flake, use `nix run`:
+
+```bash
+nix run .
+```
+
+If you want to run it against a full repository clone:
 
 ```bash
 nix run --override-input aldur-dotfiles ../../ .
@@ -12,7 +52,8 @@ nix run --override-input aldur-dotfiles ../../ .
 
 ## `hostPkgs`
 
-Thanks to [`hostPkgs`][0], the VM host can be either Linux or macOS (through [`nix-rosetta-builder`][1]).
+Thanks to [`hostPkgs`][0], the VM host can be either Linux or macOS (through
+[`nix-rosetta-builder`][1]).
 
 ## SSH keys
 

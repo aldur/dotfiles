@@ -19,6 +19,7 @@ in
     ./manpager.nix
     ./llm.nix
     ./nix_search.nix
+    ./qemu-vm.nix
   ];
 
   home = {
