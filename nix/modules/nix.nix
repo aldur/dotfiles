@@ -33,7 +33,7 @@ in
       };
     }
     (lib.mkIf cfg.enable {
-      nix.package = lib.mkForce inputs.detnix.packages."${pkgs.stdenv.system}".default;
+      nix.package = lib.mkForce inputs.detnix.packages."${pkgs.stdenv.hostPlatform.system}".default;
       # https://docs.determinate.systems/guides/telemetry
       environment.variables = {
         DETSYS_IDS_TELEMETRY = "disabled";
