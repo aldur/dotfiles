@@ -267,11 +267,11 @@ let
       case "$ARCH" in
         x86_64)
           QEMU_BIN="qemu-system-x86_64"
-          MACHINE_ARGS=(-machine type=q35,accel=kvm:hvf:tcg)
+          MACHINE_ARGS=("-machine" "type=q35,accel=kvm:hvf:tcg")
           ;;
         aarch64|arm64)
           QEMU_BIN="qemu-system-aarch64"
-          MACHINE_ARGS=(-machine type=virt,accel=hvf:kvm:tcg)
+          MACHINE_ARGS=("-machine" "type=virt,accel=hvf:kvm:tcg")
           ;;
         *)
           echo "Unsupported architecture: $ARCH"
