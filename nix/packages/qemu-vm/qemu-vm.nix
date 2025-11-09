@@ -24,7 +24,7 @@ let
 
   # Build the qemu NixOS configuration with proper VM settings
   qemuNixos = nixpkgs.lib.nixosSystem {
-    system = targetSystem;  # Target system matches host architecture
+    system = targetSystem;
     specialArgs = {
       inputs = inputs // { inherit self; };
     };
@@ -35,9 +35,9 @@ let
         imports = [ "${modulesPath}/virtualisation/qemu-vm.nix" ];
 
         virtualisation = {
-          diskSize = 64 * 1024;
-          cores = 8;
-          memorySize = 16 * 1024;
+          diskSize = defaultDiskSize * 1024;
+          cores = defaultCores;
+          memorySize = defaultMemory;
           writableStoreUseTmpfs = false;
           useBootLoader = false;
 
@@ -45,43 +45,12 @@ let
           qemu.package = pkgs.qemu;
           host.pkgs = pkgs;
         };
-
-        # Configure filesystem to not require a disk label
-        fileSystems = lib.mkForce {
-          "/" = {
-            device = "none";
-            fsType = "tmpfs";
-            options = [ "defaults" "size=16G" "mode=755" ];
-          };
-          "/nix/store" = {
-            device = "nix-store";
-            fsType = "9p";
-            options = [ "trans=virtio" "version=9p2000.L" "cache=loose" ];
-          };
-        };
-
-        boot = {
-          initrd.kernelModules = [ "9p" "9pnet_virtio" "virtio_pci" "virtio_blk" ];
-          kernelParams = [ "console=ttyS0" ];
-          loader.grub.enable = false;
-        };
       })
     ];
   };
 
-  # Build the VM system
-  vmSystem = qemuNixos.config.system.build.toplevel;
-
-  # Create a derivation that prepares the VM files with fixed kernel params
-  vmFiles = pkgs.runCommand "qemu-vm-files" {} ''
-    mkdir -p $out
-    ln -s ${vmSystem} $out/system
-    ln -s ${vmSystem}/kernel $out/kernel
-    ln -s ${vmSystem}/initrd $out/initrd
-
-    # Create kernel params without disk requirement
-    echo "init=${vmSystem}/init loglevel=4 console=ttyS0" > $out/kernel-params
-  '';
+  # Use the VM runner script that NixOS generates
+  vmRunner = qemuNixos.config.system.build.vm;
 
 in
 pkgs.writeShellApplication {
@@ -94,17 +63,13 @@ pkgs.writeShellApplication {
   text = ''
     # Default values
     VM_DIR="${defaultVmDir}"
-    SYSTEM_PATH="${vmFiles}/system"
-    KERNEL="${vmFiles}/kernel"
-    INITRD="${vmFiles}/initrd"
-    KERNEL_PARAMS=$(cat "${vmFiles}/kernel-params")
     PORTS=()
     MEMORY="${toString defaultMemory}"
     CORES="${toString defaultCores}"
     DISK_SIZE="${toString defaultDiskSize}"
     DISPLAY_MODE="none"
     VERBOSE=false
-    SNAPSHOT=false
+    CLEAN=false
 
     # Parse command line arguments
     show_help() {
@@ -125,7 +90,6 @@ pkgs.writeShellApplication {
       --gui                           Enable GUI (default: headless)
       -v, --verbose                   Verbose output
       --clean                         Remove existing VM state
-      --snapshot                      Run in snapshot mode (changes not written to disk)
 
     EXAMPLES:
       # Start VM with SSH forwarded to localhost:2222
@@ -135,10 +99,7 @@ pkgs.writeShellApplication {
       qemu-vm -d /data/my-vm -p 22:2222 -p 80:8080
 
       # Start with more resources
-      qemu-vm --memory 8192 --cores 4 --disk-size 128 -p 22:2222
-
-      # Run in snapshot mode (changes not saved to disk)
-      qemu-vm --snapshot -p 22:2222
+      qemu-vm --memory 8192 --cores 4 -p 22:2222
 
     EOF
     }
@@ -182,10 +143,6 @@ pkgs.writeShellApplication {
           CLEAN=true
           shift
           ;;
-        --snapshot)
-          SNAPSHOT=true
-          shift
-          ;;
         *)
           echo "Unknown option: $1"
           show_help
@@ -194,64 +151,26 @@ pkgs.writeShellApplication {
       esac
     done
 
-    # Ensure VM directory exists
+    # Set up VM directory
+    export NIX_DISK_IMAGE="$VM_DIR/nixos.qcow2"
     mkdir -p "$VM_DIR"
 
     # Handle clean flag
-    if [[ "''${CLEAN:-false}" == "true" ]]; then
+    if [[ "$CLEAN" == "true" ]]; then
       echo "Cleaning VM state in $VM_DIR..."
-      rm -rf "''${VM_DIR:?}"/*
-      mkdir -p "$VM_DIR"
+      rm -f "$NIX_DISK_IMAGE"
     fi
 
-    # Create qcow2 disk if it doesn't exist (for persistent storage)
-    VM_IMAGE="$VM_DIR/nixos.qcow2"
-    if [[ ! -f "$VM_IMAGE" ]]; then
-      echo "Creating disk image: $VM_IMAGE (''${DISK_SIZE}G)"
-      qemu-img create -f qcow2 "$VM_IMAGE" "''${DISK_SIZE}G"
+    # Create disk if needed (the NixOS VM runner will handle this)
+    if [[ ! -f "$NIX_DISK_IMAGE" ]]; then
+      echo "VM disk will be created at: $NIX_DISK_IMAGE (''${DISK_SIZE}G)"
     fi
 
-    if [[ "$VERBOSE" == "true" ]]; then
-      echo "System: $SYSTEM_PATH"
-      echo "Kernel: $KERNEL"
-      echo "Initrd: $INITRD"
-      echo "Kernel params: $KERNEL_PARAMS"
-    fi
-
-    # Build QEMU arguments
-    QEMU_ARGS=()
-
-    # QEMU binary and machine type are determined at build time
-    QEMU_BIN="${qemuBinary}"
-    QEMU_ARGS+=("-machine" "${machineType}")
-
-    # CPU and memory
-    QEMU_ARGS+=("-cpu" "host")
-    QEMU_ARGS+=("-smp" "$CORES")
-    QEMU_ARGS+=("-m" "$MEMORY")
-
-    # Kernel and initrd
-    QEMU_ARGS+=("-kernel" "$KERNEL")
-    QEMU_ARGS+=("-initrd" "$INITRD")
-    QEMU_ARGS+=("-append" "$KERNEL_PARAMS")
-
-    # Add 9p filesystem share for nix store
-    QEMU_ARGS+=(
-      "-virtfs"
-      "local,path=/nix/store,mount_tag=nix-store,security_model=none,readonly=on"
-    )
-
-    # Disk for persistent storage (not required for boot)
-    QEMU_ARGS+=("-drive" "file=$VM_IMAGE,if=virtio,format=qcow2")
-
-    # Snapshot mode
-    if [[ "$SNAPSHOT" == "true" ]]; then
-      QEMU_ARGS+=("-snapshot")
-    fi
-
-    # Networking - build port forwarding or use default
+    # Build QEMU network arguments
+    QEMU_NET_OPTS=""
     if [[ ''${#PORTS[@]} -gt 0 ]]; then
-      for port_spec in "''${PORTS[@]}"; do
+      for i in "''${!PORTS[@]}"; do
+        port_spec="''${PORTS[$i]}"
         if [[ "$port_spec" =~ ^([0-9]+):([0-9]+)$ ]]; then
           guest_port="''${BASH_REMATCH[1]}"
           host_port="''${BASH_REMATCH[2]}"
@@ -262,34 +181,41 @@ pkgs.writeShellApplication {
           echo "Invalid port specification: $port_spec"
           exit 1
         fi
-        QEMU_ARGS+=("-netdev" "user,id=net''${guest_port},hostfwd=tcp::''${host_port}-:''${guest_port}")
-        QEMU_ARGS+=("-device" "virtio-net-pci,netdev=net''${guest_port}")
+
+        if [[ $i -eq 0 ]]; then
+          QEMU_NET_OPTS="hostfwd=tcp::$host_port-:$guest_port"
+        else
+          QEMU_NET_OPTS="$QEMU_NET_OPTS,hostfwd=tcp::$host_port-:$guest_port"
+        fi
 
         if [[ "$VERBOSE" == "true" ]]; then
           echo "Forwarding: localhost:$host_port -> guest:$guest_port"
         fi
       done
-    else
-      QEMU_ARGS+=("-nic" "user")
     fi
 
-    # Display
+    # Set QEMU options as environment variables (used by NixOS VM runner)
+    export QEMU_OPTS="-m $MEMORY -smp $CORES"
+
+    if [[ -n "$QEMU_NET_OPTS" ]]; then
+      export QEMU_NET_OPTS
+    fi
+
     if [[ "$DISPLAY_MODE" == "none" ]]; then
-      QEMU_ARGS+=("-nographic")
-      QEMU_ARGS+=("-serial" "mon:stdio")
-    else
-      QEMU_ARGS+=("-display" "$DISPLAY_MODE")
+      export QEMU_OPTS="$QEMU_OPTS -nographic"
+      export QEMU_KERNEL_PARAMS="console=ttyS0"
+    elif [[ "$DISPLAY_MODE" == "gtk" ]]; then
+      export QEMU_OPTS="$QEMU_OPTS -display gtk"
     fi
 
     echo "Starting VM..."
     echo "  Memory: ''${MEMORY}MB"
     echo "  Cores: $CORES"
-    echo "  Disk: $VM_IMAGE (for persistent storage)"
-    if [[ "$SNAPSHOT" == "true" ]]; then
-      echo "  Mode: snapshot (changes not saved)"
-    fi
-    echo "  System: $SYSTEM_PATH (pre-built)"
+    echo "  Disk: $NIX_DISK_IMAGE"
     echo "  Display: $DISPLAY_MODE"
+    if [[ -n "$QEMU_NET_OPTS" ]]; then
+      echo "  Network: $QEMU_NET_OPTS"
+    fi
     echo ""
     if [[ "$DISPLAY_MODE" == "none" ]]; then
       echo "Press Ctrl-A then X to quit"
@@ -297,10 +223,12 @@ pkgs.writeShellApplication {
     echo ""
 
     if [[ "$VERBOSE" == "true" ]]; then
-      echo "Running: $QEMU_BIN ''${QEMU_ARGS[*]}"
+      echo "QEMU_OPTS: $QEMU_OPTS"
+      echo "NIX_DISK_IMAGE: $NIX_DISK_IMAGE"
+      echo "Running NixOS VM runner..."
     fi
 
-    # Run QEMU
-    exec "$QEMU_BIN" "''${QEMU_ARGS[@]}"
+    # Run the VM using the NixOS-generated VM runner
+    exec ${vmRunner}/bin/run-qemu-nixos-vm
   '';
 }
