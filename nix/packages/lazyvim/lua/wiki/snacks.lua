@@ -261,4 +261,95 @@ M.links = function(mode)
   })
 end
 
+---Search wiki content with live grep
+---Shows all content when search is empty, filters as you type
+M.grep = function()
+  local root = vim.g.wiki_root
+  if not root then
+    vim.notify("wiki_root is not set", vim.log.levels.ERROR)
+    return
+  end
+
+  root = vim.fn.expand(root)
+
+  require("snacks").picker.grep({
+    prompt = "Search wiki> ",
+    cwd = root,
+    query = "",  -- Start with empty query to show all content
+    live = true,  -- Enable live mode for instant results as you type
+    actions = {
+      confirm = function(picker, item)
+        picker:close()
+
+        if item then
+          -- Extract relative path from the grep result
+          local file = item.file
+          -- Make path relative to wiki root
+          if file:sub(1, #root) == root then
+            file = file:sub(#root + 1)
+            if file:sub(1, 1) == "/" then
+              file = file:sub(2)
+            end
+          end
+
+          -- Open the file
+          vim.fn["wiki#page#open"](file)
+
+          -- Use the pos from the item (already set by grep picker)
+          if item.pos and item.pos[1] and item.pos[1] > 0 then
+            vim.schedule(function()
+              -- item.pos is {line, col} with 0-based column
+              vim.api.nvim_win_set_cursor(0, {item.pos[1], item.pos[2] or 0})
+              vim.cmd("norm! zzzv")  -- Center and open folds
+            end)
+          end
+        else
+          -- No match - create a new page with the search query as the name
+          local input = picker.input and picker.input:get()
+          if not input or input == "" then
+            if picker.input and picker.input.win and picker.input.win:valid() then
+              input = picker.input.win:line()
+            end
+          end
+
+          if input and input ~= "" then
+            local note = input
+            -- Add .md extension if not present
+            if not note:match("%.md$") then
+              note = note .. ".md"
+            end
+            vim.fn["wiki#page#open"](note)
+          end
+        end
+      end,
+      force_create = function(picker)
+        -- Force create a new page with the search query as the name
+        local input = picker.input and picker.input:get()
+        if not input or input == "" then
+          if picker.input and picker.input.win and picker.input.win:valid() then
+            input = picker.input.win:line()
+          end
+        end
+
+        if input and input ~= "" then
+          local note = input
+          -- Add .md extension if not present
+          if not note:match("%.md$") then
+            note = note .. ".md"
+          end
+          picker:close()
+          vim.fn["wiki#page#open"](note)
+        end
+      end,
+    },
+    win = {
+      input = {
+        keys = {
+          [get_force_create_key()] = { "force_create", mode = { "i", "n" } },
+        },
+      },
+    },
+  })
+end
+
 return M

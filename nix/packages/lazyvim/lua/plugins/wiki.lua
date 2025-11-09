@@ -61,5 +61,14 @@ return {
 			-- Equivalent to g:wiki_fzf_force_create_key
 			vim.g.wiki_snacks_force_create_key = "<C-x>"
 		end,
+		config = function()
+			-- Create command for searching wiki content
+			vim.api.nvim_create_user_command("WikiGrep", function()
+				require("wiki.snacks").grep()
+			end, { desc = "Search wiki content (live)" })
+
+			-- Add convenient keymap (using ws for "wiki search")
+			vim.keymap.set("n", "<leader>ws", "<cmd>WikiGrep<cr>", { desc = "Search wiki content" })
+		end,
 	},
 }
