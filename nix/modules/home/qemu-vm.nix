@@ -28,7 +28,6 @@ let
       INPUT_OVERRIDES=()
       MEMORY="${toString cfg.defaultMemory}"
       CORES="${toString cfg.defaultCores}"
-      DISK_SIZE="${toString cfg.defaultDiskSize}"
       DISPLAY_MODE="none"
       VERBOSE=false
 
@@ -48,7 +47,6 @@ let
         -c, --config FILE               Path to custom NixOS configuration file
         -m, --memory SIZE               Memory size in MB (default: ${toString cfg.defaultMemory})
         --cores N                       Number of CPU cores (default: ${toString cfg.defaultCores})
-        --disk-size SIZE                Disk size in GB (default: ${toString cfg.defaultDiskSize})
         --override-input INPUT FLAKEREF Override a flake input (can be specified multiple times)
                                         Format: INPUT_NAME FLAKE_REF
                                         Example: --override-input nixpkgs github:NixOS/nixpkgs/nixos-unstable
@@ -108,10 +106,6 @@ let
             CORES="$2"
             shift 2
             ;;
-          --disk-size)
-            DISK_SIZE="$2"
-            shift 2
-            ;;
           --override-input)
             if [[ -z "''${2:-}" ]] || [[ -z "''${3:-}" ]]; then
               echo "Error: --override-input requires two arguments: INPUT_NAME FLAKE_REF"
@@ -150,7 +144,7 @@ let
       # Handle clean flag
       if [[ "''${CLEAN:-false}" == "true" ]]; then
         echo "Cleaning VM state in $VM_DIR..."
-        rm -rf "$VM_DIR"/*
+        rm -rf "''${VM_DIR:?}"/*
         mkdir -p "$VM_DIR"
         BUILD=true
       fi
@@ -173,12 +167,12 @@ let
           done
         fi
 
-        # Build command
-        BUILD_CMD="nix build ${cfg.vmFlakeRef}.config.system.build.vm --out-link $VM_DIR/vm-result"
+        # Build command as array
+        BUILD_CMD=(nix build "${cfg.vmFlakeRef}.config.system.build.vm" --out-link "$VM_DIR/vm-result")
 
         # Add override arguments if present
         if [[ ''${#OVERRIDE_ARGS[@]} -gt 0 ]]; then
-          BUILD_CMD="$BUILD_CMD ''${OVERRIDE_ARGS[@]}"
+          BUILD_CMD+=("''${OVERRIDE_ARGS[@]}")
         fi
 
         # If custom config is provided, we need to build with an override
@@ -213,7 +207,7 @@ let
       }
       FLAKE_EOF
 
-          BUILD_CMD="nix build $TEMP_DIR#nixosConfigurations.qemu.config.system.build.vm --out-link $VM_DIR/vm-result"
+          BUILD_CMD=(nix build "$TEMP_DIR#nixosConfigurations.qemu.config.system.build.vm" --out-link "$VM_DIR/vm-result")
 
           # Add override arguments to custom config build as well
           if [[ ''${#OVERRIDE_ARGS[@]} -gt 0 ]]; then
@@ -224,15 +218,15 @@ let
               flake_ref="''${INPUT_OVERRIDES[i+1]}"
               DOTFILES_OVERRIDE_ARGS+=("--override-input" "dotfiles/$input_name" "$flake_ref")
             done
-            BUILD_CMD="$BUILD_CMD ''${DOTFILES_OVERRIDE_ARGS[@]}"
+            BUILD_CMD+=("''${DOTFILES_OVERRIDE_ARGS[@]}")
           fi
         fi
 
         if [[ "$VERBOSE" == "true" ]]; then
-          echo "Running: $BUILD_CMD"
+          echo "Running: ''${BUILD_CMD[*]}"
         fi
 
-        eval "$BUILD_CMD"
+        "''${BUILD_CMD[@]}"
 
         # Link the VM image
         ln -sf "$VM_DIR/vm-result/nixos.qcow2" "$VM_IMAGE"
@@ -273,11 +267,11 @@ let
       case "$ARCH" in
         x86_64)
           QEMU_BIN="qemu-system-x86_64"
-          MACHINE_ARGS="-machine type=q35,accel=kvm:hvf:tcg"
+          MACHINE_ARGS=(-machine type=q35,accel=kvm:hvf:tcg)
           ;;
         aarch64|arm64)
           QEMU_BIN="qemu-system-aarch64"
-          MACHINE_ARGS="-machine type=virt,accel=hvf:kvm:tcg"
+          MACHINE_ARGS=(-machine type=virt,accel=hvf:kvm:tcg)
           ;;
         *)
           echo "Unsupported architecture: $ARCH"
@@ -296,7 +290,7 @@ let
 
       # Start the VM
       exec "$QEMU_BIN" \
-        $MACHINE_ARGS \
+        "''${MACHINE_ARGS[@]}" \
         -cpu host \
         -smp "$CORES" \
         -m "$MEMORY" \
@@ -329,12 +323,6 @@ in
       type = types.int;
       default = 8;
       description = "Default number of CPU cores";
-    };
-
-    defaultDiskSize = mkOption {
-      type = types.int;
-      default = 64;
-      description = "Default disk size in GB";
     };
 
     vmFlakeRef = mkOption {
