@@ -1,4 +1,6 @@
-{ pkgs, inputs,
+{
+  pkgs,
+  inputs,
   # Configurable defaults
   defaultVmDir ? "$HOME/.local/share/qemu-vm",
   defaultMemory ? 16384,
@@ -17,26 +19,31 @@ let
   qemuNixos = nixpkgs.lib.nixosSystem {
     system = targetSystem;
     specialArgs = {
-      inputs = inputs // { inherit self; };
+      inputs = inputs // {
+        inherit self;
+      };
     };
     modules = [
       inputs.self.nixosModules.default
       "${self}/base_hosts/qemu/qemu.nix"
-      ({ modulesPath, lib, ... }: {
-        imports = [ "${modulesPath}/virtualisation/qemu-vm.nix" ];
+      (
+        { modulesPath, lib, ... }:
+        {
+          imports = [ "${modulesPath}/virtualisation/qemu-vm.nix" ];
 
-        virtualisation = {
-          diskSize = defaultDiskSize * 1024;
-          cores = defaultCores;
-          memorySize = defaultMemory;
-          writableStoreUseTmpfs = false;
-          useBootLoader = false;
+          virtualisation = {
+            diskSize = defaultDiskSize * 1024;
+            cores = defaultCores;
+            memorySize = defaultMemory;
+            writableStoreUseTmpfs = false;
+            useBootLoader = false;
 
-          # Build for the host system
-          qemu.package = pkgs.qemu;
-          host.pkgs = pkgs;
-        };
-      })
+            # Build for the host system
+            qemu.package = pkgs.qemu;
+            host.pkgs = pkgs;
+          };
+        }
+      )
     ];
   };
 
@@ -61,6 +68,7 @@ pkgs.writeShellApplication {
     DISPLAY_MODE="none"
     VERBOSE=false
     CLEAN=false
+    SHOW_BOOT=false
 
     # Parse command line arguments
     show_help() {
@@ -81,6 +89,7 @@ pkgs.writeShellApplication {
       --gui                           Enable GUI (default: headless)
       -v, --verbose                   Verbose output
       --clean                         Remove existing VM state
+      --show-boot                     Show boot console messages (default: hidden)
 
     EXAMPLES:
       # Start VM with SSH forwarded to localhost:2222
@@ -91,6 +100,9 @@ pkgs.writeShellApplication {
 
       # Start with more resources
       qemu-vm --memory 8192 --cores 4 -p 22:2222
+
+      # Show boot console messages
+      qemu-vm --show-boot -p 22:2222
 
     EOF
     }
@@ -132,6 +144,10 @@ pkgs.writeShellApplication {
           ;;
         --clean)
           CLEAN=true
+          shift
+          ;;
+        --show-boot)
+          SHOW_BOOT=true
           shift
           ;;
         *)
@@ -194,9 +210,16 @@ pkgs.writeShellApplication {
 
     if [[ "$DISPLAY_MODE" == "none" ]]; then
       export QEMU_OPTS="$QEMU_OPTS -nographic"
-      export QEMU_KERNEL_PARAMS="console=ttyS0"
+      if [[ "$SHOW_BOOT" == "true" ]]; then
+        export QEMU_KERNEL_PARAMS="console=ttyS0"
+      else
+        export QEMU_KERNEL_PARAMS="console=ttyS0 quiet systemd.show_status=no"
+      fi
     elif [[ "$DISPLAY_MODE" == "gtk" ]]; then
       export QEMU_OPTS="$QEMU_OPTS -display gtk"
+      if [[ "$SHOW_BOOT" == "false" ]]; then
+        export QEMU_KERNEL_PARAMS="quiet systemd.show_status=no"
+      fi
     fi
 
     echo "Starting VM..."
@@ -204,6 +227,11 @@ pkgs.writeShellApplication {
     echo "  Cores: $CORES"
     echo "  Disk: $NIX_DISK_IMAGE"
     echo "  Display: $DISPLAY_MODE"
+    if [[ "$SHOW_BOOT" == "true" ]]; then
+      echo "  Boot output: visible"
+    else
+      echo "  Boot output: hidden (use --show-boot to see)"
+    fi
     if [[ -n "$QEMU_NET_OPTS" ]]; then
       echo "  Network: $QEMU_NET_OPTS"
     fi
@@ -223,3 +251,4 @@ pkgs.writeShellApplication {
     exec ${vmRunner}/bin/run-qemu-nixos-vm
   '';
 }
+
