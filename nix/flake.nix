@@ -75,6 +75,7 @@
           overlays = import ./overlays;
         };
         lazyvims = pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; };
+        qemu-vm = pkgs.callPackage ./packages/qemu-vm/qemu-vm.nix { inherit inputs; };
       in
       {
         packages = {
@@ -83,6 +84,7 @@
             beancount-language-server # from aldur/beancount-language-server
             nomicfoundation-solidity-language-server
             ;
+          inherit qemu-vm;
           llm = pkgs.llmWithPlugins;
         };
 

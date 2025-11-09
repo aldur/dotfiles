@@ -20,6 +20,9 @@ qemu-vm --flake ~/my-custom-vm-flake -p 22:2222
 # Rebuild and start with more resources
 qemu-vm --build --memory 8192 --cores 4 --disk-size 128 -p 22:2222
 
+# Run in snapshot mode (changes not saved to disk)
+qemu-vm --snapshot -p 22:2222
+
 # Show all options
 qemu-vm --help
 ```
@@ -43,6 +46,9 @@ You can point to any flake that provides a `nixosConfigurations.qemu-nixos` outp
 ```bash
 qemu-vm --flake ~/my-custom-vm -p 22:2222
 ```
+
+Your custom flake should expose:
+- `nixosConfigurations.qemu-nixos` - NixOS configuration that will be built and run
 
 ## Flake usage
 
