@@ -1,11 +1,19 @@
 local M = {}
 
--- Get the configured force create key (default to <M-CR> like wiki.vim)
 local function get_force_create_key()
   return vim.g.wiki_snacks_force_create_key or "<M-CR>"
 end
 
----Open fuzzy finder for wiki pages
+local function get_picker_input(picker)
+  local input = picker.input and picker.input:get()
+  if not input or input == "" then
+    if picker.input and picker.input.win and picker.input.win:valid() then
+      input = picker.input.win:line()
+    end
+  end
+  return input
+end
+
 M.pages = function()
   local root = vim.g.wiki_root
   if not root then
@@ -13,21 +21,17 @@ M.pages = function()
     return
   end
 
-  -- Expand tilde in wiki root path and ensure it ends with /
   root = vim.fn.expand(root)
   if root:sub(-1) ~= "/" then
     root = root .. "/"
   end
 
-  -- Get all markdown files recursively in wiki root
   local files = vim.fn.globpath(root, "**/*.md", false, true)
-
-  -- Convert to relative paths from wiki root
   local items = {}
   for _, file in ipairs(files) do
     local relative = file:sub(#root + 1)
     table.insert(items, {
-      file = file,  -- For preview
+      file = file,
       text = relative,
     })
   end
@@ -43,18 +47,9 @@ M.pages = function()
         if item then
           note = item.text
         else
-          -- No selection - use the query to create a new page
-          local input = picker.input and picker.input:get()
-          if not input or input == "" then
-            -- Fallback: try to get text from the input buffer
-            if picker.input and picker.input.win and picker.input.win:valid() then
-              input = picker.input.win:line()
-            end
-          end
-
+          local input = get_picker_input(picker)
           if input and input ~= "" then
             note = input
-            -- Add .md extension if not present
             if not note:match("%.md$") then
               note = note .. ".md"
             end
@@ -66,17 +61,9 @@ M.pages = function()
         end
       end,
       force_create = function(picker)
-        -- Force create a new page with the current input
-        local input = picker.input and picker.input:get()
-        if not input or input == "" then
-          if picker.input and picker.input.win and picker.input.win:valid() then
-            input = picker.input.win:line()
-          end
-        end
-
+        local input = get_picker_input(picker)
         if input and input ~= "" then
           local note = input
-          -- Add .md extension if not present
           if not note:match("%.md$") then
             note = note .. ".md"
           end
@@ -95,7 +82,6 @@ M.pages = function()
   })
 end
 
----Open fuzzy finder for wiki tags
 M.tags = function()
   local tags_with_locations = vim.fn["wiki#tags#get_all"]()
   local root = vim.fn["wiki#get_root"]()
@@ -130,7 +116,6 @@ M.tags = function()
   })
 end
 
----Open fuzzy finder for table of contents
 M.toc = function()
   local toc = vim.fn["wiki#toc#gather_entries"]()
   local items = {}
@@ -141,28 +126,17 @@ M.toc = function()
     local line = indent .. hd.header
     table.insert(items, {
       text = string.format("%d:%s", hd.lnum, line),
-      file = current_file,  -- For preview
-      pos = { hd.lnum, 1 },  -- For preview position
-      lnum = hd.lnum,
+      file = current_file,
+      pos = { hd.lnum, 1 },
     })
   end
 
   require("snacks").picker.pick({
     prompt = "TOC> ",
     items = items,
-    format = "text",
-    actions = {
-      confirm = function(picker, item)
-        picker:close()
-        if item and item.lnum then
-          vim.fn.execute(tostring(item.lnum))
-        end
-      end,
-    },
   })
 end
 
----Select a wiki page and insert a link to it
 ---@param mode? "visual" | "insert"
 M.links = function(mode)
   local text = ""
@@ -177,21 +151,17 @@ M.links = function(mode)
     return
   end
 
-  -- Expand tilde in wiki root path and ensure it ends with /
   root = vim.fn.expand(root)
   if root:sub(-1) ~= "/" then
     root = root .. "/"
   end
 
-  -- Get all markdown files recursively in wiki root
   local files = vim.fn.globpath(root, "**/*.md", false, true)
-
-  -- Convert to relative paths from wiki root
   local items = {}
   for _, file in ipairs(files) do
     local relative = file:sub(#root + 1)
     table.insert(items, {
-      file = file,  -- For preview and for wiki#link#add
+      file = file,
       text = relative,
     })
   end
@@ -207,18 +177,9 @@ M.links = function(mode)
         if item then
           note = item.file  -- Use absolute path
         else
-          -- No selection - use the query to create a new link
-          local input = picker.input and picker.input:get()
-          if not input or input == "" then
-            -- Fallback: try to get text from the input buffer
-            if picker.input and picker.input.win and picker.input.win:valid() then
-              input = picker.input.win:line()
-            end
-          end
-
+          local input = get_picker_input(picker)
           if input and input ~= "" then
             note = input
-            -- Add .md extension if not present
             if not note:match("%.md$") then
               note = note .. ".md"
             end
@@ -231,17 +192,9 @@ M.links = function(mode)
         end
       end,
       force_create = function(picker)
-        -- Force create a link to a new page with the current input
-        local input = picker.input and picker.input:get()
-        if not input or input == "" then
-          if picker.input and picker.input.win and picker.input.win:valid() then
-            input = picker.input.win:line()
-          end
-        end
-
+        local input = get_picker_input(picker)
         if input and input ~= "" then
           local note = input
-          -- Add .md extension if not present
           if not note:match("%.md$") then
             note = note .. ".md"
           end
@@ -261,8 +214,6 @@ M.links = function(mode)
   })
 end
 
----Search wiki content with live grep
----Shows all content when search is empty, filters as you type
 M.grep = function()
   local root = vim.g.wiki_root
   if not root then
@@ -275,80 +226,8 @@ M.grep = function()
   require("snacks").picker.grep({
     prompt = "Search wiki> ",
     cwd = root,
-    query = "",  -- Start with empty query to show all content
-    live = true,  -- Enable live mode for instant results as you type
-    actions = {
-      confirm = function(picker, item)
-        picker:close()
-
-        if item then
-          -- Extract relative path from the grep result
-          local file = item.file
-          -- Make path relative to wiki root
-          if file:sub(1, #root) == root then
-            file = file:sub(#root + 1)
-            if file:sub(1, 1) == "/" then
-              file = file:sub(2)
-            end
-          end
-
-          -- Open the file
-          vim.fn["wiki#page#open"](file)
-
-          -- Use the pos from the item (already set by grep picker)
-          if item.pos and item.pos[1] and item.pos[1] > 0 then
-            vim.schedule(function()
-              -- item.pos is {line, col} with 0-based column
-              vim.api.nvim_win_set_cursor(0, {item.pos[1], item.pos[2] or 0})
-              vim.cmd("norm! zzzv")  -- Center and open folds
-            end)
-          end
-        else
-          -- No match - create a new page with the search query as the name
-          local input = picker.input and picker.input:get()
-          if not input or input == "" then
-            if picker.input and picker.input.win and picker.input.win:valid() then
-              input = picker.input.win:line()
-            end
-          end
-
-          if input and input ~= "" then
-            local note = input
-            -- Add .md extension if not present
-            if not note:match("%.md$") then
-              note = note .. ".md"
-            end
-            vim.fn["wiki#page#open"](note)
-          end
-        end
-      end,
-      force_create = function(picker)
-        -- Force create a new page with the search query as the name
-        local input = picker.input and picker.input:get()
-        if not input or input == "" then
-          if picker.input and picker.input.win and picker.input.win:valid() then
-            input = picker.input.win:line()
-          end
-        end
-
-        if input and input ~= "" then
-          local note = input
-          -- Add .md extension if not present
-          if not note:match("%.md$") then
-            note = note .. ".md"
-          end
-          picker:close()
-          vim.fn["wiki#page#open"](note)
-        end
-      end,
-    },
-    win = {
-      input = {
-        keys = {
-          [get_force_create_key()] = { "force_create", mode = { "i", "n" } },
-        },
-      },
-    },
+    query = "",
+    live = true,
   })
 end
 
