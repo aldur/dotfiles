@@ -50,10 +50,6 @@ return {
 				md = { link_type = "md", url_extension = "" },
 			}
 
-			vim.g.wiki_fzf_force_create_key = "ctrl-x"
-			vim.g.wiki_fzf_pages_opts = '--preview "bat {1}"'
-			vim.g.wiki_fzf_tags_opts = '--preview "bat --color=always {2..}"'
-
 			-- Use snacks for UI selection
 			vim.g.wiki_select_method = {
 				pages = require("wiki.snacks").pages,
@@ -62,7 +58,8 @@ return {
 				links = require("wiki.snacks").links,
 			}
 
-			vim.g.wiki_snacks_force_create_key = vim.g.wiki_fzf_force_create_key
+			-- Equivalent to g:wiki_fzf_force_create_key
+			vim.g.wiki_snacks_force_create_key = "<C-x>"
 		end,
 	},
 }
