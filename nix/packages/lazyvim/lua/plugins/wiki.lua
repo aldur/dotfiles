@@ -41,6 +41,18 @@ return {
             vim.g.wiki_templates = {
                 {match_func = match, source_func = template}
             }
+
+            -- Configure wiki.vim to use snacks for UI selection
+            vim.g.wiki_select_method = {
+                pages = require("wiki.snacks").pages,
+                tags = require("wiki.snacks").tags,
+                toc = require("wiki.snacks").toc,
+                links = require("wiki.snacks").links,
+            }
+
+            -- Equivalent to g:wiki_fzf_force_create_key
+            -- This is now handled in the snacks picker with <M-CR> (Alt-Enter)
+            vim.g.wiki_snacks_force_create_key = 'ctrl-x'
         end
     }
 }
