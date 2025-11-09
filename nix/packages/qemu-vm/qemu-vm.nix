@@ -216,8 +216,11 @@ pkgs.writeShellApplication {
 
     # Control boot message visibility
     if [[ "$SHOW_BOOT" == "true" ]]; then
-      # Show all boot messages
-      export QEMU_KERNEL_PARAMS=""
+      # Force showing all boot messages
+      # loglevel=7 shows all messages including debug (overrides quiet)
+      # systemd.show_status=yes forces systemd to show service status
+      # ignore_loglevel forces all kernel messages to be printed
+      export QEMU_KERNEL_PARAMS="ignore_loglevel loglevel=7 systemd.show_status=yes"
     else
       # Suppress boot messages with quiet and minimal loglevel
       # quiet suppresses most kernel messages
