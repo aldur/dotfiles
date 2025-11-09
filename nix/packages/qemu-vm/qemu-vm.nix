@@ -1,19 +1,40 @@
-{ pkgs, inputs,
+{ pkgs, inputs, lib, system,
   # Configurable defaults
   defaultVmDir ? "$HOME/.local/share/qemu-vm",
   defaultMemory ? 16384,
   defaultCores ? 8,
   defaultDiskSize ? 64,
-  vmFlakeRef ? null,
   ...
 }:
 
 let
-  inherit (inputs) self;
-  # Compute flake ref with fallback
-  defaultFlakeRef = if vmFlakeRef != null
-    then vmFlakeRef
-    else "path:${builtins.dirOf self.outPath}/base_hosts/qemu";
+  inherit (inputs) self nixpkgs;
+
+  # Build the qemu NixOS configuration
+  # We need to evaluate the qemu flake's nixosConfiguration
+  qemuNixos = nixpkgs.lib.nixosSystem {
+    system = "aarch64-linux";  # Target system for the VM
+    specialArgs = {
+      inputs = inputs // { inherit self; };
+    };
+    modules = [
+      inputs.self.nixosModules.default
+      "${self}/base_hosts/qemu/qemu.nix"
+    ];
+  };
+
+  # Build the VM system
+  vmSystem = qemuNixos.config.system.build.toplevel;
+
+  # Create a derivation that prepares the VM files
+  vmFiles = pkgs.runCommand "qemu-vm-files" {} ''
+    mkdir -p $out
+    ln -s ${vmSystem} $out/system
+    ln -s ${vmSystem}/kernel $out/kernel
+    ln -s ${vmSystem}/initrd $out/initrd
+    cp ${vmSystem}/kernel-params $out/kernel-params
+  '';
+
 in
 pkgs.writeShellApplication {
   name = "qemu-vm";
@@ -25,9 +46,11 @@ pkgs.writeShellApplication {
   text = ''
     # Default values
     VM_DIR="${defaultVmDir}"
-    FLAKE_REF="${defaultFlakeRef}"
+    SYSTEM_PATH="${vmFiles}/system"
+    KERNEL="${vmFiles}/kernel"
+    INITRD="${vmFiles}/initrd"
+    KERNEL_PARAMS=$(cat "${vmFiles}/kernel-params")
     PORTS=()
-    INPUT_OVERRIDES=()
     MEMORY="${toString defaultMemory}"
     CORES="${toString defaultCores}"
     DISK_SIZE="${toString defaultDiskSize}"
@@ -45,20 +68,15 @@ pkgs.writeShellApplication {
     OPTIONS:
       -h, --help                      Show this help message
       -d, --dir DIR                   VM disk location (default: ${defaultVmDir})
-      -f, --flake FLAKE               Flake reference for VM configuration (default: configured vmFlakeRef)
       -p, --port PORT[:HOST]          Forward guest port to host (can be specified multiple times)
                                       Format: GUEST_PORT or GUEST_PORT:HOST_PORT
                                       Example: -p 22:2222 -p 80:8080
       -m, --memory SIZE               Memory size in MB (default: ${toString defaultMemory})
       --cores N                       Number of CPU cores (default: ${toString defaultCores})
       --disk-size SIZE                Disk size in GB (default: ${toString defaultDiskSize})
-      --override-input INPUT FLAKEREF Override a flake input (can be specified multiple times)
-                                      Format: INPUT_NAME FLAKE_REF
-                                      Example: --override-input nixpkgs github:NixOS/nixpkgs/nixos-unstable
       --gui                           Enable GUI (default: headless)
       -v, --verbose                   Verbose output
-      --build                         Rebuild the VM image before starting
-      --clean                         Remove existing VM state and rebuild
+      --clean                         Remove existing VM state
       --snapshot                      Run in snapshot mode (changes not written to disk)
 
     EXAMPLES:
@@ -68,19 +86,8 @@ pkgs.writeShellApplication {
       # Start VM with custom location and multiple ports
       qemu-vm -d /data/my-vm -p 22:2222 -p 80:8080
 
-      # Use a custom flake for VM configuration
-      qemu-vm --flake ~/my-custom-vm-flake -p 22:2222
-
-      # Rebuild and start with more resources
-      qemu-vm --build --memory 8192 --cores 4 --disk-size 128 -p 22:2222
-
-      # Override nixpkgs input to use unstable
-      qemu-vm --override-input nixpkgs github:NixOS/nixpkgs/nixos-unstable -p 22:2222
-
-      # Override multiple inputs
-      qemu-vm --override-input nixpkgs nixpkgs/nixos-unstable \\
-              --override-input home-manager github:nix-community/home-manager \\
-              -p 22:2222
+      # Start with more resources
+      qemu-vm --memory 8192 --cores 4 --disk-size 128 -p 22:2222
 
       # Run in snapshot mode (changes not saved to disk)
       qemu-vm --snapshot -p 22:2222
@@ -99,10 +106,6 @@ pkgs.writeShellApplication {
           VM_DIR="$2"
           shift 2
           ;;
-        -f|--flake)
-          FLAKE_REF="$2"
-          shift 2
-          ;;
         -p|--port)
           PORTS+=("$2")
           shift 2
@@ -119,24 +122,12 @@ pkgs.writeShellApplication {
           DISK_SIZE="$2"
           shift 2
           ;;
-        --override-input)
-          if [[ -z "''${2:-}" ]] || [[ -z "''${3:-}" ]]; then
-            echo "Error: --override-input requires two arguments: INPUT_NAME FLAKE_REF"
-            exit 1
-          fi
-          INPUT_OVERRIDES+=("$2" "$3")
-          shift 3
-          ;;
         --gui)
           DISPLAY_MODE="gtk"
           shift
           ;;
         -v|--verbose)
           VERBOSE=true
-          shift
-          ;;
-        --build)
-          BUILD=true
           shift
           ;;
         --clean)
@@ -163,73 +154,21 @@ pkgs.writeShellApplication {
       echo "Cleaning VM state in $VM_DIR..."
       rm -rf "''${VM_DIR:?}"/*
       mkdir -p "$VM_DIR"
-      BUILD=true
-    fi
-
-    # Build the VM if requested or if it doesn't exist
-    VM_IMAGE="$VM_DIR/nixos.qcow2"
-    if [[ "''${BUILD:-false}" == "true" ]] || [[ ! -f "$VM_IMAGE" ]]; then
-      echo "Building VM image..."
-      if [[ "$VERBOSE" == "true" ]]; then
-        echo "Using flake: $FLAKE_REF"
-      fi
-
-      # Build input override arguments
-      OVERRIDE_ARGS=()
-      if [[ ''${#INPUT_OVERRIDES[@]} -gt 0 ]]; then
-        for ((i=0; i<''${#INPUT_OVERRIDES[@]}; i+=2)); do
-          input_name="''${INPUT_OVERRIDES[i]}"
-          flake_ref="''${INPUT_OVERRIDES[i+1]}"
-          OVERRIDE_ARGS+=("--override-input" "$input_name" "$flake_ref")
-          if [[ "$VERBOSE" == "true" ]]; then
-            echo "Overriding input: $input_name -> $flake_ref"
-          fi
-        done
-      fi
-
-      # Build the NixOS system configuration
-      BUILD_CMD=(nix build "$FLAKE_REF#nixosConfigurations.qemu-nixos.config.system.build.toplevel" --out-link "$VM_DIR/system")
-
-      # Add override arguments if present
-      if [[ ''${#OVERRIDE_ARGS[@]} -gt 0 ]]; then
-        BUILD_CMD+=("''${OVERRIDE_ARGS[@]}")
-      fi
-
-      if [[ "$VERBOSE" == "true" ]]; then
-        echo "Running: ''${BUILD_CMD[*]}"
-      fi
-
-      "''${BUILD_CMD[@]}"
-
-      # Extract kernel, initrd, and kernel params from the built system
-      SYSTEM_PATH="$VM_DIR/system"
-      KERNEL="$SYSTEM_PATH/kernel"
-      INITRD="$SYSTEM_PATH/initrd"
-      KERNEL_PARAMS=$(cat "$SYSTEM_PATH/kernel-params")
-
-      if [[ "$VERBOSE" == "true" ]]; then
-        echo "System built at: $SYSTEM_PATH"
-        echo "Kernel: $KERNEL"
-        echo "Initrd: $INITRD"
-      fi
     fi
 
     # Create qcow2 disk if it doesn't exist
+    VM_IMAGE="$VM_DIR/nixos.qcow2"
     if [[ ! -f "$VM_IMAGE" ]]; then
       echo "Creating disk image: $VM_IMAGE (''${DISK_SIZE}G)"
       qemu-img create -f qcow2 "$VM_IMAGE" "''${DISK_SIZE}G"
     fi
 
-    # Get kernel, initrd, and params from built system
-    SYSTEM_PATH="$VM_DIR/system"
-    if [[ ! -d "$SYSTEM_PATH" ]]; then
-      echo "Error: System not built at $SYSTEM_PATH"
-      exit 1
+    if [[ "$VERBOSE" == "true" ]]; then
+      echo "System: $SYSTEM_PATH"
+      echo "Kernel: $KERNEL"
+      echo "Initrd: $INITRD"
+      echo "Kernel params: $KERNEL_PARAMS"
     fi
-
-    KERNEL="$SYSTEM_PATH/kernel"
-    INITRD="$SYSTEM_PATH/initrd"
-    KERNEL_PARAMS=$(cat "$SYSTEM_PATH/kernel-params")
 
     # Build QEMU arguments
     QEMU_ARGS=()
@@ -308,7 +247,7 @@ pkgs.writeShellApplication {
     if [[ "$SNAPSHOT" == "true" ]]; then
       echo "  Mode: snapshot (changes not saved)"
     fi
-    echo "  System: $SYSTEM_PATH"
+    echo "  System: $SYSTEM_PATH (pre-built)"
     echo "  Display: $DISPLAY_MODE"
     echo ""
     if [[ "$DISPLAY_MODE" == "none" ]]; then
