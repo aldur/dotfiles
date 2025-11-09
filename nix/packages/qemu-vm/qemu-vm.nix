@@ -210,16 +210,20 @@ pkgs.writeShellApplication {
 
     if [[ "$DISPLAY_MODE" == "none" ]]; then
       export QEMU_OPTS="$QEMU_OPTS -nographic"
-      if [[ "$SHOW_BOOT" == "true" ]]; then
-        export QEMU_KERNEL_PARAMS="console=ttyS0"
-      else
-        export QEMU_KERNEL_PARAMS="console=ttyS0 quiet systemd.show_status=no"
-      fi
     elif [[ "$DISPLAY_MODE" == "gtk" ]]; then
       export QEMU_OPTS="$QEMU_OPTS -display gtk"
-      if [[ "$SHOW_BOOT" == "false" ]]; then
-        export QEMU_KERNEL_PARAMS="quiet systemd.show_status=no"
-      fi
+    fi
+
+    # Control boot message visibility
+    if [[ "$SHOW_BOOT" == "true" ]]; then
+      # Show all boot messages
+      export QEMU_KERNEL_PARAMS=""
+    else
+      # Suppress boot messages with quiet and minimal loglevel
+      # quiet suppresses most kernel messages
+      # loglevel=0 only shows emergency messages (panic only)
+      # systemd.show_status=no suppresses systemd service messages
+      export QEMU_KERNEL_PARAMS="quiet loglevel=0 systemd.show_status=no"
     fi
 
     echo "Starting VM..."
@@ -243,6 +247,7 @@ pkgs.writeShellApplication {
 
     if [[ "$VERBOSE" == "true" ]]; then
       echo "QEMU_OPTS: $QEMU_OPTS"
+      echo "QEMU_KERNEL_PARAMS: ''${QEMU_KERNEL_PARAMS:-not set}"
       echo "NIX_DISK_IMAGE: $NIX_DISK_IMAGE"
       echo "Running NixOS VM runner..."
     fi
