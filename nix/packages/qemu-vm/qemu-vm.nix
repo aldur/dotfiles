@@ -1,4 +1,4 @@
-{ pkgs, inputs, lib, system,
+{ pkgs, inputs,
   # Configurable defaults
   defaultVmDir ? "$HOME/.local/share/qemu-vm",
   defaultMemory ? 16384,
@@ -10,29 +10,77 @@
 let
   inherit (inputs) self nixpkgs;
 
-  # Build the qemu NixOS configuration
-  # We need to evaluate the qemu flake's nixosConfiguration
+  # Determine target system based on host
+  targetSystem = if pkgs.stdenv.hostPlatform.isAarch64 then "aarch64-linux" else "x86_64-linux";
+
+  # Set QEMU configuration based on host architecture
+  qemuBinary = if pkgs.stdenv.hostPlatform.isAarch64
+    then "qemu-system-aarch64"
+    else "qemu-system-x86_64";
+
+  machineType = if pkgs.stdenv.hostPlatform.isAarch64
+    then "type=virt,accel=hvf:kvm:tcg"
+    else "type=q35,accel=kvm:hvf:tcg";
+
+  # Build the qemu NixOS configuration with proper VM settings
   qemuNixos = nixpkgs.lib.nixosSystem {
-    system = "aarch64-linux";  # Target system for the VM
+    system = targetSystem;  # Target system matches host architecture
     specialArgs = {
       inputs = inputs // { inherit self; };
     };
     modules = [
       inputs.self.nixosModules.default
       "${self}/base_hosts/qemu/qemu.nix"
+      ({ modulesPath, lib, ... }: {
+        imports = [ "${modulesPath}/virtualisation/qemu-vm.nix" ];
+
+        virtualisation = {
+          diskSize = 64 * 1024;
+          cores = 8;
+          memorySize = 16 * 1024;
+          writableStoreUseTmpfs = false;
+          useBootLoader = false;
+
+          # Build for the host system
+          qemu.package = pkgs.qemu;
+          host.pkgs = pkgs;
+        };
+
+        # Configure filesystem to not require a disk label
+        fileSystems = lib.mkForce {
+          "/" = {
+            device = "none";
+            fsType = "tmpfs";
+            options = [ "defaults" "size=16G" "mode=755" ];
+          };
+          "/nix/store" = {
+            device = "nix-store";
+            fsType = "9p";
+            options = [ "trans=virtio" "version=9p2000.L" "cache=loose" ];
+          };
+        };
+
+        boot = {
+          initrd.kernelModules = [ "9p" "9pnet_virtio" "virtio_pci" "virtio_blk" ];
+          kernelParams = [ "console=ttyS0" ];
+          loader.grub.enable = false;
+        };
+      })
     ];
   };
 
   # Build the VM system
   vmSystem = qemuNixos.config.system.build.toplevel;
 
-  # Create a derivation that prepares the VM files
+  # Create a derivation that prepares the VM files with fixed kernel params
   vmFiles = pkgs.runCommand "qemu-vm-files" {} ''
     mkdir -p $out
     ln -s ${vmSystem} $out/system
     ln -s ${vmSystem}/kernel $out/kernel
     ln -s ${vmSystem}/initrd $out/initrd
-    cp ${vmSystem}/kernel-params $out/kernel-params
+
+    # Create kernel params without disk requirement
+    echo "init=${vmSystem}/init loglevel=4 console=ttyS0" > $out/kernel-params
   '';
 
 in
@@ -156,7 +204,7 @@ pkgs.writeShellApplication {
       mkdir -p "$VM_DIR"
     fi
 
-    # Create qcow2 disk if it doesn't exist
+    # Create qcow2 disk if it doesn't exist (for persistent storage)
     VM_IMAGE="$VM_DIR/nixos.qcow2"
     if [[ ! -f "$VM_IMAGE" ]]; then
       echo "Creating disk image: $VM_IMAGE (''${DISK_SIZE}G)"
@@ -173,22 +221,9 @@ pkgs.writeShellApplication {
     # Build QEMU arguments
     QEMU_ARGS=()
 
-    # Determine system architecture for proper qemu binary
-    ARCH="$(uname -m)"
-    case "$ARCH" in
-      x86_64)
-        QEMU_BIN="qemu-system-x86_64"
-        QEMU_ARGS+=("-machine" "type=q35,accel=kvm:hvf:tcg")
-        ;;
-      aarch64|arm64)
-        QEMU_BIN="qemu-system-aarch64"
-        QEMU_ARGS+=("-machine" "type=virt,accel=hvf:kvm:tcg")
-        ;;
-      *)
-        echo "Unsupported architecture: $ARCH"
-        exit 1
-        ;;
-    esac
+    # QEMU binary and machine type are determined at build time
+    QEMU_BIN="${qemuBinary}"
+    QEMU_ARGS+=("-machine" "${machineType}")
 
     # CPU and memory
     QEMU_ARGS+=("-cpu" "host")
@@ -198,9 +233,15 @@ pkgs.writeShellApplication {
     # Kernel and initrd
     QEMU_ARGS+=("-kernel" "$KERNEL")
     QEMU_ARGS+=("-initrd" "$INITRD")
-    QEMU_ARGS+=("-append" "init=$SYSTEM_PATH/init $KERNEL_PARAMS")
+    QEMU_ARGS+=("-append" "$KERNEL_PARAMS")
 
-    # Disk
+    # Add 9p filesystem share for nix store
+    QEMU_ARGS+=(
+      "-virtfs"
+      "local,path=/nix/store,mount_tag=nix-store,security_model=none,readonly=on"
+    )
+
+    # Disk for persistent storage (not required for boot)
     QEMU_ARGS+=("-drive" "file=$VM_IMAGE,if=virtio,format=qcow2")
 
     # Snapshot mode
@@ -243,7 +284,7 @@ pkgs.writeShellApplication {
     echo "Starting VM..."
     echo "  Memory: ''${MEMORY}MB"
     echo "  Cores: $CORES"
-    echo "  Disk: $VM_IMAGE"
+    echo "  Disk: $VM_IMAGE (for persistent storage)"
     if [[ "$SNAPSHOT" == "true" ]]; then
       echo "  Mode: snapshot (changes not saved)"
     fi
