@@ -23,11 +23,12 @@ let
     text = ''
       # Default values
       VM_DIR="${cfg.defaultVmDir}"
+      FLAKE_REF="${cfg.vmFlakeRef}"
       PORTS=()
-      CONFIG_FILE=""
       INPUT_OVERRIDES=()
       MEMORY="${toString cfg.defaultMemory}"
       CORES="${toString cfg.defaultCores}"
+      DISK_SIZE="${toString cfg.defaultDiskSize}"
       DISPLAY_MODE="none"
       VERBOSE=false
 
@@ -41,12 +42,13 @@ let
       OPTIONS:
         -h, --help                      Show this help message
         -d, --dir DIR                   VM disk location (default: ${cfg.defaultVmDir})
+        -f, --flake FLAKE               Flake reference for VM configuration (default: configured vmFlakeRef)
         -p, --port PORT[:HOST]          Forward guest port to host (can be specified multiple times)
                                         Format: GUEST_PORT or GUEST_PORT:HOST_PORT
                                         Example: -p 22:2222 -p 80:8080
-        -c, --config FILE               Path to custom NixOS configuration file
         -m, --memory SIZE               Memory size in MB (default: ${toString cfg.defaultMemory})
         --cores N                       Number of CPU cores (default: ${toString cfg.defaultCores})
+        --disk-size SIZE                Disk size in GB (default: ${toString cfg.defaultDiskSize})
         --override-input INPUT FLAKEREF Override a flake input (can be specified multiple times)
                                         Format: INPUT_NAME FLAKE_REF
                                         Example: --override-input nixpkgs github:NixOS/nixpkgs/nixos-unstable
@@ -62,11 +64,11 @@ let
         # Start VM with custom location and multiple ports
         qemu-vm -d /data/my-vm -p 22:2222 -p 80:8080
 
-        # Start VM with custom configuration
-        qemu-vm -c ~/my-config.nix -p 22:2222
+        # Use a custom flake for VM configuration
+        qemu-vm --flake ~/my-custom-vm-flake -p 22:2222
 
         # Rebuild and start with more resources
-        qemu-vm --build --memory 8192 --cores 4 -p 22:2222
+        qemu-vm --build --memory 8192 --cores 4 --disk-size 128 -p 22:2222
 
         # Override nixpkgs input to use unstable
         qemu-vm --override-input nixpkgs github:NixOS/nixpkgs/nixos-unstable -p 22:2222
@@ -90,12 +92,12 @@ let
             VM_DIR="$2"
             shift 2
             ;;
-          -p|--port)
-            PORTS+=("$2")
+          -f|--flake)
+            FLAKE_REF="$2"
             shift 2
             ;;
-          -c|--config)
-            CONFIG_FILE="$2"
+          -p|--port)
+            PORTS+=("$2")
             shift 2
             ;;
           -m|--memory)
@@ -104,6 +106,10 @@ let
             ;;
           --cores)
             CORES="$2"
+            shift 2
+            ;;
+          --disk-size)
+            DISK_SIZE="$2"
             shift 2
             ;;
           --override-input)
@@ -153,6 +159,9 @@ let
       VM_IMAGE="$VM_DIR/nixos.qcow2"
       if [[ "''${BUILD:-false}" == "true" ]] || [[ ! -f "$VM_IMAGE" ]]; then
         echo "Building VM image..."
+        if [[ "$VERBOSE" == "true" ]]; then
+          echo "Using flake: $FLAKE_REF"
+        fi
 
         # Build input override arguments
         OVERRIDE_ARGS=()
@@ -167,59 +176,12 @@ let
           done
         fi
 
-        # Build command as array
-        BUILD_CMD=(nix build "${cfg.vmFlakeRef}.config.system.build.vm" --out-link "$VM_DIR/vm-result")
+        # Build the NixOS system configuration
+        BUILD_CMD=(nix build "$FLAKE_REF#nixosConfigurations.qemu-nixos.config.system.build.toplevel" --out-link "$VM_DIR/system")
 
         # Add override arguments if present
         if [[ ''${#OVERRIDE_ARGS[@]} -gt 0 ]]; then
           BUILD_CMD+=("''${OVERRIDE_ARGS[@]}")
-        fi
-
-        # If custom config is provided, we need to build with an override
-        if [[ -n "$CONFIG_FILE" ]]; then
-          if [[ ! -f "$CONFIG_FILE" ]]; then
-            echo "Error: Config file not found: $CONFIG_FILE"
-            exit 1
-          fi
-
-          # Create a temporary flake that imports the custom config
-          TEMP_DIR=$(mktemp -d)
-          trap 'rm -rf "$TEMP_DIR"' EXIT
-
-          cat > "$TEMP_DIR/flake.nix" << FLAKE_EOF
-      {
-        description = "Custom QEMU VM";
-
-        inputs = {
-          dotfiles.url = "${self}";
-          nixpkgs.follows = "dotfiles/nixpkgs";
-        };
-
-        outputs = { self, dotfiles, nixpkgs }: {
-          nixosConfigurations.qemu = nixpkgs.lib.nixosSystem {
-            system = "$(nix eval --impure --expr 'builtins.currentSystem' --raw)";
-            modules = [
-              dotfiles.nixosConfigurations.qemu.config.system.nixos.modules
-              (import $CONFIG_FILE)
-            ];
-          };
-        };
-      }
-      FLAKE_EOF
-
-          BUILD_CMD=(nix build "$TEMP_DIR#nixosConfigurations.qemu.config.system.build.vm" --out-link "$VM_DIR/vm-result")
-
-          # Add override arguments to custom config build as well
-          if [[ ''${#OVERRIDE_ARGS[@]} -gt 0 ]]; then
-            # For custom config, we need to override on the dotfiles input
-            DOTFILES_OVERRIDE_ARGS=()
-            for ((i=0; i<''${#INPUT_OVERRIDES[@]}; i+=2)); do
-              input_name="''${INPUT_OVERRIDES[i]}"
-              flake_ref="''${INPUT_OVERRIDES[i+1]}"
-              DOTFILES_OVERRIDE_ARGS+=("--override-input" "dotfiles/$input_name" "$flake_ref")
-            done
-            BUILD_CMD+=("''${DOTFILES_OVERRIDE_ARGS[@]}")
-          fi
         fi
 
         if [[ "$VERBOSE" == "true" ]]; then
@@ -228,50 +190,49 @@ let
 
         "''${BUILD_CMD[@]}"
 
-        # Link the VM image
-        ln -sf "$VM_DIR/vm-result/nixos.qcow2" "$VM_IMAGE"
-      fi
-
-      # Build port forwarding arguments
-      PORT_ARGS=()
-      for port_spec in "''${PORTS[@]}"; do
-        if [[ "$port_spec" =~ ^([0-9]+):([0-9]+)$ ]]; then
-          guest_port="''${BASH_REMATCH[1]}"
-          host_port="''${BASH_REMATCH[2]}"
-        elif [[ "$port_spec" =~ ^([0-9]+)$ ]]; then
-          guest_port="''${BASH_REMATCH[1]}"
-          host_port="$guest_port"
-        else
-          echo "Invalid port specification: $port_spec"
-          exit 1
-        fi
-        PORT_ARGS+=("-netdev" "user,id=net''${guest_port},hostfwd=tcp::''${host_port}-:''${guest_port}")
-        PORT_ARGS+=("-device" "virtio-net-pci,netdev=net''${guest_port}")
+        # Extract kernel, initrd, and kernel params from the built system
+        SYSTEM_PATH="$VM_DIR/system"
+        KERNEL="$SYSTEM_PATH/kernel"
+        INITRD="$SYSTEM_PATH/initrd"
+        KERNEL_PARAMS=$(cat "$SYSTEM_PATH/kernel-params")
 
         if [[ "$VERBOSE" == "true" ]]; then
-          echo "Forwarding: localhost:$host_port -> guest:$guest_port"
+          echo "System built at: $SYSTEM_PATH"
+          echo "Kernel: $KERNEL"
+          echo "Initrd: $INITRD"
         fi
-      done
-
-      # If no ports specified, set up default networking
-      if [[ ''${#PORTS[@]} -eq 0 ]]; then
-        PORT_ARGS+=("-nic" "user")
       fi
 
-      # State directory for VM runtime
-      STATE_DIR="$VM_DIR/state"
-      mkdir -p "$STATE_DIR"
+      # Create qcow2 disk if it doesn't exist
+      if [[ ! -f "$VM_IMAGE" ]]; then
+        echo "Creating disk image: $VM_IMAGE (''${DISK_SIZE}G)"
+        qemu-img create -f qcow2 "$VM_IMAGE" "''${DISK_SIZE}G"
+      fi
+
+      # Get kernel, initrd, and params from built system
+      SYSTEM_PATH="$VM_DIR/system"
+      if [[ ! -d "$SYSTEM_PATH" ]]; then
+        echo "Error: System not built at $SYSTEM_PATH"
+        exit 1
+      fi
+
+      KERNEL="$SYSTEM_PATH/kernel"
+      INITRD="$SYSTEM_PATH/initrd"
+      KERNEL_PARAMS=$(cat "$SYSTEM_PATH/kernel-params")
+
+      # Build QEMU arguments
+      QEMU_ARGS=()
 
       # Determine system architecture for proper qemu binary
       ARCH="$(uname -m)"
       case "$ARCH" in
         x86_64)
           QEMU_BIN="qemu-system-x86_64"
-          MACHINE_ARGS=("-machine" "type=q35,accel=kvm:hvf:tcg")
+          QEMU_ARGS+=("-machine" "type=q35,accel=kvm:hvf:tcg")
           ;;
         aarch64|arm64)
           QEMU_BIN="qemu-system-aarch64"
-          MACHINE_ARGS=("-machine" "type=virt,accel=hvf:kvm:tcg")
+          QEMU_ARGS+=("-machine" "type=virt,accel=hvf:kvm:tcg")
           ;;
         *)
           echo "Unsupported architecture: $ARCH"
@@ -279,26 +240,69 @@ let
           ;;
       esac
 
+      # CPU and memory
+      QEMU_ARGS+=("-cpu" "host")
+      QEMU_ARGS+=("-smp" "$CORES")
+      QEMU_ARGS+=("-m" "$MEMORY")
+
+      # Kernel and initrd
+      QEMU_ARGS+=("-kernel" "$KERNEL")
+      QEMU_ARGS+=("-initrd" "$INITRD")
+      QEMU_ARGS+=("-append" "init=$SYSTEM_PATH/init $KERNEL_PARAMS")
+
+      # Disk
+      QEMU_ARGS+=("-drive" "file=$VM_IMAGE,if=virtio,format=qcow2")
+
+      # Networking - build port forwarding or use default
+      if [[ ''${#PORTS[@]} -gt 0 ]]; then
+        for port_spec in "''${PORTS[@]}"; do
+          if [[ "$port_spec" =~ ^([0-9]+):([0-9]+)$ ]]; then
+            guest_port="''${BASH_REMATCH[1]}"
+            host_port="''${BASH_REMATCH[2]}"
+          elif [[ "$port_spec" =~ ^([0-9]+)$ ]]; then
+            guest_port="''${BASH_REMATCH[1]}"
+            host_port="$guest_port"
+          else
+            echo "Invalid port specification: $port_spec"
+            exit 1
+          fi
+          QEMU_ARGS+=("-netdev" "user,id=net''${guest_port},hostfwd=tcp::''${host_port}-:''${guest_port}")
+          QEMU_ARGS+=("-device" "virtio-net-pci,netdev=net''${guest_port}")
+
+          if [[ "$VERBOSE" == "true" ]]; then
+            echo "Forwarding: localhost:$host_port -> guest:$guest_port"
+          fi
+        done
+      else
+        QEMU_ARGS+=("-nic" "user")
+      fi
+
+      # Display
+      if [[ "$DISPLAY_MODE" == "none" ]]; then
+        QEMU_ARGS+=("-nographic")
+        QEMU_ARGS+=("-serial" "mon:stdio")
+      else
+        QEMU_ARGS+=("-display" "$DISPLAY_MODE")
+      fi
+
       echo "Starting VM..."
       echo "  Memory: ''${MEMORY}MB"
       echo "  Cores: $CORES"
       echo "  Disk: $VM_IMAGE"
+      echo "  System: $SYSTEM_PATH"
       echo "  Display: $DISPLAY_MODE"
       echo ""
-      echo "Press Ctrl-A then X to quit (if using -nographic)"
+      if [[ "$DISPLAY_MODE" == "none" ]]; then
+        echo "Press Ctrl-A then X to quit"
+      fi
       echo ""
 
-      # Start the VM
-      exec "$QEMU_BIN" \
-        "''${MACHINE_ARGS[@]}" \
-        -cpu host \
-        -smp "$CORES" \
-        -m "$MEMORY" \
-        -drive file="$VM_IMAGE",if=virtio,format=qcow2 \
-        "''${PORT_ARGS[@]}" \
-        -display "$DISPLAY_MODE" \
-        ''${DISPLAY_MODE:+-nographic} \
-        -serial mon:stdio
+      if [[ "$VERBOSE" == "true" ]]; then
+        echo "Running: $QEMU_BIN ''${QEMU_ARGS[*]}"
+      fi
+
+      # Run QEMU
+      exec "$QEMU_BIN" "''${QEMU_ARGS[@]}"
     '';
   };
 
@@ -325,10 +329,16 @@ in
       description = "Default number of CPU cores";
     };
 
+    defaultDiskSize = mkOption {
+      type = types.int;
+      default = 64;
+      description = "Default disk size in GB";
+    };
+
     vmFlakeRef = mkOption {
       type = types.str;
-      default = "${self}#nixosConfigurations.qemu";
-      description = "Flake reference to the QEMU base host configuration";
+      default = "path:${self}/base_hosts/qemu";
+      description = "Flake reference to the QEMU base host flake";
     };
   };
 

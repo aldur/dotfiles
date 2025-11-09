@@ -14,11 +14,11 @@ qemu-vm -p 22:2222
 # Start VM with custom location and multiple ports
 qemu-vm -d /data/my-vm -p 22:2222 -p 80:8080
 
-# Start VM with custom configuration
-qemu-vm -c ~/my-config.nix -p 22:2222
+# Use a custom flake for VM configuration
+qemu-vm --flake ~/my-custom-vm-flake -p 22:2222
 
 # Rebuild and start with more resources
-qemu-vm --build --memory 8192 --cores 4 -p 22:2222
+qemu-vm --build --memory 8192 --cores 4 --disk-size 128 -p 22:2222
 
 # Show all options
 qemu-vm --help
@@ -32,8 +32,16 @@ programs.qemu-vm = {
   # Optional: customize defaults
   defaultMemory = 4096;  # MB
   defaultCores = 4;
-  # vmFlakeRef defaults to self#nixosConfigurations.qemu
+  defaultDiskSize = 64;  # GB
 };
+```
+
+## Using a Custom Flake
+
+You can point to any flake that provides a `nixosConfigurations.qemu-nixos` output. For example, you could copy this directory and modify `qemu.nix` with your customizations, then:
+
+```bash
+qemu-vm --flake ~/my-custom-vm -p 22:2222
 ```
 
 ## Flake usage
