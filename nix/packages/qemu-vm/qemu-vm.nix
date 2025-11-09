@@ -13,15 +13,6 @@ let
   # Determine target system based on host
   targetSystem = if pkgs.stdenv.hostPlatform.isAarch64 then "aarch64-linux" else "x86_64-linux";
 
-  # Set QEMU configuration based on host architecture
-  qemuBinary = if pkgs.stdenv.hostPlatform.isAarch64
-    then "qemu-system-aarch64"
-    else "qemu-system-x86_64";
-
-  machineType = if pkgs.stdenv.hostPlatform.isAarch64
-    then "type=virt,accel=hvf:kvm:tcg"
-    else "type=q35,accel=kvm:hvf:tcg";
-
   # Build the qemu NixOS configuration with proper VM settings
   qemuNixos = nixpkgs.lib.nixosSystem {
     system = targetSystem;
