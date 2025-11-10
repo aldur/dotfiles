@@ -87,6 +87,7 @@
           llm = pkgs.llmWithPlugins;
         };
 
+        # Legacy packages are not automatically flake-checked
         legacyPackages = {
           inherit qemu-vm;
         };
