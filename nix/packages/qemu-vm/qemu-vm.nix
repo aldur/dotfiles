@@ -27,7 +27,7 @@ let
       inputs.self.nixosModules.default
       "${self}/base_hosts/qemu/qemu.nix"
       (
-        { modulesPath, lib, ... }:
+        { config, modulesPath, lib, ... }:
         {
           imports = [ "${modulesPath}/virtualisation/qemu-vm.nix" ];
 
@@ -37,6 +37,12 @@ let
             memorySize = defaultMemory;
             writableStoreUseTmpfs = false;
             useBootLoader = false;
+
+            # No additional shared directories beyond what's required
+            sharedDirectories = {};
+
+            # Disable graphics completely for terminal-only use
+            graphics = false;
 
             # Build for the host system
             qemu.package = pkgs.qemu;
@@ -48,7 +54,34 @@ let
   };
 
   # Use the VM runner script that NixOS generates
-  vmRunner = qemuNixos.config.system.build.vm;
+  vmRunnerOriginal = qemuNixos.config.system.build.vm;
+
+  # Unfortunately, NixOS hardcodes xchg directories and unnecessary devices
+  # in the qemu-vm.nix module. We patch the script to remove them.
+  vmRunner = pkgs.stdenv.mkDerivation {
+    name = "qemu-vm-runner-minimal";
+    src = vmRunnerOriginal;
+
+    buildPhase = ''
+      mkdir -p $out/bin
+
+      # Remove xchg virtfs mounts and unnecessary devices for terminal-only use
+      sed -e '/-virtfs.*mount_tag=xchg/d' \
+          -e '/-virtfs.*mount_tag=shared/d' \
+          -e '/mkdir.*xchg/d' \
+          -e '/-device virtio-keyboard/d' \
+          -e '/-device virtio-gpu-pci/d' \
+          -e '/-device usb-ehci/d' \
+          -e '/-device usb-kbd/d' \
+          -e '/-device usb-tablet/d' \
+          -e 's/console=tty0 //' \
+          $src/bin/run-qemu-nixos-vm > $out/bin/run-qemu-nixos-vm
+
+      chmod +x $out/bin/run-qemu-nixos-vm
+    '';
+
+    installPhase = "true";  # buildPhase does everything
+  };
 
 in
 pkgs.writeShellApplication {
