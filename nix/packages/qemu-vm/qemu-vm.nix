@@ -49,14 +49,37 @@ let
             host.pkgs = pkgs;
           };
 
-          # Override only the xchg mount point to not be mounted
-          # Keep shared to avoid boot issues
-          fileSystems = {
-            "/tmp/xchg" = lib.mkForce {
-              device = "none";
-              fsType = "none";
-              options = [ "noauto" ];
+          # Override filesystem configuration to remove xchg/shared mounts
+          # These would fail since we're removing the virtfs devices
+          boot.initrd.postMountCommands = lib.mkForce "";
+
+          # Remove the filesystem entries that would try to mount non-existent virtfs
+          fileSystems = lib.mkForce {
+            "/" = {
+              device = "/dev/disk/by-label/nixos";
+              fsType = "ext4";
+              autoResize = true;
             };
+
+            "/nix/.ro-store" = {
+              device = "nix-store";
+              fsType = "9p";
+              options = [ "trans=virtio" "version=9p2000.L" "cache=loose" ];
+              neededForBoot = true;
+            };
+
+            "/nix/store" = {
+              device = "overlay";
+              fsType = "overlay";
+              options = [
+                "lowerdir=/nix/.ro-store"
+                "upperdir=/nix/.rw-store/store"
+                "workdir=/nix/.rw-store/work"
+              ];
+              depends = [ "/nix/.ro-store" ];
+            };
+
+            # NOT including /tmp/xchg or /tmp/shared
           };
         }
       )
@@ -66,8 +89,8 @@ let
   # Use the VM runner script that NixOS generates
   vmRunnerOriginal = qemuNixos.config.system.build.vm;
 
-  # Unfortunately, NixOS hardcodes xchg directories and unnecessary devices
-  # in the qemu-vm.nix module. We patch the script to remove them.
+  # Remove unnecessary devices for terminal-only use
+  # The xchg/shared directories are kept as they're required for boot
   vmRunner = pkgs.stdenv.mkDerivation {
     name = "qemu-vm-runner-minimal";
     src = vmRunnerOriginal;
@@ -75,17 +98,19 @@ let
     buildPhase = ''
       mkdir -p $out/bin
 
-      # Remove xchg virtfs mount and unnecessary devices for terminal-only use
-      # Keep shared mount to avoid boot failures
-      sed -e '/-virtfs.*mount_tag=xchg/d' \
-          -e '/mkdir.*xchg/d' \
-          -e '/-device virtio-keyboard/d' \
-          -e '/-device virtio-gpu-pci/d' \
-          -e '/-device usb-ehci/d' \
-          -e '/-device usb-kbd/d' \
-          -e '/-device usb-tablet/d' \
-          -e 's/console=tty0 //' \
-          $src/bin/run-qemu-nixos-vm > $out/bin/run-qemu-nixos-vm
+      # Remove xchg/shared virtfs mounts and unnecessary devices
+      # The virtfs lines have backslashes at the end, so we need to handle line continuations
+      cat $src/bin/run-qemu-nixos-vm | \
+        sed -e '/-virtfs.*mount_tag=xchg.*\\$/d' \
+            -e '/-virtfs.*mount_tag=shared.*\\$/d' \
+            -e '/mkdir.*xchg/d' \
+            -e '/-device virtio-keyboard.*\\$/d' \
+            -e '/-device virtio-gpu-pci.*\\$/d' \
+            -e '/-device usb-ehci.*\\$/d' \
+            -e '/-device usb-kbd.*\\$/d' \
+            -e '/-device usb-tablet.*\\$/d' \
+            -e 's/console=tty0 //' \
+            > $out/bin/run-qemu-nixos-vm
 
       chmod +x $out/bin/run-qemu-nixos-vm
     '';
