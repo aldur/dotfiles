@@ -15,6 +15,11 @@ let
   # Determine target system based on host
   targetSystem = if pkgs.stdenv.hostPlatform.isAarch64 then "aarch64-linux" else "x86_64-linux";
 
+  baseModules = [
+    inputs.self.nixosModules.default
+    ../../base_hosts/qemu/qemu.nix
+  ];
+
   # Build the qemu NixOS configuration with proper VM settings
   qemuNixos = nixpkgs.lib.nixosSystem {
     system = targetSystem;
@@ -23,11 +28,15 @@ let
         inherit self;
       };
     };
-    modules = [
-      inputs.self.nixosModules.default
-      "${self}/base_hosts/qemu/qemu.nix"
+    modules = baseModules ++ [
       (
-        { config, modulesPath, lib, ... }:
+        {
+          config,
+          modulesPath,
+          lib,
+          options,
+          ...
+        }:
         {
           imports = [ "${modulesPath}/virtualisation/qemu-vm.nix" ];
 
@@ -38,9 +47,22 @@ let
             writableStoreUseTmpfs = false;
             useBootLoader = false;
 
-            # No shared directories - we don't need host-guest file sharing
-            # SSH is sufficient for file transfer
-            sharedDirectories = {};
+            # We need to remove the `xchg` and `shared` directories,
+            # so we need to re-define this option without them.
+            sharedDirectories = lib.mkForce {
+              nix-store = lib.mkIf config.virtualisation.mountHostNixStore {
+                source = builtins.storeDir;
+                # Always mount this to /nix/.ro-store because we never want to actually
+                # write to the host Nix Store.
+                target = "/nix/.ro-store";
+                securityModel = "none";
+              };
+              certs = lib.mkIf config.virtualisation.useHostCerts {
+                source = ''"$TMPDIR"/certs'';
+                target = "/etc/ssl/certs";
+                securityModel = "none";
+              };
+            };
 
             # Disable graphics completely for terminal-only use
             graphics = false;
@@ -54,10 +76,6 @@ let
           # Use mkForce with null to completely remove these mount points
           fileSystems."/tmp/xchg" = lib.mkForce null;
           fileSystems."/tmp/shared" = lib.mkForce null;
-
-          # Make boot ignore mount failures and continue
-          boot.initrd.checkJournalingFS = false;
-          boot.initrd.failureMode = "ignore";
         }
       )
     ];
@@ -87,21 +105,16 @@ let
             > $out/bin/run-qemu-nixos-vm
 
       chmod +x $out/bin/run-qemu-nixos-vm
-
-      # Debug: Show what we're removing
-      echo "=== Removed virtfs lines ===" >&2
-      grep -E "virtfs.*mount_tag=(xchg|shared)" $src/bin/run-qemu-nixos-vm >&2 || true
-      echo "=== End removed lines ===" >&2
     '';
 
-    installPhase = "true";  # buildPhase does everything
+    installPhase = "true"; # buildPhase does everything
   };
 
 in
 pkgs.writeShellApplication {
   name = "qemu-vm";
   passthru = {
-    inherit qemuNixos vmRunner;
+    modules = baseModules;
   };
   runtimeInputs = with pkgs; [
     qemu
@@ -309,4 +322,3 @@ pkgs.writeShellApplication {
     exec ${vmRunner}/bin/run-qemu-nixos-vm
   '';
 }
-

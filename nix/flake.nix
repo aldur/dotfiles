@@ -80,16 +80,12 @@
       {
         packages = {
           inherit (lazyvims) lazyvim lazyvim-light;
+          inherit qemu-vm;
           inherit (pkgs)
             beancount-language-server # from aldur/beancount-language-server
             nomicfoundation-solidity-language-server
             ;
-          inherit qemu-vm;
           llm = pkgs.llmWithPlugins;
-        };
-
-        utils = {
-          github-keys = pkgs.callPackage ./utils/github-keys.nix { };
         };
       }
     ))
