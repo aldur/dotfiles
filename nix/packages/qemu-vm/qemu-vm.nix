@@ -38,7 +38,8 @@ let
             writableStoreUseTmpfs = false;
             useBootLoader = false;
 
-            # No additional shared directories beyond what's required
+            # No shared directories - we don't need host-guest file sharing
+            # SSH is sufficient for file transfer
             sharedDirectories = {};
 
             # Disable graphics completely for terminal-only use
@@ -49,38 +50,14 @@ let
             host.pkgs = pkgs;
           };
 
-          # Override filesystem configuration to remove xchg/shared mounts
-          # These would fail since we're removing the virtfs devices
-          boot.initrd.postMountCommands = lib.mkForce "";
+          # Remove xchg/shared filesystem mounts since we removed the virtfs devices
+          # Use mkForce with null to completely remove these mount points
+          fileSystems."/tmp/xchg" = lib.mkForce null;
+          fileSystems."/tmp/shared" = lib.mkForce null;
 
-          # Remove the filesystem entries that would try to mount non-existent virtfs
-          fileSystems = lib.mkForce {
-            "/" = {
-              device = "/dev/disk/by-label/nixos";
-              fsType = "ext4";
-              autoResize = true;
-            };
-
-            "/nix/.ro-store" = {
-              device = "nix-store";
-              fsType = "9p";
-              options = [ "trans=virtio" "version=9p2000.L" "cache=loose" ];
-              neededForBoot = true;
-            };
-
-            "/nix/store" = {
-              device = "overlay";
-              fsType = "overlay";
-              options = [
-                "lowerdir=/nix/.ro-store"
-                "upperdir=/nix/.rw-store/store"
-                "workdir=/nix/.rw-store/work"
-              ];
-              depends = [ "/nix/.ro-store" ];
-            };
-
-            # NOT including /tmp/xchg or /tmp/shared
-          };
+          # Make boot ignore mount failures and continue
+          boot.initrd.checkJournalingFS = false;
+          boot.initrd.failureMode = "ignore";
         }
       )
     ];
@@ -90,7 +67,6 @@ let
   vmRunnerOriginal = qemuNixos.config.system.build.vm;
 
   # Remove unnecessary devices for terminal-only use
-  # The xchg/shared directories are kept as they're required for boot
   vmRunner = pkgs.stdenv.mkDerivation {
     name = "qemu-vm-runner-minimal";
     src = vmRunnerOriginal;
@@ -98,12 +74,10 @@ let
     buildPhase = ''
       mkdir -p $out/bin
 
-      # Remove xchg/shared virtfs mounts and unnecessary devices
-      # The virtfs lines have backslashes at the end, so we need to handle line continuations
+      # Remove BOTH virtfs mounts (xchg and shared) and unnecessary devices
       cat $src/bin/run-qemu-nixos-vm | \
         sed -e '/-virtfs.*mount_tag=xchg.*\\$/d' \
             -e '/-virtfs.*mount_tag=shared.*\\$/d' \
-            -e '/mkdir.*xchg/d' \
             -e '/-device virtio-keyboard.*\\$/d' \
             -e '/-device virtio-gpu-pci.*\\$/d' \
             -e '/-device usb-ehci.*\\$/d' \
@@ -113,6 +87,11 @@ let
             > $out/bin/run-qemu-nixos-vm
 
       chmod +x $out/bin/run-qemu-nixos-vm
+
+      # Debug: Show what we're removing
+      echo "=== Removed virtfs lines ===" >&2
+      grep -E "virtfs.*mount_tag=(xchg|shared)" $src/bin/run-qemu-nixos-vm >&2 || true
+      echo "=== End removed lines ===" >&2
     '';
 
     installPhase = "true";  # buildPhase does everything
@@ -121,6 +100,9 @@ let
 in
 pkgs.writeShellApplication {
   name = "qemu-vm";
+  passthru = {
+    inherit qemuNixos vmRunner;
+  };
   runtimeInputs = with pkgs; [
     qemu
     coreutils
