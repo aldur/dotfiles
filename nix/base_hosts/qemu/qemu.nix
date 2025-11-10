@@ -3,7 +3,6 @@
   inputs,
   lib,
   modulesPath,
-  pkgs,
   ...
 }:
 {
@@ -70,5 +69,7 @@
     };
   };
 
-  users.users.aldur.openssh.authorizedKeys.keys = pkgs.callPackage ../../utils/github-keys.nix { };
+  users.users.aldur.openssh.authorizedKeys.keys =
+    config.virtualisation.host.pkgs.callPackage ../../utils/github-keys.nix
+      { };
 }
