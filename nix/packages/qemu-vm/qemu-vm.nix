@@ -48,6 +48,16 @@ let
             qemu.package = pkgs.qemu;
             host.pkgs = pkgs;
           };
+
+          # Override only the xchg mount point to not be mounted
+          # Keep shared to avoid boot issues
+          fileSystems = {
+            "/tmp/xchg" = lib.mkForce {
+              device = "none";
+              fsType = "none";
+              options = [ "noauto" ];
+            };
+          };
         }
       )
     ];
@@ -65,9 +75,9 @@ let
     buildPhase = ''
       mkdir -p $out/bin
 
-      # Remove xchg virtfs mounts and unnecessary devices for terminal-only use
+      # Remove xchg virtfs mount and unnecessary devices for terminal-only use
+      # Keep shared mount to avoid boot failures
       sed -e '/-virtfs.*mount_tag=xchg/d' \
-          -e '/-virtfs.*mount_tag=shared/d' \
           -e '/mkdir.*xchg/d' \
           -e '/-device virtio-keyboard/d' \
           -e '/-device virtio-gpu-pci/d' \
