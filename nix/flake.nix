@@ -90,7 +90,6 @@
       }
     ))
     // {
-
       templates = {
         vm-nogui = {
           path = ./base_hosts/qemu;
