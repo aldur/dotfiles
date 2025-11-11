@@ -6,6 +6,7 @@
   defaultMemory ? 16384,
   defaultCores ? 8,
   defaultDiskSize ? 64,
+  defaultQemuModule ? ../../base_hosts/qemu/qemu.nix,
   ...
 }:
 
@@ -17,7 +18,6 @@ let
 
   baseModules = [
     inputs.self.nixosModules.default
-    ../../base_hosts/qemu/qemu.nix
   ];
 
   # Build the qemu NixOS configuration with proper VM settings
@@ -29,6 +29,7 @@ let
       };
     };
     modules = baseModules ++ [
+      defaultQemuModule
       (
         {
           config,

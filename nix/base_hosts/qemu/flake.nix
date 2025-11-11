@@ -15,14 +15,14 @@
     in
     aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system: {
       packages = rec {
-        vm-nogui = aldur-dotfiles.legacyPackages.${system}.qemu-vm;
+        vm-nogui = aldur-dotfiles.legacyPackages.${system}.qemu-vm.override { qemuModule = ./qemu.nix; };
         default = vm-nogui;
       };
     })
     // {
       nixosConfigurations.qemu-nixos = aldur-dotfiles.inputs.nixpkgs.lib.nixosSystem {
         inherit specialArgs;
-        inherit (aldur-dotfiles.legacyPackages.${targetSystem}.qemu-vm) modules;
+        modules = aldur-dotfiles.legacyPackages.${targetSystem}.qemu-vm.modules ++ [ ./qemu.nix ];
         system = targetSystem;
       };
     };
