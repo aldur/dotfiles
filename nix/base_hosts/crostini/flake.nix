@@ -62,10 +62,10 @@
     // (
       let
         generator =
-          system: module:
+          system: moreModules:
           nixpkgs.lib.nixosSystem {
             inherit specialArgs system;
-            modules = modules ++ [ module ];
+            modules = modules ++ moreModules;
           };
 
         lxc-nixos = generator "aarch64-linux" crostiniModule;
@@ -75,9 +75,14 @@
           # Having this allows rebuilding the image _within_ the container.
           inherit lxc-nixos;
           lxc-nixos-arm = lxc-nixos;
-          lxc-nixos-x86 = generator "x86_64-linux" crostiniModule;
+          lxc-nixos-x86 = generator "x86_64-linux" [ crostiniModule ];
 
-          baguette-nixos = generator "aarch64-linux" baguetteModule;
+          baguette-nixos = generator "aarch64-linux" [
+            baguetteModule
+            (_: {
+              virtualisation.buildMemorySize = 1024 * 8;
+            })
+          ];
         };
       }
     );
