@@ -42,23 +42,29 @@
       crostiniModule = nixos-crostini.nixosModules.crostini;
       baguetteModule = nixos-crostini.nixosModules.baguette;
     in
-    aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system: {
-      packages = rec {
-        crostini-lxc = nixos-generators.nixosGenerate {
-          inherit system specialArgs;
-          modules = modules ++ [ crostiniModule ];
-          format = "lxc";
-        };
-        default = crostini-lxc;
+    aldur-dotfiles.inputs.flake-utils.lib.eachSystem
+      [
+        "x86_64-linux"
+        "aarch64-linux"
+      ]
+      (system: {
+        packages = rec {
+          crostini-lxc = nixos-generators.nixosGenerate {
+            inherit system specialArgs;
+            modules = modules ++ [ crostiniModule ];
+            format = "lxc";
+          };
+          default = crostini-lxc;
 
-        crostini-lxc-metadata = nixos-generators.nixosGenerate {
-          inherit system specialArgs modules;
-          format = "lxc-metadata";
-        };
+          crostini-lxc-metadata = nixos-generators.nixosGenerate {
+            inherit system specialArgs modules;
+            format = "lxc-metadata";
+          };
 
-        baguette-image = self.nixosConfigurations.baguette-nixos.config.system.build.btrfsImage;
-      };
-    })
+          baguette-tarball = self.nixosConfigurations.baguette-nixos.config.system.build.tarball;
+          baguette-image = self.nixosConfigurations.baguette-nixos.config.system.build.btrfsImage;
+        };
+      })
     // (
       let
         generator =
