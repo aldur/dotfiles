@@ -75,6 +75,7 @@
           overlays = import ./overlays;
         };
         lazyvims = pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; };
+        qemu-vm = pkgs.callPackage ./packages/qemu-vm/qemu-vm.nix { inherit inputs; };
       in
       {
         packages = {
@@ -86,13 +87,13 @@
           llm = pkgs.llmWithPlugins;
         };
 
-        utils = {
-          github-keys = pkgs.callPackage ./utils/github-keys.nix { };
+        # Legacy packages are not automatically flake-checked
+        legacyPackages = {
+          inherit qemu-vm;
         };
       }
     ))
     // {
-
       templates = {
         vm-nogui = {
           path = ./base_hosts/qemu;

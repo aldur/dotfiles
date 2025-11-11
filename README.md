@@ -47,6 +47,16 @@ Or its light version:
 nix run "github:aldur/dotfiles?dir=nix#lazyvim-light"
 ```
 
+#### `qemu-vm`
+
+Will launch a `qemu-vm` with the configuration from this repository.
+
+See [here](/nix/base_hosts/qemu/README.md) for more information.
+
+```bash
+nix run "github:aldur/dotfiles?dir=nix#qemu-vm"
+```
+
 #### `neovim`
 
 My (previous) `nvim` setup. Technically is its own Flake.
