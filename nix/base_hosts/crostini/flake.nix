@@ -1,5 +1,5 @@
 {
-  description = "An lxc NixOS guest from aldur's dotfiles.";
+  description = "An NixOS ChromeOS guest from aldur's dotfiles.";
 
   inputs = {
     aldur-dotfiles = {
@@ -18,11 +18,21 @@
       inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
     };
   };
-  outputs = { self, nixos-generators, aldur-dotfiles, nixos-crostini, ... }:
+  outputs =
+    {
+      self,
+      nixos-generators,
+      aldur-dotfiles,
+      nixos-crostini,
+      ...
+    }:
     let
-      modules = [ aldur-dotfiles.nixosModules.default ./crostini.nix ];
+      modules = [
+        aldur-dotfiles.nixosModules.default
+        ./crostini.nix
+      ];
 
-      nixpkgs = aldur-dotfiles.inputs.nixpkgs;
+      inherit (aldur-dotfiles.inputs) nixpkgs;
       specialArgs = {
         inputs = aldur-dotfiles.specialArgs.inputs // {
           inherit nixos-crostini;
@@ -31,7 +41,8 @@
 
       crostiniModule = nixos-crostini.nixosModules.crostini;
       baguetteModule = nixos-crostini.nixosModules.baguette;
-    in aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system: {
+    in
+    aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system: {
       packages = rec {
         crostini-lxc = nixos-generators.nixosGenerate {
           inherit system specialArgs;
@@ -45,25 +56,29 @@
           format = "lxc-metadata";
         };
 
-        baguette-image =
-          self.nixosConfigurations.baguette-nixos.config.system.build.btrfsImage;
+        baguette-image = self.nixosConfigurations.baguette-nixos.config.system.build.btrfsImage;
       };
-    }) // (let
-      generator = system: module:
-        nixpkgs.lib.nixosSystem {
-          inherit specialArgs system;
-          modules = modules ++ [ module ];
+    })
+    // (
+      let
+        generator =
+          system: module:
+          nixpkgs.lib.nixosSystem {
+            inherit specialArgs system;
+            modules = modules ++ [ module ];
+          };
+
+        lxc-nixos = generator "aarch64-linux" crostiniModule;
+      in
+      {
+        nixosConfigurations = {
+          # Having this allows rebuilding the image _within_ the container.
+          inherit lxc-nixos;
+          lxc-nixos-arm = lxc-nixos;
+          lxc-nixos-x86 = generator "x86_64-linux" crostiniModule;
+
+          baguette-nixos = generator "aarch64-linux" baguetteModule;
         };
-
-      lxc-nixos = generator "aarch64-linux" crostiniModule;
-    in {
-      # Having this allows rebuilding the image _within_ the container.
-      nixosConfigurations.lxc-nixos = lxc-nixos;
-      nixosConfigurations.lxc-nixos-arm = lxc-nixos;
-      nixosConfigurations.lxc-nixos-x86 =
-        generator "x86_64-linux" crostiniModule;
-
-      nixosConfigurations.baguette-nixos =
-        generator "aarch64-linux" baguetteModule;
-    });
+      }
+    );
 }

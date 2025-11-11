@@ -100,7 +100,7 @@
           description = "A QEMU VM";
         };
         lxc-nixos = {
-          path = ./base_hosts/lxc-nixos;
+          path = ./base_hosts/crostini;
           description = "An lxc-nixos container to run in ChromeOS Crostini";
         };
       };
