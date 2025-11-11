@@ -16,6 +16,8 @@ in
     ./linux-builder.nix
     ./packages.nix
     ./security.nix
+
+    ./launchd/syncthing.nix
   ];
 
   # Used for backwards compatibility, please read the changelog before changing.
