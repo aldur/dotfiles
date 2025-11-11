@@ -19,7 +19,7 @@ in
       user = {
         agents = {
           syncthing = {
-            command = "${pkgs.lib.getExe pkgs.syncthing} -no-browser -no-restart";
+            command = "${pkgs.lib.getExe pkgs.syncthing} --no-browser --no-restart";
             serviceConfig = {
               KeepAlive = true;
               RunAtLoad = true;
