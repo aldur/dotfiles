@@ -49,9 +49,12 @@
     };
   };
   services.openssh.settings.AllowUsers = [ "root" ];
-  security = {
 
+  security = {
     pam.sshAgentAuth.enable = true;
+    pam.sshAgentAuth.authorizedKeysFiles = [
+      "/etc/ssh/authorized_keys.d/root"
+    ];
 
     # NOTE: There a bug (maybe) in pcscd where, when running in an lxc container,
     # it doesn't automatically exit when the "smart card" is disconnected.
@@ -71,10 +74,10 @@
         ];
       }
     ];
-
-    # FIXME!
-    sudo-rs.wheelNeedsPassword = false;
   };
+
+  # Enable SSH root login through localhost
+  users.users.root.openssh.authorizedKeys.keys = pkgs.callPackage ../../utils/github-keys.nix { };
 
   home-manager.users.aldur =
     { config, ... }: # home-manager's config, not the OS one
