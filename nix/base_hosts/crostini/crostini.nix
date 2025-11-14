@@ -51,7 +51,7 @@
   services.openssh.settings.AllowUsers = [ "root" ];
 
   security = {
-    pam.sshAgentAuth.enable = true;
+    pam.sshAgentAuth.enable = false;
     pam.sshAgentAuth.authorizedKeysFiles = [
       "/etc/ssh/authorized_keys.d/root"
     ];
