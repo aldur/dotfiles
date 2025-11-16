@@ -11,9 +11,12 @@
   hardware.graphics.enable = true;
 
   programs = {
+    aldur = {
+      lazyvim.enable = true;
+      lazyvim.packageNames = [ "lazyvim" ];
+      claude-code.enable = false;
+    };
 
-    aldur.lazyvim.enable = true;
-    aldur.lazyvim.packageNames = [ "lazyvim" ];
     gnupg.agent.pinentryPackage = pkgs.pinentry-qt;
 
     # This configures default SSH connections (including those initiated by
