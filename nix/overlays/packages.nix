@@ -4,6 +4,8 @@ final: prev: {
       ../packages/nomicfoundation-solidity-language-server/nomicfoundation-solidity-language-server.nix
       { };
 
+  solidity-docset = prev.callPackage ../packages/solidity-docset { };
+
   gpg-encrypt = prev.callPackage ../packages/gpg-encrypt/gpg-encrypt.nix { };
   totp-cli = final.callPackage ../packages/totp-cli-ephemeral { inherit (prev) totp-cli; };
 
