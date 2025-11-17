@@ -1,4 +1,6 @@
-vim.lsp.enable("clarinet")
-vim.lsp.enable("beancount")
-vim.lsp.enable("solidity_ls_nomicfoundation")
-vim.lsp.enable("solidity_ls")
+vim.lsp.enable({
+	"clarinet",
+	"beancount",
+	"solidity_ls_nomicfoundation",
+	"solidity_ls",
+})
