@@ -57,11 +57,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1759654643,
-        "narHash": "sha256-SHFjYHHT7BmNLRL9mgfB/9qyp5xQeI/YCxCPePPg9j0=",
+        "lastModified": 1763314327,
+        "narHash": "sha256-zZli1izZzfafYZXE2xir1+Lct5GAbOtGoMXLVlobijk=",
         "owner": "aldur",
         "repo": "dashp",
-        "rev": "200647e0dbabaf5de1cfd5e8d13df7a7f5940aa1",
+        "rev": "4138d3b67f861e2269129176791f68d04771790c",
         "type": "github"
       },
       "original": {
