@@ -1,3 +1,3 @@
 return {
-    {'tpope/vim-fugitive', cmd = {'G', 'GBrowse'}, dependencies = {'tpope/vim-rhubarb'}},
+	{ "tpope/vim-fugitive", cmd = { "G", "GBrowse" }, dependencies = { "tpope/vim-rhubarb" } },
 }
