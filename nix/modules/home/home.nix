@@ -170,6 +170,6 @@ in
     };
   };
 
-  services.gpg-agent.pinentry.package = osConfig.programs.gnupg.agent.pinentryPackage;
+  # NOTE: Pinentry configured by each respective module
   services.gpg-agent.enable = true;
 }
