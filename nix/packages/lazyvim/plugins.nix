@@ -38,10 +38,7 @@
     vim-rhubarb
 
     # rust
-    (rustaceanvim.overrideAttrs (oa: {
-      # TODO: FIXME: https://github.com/nvim-neotest/neotest/issues/530
-      doCheck = false;
-    }))
+    rustaceanvim
     crates-nvim
 
     SchemaStore-nvim
