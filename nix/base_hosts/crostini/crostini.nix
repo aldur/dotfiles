@@ -27,6 +27,7 @@
     '';
   };
 
+  # NOTE: It will use gnupg.agent.pinentryPackage
   services.yubikey-agent.enable = true;
 
   # This makes it so that `sommelier` can set `DISPLAY`,

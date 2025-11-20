@@ -3,6 +3,7 @@
   inputs,
   stateVersion,
   lib,
+  osConfig,
   ...
 }:
 let
@@ -154,7 +155,11 @@ in
     gpg = {
       enable = true;
       scdaemonSettings = {
+        # https://blog.apdu.fr/posts/2024/12/gnupg-and-pcsc-conflicts-episode-3/
         pcsc-shared = true;
+
+        # https://support.yubico.com/s/article/Resolving-GPGs-CCID-conflicts
+        disable-ccid = true;
       };
       publicKeys = [
         {
@@ -164,4 +169,7 @@ in
       ];
     };
   };
+
+  services.gpg-agent.pinentry.package = osConfig.programs.gnupg.agent.pinentryPackage;
+  services.gpg-agent.enable = true;
 }
