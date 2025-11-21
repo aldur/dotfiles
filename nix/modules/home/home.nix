@@ -3,7 +3,6 @@
   inputs,
   stateVersion,
   lib,
-  osConfig,
   ...
 }:
 let
@@ -33,6 +32,8 @@ in
   };
 
   programs = {
+    clipshare.enable = true;
+
     fish = {
       enable = true;
 

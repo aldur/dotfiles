@@ -37,11 +37,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1760261725,
-        "narHash": "sha256-1CyM8tGRyi+b5lhm0+2TMg2WsJaLvMM5ovuXe65U/kc=",
+        "lastModified": 1763719894,
+        "narHash": "sha256-7hltOCEAq+l2SaV99kGWCiJoADHMoDlfYqOTyF1aH9Q=",
         "owner": "aldur",
         "repo": "clipshare",
-        "rev": "5ea1ce9f056dfcfb816071355876425314972d0c",
+        "rev": "c1f12a7ddc897bbedf5fd4d4c3fa732814c053be",
         "type": "github"
       },
       "original": {
