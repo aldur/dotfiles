@@ -14,11 +14,11 @@ let
 
   vmScript = pkgs.callPackage ../../packages/qemu-vm/qemu-vm.nix {
     inherit inputs;
-    defaultVmDir = cfg.defaultVmDir;
-    defaultMemory = cfg.defaultMemory;
-    defaultCores = cfg.defaultCores;
-    defaultDiskSize = cfg.defaultDiskSize;
-    vmFlakeRef = cfg.vmFlakeRef;
+    inherit (cfg) defaultVmDir;
+    inherit (cfg) defaultMemory;
+    inherit (cfg) defaultCores;
+    inherit (cfg) defaultDiskSize;
+    inherit (cfg) vmFlakeRef;
   };
 
 in
