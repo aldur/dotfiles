@@ -84,6 +84,7 @@
             beancount-language-server # from aldur/beancount-language-server
             nomicfoundation-solidity-language-server
             solidity-docset
+            shrinkpdf
             ;
           llm = pkgs.llmWithPlugins;
         };
