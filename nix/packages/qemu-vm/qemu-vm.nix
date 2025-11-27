@@ -153,6 +153,7 @@ pkgs.writeShellApplication {
       --gui                           Enable GUI (default: headless)
       -v, --verbose                   Verbose output
       --clean                         Remove existing VM state
+      --ephemeral                     Do not write to the VM disk
       --show-boot                     Show boot console messages (default: hidden)
 
     EXAMPLES:
@@ -208,6 +209,10 @@ pkgs.writeShellApplication {
           ;;
         --clean)
           CLEAN=true
+          shift
+          ;;
+        --ephemeral)
+          EPHEMERAL=true
           shift
           ;;
         --show-boot)
@@ -293,6 +298,10 @@ pkgs.writeShellApplication {
       export QEMU_KERNEL_PARAMS="quiet loglevel=0 systemd.show_status=no"
     fi
 
+    if [[ "$EPHEMERAL" == "true" ]]; then
+      export QEMU_OPTS="$QEMU_OPTS -snapshot"
+    fi
+
     echo "Starting VM..."
     echo "  Memory: ''${MEMORY}MB"
     echo "  Cores: $CORES"
@@ -305,6 +314,9 @@ pkgs.writeShellApplication {
     fi
     if [[ -n "$QEMU_NET_OPTS" ]]; then
       echo "  Network: $QEMU_NET_OPTS"
+    fi
+    if [[ "$EPHEMERAL" == "true" ]]; then
+      echo "  Ephemeral mode: enabled"
     fi
     echo ""
     if [[ "$DISPLAY_MODE" == "none" ]]; then
