@@ -11,6 +11,7 @@ final: prev: {
 
   shrinkpdf = prev.callPackage ../packages/shrinkpdf/shrinkpdf.nix { };
   flake-lock-cooldown = prev.callPackage ../packages/flake-lock-cooldown { };
+  remarks = prev.callPackage ../packages/remarks { };
 
   tiktoken = prev.callPackage ../packages/tiktoken/tiktoken.nix { };
   llmcat = prev.callPackage ../packages/llmcat/llmcat.nix { };
