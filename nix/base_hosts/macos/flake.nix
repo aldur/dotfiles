@@ -35,14 +35,20 @@
       flake = false;
     };
   };
-  outputs = { nix-darwin, aldur-dotfiles, ... }@inputs:
+  outputs =
+    { nix-darwin, aldur-dotfiles, ... }@inputs:
     let
-      modules =
-        [ "${aldur-dotfiles}/modules/darwin/configuration.nix" ./macos.nix ];
+      modules = [
+        "${aldur-dotfiles}/modules/darwin/configuration.nix"
+        ./macos.nix
+      ];
 
-      specialArgs = { inputs = aldur-dotfiles.specialArgs.inputs // inputs; };
-    in {
-      darwinConfigurations."macOS" =
-        nix-darwin.lib.darwinSystem { inherit specialArgs modules; };
+      specialArgs = {
+        # Order is important, we want "self" to be "aldur-dotfiles".
+        inputs = inputs // aldur-dotfiles.specialArgs.inputs;
+      };
+    in
+    {
+      darwinConfigurations."macOS" = nix-darwin.lib.darwinSystem { inherit specialArgs modules; };
     };
 }
