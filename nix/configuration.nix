@@ -16,15 +16,17 @@
     (
       { config, ... }:
       {
-        home-manager.useGlobalPkgs = true;
-        home-manager.useUserPackages = true;
-        home-manager.backupFileExtension = "home-manager-backup";
+        home-manager = {
+          useGlobalPkgs = true;
+          useUserPackages = true;
+          backupFileExtension = "home-manager-backup";
 
-        # Optionally, use home-manager.extraSpecialArgs to pass
-        # arguments to home.nix
-        home-manager.extraSpecialArgs = {
-          stateVersion = config.system.stateVersion;
-          inherit inputs;
+          # Optionally, use home-manager.extraSpecialArgs to pass
+          # arguments to home.nix
+          extraSpecialArgs = {
+            inherit (config.system) stateVersion;
+            inherit inputs;
+          };
         };
       }
     )
@@ -32,9 +34,8 @@
     (
       { config, pkgs, ... }:
       {
-        nixpkgs.config.allowUnfreePredicate = (
-          pkg: builtins.elem (pkgs.lib.getName pkg) config.nixpkgs.allowUnfreeByName
-        );
+        nixpkgs.config.allowUnfreePredicate =
+          pkg: builtins.elem (pkgs.lib.getName pkg) config.nixpkgs.allowUnfreeByName;
       }
     )
   ];
