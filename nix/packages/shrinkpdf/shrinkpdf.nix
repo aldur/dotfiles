@@ -7,15 +7,15 @@
   makeWrapper,
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "shrinkpdf";
   version = "unstable-2025-01-08";
 
   src = fetchFromGitHub {
-    owner = "aklomp";
+    owner = "aldur";
     repo = "shrinkpdf";
-    rev = "971c661a4850d20fcd65b954ad157597b6bf3d39";
-    hash = "sha256-0wJAr6nFX2o6ciAEwJP0OJoco1zV4kYAOMOdH+5ZXbA=";
+    rev = "d8e4aca8a4caebcc1ef0f569e6651c8dc5964334";
+    hash = "sha256-URS7V00TJgrUiRC7YAaCrcmONgC5+xaHS6QPE6wv+Jo=";
   };
 
   nativeBuildInputs = [ makeWrapper ];
