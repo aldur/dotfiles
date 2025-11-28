@@ -22,6 +22,7 @@ final: prev: {
       ps.llm
       ps.llm-ollama
       ps.llm-gguf
+      ps.llm-openrouter
     ]
     ++ prev.lib.optional (prev.stdenv.isDarwin && prev.stdenv.isAarch64) (
       prev.callPackage ../packages/llm-mlx { }
