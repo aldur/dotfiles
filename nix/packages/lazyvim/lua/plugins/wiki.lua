@@ -68,7 +68,7 @@ return {
 			end, { desc = "Search wiki content (live)" })
 
 			-- Add convenient keymap (using ws for "wiki search")
-			vim.keymap.set("n", "<leader>ws", "<cmd>WikiGrep<cr>", { desc = "Search wiki content" })
+			vim.keymap.set("n", "<leader>wss", "<cmd>WikiGrep<cr>", { desc = "Search wiki content" })
 		end,
 	},
 }
