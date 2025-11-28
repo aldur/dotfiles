@@ -81,7 +81,7 @@
   };
 
   # Enable SSH root login through localhost
-  users.users.root.openssh.authorizedKeys.keys = pkgs.callPackage ../../utils/github-keys.nix { };
+  users.users.root.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
 
   home-manager.users.aldur =
     { config, ... }: # home-manager's config, not the OS one

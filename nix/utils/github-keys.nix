@@ -1,21 +1,14 @@
 {
-  fetchurl,
-  lib,
   username ? "aldur",
   sha256 ? "1wdq6qf3z27lrzcgggs2fl075l8k92kfzsp86dyzgarlz2a6r8dr",
 }:
-
+# NOTE: This uses only `builtins` to be independent of nixpkgs/system
 let
-  # Fetch the keys file from GitHub
-  keysFile = fetchurl {
+  keysFile = builtins.fetchurl {
     url = "https://github.com/${username}.keys";
     inherit sha256;
   };
 
-  # Read the file content and split into lines
   keysContent = builtins.readFile keysFile;
-
-  # Split by newlines and filter out empty lines
-  keysList = builtins.filter (line: line != "") (lib.splitString "\n" keysContent);
 in
-keysList
+builtins.filter (line: line != "" && line != [ ]) (builtins.split "\n" keysContent)

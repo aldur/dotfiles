@@ -122,6 +122,8 @@
           inputs = thisFlakeInputs;
         };
 
+      utils.github-keys = import ./utils/github-keys.nix { };
+
       nixosModules.default = ./modules/nixos/configuration.nix;
       darwinModules.default = ./modules/darwin/configuration.nix;
     };
