@@ -30,15 +30,16 @@
   # compatible, in order to avoid breaking some software such as database
   # servers. You should change this only after NixOS release notes say you
   # should.
-  system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = lib.mkDefault "24.11"; # Did you read the comment?
 
   # Doesn't play nicely with flakes.
   programs.command-not-found.enable = false;
 
   home-manager.users.aldur = ./home.nix;
+
   # Use home-manager.extraSpecialArgs to pass arguments to home.nix
   home-manager.extraSpecialArgs = {
-    stateVersion = config.system.stateVersion;
+    inherit (config.system) stateVersion;
     inherit inputs;
   };
 }
