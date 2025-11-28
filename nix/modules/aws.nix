@@ -28,13 +28,10 @@ in
         imports = [ inputs.agenix.homeManagerModules.default ];
       };
 
-    environment.systemPackages = (
-      with pkgs;
-      [
-        awscli2
-        ssm-session-manager-plugin
-      ]
-    );
+    environment.systemPackages = with pkgs; [
+      awscli2
+      ssm-session-manager-plugin
+    ];
 
   };
 }

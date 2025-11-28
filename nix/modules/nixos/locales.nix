@@ -1,4 +1,4 @@
-{ ... }:
+_:
 let
   defaultLocale = "en_US.UTF-8";
 in

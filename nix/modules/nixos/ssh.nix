@@ -1,4 +1,3 @@
-# Enable the OpenSSH daemon.
 # NOTE: SSH keys are configured per user.
 { config, ... }:
 {

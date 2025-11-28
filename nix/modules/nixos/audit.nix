@@ -1,8 +1,9 @@
-{ ... }:
-{
-  security.auditd.enable = true;
-  security.audit.enable = true;
-  security.audit.rules = [
-    "-a exit,always -F arch=b64 -S execve"
-  ];
+_: {
+  security = {
+    auditd.enable = true;
+    audit.enable = true;
+    audit.rules = [
+      "-a exit,always -F arch=b64 -S execve"
+    ];
+  };
 }
