@@ -40,7 +40,7 @@
   ];
 
   # Make it possible to use remote builders under this username
-  nix.settings.trusted-users = [ config.users.users.aldur.name ];
+  # nix.settings.trusted-users = [ config.users.users.aldur.name ];
 
   environment.etc = {
     "ssh/ssh_host_ed25519_key" = {
