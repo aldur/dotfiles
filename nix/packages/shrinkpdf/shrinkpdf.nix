@@ -9,10 +9,10 @@
 
 stdenv.mkDerivation {
   pname = "shrinkpdf";
-  version = "unstable-2025-01-08";
+  version = "git-2025-12-02";
 
   src = fetchFromGitHub {
-    owner = "aldur";
+    owner = "aklomp";
     repo = "shrinkpdf";
     rev = "d8e4aca8a4caebcc1ef0f569e6651c8dc5964334";
     hash = "sha256-URS7V00TJgrUiRC7YAaCrcmONgC5+xaHS6QPE6wv+Jo=";
