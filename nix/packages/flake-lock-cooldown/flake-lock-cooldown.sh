@@ -1,8 +1,26 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+TIME_AGO="1 week ago"
+
+while getopts ":t:" opt; do
+  case $opt in
+  t) TIME_AGO="$OPTARG ago" ;;
+  :)
+    echo "Error: -$OPTARG requires an argument" >&2
+    exit 1
+    ;;
+  \?)
+    echo "Error: Unknown option -$OPTARG" >&2
+    exit 1
+    ;;
+  esac
+done
+shift $((OPTIND - 1))
+
 if [[ $# -lt 1 ]]; then
-  echo "Usage: $0 <input-name> [flake-path]" >&2
+  echo "Usage: $0 [-t <time>] <input-name> [flake-path]" >&2
+  echo "  -t <time>  How long ago (e.g., '2 weeks', '3 days'). Default: 1 week" >&2
   exit 1
 fi
 
@@ -24,6 +42,7 @@ if [[ -z "$NODE_INFO" ]]; then
 fi
 
 TYPE=$(echo "$NODE_INFO" | jq -r '.type')
+
 if [[ "$TYPE" != "github" ]]; then
   echo "Error: Input '$INPUT_NAME' is not a GitHub source (type: $TYPE)" >&2
   exit 1
@@ -32,26 +51,34 @@ fi
 OWNER=$(echo "$NODE_INFO" | jq -r '.owner')
 REPO=$(echo "$NODE_INFO" | jq -r '.repo')
 
-echo "Found: github:$OWNER/$REPO" >&2
+echo "Found input: github:$OWNER/$REPO" >&2
 
-# Fetch most recent commit at least 1 week old
-UNTIL_DATE=$(date -u -d '1 week ago' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v-1w +%Y-%m-%dT%H:%M:%SZ)
+# Fetch most recent commit at least $TIME_AGO old
+# NOTE: This requires GNU coreutils `date`
+UNTIL_DATE=$(date -u -d "$TIME_AGO" +%Y-%m-%dT%H:%M:%SZ)
+
 API_URL="https://api.github.com/repos/$OWNER/$REPO/commits?until=$UNTIL_DATE&per_page=1"
+RESPONSE=$(curl --no-verbose -s "$API_URL")
 
-RESPONSE=$(curl -s "$API_URL")
 COMMIT=$(echo "$RESPONSE" | jq -r '.[0].sha // empty')
 
 if [[ -z "$COMMIT" ]]; then
-  echo "Error: No commits found older than 1 week" >&2
+  echo "Error: No commits found older than $TIME_AGO" >&2
   exit 1
 fi
 
 COMMIT_DATE=$(echo "$RESPONSE" | jq -r '.[0].commit.committer.date')
 COMMIT_MSG=$(echo "$RESPONSE" | jq -r '.[0].commit.message | split("\n")[0]')
+COMMIT_URL="https://github.com/$OWNER/$REPO/commit/$COMMIT"
+COMMIT_LINK=$'\e]8;;'"$COMMIT_URL"$'\e\\'"$COMMIT"$'\e]8;;\e\\'
 
-echo "Found commit: $COMMIT" >&2
+echo "Found commit: $COMMIT_LINK" >&2
 echo "Date: $COMMIT_DATE" >&2
 echo "Message: $COMMIT_MSG" >&2
 echo ""
-echo "Run this command:"
-echo "  nix flake update $INPUT_NAME --override-input $INPUT_NAME github:$OWNER/$REPO/$COMMIT"
+
+CMD="nix flake update $INPUT_NAME --override-input $INPUT_NAME github:$OWNER/$REPO/$COMMIT"
+echo "Will run: '$CMD'" >&2
+read -rp "Press Enter to continue (Ctrl-C to cancel): " >&2
+
+$CMD
