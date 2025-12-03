@@ -142,15 +142,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1765980955,
-        "narHash": "sha256-rB45jv4uwC90vM9UZ70plfvY/2Kdygs+zlQ07dGQFk4=",
+        "lastModified": 1766553861,
+        "narHash": "sha256-ZbnG01yA3O8Yr1vUm3+NQ2qk9iRhS5bloAnuXHHy7+c=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "89c9508bbe9b40d36b3dc206c2483ef176f15173",
+        "rev": "0999ed8f965bbbd991437ad9c5ed3434cecbc30e",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
+        "ref": "release-25.11",
         "repo": "home-manager",
         "type": "github"
       }
@@ -164,11 +165,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1766534655,
-        "narHash": "sha256-oeGUOXbSSV6Tu1c61/cgMLfSxOjbPnY5sguMKa/v3sM=",
+        "lastModified": 1766621101,
+        "narHash": "sha256-5pj5jTGKFJ2xYHYVzDMh3MGufqX4R56QRZ5yQZyWfGQ=",
         "owner": "nix-community",
         "repo": "neovim-nightly-overlay",
-        "rev": "14a21b492d6acd79495b14c9d127a94b77c0b72c",
+        "rev": "ef3ea2815883500f982a84af81e61a13fb601bb4",
         "type": "github"
       },
       "original": {
@@ -180,11 +181,11 @@
     "neovim-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1766504362,
-        "narHash": "sha256-53oy2rM8yBqtTge6xvsndea106ja2F9+x6fW00LX2wE=",
+        "lastModified": 1766558520,
+        "narHash": "sha256-hlpyP59PTtQmyCDRX+XCYReXOBtfUSkX88A5nlfmu6g=",
         "owner": "neovim",
         "repo": "neovim",
-        "rev": "1aa26f5d55550dd12c2cfd0f74618f0dcd6467ec",
+        "rev": "ce7ed53fbae3ebc643bce5ad8aa94c20ebc19b25",
         "type": "github"
       },
       "original": {
@@ -230,11 +231,27 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1765995917,
-        "narHash": "sha256-0cR7l/nMnskUpGlR3JnjXE68nLD2hbaQBrfcAaOeWfE=",
+        "lastModified": 1766473571,
+        "narHash": "sha256-5G1NDO2PulBx1RoaA6U1YoUDX0qZslpPxv+n5GX6Qto=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c6cfcff77e30f356aa1ee617f47f37d75e2af563",
+        "rev": "76701a179d3a98b07653e2b0409847499b2a07d3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-25.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-unstable": {
+      "locked": {
+        "lastModified": 1766388075,
+        "narHash": "sha256-lahtzgQQsRg3fXEEx+kubIG9eI6kuMY82UYDxUgukSM=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "1923098c6a58be0563c9ca8b19080261abaf3d74",
         "type": "github"
       },
       "original": {
@@ -312,6 +329,7 @@
         "nix-index-database": "nix-index-database",
         "nixCats": "nixCats",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-unstable": "nixpkgs-unstable",
         "nvim-treesitter-main": "nvim-treesitter-main",
         "systems": "systems"
       }

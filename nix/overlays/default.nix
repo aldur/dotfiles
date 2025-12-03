@@ -13,5 +13,6 @@
     in
     prev.lib.composeManyExtensions overlays final prev
   )
+
   (import ./packages.nix)
 ]
