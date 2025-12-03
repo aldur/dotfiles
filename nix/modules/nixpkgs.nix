@@ -1,4 +1,10 @@
-{ lib, inputs, ... }:
+{
+  lib,
+  inputs,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
 {
   options.nixpkgs = {
@@ -9,13 +15,21 @@ with lib;
     };
   };
 
-  config.nixpkgs = {
-    overlays = (import ../overlays) ++ [
-      inputs.dashp.overlays.default
-    ];
+  config = {
+    nixpkgs = {
+      overlays = (import ../overlays) ++ [
+        inputs.dashp.overlays.default
+      ];
 
-    config.allowUnfreePredicate =
-      pkg: builtins.elem (pkgs.lib.getName pkg) config.nixpkgs.allowUnfreeByName;
+      config.allowUnfreePredicate =
+        pkg: builtins.elem (pkgs.lib.getName pkg) config.nixpkgs.allowUnfreeByName;
+    };
+
+    # This allows accessing pkgsUnstable anywere in the configuration.
+    # https://discourse.nixos.org/t/mixing-stable-and-unstable-packages-on-flake-based-nixos-system/50351/4
+    _module.args.pkgsUnstable = import inputs.nixpkgs-unstable {
+      inherit (pkgs.stdenv.hostPlatform) system;
+      inherit (config.nixpkgs) config;
+    };
   };
-
 }

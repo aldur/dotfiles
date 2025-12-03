@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  pkgsUnstable,
   lib,
   ...
 }:
@@ -19,7 +20,7 @@ let
     watch
   ];
   extraPackages =
-    (lib.optionals claudeCfg.enable [ pkgs.claude-code ])
+    (lib.optionals claudeCfg.enable [ pkgsUnstable.claude-code ])
     ++ (lib.optionals geminiCfg.enable [ pkgs.gemini-cli ]);
 in
 {
