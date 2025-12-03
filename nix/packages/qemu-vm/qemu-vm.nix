@@ -132,6 +132,7 @@ pkgs.writeShellApplication {
     DISPLAY_MODE="none"
     VERBOSE=false
     CLEAN=false
+    EPHEMERAL=false
     SHOW_BOOT=false
 
     # Parse command line arguments
