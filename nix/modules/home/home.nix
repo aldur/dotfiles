@@ -177,4 +177,8 @@ in
 
   # NOTE: Pinentry configured by each respective module
   services.gpg-agent.enable = true;
+
+  home.shellAliases = {
+    claude-yolo = "claude --dangerously-skip-permissions";
+  };
 }
