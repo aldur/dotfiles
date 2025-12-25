@@ -1,7 +1,7 @@
 # `nix-darwin` configuration
 
 This Flake allows creating a [`nix-darwin`][0] configuration with the modules
-of this repository. 
+of this repository.
 
 ## Building
 
@@ -16,4 +16,3 @@ sudo darwin-rebuild --flake .#macOS switch
 See `macos.nix` for how to customize the install.
 
 [0]: https://github.com/nix-darwin/nix-darwin
-[1]: https://determinate.systems
