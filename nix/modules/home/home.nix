@@ -26,10 +26,11 @@ in
     inherit stateVersion;
 
     username = "aldur";
-    packages = [
-      pkgs.gpg-encrypt
-      pkgs.shrinkpdf
-      pkgs.flake-lock-cooldown
+    packages = with pkgs; [
+      gpg-encrypt
+      shrinkpdf
+      flake-lock-cooldown
+      moreutils
     ];
 
     file."Documents/Notes/.marksman.toml".text = "";
