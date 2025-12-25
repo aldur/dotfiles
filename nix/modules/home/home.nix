@@ -3,6 +3,7 @@
   inputs,
   stateVersion,
   lib,
+  osConfig,
   ...
 }:
 let
@@ -180,6 +181,9 @@ in
   services.gpg-agent.enable = true;
 
   home.shellAliases = {
+    # other aliases...
+  }
+  // lib.optionalAttrs osConfig.programs.aldur.claude-code.enable {
     claude-yolo = "claude --dangerously-skip-permissions";
   };
 }
