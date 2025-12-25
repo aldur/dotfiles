@@ -13,49 +13,43 @@ concurrency:
 permissions:
   contents: read
 
-x-steps:
-  - &checkout
-    uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-  - &nix-action
-    uses: DeterminateSystems/determinate-nix-action@dbda91f6efef3ee627f56175120aa9543687d830 # v3.11.2
-  - &flake-checker
-    uses: DeterminateSystems/flake-checker-action@3164002371bc90729c68af0e24d5aacf20d7c9f6 # v12
-  - &flake-check
-    run: nix flake check --all-systems ./nix
-
-x-runners:
-  macos: &macos-runner macos-26 # arm, beta
-
 jobs:
   nixos-ci:
-    runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-24.04-arm
+            arch: aarch64
+          - runner: ubuntu-24.04
+            arch: x86_64
+    runs-on: ${{ matrix.runner }}
     steps:
-      - *checkout
-      - *nix-action
-      - *flake-checker
-      - *flake-check
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: DeterminateSystems/determinate-nix-action@dbda91f6efef3ee627f56175120aa9543687d830  # v3.11.2
+      - uses: DeterminateSystems/flake-checker-action@3164002371bc90729c68af0e24d5aacf20d7c9f6  # v12
+      - run: nix flake check --all-systems ./nix
 
       # Test building QEMU VM configuration
-      - run: nix build --override-input aldur-dotfiles ./nix ./nix/base_hosts/qemu#vm-nogui
+      - run: nix build --override-input aldur-dotfiles ./nix ./nix/base_hosts/qemu#vm-nogui-${{ matrix.arch }}
 
   nix-darwin-ci:
-    runs-on: *macos-runner
+    runs-on: macos-26  # arm, beta
     steps:
-      - *checkout
-      - *nix-action
-      - *flake-checker
-      - *flake-check
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: DeterminateSystems/determinate-nix-action@dbda91f6efef3ee627f56175120aa9543687d830  # v3.11.2
+      - uses: DeterminateSystems/flake-checker-action@3164002371bc90729c68af0e24d5aacf20d7c9f6  # v12
+      - run: nix flake check --all-systems ./nix
 
       # Test building nix-darwin configuration
       - run: nix build --override-input aldur-dotfiles ./nix ./nix/base_hosts/macos#darwinConfigurations.macOS.system
 
-  nix-darwin-llm-ci:
-    runs-on: *macos-runner
+  nix-darwin-ci-llm:
+    runs-on: macos-26  # arm, beta
     steps:
-      - *checkout
-      - *nix-action
-      - *flake-checker
-      - *flake-check
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: DeterminateSystems/determinate-nix-action@dbda91f6efef3ee627f56175120aa9543687d830  # v3.11.2
+      - uses: DeterminateSystems/flake-checker-action@3164002371bc90729c68af0e24d5aacf20d7c9f6  # v12
+      - run: nix flake check --all-systems ./nix
 
-      # Build llm + mlx support, which often breaks on darwin
+      # Explicitly build `llm` with `mlx`, which often breaks on Darwin.
       - run: nix build nix#llm

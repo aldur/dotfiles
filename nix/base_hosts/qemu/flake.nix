@@ -10,7 +10,6 @@
   outputs =
     { aldur-dotfiles, ... }:
     let
-      targetSystem = "aarch64-linux";
       inherit (aldur-dotfiles) specialArgs;
     in
     aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system: {
@@ -19,11 +18,25 @@
         default = vm-nogui;
       };
     })
-    // {
-      nixosConfigurations.qemu-nixos = aldur-dotfiles.inputs.nixpkgs.lib.nixosSystem {
-        inherit specialArgs;
-        modules = aldur-dotfiles.legacyPackages.${targetSystem}.qemu-vm.modules ++ [ ./qemu.nix ];
-        system = targetSystem;
-      };
-    };
+    // (
+      let
+        cfg =
+          targetSystem:
+          aldur-dotfiles.inputs.nixpkgs.lib.nixosSystem {
+            inherit specialArgs;
+            modules = aldur-dotfiles.legacyPackages.${targetSystem}.qemu-vm.modules ++ [ ./qemu.nix ];
+            system = targetSystem;
+          };
+
+        qemu-nixos-aarch64 = cfg "aarch64-linux";
+        qemu-nixos-x86_64 = cfg "x86_64-linux";
+
+      in
+      {
+        nixosConfigurations = {
+          qemu-nixos = qemu-nixos-aarch64;
+          inherit qemu-nixos-aarch64 qemu-nixos-x86_64;
+        };
+      }
+    );
 }
