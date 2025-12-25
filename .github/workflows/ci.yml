@@ -19,9 +19,7 @@ jobs:
       matrix:
         include:
           - runner: ubuntu-24.04-arm
-            arch: aarch64
           - runner: ubuntu-24.04
-            arch: x86_64
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -30,7 +28,7 @@ jobs:
       - run: nix flake check --all-systems ./nix
 
       # Test building QEMU VM configuration
-      - run: nix build --override-input aldur-dotfiles ./nix ./nix/base_hosts/qemu#vm-nogui-${{ matrix.arch }}
+      - run: nix build --override-input aldur-dotfiles ./nix ./nix/base_hosts/qemu#vm-nogui
 
   nix-darwin-ci:
     runs-on: macos-26  # arm, beta
