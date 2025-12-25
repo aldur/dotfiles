@@ -27,6 +27,16 @@ final: prev: {
       mlx = prev.callPackage ../../packages/mlx/default.nix {
         inherit (pythonFinal) buildPythonPackage fetchPypi;
       };
+      accelerate = pythonPrev.accelerate.overridePythonAttrs (_: {
+        # https://github.com/NixOS/nixpkgs/issues/420372
+        doCheck = false;
+      });
+      peft = pythonPrev.peft.overridePythonAttrs (oldAttrs: {
+        disabledTestPaths = oldAttrs.disabledTestPaths ++ [
+          "tests/test_vblora.py::TestVBLoRA::test_save_load"
+          "tests/test_vblora.py::TestVBLoRA::test_resume_training_model_with_topk_weights"
+        ];
+      });
     };
   };
 }
