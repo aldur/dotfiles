@@ -50,4 +50,4 @@ jobs:
       - run: nix flake check --all-systems ./nix
 
       # Explicitly build `llm` with `mlx`, which often breaks on Darwin.
-      - run: nix build nix#llm
+      - run: nix build ./nix#llm
