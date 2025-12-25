@@ -8,8 +8,8 @@
     };
 
     nix-darwin = {
-      url = "github:LnL7/nix-darwin/master";
-      inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
+      url = "github:LnL7/nix-darwin/nix-darwin-25.11";
+      inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs-darwin";
     };
 
     nix-rosetta-builder = {

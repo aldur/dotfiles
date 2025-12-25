@@ -30,6 +30,7 @@ in
         # Pin nixpkgs to the flake input, so that the packages installed
         # come from the flake inputs.nixpkgs.url.
         registry.nixpkgs.flake = inputs.nixpkgs;
+        registry.nixpkgs.to = inputs.nixpkgs;
       };
     }
     (lib.mkIf cfg.enable {
