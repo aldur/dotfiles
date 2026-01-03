@@ -148,12 +148,13 @@ in
       enable = true;
 
       extraConfig = ''
-        set -g default-terminal "screen-256color"
+        set -g default-terminal "tmux-256color"
 
         # as required by nvim
         set-option -g focus-events on
-        # make nvim autoread work
-        set-option -a terminal-features ',screen256color:RGB'
+
+        # enable RGB support and make nvim autoread work
+        set-option -a terminal-features ',xterm-256color:RGB'
 
         set-option -sg escape-time 10
       '';
