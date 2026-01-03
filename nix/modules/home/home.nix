@@ -147,17 +147,32 @@ in
     tmux = {
       enable = true;
 
+      terminal = "tmux-direct";
+      baseIndex = 1;
+      clock24 = true;
+      customPaneNavigationAndResize = true;
+      # https://neovim.io/doc/user/faq.html#_esc-in-tmux-or-gnu-screen-is-delayed
+      escapeTime = 10;
+      focusEvents = true; # required by nvim
+      historyLimit = 10000;
+      secureSocket = true;
+
       extraConfig = ''
-        set -g default-terminal "tmux-256color"
-
-        # as required by nvim
-        set-option -g focus-events on
-
         # enable RGB support and make nvim autoread work
-        set-option -a terminal-features ',xterm-256color:RGB'
+        set -as terminal-features ',*-256color:RGB'
 
-        set-option -sg escape-time 10
+        # automatically re-number windows (do not leave gaps)
+        set -g renumber-windows on
       '';
+
+      plugins = with pkgs; [
+        {
+          plugin = tmuxPlugins.dotbar;
+          extraConfig = ''
+            set -g @tmux-dotbar-right true
+          '';
+        }
+      ];
     };
 
     gpg = {
