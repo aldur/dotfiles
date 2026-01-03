@@ -147,7 +147,7 @@ in
     tmux = {
       enable = true;
 
-      terminal = "tmux-direct";
+      terminal = "tmux-256color";
       baseIndex = 1;
       clock24 = true;
       customPaneNavigationAndResize = true;
