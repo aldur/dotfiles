@@ -167,11 +167,10 @@ in
 
       plugins = with pkgs; [
         {
-          plugin = tmuxPlugins.dotbar;
-          extraConfig = ''
-            set -g @tmux-dotbar-right true
-          '';
+          plugin = tmuxPlugins.tokyo-night-tmux;
+          extraConfig = "set -g @tokyo-night-tmux_theme moon";
         }
+        tmuxPlugins.vim-tmux-navigator
       ];
     };
 

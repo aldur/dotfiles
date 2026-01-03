@@ -47,6 +47,8 @@
 
     auto-save-nvim
 
+    vim-tmux-navigator
+
     # markdown
     markdown-preview-nvim
     render-markdown-nvim
