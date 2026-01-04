@@ -148,6 +148,7 @@ in
       enable = true;
 
       terminal = "tmux-256color";
+      prefix = "c-a";
       baseIndex = 1;
       clock24 = true;
       customPaneNavigationAndResize = true;
