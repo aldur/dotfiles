@@ -5,6 +5,10 @@
   lib,
   ...
 }:
+let
+  username = "aldur";
+  uid = 1000;
+in
 {
   imports = [
     "${inputs.self}/modules/current_system_flake.nix"
@@ -28,21 +32,12 @@
     # root when using a remote builder) to go through yubikey-agent.
     ssh.extraConfig = ''
       Host *
-        IdentityAgent /run/user/1000/yubikey-agent/yubikey-agent.sock
+        IdentityAgent /run/user/${toString uid}/yubikey-agent/yubikey-agent.sock
     '';
   };
 
   # NOTE: It will use gnupg.agent.pinentryPackage
   services.yubikey-agent.enable = true;
-
-  # This makes it so that `sommelier` can set `DISPLAY`,
-  # which is then used by `pinentry`.
-  systemd.user.services.yubikey-agent.after = [
-    "sommelier@0.service"
-    "sommelier@1.service"
-    "sommelier-x@0.service"
-    "sommelier-x@1.service"
-  ];
 
   # Make it possible to use remote builders under this username
   # nix.settings.trusted-users = [ config.users.users.aldur.name ];
@@ -74,7 +69,7 @@
     # sudo privileges and the `aldur` user has no password.
     sudo-rs.extraRules = [
       {
-        users = [ "aldur" ];
+        users = [ username ];
         commands = [
           {
             command = "/run/current-system/sw/bin/systemctl restart pcscd.service";
@@ -88,7 +83,7 @@
   # Enable SSH root login through localhost
   users.users.root.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
 
-  home-manager.users.aldur =
+  home-manager.users.${username} =
     { config, ... }: # home-manager's config, not the OS one
     {
       home.packages = with pkgs; [
@@ -116,7 +111,7 @@
 
     preserveAt."/persist" = {
       users = {
-        aldur = {
+        ${username} = {
           commonMountOptions = [
             "x-gvfs-hide"
           ];
@@ -144,18 +139,50 @@
     };
   };
 
-  systemd.tmpfiles.settings.preservation =
-    let
-      defaultPermissions = {
-        user = "aldur";
-        group = "users";
-        mode = "0755";
+  systemd = {
+    # This makes it so that `sommelier` can set `DISPLAY`,
+    # which is then used by `pinentry`.
+    user.services.yubikey-agent.after = [
+      "sommelier@0.service"
+      "sommelier@1.service"
+      "sommelier-x@0.service"
+      "sommelier-x@1.service"
+    ];
+
+    tmpfiles.settings.preservation =
+      let
+        defaultPermissions = {
+          user = username;
+          group = "users";
+          mode = "0755";
+        };
+      in
+      {
+        "/home/${username}".d = defaultPermissions;
+        "/home/${username}/.local".d = defaultPermissions;
+        "/home/${username}/.local/share".d = defaultPermissions;
+        "/home/${username}/.local/state".d = defaultPermissions;
       };
-    in
-    {
-      "/home/aldur".d = defaultPermissions;
-      "/home/aldur/.local".d = defaultPermissions;
-      "/home/aldur/.local/share".d = defaultPermissions;
-      "/home/aldur/.local/state".d = defaultPermissions;
+
+    # This is required because with tmpfs,
+    # ~/.config/systemd/user/ is empty at boot,
+    # hm activates and populates it, but
+    # needs XDG_RUNTIME_DIR to know that `systemd` for
+    # the user is running and let it learn about the new units.
+    #
+    # after/wants ensure that systemd for the user starts _before_ home
+    # manager.
+    #
+    # This fixes the following log line in home-manager-aldur.service:
+    # User systemd daemon not running. Skipping reload.
+    #
+    # It is possible this was a bug before, but tmpfs made it more promiment.
+    services."home-manager-${username}" = {
+      after = [ "user@${toString uid}.service" ];
+      wants = [ "user@${toString uid}.service" ];
+      environment = {
+        XDG_RUNTIME_DIR = "/run/user/${toString uid}";
+      };
     };
+  };
 }
