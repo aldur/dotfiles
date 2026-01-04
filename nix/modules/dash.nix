@@ -23,13 +23,13 @@ in
 {
   environment.systemPackages = basePackages;
 
-  home-manager.users.aldur =
-    { ... }:
-    {
-      home.file."${dashDocsetsDir}/.keep".text = "";
-      home.sessionVariables = {
+  home-manager.users.aldur = _: {
+    home = {
+      file."${dashDocsetsDir}/.keep".text = "";
+      sessionVariables = {
         DASHT_DOCSETS_DIR = "$HOME/${dashDocsetsDir}";
       };
-      home.packages = [ download-nix-docsets ];
+      packages = [ download-nix-docsets ];
     };
+  };
 }

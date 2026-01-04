@@ -1,6 +1,8 @@
 {
   pkgs,
   inputs,
+  config,
+  lib,
   ...
 }:
 {
@@ -8,7 +10,10 @@
     "${inputs.self}/modules/current_system_flake.nix"
     inputs.preservation.nixosModules.preservation
   ];
+
   hardware.graphics.enable = true;
+  # Enable Wayland compatibility for Chrome and Electron apps.
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   programs = {
     aldur = {
@@ -101,8 +106,8 @@
     fsType = "tmpfs";
     options = [
       "defaults"
-      "size=2G"
-      "mode=777"
+      "size=4G"
+      "mode=755"
     ];
   };
 
@@ -116,7 +121,7 @@
             "x-gvfs-hide"
           ];
           directories = [
-            ".local/state/lazyvim"
+            ".local/state/nix" # Required by HM
 
             ".local/share/atuin"
             ".local/share/dasht"
@@ -130,6 +135,12 @@
               directory = ".ssh";
               mode = "0700";
             }
+          ]
+          // lib.optionals config.programs.aldur.lazyvim.enable [
+            ".local/state/lazyvim"
+          ];
+          files = lib.optionals config.programs.aldur.claude-code.enable [
+            ".claude.json"
           ];
         };
       };
