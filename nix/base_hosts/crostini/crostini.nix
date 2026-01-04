@@ -110,7 +110,6 @@
     enable = true;
 
     preserveAt."/persist" = {
-      # preserve user-specific files, implies ownership
       users = {
         aldur = {
           commonMountOptions = [
@@ -120,6 +119,9 @@
             ".local/state/lazyvim"
             ".local/state/nix"
             ".local/share/direnv"
+
+            "Documents/"
+            "Work/"
           ];
           files = [
             ".ssh/known_hosts"
@@ -142,31 +144,19 @@
   # Note that immediate parent directories of persisted files can also be
   # configured with ownership and permissions from the `parent` settings if
   # `configureParent = true` is set for the file.
-  systemd.tmpfiles.settings.preservation = {
-    "/home/aldur/.config".d = {
-      user = "aldur";
-      group = "users";
-      mode = "0755";
+  systemd.tmpfiles.settings.preservation =
+    let
+      defaultPermissions = {
+        user = "aldur";
+        group = "users";
+        mode = "0755";
+      };
+    in
+    {
+      "/home/aldur".d = defaultPermissions;
+      "/home/aldur/.local".d = defaultPermissions;
+      "/home/aldur/.local/share".d = defaultPermissions;
+      "/home/aldur/.local/state".d = defaultPermissions;
+      "/home/aldur/.ssh".d = defaultPermissions;
     };
-    "/home/aldur/.local".d = {
-      user = "aldur";
-      group = "users";
-      mode = "0755";
-    };
-    "/home/aldur/.local/share".d = {
-      user = "aldur";
-      group = "users";
-      mode = "0755";
-    };
-    "/home/aldur/.local/state".d = {
-      user = "aldur";
-      group = "users";
-      mode = "0755";
-    };
-    "/home/aldur/.ssh".d = {
-      user = "aldur";
-      group = "users";
-      mode = "0700";
-    };
-  };
 }
