@@ -1,12 +1,12 @@
 {
   pkgs,
-  config,
   inputs,
   ...
 }:
 {
   imports = [
     "${inputs.self}/modules/current_system_flake.nix"
+    inputs.preservation.nixosModules.preservation
   ];
   hardware.graphics.enable = true;
 
@@ -14,7 +14,7 @@
     aldur = {
       lazyvim.enable = true;
       lazyvim.packageNames = [ "lazyvim" ];
-      claude-code.enable = false;
+      claude-code.enable = true;
     };
 
     gnupg.agent.pinentryPackage = pkgs.pinentry-qt;
@@ -90,5 +90,72 @@
         age-plugin-yubikey
         yubikey-manager
       ];
+
+      programs.llm.enable = true;
     };
+
+  boot.initrd.systemd.enable = true;
+
+  fileSystems."/home" = {
+    device = "none";
+    fsType = "tmpfs";
+    options = [
+      "defaults"
+      "size=2G"
+      "mode=755"
+    ];
+  };
+
+  preservation = {
+    enable = true;
+
+    preserveAt."/persist" = {
+      # preserve user-specific files, implies ownership
+      users = {
+        aldur = {
+          commonMountOptions = [
+            "x-gvfs-hide"
+          ];
+          directories = [
+            ".local/state/lazyvim"
+            ".local/share/direnv"
+          ];
+          files = [
+            ".ssh/known_hosts"
+          ];
+        };
+      };
+    };
+  };
+
+  # Create some directories with custom permissions.
+  #
+  # In this configuration the path `/home/butz/.local` is not an immediate parent
+  # of any persisted file, so it would be created with the systemd-tmpfiles default
+  # ownership `root:root` and mode `0755`. This would mean that the user `butz`
+  # could not create other files or directories inside `/home/butz/.local`.
+  #
+  # Therefore systemd-tmpfiles is used to prepare such directories with
+  # appropriate permissions.
+  #
+  # Note that immediate parent directories of persisted files can also be
+  # configured with ownership and permissions from the `parent` settings if
+  # `configureParent = true` is set for the file.
+  systemd.tmpfiles.settings.preservation = {
+    "/home/aldur/.local".d = {
+      user = "aldur";
+      group = "users";
+      mode = "0755";
+    };
+    "/home/aldur/.local/share".d = {
+      user = "aldur";
+      group = "users";
+      mode = "0755";
+    };
+    "/home/aldur/.local/state".d = {
+      user = "aldur";
+      group = "users";
+      mode = "0755";
+    };
+  };
 }
