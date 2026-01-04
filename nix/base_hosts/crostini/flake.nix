@@ -8,7 +8,7 @@
     };
 
     nixos-crostini = {
-      url = "github:aldur/nixos-crostini";
+      url = "github:aldur/nixos-crostini?ref=feat/initrd-systemd";
       inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
       inputs.nixos-generators.follows = "nixos-generators";
     };

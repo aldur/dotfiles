@@ -117,33 +117,25 @@
           ];
           directories = [
             ".local/state/lazyvim"
-            ".local/state/nix"
+
+            ".local/share/atuin"
+            ".local/share/dasht"
             ".local/share/direnv"
+            ".local/share/fish"
 
             "Documents/"
             "Work/"
-          ];
-          files = [
-            ".ssh/known_hosts"
+
+            {
+              directory = ".ssh";
+              mode = "0700";
+            }
           ];
         };
       };
     };
   };
 
-  # Create some directories with custom permissions.
-  #
-  # In this configuration the path `/home/butz/.local` is not an immediate parent
-  # of any persisted file, so it would be created with the systemd-tmpfiles default
-  # ownership `root:root` and mode `0755`. This would mean that the user `butz`
-  # could not create other files or directories inside `/home/butz/.local`.
-  #
-  # Therefore systemd-tmpfiles is used to prepare such directories with
-  # appropriate permissions.
-  #
-  # Note that immediate parent directories of persisted files can also be
-  # configured with ownership and permissions from the `parent` settings if
-  # `configureParent = true` is set for the file.
   systemd.tmpfiles.settings.preservation =
     let
       defaultPermissions = {
@@ -157,6 +149,5 @@
       "/home/aldur/.local".d = defaultPermissions;
       "/home/aldur/.local/share".d = defaultPermissions;
       "/home/aldur/.local/state".d = defaultPermissions;
-      "/home/aldur/.ssh".d = defaultPermissions;
     };
 }
