@@ -136,12 +136,9 @@
               mode = "0700";
             }
           ]
-          // lib.optionals config.programs.aldur.lazyvim.enable [
-            ".local/state/lazyvim"
-          ];
-          files = lib.optionals config.programs.aldur.claude-code.enable [
-            ".claude.json"
-          ];
+          ++ lib.optional config.programs.aldur.lazyvim.enable ".local/state/lazyvim";
+
+          files = lib.optional config.programs.aldur.claude-code.enable ".claude.json";
         };
       };
     };
