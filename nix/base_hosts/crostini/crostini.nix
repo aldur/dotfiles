@@ -120,6 +120,7 @@ in
           ];
           directories = [
             ".local/state/nix" # Required by HM
+            ".local/state/lazygit"
 
             ".local/share/atuin"
             ".local/share/dasht"
