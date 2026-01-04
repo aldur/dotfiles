@@ -102,7 +102,7 @@
     options = [
       "defaults"
       "size=2G"
-      "mode=755"
+      "mode=777"
     ];
   };
 
@@ -118,6 +118,7 @@
           ];
           directories = [
             ".local/state/lazyvim"
+            ".local/state/nix"
             ".local/share/direnv"
           ];
           files = [
@@ -142,6 +143,11 @@
   # configured with ownership and permissions from the `parent` settings if
   # `configureParent = true` is set for the file.
   systemd.tmpfiles.settings.preservation = {
+    "/home/aldur/.config".d = {
+      user = "aldur";
+      group = "users";
+      mode = "0755";
+    };
     "/home/aldur/.local".d = {
       user = "aldur";
       group = "users";
@@ -156,6 +162,11 @@
       user = "aldur";
       group = "users";
       mode = "0755";
+    };
+    "/home/aldur/.ssh".d = {
+      user = "aldur";
+      group = "users";
+      mode = "0700";
     };
   };
 }
