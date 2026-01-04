@@ -15,6 +15,9 @@ in
     inputs.preservation.nixosModules.preservation
   ];
 
+  # We rely on the UID in a few places, so better making sure about it.
+  users.users.${username}.uid = uid;
+
   hardware.graphics.enable = true;
   # Enable Wayland compatibility for Chrome and Electron apps.
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
