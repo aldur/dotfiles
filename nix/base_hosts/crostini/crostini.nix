@@ -112,7 +112,7 @@ in
         programs.llm.enable = true;
       };
 
-    boot.initrd.systemd.enable = true;
+    boot.initrd.systemd.enable = cfg.impermanence.enable;
 
     # Impermanence: tmpfs home with preservation
     fileSystems."/home" = lib.mkIf cfg.impermanence.enable {
