@@ -177,15 +177,32 @@ in
     # after/wants ensure that systemd for the user starts _before_ home
     # manager.
     #
-    # This fixes the following log line in home-manager-aldur.service:
-    # User systemd daemon not running. Skipping reload.
+    # ExecStartPre waits for user systemd to finish initialization.
+    # Without this, home-manager runs while user systemd is still in
+    # "starting" state, causing "User systemd daemon not running" error.
     #
-    # It is possible this was a bug before, but tmpfs made it more promiment.
+    # This was made prominent by tmpfs, as ~/.config/systemd/user/ is
+    # empty at boot until home-manager populates it.
     services."home-manager-${username}" = {
       after = [ "user@${toString uid}.service" ];
       wants = [ "user@${toString uid}.service" ];
       environment = {
         XDG_RUNTIME_DIR = "/run/user/${toString uid}";
+      };
+      serviceConfig = {
+        # Wait up to 30 seconds for user systemd to be running
+        ExecStartPre = pkgs.writeShellScript "wait-for-user-systemd" ''
+          for i in {1..30}; do
+            status=$(XDG_RUNTIME_DIR=/run/user/${toString uid} \
+              ${pkgs.systemd}/bin/systemctl --user is-system-running 2>&1 || true)
+            if [[ "$status" == "running" || "$status" == "degraded" ]]; then
+              exit 0
+            fi
+            sleep 0.1
+          done
+          echo "Timeout waiting for user systemd to be ready. home-manager won't work!" >&2
+          exit 1
+        '';
       };
     };
   };
