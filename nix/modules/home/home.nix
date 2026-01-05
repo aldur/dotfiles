@@ -157,6 +157,7 @@ in
       focusEvents = true; # required by nvim
       historyLimit = 10000;
       secureSocket = true;
+      mouse = true;
 
       extraConfig = ''
         # enable RGB support and make nvim autoread work
@@ -164,6 +165,10 @@ in
 
         # automatically re-number windows (do not leave gaps)
         set -g renumber-windows on
+
+        setw -g mode-keys vi
+        bind-key v split-window -h
+        bind-key s split-window -v
       '';
 
       plugins = with pkgs; [
