@@ -29,9 +29,24 @@ in
 
   config = {
     crostini.impermanence.enable = lib.mkDefault true;
+    users.users = {
+      # We rely on the UID in a few places, so better making sure about it.
+      ${username} = {
+        inherit uid;
+        # Start user@1000.service at boot (independent of PAM login).
+        # This allows us to order it after home-manager.
+        linger = cfg.impermanence.enable;
 
-    # We rely on the UID in a few places, so better making sure about it.
-    users.users.${username}.uid = uid;
+        # Make sure user has no password.
+        initialHashedPassword = lib.mkForce null;
+      };
+
+      # Make sure root has no password.
+      root.initialHashedPassword = lib.mkForce null;
+
+      # Enable SSH root login through localhost
+      root.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
+    };
 
     hardware.graphics.enable = true;
     # Enable Wayland compatibility for Chrome and Electron apps.
@@ -97,9 +112,6 @@ in
         }
       ];
     };
-
-    # Enable SSH root login through localhost
-    users.users.root.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
 
     home-manager.users.${username} =
       { config, lib, ... }: # home-manager's config, not the OS one
