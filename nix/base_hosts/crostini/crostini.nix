@@ -88,11 +88,6 @@ in
     services.openssh.settings.AllowUsers = [ "root" ];
 
     security = {
-      pam.sshAgentAuth.enable = false;
-      pam.sshAgentAuth.authorizedKeysFiles = [
-        "/etc/ssh/authorized_keys.d/root"
-      ];
-
       # NOTE: There a bug (maybe) in pcscd where, when running in an lxc container,
       # it doesn't automatically exit when the "smart card" is disconnected.
       #
@@ -134,14 +129,6 @@ in
                   fi
                 ''
               );
-
-          # Signal completion of home-manager activation for impermanence.
-          # Uses XDG_RUNTIME_DIR which is fresh each boot (tmpfs).
-          activation.signalReady = lib.mkIf cfg.impermanence.enable (
-            lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-              run touch "$XDG_RUNTIME_DIR/home-manager-ready"
-            ''
-          );
         };
       };
 
@@ -199,70 +186,31 @@ in
 
     systemd = {
       user.services = {
-        # This makes it so that `sommelier` can set `DISPLAY`,
-        # which is then used by `pinentry`.
+        # This ensures that `sommelier` sets `DISPLAY`, used by `pinentry`.
         yubikey-agent.after = [
           "sommelier@0.service"
           "sommelier@1.service"
           "sommelier-x@0.service"
           "sommelier-x@1.service"
         ];
-      }
-      // lib.optionalAttrs cfg.impermanence.enable {
-        # Create a user service that waits for home-manager to complete setup.
-        # This is needed because garcon (which spawns shells) starts immediately
-        # when user systemd starts, but home-manager (a system service) runs
-        # after user systemd starts and creates config symlinks. Without this,
-        # fish starts before its config is properly linked.
-        #
-        # NOTE: Do NOT add wantedBy = [ "default.target" ] here!
-        #
-        # That would create a circular dependency:
-        #   - is-system-running won't return "running" until default.target is reached
-        #   - default.target requires all wantedBy services to complete
-        #   - wait-for-home-manager waits for home-manager activation
-        #   - home-manager checks is-system-running before reloading systemd units
-        # Instead, let garcon pull this service in via `wants`.
-        wait-for-home-manager = {
-          description = "Wait for home-manager activation to complete";
-          before = [ "garcon.service" ];
-          serviceConfig = {
-            Type = "oneshot";
-            ExecStart =
-              let
-                markerFile = "/run/user/${toString uid}/home-manager-ready";
-              in
-              pkgs.writeShellScript "wait-for-home-manager" ''
-                set -euo pipefail
+      };
 
-                # Check if already ready (avoid race condition)
-                if [[ -f "${markerFile}" ]]; then
-                  exit 0
-                fi
+      # Drop-in to make user@.service wait for home-manager.
+      # This ensures the following order, important to make /home under tmpfs work:
+      #
+      # 1. System boots, linger-users.service enables linger for aldur
+      # 2. `user@1000.service` starts but waits (due to `After=home-manager-aldur.service`)
+      # 3. `home-manager-aldur.service` runs, creating user config (including `fish`)
+      #    and hm service definitions
+      # 4. `user@1000.service proceeds` (starting hm services)
+      # 5. User services start; `garcon` starts `fish` with the correct configuration
+      services."user@" = lib.mkIf cfg.impermanence.enable {
+        overrideStrategy = "asDropin";
+        after = [ "home-manager-${username}.service" ];
+        wants = [ "home-manager-${username}.service" ];
 
-                # Use inotifywait to efficiently wait for the marker file
-                ${pkgs.inotify-tools}/bin/inotifywait \
-                  --timeout 30 \
-                  --event create \
-                  --include 'home-manager-ready$' \
-                  /run/user/${toString uid}/ || {
-                    # Check one more time in case of race
-                    if [[ -f "${markerFile}" ]]; then
-                      exit 0
-                    fi
-                    echo "Timeout waiting for home-manager activation" >&2
-                    exit 1
-                  }
-              '';
-          };
-        };
-
-        # Make garcon wait for home-manager to complete.
-        # `wants` pulls in wait-for-home-manager, `after` ensures ordering.
-        garcon = {
-          after = [ "wait-for-home-manager.service" ];
-          wants = [ "wait-for-home-manager.service" ];
-        };
+        # In case something goes wrong, start `user` and transitively `garcon` after a timeout
+        serviceConfig.TimeoutStartSec = "90";
       };
 
       tmpfiles.settings = lib.mkIf cfg.impermanence.enable {
@@ -282,41 +230,6 @@ in
           };
       };
 
-      # This is required because with tmpfs,
-      # ~/.config/systemd/user/ is empty at boot,
-      # hm activates and populates it, but
-      # needs XDG_RUNTIME_DIR to know that `systemd` for
-      # the user is running and let it learn about the new units.
-      #
-      # after/wants ensure that systemd for the user starts _before_ home
-      # manager.
-      #
-      # ExecStartPre waits for user systemd to be responsive (can accept commands).
-      # We check this by running a simple systemctl command, NOT by waiting for
-      # is-system-running to return "running"/"degraded" - that would create a
-      # circular dependency with wait-for-home-manager.service (a user service
-      # that waits for home-manager to create config symlinks).
-      services."home-manager-${username}" = lib.mkIf cfg.impermanence.enable {
-        after = [ "user@${toString uid}.service" ];
-        wants = [ "user@${toString uid}.service" ];
-        environment = {
-          XDG_RUNTIME_DIR = "/run/user/${toString uid}";
-        };
-        serviceConfig = {
-          ExecStartPre = pkgs.writeShellScript "wait-for-user-systemd" ''
-            set -euo pipefail
-            for i in {1..30}; do
-              if XDG_RUNTIME_DIR=/run/user/${toString uid} \
-                 ${pkgs.systemd}/bin/systemctl --user list-units --no-pager >/dev/null 2>&1; then
-                exit 0
-              fi
-              sleep 1
-            done
-            echo "Timeout waiting for user systemd to be responsive" >&2
-            exit 1
-          '';
-        };
-      };
     };
   };
 }
