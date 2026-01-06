@@ -80,7 +80,7 @@
             modules = modules ++ moreModules;
           };
 
-        lxc-nixos = generator "aarch64-linux" crostiniModule;
+        lxc-nixos = generator "aarch64-linux" [ crostiniModule ];
       in
       {
         nixosConfigurations = {
