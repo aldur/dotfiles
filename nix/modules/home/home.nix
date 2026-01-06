@@ -75,6 +75,17 @@ in
       enable = true;
     };
 
+    lazygit = {
+      enable = true;
+      enableFishIntegration = true;
+
+      settings = {
+        git = {
+          autoFetch = false;
+        };
+      };
+    };
+
     difftastic = {
       # enabled by default for `git diff`
       # enabled with `--ext-diff` to git show and git log -p

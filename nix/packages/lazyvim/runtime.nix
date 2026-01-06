@@ -9,13 +9,13 @@
       inotify-tools
     ]
     ++ [
-
       ast-grep
       basedpyright
       curl
       fd
       git
       harper
+      lazygit
       lua-language-server
       markdownlint-cli2
       marksman
@@ -34,12 +34,6 @@
       pandoc
 
       (pkgs.callPackage ../pandoc_md2html_assets/md2html.nix { })
-    ]
-    ++ [
-      # NOTE: lazygit can't create its own config file, so we add one from `nix`.
-      (pkgs.writeShellScriptBin "lazygit" ''
-        exec ${pkgs.lazygit}/bin/lazygit --use-config-file ${pkgs.writeText "lazygit_config.yml" ""} "$@"
-      '')
     ];
 
   # Categories
