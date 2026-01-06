@@ -158,6 +158,8 @@ in
       historyLimit = 10000;
       secureSocket = true;
       mouse = true;
+      keyMode = "vi";
+      newSession = true;
 
       extraConfig = ''
         # enable RGB support and make nvim autoread work
@@ -166,9 +168,13 @@ in
         # automatically re-number windows (do not leave gaps)
         set -g renumber-windows on
 
-        setw -g mode-keys vi
+        # Split panels similar to vi
         bind-key v split-window -h
         bind-key s split-window -v
+
+        # Pane splits should open to the same path as the current pane
+        bind '"' split-window -v -c "#{pane_current_path}"
+        bind % split-window -h -c "#{pane_current_path}"
       '';
 
       plugins = with pkgs; [
@@ -177,6 +183,7 @@ in
           extraConfig = "set -g @tokyo-night-tmux_theme moon";
         }
         tmuxPlugins.vim-tmux-navigator
+        tmuxPlugins.yank
       ];
     };
 
