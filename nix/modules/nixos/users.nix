@@ -3,4 +3,6 @@ _: {
     extraGroups = [ "wheel" ];
     isNormalUser = true;
   };
+
+  users.mutableUsers = false;
 }
