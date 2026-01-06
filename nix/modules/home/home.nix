@@ -30,6 +30,7 @@ in
     packages = with pkgs; [
       gpg-encrypt
       shrinkpdf
+      flatten-pdf
       flake-lock-cooldown
       moreutils
     ];

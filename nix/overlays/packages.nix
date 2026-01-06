@@ -10,6 +10,7 @@ final: prev: {
   totp-cli = final.callPackage ../packages/totp-cli-ephemeral { inherit (prev) totp-cli; };
 
   shrinkpdf = prev.callPackage ../packages/shrinkpdf/shrinkpdf.nix { };
+  flatten-pdf = prev.callPackage ../packages/flatten-pdf { };
   flake-lock-cooldown = prev.callPackage ../packages/flake-lock-cooldown { };
   remarks = prev.callPackage ../packages/remarks { };
 
