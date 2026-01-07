@@ -14,6 +14,10 @@
       faraday = "sandbox-exec -p '(version 1)(allow default)(deny network*)'";
       sandbox = "sandbox-exec -p '(version 1)(allow default)(deny network*)(deny file-read-data (regex \"^/Users/'$USER'/(Documents|Desktop|Developer|Movies|Music|Pictures)\"))'";
     };
+
+    packages = with pkgs; [
+      reattach-to-user-namespace
+    ];
   };
 
   services.gpg-agent = {
