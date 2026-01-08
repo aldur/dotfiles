@@ -70,5 +70,5 @@
     };
   };
 
-  users.users.aldur.openssh.authorizedKeys.keys = pkgs.callPackage ../../utils/github-keys.nix { };
+  users.users.aldur.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
 }
