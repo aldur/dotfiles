@@ -187,13 +187,51 @@ in
         # Pane splits should open to the same path as the current pane
         bind '"' split-window -v -c "#{pane_current_path}"
         bind % split-window -h -c "#{pane_current_path}"
+
+        set -g @tokyo-night-tmux_transparent 1
+
+        # Stripped down version of https://github.com/janoamaral/tokyo-night-tmux
+        # Night theme colors 
+        # BG supports transparent mode via @tokyo-night-tmux_transparent
+        %hidden BG="#{?#{==:#{@tokyo-night-tmux_transparent},1},default,#1A1B26}"
+        %hidden FG="#a9b1d6"
+        %hidden BBLACK="#2A2F41"
+        %hidden BLUE="#7aa2f7"
+        %hidden GREEN="#73daca"
+        %hidden BGREEN="#41a6b5"
+        %hidden YELLOW="#e0af68"
+
+        # Status bar
+        set -g status-left-length 40
+        set -g status-right-length 80
+        set -g status-style "bg=#{BG}"
+
+        # Highlight & messages
+        set -g mode-style "fg=#{BGREEN},bg=#{BBLACK}"
+        set -g message-style "bg=#{BLUE},fg=#{BBLACK}"
+        set -g message-command-style "fg=#{BLUE},bg=#{BBLACK}"
+
+        # Panes
+        set -g pane-border-style "fg=#{BBLACK}"
+        set -g pane-active-border-style "fg=#{BLUE}"
+        set -g pane-border-status off
+
+        # Popup
+        set -g popup-border-style "fg=#{BLUE}"
+
+        # Status left (session)
+        set -g status-left "#[fg=#{BBLACK},bg=#{BLUE},bold] #{?client_prefix,󰠠 ,#[dim]󰤂 }#[bold,nodim]#S "
+
+        # Windows
+        set -g window-status-current-format "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{GREEN},bg=#{BBLACK}] #{?#{==:#{pane_current_command},ssh},󰣀 , }#[fg=#{FG},bold,nodim]#I-#P #W#{?window_zoomed_flag, ,}#[nobold]#{?window_last_flag, , }"
+        set -g window-status-format "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{FG}] #{?#{==:#{pane_current_command},ssh},󰣀 , }#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#I-#P #W#{?window_zoomed_flag, ,}#[nobold,dim]#[fg=#{YELLOW}]#{?window_last_flag, 󰁯  , }"
+        set -g window-status-separator ""
+
+        # Status right (date/time)
+        set -g status-right "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{FG},bg=#{BBLACK}] %Y-%m-%d ❬ %H:%M "
       '';
 
       plugins = with pkgs; [
-        {
-          plugin = tmuxPlugins.tokyo-night-tmux;
-          extraConfig = "set -g @tokyo-night-tmux_theme moon";
-        }
         tmuxPlugins.vim-tmux-navigator
         tmuxPlugins.yank
       ];
