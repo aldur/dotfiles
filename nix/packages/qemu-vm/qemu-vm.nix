@@ -83,18 +83,30 @@ let
     dontInstall = true;
   };
 
-in
-pkgs.writeShellApplication {
-  name = "qemu-vm";
-  passthru = {
-    modules = baseModules;
-  };
-  runtimeInputs = with pkgs; [
-    qemu
-    coreutils
-    gnused
-  ];
-  text = ''
+  # Fish completion script
+  fishCompletion = ''
+    # Completions for qemu-vm
+    complete -c qemu-vm -f
+    complete -c qemu-vm -s h -l help -d 'Show help message'
+    complete -c qemu-vm -s d -l dir -r -F -d 'VM disk location'
+    complete -c qemu-vm -s p -l port -r -d 'Forward guest port to host (GUEST_PORT[:HOST_PORT])'
+    complete -c qemu-vm -s m -l memory -r -d 'Memory size in MB'
+    complete -c qemu-vm -l cores -r -d 'Number of CPU cores'
+    complete -c qemu-vm -l disk-size -r -d 'Disk size in GB'
+    complete -c qemu-vm -s v -l verbose -d 'Verbose output'
+    complete -c qemu-vm -l clean -d 'Remove existing VM state'
+    complete -c qemu-vm -l ephemeral -d 'Do not write to the VM disk'
+    complete -c qemu-vm -l show-boot -d 'Show boot console messages'
+  '';
+
+  shellApp = pkgs.writeShellApplication {
+    name = "qemu-vm";
+    runtimeInputs = with pkgs; [
+      qemu
+      coreutils
+      gnused
+    ];
+    text = ''
     # Default values
     VM_DIR="${defaultVmDir}"
     PORTS=()
@@ -122,7 +134,6 @@ pkgs.writeShellApplication {
       -m, --memory SIZE               Memory size in MB (default: ${toString defaultMemory})
       --cores N                       Number of CPU cores (default: ${toString defaultCores})
       --disk-size SIZE                Disk size in GB (default: ${toString defaultDiskSize})
-      --gui                           Enable GUI (default: headless)
       -v, --verbose                   Verbose output
       --clean                         Remove existing VM state
       --ephemeral                     Do not write to the VM disk
@@ -290,4 +301,19 @@ pkgs.writeShellApplication {
 
     exec ${vmRunner}/bin/run-${targetHostname}-vm
   '';
+  };
+
+in
+pkgs.symlinkJoin {
+  name = "qemu-vm";
+  paths = [ shellApp ];
+  postBuild = ''
+    mkdir -p $out/share/fish/vendor_completions.d
+    cat > $out/share/fish/vendor_completions.d/qemu-vm.fish << 'EOF'
+    ${fishCompletion}
+    EOF
+  '';
+  passthru = {
+    modules = baseModules;
+  };
 }
