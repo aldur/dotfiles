@@ -10,7 +10,6 @@ with lib;
 
 let
   cfg = config.programs.qemu-vm;
-  inherit (inputs) self;
 
   vmScript = pkgs.callPackage ../../packages/qemu-vm/qemu-vm.nix {
     inherit inputs;
@@ -18,7 +17,6 @@ let
     inherit (cfg) defaultMemory;
     inherit (cfg) defaultCores;
     inherit (cfg) defaultDiskSize;
-    inherit (cfg) vmFlakeRef;
   };
 
 in
@@ -48,12 +46,6 @@ in
       type = types.int;
       default = 64;
       description = "Default disk size in GB";
-    };
-
-    vmFlakeRef = mkOption {
-      type = types.str;
-      default = "path:${builtins.dirOf self.outPath}/base_hosts/qemu";
-      description = "Flake reference to the QEMU base host flake";
     };
   };
 

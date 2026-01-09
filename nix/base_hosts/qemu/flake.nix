@@ -11,10 +11,11 @@
     { aldur-dotfiles, ... }:
     let
       inherit (aldur-dotfiles) specialArgs;
+      qemuModule = ./qemu.nix;
     in
     aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system: {
       packages = rec {
-        vm-nogui = aldur-dotfiles.legacyPackages.${system}.qemu-vm.override { qemuModule = ./qemu.nix; };
+        vm-nogui = aldur-dotfiles.legacyPackages.${system}.qemu-vm.override { inherit qemuModule; };
         default = vm-nogui;
       };
     })
@@ -24,7 +25,7 @@
           targetSystem:
           aldur-dotfiles.inputs.nixpkgs.lib.nixosSystem {
             inherit specialArgs;
-            modules = aldur-dotfiles.legacyPackages.${targetSystem}.qemu-vm.modules ++ [ ./qemu.nix ];
+            modules = aldur-dotfiles.legacyPackages.${targetSystem}.qemu-vm.modules ++ [ qemuModule ];
             system = targetSystem;
           };
 

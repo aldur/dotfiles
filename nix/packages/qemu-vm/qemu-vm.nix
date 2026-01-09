@@ -3,10 +3,10 @@
   inputs,
   # Configurable defaults
   defaultVmDir ? "$HOME/.local/share/qemu-vm",
-  defaultMemory ? 16384,
+  defaultMemory ? 1024 * 16,
   defaultCores ? 8,
   defaultDiskSize ? 64,
-  defaultQemuModule ? ../../base_hosts/qemu/qemu.nix,
+  qemuModule ? ../../base_hosts/qemu/qemu.nix,
   ...
 }:
 
@@ -29,7 +29,7 @@ let
       };
     };
     modules = baseModules ++ [
-      defaultQemuModule
+      qemuModule
       (
         {
           config,
@@ -39,8 +39,6 @@ let
           ...
         }:
         {
-          imports = [ "${modulesPath}/virtualisation/qemu-vm.nix" ];
-
           virtualisation = {
             diskSize = defaultDiskSize * 1024;
             cores = defaultCores;
@@ -48,39 +46,16 @@ let
             writableStoreUseTmpfs = false;
             useBootLoader = false;
 
-            # We need to remove the `xchg` and `shared` directories,
-            # so we need to re-define this option without them.
-            sharedDirectories = lib.mkForce {
-              nix-store = lib.mkIf config.virtualisation.mountHostNixStore {
-                source = builtins.storeDir;
-                # Always mount this to /nix/.ro-store because we never want to actually
-                # write to the host Nix Store.
-                target = "/nix/.ro-store";
-                securityModel = "none";
-              };
-              certs = lib.mkIf config.virtualisation.useHostCerts {
-                source = ''"$TMPDIR"/certs'';
-                target = "/etc/ssl/certs";
-                securityModel = "none";
-              };
-            };
-
-            # Disable graphics completely for terminal-only use
-            graphics = false;
-
             # Build for the host system
             qemu.package = pkgs.qemu;
             host.pkgs = pkgs;
           };
-
-          # Remove xchg/shared filesystem mounts since we removed the virtfs devices
-          # Use mkForce with null to completely remove these mount points
-          fileSystems."/tmp/xchg" = lib.mkForce null;
-          fileSystems."/tmp/shared" = lib.mkForce null;
         }
       )
     ];
   };
+
+  targetHostname = qemuNixos.config.networking.hostName;
 
   # Use the VM runner script that NixOS generates
   vmRunnerOriginal = qemuNixos.config.system.build.vm;
@@ -93,22 +68,19 @@ let
     buildPhase = ''
       mkdir -p $out/bin
 
-      # Remove BOTH virtfs mounts (xchg and shared) and unnecessary devices
-      cat $src/bin/run-qemu-nixos-vm | \
-        sed -e '/-virtfs.*mount_tag=xchg.*\\$/d' \
-            -e '/-virtfs.*mount_tag=shared.*\\$/d' \
-            -e '/-device virtio-keyboard.*\\$/d' \
-            -e '/-device virtio-gpu-pci.*\\$/d' \
+      # Remove unnecessary devices
+      cat $src/bin/run-${targetHostname}-vm | \
+        sed -e '/-device virtio-gpu-pci.*\\$/d' \
             -e '/-device usb-ehci.*\\$/d' \
             -e '/-device usb-kbd.*\\$/d' \
             -e '/-device usb-tablet.*\\$/d' \
             -e 's/console=tty0 //' \
-            > $out/bin/run-qemu-nixos-vm
+            > $out/bin/run-${targetHostname}-vm
 
-      chmod +x $out/bin/run-qemu-nixos-vm
+      chmod +x $out/bin/run-${targetHostname}-vm
     '';
 
-    installPhase = "true"; # buildPhase does everything
+    dontInstall = true;
   };
 
 in
@@ -129,7 +101,6 @@ pkgs.writeShellApplication {
     MEMORY="${toString defaultMemory}"
     CORES="${toString defaultCores}"
     DISK_SIZE="${toString defaultDiskSize}"
-    DISPLAY_MODE="none"
     VERBOSE=false
     CLEAN=false
     EPHEMERAL=false
@@ -199,10 +170,6 @@ pkgs.writeShellApplication {
         --disk-size)
           DISK_SIZE="$2"
           shift 2
-          ;;
-        --gui)
-          DISPLAY_MODE="gtk"
-          shift
           ;;
         -v|--verbose)
           VERBOSE=true
@@ -278,12 +245,6 @@ pkgs.writeShellApplication {
       export QEMU_NET_OPTS
     fi
 
-    if [[ "$DISPLAY_MODE" == "none" ]]; then
-      export QEMU_OPTS="$QEMU_OPTS -nographic"
-    elif [[ "$DISPLAY_MODE" == "gtk" ]]; then
-      export QEMU_OPTS="$QEMU_OPTS -display gtk"
-    fi
-
     # Control boot message visibility
     if [[ "$SHOW_BOOT" == "true" ]]; then
       # Force showing all boot messages
@@ -307,7 +268,6 @@ pkgs.writeShellApplication {
     echo "  Memory: ''${MEMORY}MB"
     echo "  Cores: $CORES"
     echo "  Disk: $NIX_DISK_IMAGE"
-    echo "  Display: $DISPLAY_MODE"
     if [[ "$SHOW_BOOT" == "true" ]]; then
       echo "  Boot output: visible"
     else
@@ -320,10 +280,6 @@ pkgs.writeShellApplication {
       echo "  Ephemeral mode: enabled"
     fi
     echo ""
-    if [[ "$DISPLAY_MODE" == "none" ]]; then
-      echo "Press Ctrl-A then X to quit"
-    fi
-    echo ""
 
     if [[ "$VERBOSE" == "true" ]]; then
       echo "QEMU_OPTS: $QEMU_OPTS"
@@ -332,7 +288,6 @@ pkgs.writeShellApplication {
       echo "Running NixOS VM runner..."
     fi
 
-    # Run the VM using the NixOS-generated VM runner
-    exec ${vmRunner}/bin/run-qemu-nixos-vm
+    exec ${vmRunner}/bin/run-${targetHostname}-vm
   '';
 }

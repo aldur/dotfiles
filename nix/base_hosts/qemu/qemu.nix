@@ -3,7 +3,6 @@
   inputs,
   lib,
   modulesPath,
-  pkgs,
   ...
 }:
 {
@@ -50,10 +49,6 @@
     };
   };
 
-  services.getty.helpLine = ''
-    Type 'Ctrl-a c' from `bash` to switch to the QEMU console.
-  '';
-
   # Disable virtual console
   systemd.services."autovt@".enable = false;
   systemd.services."getty@".enable = false;
@@ -71,4 +66,32 @@
   };
 
   users.users.aldur.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
+
+  virtualisation = {
+    # By default, `nix` mounts the whole /nix/store of the host to the VM.
+    # That's insecure, since it might leak unrelated (to the vm) files.
+    # This disables it, at the cost of building the /nix/store image at runtime
+    # and increasing vm startup time.
+    useNixStoreImage = true;
+
+    # Make the nixStoreImage from above writable.
+    writableStore = true;
+
+    # No shared directories.
+    sharedDirectories = lib.mkForce { };
+
+    # No graphics either.
+    graphics = false;
+
+    # No need for this device.
+    qemu.virtioKeyboard = false;
+
+    # ctrl-b, since ctrl-a clashes with `tmux`
+    qemu.options = [ "-echr 0x02" ];
+  };
+
+  services.getty.helpLine = ''
+    Type 'Ctrl-b c' from `bash` to switch to the QEMU console.
+  '';
+
 }
