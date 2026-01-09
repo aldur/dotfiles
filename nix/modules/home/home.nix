@@ -180,14 +180,20 @@ in
         # automatically re-number windows (do not leave gaps)
         set -g renumber-windows on
 
-        # Split panels similar to vi
-        bind-key v split-window -h
-        bind-key s split-window -v
+        # c-a twice sends c-a to the terminal
+        bind C-a send-prefix
 
-        # Pane splits should open to the same path as the current pane
-        bind '"' split-window -v -c "#{pane_current_path}"
-        bind % split-window -h -c "#{pane_current_path}"
+        # split with vi keybindings opening to the current pane's path
+        bind-key s split-window -v -c "#{pane_current_path}"
+        bind-key v split-window -h -c "#{pane_current_path}"
 
+        # v, c-v to select and vertically select
+        bind -T copy-mode-vi v send-keys -X begin-selection
+        bind -T copy-mode-vi C-v send-keys -X rectangle-toggle
+        # escape to exit copy mode
+        bind -T copy-mode-vi Escape send-keys -X cancel
+
+        # --- Theming ---
         set -g @tokyo-night-tmux_transparent 1
 
         # Stripped down version of https://github.com/janoamaral/tokyo-night-tmux
@@ -229,6 +235,7 @@ in
 
         # Status right (date/time)
         set -g status-right "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{FG},bg=#{BBLACK}] %Y-%m-%d ❬ %H:%M "
+        # --- /Theming ---
       '';
 
       plugins = with pkgs; [
