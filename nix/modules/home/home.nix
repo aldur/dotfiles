@@ -62,6 +62,20 @@ in
             bind -M insert ctrl-n down-or-search
           '';
         };
+
+        pyshell = {
+          description = "Launch a nix shell with Python packages";
+          body = ''
+            if test (count $argv) -eq 0
+                echo "Usage: pyshell <package1> [package2] ..."
+                return 1
+            end
+
+            set -l packages (string join " " $argv)
+            nix-shell -p "python3.withPackages (ps: with ps; [ $packages ])" --run "$SHELL"
+          '';
+        };
+
       };
 
       plugins = [
