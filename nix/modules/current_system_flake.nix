@@ -13,7 +13,7 @@ let
     fi
     cp -rL /etc/${flakeName} "$dest"
     chmod -R u+w "$dest"
-    echo "Flake copied to $dest"
+    echo "Current system's flake copied to '$dest'."
   '';
 in
 {
@@ -25,7 +25,7 @@ in
   # https://discourse.nixos.org/t/nixos-config-flake-store-path-for-run-current-system/24812/6
   environment.etc.${flakeName}.source = self;
 
-  # Script to copy the flake to ~/flake and make it writable
+  # Script to copy the flake to ~/flake and make it writable.
   home-manager.users.aldur.home.packages = [ editCurrentFlake ];
 
   # https://discourse.nixos.org/t/flakes-accessing-selfs-revision/11237/8
