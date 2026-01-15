@@ -29,11 +29,12 @@ in
 
     username = "aldur";
     packages = with pkgs; [
-      gpg-encrypt
-      shrinkpdf
-      flatten-pdf
       flake-lock-cooldown
+      flatten-pdf
+      fps
+      gpg-encrypt
       moreutils
+      shrinkpdf
     ];
 
     file."Documents/Notes/.marksman.toml".text = "";
