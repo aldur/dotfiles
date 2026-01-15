@@ -3,6 +3,7 @@
   inputs,
   stateVersion,
   lib,
+  config,
   osConfig,
   ...
 }:
@@ -283,5 +284,8 @@ in
   }
   // lib.optionalAttrs osConfig.programs.aldur.claude-code.enable {
     claude-yolo = "claude --dangerously-skip-permissions";
+  }
+  // lib.optionalAttrs config.programs.aldur.lazyvim.enable {
+    lv = "lazyvim";
   };
 }
