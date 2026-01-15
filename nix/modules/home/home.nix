@@ -253,7 +253,6 @@ in
       '';
 
       plugins = with pkgs; [
-        tmuxPlugins.vim-tmux-navigator
         tmuxPlugins.yank
       ];
     };
