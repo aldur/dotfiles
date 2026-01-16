@@ -39,6 +39,18 @@
     ],
     "description": "Add image"
   },
+  "Centered Image": {
+    "prefix": [
+      "imgc",
+      "cimg"
+    ],
+    "body": [
+      "![${1:alt text}]({% link /images/${2:filename.webp} %}){:.centered style=\"width: ${3:70}%; border-radius: 10px;\"}",
+      "_${4:caption}_",
+      "${0}"
+    ],
+    "description": "Add centered image with caption (Jekyll)"
+  },
   "References": {
     "prefix": "refh",
     "body": [
