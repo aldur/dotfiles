@@ -76,7 +76,7 @@
       let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = import ./overlays;
+          overlays = import ./overlays { inherit self; };
         };
         lazyvims = pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; };
         qemu-vm = pkgs.callPackage ./packages/qemu-vm/qemu-vm.nix { inherit inputs; };

@@ -6,6 +6,7 @@
 #     name = "my-script";
 #     file = ./my-script.sh;  # or use `text = "..."` for inline scripts
 #     runtimeInputs = [ someDep ];
+#     version = "1.0.0";  # optional, defaults to flake shortRev
 #   }
 #
 # Script requirements:
@@ -25,19 +26,37 @@
 #
 # See https://github.com/sigoden/argc for full documentation.
 
-final: prev: {
+{ self }:
+final: prev:
+let
+  defaultVersion = self.shortRev or self.dirtyShortRev or "unknown";
+in
+{
   writeArgcApplication =
     {
       name,
       text ? null,
       file ? null,
       runtimeInputs ? [ ],
+      version ? defaultVersion,
       meta ? { },
+      passthru ? { },
     }:
     assert (text != null) != (file != null);
     let
-      scriptSource = if file != null then builtins.readFile file else text;
-      scriptFile = if file != null then file else prev.writeText "${name}.sh" text;
+      rawSource = if file != null then builtins.readFile file else text;
+      # Inject @version after @describe (or at the start if no @describe)
+      scriptSource =
+        if builtins.match ".*# @version.*" rawSource != null then
+          rawSource # Already has version
+        else if builtins.match ".*# @describe.*" rawSource != null then
+          builtins.replaceStrings
+            [ "# @describe" ]
+            [ "# @version ${version}\n    # @describe" ]
+            rawSource
+        else
+          "# @version ${version}\n" + rawSource;
+      scriptFile = prev.writeText "${name}.sh" scriptSource;
 
       shellApp = prev.writeShellApplication {
         inherit name meta;
@@ -46,7 +65,7 @@ final: prev: {
       };
     in
     prev.stdenv.mkDerivation {
-      inherit name meta;
+      inherit name version meta passthru;
       nativeBuildInputs = [ prev.installShellFiles ];
       buildCommand = ''
         mkdir -p $out

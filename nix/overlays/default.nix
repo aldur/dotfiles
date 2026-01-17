@@ -1,3 +1,4 @@
+{ self }:
 [
   (
     final: prev:
@@ -14,6 +15,6 @@
     prev.lib.composeManyExtensions overlays final prev
   )
 
-  (import ./argc.nix)
+  (import ./argc.nix { inherit self; })
   (import ./packages.nix)
 ]
