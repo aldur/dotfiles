@@ -14,5 +14,6 @@
     prev.lib.composeManyExtensions overlays final prev
   )
 
+  (import ./argc.nix)
   (import ./packages.nix)
 ]

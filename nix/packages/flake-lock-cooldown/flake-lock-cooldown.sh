@@ -1,31 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TIME_AGO="1 week ago"
+# @describe Update a flake input to a commit from at least N time ago
+# @option -t --time <TIME> How long ago (e.g., '2 weeks', '3 days') [default: `1 week`]
+# @arg input! Flake input name to update
+# @arg flake-path Path to flake directory [default: .]
 
-while getopts ":t:" opt; do
-  case $opt in
-  t) TIME_AGO="$OPTARG ago" ;;
-  :)
-    echo "Error: -$OPTARG requires an argument" >&2
-    exit 1
-    ;;
-  \?)
-    echo "Error: Unknown option -$OPTARG" >&2
-    exit 1
-    ;;
-  esac
-done
-shift $((OPTIND - 1))
+declare argc_time argc_input argc_flake_path
+eval "$(argc --argc-eval "$0" "$@")"
 
-if [[ $# -lt 1 ]]; then
-  echo "Usage: $0 [-t <time>] <input-name> [flake-path]" >&2
-  echo "  -t <time>  How long ago (e.g., '2 weeks', '3 days'). Default: 1 week" >&2
-  exit 1
-fi
-
-INPUT_NAME="$1"
-FLAKE_PATH="${2:-.}"
+TIME_AGO="${argc_time:-1 week} ago"
+INPUT_NAME="$argc_input"
+FLAKE_PATH="${argc_flake_path:-.}"
 LOCK_FILE="$FLAKE_PATH/flake.lock"
 
 if [[ ! -f "$LOCK_FILE" ]]; then

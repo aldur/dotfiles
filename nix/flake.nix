@@ -91,6 +91,7 @@
             solidity-docset
             remarks
             flatten-pdf
+            flake-lock-cooldown
             ;
           llm = pkgs.llmWithPlugins;
         };

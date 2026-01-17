@@ -1,18 +1,16 @@
 {
-  writeShellApplication,
+  writeArgcApplication,
   curl,
   jq,
   coreutils,
 }:
 
-writeShellApplication {
+writeArgcApplication {
   name = "flake-lock-cooldown";
-
+  file = ./flake-lock-cooldown.sh;
   runtimeInputs = [
     curl
     jq
     coreutils
   ];
-
-  text = builtins.readFile ./flake-lock-cooldown.sh;
 }
