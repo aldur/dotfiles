@@ -90,6 +90,7 @@
             shrinkpdf
             solidity-docset
             remarks
+            flatten-pdf
             ;
           llm = pkgs.llmWithPlugins;
         };
