@@ -83,135 +83,44 @@ let
     dontInstall = true;
   };
 
-  # Fish completion script
-  fishCompletion = ''
-    # Completions for qemu-vm
-    complete -c qemu-vm -f
-    complete -c qemu-vm -s h -l help -d 'Show help message'
-    complete -c qemu-vm -s d -l dir -r -F -d 'VM disk location'
-    complete -c qemu-vm -s p -l port -r -d 'Forward guest port to host (GUEST_PORT[:HOST_PORT])'
-    complete -c qemu-vm -s m -l memory -r -d 'Memory size in MB'
-    complete -c qemu-vm -l cores -r -d 'Number of CPU cores'
-    complete -c qemu-vm -l disk-size -r -d 'Disk size in GB'
-    complete -c qemu-vm -s v -l verbose -d 'Verbose output'
-    complete -c qemu-vm -l clean -d 'Remove existing VM state'
-    complete -c qemu-vm -l ephemeral -d 'Do not write to the VM disk'
-    complete -c qemu-vm -l show-boot -d 'Show boot console messages'
-  '';
+in
+pkgs.writeArgcApplication {
+  name = "qemu-vm";
+  runtimeInputs = with pkgs; [
+    qemu
+    coreutils
+    gnused
+  ];
+  passthru = {
+    modules = baseModules;
+  };
+  text = ''
+    # @describe Spawn a NixOS VM configured as the qemu base host
+    # @option -d --dir <DIR> VM disk location [default: ${defaultVmDir}]
+    # @option -p --port* <PORT> Forward guest port to host (GUEST_PORT[:HOST_PORT])
+    # @option -m --memory <SIZE> Memory size in MB [default: ${toString defaultMemory}]
+    # @option --cores <N> Number of CPU cores [default: ${toString defaultCores}]
+    # @option --disk-size <SIZE> Disk size in GB [default: ${toString defaultDiskSize}]
+    # @flag -v --verbose Verbose output
+    # @flag --clean Remove existing VM state
+    # @flag --ephemeral Do not write to the VM disk
+    # @flag --show-boot Show boot console messages
 
-  shellApp = pkgs.writeShellApplication {
-    name = "qemu-vm";
-    runtimeInputs = with pkgs; [
-      qemu
-      coreutils
-      gnused
-    ];
-    text = ''
-    # Default values
-    VM_DIR="${defaultVmDir}"
-    PORTS=()
-    MEMORY="${toString defaultMemory}"
-    CORES="${toString defaultCores}"
-    DISK_SIZE="${toString defaultDiskSize}"
-    VERBOSE=false
-    CLEAN=false
-    EPHEMERAL=false
-    SHOW_BOOT=false
+    declare argc_dir argc_port argc_memory argc_cores argc_disk_size
+    declare argc_verbose argc_clean argc_ephemeral argc_show_boot
+    eval "$(argc --argc-eval "$0" "$@")"
 
-    # Parse command line arguments
-    show_help() {
-      cat << EOF
-    Usage: qemu-vm [OPTIONS]
-
-    Spawn a NixOS VM configured as the qemu base host.
-
-    OPTIONS:
-      -h, --help                      Show this help message
-      -d, --dir DIR                   VM disk location (default: ${defaultVmDir})
-      -p, --port PORT[:HOST]          Forward guest port to host (can be specified multiple times)
-                                      Format: GUEST_PORT or GUEST_PORT:HOST_PORT
-                                      Example: -p 22:2222 -p 80:8080
-      -m, --memory SIZE               Memory size in MB (default: ${toString defaultMemory})
-      --cores N                       Number of CPU cores (default: ${toString defaultCores})
-      --disk-size SIZE                Disk size in GB (default: ${toString defaultDiskSize})
-      -v, --verbose                   Verbose output
-      --clean                         Remove existing VM state
-      --ephemeral                     Do not write to the VM disk
-      --show-boot                     Show boot console messages (default: hidden)
-
-    EXAMPLES:
-      # Start VM with SSH forwarded to localhost:2222
-      qemu-vm -p 22:2222
-
-      # Start VM with custom location and multiple ports
-      qemu-vm -d /data/my-vm -p 22:2222 -p 80:8080
-
-      # Start with more resources
-      qemu-vm --memory 8192 --cores 4 -p 22:2222
-
-      # Show boot console messages
-      qemu-vm --show-boot -p 22:2222
-
-    EOF
-    }
-
-    # Parse arguments
-    while [[ $# -gt 0 ]]; do
-      case $1 in
-        -h|--help)
-          show_help
-          exit 0
-          ;;
-        -d|--dir)
-          VM_DIR="$2"
-          shift 2
-          ;;
-        -p|--port)
-          PORTS+=("$2")
-          shift 2
-          ;;
-        -m|--memory)
-          MEMORY="$2"
-          shift 2
-          ;;
-        --cores)
-          CORES="$2"
-          shift 2
-          ;;
-        --disk-size)
-          DISK_SIZE="$2"
-          shift 2
-          ;;
-        -v|--verbose)
-          VERBOSE=true
-          shift
-          ;;
-        --clean)
-          CLEAN=true
-          shift
-          ;;
-        --ephemeral)
-          EPHEMERAL=true
-          shift
-          ;;
-        --show-boot)
-          SHOW_BOOT=true
-          shift
-          ;;
-        *)
-          echo "Unknown option: $1"
-          show_help
-          exit 1
-          ;;
-      esac
-    done
+    VM_DIR="''${argc_dir:-${defaultVmDir}}"
+    MEMORY="''${argc_memory:-${toString defaultMemory}}"
+    CORES="''${argc_cores:-${toString defaultCores}}"
+    DISK_SIZE="''${argc_disk_size:-${toString defaultDiskSize}}"
 
     # Set up VM directory
     export NIX_DISK_IMAGE="$VM_DIR/nixos.qcow2"
     mkdir -p "$VM_DIR"
 
     # Handle clean flag
-    if [[ "$CLEAN" == "true" ]]; then
+    if [[ "''${argc_clean:-0}" -eq 1 ]]; then
       echo "Cleaning VM state in $VM_DIR..."
       rm -f "$NIX_DISK_IMAGE"
     fi
@@ -223,7 +132,8 @@ let
 
     # Build QEMU network arguments
     QEMU_NET_OPTS=""
-    if [[ ''${#PORTS[@]} -gt 0 ]]; then
+    if [[ -n "''${argc_port:-}" ]]; then
+      IFS=$'\n' read -r -d "" -a PORTS <<< "''${argc_port:-}" || true
       for i in "''${!PORTS[@]}"; do
         port_spec="''${PORTS[$i]}"
         if [[ "$port_spec" =~ ^([0-9]+):([0-9]+)$ ]]; then
@@ -243,7 +153,7 @@ let
           QEMU_NET_OPTS="$QEMU_NET_OPTS,hostfwd=tcp::$host_port-:$guest_port"
         fi
 
-        if [[ "$VERBOSE" == "true" ]]; then
+        if [[ "''${argc_verbose:-0}" -eq 1 ]]; then
           echo "Forwarding: localhost:$host_port -> guest:$guest_port"
         fi
       done
@@ -257,7 +167,7 @@ let
     fi
 
     # Control boot message visibility
-    if [[ "$SHOW_BOOT" == "true" ]]; then
+    if [[ "''${argc_show_boot:-0}" -eq 1 ]]; then
       # Force showing all boot messages
       # loglevel=7 shows all messages including debug (overrides quiet)
       # systemd.show_status=yes forces systemd to show service status
@@ -271,7 +181,7 @@ let
       export QEMU_KERNEL_PARAMS="quiet loglevel=0 systemd.show_status=no"
     fi
 
-    if [[ "$EPHEMERAL" == "true" ]]; then
+    if [[ "''${argc_ephemeral:-0}" -eq 1 ]]; then
       export QEMU_OPTS="$QEMU_OPTS -snapshot"
     fi
 
@@ -279,7 +189,7 @@ let
     echo "  Memory: ''${MEMORY}MB"
     echo "  Cores: $CORES"
     echo "  Disk: $NIX_DISK_IMAGE"
-    if [[ "$SHOW_BOOT" == "true" ]]; then
+    if [[ "''${argc_show_boot:-0}" -eq 1 ]]; then
       echo "  Boot output: visible"
     else
       echo "  Boot output: hidden (use --show-boot to see)"
@@ -287,12 +197,12 @@ let
     if [[ -n "$QEMU_NET_OPTS" ]]; then
       echo "  Network: $QEMU_NET_OPTS"
     fi
-    if [[ "$EPHEMERAL" == "true" ]]; then
+    if [[ "''${argc_ephemeral:-0}" -eq 1 ]]; then
       echo "  Ephemeral mode: enabled"
     fi
     echo ""
 
-    if [[ "$VERBOSE" == "true" ]]; then
+    if [[ "''${argc_verbose:-0}" -eq 1 ]]; then
       echo "QEMU_OPTS: $QEMU_OPTS"
       echo "QEMU_KERNEL_PARAMS: ''${QEMU_KERNEL_PARAMS:-not set}"
       echo "NIX_DISK_IMAGE: $NIX_DISK_IMAGE"
@@ -301,19 +211,4 @@ let
 
     exec ${vmRunner}/bin/run-${targetHostname}-vm
   '';
-  };
-
-in
-pkgs.symlinkJoin {
-  name = "qemu-vm";
-  paths = [ shellApp ];
-  postBuild = ''
-    mkdir -p $out/share/fish/vendor_completions.d
-    cat > $out/share/fish/vendor_completions.d/qemu-vm.fish << 'EOF'
-    ${fishCompletion}
-    EOF
-  '';
-  passthru = {
-    modules = baseModules;
-  };
 }
