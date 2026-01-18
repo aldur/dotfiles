@@ -201,6 +201,9 @@ in
         # c-a twice sends c-a to the terminal
         bind C-a send-prefix
 
+        # Center the window list
+        set -g status-justify centre
+
         # split with vi keybindings opening to the current pane's path
         bind-key s split-window -v -c "#{pane_current_path}"
         bind-key v split-window -h -c "#{pane_current_path}"
