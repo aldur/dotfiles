@@ -45,6 +45,7 @@
       "cimg"
     ],
     "body": [
+      "{:.text-align-center}",
       "![${1:alt text}]({% link /images/${2:filename.webp} %}){:.centered style=\"width: ${3:70}%; border-radius: 10px;\"}",
       "_${4:caption}_",
       "${0}"
@@ -78,10 +79,10 @@
       "details"
     ],
     "body": [
-        "<details markdown=1>",
-        "<summary markdown=span>${1:summary}</summary>",
-        "${0}",
-        "</details>"
+      "<details markdown=1>",
+      "<summary markdown=span>${1:summary}</summary>",
+      "${0}",
+      "</details>"
     ],
     "description": "Reference under header"
   },
