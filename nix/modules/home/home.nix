@@ -92,6 +92,8 @@ in
       enable = true;
     };
 
+    nh.enable = true;
+
     lazygit = {
       enable = true;
       enableFishIntegration = true;
