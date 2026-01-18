@@ -113,6 +113,7 @@ in
       {
 
         programs.llm.enable = true;
+        programs.better-nix-search.enable = true;
         home = {
           packages = with pkgs; [
             age-plugin-yubikey
