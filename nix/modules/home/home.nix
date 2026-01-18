@@ -288,7 +288,9 @@ in
   // lib.optionalAttrs osConfig.programs.aldur.claude-code.enable {
     claude-yolo = "claude --dangerously-skip-permissions";
   }
-  // lib.optionalAttrs config.programs.aldur.lazyvim.enable {
-    lv = "lazyvim";
-  };
+  //
+    lib.optionalAttrs (osConfig.programs.aldur.lazyvim.enable || config.programs.aldur.lazyvim.enable)
+      {
+        lv = "lazyvim";
+      };
 }
