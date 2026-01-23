@@ -1,15 +1,22 @@
-{ lib, stdenv, clang_20, buildNpmPackage, fetchFromGitHub, pkg-config, libsecret
+{
+  lib,
+  stdenv,
+  clang_20,
+  buildNpmPackage,
+  fetchFromGitHub,
+  pkg-config,
+  libsecret,
 }:
 
 buildNpmPackage (finalAttrs: {
   pname = "nomicfoundation-solidity-language-server";
-  version = "0.8.25";
+  version = "0.8.26";
 
   src = fetchFromGitHub {
     owner = "NomicFoundation";
     repo = "hardhat-vscode";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-DJm/qv5WMfjwLs8XBL2EfL11f5LR9MHfTT5eR2Ir37U=";
+    hash = "sha256-QXkfPRVQLYmMlhidiLH34wproYpJiVpdZEw1wLRbGAY=";
   };
 
   postPatch = ''
@@ -21,13 +28,13 @@ buildNpmPackage (finalAttrs: {
 
   npmWorkspace = "server";
 
-  npmDepsHash = "sha256-bLP5kVpfRIvHPCutUvTz5MFal6g5fimzXGNdQEhB+Lw=";
+  npmDepsHash = "sha256-L3obeOyS4uCsaDYwMJJDJoK8vmWhSqGT2a7I/NsHdwM=";
 
   nativeBuildInputs = [
     pkg-config
   ]
   # https://github.com/NixOS/nixpkgs/pull/451937/files
-    ++ lib.optionals stdenv.isDarwin [ clang_20 ];
+  ++ lib.optionals stdenv.isDarwin [ clang_20 ];
 
   buildInputs = [ libsecret ];
 
