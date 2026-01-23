@@ -10,10 +10,13 @@ in
 {
 
   options.programs.llm = {
-    enable = lib.mkEnableOption "simonw's LLM";
+    enable = lib.mkEnableOption "LLMs tools and friends";
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = [ pkgs.llmWithPlugins ];
+    home.packages = with pkgs; [
+      llmWithPlugins
+      llama-cpp
+    ];
   };
 }
