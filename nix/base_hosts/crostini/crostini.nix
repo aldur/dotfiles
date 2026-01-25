@@ -164,6 +164,8 @@ in
               ".local/share/direnv"
               ".local/share/fish"
 
+              ".config/io.datasette.llm"
+
               "Documents/"
               "Work/"
 
@@ -228,6 +230,8 @@ in
             "/home/${username}/.local".d = defaultPermissions;
             "/home/${username}/.local/share".d = defaultPermissions;
             "/home/${username}/.local/state".d = defaultPermissions;
+            "/home/${username}/.config/".d = defaultPermissions;
+            "/home/${username}/.config/io.datasette.llm/".d = defaultPermissions;
           };
       };
 
