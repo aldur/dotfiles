@@ -43,6 +43,14 @@ in
   programs = {
     clipshare.enable = true;
 
+    claude-code = lib.optionalAttrs osConfig.programs.aldur.claude-code.enable {
+      inherit (osConfig.programs.aldur.claude-code) enable;
+
+      settings = {
+        theme = "dark";
+      };
+    };
+
     fish = {
       enable = true;
 
