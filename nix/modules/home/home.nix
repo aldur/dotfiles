@@ -281,10 +281,14 @@ in
         set -g message-style "bg=#{BLUE},fg=#{BBLACK}"
         set -g message-command-style "fg=#{BLUE},bg=#{BBLACK}"
 
-        # Panes
+        # Panes: borders
+        set -g pane-border-lines heavy
         set -g pane-border-style "fg=#{BBLACK}"
         set -g pane-active-border-style "fg=#{BLUE}"
+
+        # Panes: status (set it to `top` when you need it)
         set -g pane-border-status off
+        set -g pane-border-format "#{?pane_active,#[fg=#{BLUE}]  #P: #{pane_title} ,#[fg=#{BBLACK}] #P: #{pane_title} }"
 
         # Popup
         set -g popup-border-style "fg=#{BLUE}"
