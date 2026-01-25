@@ -198,21 +198,24 @@ in
         ];
       };
 
-      # Drop-in to make user@.service wait for home-manager.
-      # This ensures the following order, important to make /home under tmpfs work:
+      # Drop-in to make user@.service wait for home-manager. This ensures the
+      # following order, important to make /home under tmpfs work:
       #
       # 1. System boots, linger-users.service enables linger for aldur
-      # 2. `user@1000.service` starts but waits (due to `After=home-manager-aldur.service`)
-      # 3. `home-manager-aldur.service` runs, creating user config (including `fish`)
-      #    and hm service definitions
+      # 2. `user@1000.service` starts but waits (due to
+      #    `After=home-manager-aldur.service`)
+      # 3. `home-manager-aldur.service` runs, creating user config (including
+      #    `fish`) and hm service definitions
       # 4. `user@1000.service proceeds` (starting hm services)
-      # 5. User services start; `garcon` starts `fish` with the correct configuration
+      # 5. User services start; `garcon` starts `fish` with the correct
+      #    configuration
       services."user@" = lib.mkIf cfg.impermanence.enable {
         overrideStrategy = "asDropin";
         after = [ "home-manager-${username}.service" ];
         wants = [ "home-manager-${username}.service" ];
 
-        # In case something goes wrong, start `user` and transitively `garcon` after a timeout
+        # In case something goes wrong, start `user` and transitively `garcon`
+        # after a timeout
         serviceConfig.TimeoutStartSec = "90";
       };
 
