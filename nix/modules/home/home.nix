@@ -195,6 +195,13 @@ in
         # enable RGB support and make nvim autoread work
         set -as terminal-features ',*-256color:RGB'
 
+        # enable hyperlinks
+        set -as terminal-features ",*:hyperlinks"
+
+        # enable undercurl and strikethrough
+        set -as terminal-features ',*:usstyle'
+        set -as terminal-features ',*:strikethrough'
+
         # automatically re-number windows (do not leave gaps)
         set -g renumber-windows on
 
@@ -213,6 +220,10 @@ in
         bind -T copy-mode-vi C-v send-keys -X rectangle-toggle
         # escape to exit copy mode
         bind -T copy-mode-vi Escape send-keys -X cancel
+
+        # Jump to previous/next prompt with [ and ]
+        bind-key -T copy-mode-vi [ send-keys -X previous-prompt
+        bind-key -T copy-mode-vi ] send-keys -X next-prompt
 
         # --- Theming ---
         set -g @tokyo-night-tmux_transparent 1
