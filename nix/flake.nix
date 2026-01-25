@@ -130,8 +130,12 @@
 
       utils.github-keys = import ./utils/github-keys.nix { };
 
-      nixosModules.default = ./modules/nixos/configuration.nix;
-      nixosModules.audit = ./modules/nixos/audit.nix;
+      nixosModules = {
+        default = ./modules/nixos/configuration.nix;
+        audit = ./modules/nixos/audit.nix;
+        docker = ./modules/nixos/docker.nix;
+      };
+
       darwinModules.default = ./modules/darwin/configuration.nix;
     };
 }
