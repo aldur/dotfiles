@@ -2,7 +2,6 @@
   pkgs,
   config,
   lib,
-  inputs,
   ...
 }:
 with lib;
@@ -12,7 +11,7 @@ let
 in
 {
   options.programs.${name} = {
-    enable = mkEnableOption "AWS CLI and SSM";
+    enable = mkEnableOption "AWS CLI with SSM support";
   };
 
   imports = [
@@ -25,7 +24,7 @@ in
     home-manager.users.aldur =
       { config, ... }: # home-manager's config, not the OS one
       {
-        imports = [ inputs.agenix.homeManagerModules.default ];
+        programs.awscli.enable = true;
       };
 
     environment.systemPackages = with pkgs; [
