@@ -35,4 +35,7 @@ final: prev: {
   markdownlint-cli2 = final.callPackage ../packages/markdownlint-cli2 {
     markdownlint-cli2-unwrapped = prev.markdownlint-cli2;
   };
+
+  uvc-util = prev.callPackage ../packages/uvc-util { };
+  c920-defaults = final.callPackage ../packages/c920-defaults { };
 }

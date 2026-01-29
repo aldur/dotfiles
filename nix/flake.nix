@@ -94,6 +94,8 @@
             flake-lock-cooldown
             ;
           llm = pkgs.llmWithPlugins;
+        } // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
+          inherit (pkgs) uvc-util c920-defaults;
         };
 
         # Legacy packages are not automatically flake-checked
