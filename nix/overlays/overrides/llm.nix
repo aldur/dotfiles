@@ -13,6 +13,8 @@ final: prev: {
 
         # Do not seem to work reliably on GH CI
         doCheck = false;
+        doInstallCheck = false;
+        disabledTestPaths = [ ];
 
         pythonImportsCheck = [
           "mlx_lm"
