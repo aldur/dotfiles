@@ -132,10 +132,19 @@
 
       utils.github-keys = import ./utils/github-keys.nix { };
 
+      lib.programs = {
+        git = import ./modules/shared/programs/git.nix;
+        tmux = import ./modules/shared/programs/tmux.nix;
+      };
+
       nixosModules = {
         default = ./modules/nixos/configuration.nix;
         audit = ./modules/nixos/audit.nix;
         docker = ./modules/nixos/docker.nix;
+        pragmatism = ./modules/nixos/pragmatism.nix;
+        default-editor = ./modules/nixos/default_editor.nix;
+        cli = ./modules/cli.nix;
+        environment = ./modules/environment.nix;
       };
 
       darwinModules.default = ./modules/darwin/configuration.nix;
