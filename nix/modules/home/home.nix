@@ -16,6 +16,7 @@ in
 {
   imports = [
     inputs.clipshare.homeManagerModules.default
+    ./dash.nix
     ./w3m.nix
     ./direnv.nix
     ./manpager.nix
