@@ -1,5 +1,4 @@
-{ ... }:
-{
+_: {
   environment.shellAliases = {
     gst = "git status";
     gp = "git push";
