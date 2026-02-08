@@ -17,7 +17,7 @@ with lib;
 
   config = {
     nixpkgs = {
-      overlays = (import ../overlays { self = inputs.self; }) ++ [
+      overlays = (import ../overlays { inherit (inputs) self; }) ++ [
         inputs.dashp.overlays.default
       ];
 

@@ -144,6 +144,7 @@
         pragmatism = ./modules/nixos/pragmatism.nix;
         default-editor = ./modules/nixos/default_editor.nix;
         cli = ./modules/cli.nix;
+        development = ./modules/development.nix;
         environment = ./modules/environment.nix;
       };
 
