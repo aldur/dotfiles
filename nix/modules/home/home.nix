@@ -111,6 +111,14 @@ in
           '';
         };
 
+        fixssh = {
+          # https://stackoverflow.com/a/34683596
+          description = "Fix SSH socket in tmux after re-attaching";
+          body = ''
+            tmux show-env | grep '^SSH_' | while read -d= key val; set -gx $key $val; end
+          '';
+        };
+
       };
 
       plugins = [
