@@ -27,6 +27,15 @@ jobs:
       - uses: DeterminateSystems/flake-checker-action@3164002371bc90729c68af0e24d5aacf20d7c9f6  # v12
       - run: nix flake check --all-systems ./nix
 
+      # Reclaim disk space
+      - run: |
+          sudo rm -rf /usr/lib/jvm /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /usr/local/julia* \
+            /usr/local/lib/android /usr/local/share/chromium /opt/microsoft /opt/google \
+            /opt/az /usr/local/share/powershell /opt/hostedtoolcache
+          docker system prune -af || true
+          docker builder prune -af || true
+          df -h
+
       # Test building QEMU VM configuration
       - run: nix build --override-input aldur-dotfiles ./nix ./nix/base_hosts/qemu#vm-nogui
 
