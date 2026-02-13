@@ -53,8 +53,8 @@
     detnix = {
       url = "github:DeterminateSystems/nix-src";
       inputs = {
-        # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2505";
-        nixpkgs.follows = "nixpkgs";
+        # `detnix` wants its own Rust version
+        # nixpkgs.follows = "nixpkgs-unstable";
 
         nixpkgs-regression.follows = "";
         nixpkgs-23-11.follows = "";
@@ -94,7 +94,8 @@
             flake-lock-cooldown
             ;
           llm = pkgs.llmWithPlugins;
-        } // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
+        }
+        // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
           inherit (pkgs) uvc-util c920-defaults;
         };
 
