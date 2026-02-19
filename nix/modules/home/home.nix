@@ -49,30 +49,6 @@ in
 
       settings = {
         theme = "dark";
-        hooks = lib.optionalAttrs pkgs.stdenv.isLinux {
-          Stop = [
-            {
-              matcher = "";
-              hooks = [
-                {
-                  type = "command";
-                  command = "${pkgs.libnotify}/bin/notify-send 'Claude' 'Done'";
-                }
-              ];
-            }
-          ];
-          Notification = [
-            {
-              matcher = "";
-              hooks = [
-                {
-                  type = "command";
-                  command = "${pkgs.libnotify}/bin/notify-send 'Claude' 'Needs input'";
-                }
-              ];
-            }
-          ];
-        };
       };
     };
 
