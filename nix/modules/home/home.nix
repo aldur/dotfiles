@@ -1,5 +1,6 @@
 {
   pkgs,
+  pkgsUnstable,
   inputs,
   stateVersion,
   lib,
@@ -46,6 +47,7 @@ in
 
     claude-code = lib.optionalAttrs osConfig.programs.aldur.claude-code.enable {
       inherit (osConfig.programs.aldur.claude-code) enable;
+      package = pkgsUnstable.claude-code;
 
       settings = {
         theme = "dark";

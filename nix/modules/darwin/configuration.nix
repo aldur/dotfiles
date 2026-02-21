@@ -1,5 +1,5 @@
 # macOS-specific configuration
-{ inputs, ... }:
+{ inputs, pkgsUnstable, ... }:
 let
   user = "aldur";
 in
@@ -39,6 +39,6 @@ in
   # Use home-manager.extraSpecialArgs to pass arguments to home.nix
   home-manager.extraSpecialArgs = {
     stateVersion = "25.05"; # Can't share it with nix-darwin as we do for NixOS
-    inherit inputs;
+    inherit inputs pkgsUnstable;
   };
 }

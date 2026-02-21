@@ -3,6 +3,7 @@
   inputs,
   lib,
   config,
+  pkgsUnstable,
   ...
 }:
 {
@@ -40,6 +41,6 @@
   # Use home-manager.extraSpecialArgs to pass arguments to home.nix
   home-manager.extraSpecialArgs = {
     inherit (config.system) stateVersion;
-    inherit inputs;
+    inherit inputs pkgsUnstable;
   };
 }
