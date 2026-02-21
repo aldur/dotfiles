@@ -27,10 +27,4 @@ in
 
   # Script to copy the flake to ~/flake and make it writable.
   home-manager.users.aldur.home.packages = [ editCurrentFlake ];
-
-  # https://discourse.nixos.org/t/flakes-accessing-selfs-revision/11237/8
-  # Show with `nixos-version --configuration-revision`
-  system.configurationRevision = toString (
-    self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
-  );
 }

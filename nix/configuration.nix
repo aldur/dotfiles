@@ -38,5 +38,19 @@
           pkg: builtins.elem (pkgs.lib.getName pkg) config.nixpkgs.allowUnfreeByName;
       }
     )
+
+    (
+      { inputs, ... }:
+      let
+        inherit (inputs) self;
+      in
+      {
+        # https://discourse.nixos.org/t/flakes-accessing-selfs-revision/11237/8
+        # Show with `nixos-version --configuration-revision`
+        system.configurationRevision = toString (
+          self.shortRev or self.dirtyShortRev or self.lastModified or "unknown"
+        );
+      }
+    )
   ];
 }
