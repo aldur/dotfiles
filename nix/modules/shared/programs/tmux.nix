@@ -55,6 +55,9 @@
     bind-key -T copy-mode-vi [ send-keys -X previous-prompt
     bind-key -T copy-mode-vi ] send-keys -X next-prompt
 
+    # Remain in copy mode after yanking
+    set -g @yank_action 'copy-pipe'
+
     # --- Theming ---
     set -g @tokyo-night-tmux_transparent 1
 
