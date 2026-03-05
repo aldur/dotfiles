@@ -1,15 +1,17 @@
-{ inputs, pkgs }:
+{
+  inputs,
+  pkgs,
+  pkgsUnstable,
+}:
 let
   inherit (inputs.nixCats) utils;
   luaPath = ./.;
-
-  dependencyOverlays = import ./overlays inputs;
 
   categoryDefinitions =
     { pkgs, ... }:
     {
       lspsAndRuntimeDeps = pkgs.callPackage ./runtime.nix { };
-      startupPlugins = pkgs.callPackage ./plugins.nix { };
+      startupPlugins = pkgs.callPackage ./plugins.nix { inherit pkgsUnstable; };
       environmentVariables = pkgs.callPackage ./environment.nix { };
     };
 
@@ -60,7 +62,7 @@ let
   };
 
   nixCatsBuilder = utils.baseBuilder luaPath {
-    inherit pkgs dependencyOverlays;
+    inherit pkgs;
   } categoryDefinitions packageDefinitions;
 
   defaultPackage = nixCatsBuilder defaultPackageName;
@@ -70,7 +72,6 @@ let
       defaultPackageName
       categoryDefinitions
       packageDefinitions
-      dependencyOverlays
       ;
   }
   // {

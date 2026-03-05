@@ -34,11 +34,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nvim-treesitter-main = {
-      url = "github:iofq/nvim-treesitter-main";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     clipshare = {
       url = "github:aldur/clipshare";
       inputs.flake-utils.follows = "flake-utils";
@@ -69,16 +64,20 @@
       self,
       flake-utils,
       nixpkgs,
+      nixpkgs-unstable,
       ...
     }@inputs:
     (flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = import nixpkgs {
+        pkgsArgs = {
           inherit system;
           overlays = import ./overlays { inherit self; };
         };
-        lazyvims = pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs; };
+
+        pkgs = import nixpkgs pkgsArgs;
+        pkgsUnstable = import nixpkgs-unstable pkgsArgs;
+        lazyvims = pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs pkgsUnstable; };
         qemu-vm = pkgs.callPackage ./packages/qemu-vm/qemu-vm.nix { inherit inputs; };
       in
       {

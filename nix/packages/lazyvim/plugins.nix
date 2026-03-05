@@ -1,4 +1,4 @@
-{ pkgs }:
+{ pkgs, pkgsUnstable }:
 (with pkgs.vimPlugins; {
   general = [
     lazy-nvim
@@ -30,9 +30,10 @@
     vim-startuptime
     which-key-nvim
     snacks-nvim
-    nvim-treesitter-textobjects
-    nvim-treesitter.withAllGrammars
     dial-nvim
+
+    pkgsUnstable.vimPlugins.nvim-treesitter-textobjects
+    pkgsUnstable.vimPlugins.nvim-treesitter.withAllGrammars
 
     fugitive
     vim-rhubarb
