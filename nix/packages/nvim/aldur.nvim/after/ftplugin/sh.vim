@@ -1,1 +1,0 @@
-setlocal makeprg=bash\ %

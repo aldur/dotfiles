@@ -57,14 +57,6 @@ See [here](/nix/base_hosts/qemu/README.md) for more information.
 nix run "github:aldur/dotfiles?dir=nix#qemu-vm"
 ```
 
-#### `neovim`
-
-My (previous) `nvim` setup. Technically is its own Flake.
-
-```bash
-nix run "github:aldur/dotfiles?dir=nix#nvim"
-```
-
 ## Makefile
 
 ### Install
