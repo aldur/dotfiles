@@ -1,8 +1,13 @@
-{ inputs, pkgs }:
+{
+  inputs,
+  pkgs,
+  pkgsUnstable,
+  ...
+}:
 (
   final: prev:
   let
-    lazyvim = prev.callPackage ../../packages/lazyvim/lazyvim.nix { inherit inputs pkgs; };
+    lazyvim = prev.callPackage ../../packages/lazyvim/lazyvim.nix { inherit inputs pkgs pkgsUnstable; };
     name = "lazyvim";
   in
   {
