@@ -51,6 +51,7 @@ in
 
       settings = {
         theme = "dark";
+        skipDangerousModePermissionPrompt = true;
       };
     };
 
@@ -200,7 +201,11 @@ in
     # other aliases...
   }
   // lib.optionalAttrs osConfig.programs.aldur.claude-code.enable {
-    claude-yolo = "claude --dangerously-skip-permissions";
+    claude-yolo =
+      let
+        pathPrefix = lib.optionalString osConfig.programs.nix-ld.enable "PATH=~/.local/bin/:$PATH ";
+      in
+      "${pathPrefix}IS_SANDBOX=1 claude --dangerously-skip-permissions";
   }
   //
     lib.optionalAttrs (osConfig.programs.aldur.lazyvim.enable || config.programs.aldur.lazyvim.enable)
