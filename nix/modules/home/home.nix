@@ -137,6 +137,43 @@ in
           '';
         };
 
+        gbrowse = {
+          description = "Print browse URLs for the current branch on each remote";
+          body = ''
+            set branch (git branch --show-current)
+            set remotes (git remote)
+
+            if test -z "$remotes"
+                echo "No remotes found"
+                return 1
+            end
+
+            # Strip remote prefix if branch starts with a known remote name
+            for remote in $remotes
+                if echo "$branch" | grep -q "^$remote/"
+                    set branch (echo "$branch" | sed "s/^$remote\///")
+                    break
+                end
+            end
+
+            for remote in $remotes
+                set remote_url (git remote get-url $remote 2>/dev/null)
+                set url (echo "$remote_url" \
+                    | sed 's/^ssh:\/\/[^@]*@/https:\/\//' \
+                    | sed 's/^[^@]*@\([^:]*\):/https:\/\/\1\//' \
+                    | sed 's/\.git$//')
+
+                set branch_path "tree"
+                if echo "$remote_url" | grep -qi "forgejo"
+                    set branch_path "src/branch"
+                end
+
+                set full_url "$url/$branch_path/$branch"
+                printf "%s\t\033]8;;%s\033\134%s\033]8;;\033\134\n" "$remote" "$full_url" "$full_url"
+            end
+          '';
+        };
+
         fixssh = {
           # https://stackoverflow.com/a/34683596
           description = "Fix SSH socket in tmux after re-attaching";
