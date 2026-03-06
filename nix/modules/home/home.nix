@@ -37,6 +37,7 @@ in
       gpg-encrypt
       moreutils
       shrinkpdf
+      watermark-pdf
     ];
 
     file."Documents/Notes/.marksman.toml".text = "";

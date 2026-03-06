@@ -90,6 +90,7 @@
             solidity-docset
             remarks
             flatten-pdf
+            watermark-pdf
             flake-lock-cooldown
             ;
           llm = pkgs.llmWithPlugins;

@@ -11,6 +11,7 @@ final: prev: {
 
   shrinkpdf = prev.callPackage ../packages/shrinkpdf/shrinkpdf.nix { };
   flatten-pdf = prev.callPackage ../packages/flatten-pdf { };
+  watermark-pdf = prev.callPackage ../packages/watermark-pdf { };
   flake-lock-cooldown = prev.callPackage ../packages/flake-lock-cooldown { };
   fps = prev.callPackage ../packages/fps { };
   remarks = prev.callPackage ../packages/remarks { };
