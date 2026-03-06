@@ -174,13 +174,7 @@ in
 
     difftastic = {
       enable = true;
-
-      git.enable = true;
-
-      # use `git difftool` to see `difftastic output`
-      # or pass `--ext-diff`
-      # or the `gd` shell alias
-      git.diffToolMode = true;
+      git.enable = false;
     };
 
     git = {
@@ -200,6 +194,11 @@ in
 
         # NOTE: This will default to the _second_ key offered by the agent.
         gpg.ssh.defaultKeyCommand = lib.mkDefault "sh -c 'echo key::$(ssh-add -L | tail -n 1)'";
+
+        # difftastic as difftool only (not diff.external, which breaks fugitive)
+        diff.tool = "difftastic";
+        difftool.difftastic.cmd = ''difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"'';
+        pager.difftool = true;
       };
     };
 
@@ -248,6 +247,8 @@ in
 
   home.shellAliases = {
     gd = "git -c diff.external=difft diff";
+    gdl = "git -c diff.external=difft log -p --ext-diff";
+    gds = "git -c diff.external=difft show --ext-diff";
   }
   //
     lib.optionalAttrs (osConfig.programs.aldur.lazyvim.enable || config.programs.aldur.lazyvim.enable)
