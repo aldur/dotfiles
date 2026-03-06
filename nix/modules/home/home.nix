@@ -51,6 +51,10 @@ in
       interactiveShellInit = ''
         set fish_greeting # Disable greeting
         set -g fish_key_bindings fish_hybrid_key_bindings
+
+        # gw completions
+        complete -c gw -l no-fetch -d "Skip fetching from origin"
+        complete -c gw -f -a "(git branch -r --format='%(refname:short)' 2>/dev/null)"
       '';
 
       functions = {
@@ -77,6 +81,51 @@ in
 
             set -l packages (string join " " $argv)
             nix-shell -p "python3.withPackages (ps: with ps; [ $packages ])" --run "$SHELL"
+          '';
+        };
+
+        gw = {
+          description = "Create or switch to a git worktree for a (new) branch";
+          body = ''
+            argparse 'no-fetch' -- $argv
+            or return 1
+
+            if test (count $argv) -eq 0
+                echo "Usage: gw [--no-fetch] <branch> [base-ref]"
+                return 1
+            end
+
+            set -l branch $argv[1]
+            set -l base (if test (count $argv) -ge 2; echo $argv[2]; else; git rev-parse --abbrev-ref refs/remotes/origin/HEAD | sed 's|^origin/||'; end)
+            set -l root (git rev-parse --show-toplevel) || return 1
+            set -l path "$root/../"(basename "$root")"-worktrees/"(string replace -a / - $branch)
+
+            if not set -q _flag_no_fetch
+                if not git fetch origin 2>/dev/null
+                    echo "gw: warning: fetch failed, continuing with local state" >&2
+                end
+            end
+
+            if test -d "$path"
+                cd $path
+                return
+            end
+
+            # Check if the branch already exists (local or as a worktree elsewhere)
+            set -l existing_wt (git worktree list --porcelain | grep -A2 "^worktree " | grep "branch refs/heads/$branch\$" -B2 | head -1 | sed 's/^worktree //')
+            if test -n "$existing_wt"
+                echo "gw: branch '$branch' already checked out at $existing_wt" >&2
+                cd $existing_wt
+                return
+            end
+
+            if git show-ref --verify --quiet "refs/heads/$branch"
+                git worktree add $path $branch
+            else
+                git worktree add -b $branch $path origin/$base
+            end
+
+            cd $path
           '';
         };
 
@@ -116,12 +165,14 @@ in
     };
 
     difftastic = {
-      # enabled by default for `git diff`
-      # enabled with `--ext-diff` to git show and git log -p
       enable = true;
 
       git.enable = true;
-      git.diffToolMode = false;
+
+      # use `git difftool` to see `difftastic output`
+      # or pass `--ext-diff`
+      # or the `gd` shell alias
+      git.diffToolMode = true;
     };
 
     git = {
@@ -188,7 +239,7 @@ in
   services.gpg-agent.enable = true;
 
   home.shellAliases = {
-    # other aliases...
+    gd = "git -c diff.external=difft diff";
   }
   //
     lib.optionalAttrs (osConfig.programs.aldur.lazyvim.enable || config.programs.aldur.lazyvim.enable)

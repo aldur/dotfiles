@@ -19,6 +19,7 @@
   branch.sort = "-committerdate";
   merge.conflictStyle = "zdiff3";
   diff.algorithm = "histogram";
+  difftool.prompt = false;
   transfer.fsckobjects = true;
   fetch.fsckobjects = true;
   receive.fsckObjects = true;
