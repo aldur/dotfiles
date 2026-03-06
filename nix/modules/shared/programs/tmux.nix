@@ -10,12 +10,15 @@
   customPaneNavigationAndResize = true;
   # https://neovim.io/doc/user/faq.html#_esc-in-tmux-or-gnu-screen-is-delayed
   escapeTime = 10;
-  historyLimit = 10000;
+  historyLimit = 50000;
   secureSocket = true;
   keyMode = "vi";
   newSession = true;
 
   extraConfig = ''
+    # Forward OSC 52 to the terminal for clipboard access over SSH
+    set -g set-clipboard on
+
     # enable RGB support and make nvim autoread work
     set -as terminal-features ',*-256color:RGB'
 
@@ -38,6 +41,9 @@
     # c-a twice sends c-a to the terminal
     bind C-a send-prefix
 
+    # session/window/pane picker
+    bind S choose-tree
+
     # Center the window list
     set -g status-justify centre
 
@@ -55,8 +61,8 @@
     bind-key -T copy-mode-vi [ send-keys -X previous-prompt
     bind-key -T copy-mode-vi ] send-keys -X next-prompt
 
-    # Remain in copy mode after yanking
-    set -g @yank_action 'copy-pipe'
+    # y to yank in copy mode, remaining in copy mode
+    bind -T copy-mode-vi y send-keys -X copy-selection
 
     # --- Theming ---
     set -g @tokyo-night-tmux_transparent 1
@@ -78,7 +84,7 @@
     set -g status-style "bg=#{BG}"
 
     # Highlight & messages
-    set -g mode-style "fg=#{BGREEN},bg=#{BBLACK}"
+    set -g mode-style "fg=#{BBLACK},bg=#{BLUE},bold"
     set -g message-style "bg=#{BLUE},fg=#{BBLACK}"
     set -g message-command-style "fg=#{BLUE},bg=#{BBLACK}"
 
@@ -98,8 +104,8 @@
     set -g status-left "#[fg=#{BBLACK},bg=#{BLUE},bold] #{?client_prefix,󰠠 ,#[dim]󰤂 }#[bold,nodim]#S "
 
     # Windows
-    set -g window-status-current-format "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{GREEN},bg=#{BBLACK}] #{?#{==:#{pane_current_command},ssh},󰣀 , }#[fg=#{FG},bold,nodim]#I-#P #W#{?window_zoomed_flag, ,}#[nobold]#{?window_last_flag, , }"
-    set -g window-status-format "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{FG}] #{?#{==:#{pane_current_command},ssh},󰣀 , }#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#I-#P #W#{?window_zoomed_flag, ,}#[nobold,dim]#[fg=#{YELLOW}]#{?window_last_flag, 󰁯  , }"
+    set -g window-status-current-format "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{GREEN},bg=#{BBLACK}] #{?#{==:#{pane_current_command},ssh},󰣀 , }#[fg=#{FG},bold,nodim]#I #W#{?window_zoomed_flag, ,}#[nobold]#{?window_last_flag, , }"
+    set -g window-status-format "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{FG}] #{?#{==:#{pane_current_command},ssh},󰣀 , }#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#I #W#{?window_zoomed_flag, ,}#[nobold,dim]#[fg=#{YELLOW}]#{?window_last_flag, 󰁯  , }"
     set -g window-status-separator ""
 
     # Status right (date/time)
@@ -107,7 +113,5 @@
     # --- /Theming ---
   '';
 
-  plugins = with pkgs; [
-    tmuxPlugins.yank
-  ];
+  plugins = [ ];
 }

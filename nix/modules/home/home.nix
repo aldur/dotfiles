@@ -129,6 +129,14 @@ in
           '';
         };
 
+        tcopy = {
+          description = "Copy stdin to system clipboard via OSC 52 escape sequence";
+          body = ''
+            read -z data
+            printf "\033]52;c;%s\007" (printf "%s" $data | base64 -w 0)
+          '';
+        };
+
         fixssh = {
           # https://stackoverflow.com/a/34683596
           description = "Fix SSH socket in tmux after re-attaching";
