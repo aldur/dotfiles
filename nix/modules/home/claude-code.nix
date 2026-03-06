@@ -88,7 +88,10 @@ in
   home.shellAliases = lib.optionalAttrs enabled {
     claude-yolo =
       let
-        pathPrefix = lib.optionalString osConfig.programs.nix-ld.enable "PATH=~/.local/bin/:$PATH ";
+        needsPathPrefix =
+          if pkgs.stdenv.isDarwin then true
+          else osConfig.programs.nix-ld.enable;
+        pathPrefix = lib.optionalString needsPathPrefix "PATH=~/.local/bin/:$PATH ";
       in
       "${pathPrefix}IS_SANDBOX=1 CLAUBBIT=1 DISABLE_TELEMETRY=1 claude --dangerously-skip-permissions";
   };
