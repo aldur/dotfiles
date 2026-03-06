@@ -22,7 +22,7 @@ let
 
   claudeSettingsSchema = pkgs.fetchurl {
     url = "https://json.schemastore.org/claude-code-settings.json";
-    hash = "sha256-5ps7X94iYKsvCGqgQXTvtQRCgwev8Ff7RgIt+CMduBo=";
+    hash = "sha256-UBqmJ3D3gfA9s0TUlVavSe7Nn52T+SA/KPcZM6eoc4Q=";
   };
 
   claude-statusline = pkgs.callPackage ../../packages/claude-statusline { };
