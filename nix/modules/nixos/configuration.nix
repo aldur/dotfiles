@@ -12,6 +12,7 @@
 
     ./agenix.nix
     ./default_editor.nix
+    ./direnv.nix
     ./documentation.nix
     ./fish.nix
     ./locales.nix
