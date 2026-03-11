@@ -109,7 +109,7 @@ in
           needsPathPrefix = if pkgs.stdenv.isDarwin then true else osConfig.programs.nix-ld.enable;
           pathPrefix = lib.optionalString needsPathPrefix "PATH=~/.local/bin/:$PATH ";
         in
-        "${pathPrefix}IS_SANDBOX=1 CLAUBBIT=1 DISABLE_TELEMETRY=1 claude --dangerously-skip-permissions";
+        "${pathPrefix}IS_SANDBOX=1 CLAUBBIT=1 DISABLE_TELEMETRY=1 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 claude --dangerously-skip-permissions";
     };
 
     # The upstream HM module creates a read-only symlink for settings.json when
@@ -126,11 +126,5 @@ in
         '';
       }
     ];
-
-    # Work around claude-code using SSH URLs for its plugins repo.
-    # https://github.com/anthropics/claude-code/issues/21108
-    programs.git.settings = lib.mkIf enabled {
-      url."https://github.com/anthropics/".insteadOf = "ssh://git@github.com/anthropics/";
-    };
   };
 }
