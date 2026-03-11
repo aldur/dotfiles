@@ -111,32 +111,35 @@ in
     home-manager.users.${username} =
       { config, lib, ... }: # home-manager's config, not the OS one
       {
-
-        programs.llm.enable = true;
-        programs.better-nix-search.enable = true;
-        programs.claude-code.settings.hooks = {
-          Stop = [
-            {
-              matcher = "";
-              hooks = [
-                {
-                  type = "command";
-                  command = "${pkgs.libnotify}/bin/notify-send 'Claude' 'Done'";
-                }
-              ];
-            }
-          ];
-          Notification = [
-            {
-              matcher = "";
-              hooks = [
-                {
-                  type = "command";
-                  command = "${pkgs.libnotify}/bin/notify-send 'Claude' 'Needs input'";
-                }
-              ];
-            }
-          ];
+        programs = {
+          llm = {
+            enable = true;
+          };
+          better-nix-search.enable = true;
+          claude-code.writableSettings.hooks = {
+            Stop = [
+              {
+                matcher = "";
+                hooks = [
+                  {
+                    type = "command";
+                    command = "${pkgs.libnotify}/bin/notify-send 'Claude' 'Done'";
+                  }
+                ];
+              }
+            ];
+            Notification = [
+              {
+                matcher = "";
+                hooks = [
+                  {
+                    type = "command";
+                    command = "${pkgs.libnotify}/bin/notify-send 'Claude' 'Needs input'";
+                  }
+                ];
+              }
+            ];
+          };
         };
         home = {
           packages = with pkgs; [
