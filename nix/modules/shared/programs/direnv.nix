@@ -10,6 +10,6 @@
     strict_env = true;
     disable_stdin = true;
     # https://esham.io/2023/10/direnv
-    log_format = "\u001B[2mdirenv: %s\u001B[0m";
+    log_format = builtins.fromJSON ''"\u001B[2mdirenv: %s\u001B[0m"'';
   };
 }
