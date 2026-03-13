@@ -24,6 +24,7 @@ in
 
   imports = [
     "${inputs.self}/modules/current_system_flake.nix"
+    "${inputs.self}/modules/nixos/pragmatism.nix"
     inputs.preservation.nixosModules.preservation
   ];
 
@@ -146,17 +147,6 @@ in
             age-plugin-yubikey
             yubikey-manager
           ];
-
-          # Ensure .claude.json has valid JSON content (instead of an empty file)
-          activation.fixClaudeJson =
-            lib.mkIf (cfg.impermanence.enable && cfg.impermanence.persist.claude-code)
-              (
-                lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-                  if [[ ! -s "$HOME/.claude.json" ]]; then
-                    run echo '{}' > "$HOME/.claude.json"
-                  fi
-                ''
-              );
         };
       };
 

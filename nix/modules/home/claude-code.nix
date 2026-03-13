@@ -16,9 +16,10 @@ let
   # We use `cat f.tmp > f` instead of `mv f.tmp f` so that this plays nicely
   # with persistance.
   mergeJsonActivation = name: target: source: ''
-    if [ -f "${target}" ]; then
+    if [ -s "${target}" ]; then
       $DRY_RUN_CMD ${lib.getExe pkgs.jq} -s '.[0] * .[1]' "${target}" ${source} > "${target}.tmp"
       $DRY_RUN_CMD cat "${target}.tmp" > "${target}"
+      rm -f "${target}.tmp"
     else
       $DRY_RUN_CMD install -Dm644 ${source} "${target}"
     fi
