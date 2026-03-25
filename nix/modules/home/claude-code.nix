@@ -26,8 +26,10 @@ let
   '';
 
   claudeSettingsSchema = pkgs.fetchurl {
+    # To update:
+    # nix store prefetch-file --json --hash-type sha256 <url> | jq -r .hash
     url = "https://json.schemastore.org/claude-code-settings.json";
-    hash = "sha256-UBqmJ3D3gfA9s0TUlVavSe7Nn52T+SA/KPcZM6eoc4Q=";
+    hash = "sha256-5X9e36qZcCbuhJcqAtskIC8Myq+I3nyy4NijbE+m0to=";
   };
 
   claude-statusline = pkgs.callPackage ../../packages/claude-statusline { };
