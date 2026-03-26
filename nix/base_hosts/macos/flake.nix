@@ -14,7 +14,7 @@
 
     nix-rosetta-builder = {
       url = "github:cpick/nix-rosetta-builder";
-      inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
+      inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs-unstable";
     };
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
