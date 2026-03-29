@@ -1,6 +1,6 @@
 {
   username ? "aldur",
-  sha256 ? "04l39mybmk8hhggwv2gwjx1ad591hjbkf440lrk8j27i0ddq9mhx",
+  sha256 ? "sha256-fX18uyZHlf1Sp+RpCAUiCSP2VZf9gGdHZfqWV33b5W0=",
 }:
 # NOTE: This uses only `builtins` to be independent of nixpkgs/system
 let
