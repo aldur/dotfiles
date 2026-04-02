@@ -183,6 +183,25 @@ in
           '';
         };
 
+        tmux-move-windows = {
+          description = "Move all windows from one tmux session into another";
+          body = ''
+            if test (count $argv) -ne 2
+                echo "Usage: tmux-move-windows <source-session> <target-session>"
+                return 1
+            end
+
+            set -l src $argv[1]
+            set -l dst $argv[2]
+
+            # Trailing colon on -t ensures tmux interprets it as a session
+            # and auto-assigns the window index (avoids index collisions).
+            tmux list-windows -t "$src" -F '#I' | while read win
+                tmux move-window -s "$src:$win" -t "$dst:"
+            end
+          '';
+        };
+
       };
 
       plugins = [
