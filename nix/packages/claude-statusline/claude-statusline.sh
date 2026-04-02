@@ -29,7 +29,7 @@ fi
 
 # Repo name
 REPO_NAME=""
-REMOTE=$(git remote get-url origin 2>/dev/null)
+REMOTE=$(git remote get-url origin 2>/dev/null || true)
 if [ -n "$REMOTE" ]; then
     REPO_NAME=$(basename "${REMOTE%.git}")
 fi
