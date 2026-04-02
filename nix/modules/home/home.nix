@@ -202,6 +202,22 @@ in
           '';
         };
 
+        ssh-forward = {
+          description = "Start local SSH port forwarding to a remote host";
+          body = ''
+            if test (count $argv) -lt 2 -o (count $argv) -gt 3
+                echo "Usage: ssh-forward <host> <remote_port> [local_port]"
+                return 1
+            end
+
+            set -l host $argv[1]
+            set -l remote_port $argv[2]
+            set -l local_port (if test (count $argv) -eq 3; echo $argv[3]; else; echo $remote_port; end)
+
+            ssh -N -L "$local_port:localhost:$remote_port" "$host"
+          '';
+        };
+
       };
 
       plugins = [
