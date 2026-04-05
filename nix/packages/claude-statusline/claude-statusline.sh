@@ -7,31 +7,40 @@ PCT=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1
 CTX_SIZE=$(echo "$input" | jq -r '.context_window.context_window_size // 0')
 CTX_K=$((CTX_SIZE / 1000))k
 
-GREEN='\033[32m'; YELLOW='\033[33m'; RED='\033[31m'; CYAN='\033[36m'; DIM='\033[2m'; RESET='\033[0m'
+GREEN='\033[32m'
+YELLOW='\033[33m'
+RED='\033[31m'
+CYAN='\033[36m'
+DIM='\033[2m'
+RESET='\033[0m'
 
 # Color-coded compact context bar
-if [ "$PCT" -ge 90 ]; then BAR_COLOR="$RED"
-elif [ "$PCT" -ge 70 ]; then BAR_COLOR="$YELLOW"
+if [ "$PCT" -ge 90 ]; then
+  BAR_COLOR="$RED"
+elif [ "$PCT" -ge 70 ]; then
+  BAR_COLOR="$YELLOW"
 else BAR_COLOR="$GREEN"; fi
 
 BAR_WIDTH=10
 FILLED=$((PCT * BAR_WIDTH / 100))
 EMPTY=$((BAR_WIDTH - FILLED))
 BAR=""
-for ((i=0; i<FILLED; i++)); do BAR="${BAR}█"; done
-for ((i=0; i<EMPTY; i++)); do BAR="${BAR}░"; done
+for ((i = 0; i < FILLED; i++)); do BAR="${BAR}█"; done
+for ((i = 0; i < EMPTY; i++)); do BAR="${BAR}░"; done
 
 # Git branch
 BRANCH=""
-if git rev-parse --git-dir > /dev/null 2>&1; then
-    BRANCH=$(git branch --show-current 2>/dev/null)
+if git rev-parse --git-dir >/dev/null 2>&1; then
+  BRANCH=$(git branch --show-current 2>/dev/null)
 fi
 
 # Repo name
 REPO_NAME=""
-REMOTE=$(git remote get-url origin 2>/dev/null || true)
-if [ -n "$REMOTE" ]; then
+if git rev-parse --git-dir >/dev/null 2>&1; then
+  REMOTE=$(git remote get-url origin 2>/dev/null) || true
+  if [ -n "$REMOTE" ]; then
     REPO_NAME=$(basename "${REMOTE%.git}")
+  fi
 fi
 
 # Show last 2 path segments
@@ -46,10 +55,10 @@ CACHE_CREATE=$(echo "$input" | jq -r '.context_window.current_usage.cache_creati
 INPUT=$(echo "$input" | jq -r '.context_window.current_usage.input_tokens // 0')
 TOTAL_IN=$((CACHE_READ + CACHE_CREATE + INPUT))
 if [ "$TOTAL_IN" -gt 0 ]; then
-    CACHE_PCT=$((CACHE_READ * 100 / TOTAL_IN))
-    CACHE_INFO=" ${DIM}cache:${RESET}${GREEN}${CACHE_PCT}%${RESET}"
+  CACHE_PCT=$((CACHE_READ * 100 / TOTAL_IN))
+  CACHE_INFO=" ${DIM}cache:${RESET}${GREEN}${CACHE_PCT}%${RESET}"
 else
-    CACHE_INFO=""
+  CACHE_INFO=""
 fi
 
 printf '%b' " | ${BAR_COLOR}${BAR}${RESET} ${PCT}%${CACHE_INFO} ${CYAN}[${MODEL} ${CTX_K}]${RESET}\n"
