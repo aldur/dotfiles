@@ -106,6 +106,22 @@ in
       ''
     );
 
+    # Re-create ~/.local/bin/claude symlink after an impermanence wipe by
+    # pointing it at the highest version under ~/.local/share/claude/versions/.
+    # No-op on first boot (before claude-code has installed itself).
+    home.activation.claudeSymlink = lib.mkIf enabled (
+      lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        versionsDir="$HOME/.local/share/claude/versions"
+        if [ -d "$versionsDir" ]; then
+          latest=$(ls -v "$versionsDir" 2>/dev/null | tail -n1 || true)
+          if [ -n "''${latest:-}" ]; then
+            $DRY_RUN_CMD mkdir -p "$HOME/.local/bin"
+            $DRY_RUN_CMD ln -sfn "$versionsDir/$latest" "$HOME/.local/bin/claude"
+          fi
+        fi
+      ''
+    );
+
     home.shellAliases = lib.optionalAttrs enabled {
       claude-yolo =
         let

@@ -192,9 +192,12 @@ in
               }
             ]
             ++ lib.optional config.programs.aldur.lazyvim.enable ".local/state/lazyvim"
-            ++ lib.optional (
-              cfg.impermanence.persist.claude-code && config.programs.aldur.claude-code.enable
-            ) ".claude";
+            ++
+              lib.optionals (cfg.impermanence.persist.claude-code && config.programs.aldur.claude-code.enable)
+                [
+                  ".claude"
+                  ".local/share/claude/versions"
+                ];
 
             files = lib.optional (
               cfg.impermanence.persist.claude-code && config.programs.aldur.claude-code.enable
@@ -252,7 +255,12 @@ in
             "/home/${username}/.local/state".d = defaultPermissions;
             "/home/${username}/.config/".d = defaultPermissions;
             "/home/${username}/.config/io.datasette.llm/".d = defaultPermissions;
-          };
+          }
+          //
+            lib.optionalAttrs (cfg.impermanence.persist.claude-code && config.programs.aldur.claude-code.enable)
+              {
+                "/home/${username}/.local/share/claude/versions".d = defaultPermissions;
+              };
       };
 
     };
