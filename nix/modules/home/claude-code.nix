@@ -29,7 +29,7 @@ let
     # To update:
     # nix store prefetch-file --json --hash-type sha256 <url> | jq -r .hash
     url = "https://json.schemastore.org/claude-code-settings.json";
-    hash = "sha256-wMrWLpfaQt5TcrISJAvotYWXg6M+dPlqTA8TwQIBt5I=";
+    hash = "sha256-K9HncGanSpAcH9Rbk7WbjP+0CJVXeJ/iZKGGDz+Sg5Y=";
   };
 
   claude-statusline = pkgs.callPackage ../../packages/claude-statusline { };
