@@ -25,26 +25,9 @@ let
     fi
   '';
 
-  claudeSettingsSchema = pkgs.fetchurl {
-    # To update:
-    # nix store prefetch-file --json --hash-type sha256 <url> | jq -r .hash
-    url = "https://json.schemastore.org/claude-code-settings.json";
-    hash = "sha256-K9HncGanSpAcH9Rbk7WbjP+0CJVXeJ/iZKGGDz+Sg5Y=";
-  };
-
   claude-statusline = pkgs.callPackage ../../packages/claude-statusline { };
 
   claudeSettings = jsonFormat.generate "claude-code-settings.json" cfg.writableSettings;
-
-  claudeSettingsValidated =
-    pkgs.runCommand "validate-claude-settings"
-      {
-        nativeBuildInputs = [ pkgs.check-jsonschema ];
-      }
-      ''
-        check-jsonschema --schemafile ${claudeSettingsSchema} ${claudeSettings}
-        touch $out
-      '';
 
   claudeMcpConfig = jsonFormat.generate "claude-mcp.json" {
     mcpServers = {
@@ -99,7 +82,6 @@ in
     # so MCP servers must be configured via ~/.claude.json directly.
     home.activation.claudeSettings = lib.mkIf enabled (
       lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        # Validated at build time by ${claudeSettingsValidated}
         $DRY_RUN_CMD mkdir -p "$HOME/.claude"
         ${mergeJsonActivation "settings" "$HOME/.claude/settings.json" claudeSettings}
         ${mergeJsonActivation "mcp" "$HOME/.claude.json" claudeMcpConfig}

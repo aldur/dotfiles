@@ -103,6 +103,34 @@
         legacyPackages = {
           inherit qemu-vm;
         };
+
+        apps.validate-claude-settings = {
+          type = "app";
+          program =
+            let
+              script = pkgs.writeShellApplication {
+                name = "validate-claude-settings";
+                runtimeInputs = [
+                  pkgs.curl
+                  pkgs.check-jsonschema
+                ];
+                text = ''
+                  settings="''${1:-$HOME/.claude/settings.json}"
+                  if [ ! -f "$settings" ]; then
+                    echo "error: $settings does not exist" >&2
+                    exit 1
+                  fi
+                  schema=$(mktemp)
+                  trap 'rm -f "$schema"' EXIT
+                  curl -sSL --fail \
+                    "https://json.schemastore.org/claude-code-settings.json" \
+                    -o "$schema"
+                  check-jsonschema --schemafile "$schema" "$settings"
+                '';
+              };
+            in
+            "${script}/bin/validate-claude-settings";
+        };
       }
     ))
     // {
