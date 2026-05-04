@@ -86,7 +86,7 @@
           inherit (pkgs)
             beancount-language-server # from aldur/beancount-language-server
             nomicfoundation-solidity-language-server
-            shrinkpdf
+            shrink-pdf
             solidity-docset
             remarks
             flatten-pdf

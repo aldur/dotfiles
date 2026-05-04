@@ -8,7 +8,7 @@
 }:
 
 stdenv.mkDerivation {
-  pname = "shrinkpdf";
+  pname = "shrink-pdf";
   version = "git-2025-12-02";
 
   src = fetchFromGitHub {
@@ -30,14 +30,14 @@ stdenv.mkDerivation {
     runHook preInstall
 
     mkdir -p $out/bin
-    cp shrinkpdf.sh $out/bin/shrinkpdf
-    chmod +x $out/bin/shrinkpdf
+    cp shrinkpdf.sh $out/bin/shrink-pdf
+    chmod +x $out/bin/shrink-pdf
 
     runHook postInstall
   '';
 
   postFixup = ''
-    wrapProgram $out/bin/shrinkpdf \
+    wrapProgram $out/bin/shrink-pdf \
       --prefix PATH : ${
         lib.makeBinPath [
           ghostscript

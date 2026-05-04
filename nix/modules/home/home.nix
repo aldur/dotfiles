@@ -12,6 +12,19 @@ let
     url = "https://github.com/aldur.gpg";
     sha256 = "sha256-x1H++Oqax/ZacnsTgurRFWI9I+/E7wb5pj8PXf7fhmw=";
   };
+
+  customTools = with pkgs; [
+    flake-lock-cooldown
+    flatten-pdf
+    fps
+    gpg-encrypt
+    shrink-pdf
+    split-pdf
+    totp-qr-decode
+    watermark-pdf
+  ];
+
+  aldurs-tools = pkgs.callPackage ../../packages/aldurs-tools { tools = customTools; };
 in
 {
   imports = [
@@ -30,14 +43,9 @@ in
     inherit stateVersion;
 
     username = "aldur";
-    packages = with pkgs; [
-      flake-lock-cooldown
-      flatten-pdf
-      fps
-      gpg-encrypt
-      moreutils
-      shrinkpdf
-      watermark-pdf
+    packages = customTools ++ [
+      aldurs-tools
+      pkgs.moreutils
     ];
 
     file."Documents/Notes/.marksman.toml".text = "";

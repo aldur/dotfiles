@@ -9,9 +9,11 @@ final: prev: {
   gpg-encrypt = prev.callPackage ../packages/gpg-encrypt/gpg-encrypt.nix { };
   totp-cli = final.callPackage ../packages/totp-cli-ephemeral { inherit (prev) totp-cli; };
 
-  shrinkpdf = prev.callPackage ../packages/shrinkpdf/shrinkpdf.nix { };
+  shrink-pdf = prev.callPackage ../packages/shrink-pdf { };
   flatten-pdf = prev.callPackage ../packages/flatten-pdf { };
   watermark-pdf = prev.callPackage ../packages/watermark-pdf { };
+  split-pdf = prev.callPackage ../packages/split-pdf { };
+  totp-qr-decode = prev.callPackage ../packages/totp-qr-decode { };
   flake-lock-cooldown = prev.callPackage ../packages/flake-lock-cooldown { };
   fps = prev.callPackage ../packages/fps { };
   remarks = prev.callPackage ../packages/remarks { };
