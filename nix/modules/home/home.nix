@@ -96,8 +96,13 @@ in
         gw = {
           description = "Create or switch to a git worktree for a (new) branch";
           body = ''
-            argparse 'no-fetch' -- $argv
+            argparse 'h/help' 'no-fetch' -- $argv
             or return 1
+
+            if set -q _flag_help
+                echo "Usage: gw [--no-fetch] <branch> [base-ref]"
+                return 0
+            end
 
             if test (count $argv) -eq 0
                 echo "Usage: gw [--no-fetch] <branch> [base-ref]"
@@ -105,7 +110,7 @@ in
             end
 
             set -l branch $argv[1]
-            set -l base (if test (count $argv) -ge 2; echo $argv[2]; else; git rev-parse --abbrev-ref refs/remotes/origin/HEAD | sed 's|^origin/||'; end)
+            set -l base (if test (count $argv) -ge 2; echo $argv[2]; else; git symbolic-ref refs/remotes/origin/HEAD | sed 's|^refs/remotes/origin/||'; end)
             set -l root (git rev-parse --show-toplevel) || return 1
             set -l path "$root/../"(basename "$root")"-worktrees/"(string replace -a / - $branch)
 
