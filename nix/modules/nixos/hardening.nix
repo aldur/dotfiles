@@ -58,6 +58,22 @@ in
       ];
 
       boot.tmp.cleanOnBoot = true;
+
+      # KSPP-recommended kernel self-protection params + IOMMU.  Cheap,
+      # broadly compatible: zero-on-alloc, slab/freelist randomization,
+      # per-syscall kstack offset, and removal of the legacy vsyscall
+      # ROP target.  IOMMU in passthrough mode isolates DMA without the
+      # mapping overhead of full translation.
+      boot.kernelParams = [
+        "slab_nomerge"
+        "init_on_alloc=1"
+        "page_alloc.shuffle=1"
+        "randomize_kstack_offset=on"
+        "vsyscall=none"
+        "intel_iommu=on"
+        "amd_iommu=on"
+        "iommu=pt"
+      ];
     }
 
     (lib.mkIf cfg.sysctl.enable {
