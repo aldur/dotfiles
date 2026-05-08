@@ -8,6 +8,7 @@
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
       AllowUsers = [ config.users.users.aldur.name ];
+      LogLevel = "VERBOSE";
     };
   };
 }
