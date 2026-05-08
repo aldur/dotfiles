@@ -324,11 +324,14 @@ in
         sudoedit.enable = lib.mkDefault false;
         sg.enable = lib.mkDefault false;
         newgrp.setuid = lib.mkDefault false;
-        pkexec.setuid = lib.mkDefault false;
         newuidmap.setuid = lib.mkDefault false;
         newgidmap.setuid = lib.mkDefault false;
         fusermount.enable = lib.mkDefault false;
         fusermount3.enable = lib.mkDefault false;
+      } // lib.optionalAttrs config.security.polkit.enable {
+        # pkexec wrapper is only defined upstream when polkit is enabled;
+        # setting setuid here without a source would fail evaluation.
+        pkexec.setuid = lib.mkDefault false;
       };
     })
   ];
