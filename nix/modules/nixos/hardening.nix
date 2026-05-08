@@ -100,9 +100,12 @@ in
         "kernel.unprivileged_bpf_disabled" = 1;
         "net.core.bpf_jit_harden" = 2;
 
-        # ASLR entropy (x86_64 maxima)
-        "vm.mmap_rnd_bits" = 32;
-        "vm.mmap_rnd_compat_bits" = 16;
+        # ASLR entropy maxima (x86_64).  Skip on other arches: the max
+        # for vm.mmap_rnd_bits varies by PAGE_SIZE (33/24/19 on arm64
+        # with 4K/16K/64K), and our value would either equal the
+        # kernel default or trip systemd-sysctl with EINVAL.
+        "vm.mmap_rnd_bits" = if pkgs.stdenv.hostPlatform.isx86_64 then 32 else null;
+        "vm.mmap_rnd_compat_bits" = if pkgs.stdenv.hostPlatform.isx86_64 then 16 else null;
 
         # Network hardening (workstation, not a router)
         "net.ipv4.tcp_syncookies" = 1;
