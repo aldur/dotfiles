@@ -15,6 +15,7 @@
     ./direnv.nix
     ./documentation.nix
     ./fish.nix
+    ./hardening.nix
     ./locales.nix
     ./security.nix
     ./ssh.nix
