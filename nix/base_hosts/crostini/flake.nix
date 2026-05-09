@@ -93,6 +93,7 @@
             baguetteModule
             (_: {
               virtualisation.buildMemorySize = 1024 * 8;
+              virtualisation.diskImageSize = 1024 * 16;
             })
           ];
         };
