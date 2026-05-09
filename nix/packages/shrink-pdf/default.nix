@@ -26,6 +26,29 @@ stdenv.mkDerivation {
 
   dontBuild = true;
 
+  # Upstream only accepts -h; teach it --help too (used by aldurs-tools' preview).
+  postPatch = ''
+    helpPatch=$(cat <<'PATCH'
+    # Allow --help as a synonym for -h.
+    __n=$#
+    __i=0
+    while [ $__i -lt $__n ]; do
+        case "$1" in --help) set -- "$@" -h ;; *) set -- "$@" "$1" ;; esac
+        shift
+        __i=$((__i + 1))
+    done
+
+    while getopts ':hgo:r:t:' flag; do
+    PATCH
+    )
+    substituteInPlace shrinkpdf.sh --replace-fail \
+      "while getopts ':hgo:r:t:' flag; do" \
+      "$helpPatch"
+
+    # Use the canonical name in usage output instead of the wrapped store path.
+    substituteInPlace shrinkpdf.sh --replace-quiet 'usage "$0"' 'usage "shrink-pdf"'
+  '';
+
   installPhase = ''
     runHook preInstall
 

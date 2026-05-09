@@ -27,7 +27,7 @@ fi
 # Function to show usage
 usage() {
 	cat <<EOF
-Usage: $0 [OPTIONS] [FILE]
+Usage: gpg-encrypt [OPTIONS] [FILE]
 
 Encrypt data using GPG with recipient keys from your GPG keyring.
 
@@ -46,13 +46,13 @@ BEHAVIOR:
 
 EXAMPLES:
   # Encrypt stdin to stdout (using default email)
-  echo "secret" | $0
+  echo "secret" | gpg-encrypt
 
   # Encrypt to specific email
-  echo "secret" | $0 --email user@example.com
+  echo "secret" | gpg-encrypt --email user@example.com
 
   # Encrypt a file
-  $0 --email user@example.com document.txt
+  gpg-encrypt --email user@example.com document.txt
 
 EOF
 	exit 0

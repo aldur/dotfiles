@@ -14,7 +14,10 @@ writeShellApplication {
   text = ''
     printf '%s\n' ${nameArgs} \
       | fzf --prompt='tool> ' \
-            --preview '({} --help 2>&1 || echo "(no --help available)") | head -60' \
+            --height=40% \
+            --reverse \
+            --with-shell 'bash -c' \
+            --preview '(timeout 2 {} --help </dev/null 2>&1 || echo "(no help available)") | head -60' \
             --preview-window=right,60%,wrap \
             --bind 'enter:become(echo {})'
   '';
