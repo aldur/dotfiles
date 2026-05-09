@@ -4,7 +4,7 @@ _: {
     gp = "git push";
     gc = "git commit";
 
-    ta = "tmux attach";
+    ta = "tmux new-session -A -s main";
     tls = "tmux ls";
   };
 }
