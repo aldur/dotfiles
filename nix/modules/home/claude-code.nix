@@ -27,6 +27,20 @@ let
 
   claude-statusline = pkgs.callPackage ../../packages/claude-statusline { };
 
+  # Pre-accept the workspace trust dialog for $PWD so trust-gated features
+  # (e.g. statusLine) render under `claude-yolo`. Uses cat-to-overwrite so the
+  # underlying inode is preserved (impermanence bind-mounts ~/.claude.json).
+  claude-trust-cwd = pkgs.writeShellScript "claude-trust-cwd" ''
+    set -euo pipefail
+    config="$HOME/.claude.json"
+    [ -s "$config" ] || exit 0
+    tmp=$(mktemp)
+    trap 'rm -f "$tmp"' EXIT
+    ${lib.getExe pkgs.jq} --arg cwd "$PWD" \
+      '.projects[$cwd].hasTrustDialogAccepted = true' "$config" > "$tmp"
+    cat "$tmp" > "$config"
+  '';
+
   claudeSettings = jsonFormat.generate "claude-code-settings.json" cfg.writableSettings;
 
   claudeMcpConfig = jsonFormat.generate "claude-mcp.json" {
@@ -110,7 +124,7 @@ in
           needsPathPrefix = if pkgs.stdenv.isDarwin then true else osConfig.programs.nix-ld.enable;
           pathPrefix = lib.optionalString needsPathPrefix "PATH=~/.local/bin/:$PATH ";
         in
-        "${pathPrefix}IS_SANDBOX=1 CLAUBBIT=1 DISABLE_TELEMETRY=1 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 claude --dangerously-skip-permissions";
+        "${pathPrefix}${claude-trust-cwd}; IS_SANDBOX=1 CLAUBBIT=1 DISABLE_TELEMETRY=1 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 claude --dangerously-skip-permissions";
     };
 
     # The upstream HM module creates a read-only symlink for settings.json when
