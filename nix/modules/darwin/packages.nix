@@ -3,7 +3,7 @@
 with pkgs;
 {
   environment.defaultPackages = [
-    iterm2
+    yubikey-agent
   ];
 
   fonts.packages = [
