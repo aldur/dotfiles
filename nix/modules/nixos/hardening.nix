@@ -42,6 +42,22 @@ in
         newgidmap, fusermount, and fusermount3).
       '';
     };
+
+    ioUring.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Allow processes to create new io_uring rings. Off by default
+        (sets `kernel.io_uring_disabled = 2`) because io_uring is a
+        recurring CVE source and most workloads here use epoll.
+        Enable per-host if a service actually needs it: QEMU disks
+        with `aio=io_uring` (microvm.nix defaults to threads, so VMs
+        are unaffected), PostgreSQL 18+ with `io_method=io_uring`,
+        SeaStar-based databases (ScyllaDB, Redpanda), or apps built
+        against `tokio-uring` / `liburing`. Stock Go, Python, Node,
+        and MariaDB/MySQL (libaio) are fine either way.
+      '';
+    };
   };
 
   config = lib.mkMerge [
@@ -99,6 +115,17 @@ in
         "dev.tty.ldisc_autoload" = 0;
         "kernel.unprivileged_bpf_disabled" = 1;
         "net.core.bpf_jit_harden" = 2;
+
+        # 2 = block io_uring creation for everyone (including root).
+        # Recurring CVE source; most services here are Go/Python/Node
+        # on epoll and unaffected. See `hardening.ioUring.enable` for
+        # the list of workloads that need it back on.
+        "kernel.io_uring_disabled" = if cfg.ioUring.enable then 0 else 2;
+
+        # Panic after N oopses/warns to defeat oracle-style LPE that
+        # sprays kernel oopses to leak KASLR or stabilise UAFs.
+        "kernel.oops_limit" = 100;
+        "kernel.warn_limit" = 100;
 
         # ASLR entropy maxima (x86_64).  Skip on other arches: the max
         # for vm.mmap_rnd_bits varies by PAGE_SIZE (33/24/19 on arm64
