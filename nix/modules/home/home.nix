@@ -218,16 +218,24 @@ in
         ssh-forward = {
           description = "Start local SSH port forwarding to a remote host";
           body = ''
-            if test (count $argv) -lt 2 -o (count $argv) -gt 3
-                echo "Usage: ssh-forward <host> <remote_port> [local_port]"
+            if test (count $argv) -lt 2
+                echo "Usage: ssh-forward <host> <port> [<port>...]"
+                echo "       Each <port> is either <remote_port> or <local_port>:<remote_port>"
                 return 1
             end
 
             set -l host $argv[1]
-            set -l remote_port $argv[2]
-            set -l local_port (if test (count $argv) -eq 3; echo $argv[3]; else; echo $remote_port; end)
+            set -l forwards
+            for port in $argv[2..-1]
+                if string match -qr : -- $port
+                    set -l parts (string split -m 1 : -- $port)
+                    set -a forwards -L "$parts[1]:localhost:$parts[2]"
+                else
+                    set -a forwards -L "$port:localhost:$port"
+                end
+            end
 
-            ssh -N -L "$local_port:localhost:$remote_port" "$host"
+            ssh -N $forwards "$host"
           '';
         };
 
