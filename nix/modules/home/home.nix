@@ -263,6 +263,10 @@ in
         git = {
           autoFetch = false;
         };
+        gui = {
+          skipAmendWarning = true;
+          nerdFontsVersion = "3";
+        };
       };
     };
 
