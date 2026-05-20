@@ -18,6 +18,7 @@ let
     flatten-pdf
     fps
     gpg-encrypt
+    lstrip
     shrink-pdf
     split-pdf
     totp-qr-decode

@@ -16,6 +16,7 @@ final: prev: {
   totp-qr-decode = prev.callPackage ../packages/totp-qr-decode { };
   flake-lock-cooldown = prev.callPackage ../packages/flake-lock-cooldown { };
   fps = prev.callPackage ../packages/fps { };
+  lstrip = prev.callPackage ../packages/lstrip { };
   remarks = prev.callPackage ../packages/remarks { };
 
   tiktoken = prev.callPackage ../packages/tiktoken/tiktoken.nix { };
