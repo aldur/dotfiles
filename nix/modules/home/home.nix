@@ -52,6 +52,19 @@ in
     ];
 
     file."Documents/Notes/.marksman.toml".text = "";
+
+    # Keep a stable SSH_AUTH_SOCK across reconnects: each new sshd session
+    # rewrites this symlink to the current forwarded socket, so existing
+    # shells/tmux panes silently pick up the fresh socket without `fixssh`.
+    file.".ssh/rc" = {
+      executable = true;
+      text = ''
+        #!/bin/sh
+        if [ -n "$SSH_AUTH_SOCK" ] && [ "$SSH_AUTH_SOCK" != "$HOME/.ssh/auth_sock" ]; then
+            ln -sf -- "$SSH_AUTH_SOCK" "$HOME/.ssh/auth_sock"
+        fi
+      '';
+    };
   };
 
   programs = {
@@ -63,6 +76,13 @@ in
       interactiveShellInit = ''
         set fish_greeting # Disable greeting
         set -g fish_key_bindings fish_hybrid_key_bindings
+
+        # Inside an SSH session, point at the stable symlink that ~/.ssh/rc
+        # keeps fresh. Falls through to whatever SSH_AUTH_SOCK was set to
+        # (e.g. local yubikey-agent) if the symlink isn't a live socket.
+        if set -q SSH_CONNECTION; and test -S "$HOME/.ssh/auth_sock"
+            set -gx SSH_AUTH_SOCK "$HOME/.ssh/auth_sock"
+        end
 
         # gw completions
         complete -c gw -l no-fetch -d "Skip fetching from origin"
@@ -188,14 +208,6 @@ in
                 set full_url "$url/$branch_path/$branch"
                 printf "%s\t\033]8;;%s\033\134%s\033]8;;\033\134\n" "$remote" "$full_url" "$full_url"
             end
-          '';
-        };
-
-        fixssh = {
-          # https://stackoverflow.com/a/34683596
-          description = "Fix SSH socket in tmux after re-attaching";
-          body = ''
-            tmux show-env | grep '^SSH_' | while read -d= key val; set -gx $key $val; end
           '';
         };
 
