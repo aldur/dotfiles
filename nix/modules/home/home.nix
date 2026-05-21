@@ -14,6 +14,7 @@ let
   };
 
   customTools = with pkgs; [
+    claude-log
     flake-lock-cooldown
     flatten-pdf
     fps

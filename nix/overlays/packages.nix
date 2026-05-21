@@ -17,6 +17,7 @@ final: prev: {
   flake-lock-cooldown = prev.callPackage ../packages/flake-lock-cooldown { };
   fps = prev.callPackage ../packages/fps { };
   lstrip = prev.callPackage ../packages/lstrip { };
+  claude-log = prev.callPackage ../packages/claude-log { };
   remarks = prev.callPackage ../packages/remarks { };
   tmux-palette = prev.callPackage ../packages/tmux-palette { };
 
