@@ -11,13 +11,50 @@ let
   jsonFormat = pkgs.formats.json { };
   cfg = config.programs.claude-code;
 
+  # Substrings identifying hook commands we manage. The merge filter below
+  # strips matcher-entries whose hook command contains one of these substrings
+  # before re-adding our entries, so:
+  #   - other tools' hooks (e.g. claude-inhibit-stop) are preserved untouched
+  #   - dropping a hook from Nix removes it on next activation
+  #   - Nix store path churn doesn't accumulate duplicates
+  # Substring match is used because writeShellScript paths include a content
+  # hash (e.g. /nix/store/HASH-claude-tmux-silence) that changes on every
+  # rebuild. Keep substrings specific enough to avoid false positives.
+  nixManagedHookMarkers = [ "claude-tmux-silence" ];
+
+  # jq filter: deep-merge objects, but for `.hooks.<event>` arrays strip any
+  # existing entries whose hook command contains a Nix-managed marker, then
+  # concatenate. No-op for files without `.hooks`.
+  hooksAwareMerge = ''
+    def is_managed:
+      (.hooks // []) | any(
+        (.command // "") as $c
+        | any($managed[]; . as $m | $c | contains($m))
+      );
+    def strip_managed(h):
+      (h // {})
+      | with_entries(.value |= map(select(is_managed | not)))
+      | with_entries(select(.value | length > 0));
+    def merge_hooks($a; $b):
+      (($a | keys) + ($b | keys) | unique) as $ks
+      | reduce $ks[] as $k ({}; .[$k] = (($a[$k] // []) + ($b[$k] // [])));
+    .[0] as $e | .[1] as $n
+    | ($e * $n)
+    | (strip_managed($e.hooks)) as $eh
+    | (merge_hooks($eh; ($n.hooks // {}))) as $merged
+    | if $merged == {} then del(.hooks) else .hooks = $merged end
+  '';
+
   # Helper: merge a Nix-generated JSON file into an existing file at activation.
   # Existing keys are preserved; Nix-managed keys take precedence on conflict.
   # We use `cat f.tmp > f` instead of `mv f.tmp f` so that this plays nicely
   # with persistance.
   mergeJsonActivation = name: target: source: ''
     if [ -s "${target}" ]; then
-      $DRY_RUN_CMD ${lib.getExe pkgs.jq} -s '.[0] * .[1]' "${target}" ${source} > "${target}.tmp"
+      $DRY_RUN_CMD ${lib.getExe pkgs.jq} \
+        --argjson managed ${lib.escapeShellArg (builtins.toJSON nixManagedHookMarkers)} \
+        -s ${lib.escapeShellArg hooksAwareMerge} \
+        "${target}" ${source} > "${target}.tmp"
       $DRY_RUN_CMD cat "${target}.tmp" > "${target}"
       rm -f "${target}.tmp"
     else
@@ -26,6 +63,16 @@ let
   '';
 
   claude-statusline = pkgs.callPackage ../../packages/claude-statusline { };
+
+  # Toggle tmux monitor-silence on the current window while Claude runs.
+  # No-op outside tmux. Wired up via SessionStart/SessionEnd hooks below.
+  claude-tmux-silence = pkgs.writeShellScript "claude-tmux-silence" ''
+    [ -n "''${TMUX:-}" ] || exit 0
+    case "''${1:-}" in
+      on)  tmux setw monitor-silence 10 ;;
+      off) tmux setw monitor-silence 0 ;;
+    esac
+  '';
 
   # Pre-accept the workspace trust dialog for $PWD so trust-gated features
   # (e.g. statusLine) render under `claude-yolo`. Uses cat-to-overwrite so the
@@ -78,6 +125,28 @@ in
         statusLine = {
           type = "command";
           command = "${claude-statusline}/bin/claude-statusline";
+        };
+        hooks = {
+          SessionStart = [
+            {
+              hooks = [
+                {
+                  type = "command";
+                  command = "${claude-tmux-silence} on";
+                }
+              ];
+            }
+          ];
+          SessionEnd = [
+            {
+              hooks = [
+                {
+                  type = "command";
+                  command = "${claude-tmux-silence} off";
+                }
+              ];
+            }
+          ];
         };
       };
 
