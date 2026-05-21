@@ -111,8 +111,8 @@
     set -g status-left "#[fg=#{BBLACK},bg=#{BLUE},bold] #{?client_prefix,󰠠 ,#[dim]󰤂 }#[bold,nodim]#S "
 
     # Windows
-    set -g window-status-current-format "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{GREEN},bg=#{BBLACK}] #{?#{==:#{pane_current_command},ssh},󰣀 , }#[fg=#{FG},bold,nodim]#I #W#{?window_zoomed_flag, 󰍉 ,}#[nobold]#{?window_last_flag, , }"
-    set -g window-status-format "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{FG}] #{?#{==:#{pane_current_command},ssh},󰣀 , }#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#I #W#{?window_zoomed_flag, 󰍉 ,}#[fg=#{GREEN}]#{?window_silence_flag,  ,}#[nobold,dim,fg=#{YELLOW}]#{?window_last_flag, 󰁯  , }"
+    set -g window-status-current-format "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{GREEN},bg=#{BBLACK}] #{?#{==:#{pane_current_command},ssh},󰣀 , }#[fg=#{FG},bold,nodim]#I #W#{?window_zoomed_flag, 󰍉 , }"
+    set -g window-status-format "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{FG}] #{?#{==:#{pane_current_command},ssh},󰣀 , }#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#I #W#{?window_zoomed_flag, 󰍉 ,}#[fg=#{GREEN}]#{?window_silence_flag,  , }"
     set -g window-status-separator ""
 
     # Status right (date/time)
