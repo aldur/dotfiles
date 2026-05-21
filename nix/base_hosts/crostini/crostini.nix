@@ -148,6 +148,15 @@ in
             yubikey-manager
           ];
         };
+
+        # The NixOS module's standalone unit is hardened and survives a rebuild
+        # cleanly; HM's socket-activated variant double-binds the socket path
+        # (yubikey-agent ignores LISTEN_FDS and rebinds via `-l`) and leaves it
+        # in a broken state after sd-switch SIGTERMs the service. The NixOS
+        # module only sets SSH_AUTH_SOCK via /etc/profile (bash-only), so we
+        # set it through home.sessionVariables so fish picks it up too.
+        services.yubikey-agent.enable = lib.mkForce false;
+        home.sessionVariables.SSH_AUTH_SOCK = "\${XDG_RUNTIME_DIR:-/run/user/$UID}/yubikey-agent/yubikey-agent.sock";
       };
 
     boot.initrd.systemd.enable = cfg.impermanence.enable;
@@ -216,6 +225,8 @@ in
           "sommelier-x@0.service"
           "sommelier-x@1.service"
         ];
+        # Don't start a yubikey-agent instance for root.
+        yubikey-agent.unitConfig.ConditionUser = "!root";
       };
 
       # Drop-in to make user@.service wait for home-manager. This ensures the
