@@ -21,6 +21,7 @@ let
     lstrip
     shrink-pdf
     split-pdf
+    tmux-palette
     totp-qr-decode
     watermark-pdf
   ];

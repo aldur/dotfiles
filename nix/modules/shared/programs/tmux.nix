@@ -38,6 +38,10 @@
     # automatically re-number windows (do not leave gaps)
     set -g renumber-windows on
 
+    # silence detection is opt-in per window (toggled via the binding below);
+    # show the flag in the status line instead of popping a message
+    set -g visual-silence off
+
     # c-a twice sends c-a to the terminal
     bind C-a send-prefix
 
@@ -60,6 +64,9 @@
     # Jump to previous/next prompt with [ and ]
     bind-key -T copy-mode-vi [ send-keys -X previous-prompt
     bind-key -T copy-mode-vi ] send-keys -X next-prompt
+
+    # Fuzzy command palette for seldom-used tmux actions
+    bind-key / display-popup -E -w 60% -h 50% tmux-palette
 
     # y to yank in copy mode, remaining in copy mode
     bind -T copy-mode-vi y send-keys -X copy-selection
@@ -104,8 +111,8 @@
     set -g status-left "#[fg=#{BBLACK},bg=#{BLUE},bold] #{?client_prefix,󰠠 ,#[dim]󰤂 }#[bold,nodim]#S "
 
     # Windows
-    set -g window-status-current-format "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{GREEN},bg=#{BBLACK}] #{?#{==:#{pane_current_command},ssh},󰣀 , }#[fg=#{FG},bold,nodim]#I #W#{?window_zoomed_flag, ,}#[nobold]#{?window_last_flag, , }"
-    set -g window-status-format "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{FG}] #{?#{==:#{pane_current_command},ssh},󰣀 , }#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#I #W#{?window_zoomed_flag, ,}#[nobold,dim]#[fg=#{YELLOW}]#{?window_last_flag, 󰁯  , }"
+    set -g window-status-current-format "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{GREEN},bg=#{BBLACK}] #{?#{==:#{pane_current_command},ssh},󰣀 , }#[fg=#{FG},bold,nodim]#I #W#{?window_zoomed_flag, 󰍉 ,}#[nobold]#{?window_last_flag, , }"
+    set -g window-status-format "#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#[fg=#{FG}] #{?#{==:#{pane_current_command},ssh},󰣀 , }#[fg=#{FG},bg=#{BG},nobold,noitalics,nounderscore,nodim]#I #W#{?window_zoomed_flag, 󰍉 ,}#[fg=#{GREEN}]#{?window_silence_flag,  ,}#[nobold,dim,fg=#{YELLOW}]#{?window_last_flag, 󰁯  , }"
     set -g window-status-separator ""
 
     # Status right (date/time)

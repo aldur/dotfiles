@@ -18,6 +18,7 @@ final: prev: {
   fps = prev.callPackage ../packages/fps { };
   lstrip = prev.callPackage ../packages/lstrip { };
   remarks = prev.callPackage ../packages/remarks { };
+  tmux-palette = prev.callPackage ../packages/tmux-palette { };
 
   tiktoken = prev.callPackage ../packages/tiktoken/tiktoken.nix { };
   llmcat = prev.callPackage ../packages/llmcat/llmcat.nix { };
