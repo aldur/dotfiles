@@ -39,6 +39,7 @@ in
     ./manpager.nix
     ./llm.nix
     ./nix_search.nix
+    ./secrets.nix
     ./qemu-vm.nix
   ];
 
