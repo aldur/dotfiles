@@ -68,6 +68,12 @@
     # Fuzzy command palette for seldom-used tmux actions
     bind-key / display-popup -E -w 60% -h 50% tmux-palette
 
+    # Lazygit in a big popup at the current pane's path
+    bind-key g display-popup -E -w 90% -h 90% -d "#{pane_current_path}" lazygit
+
+    # Lazyvim in a big popup at the current pane's path
+    bind-key e display-popup -E -w 90% -h 90% -d "#{pane_current_path}" lazyvim
+
     # y to yank in copy mode, remaining in copy mode
     bind -T copy-mode-vi y send-keys -X copy-selection
 
