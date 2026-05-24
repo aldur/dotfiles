@@ -356,6 +356,17 @@ in
     };
   };
 
+  # atuin's daemon (as of 18.10) bind()s its unix socket without unlink()-ing
+  # a stale one first, so launchd's KeepAlive crash-loops with EADDRINUSE
+  # after any unclean shutdown. Strip the leftover socket before exec.
+  launchd.agents = lib.mkIf pkgs.stdenv.isDarwin {
+    atuin-daemon.config.ProgramArguments = lib.mkForce [
+      "/bin/sh"
+      "-c"
+      "rm -f ${config.programs.atuin.settings.daemon.socket_path} && exec ${lib.getExe config.programs.atuin.package} daemon"
+    ];
+  };
+
   # NOTE: Pinentry configured by each respective module
   services.gpg-agent.enable = true;
 
