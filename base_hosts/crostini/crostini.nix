@@ -25,6 +25,8 @@ in
   imports = [
     "${inputs.self}/modules/current_system_flake.nix"
     "${inputs.self}/modules/nixos/pragmatism.nix"
+    "${inputs.self}/modules/nixos/preservation-system.nix"
+    "${inputs.self}/modules/nixos/preservation-user.nix"
     inputs.preservation.nixosModules.preservation
   ];
 
@@ -178,46 +180,19 @@ in
 
     preservation = lib.mkIf cfg.impermanence.enable {
       enable = true;
+    };
 
-      preserveAt."/persist" = {
-        users = {
-          ${username} = {
-            commonMountOptions = [
-              "x-gvfs-hide"
-            ];
-            directories = [
-              ".local/state/nix" # Required by HM
-              ".local/state/lazygit"
-
-              ".local/share/atuin"
-              ".local/share/dasht"
-              ".local/share/direnv"
-              ".local/share/fish"
-
-              ".config/io.datasette.llm"
-
-              "Documents/"
-              "Work/"
-
-              {
-                directory = ".ssh";
-                mode = "0700";
-              }
-            ]
-            ++ lib.optional config.programs.aldur.lazyvim.enable ".local/state/lazyvim"
-            ++
-              lib.optionals (cfg.impermanence.persist.claude-code && config.programs.aldur.claude-code.enable)
-                [
-                  ".claude"
-                  ".local/share/claude/versions"
-                ];
-
-            files = lib.optional (
-              cfg.impermanence.persist.claude-code && config.programs.aldur.claude-code.enable
-            ) ".claude.json";
-          };
-        };
-      };
+    # Host-key + machine-id persistence is intentionally off here: crostini
+    # already installs a checked-in ssh_host_ed25519_key via
+    # environment.etc, and bind-mounting /persist/etc/ssh/... on top of
+    # that /nix/store-backed symlink doesn't work. Revisit as its own
+    # change, coordinated with removing the environment.etc entries.
+    aldur.preservation-system.enable = false;
+    aldur.preservation-user = {
+      enable = cfg.impermanence.enable;
+      inherit username;
+      persistClaudeCode =
+        cfg.impermanence.persist.claude-code && config.programs.aldur.claude-code.enable;
     };
 
     systemd = {
@@ -231,51 +206,6 @@ in
         ];
         # Don't start a yubikey-agent instance for root.
         yubikey-agent.unitConfig.ConditionUser = "!root";
-      };
-
-      # Drop-in to make user@.service wait for home-manager. This ensures the
-      # following order, important to make /home under tmpfs work:
-      #
-      # 1. System boots, linger-users.service enables linger for aldur
-      # 2. `user@1000.service` starts but waits (due to
-      #    `After=home-manager-aldur.service`)
-      # 3. `home-manager-aldur.service` runs, creating user config (including
-      #    `fish`) and hm service definitions
-      # 4. `user@1000.service proceeds` (starting hm services)
-      # 5. User services start; `garcon` starts `fish` with the correct
-      #    configuration
-      services."user@" = lib.mkIf cfg.impermanence.enable {
-        overrideStrategy = "asDropin";
-        after = [ "home-manager-${username}.service" ];
-        wants = [ "home-manager-${username}.service" ];
-
-        # In case something goes wrong, start `user` and transitively `garcon`
-        # after a timeout
-        serviceConfig.TimeoutStartSec = "90";
-      };
-
-      tmpfiles.settings = lib.mkIf cfg.impermanence.enable {
-        preservation =
-          let
-            defaultPermissions = {
-              user = username;
-              group = "users";
-              mode = "0755";
-            };
-          in
-          {
-            "/home/${username}".d = defaultPermissions;
-            "/home/${username}/.local".d = defaultPermissions;
-            "/home/${username}/.local/share".d = defaultPermissions;
-            "/home/${username}/.local/state".d = defaultPermissions;
-            "/home/${username}/.config/".d = defaultPermissions;
-            "/home/${username}/.config/io.datasette.llm/".d = defaultPermissions;
-          }
-          //
-            lib.optionalAttrs (cfg.impermanence.persist.claude-code && config.programs.aldur.claude-code.enable)
-              {
-                "/home/${username}/.local/share/claude/versions".d = defaultPermissions;
-              };
       };
 
     };

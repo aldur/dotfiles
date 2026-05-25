@@ -175,6 +175,8 @@
         cli = ./modules/cli.nix;
         development = ./modules/development.nix;
         environment = ./modules/environment.nix;
+        preservation-system = ./modules/nixos/preservation-system.nix;
+        preservation-user = ./modules/nixos/preservation-user.nix;
       };
 
       darwinModules.default = ./modules/darwin/configuration.nix;
