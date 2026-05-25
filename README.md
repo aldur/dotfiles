@@ -8,11 +8,13 @@ My collection of dotfiles.
 overlays, packages, etc.
 
 Host-specific configuration to into [`base_hosts`](base_hosts/), consuming
-the root [./flake.nix](flake.nix) as an input.
+the root [flake.nix](flake.nix) as an input.
 
 Most modules assume the username to be `aldur`.
 
 ## Packages
+
+See the [`packages`](./packages/) directories for a few more.
 
 ### `lazyvim`
 
