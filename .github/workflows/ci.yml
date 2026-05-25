@@ -27,7 +27,7 @@ jobs:
           persist-credentials: false
       - uses: DeterminateSystems/determinate-nix-action@1d699fc25db3f9e079cd2f168ca007a4183389be # v3.15.1
       - uses: DeterminateSystems/flake-checker-action@3164002371bc90729c68af0e24d5aacf20d7c9f6  # v12
-      - run: nix flake check --all-systems ./nix
+      - run: nix flake check --all-systems .
 
       # Reclaim disk space
       - run: |
@@ -39,11 +39,11 @@ jobs:
           df -h
 
       # Test building QEMU VM configuration
-      - run: nix build --override-input aldur-dotfiles ./nix ./nix/base_hosts/qemu#vm-nogui
+      - run: nix build --override-input aldur-dotfiles . ./base_hosts/qemu#vm-nogui
 
       # Test building the Crostini Baguette image (aarch64-only)
       - if: matrix.runner == 'ubuntu-24.04-arm'
-        run: nix build --override-input aldur-dotfiles ./nix ./nix/base_hosts/crostini#baguette-image
+        run: nix build --override-input aldur-dotfiles . ./base_hosts/crostini#baguette-image
 
   nix-darwin-ci:
     runs-on: macos-26  # arm, beta
@@ -53,10 +53,10 @@ jobs:
           persist-credentials: false
       - uses: DeterminateSystems/determinate-nix-action@1d699fc25db3f9e079cd2f168ca007a4183389be # v3.15.1
       - uses: DeterminateSystems/flake-checker-action@3164002371bc90729c68af0e24d5aacf20d7c9f6  # v12
-      - run: nix flake check --all-systems ./nix
+      - run: nix flake check --all-systems .
 
       # Test building nix-darwin configuration
-      - run: nix build --override-input aldur-dotfiles ./nix ./nix/base_hosts/macos#darwinConfigurations.macOS.system
+      - run: nix build --override-input aldur-dotfiles . ./base_hosts/macos#darwinConfigurations.macOS.system
 
   nix-darwin-ci-llm:
     runs-on: macos-26  # arm, beta
@@ -66,7 +66,7 @@ jobs:
           persist-credentials: false
       - uses: DeterminateSystems/determinate-nix-action@1d699fc25db3f9e079cd2f168ca007a4183389be # v3.15.1
       - uses: DeterminateSystems/flake-checker-action@3164002371bc90729c68af0e24d5aacf20d7c9f6  # v12
-      - run: nix flake check --all-systems ./nix
+      - run: nix flake check --all-systems .
 
       # Explicitly build `llm` with `mlx`, which often breaks on Darwin.
-      - run: nix build ./nix#llm
+      - run: nix build .#llm

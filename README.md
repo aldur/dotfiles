@@ -2,90 +2,50 @@
 
 My collection of dotfiles.
 
-## Structure
+## Structure: `nix`
 
-These dotfiles are currently arranged around two configuration systems:
+[`flake.nix`](./flake.nix) is the entrypoint, while directories hold modules,
+overlays, packages, etc.
 
-1. `nix`-based: how I lately started configuring [throwaway containers and VMs](https://aldur.blog/articles/2025/06/19/nixos-in-crostini).
-1. `Makefile`-based: how have I historically configured my systems, mostly on
-   macOS.
+Host-specific configuration to into [`base_hosts`](base_hosts/), consuming
+the root [./flake.nix](flake.nix) as an input.
 
-Over time, I will slowly migrate away from `Makefile`s, deleting what is not
-relevant anymore.
+Most modules assume the username to be `aldur`.
 
-## With `nix`
+## Packages
 
-The `nix` folder includes a few NixOS/`nix-darwin` modules, some general Nix
-packages, and shared Nix configurations (e.g., for `home-manager`).
+### `lazyvim`
 
-It doesn't include host-specific configuration, leaving that to a Nix Flakes
-that pulls [./nix/flake.nix] as an input.
-
-Most NixOS modules assume the username to be `aldur`.
-
-### Templates
-
-#### QEMU VM
+A slightly customized [LazyVim setup][0].
 
 ```bash
-nix flake init --template github:aldur/dotfiles?dir=nix#vm-nogui
+nix run "github:aldur/dotfiles#lazyvim"
 ```
 
-### Packages
-
-#### `lazyvim`
-
-A slightly customized [LazyVim setup](https://www.lazyvim.org).
+Or its _light_ version:
 
 ```bash
-nix run "github:aldur/dotfiles?dir=nix#lazyvim"
+nix run "github:aldur/dotfiles#lazyvim-light"
 ```
 
-Or its light version:
+### `qemu-vm`
+
+Launch a `qemu-vm` with the configuration from this repository.
+
+See [the README](base_hosts/qemu/README.md) for more information.
 
 ```bash
-nix run "github:aldur/dotfiles?dir=nix#lazyvim-light"
+nix run "github:aldur/dotfiles#qemu-vm"
 ```
 
-#### `qemu-vm`
+## Templates
 
-Will launch a `qemu-vm` with the configuration from this repository.
+### QEMU VM
 
-See [here](/nix/base_hosts/qemu/README.md) for more information.
+To further configure the QEMU VM, clone the template:
 
 ```bash
-nix run "github:aldur/dotfiles?dir=nix#qemu-vm"
+nix flake init --template github:aldur/dotfiles#vm-nogui
 ```
 
-## Makefile
-
-### Install
-
-Simply run `make` from the top-level directory.
-
-```bash
-make
-```
-
-### Requirements
-
-Different systems have different requirements that `make` will try to handle
-for you.
-
-#### git-crypt
-
-Some files in this repository have been encrypted.
-
-To decrypt them, run `git-crypt unlock <symmetric_key>` before running `make`.
-
-#### macOS
-
-On macOS, first install `homebrew`. Then:
-
-```bash
-git clone https://github.com/aldur/dotfiles .dotfiles
-brew install git make gpg coreutils git-crypt
-PATH="$(brew --prefix)/opt/coreutils/libexec/gnubin:$PATH"
-git-crypt unlock <symmetric_key>
-gmake requirements #optional
-```
+[0]: https://www.lazyvim.org

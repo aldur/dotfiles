@@ -9,7 +9,7 @@
   let
     lazyvim = prev.callPackage ../../packages/lazyvim/lazyvim.nix { inherit inputs pkgs pkgsUnstable; };
     name = "lazyvim";
-    sandboxProfile = ../../../osx/sandboxes/lazyvim.sb;
+    sandboxProfile = ../sandboxes/lazyvim.sb;
   in
   {
     jailed-lazyvim = prev.writeShellApplication {

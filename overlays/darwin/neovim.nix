@@ -13,7 +13,7 @@
 
       # Jail nvim
       text = ''
-        sandbox-exec -f ${../../../osx/sandboxes/neovim.sb} nvim "$@"
+        sandbox-exec -f ${../sandboxes/neovim.sb} nvim "$@"
       '';
     };
   }

@@ -9,7 +9,7 @@ The `qemu-vm` package provides a pre-built NixOS VM:
 
 ```bash
 # Install or run the qemu-vm package
-nix run github:aldur/dotfiles?dir=nix#qemu-vm -- -p 22:2222
+nix run github:aldur/dotfiles#qemu-vm -- -p 22:2222
 
 # Or if you have it installed
 qemu-vm -p 22:2222
@@ -62,7 +62,7 @@ nix build .#qemu-vm
 ```
 
 The VM configuration is built as part of the package derivation in
-`/nix/packages/qemu-vm/qemu-vm.nix`.
+`/packages/qemu-vm/qemu-vm.nix`.
 
 [0]: https://github.com/NixOS/nixpkgs/blob/554be6495561ff07b6c724047bdd7e0716aa7b46/nixos/modules/virtualisation/qemu-vm.nix#L25
 [1]: https://github.com/cpick/nix-rosetta-builder
