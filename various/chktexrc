@@ -1,2 +1,0 @@
-# Exclude these environments from syntax checking
-VerbEnvir { pgfpicture tikzpicture ignore dot2tex }
