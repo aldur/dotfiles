@@ -17,10 +17,6 @@
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
     };
-
-    preservation = {
-      url = "github:nix-community/preservation";
-    };
   };
   outputs =
     {
@@ -28,7 +24,6 @@
       nixos-generators,
       aldur-dotfiles,
       nixos-crostini,
-      preservation,
       ...
     }:
     let
@@ -41,7 +36,6 @@
       specialArgs = {
         inputs = aldur-dotfiles.specialArgs.inputs // {
           inherit nixos-crostini;
-          inherit preservation;
         };
       };
 

@@ -25,9 +25,12 @@ in
   imports = [
     "${inputs.self}/modules/current_system_flake.nix"
     "${inputs.self}/modules/nixos/pragmatism.nix"
-    "${inputs.self}/modules/nixos/preservation-system.nix"
-    "${inputs.self}/modules/nixos/preservation-user.nix"
-    inputs.preservation.nixosModules.preservation
+    # preservation-{system,user} transitively pull in the upstream
+    # preservation module (wrapped in the dotfiles flake outputs), so
+    # crostini doesn't need to import it directly. Note: `inputs.self`
+    # here is the dotfiles flake (per its specialArgs.inputs export).
+    inputs.self.nixosModules.preservation-system
+    inputs.self.nixosModules.preservation-user
   ];
 
   config = {

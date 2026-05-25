@@ -58,6 +58,9 @@
       };
 
     };
+
+    # preservation has no inputs of its own (pure NixOS module).
+    preservation.url = "github:nix-community/preservation";
   };
   outputs =
     {
@@ -175,8 +178,22 @@
         cli = ./modules/cli.nix;
         development = ./modules/development.nix;
         environment = ./modules/environment.nix;
-        preservation-system = ./modules/nixos/preservation-system.nix;
-        preservation-user = ./modules/nixos/preservation-user.nix;
+
+        # Meta-modules: each export pulls in the upstream preservation
+        # module alongside our config layer. Consumers just import the
+        # one entry from `aldur-dotfiles.nixosModules` and get both.
+        preservation-system = {
+          imports = [
+            inputs.preservation.nixosModules.preservation
+            ./modules/nixos/preservation-system.nix
+          ];
+        };
+        preservation-user = {
+          imports = [
+            inputs.preservation.nixosModules.preservation
+            ./modules/nixos/preservation-user.nix
+          ];
+        };
       };
 
       darwinModules.default = ./modules/darwin/configuration.nix;
