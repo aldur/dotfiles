@@ -8,13 +8,16 @@
 }:
 let
   enabled = osConfig.programs.aldur.claude-code.enable;
+  sandboxCfg = osConfig.programs.aldur.claude-code.sandbox;
+  sandbox = sandboxCfg.enable;
+  runtimeAllowlist = sandboxCfg.extraRuntimeDirAllowlist;
   jsonFormat = pkgs.formats.json { };
   cfg = config.programs.claude-code;
 
   # Substrings identifying hook commands we manage. The merge filter below
   # strips matcher-entries whose hook command contains one of these substrings
   # before re-adding our entries, so:
-  #   - other tools' hooks (e.g. claude-inhibit-stop) are preserved untouched
+  #   - hooks contributed by other modules are preserved untouched
   #   - dropping a hook from Nix removes it on next activation
   #   - Nix store path churn doesn't accumulate duplicates
   # Substring match is used because writeShellScript paths include a content
@@ -64,16 +67,6 @@ let
 
   claude-statusline = pkgs.callPackage ../../packages/claude-statusline { };
 
-  # Toggle tmux monitor-silence on the current window while Claude runs.
-  # No-op outside tmux. Wired up via SessionStart/SessionEnd hooks below.
-  claude-tmux-silence = pkgs.writeShellScript "claude-tmux-silence" ''
-    [ -n "''${TMUX:-}" ] || exit 0
-    case "''${1:-}" in
-      on)  tmux setw monitor-silence 10 ;;
-      off) tmux setw monitor-silence 0 ;;
-    esac
-  '';
-
   # Pre-accept the workspace trust dialog for $PWD so trust-gated features
   # (e.g. statusLine) render under `claude-yolo`. Uses cat-to-overwrite so the
   # underlying inode is preserved (impermanence bind-mounts ~/.claude.json).
@@ -86,6 +79,92 @@ let
     ${lib.getExe pkgs.jq} --arg cwd "$PWD" \
       '.projects[$cwd].hasTrustDialogAccepted = true' "$config" > "$tmp"
     cat "$tmp" > "$config"
+  '';
+
+  # Shadow the user's tmux server, ssh-agent socket from subprocesses Claude
+  # spawns under YOLO. Filesystem and network pass through so editing, nix
+  # builds, and the Claude API still work. CLAUDE_NO_SANDBOX=1 skips the wrapper.
+  claude-bwrap = pkgs.writeShellScript "claude-bwrap" ''
+    set -euo pipefail
+
+    if [ "''${CLAUDE_NO_SANDBOX:-0}" = "1" ]; then
+      exec "$@"
+    fi
+
+    uid=$(${pkgs.coreutils}/bin/id -u)
+    runtime="''${XDG_RUNTIME_DIR:-/run/user/$uid}"
+    data_home="''${XDG_DATA_HOME:-$HOME/.local/share}"
+
+    # Spawn xdg-dbus-proxy: filtered view of the session bus. Closes the
+    # systemd-run / StartTransientUnit escape, which would otherwise let
+    # the sandboxed Claude spawn arbitrary commands as a transient user
+    # unit (outside the bwrap, with full access to every shadowed path).
+    bus_addr="''${DBUS_SESSION_BUS_ADDRESS:-unix:path=$runtime/bus}"
+    proxy_sock=$(${pkgs.coreutils}/bin/mktemp -u /tmp/claude-dbus-proxy.XXXXXX)
+    ${pkgs.xdg-dbus-proxy}/bin/xdg-dbus-proxy "$bus_addr" "$proxy_sock" --filter \
+      --talk=org.freedesktop.DBus \
+      ${
+        lib.concatMapStringsSep " \\\n      " (n: "--talk=${lib.escapeShellArg n}") sandboxCfg.extraDbusTalk
+      } &
+    proxy_pid=$!
+    trap 'kill "$proxy_pid" 2>/dev/null; rm -f "$proxy_sock"' EXIT
+    for _ in 1 2 3 4 5 6 7 8 9 10; do
+      [ -S "$proxy_sock" ] && break
+      sleep 0.1
+    done
+    [ -S "$proxy_sock" ] || { echo "claude-bwrap: xdg-dbus-proxy did not come up" >&2; exit 1; }
+
+    # Simple `bwrap` invocation that shadows `runtime`, the `tmux`/`ssh` sockets, 
+    # and hides pid/ipc/uts. 
+    #
+    # WARNING: Doesn't try to be bullet-proof.
+    args=(
+      --dev-bind / /
+      --proc /proc
+      --tmpfs "$runtime"
+      --tmpfs "/tmp/tmux-$uid"
+      --tmpfs "$HOME/.ssh"
+      --ro-bind-try "$HOME/.config/git" "$HOME/.config/git"
+      --tmpfs "$HOME/.config/nix"
+      --ro-bind-try "$HOME/.config/systemd" "$HOME/.config/systemd"
+      --ro-bind-try "$HOME/.config/fish" "$HOME/.config/fish"
+      --ro-bind-try "$HOME/.local/bin" "$HOME/.local/bin"
+      --ro-bind-try "$data_home/lazyvim" "$data_home/lazyvim"
+      --unsetenv TMUX
+      --unsetenv TMUX_PANE
+      --unsetenv TMUX_TMPDIR
+      --unsetenv SSH_AUTH_SOCK
+      --unsetenv SSH_AGENT_PID
+      --unsetenv GNUPGHOME
+      --unsetenv GPG_TTY
+      --die-with-parent
+      --unshare-pid
+      --unshare-ipc
+      --unshare-uts
+    )
+
+    # Re-bind allowlist into the empty runtime tmpfs. The list is the
+    # value of programs.aldur.claude-code.sandbox.extraRuntimeDirAllowlist.
+    # The session bus is handled separately below via xdg-dbus-proxy.
+    for entry in ${lib.concatMapStringsSep " " lib.escapeShellArg runtimeAllowlist}; do
+      src="/run/user/$uid/$entry"
+      [ -e "$src" ] && args+=(--bind "$src" "$runtime/$entry")
+    done
+
+    # Bind the filtered bus and point DBUS_SESSION_BUS_ADDRESS at it.
+    args+=(
+      --bind "$proxy_sock" "$runtime/bus"
+      --setenv DBUS_SESSION_BUS_ADDRESS "unix:path=$runtime/bus"
+    )
+
+    # Shell history files.
+    for f in "$data_home/fish/fish_history" \
+             "$HOME/.bash_history"; do
+      [ -f "$f" ] && args+=(--bind /dev/null "$f")
+    done
+
+    # Not exec'd so the EXIT trap can clean up the proxy.
+    ${pkgs.bubblewrap}/bin/bwrap "''${args[@]}" -- "$@"
   '';
 
   claudeSettings = jsonFormat.generate "claude-code-settings.json" cfg.writableSettings;
@@ -126,28 +205,6 @@ in
           type = "command";
           command = "${claude-statusline}/bin/claude-statusline";
         };
-        hooks = {
-          SessionStart = [
-            {
-              hooks = [
-                {
-                  type = "command";
-                  command = "${claude-tmux-silence} on";
-                }
-              ];
-            }
-          ];
-          SessionEnd = [
-            {
-              hooks = [
-                {
-                  type = "command";
-                  command = "${claude-tmux-silence} off";
-                }
-              ];
-            }
-          ];
-        };
       };
 
       skillsDir = "${
@@ -160,40 +217,43 @@ in
       }/skills";
     };
 
-    # Write settings and MCP config as writable files (not read-only symlinks).
-    # The native claude binary from ~/.local/bin bypasses the Nix wrapper,
-    # so MCP servers must be configured via ~/.claude.json directly.
-    home.activation.claudeSettings = lib.mkIf enabled (
-      lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        $DRY_RUN_CMD mkdir -p "$HOME/.claude"
-        ${mergeJsonActivation "settings" "$HOME/.claude/settings.json" claudeSettings}
-        ${mergeJsonActivation "mcp" "$HOME/.claude.json" claudeMcpConfig}
-      ''
-    );
+    home = {
+      # Write settings and MCP config as writable files (not read-only symlinks).
+      # The native claude binary from ~/.local/bin bypasses the Nix wrapper,
+      # so MCP servers must be configured via ~/.claude.json directly.
+      activation.claudeSettings = lib.mkIf enabled (
+        lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          $DRY_RUN_CMD mkdir -p "$HOME/.claude"
+          ${mergeJsonActivation "settings" "$HOME/.claude/settings.json" claudeSettings}
+          ${mergeJsonActivation "mcp" "$HOME/.claude.json" claudeMcpConfig}
+        ''
+      );
 
-    # Re-create ~/.local/bin/claude symlink after an impermanence wipe by
-    # pointing it at the highest version under ~/.local/share/claude/versions/.
-    # No-op on first boot (before claude-code has installed itself).
-    home.activation.claudeSymlink = lib.mkIf enabled (
-      lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        versionsDir="$HOME/.local/share/claude/versions"
-        if [ -d "$versionsDir" ]; then
-          latest=$(ls -v "$versionsDir" 2>/dev/null | tail -n1 || true)
-          if [ -n "''${latest:-}" ]; then
-            $DRY_RUN_CMD mkdir -p "$HOME/.local/bin"
-            $DRY_RUN_CMD ln -sfn "$versionsDir/$latest" "$HOME/.local/bin/claude"
+      # Re-create ~/.local/bin/claude symlink after an impermanence wipe by
+      # pointing it at the highest version under ~/.local/share/claude/versions/.
+      # No-op on first boot (before claude-code has installed itself).
+      activation.claudeSymlink = lib.mkIf enabled (
+        lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          versionsDir="$HOME/.local/share/claude/versions"
+          if [ -d "$versionsDir" ]; then
+            latest=$(ls -v "$versionsDir" 2>/dev/null | tail -n1 || true)
+            if [ -n "''${latest:-}" ]; then
+              $DRY_RUN_CMD mkdir -p "$HOME/.local/bin"
+              $DRY_RUN_CMD ln -sfn "$versionsDir/$latest" "$HOME/.local/bin/claude"
+            fi
           fi
-        fi
-      ''
-    );
+        ''
+      );
 
-    home.shellAliases = lib.optionalAttrs enabled {
-      claude-yolo =
-        let
-          needsPathPrefix = if pkgs.stdenv.isDarwin then true else osConfig.programs.nix-ld.enable;
-          pathPrefix = lib.optionalString needsPathPrefix "PATH=~/.local/bin/:$PATH ";
-        in
-        "${pathPrefix}${claude-trust-cwd}; IS_SANDBOX=1 CLAUBBIT=1 DISABLE_TELEMETRY=1 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 claude --dangerously-skip-permissions";
+      shellAliases = lib.optionalAttrs enabled {
+        claude-yolo =
+          let
+            needsPathPrefix = if pkgs.stdenv.isDarwin then true else osConfig.programs.nix-ld.enable;
+            pathPrefix = lib.optionalString needsPathPrefix "PATH=~/.local/bin/:$PATH ";
+            sandboxPrefix = lib.optionalString (sandbox && pkgs.stdenv.isLinux) "${claude-bwrap} ";
+          in
+          "${pathPrefix}${claude-trust-cwd}; IS_SANDBOX=1 CLAUBBIT=1 DISABLE_TELEMETRY=1 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 ${sandboxPrefix}claude --dangerously-skip-permissions";
+      };
     };
 
     # The upstream HM module creates a read-only symlink for settings.json when

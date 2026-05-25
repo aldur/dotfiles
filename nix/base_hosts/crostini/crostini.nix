@@ -58,6 +58,10 @@ in
         lazyvim.enable = true;
         lazyvim.packageNames = [ "lazyvim" ];
         claude-code.enable = true;
+        # The hooks defined below in home-manager invoke notify-send when
+        # Claude finishes or needs input; that requires the session bus
+        # path through the sandbox to org.freedesktop.Notifications.
+        claude-code.sandbox.extraDbusTalk = [ "org.freedesktop.Notifications" ];
       };
 
       gnupg.agent.pinentryPackage = pkgs.pinentry-qt;
