@@ -14,16 +14,7 @@ let
   jsonFormat = pkgs.formats.json { };
   cfg = config.programs.claude-code;
 
-  # Substrings identifying hook commands we manage. The merge filter below
-  # strips matcher-entries whose hook command contains one of these substrings
-  # before re-adding our entries, so:
-  #   - hooks contributed by other modules are preserved untouched
-  #   - dropping a hook from Nix removes it on next activation
-  #   - Nix store path churn doesn't accumulate duplicates
-  # Substring match is used because writeShellScript paths include a content
-  # hash (e.g. /nix/store/HASH-claude-tmux-silence) that changes on every
-  # rebuild. Keep substrings specific enough to avoid false positives.
-  nixManagedHookMarkers = [ "claude-tmux-silence" ];
+  inherit (cfg) nixManagedHookMarkers;
 
   # jq filter: deep-merge objects, but for `.hooks.<event>` arrays strip any
   # existing entries whose hook command contains a Nix-managed marker, then
@@ -192,6 +183,24 @@ in
     '';
   };
 
+  options.programs.claude-code.nixManagedHookMarkers = lib.mkOption {
+    type = lib.types.listOf lib.types.str;
+    default = [ ];
+    description = ''
+      Substrings identifying hook commands wired via Nix. On activation,
+      any entry in ~/.claude/settings.json whose hook command contains one
+      of these substrings is stripped before the Nix-generated entries are
+      merged in, so:
+        - hooks contributed by other modules are preserved untouched
+        - dropping a hook from Nix removes it on next activation
+        - Nix store path churn doesn't accumulate duplicates
+      Substring match is used because writeShellScript paths include a
+      content hash that changes on every rebuild. Hosts wiring their own
+      hooks via `writableSettings.hooks` should contribute the relevant
+      substrings here so their stale generations get reclaimed.
+    '';
+  };
+
   config = {
     programs.claude-code = lib.optionalAttrs enabled {
       inherit (osConfig.programs.aldur.claude-code) enable;
@@ -206,6 +215,8 @@ in
           command = "${claude-statusline}/bin/claude-statusline";
         };
       };
+
+      nixManagedHookMarkers = [ "claude-tmux-silence" ];
 
       skillsDir = "${
         pkgs.fetchFromGitHub {
