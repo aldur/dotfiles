@@ -263,7 +263,7 @@ in
             pathPrefix = lib.optionalString needsPathPrefix "PATH=~/.local/bin/:$PATH ";
             sandboxPrefix = lib.optionalString (sandbox && pkgs.stdenv.isLinux) "${claude-bwrap} ";
           in
-          "${pathPrefix}${claude-trust-cwd}; IS_SANDBOX=1 CLAUBBIT=1 DISABLE_TELEMETRY=1 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 ${sandboxPrefix}claude --dangerously-skip-permissions";
+          "${claude-trust-cwd}; ${pathPrefix}IS_SANDBOX=1 CLAUBBIT=1 DISABLE_TELEMETRY=1 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 ${sandboxPrefix}claude --dangerously-skip-permissions";
       };
     };
 
