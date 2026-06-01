@@ -210,6 +210,10 @@ in
         "$schema" = "https://json.schemastore.org/claude-code-settings.json";
         theme = "dark";
         skipDangerousModePermissionPrompt = true;
+        # Retain session transcripts effectively forever. Claude Code prunes
+        # JSONL logs older than `cleanupPeriodDays` (default 30) at startup, and
+        # there is no infinite sentinel — so set a 100-year horizon.
+        cleanupPeriodDays = 36500;
         statusLine = {
           type = "command";
           command = "${claude-statusline}/bin/claude-statusline";
