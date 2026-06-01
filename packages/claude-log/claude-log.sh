@@ -8,6 +8,8 @@ If SESSION_FILE is omitted, picks among sessions for the current
 project (~/.claude/projects/<encoded-cwd>/*.jsonl), most recently
 active first (ordered by last message timestamp, not file mtime).
 Press ctrl-a in the session picker to broaden to all projects.
+Press alt-i in the session picker to print the session id and exit
+(skips the turn picker) — handy for `claude --resume <id>`.
 
 Options:
   --newest      Skip the picker; open the most recently active session in cwd.
@@ -108,8 +110,11 @@ list_sessions() {
               if [ -n "$title" ]; then
                   label="$title"
               else
-                  label=$(jq -r 'select(.type=="user" and (.message.content | type)=="string") | .message.content' "$path" 2>/dev/null \
-                          | head -1)
+                  # `first(inputs|...)` makes jq emit one value and stop on its
+                  # own. Piping into `head -1` instead would close the pipe early,
+                  # so jq dies with SIGPIPE — fatal under set -o errexit/pipefail,
+                  # which aborts this whole loop and drops every later session.
+                  label=$(jq -rn 'first(inputs | select(.type=="user" and (.message.content | type)=="string") | .message.content) // empty' "$path" 2>/dev/null)
               fi
               label=$(printf '%s' "$label" | tr '\n\r\t' '   ' | cut -c1-100)
               corpus=$(jq -r '
@@ -204,7 +209,7 @@ fi
 # Start the picker in "all" scope if the current dir has no sessions, so the
 # user still has something to pick from. ctrl-a always reloads to "all".
 pick_session() {
-    local scope prompt
+    local scope prompt out key sel
     if [ -d "$PROJECT_DIR" ] && find "$PROJECT_DIR" -maxdepth 1 -name '*.jsonl' -print -quit 2>/dev/null | grep -q .; then
         scope=project
         prompt='session> '
@@ -215,16 +220,27 @@ pick_session() {
         echo "claude-log: no sessions found under ~/.claude/projects" >&2
         return 1
     fi
-    list_sessions "$scope" \
+    # --expect makes alt-i accept like enter while reporting itself on the
+    # first output line, so the caller can print the bare session id and skip
+    # the turn picker. Output is "<key>\n<selected row>"; key is empty on enter.
+    out=$(list_sessions "$scope" \
         | fzf --prompt="$prompt" --reverse --height=60% --ansi \
               --delimiter=$'\t' --with-nth=1 \
+              --expect=alt-i \
               --preview="$self --_summary {2}" \
               --preview-window=right,60%,wrap \
               --bind='alt-p:toggle-preview' \
               --bind="ctrl-a:reload($self --_list-sessions all)+change-prompt(all> )" \
-              --footer=$'\033[2menter\033[0m pick   \033[2malt-p\033[0m preview   \033[2mctrl-a\033[0m all projects' \
-              --wrap-sign='' \
-        | cut -f2
+              --footer=$'\033[2menter\033[0m open   \033[2malt-i\033[0m id only   \033[2malt-p\033[0m preview   \033[2mctrl-a\033[0m all projects' \
+              --wrap-sign='') || return 1
+    key=$(printf '%s\n' "$out" | sed -n 1p)
+    sel=$(printf '%s\n' "$out" | sed -n 2p | cut -f2)
+    [ -n "$sel" ] || return 0
+    if [ "$key" = "alt-i" ]; then
+        printf 'id\t%s\n' "$(basename "$sel" .jsonl)"
+    else
+        printf 'path\t%s\n' "$sel"
+    fi
 }
 
 if [ -n "$NEWEST" ] && [ -z "$SESSION" ]; then
@@ -236,8 +252,15 @@ if [ -n "$NEWEST" ] && [ -z "$SESSION" ]; then
 fi
 
 if [ -z "$SESSION" ]; then
-    SESSION=$(pick_session) || exit 1
-    [ -n "$SESSION" ] || exit 0
+    picked=$(pick_session) || exit 1
+    [ -n "$picked" ] || exit 0
+    # alt-i in the picker returns "id\t<uuid>" — print it and stop short of
+    # the turn picker. A normal pick returns "path\t<file>".
+    if [ "${picked%%$'\t'*}" = "id" ]; then
+        printf '%s\n' "${picked#*$'\t'}"
+        exit 0
+    fi
+    SESSION="${picked#*$'\t'}"
 fi
 
 if [ ! -f "$SESSION" ]; then
