@@ -226,8 +226,8 @@ in
         pkgs.fetchFromGitHub {
           owner = "anthropics";
           repo = "skills";
-          rev = "7029232b9212482c0476da354b83364bd28fab2f";
-          hash = "sha256-rQXOcZk0nF9ZqYK0CUelGoY4oj/gYZgcdh1qUdwvx2k=";
+          rev = "da20c92503b2e8ff1cf28ca81a0df4673debdbf7";
+          hash = "sha256-BiZvEV7VK1AwhiGg+pNMgTUQmt4exevLWwL0Brx4YyE=";
         }
       }/skills";
     };
