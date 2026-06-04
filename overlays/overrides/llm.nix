@@ -16,6 +16,14 @@ final: prev: {
         doInstallCheck = false;
         disabledTestPaths = [ ];
 
+        # mlx-lm >= 0.31 promotes sentencepiece from a test-only to a runtime
+        # dependency, but nixpkgs still lists it under nativeCheckInputs, which
+        # our `doCheck = false` drops. Add it as a real runtime dependency so
+        # the wheel's runtime-deps check is satisfied.
+        propagatedBuildInputs = (oldAttrs.propagatedBuildInputs or [ ]) ++ [
+          pythonFinal.sentencepiece
+        ];
+
         pythonImportsCheck = [
           "mlx_lm"
         ];

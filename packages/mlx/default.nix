@@ -6,7 +6,7 @@
   fetchPypi,
 }:
 let
-  version = "0.30.1";
+  version = "0.31.2";
   format = "wheel";
   platform = "macosx_15_0_arm64";
 
@@ -21,7 +21,7 @@ let
         format
         platform
         ;
-      hash = "sha256-u1D1dBivf8PEKi2ixL3g56t6wLmX3h9vZCpmgKxl1iY=";
+      hash = "sha256-6dTl/ObKEKh6DjiFl/mVGa1ZTQnmdHCLUxK9i9T1mX0=";
       python = "py3";
       dist = "py3";
     };
@@ -47,7 +47,7 @@ buildPythonPackage rec {
       format
       platform
       ;
-    hash = "sha256-/JdFvBhgymASjjptNhV9oG2TbitAB6TcupkLQCAvWY8=";
+    hash = "sha256-NLAXHNnrXEP92CCR9hNdbMxaBlNjpKPmj6xk+05T03w=";
     python = "cp313";
     dist = "cp313";
     abi = "cp313";
