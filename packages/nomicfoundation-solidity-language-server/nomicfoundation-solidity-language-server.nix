@@ -10,13 +10,13 @@
 
 buildNpmPackage (finalAttrs: {
   pname = "nomicfoundation-solidity-language-server";
-  version = "0.8.26";
+  version = "0.8.29";
 
   src = fetchFromGitHub {
     owner = "NomicFoundation";
     repo = "hardhat-vscode";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-QXkfPRVQLYmMlhidiLH34wproYpJiVpdZEw1wLRbGAY=";
+    hash = "sha256-lRujS/Ps56U9q201Fj952huNH+vJZYI/KPjjv/ZjNOk=";
   };
 
   postPatch = ''
@@ -28,7 +28,7 @@ buildNpmPackage (finalAttrs: {
 
   npmWorkspace = "server";
 
-  npmDepsHash = "sha256-L3obeOyS4uCsaDYwMJJDJoK8vmWhSqGT2a7I/NsHdwM=";
+  npmDepsHash = "sha256-FXp9ii4irSSg+nrHVl8Pcbrr5kuVGU23QSAZHwNDYnk=";
 
   nativeBuildInputs = [
     pkg-config
