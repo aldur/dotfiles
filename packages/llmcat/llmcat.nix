@@ -1,13 +1,13 @@
 { buildGoModule, fetchFromGitHub }:
 buildGoModule rec {
   name = "llmcat";
-  version = "c1092576f26465945520100b9f27a9b47cd89d1d";
+  version = "950be582c022f8245b0caa74b53d76a39609c600";
   src = fetchFromGitHub {
     owner = "everestmz";
     repo = name;
     rev = version;
-    hash = "sha256-0kj1ADmfAhPOBh4sy/SQ+8oHZSaE2elrJX87lJo0c8I=";
+    hash = "sha256-yV+LaLWVhgwHQj69K/KbI6OX+itBxbM9EtRazB1HlkI=";
   };
 
-  vendorHash = "sha256-e0WdB61YJm26e93q04sfhMogmYT+V19GSabDqSwiq5g=";
+  vendorHash = "sha256-lRIR6UubOi613KUn+IFv8kjK8HkTvYluhO3H94/TbsQ=";
 }

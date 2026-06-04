@@ -123,8 +123,8 @@
         src = pkgs.fetchFromGitHub {
           owner = "qadzek";
           repo = name;
-          rev = "0acbf748ae052edf0bd4d70a632a1bb289e1eb33";
-          hash = "sha256-1Eq2arCC5dYDLCk5P2y3Gl1vv1TB3lpq56kJZNCQ7sI=";
+          rev = "53e09621fc0dcee54e3231422029be19dab75018";
+          hash = "sha256-YjKFDv9QyuWDfWiKP6EvjSRbkz/K6e/Neq76ckghKh0=";
         };
       };
       name = "link.vim";
@@ -136,8 +136,8 @@
         src = pkgs.fetchFromGitHub {
           owner = "linux-cultist";
           repo = name;
-          rev = "2b49d1f8b8fcf5cfbd0913136f48f118225cca5d";
-          hash = "sha256-mz9RT1foan2DCHTZppuPZHaEqREqOHg2WU7uk3bjl0E=";
+          rev = "cc4bb3975de8835291f9bb45889e96c6b2795fc4";
+          hash = "sha256-+GRJuvsO4nf+RczyDOojfUc+nfsM9JIENUv43fEZPYU=";
         };
       };
       name = "venv-selector.nvim";
