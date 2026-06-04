@@ -39,12 +39,15 @@ let
       setuptools-scm
     ];
 
+    # Upstream's wheel metadata requires the `grapheme` distribution, removed
+    # from nixpkgs in 26.05 (unmaintained). `graphemeu` is the maintained fork
+    # and still provides the `grapheme` module, so depend on it and strip the
+    # stale `grapheme` requirement so the runtime-deps check passes.
     dependencies = with python.pkgs; [
-      # `grapheme` was removed in nixpkgs 26.05 (unmaintained upstream);
-      # `graphemeu` is the maintained fork and still exposes the `grapheme` module.
       graphemeu
       wcwidth
     ];
+    pythonRemoveDeps = [ "grapheme" ];
 
     pythonImportsCheck = [ "syntax_diagrams" ];
   };
@@ -71,6 +74,10 @@ let
       antlr4-python3-runtime
       syntax-diagrams
     ];
+
+    # Upstream caps sphinx at <9.0; nixpkgs 26.05 ships sphinx 9.x. Relax the
+    # bound — the actual `sphinx-build` doc step below exercises compatibility.
+    pythonRelaxDeps = [ "sphinx" ];
   };
 
   # Build doc2dash as a proper Python package
