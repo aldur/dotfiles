@@ -84,6 +84,12 @@ buildPythonPackage rec {
   dontStrip = true;
   doCheck = false;
 
+  # The mlx wheel declares a runtime dependency on `mlx-metal`, which we don't
+  # install as a separate Python package (both wheels would collide on the
+  # `mlx/` namespace). Instead its `lib/` is vendored in via postInstall above,
+  # so the runtime-deps check has nothing to find and would fail spuriously.
+  dontCheckRuntimeDeps = true;
+
   pythonImportsCheck = [
     "mlx.core"
   ];
