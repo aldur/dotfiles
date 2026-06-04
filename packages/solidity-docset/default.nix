@@ -40,7 +40,9 @@ let
     ];
 
     dependencies = with python.pkgs; [
-      grapheme
+      # `grapheme` was removed in nixpkgs 26.05 (unmaintained upstream);
+      # `graphemeu` is the maintained fork and still exposes the `grapheme` module.
+      graphemeu
       wcwidth
     ];
 
