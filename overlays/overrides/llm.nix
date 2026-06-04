@@ -2,13 +2,13 @@ final: prev: {
   python313Packages = prev.python313Packages.override {
     overrides = pythonFinal: pythonPrev: {
       mlx-lm = pythonPrev.mlx-lm.overrideAttrs (oldAttrs: rec {
-        version = "0.28.3";
+        version = "0.31.3";
 
         src = prev.fetchFromGitHub {
           owner = "ml-explore";
           repo = "mlx-lm";
           tag = "v${version}";
-          hash = "sha256-H3LwMx3QFuU6d+ayIN2N+Y3Euv4L09oH0JUZV2Gd7Qw=";
+          hash = "sha256-DPOJfsIucG8mWt4ZKenymCJo/i9Jw+a+iuIygIIYkA8=";
         };
 
         # Do not seem to work reliably on GH CI
