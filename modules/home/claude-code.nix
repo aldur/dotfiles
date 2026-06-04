@@ -222,7 +222,7 @@ in
 
       nixManagedHookMarkers = [ "claude-tmux-silence" ];
 
-      skillsDir = "${
+      skills = "${
         pkgs.fetchFromGitHub {
           owner = "anthropics";
           repo = "skills";

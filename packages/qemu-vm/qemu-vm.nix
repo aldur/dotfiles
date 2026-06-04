@@ -58,12 +58,12 @@ let
   targetHostname = qemuNixos.config.networking.hostName;
 
   # Cross-platform QEMU binary selection (includes machine flags)
-  # qemu-common uses pkgs.stdenv.hostPlatform as the *guest* system,
-  # so we must pass Linux pkgs (not the host's, which may be darwin).
+  # qemu-common uses stdenv.hostPlatform as the *guest* system, so we
+  # must pass the Linux (target) stdenv, not the host's (may be darwin).
   guestPkgs = import nixpkgs { system = targetSystem; };
   qemu-common = import "${nixpkgs}/nixos/lib/qemu-common.nix" {
     inherit (nixpkgs) lib;
-    pkgs = guestPkgs;
+    inherit (guestPkgs) stdenv;
   };
   qemuBinary = qemu-common.qemuBinary pkgs.qemu;
   serialDevice = qemu-common.qemuSerialDevice;
