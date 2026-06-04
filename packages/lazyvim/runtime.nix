@@ -59,7 +59,7 @@
   ];
   nix = [
     nil
-    nixfmt-rfc-style
+    nixfmt
     statix
   ];
   beancount = [

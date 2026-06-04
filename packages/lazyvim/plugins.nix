@@ -35,7 +35,7 @@
     pkgsUnstable.vimPlugins.nvim-treesitter-textobjects
     pkgsUnstable.vimPlugins.nvim-treesitter.withAllGrammars
 
-    fugitive
+    vim-fugitive
     vim-rhubarb
 
     # rust
