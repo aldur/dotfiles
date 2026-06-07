@@ -376,7 +376,15 @@ in
     gds = "git -c diff.external=difft show --ext-diff";
   }
   //
-    lib.optionalAttrs (osConfig.programs.aldur.lazyvim.enable || config.programs.aldur.lazyvim.enable)
+    # `lv` shortcut whenever a `lazyvim` command is on PATH: either the nixCats
+    # module (`aldur.lazyvim.enable`) or a sandboxed `jailed-lazyvim` wrapper
+    # added to `home.packages`, which ships the same `lazyvim` binary.
+    lib.optionalAttrs
+      (
+        osConfig.programs.aldur.lazyvim.enable
+        || config.programs.aldur.lazyvim.enable
+        || lib.any (p: lib.getName p == "lazyvim") config.home.packages
+      )
       {
         lv = "lazyvim";
       };
