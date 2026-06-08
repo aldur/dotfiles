@@ -6,9 +6,10 @@
 #
 # Both nix-darwin and home-manager build such a manual, and each only rewrites
 # declarations under its own source tree, leaving nixpkgs ones as store paths.
-# Applied to the system pkgs (darwin/nixpkgs.nix) and to home-manager's own pkgs
-# (darwin/home.nix), since home-manager builds `man home-configuration.nix` with
-# its own nixpkgs that the system overlay does not reach.
+# Applied once to the system pkgs (darwin/nixpkgs.nix); because
+# `home-manager.useGlobalPkgs` makes home-manager evaluate against that same
+# package set, its `man home-configuration.nix` (built via
+# `pkgs.buildPackages.nixosOptionsDoc`) inherits the wrapped derivation too.
 { inputs }:
 _final: prev:
 let

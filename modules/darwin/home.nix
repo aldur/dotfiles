@@ -1,19 +1,11 @@
 # macOS-specific home-manager configuration
 {
   config,
-  inputs,
   pkgs,
   ...
 }:
 {
   imports = [ ../home/home.nix ];
-
-  # home-manager builds `man home-configuration.nix` with its own nixpkgs, so the
-  # store-path scrub overlay must be applied here too — the system overlay in
-  # darwin/nixpkgs.nix does not reach it.
-  nixpkgs.overlays = [
-    (import ../../overlays/darwin/options-doc-links.nix { inherit inputs; })
-  ];
 
   home = {
     homeDirectory = "/Users/${config.home.username}";
