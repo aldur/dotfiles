@@ -70,6 +70,14 @@
       nixpkgs-unstable,
       ...
     }@inputs:
+    let
+      # This ugly thing ensures that, when descendant flakes (e.g. those in
+      # `base_hosts`) use this flake, all (this flake) inputs are correctly
+      # passed as arguments to the modules.
+      thisFlakeInputs = inputs // {
+        inherit self;
+      };
+    in
     (flake-utils.lib.eachDefaultSystem (
       system:
       let
@@ -149,24 +157,21 @@
       };
 
       # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
-      specialArgs =
-        # This ugly thing ensures that, when descendant flakes (e.g. those in `base_hosts`)
-        # will use this flake, all (this flake) inputs will be correctly passed
-        # as arguments to the modules.
-        let
-          thisFlakeInputs = inputs // {
-            inherit self;
-          };
-        in
-        {
-          inputs = thisFlakeInputs;
-        };
+      specialArgs.inputs = thisFlakeInputs;
 
       utils.github-keys = import ./utils/github-keys.nix { };
 
       lib.programs = {
         git = import ./modules/shared/programs/git.nix;
         tmux = import ./modules/shared/programs/tmux.nix;
+      };
+
+      # Build `specialArgs` for a descendant flake (e.g. those in
+      # `base_hosts`): merge its own inputs with this flake's, the latter
+      # winning so `self` resolves to aldur-dotfiles. Encodes the merge
+      # order once so consumers can't get it backwards.
+      lib.mkSpecialArgs = hostInputs: {
+        inputs = hostInputs // thisFlakeInputs;
       };
 
       nixosModules = {

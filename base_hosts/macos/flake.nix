@@ -43,10 +43,7 @@
         ./macos.nix
       ];
 
-      specialArgs = {
-        # Order is important, we want "self" to be "aldur-dotfiles".
-        inputs = inputs // aldur-dotfiles.specialArgs.inputs;
-      };
+      specialArgs = aldur-dotfiles.lib.mkSpecialArgs inputs;
     in
     {
       darwinConfigurations."macOS" = nix-darwin.lib.darwinSystem { inherit specialArgs modules; };

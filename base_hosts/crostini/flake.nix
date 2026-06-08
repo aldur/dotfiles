@@ -25,7 +25,7 @@
       aldur-dotfiles,
       nixos-crostini,
       ...
-    }:
+    }@inputs:
     let
       modules = [
         aldur-dotfiles.nixosModules.default
@@ -33,11 +33,7 @@
       ];
 
       inherit (aldur-dotfiles.inputs) nixpkgs;
-      specialArgs = {
-        inputs = aldur-dotfiles.specialArgs.inputs // {
-          inherit nixos-crostini;
-        };
-      };
+      specialArgs = aldur-dotfiles.lib.mkSpecialArgs inputs;
 
       crostiniModule = nixos-crostini.nixosModules.crostini;
       baguetteModule = nixos-crostini.nixosModules.baguette;
