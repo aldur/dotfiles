@@ -189,6 +189,14 @@ in
       secret = {
         description = "Unified secrets command: passage wrapper with a secure `add` subcommand";
         body = ''
+          # passage locates its store + identities via these; export them here
+          # so the command works regardless of whether the session vars reached
+          # this shell — a fish session predating the last switch, a non-login
+          # shell, tmux panes, or scripts would otherwise miss them and passage
+          # would fall back to its (nonexistent) ~/.passage defaults.
+          set -lx PASSAGE_DIR ${cfg.store}
+          set -lx PASSAGE_IDENTITIES_FILE ${identitiesFile}
+
           if test (count $argv) -eq 0
             command passage
             return
