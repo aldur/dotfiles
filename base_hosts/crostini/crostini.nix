@@ -133,7 +133,7 @@ in
                 hooks = [
                   {
                     type = "command";
-                    command = "${pkgs.libnotify}/bin/notify-send 'Claude' 'Done'";
+                    command = "${lib.getExe pkgs.libnotify} 'Claude' 'Done'";
                   }
                 ];
               }
@@ -144,7 +144,7 @@ in
                 hooks = [
                   {
                     type = "command";
-                    command = "${pkgs.libnotify}/bin/notify-send 'Claude' 'Needs input'";
+                    command = "${lib.getExe pkgs.libnotify} 'Claude' 'Needs input'";
                   }
                 ];
               }

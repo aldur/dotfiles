@@ -92,7 +92,7 @@ let
     # unit (outside the bwrap, with full access to every shadowed path).
     bus_addr="''${DBUS_SESSION_BUS_ADDRESS:-unix:path=$runtime/bus}"
     proxy_sock=$(${pkgs.coreutils}/bin/mktemp -u /tmp/claude-dbus-proxy.XXXXXX)
-    ${pkgs.xdg-dbus-proxy}/bin/xdg-dbus-proxy "$bus_addr" "$proxy_sock" --filter \
+    ${lib.getExe pkgs.xdg-dbus-proxy} "$bus_addr" "$proxy_sock" --filter \
       --talk=org.freedesktop.DBus \
       ${
         lib.concatMapStringsSep " \\\n      " (n: "--talk=${lib.escapeShellArg n}") sandboxCfg.extraDbusTalk
@@ -155,7 +155,7 @@ let
     done
 
     # Not exec'd so the EXIT trap can clean up the proxy.
-    ${pkgs.bubblewrap}/bin/bwrap "''${args[@]}" -- "$@"
+    ${lib.getExe pkgs.bubblewrap} "''${args[@]}" -- "$@"
   '';
 
   claudeSettings = jsonFormat.generate "claude-code-settings.json" cfg.writableSettings;
@@ -163,7 +163,7 @@ let
   claudeMcpConfig = jsonFormat.generate "claude-mcp.json" {
     mcpServers = {
       playwright = {
-        command = "${pkgs.playwright-mcp}/bin/playwright-mcp";
+        command = lib.getExe pkgs.playwright-mcp;
         args = [ "--headless" ];
       };
     };
