@@ -163,7 +163,7 @@ let
   claudeMcpConfig = jsonFormat.generate "claude-mcp.json" {
     mcpServers = {
       playwright = {
-        command = "${pkgs.playwright-mcp}/bin/mcp-server-playwright";
+        command = "${pkgs.playwright-mcp}/bin/playwright-mcp";
         args = [ "--headless" ];
       };
     };
