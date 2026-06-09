@@ -164,7 +164,10 @@ let
     mcpServers = {
       playwright = {
         command = lib.getExe pkgs.playwright-mcp;
-        args = [ "--headless" ];
+        args = [
+          "--headless"
+          "--isolated"
+        ];
       };
     };
   };
