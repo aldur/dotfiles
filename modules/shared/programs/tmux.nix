@@ -71,8 +71,10 @@
     # Lazygit in a big popup at the current pane's path
     bind-key g display-popup -E -w 90% -h 90% -d "#{pane_current_path}" lazygit
 
-    # Lazyvim in a big popup at the current pane's path
-    bind-key e display-popup -E -w 90% -h 90% -d "#{pane_current_path}" lazyvim
+    # Lazyvim in a big popup at the current pane's path.
+    # NVIM_POPUP lets the nvim config map `q` (normal mode) to quit, so the
+    # popup closes on `q` just like lazygit's.
+    bind-key e display-popup -E -e NVIM_POPUP=1 -w 90% -h 90% -d "#{pane_current_path}" lazyvim
 
     # y to yank in copy mode, remaining in copy mode
     bind -T copy-mode-vi y send-keys -X copy-selection
