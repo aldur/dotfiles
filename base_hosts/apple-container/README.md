@@ -21,24 +21,17 @@ Linux builder (this repo's `nix-darwin` host already provides one via
 
 ```bash
 nix build --override-input aldur-dotfiles . ./base_hosts/apple-container#container-image
-# → ./result  (a `docker save`-format archive)
+# → ./result  (an OCI archive, built straight for aarch64-linux)
 ```
 
-## Convert, load & run
+`#container-image` resolves on a Darwin host too (it maps to `aarch64-linux` and
+offloads to the Linux builder).
 
-Apple `container image load` only accepts an **OCI archive**, while Nix produces
-a `docker save`-format archive — so convert it first with `skopeo` (in nixpkgs,
-no extra Flake input). This step runs on the host rather than inside the build,
-because the OCI writer needs `/var/tmp`, which macOS has but the Nix sandbox does
-not.
+## Load & run
 
 ```bash
-nix run nixpkgs#skopeo -- --insecure-policy copy \
-  docker-archive:"$(readlink -f result)" \
-  oci-archive:aldur-nixos.oci:latest
-
-container image load --input ./aldur-nixos.oci
-container image ls                       # note the name it loaded as
+container image load --input ./result
+container image tag latest aldur-nixos:latest   # see "Image name" below
 container run -it --rm aldur-nixos:latest
 ```
 
@@ -47,13 +40,9 @@ container run -it --rm aldur-nixos:latest
 
 ### Image name after load
 
-Converting through an OCI archive drops the repository name, so the image loads
-as `NAME=latest, TAG=<none>`. Retag it once:
-
-```bash
-container image tag latest aldur-nixos:latest
-container run -it --rm aldur-nixos:latest
-```
+The OCI archive carries only a `latest` ref, so Apple `container` loads it as
+`NAME=latest, TAG=<none>`. The one-time `container image tag` above gives it a
+proper `aldur-nixos:latest` name; `container image ls` shows what loaded.
 
 ## Notes
 

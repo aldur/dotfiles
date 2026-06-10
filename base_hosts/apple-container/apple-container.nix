@@ -89,32 +89,49 @@ in
   # entrypoint references is pulled in automatically). `includeNixDB` registers
   # the store paths so the in-container nix-daemon treats them as valid (no
   # rebuild attempts, and home-manager's gcroots succeed).
-  #
-  # This is a `docker save`-format archive. Apple `container image load` wants
-  # an OCI archive, so the README shows a one-line `skopeo` conversion — it runs
-  # on the host (macOS has /var/tmp), which the Nix sandbox lacks, so it cannot
-  # be baked into this derivation.
-  system.build.containerImage = pkgs.dockerTools.buildLayeredImage {
-    name = "aldur-nixos";
-    tag = "latest";
+  system.build.containerImage =
+    let
+      layered = pkgs.dockerTools.buildLayeredImage {
+        name = "aldur-nixos";
+        tag = "latest";
 
-    includeNixDB = true;
+        includeNixDB = true;
 
-    # Mountpoints and writable dirs the runtime/activation expect; /tmp must
-    # be world-writable+sticky so the unprivileged user (and nix) can use it.
-    extraCommands = ''
-      mkdir -p tmp proc sys dev etc run var home
-      chmod 1777 tmp
-    '';
+        # Mountpoints and writable dirs the runtime/activation expect; /tmp must
+        # be world-writable+sticky so the unprivileged user (and nix) can use it.
+        extraCommands = ''
+          mkdir -p tmp proc sys dev etc run var home
+          chmod 1777 tmp
+        '';
 
-    config = {
-      Entrypoint = [ "${entrypoint}" ];
-      Cmd = [
-        "${shell}/bin/fish"
-        "-l"
-      ];
-      WorkingDir = "/home/${username}";
-      Env = [ "TERM=screen-256color" ];
-    };
-  };
+        config = {
+          Entrypoint = [ "${entrypoint}" ];
+          Cmd = [
+            "${shell}/bin/fish"
+            "-l"
+          ];
+          WorkingDir = "/home/${username}";
+          Env = [ "TERM=screen-256color" ];
+        };
+      };
+    in
+    # `buildLayeredImage` emits a `docker save`-format archive, but Apple
+    # `container image load` only accepts an OCI archive. Convert with `regctl`
+    # (regclient, a nixpkgs package — no extra Flake input): unlike skopeo it
+    # doesn't need `/var/tmp`, so the conversion runs inside the Nix sandbox and
+    # the build output is loadable directly. After loading, the image lands as
+    # `latest:<none>` and wants a one-time `container image tag` — see README.
+    pkgs.runCommand "aldur-nixos-oci.tar"
+      {
+        nativeBuildInputs = [
+          pkgs.regclient
+          pkgs.gnutar
+        ];
+      }
+      ''
+        export TMPDIR="$PWD/tmp"
+        mkdir -p "$TMPDIR" oci
+        regctl image import "ocidir://$PWD/oci:latest" ${layered}
+        tar -cf "$out" -C oci .
+      '';
 }

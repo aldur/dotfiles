@@ -25,19 +25,27 @@
           ];
         };
     in
-    # Building the aarch64 image (the Apple-silicon target) needs an aarch64
-    # builder; x86_64 is kept for parity and CI, mirroring the other hosts.
-    flake-utils.lib.eachSystem
-      [
-        "aarch64-linux"
-        "x86_64-linux"
-      ]
-      (system: {
+    # The image is always a Linux artifact. On a Darwin host (the usual case —
+    # Apple silicon) map to the matching linux system so `#container-image`
+    # works directly and offloads to the user's Linux builder. Building the
+    # aarch64 image natively needs an aarch64 builder.
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        targetSystem =
+          {
+            aarch64-darwin = "aarch64-linux";
+            x86_64-darwin = "x86_64-linux";
+          }
+          .${system} or system;
+      in
+      {
         packages = rec {
-          container-image = (cfg system).config.system.build.containerImage;
+          container-image = (cfg targetSystem).config.system.build.containerImage;
           default = container-image;
         };
-      })
+      }
+    )
     // {
       nixosConfigurations = {
         apple-container = cfg "aarch64-linux";
