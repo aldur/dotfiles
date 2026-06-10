@@ -154,6 +154,10 @@
           path = ./base_hosts/crostini;
           description = "An lxc-nixos container to run in ChromeOS Crostini";
         };
+        apple-container = {
+          path = ./base_hosts/apple-container;
+          description = "A NixOS OCI image to run in Apple `container`";
+        };
       };
 
       # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
