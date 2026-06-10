@@ -30,7 +30,12 @@ let
     export NIX_SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-certificates.crt
 
     mkdir -p /nix/var/nix/daemon-socket
-    ${config.nix.package}/bin/nix-daemon &
+    # Detach the daemon from the controlling terminal. Otherwise it inherits the
+    # container's tty, fish's terminal setup a moment after launch HUPs it, and
+    # its death (it's a child of the `runuser --pty` proxy that is PID 1) wedges
+    # the interactive session — input stops being forwarded. `setsid` + /dev/null
+    # fully detaches it (and drops the "accepted connection" noise).
+    ${pkgs.util-linux}/bin/setsid ${config.nix.package}/bin/nix-daemon </dev/null >/dev/null 2>&1 &
     for _ in $(seq 1 100); do
       [ -S /nix/var/nix/daemon-socket/socket ] && break
       sleep 0.05
