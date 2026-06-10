@@ -1,6 +1,8 @@
 {
   config,
   pkgs,
+  lib,
+  mkOciArchive,
   ...
 }:
 let
@@ -11,7 +13,7 @@ let
   hmActivate = config.home-manager.users.${username}.home.activationPackage;
   shell = config.users.users.${username}.shell;
 
-  coreutils = pkgs.coreutils;
+  inherit (pkgs) coreutils;
   runuser = "${pkgs.util-linux}/bin/runuser";
 
   # Apple `container` boots a lightweight VM whose init runs this OCI image's
@@ -27,6 +29,12 @@ let
     set -u
     export PATH=${coreutils}/bin:${pkgs.util-linux}/bin
 
+    # The daemon (and any nix client) fetches over TLS but nothing in this bare
+    # environment points at a CA bundle, so set it explicitly. NixOS sets this
+    # in /etc/set-environment for the login shell, but the daemon starts before
+    # activation and wouldn't otherwise see it.
+    export NIX_SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-certificates.crt
+
     # No systemd here, so start the nix-daemon ourselves. Together with the
     # baked-in Nix DB (`includeNixDB` below) this makes `nix` usable inside the
     # container and — the reason it is required — lets home-manager activation
@@ -40,8 +48,8 @@ let
     done
 
     # System activation: /etc, /etc/passwd from the declarative users, tmpfiles.
-    # The `specialfs` snippet tries to mount /proc,/dev,... which the runtime
-    # already provides, so it warns and is skipped; `|| true` tolerates that.
+    # `specialfs` is no-op'd (see config below) since the runtime already mounts
+    # the API filesystems; `|| true` tolerates any remaining non-fatal snippet.
     ln -sfn ${toplevel} /run/current-system
     ${toplevel}/activate || true
 
@@ -54,84 +62,60 @@ let
     ${runuser} -u ${username} -- ${hmActivate}/activate --driver-version 1 || true
 
     cd /home/${username}
-    exec ${runuser} -u ${username} -- "$@"
+    # `runuser` starts a new session, which leaves the shell WITHOUT a
+    # controlling terminal — and without one fish won't even source the user's
+    # config (aliases like `lv`, the greeting, conf.d all silently skip). When
+    # we have a tty, `--pty` gives the shell a real controlling terminal; for a
+    # non-interactive `container run <img> <cmd>` we skip it so piped output
+    # isn't mangled.
+    if [ -t 0 ]; then
+      exec ${runuser} --pty -u ${username} -- "$@"
+    else
+      exec ${runuser} -u ${username} -- "$@"
+    fi
   '';
 in
 {
-  # We are a container, not a VM/host: drop kernel/initrd and hardware units
-  # from the closure.
-  boot.isContainer = true;
+  imports = [ ./common.nix ];
 
   networking.hostName = "apple-container";
 
-  # There is no sshd or login manager here — access is via `container run`,
-  # which drops straight into the activated user (see the entrypoint). So no
-  # account needs a password; say so explicitly rather than be "locked out".
-  users.allowNoPasswordLogin = true;
-
-  programs = {
-    aldur = {
-      lazyvim.enable = true;
-      lazyvim.packageNames = [ "lazyvim" ];
-
-      claude-code.enable = true;
-    };
-  };
-
-  home-manager.users.${username} = _: {
-    programs = {
-      git.settings.gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | grep -i sign)'";
-      better-nix-search.enable = true;
-    };
-  };
+  # Apple's runtime already mounts /proc, /dev, /run, … into the container, so
+  # NixOS's `specialfs` activation snippet only produces a wall of
+  # `mount: … permission denied` warnings. No-op it (the snippets ordered after
+  # it just need the mounts present, which they are). Other activation steps
+  # (setup-etc, users, tmpfiles) still run. The full-system `apple-machine`
+  # image leaves this alone: there systemd mounts them itself.
+  system.activationScripts.specialfs = lib.mkForce "";
 
   # Layered image built from the closure of `toplevel` (everything the
   # entrypoint references is pulled in automatically). `includeNixDB` registers
   # the store paths so the in-container nix-daemon treats them as valid (no
   # rebuild attempts, and home-manager's gcroots succeed).
-  system.build.containerImage =
-    let
-      layered = pkgs.dockerTools.buildLayeredImage {
-        name = "aldur-nixos";
-        tag = "latest";
+  system.build.containerImage = mkOciArchive {
+    name = "aldur-nixos";
+    layered = pkgs.dockerTools.buildLayeredImage {
+      name = "aldur-nixos";
+      tag = "latest";
 
-        includeNixDB = true;
+      includeNixDB = true;
 
-        # Mountpoints and writable dirs the runtime/activation expect; /tmp must
-        # be world-writable+sticky so the unprivileged user (and nix) can use it.
-        extraCommands = ''
-          mkdir -p tmp proc sys dev etc run var home
-          chmod 1777 tmp
-        '';
-
-        config = {
-          Entrypoint = [ "${entrypoint}" ];
-          Cmd = [
-            "${shell}/bin/fish"
-            "-l"
-          ];
-          WorkingDir = "/home/${username}";
-          Env = [ "TERM=screen-256color" ];
-        };
-      };
-    in
-    # `buildLayeredImage` emits a `docker save`-format archive, but Apple
-    # `container image load` only accepts an OCI archive. Convert with `regctl`
-    # (regclient, a nixpkgs package — no extra Flake input): unlike skopeo it
-    # doesn't need `/var/tmp`, so the conversion runs inside the Nix sandbox and
-    # the build output is loadable directly. After loading, the image lands as
-    # `latest:<none>` and wants a one-time `container image tag` — see README.
-    pkgs.runCommand "aldur-nixos-oci.tar"
-      {
-        nativeBuildInputs = [
-          pkgs.regclient
-          pkgs.gnutar
-        ];
-      }
-      ''
-        export TMPDIR="$PWD/tmp"
-        mkdir -p "$TMPDIR" oci
-        regctl image import "ocidir://$PWD/oci:latest" ${layered}
-        tar -cf "$out" -C oci .
+      # Mountpoints and writable dirs the runtime/activation expect; /tmp must
+      # be world-writable+sticky so the unprivileged user (and nix) can use it.
+      extraCommands = ''
+        mkdir -p tmp proc sys dev etc run var home
+        chmod 1777 tmp
       '';
+
+      config = {
+        Entrypoint = [ "${entrypoint}" ];
+        Cmd = [
+          "${shell}/bin/fish"
+          "-l"
+        ];
+        WorkingDir = "/home/${username}";
+        Env = [ "TERM=screen-256color" ];
+      };
+    };
+  };
 }

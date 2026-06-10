@@ -45,9 +45,12 @@ jobs:
       - if: matrix.runner == 'ubuntu-24.04-arm'
         run: nix build --override-input aldur-dotfiles . ./base_hosts/crostini#baguette-image
 
-      # Test building the Apple `container` OCI image (aarch64 is the target)
+      # Test building the Apple `container` OCI images (aarch64 is the target):
+      # the lightweight `container run` one and the full `container machine` one.
       - if: matrix.runner == 'ubuntu-24.04-arm'
         run: nix build --override-input aldur-dotfiles . ./base_hosts/apple-container#container-image
+      - if: matrix.runner == 'ubuntu-24.04-arm'
+        run: nix build --override-input aldur-dotfiles . ./base_hosts/apple-container#machine-image
 
   nix-darwin-ci:
     runs-on: macos-26  # arm, beta
