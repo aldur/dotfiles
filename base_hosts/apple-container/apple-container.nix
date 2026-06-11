@@ -10,25 +10,31 @@ let
 
   toplevel = config.system.build.toplevel;
   hmActivate = config.home-manager.users.${username}.home.activationPackage;
-  shell = config.users.users.${username}.shell;
 
   inherit (pkgs) coreutils;
   runuser = "${pkgs.util-linux}/bin/runuser";
 
-  # Baked into the image's /etc/passwd as aldur's shell: Apple's `container
-  # machine` opens its session (`/sbin.machine/init -s`) as soon as the
-  # container starts, racing NixOS first-boot activation (observed: nameless
-  # uid 501, bare PATH, sh fallback — while /run/current-system appeared
-  # moments later). Wait for activation, then hand over to a login fish so
-  # the full session environment applies. Once activation has rewritten
-  # /etc/passwd, later sessions get plain fish directly.
-  machineSessionShell = pkgs.writeShellScript "machine-session-shell" ''
+  # aldur's login shell, both in the baked /etc/passwd and the NixOS user
+  # declaration: Apple's `container machine` opens its session
+  # (`/sbin.machine/init -s`) as soon as the container starts, racing NixOS
+  # first-boot activation AND the home-manager service (observed, separate
+  # runs: nameless uid 501 with bare PATH; "/run/current-system/sw/bin/fish:
+  # No such file or directory" from passwd already rewritten but the symlink
+  # not yet made; fish up but greeting/config missing and ~/.config created
+  # group-`lp` by the gid-20 session). Wait for both, then a login fish.
+  # ~/.config/fish/config.fish is the home-manager completion marker; if fish
+  # ever stops being home-managed, sessions eat the 60s timeout — adjust then.
+  # A bin-in-package path (not a bare store file): NixOS' toShellPath rejects
+  # plain store paths as login shells, but passes path strings through.
+  machineSessionShell = "${pkgs.writeShellScriptBin "machine-session-shell" ''
     for _ in $(${coreutils}/bin/seq 1 600); do
-      [ -x /run/current-system/sw/bin/fish ] && break
+      [ -x /run/current-system/sw/bin/fish ] \
+        && [ -e "$HOME"/.config/fish/config.fish ] \
+        && break
       ${coreutils}/bin/sleep 0.1
     done
     exec /run/current-system/sw/bin/fish -l "$@"
-  '';
+  ''}/bin/machine-session-shell";
 
   # Apple `container` boots a lightweight VM whose init runs this OCI image's
   # entrypoint as a single process — there is no systemd PID 1.
@@ -42,9 +48,9 @@ let
   entrypoint = pkgs.writeShellScript "container-entrypoint" ''
     set -u
     export PATH=${coreutils}/bin:${pkgs.util-linux}/bin
-    export NIX_SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-certificates.crt
-    # Pin ${machineSessionShell} into the image closure: it is otherwise only
-    # referenced from the baked /etc/passwd, which the closure scan can't see.
+    # cacert ships ca-bundle.crt — the previous ca-certificates.crt name
+    # dangled, and `nix` died with "error adding trust anchors" on any TLS use
+    export NIX_SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
 
     # Activation runs to logs, and failures are *loud*: `|| true` used to swallow
     # them, which left Apple-only failures (not reproducible under podman)
@@ -144,7 +150,13 @@ in
     group = "users";
     home = "/home/${username}";
     createHome = true;
-    useDefaultShell = true;
+    # The wait-for-boot wrapper (not plain fish, mkForce'd over the shared
+    # modules' choice): the machine session can fire inside activation, after
+    # /etc/passwd is rewritten but before /run/current-system or the
+    # home-manager files exist. Keeping the wrapper as the *declared* shell
+    # closes that window for every session, and pulls it into the image
+    # closure via the toplevel.
+    shell = lib.mkForce "${machineSessionShell}";
   };
 
   # Make `specialfs` tolerant rather than no-op'd: skip what the runtime already
@@ -264,10 +276,10 @@ in
 
       config = {
         Entrypoint = [ "${entrypoint}" ];
-        Cmd = [
-          "${shell}/bin/fish"
-          "-l"
-        ];
+        # The same wait-wrapper the machine sessions use; under `container run`
+        # the entrypoint has already finished both activations, so it execs a
+        # login fish immediately.
+        Cmd = [ "${machineSessionShell}" ];
         WorkingDir = "/home/${username}";
         Env = [ "TERM=screen-256color" ];
       };
