@@ -29,35 +29,61 @@ let
     export PATH=${coreutils}/bin:${pkgs.util-linux}/bin
     export NIX_SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-certificates.crt
 
+    # Activation runs to logs, and failures are *loud*: `|| true` used to swallow
+    # them, which left Apple-only failures (not reproducible under podman)
+    # looking like shell-config bugs — fish without its home-manager config
+    # still prints the default greeting and lacks `lv`.
+    logdir=/var/log/entrypoint
+    mkdir -p "$logdir"
+    fail() {
+      printf '\033[1;31mentrypoint: %s — full log: %s\033[0m\n' "$1" "$2"
+      tail -n 15 "$2" 2>/dev/null
+    }
+
     mkdir -p /nix/var/nix/daemon-socket
     # Detach the daemon from the controlling terminal. Otherwise it inherits the
     # container's tty, fish's terminal setup a moment after launch HUPs it, and
     # its death (it's a child of the `runuser --pty` proxy that is PID 1) wedges
     # the interactive session — input stops being forwarded. `setsid` + /dev/null
-    # fully detaches it (and drops the "accepted connection" noise).
-    ${pkgs.util-linux}/bin/setsid ${config.nix.package}/bin/nix-daemon </dev/null >/dev/null 2>&1 &
-    for _ in $(seq 1 100); do
+    # fully detaches it.
+    ${pkgs.util-linux}/bin/setsid ${config.nix.package}/bin/nix-daemon \
+      </dev/null >"$logdir/nix-daemon.log" 2>&1 &
+    for _ in $(seq 1 200); do
       [ -S /nix/var/nix/daemon-socket/socket ] && break
       sleep 0.05
     done
+    [ -S /nix/var/nix/daemon-socket/socket ] \
+      || fail "nix-daemon socket missing after 10s" "$logdir/nix-daemon.log"
 
     ln -sfn ${toplevel} /run/current-system
-    ${toplevel}/activate || true
+    ${toplevel}/activate >"$logdir/system-activation.log" 2>&1 \
+      || fail "system activation failed" "$logdir/system-activation.log"
 
     ${runuser} -u ${username} -- ${coreutils}/bin/mkdir -p /home/${username}/.local/state/nix/profiles
-    ${runuser} -u ${username} -- ${hmActivate}/activate --driver-version 1 || true
+    # Home-manager's activate is `set -e` and its first steps need the daemon
+    # (`nix-build` sanity check, `nix-store --realise`) — if it dies there, no
+    # home files get linked.
+    ${runuser} -u ${username} -- ${hmActivate}/activate --driver-version 1 \
+      >"$logdir/home-manager.log" 2>&1 \
+      || fail "home-manager activation failed" "$logdir/home-manager.log"
+
+    if [ "''${CONTAINER_DEBUG:-}" = 1 ]; then
+      echo "== entrypoint debug =="
+      [ -t 0 ] && echo "fd0 is a tty: yes" || echo "fd0 is a tty: no"
+      (: >/dev/tty) 2>/dev/null && echo "PID1 has a ctty: yes" || echo "PID1 has a ctty: no"
+      echo "fd0 -> $(readlink /proc/$$/fd/0 2>/dev/null)"
+      echo "PID1 tty_nr: $(cut -d' ' -f7 /proc/1/stat 2>/dev/null)"
+    fi
 
     cd /home/${username}
-    # Hand off to the user's shell with a *controlling terminal* — fish needs one
-    # to source its interactive config (`lv`, the greeting, conf.d). The runtime
-    # gives PID 1 a tty either way, but not always as a controlling terminal:
-    #   - docker/podman make it PID 1's controlling terminal → plain `runuser`
-    #     (which doesn't start a new session) inherits it.
-    #   - Apple `container run` gives a tty with NO controlling terminal → we
-    #     claim the (unclaimed) pty in a new session with `setsid -c`. That needs
-    #     no capability (claiming an unclaimed tty isn't stealing), and unlike
-    #     `runuser --pty` it adds no I/O proxy, so an activation orphan dying
-    #     can't wedge the session. Both paths verified locally.
+    # Hand off to the user's shell. Both Apple `container` (vmexec's childSetup
+    # does setsid() + ioctl(TIOCSCTTY) before exec'ing us — see
+    # containerization vminitd/Sources/vmexec/RunCommand.swift) and podman give
+    # PID 1 the pty as a *controlling* terminal, so plain `runuser` (no new
+    # session) inherits it and fish gets job control. The `setsid -c` branch is
+    # a safety net for a runtime that hands us a tty without claiming it; unlike
+    # `runuser --pty` it adds no I/O proxy that an activation orphan's death
+    # could wedge.
     # Non-interactive `container run <img> <cmd>` (no tty) just runs <cmd>.
     if [ -t 0 ] && ! (: >/dev/tty) 2>/dev/null; then
       exec ${pkgs.util-linux}/bin/setsid -c -w ${runuser} -u ${username} -- "$@"
@@ -106,11 +132,35 @@ in
       # /sbin/init for `container machine`; real (placeholder) /etc files so /etc
       # is a guaranteed-present writable dir its bootstrap can write into (empty
       # dirs can be dropped in OCI conversion); /tmp world-writable+sticky.
+      #
+      # `container machine` boots Apple's /sbin.machine/init — a `#!/bin/sh`
+      # script virtiofs-mounted from the host bundle (apple/container
+      # Sources/Plugins/MachineAPIServer/Resources/init). exec'ing it in a bare
+      # NixOS rootfs fails with ENOENT: the shebang interpreter /bin/sh doesn't
+      # exist. The script is `set -e`, sources /etc/os-release (a missing file
+      # kills a POSIX sh outright), uses id/grep/cut to open the user's shell
+      # (`-s`) and chown for $SSH_AUTH_SOCK — so ship those at FHS paths, plus
+      # os-release. Its first-boot provisioning (`-u`) is overridable via
+      # /etc/machine/create-user.sh: ours is a no-op, NixOS declares the user.
       extraCommands = ''
-        mkdir -p sbin tmp proc sys dev etc run var home
+        mkdir -p sbin tmp proc sys dev etc/machine run var home bin usr/bin
         ln -sfn ${toplevel}/init sbin/init
         : > etc/resolv.conf
         printf '127.0.0.1 localhost\n' > etc/hosts
+        ln -s ${config.environment.etc."os-release".source} etc/os-release
+        for d in bin usr/bin; do
+          ln -s ${config.environment.binsh} "$d"/sh
+          ln -s ${pkgs.gnugrep}/bin/grep "$d"/grep
+          for b in id chown cut; do
+            ln -s ${coreutils}/bin/"$b" "$d"/"$b"
+          done
+        done
+        cat > etc/machine/create-user.sh <<'EOF'
+        #!/bin/sh
+        # NixOS declares the machine user; nothing to provision on first boot.
+        exit 0
+        EOF
+        chmod +x etc/machine/create-user.sh
         chmod 1777 tmp
       '';
 
