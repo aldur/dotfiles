@@ -1,0 +1,43 @@
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - staging
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  push:
+    name: ${{ matrix.app }}
+    strategy:
+      matrix:
+        include:
+          - app: push
+            reclaim-disk: true
+          - app: push-minimal
+            reclaim-disk: false
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: DeterminateSystems/determinate-nix-action@1d699fc25db3f9e079cd2f168ca007a4183389be # v3.15.1
+
+      - if: matrix.reclaim-disk
+        run: |
+          sudo rm -rf /usr/lib/jvm /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /usr/local/julia* \
+            /usr/local/lib/android /usr/local/share/chromium /opt/microsoft /opt/google \
+            /opt/az /usr/local/share/powershell /opt/hostedtoolcache
+          docker system prune -af || true
+          docker builder prune -af || true
+          df -h
+
+      - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - run: nix run --override-input aldur-dotfiles . ./base_hosts/apple-container#${{ matrix.app }} -- ghcr.io/${{ github.repository_owner }}

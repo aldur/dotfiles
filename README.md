@@ -50,4 +50,16 @@ To further configure the QEMU VM, clone the template:
 nix flake init --template github:aldur/dotfiles#vm-nogui
 ```
 
+### Apple `container`
+
+To build a NixOS OCI image for [Apple `container`][1], clone the template:
+
+```bash
+nix flake init --template github:aldur/dotfiles#apple-container
+```
+
+See [the README](base_hosts/apple-container/README.md) for how to build, load,
+and run it.
+
 [0]: https://www.lazyvim.org
+[1]: https://github.com/apple/container
