@@ -42,8 +42,20 @@ conf.d) loads and the session stays responsive.
 ## Machine it (`container machine`)
 
 ```bash
-container machine create aldur-nixos:latest --name dev
+container machine create aldur-nixos:latest --name dev --home-mount none
 container machine run -n dev          # boots systemd, opens a shell as your user
+```
+
+By default a machine mounts your **entire macOS home read-write** at
+`/Users/<you>` (and forwards your SSH agent socket — that part has no off
+switch). `--home-mount` takes `rw` (default), `ro`, or `none`; to make `none`
+the default for every machine you create, set it in `container`'s user config
+(read on each invocation, user layer first):
+
+```toml
+# ~/Library/Application Support/com.apple.container/config/config.toml
+[machine]
+home-mount = "none"
 ```
 
 A machine **clones the image's rootfs at `create` time** — after loading a new
@@ -70,6 +82,11 @@ directory` (the missing-shebang-interpreter ENOENT).
 - **DNS:** `container machine`'s bootstrap writes `/etc/resolv.conf` /
   `/etc/hosts` before the guest boots, so the image ships placeholder files (so
   `/etc` is a writable target) and disables the guest's DHCP/resolvconf.
+- **Hostname:** under `container run` the entrypoint applies
+  `networking.hostName` itself (the runtime otherwise names the container
+  after its UUID). Under `container machine`, systemd defers to the hostname
+  the runtime set — the machine's *name* (e.g. `dev`) — which matches Apple's
+  semantics.
 - No SSH host keys are checked in.
 - To customize, edit `common.nix` (shared) or `apple-container.nix` (the image),
   and rebuild.

@@ -59,10 +59,26 @@ let
     ${toplevel}/activate >"$logdir/system-activation.log" 2>&1 \
       || fail "system activation failed" "$logdir/system-activation.log"
 
+    # vminitd names the UTS namespace after the container ID (the OCI spec
+    # default) and no systemd runs in this door to apply networking.hostName —
+    # do it ourselves. Tolerated if the runtime withholds CAP_SYS_ADMIN.
+    echo ${lib.escapeShellArg config.networking.hostName} > /proc/sys/kernel/hostname 2>/dev/null \
+      || true
+
     ${runuser} -u ${username} -- ${coreutils}/bin/mkdir -p /home/${username}/.local/state/nix/profiles
-    # Home-manager's activate is `set -e` and its first steps need the daemon
-    # (`nix-build` sanity check, `nix-store --realise`) — if it dies there, no
-    # home files get linked.
+    # Preflight the daemon as the user, with errors VISIBLE. Home-manager's
+    # `activate` is `set -e` and wraps its first daemon write —
+    # `nix-store --realise <gen> --add-root …` — in `run --silence`, so when
+    # that dies the log ends at the banner with no error at all (observed on
+    # Apple). Mirror the same query + realise + indirect-gc-root here.
+    {
+      ${runuser} -u ${username} -- ${config.nix.package}/bin/nix-store -q --hash ${hmActivate} \
+        && ${runuser} -u ${username} -- ${config.nix.package}/bin/nix-store --realise ${hmActivate} \
+          --add-root /tmp/.hm-preflight-root
+    } >"$logdir/nix-preflight.log" 2>&1 || {
+      fail "nix daemon preflight failed (home-manager activation will too)" "$logdir/nix-preflight.log"
+      fail "nix-daemon's own log" "$logdir/nix-daemon.log"
+    }
     ${runuser} -u ${username} -- ${hmActivate}/activate --driver-version 1 \
       >"$logdir/home-manager.log" 2>&1 \
       || fail "home-manager activation failed" "$logdir/home-manager.log"
@@ -97,6 +113,23 @@ in
 
   networking.hostName = "nixos-apple-container";
 
+  # `container machine` opens its shell as the *Mac* uid (CONTAINER_UID, 501
+  # for the first macOS user) and the shared /Users files carry it too. Pin
+  # aldur to that uid so `id -un` resolves, the exec picks HOME/SHELL from
+  # /etc/passwd (observed otherwise: nameless uid 501, HOME=/, default sh),
+  # and the virtiofs-shared files are owned by aldur inside the guest.
+  # NixOS asserts `isNormalUser` ⇒ uid ≥ 1000, so take its prescribed escape
+  # hatch (isSystemUser) and re-state what isNormalUser implied.
+  users.users.${username} = {
+    uid = 501;
+    isNormalUser = lib.mkForce false;
+    isSystemUser = true;
+    group = "users";
+    home = "/home/${username}";
+    createHome = true;
+    useDefaultShell = true;
+  };
+
   # Make `specialfs` tolerant rather than no-op'd: skip what the runtime already
   # mounted (so `container run` startup stays quiet — no `mount: … permission
   # denied` spam), and mount/tolerate the rest, which is what systemd needs when
@@ -116,6 +149,21 @@ in
   # let resolvconf replace /etc/resolv.conf afterwards.
   networking.useDHCP = false;
   networking.resolvconf.enable = lib.mkForce false;
+
+  # `container machine` opens its shell (`/sbin.machine/init -s`) as plain
+  # non-login fish outside any PAM session, so nothing has applied the NixOS
+  # session environment — PATH is bare FHS and every command is "not found".
+  # The stock /etc/fish/nixos-env-preinit.fish exists for exactly this job and
+  # self-guards with $__NIXOS_SET_ENVIRONMENT_DONE; vendor conf.d runs after
+  # fish's embedded config has set fish_function_path, which the preinit
+  # clobbers and erases (it expects to run first), so save/restore it.
+  environment.etc."fish/conf.d/nixos-env.fish".text = ''
+    if test -z "$__NIXOS_SET_ENVIRONMENT_DONE"; and test -r /etc/fish/nixos-env-preinit.fish
+        set -l __saved_function_path $fish_function_path
+        source /etc/fish/nixos-env-preinit.fish
+        set -g fish_function_path $__saved_function_path
+    end
+  '';
 
   # One artifact, two entry doors into the same system closure:
   #   - `container run`  uses the OCI Entrypoint → activation → fish.
