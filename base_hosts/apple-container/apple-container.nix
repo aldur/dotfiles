@@ -82,9 +82,15 @@ let
     # mkdirs it).
     d=/run/user/$(${coreutils}/bin/id -u)
     [ -d "$d" ] && export XDG_RUNTIME_DIR="$d"
-    case "''${TERM:-}" in
-      "" | xterm) export TERM=xterm-256color ;;
-    esac
+    # Apple's machine sessions arrive with TERM unset or a hardcoded plain
+    # `xterm` (8 colors — a lie for every modern macOS terminal); upgrade
+    # those. SSH sessions land in this wrapper too, but sshd forwards the
+    # *client's* real TERM — never second-guess it, even if it's `xterm`.
+    if [ -z "''${SSH_CONNECTION:-}" ]; then
+      case "''${TERM:-}" in
+        "" | xterm) export TERM=xterm-256color ;;
+      esac
+    fi
     exec ${runtimeShell} -l "$@"
   ''}/bin/machine-session-shell";
 
