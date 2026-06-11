@@ -48,18 +48,13 @@ let
     ${runuser} -u ${username} -- ${hmActivate}/activate --driver-version 1 || true
 
     cd /home/${username}
-    # Hand off to the user's shell with a *controlling terminal*. `runuser --pty`
-    # proxies I/O and wedged the session as PID 1; `setsid --ctty` can't steal
-    # the tty once we've dropped privileges. `login` does the privileged tty
-    # setup as root and *then* drops to the user — the exact path getty uses,
-    # which works in the qemu VM. It runs the user's login shell from
-    # /etc/passwd (fish) in a clean login environment. The non-interactive case
-    # keeps `runuser` so `container run <img> <cmd>` still runs <cmd>.
-    if [ -t 0 ]; then
-      exec ${pkgs.shadow}/bin/login -f ${username}
-    else
-      exec ${runuser} -u ${username} -- "$@"
-    fi
+    # Drop to the user. Plain `runuser` does NOT start a new session, so the
+    # shell keeps the controlling terminal the runtime gave PID 1 — fish sources
+    # its config (`lv`, the greeting, conf.d) and stays responsive. (`runuser
+    # --pty` instead proxies I/O as PID 1, and an activation orphan like
+    # gpg-agent dying a moment later wedges that proxy → input freezes. Verified
+    # in a local podman reproduction.)
+    exec ${runuser} -u ${username} -- "$@"
   '';
 in
 {
