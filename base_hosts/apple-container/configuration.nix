@@ -1,6 +1,8 @@
-{ lib, ... }:
+{ inputs, lib, ... }:
 {
   imports = [ ./apple-container.nix ];
+
+  users.users.aldur.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
 
   virtualisation.appleContainer = {
     # Literal, not `config.users.users.aldur.name`: the module declares
