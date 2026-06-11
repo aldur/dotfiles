@@ -13,6 +13,12 @@
     # Silence "Last login: ..."
     file.".hushlogin".text = "";
 
+    # Don't mount $HOME into `container` VMs
+    file."Library/Application Support/com.apple.container/config/config.toml".text = ''
+      [machine]
+      home-mount = "none"
+    '';
+
     shellAliases = {
       tailscale = "/Applications/Tailscale.app/Contents/MacOS/Tailscale";
 
