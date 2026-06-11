@@ -1,5 +1,5 @@
 {
-  description = "A NixOS OCI image for Apple `container`, from aldur's dotfiles.";
+  description = "A NixOS OCI image for Apple `container` (run + machine), from aldur's dotfiles.";
 
   inputs = {
     aldur-dotfiles = {
@@ -13,21 +13,17 @@
       inherit (aldur-dotfiles) specialArgs;
       inherit (aldur-dotfiles.inputs) nixpkgs flake-utils;
 
-      # `apple-container.nix` → lightweight `container run` image;
-      # `apple-machine.nix` → full-system `container machine` image. Both share
-      # `common.nix` and the base modules.
-      mkSystem =
-        system: hostModule:
+      # One image serves both: `container run` uses the OCI entrypoint, while
+      # `container machine` execs /sbin/init. Same closure, two entry doors.
+      cfg =
+        system:
         nixpkgs.lib.nixosSystem {
           inherit specialArgs system;
           modules = [
             aldur-dotfiles.nixosModules.default
-            hostModule
+            ./apple-container.nix
           ];
         };
-
-      containerCfg = system: mkSystem system ./apple-container.nix;
-      machineCfg = system: mkSystem system ./apple-machine.nix;
     in
     # The image is always a Linux artifact. On a Darwin host (the usual case —
     # Apple silicon) map to the matching linux system so `#container-image`
@@ -45,21 +41,16 @@
       in
       {
         packages = rec {
-          container-image = (containerCfg targetSystem).config.system.build.containerImage;
-          machine-image = (machineCfg targetSystem).config.system.build.containerImage;
+          container-image = (cfg targetSystem).config.system.build.containerImage;
           default = container-image;
         };
       }
     )
     // {
       nixosConfigurations = {
-        apple-container = containerCfg "aarch64-linux";
-        apple-container-aarch64 = containerCfg "aarch64-linux";
-        apple-container-x86_64 = containerCfg "x86_64-linux";
-
-        apple-machine = machineCfg "aarch64-linux";
-        apple-machine-aarch64 = machineCfg "aarch64-linux";
-        apple-machine-x86_64 = machineCfg "x86_64-linux";
+        apple-container = cfg "aarch64-linux";
+        apple-container-aarch64 = cfg "aarch64-linux";
+        apple-container-x86_64 = cfg "x86_64-linux";
       };
     };
 }
