@@ -1,8 +1,7 @@
 # Apple `container` image
 
-This Flake builds a single NixOS OCI image, with the modules of this repository,
-that serves **both** ways of running [Apple `container`][0] on Apple silicon —
-the same closure with two entry doors:
+This Flake builds a NixOS OCI image that serves **both** ways of running
+[Apple `container`][0] on Apple silicon:
 
 | Run with | Entry point | Shape |
 |---|---|---|
@@ -10,47 +9,39 @@ the same closure with two entry doors:
 | `container machine` | the image's **`/sbin/init`** → **systemd** | full, persistent Linux box |
 
 `container machine` ignores the OCI entrypoint and execs `/sbin/init`, so both
-fit in one image. The whole environment is reused from
-`aldur-dotfiles.nixosModules.default` — nothing is re-listed.
+fit in one image.
 
 ## Build
 
 The image targets `aarch64-linux` (Apple silicon). On macOS this requires a
 Linux builder (this repo's `nix-darwin` host already provides one via
-`modules/darwin/linux-builder.nix` + `nix-rosetta-builder`). The package name
-resolves on a Darwin host too (it maps to `aarch64-linux` and offloads).
+`modules/darwin/linux-builder.nix` + `nix-rosetta-builder`).
 
 ```bash
 nix build --override-input aldur-dotfiles . ./base_hosts/apple-container#container-image
 container image load --input ./result
 ```
 
-The archive sets its `org.opencontainers.image.ref.name` to `aldur-nixos:latest`
-so it loads under that name directly.
+The archive sets its `org.opencontainers.image.ref.name` to
+`aldur-nixos:latest` so it loads under that name directly.
 
-## Run it (`container run`)
+## `container run`
 
 ```bash
 container run -it --rm aldur-nixos:latest
 ```
 
-The entrypoint applies the config (starts a nix-daemon, system + home-manager
-activation), then drops to `aldur`'s `fish` via plain `runuser` — which keeps the
-controlling terminal the runtime gives PID 1, so the config (`lv`, the greeting,
-conf.d) loads and the session stays responsive.
-
-## Machine it (`container machine`)
+## `container machine`
 
 ```bash
 container machine create aldur-nixos:latest --name dev --home-mount none
 container machine run -n dev          # boots systemd, opens a shell as your user
 ```
 
-By default a machine mounts your **entire macOS home read-write** at
-`/Users/<you>` (and forwards your SSH agent socket — that part has no off
-switch). `--home-mount` takes `rw` (default), `ro`, or `none`; to make `none`
-the default for every machine you create, set it in `container`'s user config
-(read on each invocation, user layer first):
+> [!WARNING]
+> By default a machine mounts your **entire macOS home read-write** at
+> `/Users/<you>` (and forwards your SSH agent socket). Use `--home-mount none`
+> to disable it or make it the default with:
 
 ```toml
 # ~/Library/Application Support/com.apple.container/config/config.toml
@@ -58,30 +49,10 @@ the default for every machine you create, set it in `container`'s user config
 home-mount = "none"
 ```
 
-A machine **clones the image's rootfs at `create` time** — after loading a new
-image, `container machine rm dev` and re-`create`, or you keep booting the old
-rootfs.
-
-`container machine`'s real PID 1 is Apple's `/sbin.machine/init`, a `#!/bin/sh`
-script virtiofs-mounted from the host that ends in `exec /sbin/init`. To host
-it, the image ships an FHS shim set (coreutils + bash + sh + grep in `/bin`
-and `/usr/bin`), `/etc/os-release`, and a no-op `/etc/machine/create-user.sh`
-(NixOS already declares the user) — without these, boot dies with `failed to
-exec [/sbin.machine/init] … No such file or directory` (the
-missing-shebang-interpreter ENOENT).
-
-The machine session also opens **as soon as the container starts**, racing
-NixOS first-boot activation, and runs as the *Mac* uid (501). The image bakes
-a pre-activation `/etc/passwd` (uid 501 = `aldur`, matching the NixOS
-declaration) whose shell waits for activation and then execs a login `fish` —
-so the very first session pauses a few seconds instead of dropping you into a
-bare `sh`.
-
 ## Notes
 
-- **A nix-daemon runs under `container run`** (the entrypoint starts it, image
-  built with `includeNixDB`): home-manager activation needs it, and `nix` works
-  inside. Under `container machine`, systemd runs the daemon normally.
+- **A nix-daemon runs under `container run`** so that `nix` works inside the
+  container. Under `container machine`, `systemd` runs the daemon normally.
 - **Logs & debugging:** the entrypoint writes to `/var/log/entrypoint/`
   (`nix-daemon.log`, `system-activation.log`, `home-manager.log`) and prints a
   red banner + log tail when a step fails. Run with `CONTAINER_DEBUG=1` in the
@@ -90,12 +61,15 @@ bare `sh`.
   `/etc/hosts` before the guest boots, so the image ships placeholder files (so
   `/etc` is a writable target) and disables the guest's DHCP/resolvconf.
 - **Hostname:** under `container run` the entrypoint applies
-  `networking.hostName` itself (the runtime otherwise names the container
-  after its UUID). Under `container machine`, systemd defers to the hostname
-  the runtime set — the machine's *name* (e.g. `dev`) — which matches Apple's
-  semantics.
-- No SSH host keys are checked in.
-- To customize, edit `common.nix` (shared) or `apple-container.nix` (the image),
-  and rebuild.
+  `networking.hostName` itself (the runtime otherwise names the container after
+  its UUID). Under `container machine` the runtime first sets the machine's
+  *name* (e.g. `dev`) and systemd applies `networking.hostName` during boot — a
+  shell that opened early may keep showing the old name (fish caches it at
+startup).
+- **No ICMP:** `ping` from inside shows 100% loss while TCP/UDP (DNS, HTTPS)
+  work — Apple's vmnet NAT doesn't forward ICMP echo
+  ([apple/container#345][1]); under `container run` there's additionally no
+  `cap_net_raw`/setuid wrapper. Not fixable image-side.
 
 [0]: https://github.com/apple/container
+[1]: https://github.com/apple/container/issues/345

@@ -21,7 +21,7 @@
           inherit specialArgs system;
           modules = [
             aldur-dotfiles.nixosModules.default
-            ./apple-container.nix
+            ./config.nix
           ];
         };
     in
@@ -47,6 +47,15 @@
       }
     )
     // {
+      # The generic part — anyone can import this into their own
+      # nixosConfiguration (no dependency on aldur's dotfiles) and build
+      # `config.system.build.containerImage`. See the
+      # `virtualisation.appleContainer` options in apple-container.nix.
+      nixosModules = rec {
+        apple-container = ./apple-container.nix;
+        default = apple-container;
+      };
+
       nixosConfigurations = {
         apple-container = cfg "aarch64-linux";
         apple-container-aarch64 = cfg "aarch64-linux";
