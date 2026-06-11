@@ -21,7 +21,7 @@
           inherit specialArgs system;
           modules = [
             aldur-dotfiles.nixosModules.default
-            ./config.nix
+            ./configuration.nix
           ];
         };
     in
