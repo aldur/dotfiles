@@ -13,9 +13,9 @@ fit in one image.
 
 ## Build
 
-The image targets `aarch64-linux` (Apple silicon). On macOS this requires a
-Linux builder (this repo's `nix-darwin` host already provides one via
-`modules/darwin/linux-builder.nix` + `nix-rosetta-builder`).
+The image targets `aarch64-linux` (Apple silicon). Building it on macOS
+requires a Linux builder (this repo's `nix-darwin` host already provides one
+via `modules/darwin/linux-builder.nix` + `nix-rosetta-builder`).
 
 ```bash
 nix build --override-input aldur-dotfiles . ./base_hosts/apple-container#container-image
@@ -24,6 +24,10 @@ container image load --input ./result
 
 The archive sets its `org.opencontainers.image.ref.name` to
 `aldur-nixos:latest` so it loads under that name directly.
+
+> [!TIP]
+> There's also a `minimal-image` that doesn't include this repo's configuration.
+> Once built, its name is just `nixos`.
 
 ## `container run`
 

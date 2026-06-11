@@ -24,6 +24,28 @@
             ./configuration.nix
           ];
         };
+
+      minimal =
+        system:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            (nixpkgs + "/nixos/modules/profiles/minimal.nix")
+            ./apple-container.nix
+            {
+              system.stateVersion = nixpkgs.lib.trivial.release;
+              virtualisation.appleContainer = {
+                username = "nixos";
+                imageName = "nixos";
+              };
+              users.users.nixos.extraGroups = [ "wheel" ];
+              nix.settings.experimental-features = [
+                "nix-command"
+                "flakes"
+              ];
+            }
+          ];
+        };
     in
     # The image is always a Linux artifact. On a Darwin host (the usual case —
     # Apple silicon) map to the matching linux system so `#container-image`
@@ -42,6 +64,7 @@
       {
         packages = rec {
           container-image = (cfg targetSystem).config.system.build.containerImage;
+          minimal-image = (minimal targetSystem).config.system.build.containerImage;
           default = container-image;
         };
       }
