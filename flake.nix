@@ -97,6 +97,7 @@
           inherit (pkgs)
             beancount-language-server # from aldur/beancount-language-server
             nomicfoundation-solidity-language-server
+            claude-log
             shrink-pdf
             solidity-docset
             remarks

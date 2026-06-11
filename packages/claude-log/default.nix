@@ -2,6 +2,7 @@
   writeShellApplication,
   fzf,
   jq,
+  jaq,
   coreutils,
   findutils,
   gawk,
@@ -14,6 +15,7 @@ writeShellApplication {
   runtimeInputs = [
     fzf
     jq
+    jaq # faster jq (Rust) used for the hot session-list extraction
     coreutils
     findutils
     gawk
