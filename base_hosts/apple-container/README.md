@@ -70,6 +70,14 @@ container machine run -n dev          # boots systemd, opens a shell as your use
 home-mount = "none"
 ```
 
+The agent forwarding has no flag, but the CLI lifts `SSH_AUTH_SOCK` from its
+own environment on every boot (`container run` does too). Unset it to disable
+forwarding:
+
+```bash
+env -u SSH_AUTH_SOCK container machine run -n dev
+```
+
 ## Notes
 
 - **A nix-daemon runs under `container run`** so that `nix` works inside the
