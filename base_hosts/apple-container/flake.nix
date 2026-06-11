@@ -67,6 +67,59 @@
           minimal-image = (minimal targetSystem).config.system.build.containerImage;
           default = container-image;
         };
+
+        # Build + load in one step: the image is the script's dependency, so
+        # `nix run` realizes it (offloading to the Linux builder on Darwin)
+        # and then hands it to Apple's CLI.
+        apps =
+          let
+            pkgs = nixpkgs.legacyPackages.${system};
+            mkLoad =
+              image:
+              let
+                script = pkgs.writeShellScript "load-${image.name}" ''
+                  if ! command -v container >/dev/null 2>&1; then
+                    echo "error: Apple's \`container\` CLI not found in PATH" >&2
+                    exit 1
+                  fi
+                  exec container image load --input ${image}
+                '';
+              in
+              {
+                type = "app";
+                program = "${script}";
+              };
+            mkPush =
+              c:
+              let
+                image = c.config.system.build.containerImage;
+                name = c.config.virtualisation.appleContainer.imageName;
+              in
+              {
+                type = "app";
+                program = "${pkgs.writeShellScript "push-${name}" ''
+                  set -eu
+                  repo="''${1:-ghcr.io/aldur}"
+                  echo "pushing ${name} -> $repo/${name}:latest"
+                  exec ${nixpkgs.lib.getExe pkgs.skopeo} copy \
+                    oci-archive:${image} "docker://$repo/${name}:latest"
+                ''}";
+              };
+          in
+          rec {
+            load = mkLoad (cfg targetSystem).config.system.build.containerImage;
+            load-minimal = mkLoad (minimal targetSystem).config.system.build.containerImage;
+            default = load;
+
+            # Build (if needed) and push one image to a registry.
+            # `nix run …#push` → ghcr.io/aldur; override with
+            # `nix run …#push -- ghcr.io/someone-else`. Auth: anything skopeo
+            # understands — `skopeo login ghcr.io -u <user>` or an existing
+            # `docker login` (a GH token with write:packages).
+            # NB: pushes the arch you build on — aarch64 from a Mac.
+            push = mkPush (cfg targetSystem);
+            push-minimal = mkPush (minimal targetSystem);
+          };
       }
     )
     // {
