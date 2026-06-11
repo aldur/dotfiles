@@ -82,6 +82,9 @@ let
     # mkdirs it).
     d=/run/user/$(${coreutils}/bin/id -u)
     [ -d "$d" ] && export XDG_RUNTIME_DIR="$d"
+    case "''${TERM:-}" in
+      "" | xterm) export TERM=xterm-256color ;;
+    esac
     exec ${runtimeShell} -l "$@"
   ''}/bin/machine-session-shell";
 
@@ -366,7 +369,7 @@ in
           Entrypoint = [ "${entrypoint}" ];
           Cmd = [ "${machineSessionShell}" ];
           WorkingDir = "/home/${username}";
-          Env = [ "TERM=screen-256color" ];
+          Env = [ "TERM=xterm-256color" ];
         };
       };
     };
