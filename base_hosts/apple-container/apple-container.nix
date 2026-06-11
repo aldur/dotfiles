@@ -15,6 +15,21 @@ let
   inherit (pkgs) coreutils;
   runuser = "${pkgs.util-linux}/bin/runuser";
 
+  # Baked into the image's /etc/passwd as aldur's shell: Apple's `container
+  # machine` opens its session (`/sbin.machine/init -s`) as soon as the
+  # container starts, racing NixOS first-boot activation (observed: nameless
+  # uid 501, bare PATH, sh fallback — while /run/current-system appeared
+  # moments later). Wait for activation, then hand over to a login fish so
+  # the full session environment applies. Once activation has rewritten
+  # /etc/passwd, later sessions get plain fish directly.
+  machineSessionShell = pkgs.writeShellScript "machine-session-shell" ''
+    for _ in $(${coreutils}/bin/seq 1 600); do
+      [ -x /run/current-system/sw/bin/fish ] && break
+      ${coreutils}/bin/sleep 0.1
+    done
+    exec /run/current-system/sw/bin/fish -l "$@"
+  '';
+
   # Apple `container` boots a lightweight VM whose init runs this OCI image's
   # entrypoint as a single process — there is no systemd PID 1.
   # We apply the NixOS + home-manager configuration ourselves at start.
@@ -28,6 +43,8 @@ let
     set -u
     export PATH=${coreutils}/bin:${pkgs.util-linux}/bin
     export NIX_SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-certificates.crt
+    # Pin ${machineSessionShell} into the image closure: it is otherwise only
+    # referenced from the baked /etc/passwd, which the closure scan can't see.
 
     # Activation runs to logs, and failures are *loud*: `|| true` used to swallow
     # them, which left Apple-only failures (not reproducible under podman)
@@ -175,8 +192,6 @@ in
       name = "aldur-nixos";
       tag = "latest";
 
-      includeNixDB = true;
-
       # /sbin/init for `container machine`; real (placeholder) /etc files so /etc
       # is a guaranteed-present writable dir its bootstrap can write into (empty
       # dirs can be dropped in OCI conversion); /tmp world-writable+sticky.
@@ -198,11 +213,24 @@ in
         ln -s ${config.environment.etc."os-release".source} etc/os-release
         for d in bin usr/bin; do
           ln -s ${config.environment.binsh} "$d"/sh
+          ln -s ${pkgs.bashInteractive}/bin/bash "$d"/bash
           ln -s ${pkgs.gnugrep}/bin/grep "$d"/grep
-          for b in id chown cut; do
-            ln -s ${coreutils}/bin/"$b" "$d"/"$b"
+          for b in ${coreutils}/bin/*; do
+            ln -s "$b" "$d"/"''${b##*/}"
           done
         done
+        # Pre-activation /etc/passwd + /etc/group (first-boot machine sessions
+        # exec before activation writes the real ones; uid/gid match the NixOS
+        # declaration, and mutableUsers=false rewrites these wholesale at
+        # activation). aldur's shell is the wait-for-activation wrapper.
+        cat > etc/passwd <<'EOF'
+        root:x:0:0:root:/root:/bin/sh
+        ${username}:x:501:100::/home/${username}:${machineSessionShell}
+        EOF
+        cat > etc/group <<'EOF'
+        root:x:0:
+        users:x:100:
+        EOF
         cat > etc/machine/create-user.sh <<'EOF'
         #!/bin/sh
         # NixOS declares the machine user; nothing to provision on first boot.
@@ -210,6 +238,28 @@ in
         EOF
         chmod +x etc/machine/create-user.sh
         chmod 1777 tmp
+        # Register the shipped closure in the image's nix DB. This was Bug 1's
+        # root cause: dockerTools' `includeNixDB` registers only the closure of
+        # `contents` (empty here — symlinkJoin would merge its entries into the
+        # image root), so the DB shipped EMPTY and home-manager's first daemon
+        # operation, the output-silenced `nix-store --realise <generation>`,
+        # died with "path … is not valid" right after its banner.
+        export NIX_REMOTE="local?root=$PWD" USER=nobody
+        ${lib.getExe' pkgs.buildPackages.nix "nix-store"} --load-db < ${
+          pkgs.closureInfo {
+            rootPaths = [
+              toplevel
+              hmActivate
+            ];
+          }
+        }/registration
+        # Reset registration times to keep the image reproducible
+        ${lib.getExe pkgs.buildPackages.sqlite} nix/var/nix/db/db.sqlite \
+          "UPDATE ValidPaths SET registrationTime = ''${SOURCE_DATE_EPOCH}"
+        # In-image GC roots for the two generations (a `nix-collect-garbage`
+        # inside the container must not eat the system it runs on)
+        mkdir -p nix/var/nix/gcroots/docker
+        ln -s ${toplevel} ${hmActivate} nix/var/nix/gcroots/docker/
       '';
 
       config = {

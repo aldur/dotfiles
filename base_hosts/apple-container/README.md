@@ -64,11 +64,18 @@ rootfs.
 
 `container machine`'s real PID 1 is Apple's `/sbin.machine/init`, a `#!/bin/sh`
 script virtiofs-mounted from the host that ends in `exec /sbin/init`. To host
-it, the image ships a small FHS shim set (`/bin/sh`, `id`, `grep`, `cut`,
-`chown` in `/bin` and `/usr/bin`), `/etc/os-release`, and a no-op
-`/etc/machine/create-user.sh` (NixOS already declares the user) — without
-these, boot dies with `failed to exec [/sbin.machine/init] … No such file or
-directory` (the missing-shebang-interpreter ENOENT).
+it, the image ships an FHS shim set (coreutils + bash + sh + grep in `/bin`
+and `/usr/bin`), `/etc/os-release`, and a no-op `/etc/machine/create-user.sh`
+(NixOS already declares the user) — without these, boot dies with `failed to
+exec [/sbin.machine/init] … No such file or directory` (the
+missing-shebang-interpreter ENOENT).
+
+The machine session also opens **as soon as the container starts**, racing
+NixOS first-boot activation, and runs as the *Mac* uid (501). The image bakes
+a pre-activation `/etc/passwd` (uid 501 = `aldur`, matching the NixOS
+declaration) whose shell waits for activation and then execs a login `fish` —
+so the very first session pauses a few seconds instead of dropping you into a
+bare `sh`.
 
 ## Notes
 
