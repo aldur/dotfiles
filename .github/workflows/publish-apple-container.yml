@@ -1,11 +1,9 @@
-name: publish-apple-container
-
 on:
   workflow_dispatch:
   push:
     branches:
       - master
-      - feat/apple-containers
+      - staging
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
