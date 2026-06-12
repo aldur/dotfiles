@@ -14,13 +14,8 @@ permissions:
   contents: read
 
 jobs:
-  nixos-ci:
-    strategy:
-      matrix:
-        include:
-          - runner: ubuntu-24.04-arm
-          - runner: ubuntu-24.04
-    runs-on: ${{ matrix.runner }}
+  flake-check:
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -28,6 +23,34 @@ jobs:
       - uses: DeterminateSystems/determinate-nix-action@1d699fc25db3f9e079cd2f168ca007a4183389be # v3.15.1
       - uses: DeterminateSystems/flake-checker-action@3164002371bc90729c68af0e24d5aacf20d7c9f6  # v12
       - run: nix flake check --all-systems .
+
+  # One job per (runner, target): the image builds each need tens of GB of
+  # scratch space (full-system tarball + 16GiB disk image + copy into the
+  # store), so they get a fresh runner instead of sharing one disk.
+  nixos-ci:
+    strategy:
+      matrix:
+        include:
+          # Test building QEMU VM configuration
+          - runner: ubuntu-24.04
+            target: ./base_hosts/qemu#vm-nogui
+          - runner: ubuntu-24.04-arm
+            target: ./base_hosts/qemu#vm-nogui
+
+          # Test building the Crostini Baguette image (aarch64-only)
+          - runner: ubuntu-24.04-arm
+            target: ./base_hosts/crostini#baguette-image
+
+          # Test building the Apple `container` OCI image (serves `container
+          # run` and `container machine`; aarch64 is the target).
+          - runner: ubuntu-24.04-arm
+            target: ./base_hosts/apple-container#container-image
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: DeterminateSystems/determinate-nix-action@1d699fc25db3f9e079cd2f168ca007a4183389be # v3.15.1
 
       # Reclaim disk space
       - run: |
@@ -38,17 +61,7 @@ jobs:
           docker builder prune -af || true
           df -h
 
-      # Test building QEMU VM configuration
-      - run: nix build --override-input aldur-dotfiles . ./base_hosts/qemu#vm-nogui
-
-      # Test building the Crostini Baguette image (aarch64-only)
-      - if: matrix.runner == 'ubuntu-24.04-arm'
-        run: nix build --override-input aldur-dotfiles . ./base_hosts/crostini#baguette-image
-
-      # Test building the Apple `container` OCI image (serves `container run`
-      # and `container machine`; aarch64 is the target).
-      - if: matrix.runner == 'ubuntu-24.04-arm'
-        run: nix build --override-input aldur-dotfiles . ./base_hosts/apple-container#container-image
+      - run: nix build --override-input aldur-dotfiles . ${{ matrix.target }}
 
   nix-darwin-ci:
     runs-on: macos-26  # arm, beta
