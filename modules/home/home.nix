@@ -276,6 +276,8 @@ in
       enableFishIntegration = true;
 
       settings = {
+        disableStartupPopups = true;
+
         git = {
           autoFetch = false;
         };
