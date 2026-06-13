@@ -157,6 +157,12 @@ let
     chown ${username}:users /run/user/${toString uid}
     chmod 700 /run/user/${toString uid}
 
+    # `container run --ssh` forwards the host's SSH agent socket to
+    # /var/host-services/ssh-auth.sock, created root:root by the runtime.
+    if [ -S "''${SSH_AUTH_SOCK:-}" ]; then
+      chown ${username}:users "$SSH_AUTH_SOCK"
+    fi
+
     if [ "''${CONTAINER_DEBUG:-}" = 1 ]; then
       echo "== entrypoint debug =="
       [ -t 0 ] && echo "fd0 is a tty: yes" || echo "fd0 is a tty: no"
