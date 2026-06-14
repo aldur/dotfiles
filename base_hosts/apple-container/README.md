@@ -1,15 +1,12 @@
 # Apple `container` image
 
-This Flake builds a NixOS OCI image that serves **both** ways of running
-[Apple `container`][0] on Apple silicon:
+This Flake builds a NixOS OCI image that allows running [Apple `container`][0]
+on Apple silicon:
 
-| Run with | Entry point | Shape |
+| With | Entry point | What |
 |---|---|---|
-| `container run` | the OCI **Entrypoint** → activation → `fish` | lightweight, ephemeral container |
-| `container machine` | the image's **`/sbin/init`** → **systemd** | full, persistent Linux box |
-
-`container machine` ignores the OCI entrypoint and execs `/sbin/init`, so both
-fit in one image.
+| `container run` | the OCI Entrypoint → syntetic activation → `fish` | an ephemeral container, doesn't mount `~` |
+| `container machine` | `/sbin/init` → `systemd` | a persistent Linux box |
 
 ## Run from GHCR
 
@@ -29,10 +26,9 @@ machine architecture.
 
 ## Build
 
-A local build targets the arch you build on — `aarch64-linux` on Apple silicon
-(for the multi-arch GHCR images, see above). Building it on macOS requires a
-Linux builder (this repo's `nix-darwin` host already provides one via
-`modules/darwin/linux-builder.nix` + `nix-rosetta-builder`).
+Building on macOS requires a Linux builder (this repo's `nix-darwin` host
+already provides one via `modules/darwin/linux-builder.nix` +
+`nix-rosetta-builder`).
 
 ```bash
 # build + load in one step:
