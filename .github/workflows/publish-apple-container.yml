@@ -15,22 +15,23 @@ permissions:
 
 jobs:
   push:
-    name: ${{ matrix.app }}
+    name: ${{ matrix.app.name }} (${{ matrix.arch.suffix }})
     strategy:
       matrix:
-        include:
-          - app: push
-            reclaim-disk: true
-          - app: push-minimal
-            reclaim-disk: false
-    runs-on: ubuntu-24.04-arm
+        arch:
+          - { runner: ubuntu-24.04-arm, suffix: arm64 }
+          - { runner: ubuntu-24.04, suffix: amd64 }
+        app:
+          - { name: push, reclaim-disk: true }
+          - { name: push-minimal, reclaim-disk: false }
+    runs-on: ${{ matrix.arch.runner }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - uses: DeterminateSystems/determinate-nix-action@1d699fc25db3f9e079cd2f168ca007a4183389be # v3.15.1
 
-      - if: matrix.reclaim-disk
+      - if: matrix.app.reclaim-disk
         run: |
           sudo rm -rf /usr/lib/jvm /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /usr/local/julia* \
             /usr/local/lib/android /usr/local/share/chromium /opt/microsoft /opt/google \
@@ -39,5 +40,23 @@ jobs:
           docker builder prune -af || true
           df -h
 
+      - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - run: nix run --override-input aldur-dotfiles . ./base_hosts/apple-container#${{ matrix.app.name }} -- ghcr.io/${{ github.repository_owner }} latest-${{ matrix.arch.suffix }}
+
+    needs: push
+    name: ${{ matrix.app }}
+    strategy:
+      matrix:
+        app:
+          - manifest
+          - manifest-minimal
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: DeterminateSystems/determinate-nix-action@1d699fc25db3f9e079cd2f168ca007a4183389be # v3.15.1
+
+      # Multi-arch `:latest`.
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - run: nix run --override-input aldur-dotfiles . ./base_hosts/apple-container#${{ matrix.app }} -- ghcr.io/${{ github.repository_owner }}

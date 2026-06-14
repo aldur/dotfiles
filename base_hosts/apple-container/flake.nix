@@ -100,9 +100,32 @@
                 program = "${pkgs.writeShellScript "push-${name}" ''
                   set -eu
                   repo="''${1:-ghcr.io/aldur}"
-                  echo "pushing ${name} -> $repo/${name}:latest"
+                  tag="''${2:-latest}"
+                  echo "pushing ${name} -> $repo/${name}:$tag"
                   exec ${nixpkgs.lib.getExe pkgs.skopeo} copy \
-                    oci-archive:${image} "docker://$repo/${name}:latest"
+                    oci-archive:${image} "docker://$repo/${name}:$tag"
+                ''}";
+              };
+            # Stitch the per-arch tags that CI pushes (`:latest-amd64`,
+            # `:latest-arm64`) into a multi-arch `:latest` manifest list.
+            # regctl reads each ref's platform from its config, so we needn't
+            # name platforms here. Pure registry work — no image is realised —
+            # so any one runner can run it, and it's cheap.
+            mkManifest =
+              c:
+              let
+                name = c.config.virtualisation.appleContainer.imageName;
+              in
+              {
+                type = "app";
+                program = "${pkgs.writeShellScript "manifest-${name}" ''
+                  set -eu
+                  repo="''${1:-ghcr.io/aldur}"
+                  img="$repo/${name}"
+                  echo "assembling $img:latest from :latest-amd64 + :latest-arm64"
+                  exec ${pkgs.regclient}/bin/regctl index create "$img:latest" \
+                    --ref "$img:latest-amd64" \
+                    --ref "$img:latest-arm64"
                 ''}";
               };
           in
@@ -112,13 +135,20 @@
             default = load;
 
             # Build (if needed) and push one image to a registry.
-            # `nix run …#push` → ghcr.io/aldur; override with
-            # `nix run …#push -- ghcr.io/someone-else`. Auth: anything skopeo
-            # understands — `skopeo login ghcr.io -u <user>` or an existing
-            # `docker login` (a GH token with write:packages).
-            # NB: pushes the arch you build on — aarch64 from a Mac.
+            # `nix run …#push` → ghcr.io/aldur:latest; override repo and tag:
+            # `nix run …#push -- ghcr.io/someone-else latest-amd64`. Auth:
+            # anything skopeo understands — `skopeo login ghcr.io -u <user>`
+            # or an existing `docker login` (a GH token with write:packages).
+            # NB: pushes the arch you build on — aarch64 from a Mac. CI runs
+            # this on a native runner per arch into `:latest-<arch>` tags,
+            # then `manifest` stitches them into a multi-arch `:latest`.
             push = mkPush (cfg targetSystem);
             push-minimal = mkPush (minimal targetSystem);
+
+            # Assemble the multi-arch `:latest` from the per-arch tags above.
+            # Registry-only, so it runs on any one runner after both pushes.
+            manifest = mkManifest (cfg targetSystem);
+            manifest-minimal = mkManifest (minimal targetSystem);
           };
       }
     )
