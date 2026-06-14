@@ -15,11 +15,6 @@
 
   networking.hostName = "nixos-apple-container";
 
-  security.sudo-rs = {
-    wheelNeedsPassword = false;
-    execWheelOnly = lib.mkForce false; # There's no `wheel`
-  };
-
   programs.aldur = {
     lazyvim.enable = true;
     lazyvim.packageNames = [ "lazyvim" ];

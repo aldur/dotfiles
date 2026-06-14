@@ -24,11 +24,15 @@ container machine run -n dev
 
 `ghcr.io/aldur/nixos:latest` is a minimal image.
 
+Both images are multi-arch, so they'll pull the correct runtime for your
+machine architecture.
+
 ## Build
 
-The image targets `aarch64-linux` (Apple silicon). Building it on macOS
-requires a Linux builder (this repo's `nix-darwin` host already provides one
-via `modules/darwin/linux-builder.nix` + `nix-rosetta-builder`).
+A local build targets the arch you build on — `aarch64-linux` on Apple silicon
+(for the multi-arch GHCR images, see above). Building it on macOS requires a
+Linux builder (this repo's `nix-darwin` host already provides one via
+`modules/darwin/linux-builder.nix` + `nix-rosetta-builder`).
 
 ```bash
 # build + load in one step:
@@ -82,6 +86,8 @@ env -u SSH_AUTH_SOCK container machine run -n dev
 
 - **A nix-daemon runs under `container run`** so that `nix` works inside the
   container. Under `container machine`, `systemd` runs the daemon normally.
+- If you need `root`, you can use `container exec --user 0` or `container
+  machine run --root`.
 - **Logs & debugging:** the entrypoint writes to `/var/log/entrypoint/`
   (`nix-daemon.log`, `system-activation.log`, `home-manager.log`) and prints a
   red banner + log tail when a step fails. Run with `CONTAINER_DEBUG=1` in the
@@ -92,9 +98,9 @@ env -u SSH_AUTH_SOCK container machine run -n dev
 - **Hostname:** under `container run` the entrypoint applies
   `networking.hostName` itself (the runtime otherwise names the container after
   its UUID). Under `container machine` the runtime first sets the machine's
-  *name* (e.g. `dev`) and systemd applies `networking.hostName` during boot — a
+  name (e.g. `dev`) and systemd applies `networking.hostName` during boot — a
   shell that opened early may keep showing the old name (fish caches it at
-startup).
+  startup).
 - **No ICMP:** `ping` from inside shows 100% loss while TCP/UDP (DNS, HTTPS)
   work — Apple's vmnet NAT doesn't forward ICMP echo
   ([apple/container#345][1]); under `container run` there's additionally no

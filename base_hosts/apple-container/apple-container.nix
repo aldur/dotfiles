@@ -308,12 +308,6 @@ in
       };
     };
 
-    # The PAM-less machine session cannot type a password (with mutableUsers
-    # disabled above, none exists unless declared). Defaults only — site
-    # config can still force these back.
-    security.sudo.wheelNeedsPassword = lib.mkDefault false;
-    security.sudo-rs.wheelNeedsPassword = lib.mkDefault false;
-
     # Make `specialfs` skip what the runtime already mounted and mount/tolerate
     # the rest, which is what systemd needs when the same image boots via
     # /sbin/init under `container machine`.
