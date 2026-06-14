@@ -43,6 +43,7 @@ jobs:
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - run: nix run --override-input aldur-dotfiles . ./base_hosts/apple-container#${{ matrix.app.name }} -- ghcr.io/${{ github.repository_owner }} latest-${{ matrix.arch.suffix }}
 
+  manifest:
     needs: push
     name: ${{ matrix.app }}
     strategy:
