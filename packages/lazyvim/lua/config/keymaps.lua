@@ -1,10 +1,18 @@
 -- Keymaps loaded after LazyVim's defaults (on the `VeryLazy` event).
 
--- When launched from the tmux popup (prefix + e), `q` in normal mode quits
--- Neovim, which closes the `-E` popup — mirroring lazygit's `q`. Scoped to the
--- popup via NVIM_POPUP so normal nvim keeps `q` for macro recording.
--- Buffer-local `q` (help, quickfix, pickers, dashboard, …) still wins, so those
--- close their own window first.
+-- When launched from a tmux popup, nvim runs inside a detached,
+-- per-window tmux session, so the popup is persistent:
 if vim.env.NVIM_POPUP == "1" then
 	vim.keymap.set("n", "q", "<cmd>qa<cr>", { desc = "Quit (close tmux popup)", silent = true })
+	vim.keymap.set("n", "<esc>", function()
+		-- Detach the client(s) on THIS popup's own session. Resolve the session
+		-- live (#S) so it's always right, and target it with -s so we can only
+		-- ever detach the popup — never the outer terminal. (A bare
+		-- `detach-client` picks the "current client", which inside a nested
+		-- popup is the parent terminal, dropping you out of tmux entirely.)
+		local session = vim.fn.systemlist({ "tmux", "display-message", "-p", "#S" })[1]
+		if session and session ~= "" then
+			vim.fn.system({ "tmux", "detach-client", "-s", session })
+		end
+	end, { desc = "Background (hide tmux popup)", silent = true })
 end

@@ -19,6 +19,7 @@ let
     flatten-pdf
     fps
     gpg-encrypt
+    lazyvim-popup
     lstrip
     shrink-pdf
     split-pdf
@@ -333,7 +334,7 @@ in
       enable = true;
     };
 
-    tmux = (import ../shared/programs/tmux.nix { inherit pkgs; }) // {
+    tmux = (import ../shared/programs/tmux.nix) // {
       enable = true;
       prefix = "c-a";
       mouse = true;

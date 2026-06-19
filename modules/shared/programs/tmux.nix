@@ -2,7 +2,6 @@
 # Consumed by home-manager (programs.tmux) and NixOS (programs.tmux).
 # NixOS uses `shortcut` instead of `prefix`, and lacks `mouse`/`focusEvents`
 # options — callers must set those themselves.
-{ pkgs }:
 {
   terminal = "tmux-256color";
   baseIndex = 1;
@@ -42,6 +41,10 @@
     # show the flag in the status line instead of popping a message
     set -g visual-silence off
 
+    # Set the terminal window/tab title to: hostname - window - pane
+    set -g set-titles on
+    set -g set-titles-string "#H - #W - #{pane_title}"
+
     # c-a twice sends c-a to the terminal
     bind C-a send-prefix
 
@@ -71,10 +74,12 @@
     # Lazygit in a big popup at the current pane's path
     bind-key g display-popup -E -w 90% -h 90% -d "#{pane_current_path}" lazygit
 
-    # Lazyvim in a big popup at the current pane's path.
-    # NVIM_POPUP lets the nvim config map `q` (normal mode) to quit, so the
-    # popup closes on `q` just like lazygit's.
-    bind-key e display-popup -E -e NVIM_POPUP=1 -w 90% -h 90% -d "#{pane_current_path}" lazyvim
+    # Lazyvim in a big popup. `lazyvim-popup` attaches to a detached, per-window
+    # tmux session that owns the nvim process, so the popup is persistent: esc
+    # (normal mode) backgrounds it and the next summon reattaches with state
+    # intact, while `q` quits and starts fresh. The session sets NVIM_POPUP=1 so
+    # the nvim config knows to map esc/`q` accordingly.
+    bind-key e display-popup -E -w 90% -h 90% lazyvim-popup
 
     # y to yank in copy mode, remaining in copy mode
     bind -T copy-mode-vi y send-keys -X copy-selection

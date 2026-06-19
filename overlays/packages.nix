@@ -20,6 +20,7 @@ final: prev: {
   claude-log = prev.callPackage ../packages/claude-log { };
   remarks = prev.callPackage ../packages/remarks { };
   tmux-palette = prev.callPackage ../packages/tmux-palette { };
+  lazyvim-popup = prev.callPackage ../packages/lazyvim-popup { };
 
   tiktoken = prev.callPackage ../packages/tiktoken/tiktoken.nix { };
   llmcat = prev.callPackage ../packages/llmcat/llmcat.nix { };
