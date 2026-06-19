@@ -115,7 +115,14 @@
 
     # Panes: status (set it to `top` when you need it)
     set -g pane-border-status off
-    set -g pane-border-format "#{?pane_active,#[fg=#{BLUE}]  #P: #{pane_title} ,#[fg=#{BBLACK}] #P: #{pane_title} }"
+    # A pinned name (@pane_name, set via the command palette) wins over
+    # #{pane_title}: programs overwrite the title via the OSC escape sequence,
+    # but not the @pane_name user option, so a renamed pane stays renamed.
+    %hidden PANE_LABEL="#{?#{@pane_name},#{@pane_name},#{pane_title}}"
+    # Push each pane's label to its outer edge: panes that touch the right edge
+    # (and not also the left, i.e. not full-width) align right, the rest left.
+    %hidden PANE_ALIGN="#{?#{&&:#{pane_at_right},#{?pane_at_left,0,1}},right,left}"
+    set -g pane-border-format "#[align=#{PANE_ALIGN}]#{?pane_active,#[fg=#{BLUE}]  #{PANE_LABEL} ,#[fg=#{BBLACK}] #{PANE_LABEL} }"
 
     # Popup
     set -g popup-border-style "fg=#{BLUE}"
