@@ -58,6 +58,19 @@ in
         and MariaDB/MySQL (libaio) are fine either way.
       '';
     };
+
+    webcam.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Allow the USB Video Class driver (`uvcvideo`) to load, i.e. keep
+        USB webcams working. Off by default: `uvcvideo` is blacklisted and
+        `install`-blocked like the rest of the list. Enable per-host on
+        machines that actually use a webcam (laptops, video calls); leave
+        off on servers, VMs, and headless hosts. Only has an effect while
+        `hardening.kernelModules.enable` is true.
+      '';
+    };
   };
 
   config = lib.mkMerge [
@@ -170,9 +183,114 @@ in
         "rxrpc"
         # --- /Mitigation against dirtyfrag ---
 
+        # --- Mitigation against CVE-2026-46331/pedit COW ---
+        "act_pedit"
+        # --- /Mitigation against CVE-2026-46331/pedit COW ---
+
+        # --- Unused tc/net-sched subsystem ---
+        # Actions:
+        "act_bpf"
+        "act_connmark"
+        "act_csum"
+        "act_ct"
+        "act_ctinfo"
+        "act_gact"
+        "act_gate"
+        "act_ife"
+        "act_meta_mark"
+        "act_meta_skbprio"
+        "act_meta_skbtcindex"
+        "act_mirred"
+        "act_mpls"
+        "act_nat"
+        "act_police"
+        "act_sample"
+        "act_simple"
+        "act_skbedit"
+        "act_skbmod"
+        "act_tunnel_key"
+        "act_vlan"
+        # Classifiers + ematches:
+        "cls_basic"
+        "cls_bpf"
+        "cls_cgroup"
+        "cls_flow"
+        "cls_flower"
+        "cls_fw"
+        "cls_matchall"
+        "cls_route"
+        "cls_u32"
+        "em_canid"
+        "em_cmp"
+        "em_ipset"
+        "em_ipt"
+        "em_meta"
+        "em_nbyte"
+        "em_text"
+        "em_u32"
+        # Qdiscs (all except the live default sch_fq_codel):
+        "sch_cake"
+        "sch_cbs"
+        "sch_choke"
+        "sch_codel"
+        "sch_drr"
+        "sch_dualpi2"
+        "sch_etf"
+        "sch_ets"
+        "sch_fq"
+        "sch_fq_pie"
+        "sch_gred"
+        "sch_hfsc"
+        "sch_hhf"
+        "sch_htb"
+        "sch_ingress"
+        "sch_mqprio"
+        "sch_mqprio_lib"
+        "sch_multiq"
+        "sch_netem"
+        "sch_pie"
+        "sch_plug"
+        "sch_prio"
+        "sch_qfq"
+        "sch_red"
+        "sch_sfb"
+        "sch_sfq"
+        "sch_skbprio"
+        "sch_taprio"
+        "sch_tbf"
+        "sch_teql"
+        # --- /Unused tc/net-sched subsystem ---
+
+        # --- Unused tunneling (PPP/L2TP) + NFC ---
+        # Only keep Wireguard
+        "ppp_generic"
+        "ppp_async"
+        "ppp_synctty"
+        "ppp_deflate"
+        "ppp_mppe"
+        "bsd_comp"
+        "pppoe"
+        "pppox"
+        "pptp"
+        "l2tp_core"
+        "l2tp_eth"
+        "l2tp_ip"
+        "l2tp_ip6"
+        "l2tp_netlink"
+        "l2tp_ppp"
+        "l2tp_debugfs"
+        "nfc"
+        "nfc_digital"
+        "nci"
+        "nci_spi"
+        "nci_uart"
+        # --- /Unused tunneling (PPP/L2TP) + NFC ---
+
         # Selections sourced from Kicksecure security-misc
-        # 30_security-misc_disable.conf, with Bluetooth, USB video,
-        # Thunderbolt, network filesystems, MEI and joydev kept enabled.
+        # 30_security-misc_disable.conf, with Bluetooth, network
+        # filesystems, 9p (KVM shared folders), and the CPU MSR modules
+        # (msr/rapl/isst, needed by undervolting and cpupower/turbostat)
+        # kept enabled.
         # https://github.com/Kicksecure/security-misc/blob/master/etc/modprobe.d/30_security-misc_disable.conf
 
         # --- Obscure / legacy network protocols ---
@@ -256,6 +374,7 @@ in
         "romfs"
         "sysv"
         "ubifs"
+        "udf" # Universal Disk Format (optical / DVD media)
         "ufs"
         "zonefs"
         # --- /Obscure / legacy filesystems ---
@@ -272,6 +391,12 @@ in
         "video1394"
         # --- /FireWire ---
 
+        # --- Thunderbolt (DMA attack surface, like FireWire) ---
+        "intel-wmi-thunderbolt"
+        "thunderbolt"
+        "thunderbolt_net"
+        # --- /Thunderbolt ---
+
         # --- GPS / GNSS ---
         "garmin_gps"
         "gnss"
@@ -287,6 +412,21 @@ in
         "pmt_crashlog"
         "pmt_telemetry"
         # --- /Intel PMT ---
+
+        # --- Intel Management Engine Interface ---
+        "mei"
+        "mei-gsc"
+        "mei_gsc_proxy"
+        "mei_hdcp"
+        "mei-me"
+        "mei_phy"
+        "mei_pxp"
+        "mei-txe"
+        "mei-vsc"
+        "mei-vsc-hw"
+        "mei_wdt"
+        "microread_mei"
+        # --- /Intel MEI ---
 
         # --- Legacy framebuffer drivers (replaced by DRM/KMS) ---
         "aty128fb"
@@ -313,6 +453,7 @@ in
         "tdfxfb"
         "tridentfb"
         "udlfb"
+        "vesafb" # Legacy VESA BIOS framebuffer; UEFI+KMS uses efifb/simpledrm
         "vfb"
         "viafb"
         "vt8623fb"
@@ -339,13 +480,22 @@ in
         "usbmouse" # Legacy boot-protocol HID; usbhid replaces
         # --- /Replaced / obsolete drivers ---
 
+        # --- Joystick / game controller input ---
+        "joydev"
+        # --- /Joystick ---
+
         # --- Misc ---
         "hamradio" # Amateur radio umbrella
         "floppy"
         "vivid" # Test driver, repeated CVE source
         "pcspkr" # PC speaker beep
         # --- /Misc ---
-      ];
+      ]
+      # USB webcams (uvcvideo) are killed by default like everything above,
+      # but gated so a host can keep webcams working via
+      # `hardening.webcam.enable = true`. modprobe.d and the unload script
+      # below follow automatically since both read blacklistedKernelModules.
+      ++ lib.optional (!cfg.webcam.enable) "uvcvideo";
 
       environment.etc."modprobe.d/nixos-hardening.conf".text = lib.concatMapStringsSep "\n" (
         mod: "install ${mod} ${pkgs.coreutils}/bin/false"
@@ -374,7 +524,8 @@ in
         newgidmap.setuid = lib.mkDefault false;
         fusermount.enable = lib.mkDefault false;
         fusermount3.enable = lib.mkDefault false;
-      } // lib.optionalAttrs config.security.polkit.enable {
+      }
+      // lib.optionalAttrs config.security.polkit.enable {
         # pkexec wrapper is only defined upstream when polkit is enabled;
         # setting setuid here without a source would fail evaluation.
         pkexec.setuid = lib.mkDefault false;
