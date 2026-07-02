@@ -84,19 +84,28 @@ in
     # preservation tries to create the leaves.
     systemd.tmpfiles.settings.preservation =
       let
-        defaults = {
+        # Intermediate parents (e.g. .config, .local/share). They live inside
+        # the 0700 home, so their mode is moot for other users anyway.
+        parentDefaults = {
           user = cfg.username;
           group = "users";
           mode = "0755";
         };
+        # The home root must stay 0700 to match users.users.<u>.homeMode.
+        # tmpfiles `d` rules *adjust* an existing dir's mode and run on boot
+        # AFTER activation's chmod, so a 0755 here would silently re-open the
+        # home to o+rx on every boot.
+        homeDefaults = parentDefaults // {
+          mode = "0700";
+        };
       in
       {
-        "/home/${cfg.username}".d = defaults;
+        "/home/${cfg.username}".d = homeDefaults;
       }
       // lib.listToAttrs (
         map (p: {
           name = "/home/${cfg.username}/${p}";
-          value.d = defaults;
+          value.d = parentDefaults;
         }) intermediateParents
       );
 
