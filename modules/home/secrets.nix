@@ -9,10 +9,23 @@
 let
   cfg = config.programs.aldur.secrets;
 
-  identitiesFile = pkgs.concatTextFile {
-    name = "age-identities";
-    files = cfg.identities;
-  };
+  # Concatenate the identities passage reads, but first refuse to bake a
+  # plaintext age secret key into the world-readable nix store. age-plugin-*
+  # identity stubs are public and fine; an age-keygen secret (AGE-SECRET-KEY-1
+  # ...) is a decryption key and must never land here. This turns the option
+  # doc's "do not put secret keys here" from a hope into a build failure.
+  identitiesFile =
+    pkgs.runCommand "age-identities" { inherit (cfg) identities; } ''
+      for f in $identities; do
+        if grep -q 'AGE-SECRET-KEY-1' "$f"; then
+          echo "secrets.nix: refusing to store a plaintext age secret key from identity: $f" >&2
+          echo "  identities must be public key material (e.g. age-plugin-yubikey stubs)." >&2
+          exit 1
+        fi
+        cat "$f"
+        echo
+      done > $out
+    '';
 
   recipientsFile =
     pkgs.runCommand "age-recipients"
@@ -25,7 +38,15 @@ let
       ''
         {
           for f in $identities; do
-            grep -oE 'age1[a-z0-9]+' "$f" | head -1
+            # Per-file so one identity without a recipient fails loudly
+            # instead of being masked by another file's recipient (the old
+            # `grep | head` swallowed grep's exit status).
+            rec=$(grep -oE 'age1[a-z0-9]+' "$f" | head -1)
+            if [ -z "$rec" ]; then
+              echo "secrets.nix: no 'age1...' recipient found in identity: $f" >&2
+              exit 1
+            fi
+            printf '%s\n' "$rec"
           done
           cat "$extras"
         } > $out
@@ -178,7 +199,9 @@ in
         concatenated into the file passage reads via
         $PASSAGE_IDENTITIES_FILE. Identity stubs from `age-plugin-yubikey`
         are public info and safe in the nix store; do not put plaintext
-        age secret keys here.
+        age secret keys here — the build fails if an identity contains an
+        `AGE-SECRET-KEY-1...` line, and if any identity has no `age1...`
+        recipient.
       '';
       example = lib.literalExpression "[ ./secrets/yubikey-a ./secrets/yubikey-b ]";
     };
