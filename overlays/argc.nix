@@ -45,14 +45,16 @@ in
     assert (text != null) != (file != null);
     let
       rawSource = if file != null then builtins.readFile file else text;
-      # Inject @version after @describe (or at the start if no @describe)
+      # Inject @version before @describe (or at the start if no @describe).
+      # The injected lines must start at column 0: argc only recognizes
+      # unindented `# @...` directives.
       scriptSource =
         if builtins.match ".*# @version.*" rawSource != null then
           rawSource # Already has version
         else if builtins.match ".*# @describe.*" rawSource != null then
           builtins.replaceStrings
             [ "# @describe" ]
-            [ "# @version ${version}\n    # @describe" ]
+            [ "# @version ${version}\n# @describe" ]
             rawSource
         else
           "# @version ${version}\n" + rawSource;
