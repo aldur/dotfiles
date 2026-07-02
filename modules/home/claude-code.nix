@@ -43,16 +43,22 @@ let
   # Existing keys are preserved; Nix-managed keys take precedence on conflict.
   # We use `cat f.tmp > f` instead of `mv f.tmp f` so that this plays nicely
   # with persistance.
+  #
+  # Branch on DRY_RUN instead of prefixing with the deprecated $DRY_RUN_CMD:
+  # the redirections would still run under `home-manager switch -n` and
+  # truncate the live target with the echoed command text.
   mergeJsonActivation = name: target: source: ''
-    if [ -s "${target}" ]; then
-      $DRY_RUN_CMD ${lib.getExe pkgs.jq} \
+    if [[ -v DRY_RUN ]]; then
+      echo "Would merge ${name} from ${source} into ${target}"
+    elif [ -s "${target}" ]; then
+      ${lib.getExe pkgs.jq} \
         --argjson managed ${lib.escapeShellArg (builtins.toJSON nixManagedHookMarkers)} \
         -s ${lib.escapeShellArg hooksAwareMerge} \
         "${target}" ${source} > "${target}.tmp"
-      $DRY_RUN_CMD cat "${target}.tmp" > "${target}"
+      cat "${target}.tmp" > "${target}"
       rm -f "${target}.tmp"
     else
-      $DRY_RUN_CMD install -Dm644 ${source} "${target}"
+      install -Dm644 ${source} "${target}"
     fi
   '';
 
