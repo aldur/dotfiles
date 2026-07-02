@@ -11,7 +11,6 @@ in
 {
   imports = [
     inputs.nix-homebrew.darwinModules.nix-homebrew
-    # ./casks.nix ./masApps.nix
   ];
 
   options.programs.${name} = {
@@ -44,7 +43,6 @@ in
       taps = {
         "homebrew/homebrew-core" = inputs.homebrew-core;
         "homebrew/homebrew-cask" = inputs.homebrew-cask;
-        "homebrew/homebrew-bundle" = inputs.homebrew-bundle;
       };
 
       # Optional: Enable fully-declarative tap management
