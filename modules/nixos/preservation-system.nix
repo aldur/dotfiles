@@ -20,20 +20,23 @@ in
         inInitrd = true;
         mode = "0444";
       }
-      # SSH host keys via default bind-mount. On fresh deploy
-      # /persist/etc/ssh/... doesn't exist yet — preservation creates
-      # empty files, sshd-keygen fills them on first boot (writes go
-      # through the bind to /persist), and subsequent boots find the
-      # populated keys.
+      # SSH host keys via symlink, NOT the default bind-mount. sshd-keygen
+      # does `rm -f $key` unless the path is a symlink; on a bind-mounted
+      # (empty) file the rm fails with EBUSY under `set -e`, so no key is
+      # ever generated and sshd starts without host keys. With a dangling
+      # symlink the rm is skipped and `ssh-keygen -f` writes through it
+      # into /persist (parent dir created by configureParent). Same shape
+      # as the upstream preservation example. File modes are set by
+      # ssh-keygen itself (0600 / 0644).
       {
         file = "/etc/ssh/ssh_host_ed25519_key";
+        how = "symlink";
         configureParent = true;
-        mode = "0600";
       }
       {
         file = "/etc/ssh/ssh_host_ed25519_key.pub";
+        how = "symlink";
         configureParent = true;
-        mode = "0644";
       }
     ];
 
