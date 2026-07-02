@@ -31,7 +31,7 @@ BOT_TOKEN="${BOT_TOKEN:-}"
 TYPE='m'
 FILE_TO_SEND=""
 
-while getopts ":c:t:h:p:v:" opt; do
+while getopts ":c:t:p:v:h" opt; do
 	case $opt in
 		c) CHAT_ID="$OPTARG" ;;
 		t) BOT_TOKEN="$OPTARG" ;;
@@ -64,7 +64,7 @@ done
 shift $((OPTIND - 1))
 
 if [ -z "$CHAT_ID" ]; then
-	echo "Error: CHAT_ID cannot be empty. Use '-c' or '--chat-id' to set it."
+	echo "Error: CHAT_ID cannot be empty. Use '-c' to set it."
 	exit 1
 fi
 
@@ -80,33 +80,39 @@ if [ $# -eq 0 ]; then
 fi
 
 MESSAGE="$1"
-CURL_OPTIONS="-q -s -S -L -o-"
 
-CURL_CMD_STR="curl ${CURL_OPTIONS} "
-CURL_CMD_STR+="-F chat_id=${CHAT_ID} "
+# curl's -F syntax needs `"` and `\` escaped inside its own quoting when the
+# value is a filename (an unquoted `@path` stops at `;` or `,`).
+curl_f_escape() {
+	printf '%s' "$1" | sed 's/[\\"]/\\&/g'
+}
+
+# --form-string (not -F) for user-supplied text: -F would expand a leading
+# `@` or `<` into a file upload.
+CURL_ARGS=(-q -s -S -L -o- --form-string "chat_id=${CHAT_ID}")
 
 case $TYPE in
 	m)
-        CURL_CMD_STR+="-F text=\"${MESSAGE}\" "
+		CURL_ARGS+=(--form-string "text=${MESSAGE}")
 		ENDPOINT="sendMessage"
 		;;
 	p)
-        CURL_CMD_STR+="-F caption=\"${MESSAGE}\" "
-		CURL_CMD_STR+="-F photo=@\"${FILE_TO_SEND}\" "
+		CURL_ARGS+=(--form-string "caption=${MESSAGE}")
+		CURL_ARGS+=(-F "photo=@\"$(curl_f_escape "$FILE_TO_SEND")\"")
 		ENDPOINT="sendPhoto"
 		;;
 	v)
-        CURL_CMD_STR+="-F caption=\"${MESSAGE}\" "
-		CURL_CMD_STR+="-F video=@\"${FILE_TO_SEND}\" "
+		CURL_ARGS+=(--form-string "caption=${MESSAGE}")
+		CURL_ARGS+=(-F "video=@\"$(curl_f_escape "$FILE_TO_SEND")\"")
 		ENDPOINT="sendVideo"
 		;;
-	\?)
-		echo "Invalid type: $type!"
+	*)
+		echo "Invalid type: $TYPE!"
 		exit 1
 		;;
 esac
 
-CURL_CMD_STR+="https://api.telegram.org/bot${BOT_TOKEN}/${ENDPOINT}"
-
-eval $CURL_CMD_STR
-exit $?
+# The URL embeds the bot token; pass it via a config file on stdin so it
+# never appears in the process list.
+printf 'url = "https://api.telegram.org/bot%s/%s"\n' "$BOT_TOKEN" "$ENDPOINT" \
+	| curl "${CURL_ARGS[@]}" --config -
