@@ -42,7 +42,7 @@ BEHAVIOR:
   - If no FILE is provided, reads from stdin and outputs with --armor to stdout
   - If FILE is provided, writes to <filename>.gpg
   - If --output is specified, writes to the specified output file
-  - When outputting to stdout and input exceeds 1KB, prompts for confirmation
+  - Refuses to overwrite an existing output file
 
 EXAMPLES:
   # Encrypt stdin to stdout (using default email)
@@ -155,8 +155,8 @@ if [ ${#UNTRUSTED_KEYS[@]} -gt 0 ]; then
 	exit 1
 fi
 
-# Build GPG recipient arguments
-GPG_ARGS=(--batch --yes --trust-model always)
+# Build GPG recipient arguments.
+GPG_ARGS=(--batch)
 for recipient in "${RECIPIENTS[@]}"; do
 	GPG_ARGS+=(--recipient "$recipient")
 done
@@ -165,28 +165,7 @@ done
 if [ -z "$INPUT_FILE" ]; then
 	# Reading from stdin
 	if [ -z "$OUTPUT_FILE" ]; then
-		# Output to stdout with armor
-		# First, read stdin into a temp file to check size
-		TEMP_INPUT=$(mktemp)
-		trap "rm -f $TEMP_INPUT; cleanup" SIGINT SIGTERM ERR EXIT
-		cat > "$TEMP_INPUT"
-
-		INPUT_SIZE=$(stat -c%s "$TEMP_INPUT" 2>/dev/null || stat -f%z "$TEMP_INPUT" 2>/dev/null || echo 0)
-
-		# Check if size exceeds 1KB (1024 bytes)
-		if [ "$INPUT_SIZE" -gt 1024 ]; then
-			echo "Warning: Input size is $INPUT_SIZE bytes (> 1KB)." >&2
-			echo "Are you sure you want to output to stdout? [y/N]" >&2
-			read -r response
-			if [[ ! "$response" =~ ^[Yy]$ ]]; then
-				echo "Aborted." >&2
-				rm -f "$TEMP_INPUT"
-				exit 1
-			fi
-		fi
-
-		gpg --encrypt --armor "${GPG_ARGS[@]}" < "$TEMP_INPUT"
-		rm -f "$TEMP_INPUT"
+		gpg --encrypt --armor "${GPG_ARGS[@]}"
 	else
 		# Output to specified file
 		gpg --encrypt --output "$OUTPUT_FILE" "${GPG_ARGS[@]}"
