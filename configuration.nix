@@ -11,6 +11,7 @@
     ./modules/fish.nix
     ./modules/lazyvim.nix
     ./modules/nix.nix
+    ./modules/nixpkgs.nix
     ./modules/users.nix
 
     (
@@ -28,14 +29,6 @@
             inherit inputs;
           };
         };
-      }
-    )
-
-    (
-      { config, pkgs, ... }:
-      {
-        nixpkgs.config.allowUnfreePredicate =
-          pkg: builtins.elem (pkgs.lib.getName pkg) config.nixpkgs.allowUnfreeByName;
       }
     )
 
