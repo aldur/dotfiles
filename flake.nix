@@ -70,14 +70,6 @@
       nixpkgs-unstable,
       ...
     }@inputs:
-    let
-      # This ugly thing ensures that, when descendant flakes (e.g. those in
-      # `base_hosts`) use this flake, all (this flake) inputs are correctly
-      # passed as arguments to the modules.
-      thisFlakeInputs = inputs // {
-        inherit self;
-      };
-    in
     (flake-utils.lib.eachDefaultSystem (
       system:
       let
@@ -162,7 +154,7 @@
       };
 
       # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
-      specialArgs.inputs = thisFlakeInputs;
+      specialArgs.inputs = inputs;
 
       utils.github-keys = import ./utils/github-keys.nix { };
 
@@ -176,7 +168,7 @@
       # winning so `self` resolves to aldur-dotfiles. Encodes the merge
       # order once so consumers can't get it backwards.
       lib.mkSpecialArgs = hostInputs: {
-        inputs = hostInputs // thisFlakeInputs;
+        inputs = hostInputs // inputs;
       };
 
       nixosModules = {
