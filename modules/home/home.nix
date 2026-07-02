@@ -29,6 +29,23 @@ let
   ];
 
   aldurs-tools = pkgs.callPackage ../../packages/aldurs-tools { tools = customTools; };
+
+  # Absolute path to the `lazyvim` binary, or null when no variant of it is
+  # part of this configuration. The nixCats modules expose their built package
+  # under `out.packages` (only populated while enabled); the sandboxed
+  # `jailed-lazyvim` alternative ships the same binary via `home.packages`.
+  lazyvim-bin =
+    let
+      fromModule = cfg: lib.attrByPath [ "out" "packages" "lazyvim" ] null cfg;
+      package =
+        if osConfig.programs.aldur.lazyvim.enable then
+          fromModule osConfig.programs.aldur.lazyvim
+        else if config.programs.aldur.lazyvim.enable then
+          fromModule config.programs.aldur.lazyvim
+        else
+          lib.findFirst (p: lib.getName p == "lazyvim") null config.home.packages;
+    in
+    if package == null then null else lib.getExe' package "lazyvim";
 in
 {
   imports = [
@@ -289,7 +306,21 @@ in
           skipAmendWarning = true;
           nerdFontsVersion = "3";
         };
-      };
+      }
+      //
+        # `e` should open our wrapped nvim, when this configuration has it.
+        # These mirror lazygit's built-in "nvim" editPreset with the binary
+        # swapped; lazygit quotes {{filename}} itself, and editInTerminal
+        # suspends lazygit while nvim runs.
+        lib.optionalAttrs (lazyvim-bin != null) {
+          os = {
+            edit = "${lazyvim-bin} -- {{filename}}";
+            editAtLine = "${lazyvim-bin} +{{line}} -- {{filename}}";
+            editAtLineAndWait = "${lazyvim-bin} +{{line}} -- {{filename}}";
+            openDirInEditor = "${lazyvim-bin} -- {{dir}}";
+            editInTerminal = true;
+          };
+        };
     };
 
     difftastic = {
