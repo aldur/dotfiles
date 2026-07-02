@@ -1,6 +1,7 @@
 {
   writeShellApplication,
   tmux,
+  lazyvim-bin ? "lazyvim",
 }:
 
 writeShellApplication {
@@ -9,6 +10,10 @@ writeShellApplication {
   runtimeInputs = [
     tmux
   ];
+
+  runtimeEnv = {
+    LAZYVIM_BIN = lazyvim-bin;
+  };
 
   text = builtins.readFile ./lazyvim-popup.sh;
 }

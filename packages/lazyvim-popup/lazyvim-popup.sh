@@ -44,7 +44,10 @@ if tmux has-session -t "=${session}" 2>/dev/null; then
     # force-reloads from disk.
     [ -n "$file" ] && tmux send-keys -t "${session}" ":edit! ${file}" Enter
 else
-    nvim_cmd=(lazyvim)
+    # LAZYVIM_BIN comes from the wrapper (default.nix): the session command
+    # runs with the tmux *server's* environment, whose PATH may not include
+    # lazyvim, so prefer the absolute path baked in at build time.
+    nvim_cmd=("$LAZYVIM_BIN")
     [ -n "$file" ] && nvim_cmd+=("$file")
     tmux new-session -d -s "${session}" -c "${start_dir}" -e NVIM_POPUP=1 "${nvim_cmd[@]}"
     # Popup-only session: drop the status line so nvim fills the popup, and

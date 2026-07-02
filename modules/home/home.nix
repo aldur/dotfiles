@@ -19,7 +19,7 @@ let
     flatten-pdf
     fps
     gpg-encrypt
-    lazyvim-popup
+    (lazyvim-popup.override (lib.optionalAttrs (lazyvim-bin != null) { inherit lazyvim-bin; }))
     lstrip
     shrink-pdf
     split-pdf
