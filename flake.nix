@@ -153,9 +153,6 @@
         };
       };
 
-      # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
-      specialArgs.inputs = inputs;
-
       utils.github-keys = import ./utils/github-keys.nix { };
 
       lib.programs = {

@@ -8,9 +8,9 @@
     };
   };
   outputs =
-    { aldur-dotfiles, ... }:
+    { aldur-dotfiles, ... }@inputs:
     let
-      inherit (aldur-dotfiles) specialArgs;
+      specialArgs = aldur-dotfiles.lib.mkSpecialArgs inputs;
       qemuModule = ./qemu.nix;
     in
     aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system: {

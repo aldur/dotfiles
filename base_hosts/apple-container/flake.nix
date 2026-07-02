@@ -8,9 +8,9 @@
     };
   };
   outputs =
-    { aldur-dotfiles, ... }:
+    { aldur-dotfiles, ... }@inputs:
     let
-      inherit (aldur-dotfiles) specialArgs;
+      specialArgs = aldur-dotfiles.lib.mkSpecialArgs inputs;
       inherit (aldur-dotfiles.inputs) nixpkgs flake-utils;
 
       # One image serves both: `container run` uses the OCI entrypoint, while
