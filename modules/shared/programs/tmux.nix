@@ -2,6 +2,7 @@
 # Consumed by home-manager (programs.tmux) and NixOS (programs.tmux).
 # NixOS uses `shortcut` instead of `prefix`, and lacks `mouse`/`focusEvents`
 # options — callers must set those themselves.
+{ lib }:
 {
   terminal = "tmux-256color";
   baseIndex = 1;
@@ -10,7 +11,7 @@
   # https://neovim.io/doc/user/faq.html#_esc-in-tmux-or-gnu-screen-is-delayed
   escapeTime = 10;
   historyLimit = 50000;
-  secureSocket = true;
+  secureSocket = lib.mkDefault true; # macOS disables it and overrides /tmp
   keyMode = "vi";
   newSession = true;
 

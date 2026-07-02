@@ -337,7 +337,7 @@ in
       enable = true;
     };
 
-    tmux = (import ../shared/programs/tmux.nix) // {
+    tmux = (import ../shared/programs/tmux.nix { inherit lib; }) // {
       enable = true;
       prefix = "c-a";
       mouse = true;
