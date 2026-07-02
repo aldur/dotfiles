@@ -399,8 +399,6 @@ in
     tmux = (import ../shared/programs/tmux.nix { inherit lib; }) // {
       enable = true;
       prefix = "c-a";
-      mouse = true;
-      focusEvents = true;
     };
 
     gpg = {

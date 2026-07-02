@@ -8,16 +8,14 @@ with lib;
 let
   claudeCfg = config.programs.aldur.claude-code;
 
-  # CLI utils useful for development.
+  # CLI utils useful for development. 
   basePackages = with pkgs; [
     autossh
-    bat
     difftastic
     ripgrep-all
     universal-ctags
     watch
   ];
-  extraPackages = [ ];
 in
 {
   imports = [
@@ -70,7 +68,7 @@ in
   };
 
   config = {
-    environment.systemPackages = basePackages ++ extraPackages;
+    environment.systemPackages = basePackages;
     nixpkgs.allowUnfreeByName = mkIf claudeCfg.enable [ "claude-code" ];
   };
 }

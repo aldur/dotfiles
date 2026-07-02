@@ -21,16 +21,9 @@ in
   config = mkIf cfg.enable {
     nixpkgs.allowUnfreeByName = [ "ssm-session-manager-plugin" ];
 
-    home-manager.users.aldur =
-      { config, ... }: # home-manager's config, not the OS one
-      {
-        programs.awscli.enable = true;
-      };
-
     environment.systemPackages = with pkgs; [
       awscli2
       ssm-session-manager-plugin
     ];
-
   };
 }
