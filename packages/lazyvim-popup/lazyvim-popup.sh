@@ -2,10 +2,10 @@
 #
 # Run from a tmux `display-popup`. Rather than launching a throwaway nvim that
 # dies with the popup, this attaches to a detached, per-window tmux session that
-# owns the nvim process. Backgrounding the popup (esc in nvim, which runs
+# owns the nvim process. Backgrounding the popup (q in nvim, which runs
 # `tmux detach-client`) leaves that session running, so the next summon
-# reattaches with every buffer and cursor position intact. `q` quits nvim, which
-# ends the session, so the following summon starts fresh.
+# reattaches with every buffer and cursor position intact. Quitting nvim
+# (:qa) ends the session, so the following summon starts fresh.
 #
 # Usage:
 #   lazyvim-popup                 # per-window editing session (prefix + e)
@@ -39,7 +39,7 @@ session="_lazyvim${kind:+_${kind}}_${window_id#@}"
 
 if tmux has-session -t "=${session}" 2>/dev/null; then
     # Reattaching to a backgrounded session. If a FILE was given, reload it so a
-    # re-run shows freshly-captured content instead of the stale buffer. esc only
+    # re-run shows freshly-captured content instead of the stale buffer. q only
     # backgrounds from normal mode, so nvim is in normal mode here; `:edit!`
     # force-reloads from disk.
     [ -n "$file" ] && tmux send-keys -t "${session}" ":edit! ${file}" Enter
@@ -48,7 +48,7 @@ else
     [ -n "$file" ] && nvim_cmd+=("$file")
     tmux new-session -d -s "${session}" -c "${start_dir}" -e NVIM_POPUP=1 "${nvim_cmd[@]}"
     # Popup-only session: drop the status line so nvim fills the popup, and
-    # disable the prefix so every key reaches nvim (we background via the esc
+    # disable the prefix so every key reaches nvim (we background via the q
     # keymap, not a tmux prefix binding). No "=" exact-match prefix here: unlike
     # has-session/attach-session, set-option rejects it ("no such session: =…").
     # The bare name still resolves exactly — we just created this session.

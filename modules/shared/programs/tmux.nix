@@ -76,10 +76,10 @@
     bind-key g display-popup -E -w 90% -h 90% -d "#{pane_current_path}" lazygit
 
     # Lazyvim in a big popup. `lazyvim-popup` attaches to a detached, per-window
-    # tmux session that owns the nvim process, so the popup is persistent: esc
+    # tmux session that owns the nvim process, so the popup is persistent: `q`
     # (normal mode) backgrounds it and the next summon reattaches with state
-    # intact, while `q` quits and starts fresh. The session sets NVIM_POPUP=1 so
-    # the nvim config knows to map esc/`q` accordingly.
+    # intact, while quitting nvim (:qa) starts fresh. The session sets
+    # NVIM_POPUP=1 so the nvim config knows to map `q` accordingly.
     bind-key e display-popup -E -w 90% -h 90% lazyvim-popup
 
     # y to yank in copy mode, remaining in copy mode

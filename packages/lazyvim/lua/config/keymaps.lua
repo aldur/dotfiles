@@ -3,8 +3,7 @@
 -- When launched from a tmux popup, nvim runs inside a detached,
 -- per-window tmux session, so the popup is persistent:
 if vim.env.NVIM_POPUP == "1" then
-	vim.keymap.set("n", "q", "<cmd>qa<cr>", { desc = "Quit (close tmux popup)", silent = true })
-	vim.keymap.set("n", "<esc>", function()
+	vim.keymap.set("n", "q", function()
 		-- Detach the client(s) on THIS popup's own session. Resolve the session
 		-- live (#S) so it's always right, and target it with -s so we can only
 		-- ever detach the popup — never the outer terminal. (A bare
