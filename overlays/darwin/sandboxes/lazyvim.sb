@@ -22,9 +22,6 @@
 ; Some LSPs need this.
 (allow signal)
 
-; To open browser, etc.
-(allow lsopen)
-
 ; --- Network ---
 ; We `deny all`, so this shouldn't be necessary.
 (deny network*
@@ -52,7 +49,10 @@
 (allow file-write* (subpath "/Users/aldur/.config/lazyvim"))
 (allow file-write* (subpath "/Users/aldur/.local/state/lazyvim"))
 (allow file-write* (subpath "/Users/aldur/.local/share"))
-(allow file-write* (subpath "/Users/aldur/.cargo"))
+; Only the download/build caches, NOT ~/.cargo/bin (on PATH) or
+; ~/.cargo/config.toml.
+(allow file-write* (subpath "/Users/aldur/.cargo/registry"))
+(allow file-write* (subpath "/Users/aldur/.cargo/git"))
 
 ; Allow
 (allow file-write* (subpath "/Users/aldur/Work/"))
@@ -63,6 +63,7 @@
 	(subpath "/private/var/protected/")
 	(subpath "/System/Library/Security/")
 	(subpath "/Library/Keychains/")
-	(regex #"/Users/[^/]*/\.ssh/")
+	(regex #"/Users/[^/]*/Library/Keychains/")
+	(regex #"/Users/[^/]*/\.ssh(/|$)")
 )
 ; --- /Files ---
