@@ -144,7 +144,7 @@ let
     # value of programs.aldur.claude-code.sandbox.extraRuntimeDirAllowlist.
     # The session bus is handled separately below via xdg-dbus-proxy.
     for entry in ${lib.concatMapStringsSep " " lib.escapeShellArg runtimeAllowlist}; do
-      src="/run/user/$uid/$entry"
+      src="$runtime/$entry"
       [ -e "$src" ] && args+=(--bind "$src" "$runtime/$entry")
     done
 
