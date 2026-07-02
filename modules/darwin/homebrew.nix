@@ -1,11 +1,17 @@
-{ inputs, config, lib, ... }:
+{
+  inputs,
+  config,
+  lib,
+  ...
+}:
 let
   name = "homebrew";
   cfg = config.programs.${name};
-in {
+in
+{
   imports = [
     inputs.nix-homebrew.darwinModules.nix-homebrew
-    # ./casks.nix ./masApps.nix 
+    # ./casks.nix ./masApps.nix
   ];
 
   options.programs.${name} = {
@@ -16,8 +22,6 @@ in {
     homebrew = {
       enable = true;
       onActivation.cleanup = "zap";
-
-      caskArgs.no_quarantine = true;
       caskArgs.require_sha = true;
 
       taps = builtins.attrNames config.nix-homebrew.taps;
