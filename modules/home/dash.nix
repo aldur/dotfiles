@@ -7,9 +7,21 @@ let
     runtimeInputs = with pkgs; [
       curl
       gnutar
+      coreutils
     ];
     text = ''
-      curl https://aldur.github.io/nixpkgs.docset/all.tgz | tar --overwrite -xzf - -C "$DASHT_DOCSETS_DIR"
+      tmp="$(mktemp)"
+      trap 'rm -f "$tmp"' EXIT
+
+      # -f so curl fails (non-zero, no body) on an HTTP error instead of
+      # piping an error page into tar; download to a temp file first so a
+      # partial/failed transfer can't --overwrite the live docsets with
+      # garbage. Extraction only runs once the download fully succeeds.
+      curl -fsSL --proto '=https' -o "$tmp" \
+        https://aldur.github.io/nixpkgs.docset/all.tgz
+
+      mkdir -p "$DASHT_DOCSETS_DIR"
+      tar --overwrite -xzf "$tmp" -C "$DASHT_DOCSETS_DIR"
     '';
   };
 in
