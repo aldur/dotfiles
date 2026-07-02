@@ -121,11 +121,12 @@
                 program = "${pkgs.writeShellScript "manifest-${name}" ''
                   set -eu
                   repo="''${1:-ghcr.io/aldur}"
+                  tag="''${2:-latest}"
                   img="$repo/${name}"
-                  echo "assembling $img:latest from :latest-amd64 + :latest-arm64"
-                  exec ${pkgs.regclient}/bin/regctl index create "$img:latest" \
-                    --ref "$img:latest-amd64" \
-                    --ref "$img:latest-arm64"
+                  echo "assembling $img:$tag from :$tag-amd64 + :$tag-arm64"
+                  exec ${pkgs.regclient}/bin/regctl index create "$img:$tag" \
+                    --ref "$img:$tag-amd64" \
+                    --ref "$img:$tag-arm64"
                 ''}";
               };
           in

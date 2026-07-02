@@ -13,6 +13,12 @@ permissions:
   contents: read
   packages: write
 
+# Publish master to the production `latest` tags; publish any other branch
+# (e.g. staging) to `<branch>-*` tags so it can never clobber what `container
+# run` consumers pull from `latest`.
+env:
+  TAG_PREFIX: ${{ github.ref_name == 'master' && 'latest' || github.ref_name }}
+
 jobs:
   push:
     name: ${{ matrix.app.name }} (${{ matrix.arch.suffix }})
@@ -40,8 +46,10 @@ jobs:
           docker builder prune -af || true
           df -h
 
-      - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-      - run: nix run --override-input aldur-dotfiles . ./base_hosts/apple-container#${{ matrix.app.name }} -- ghcr.io/${{ github.repository_owner }} latest-${{ matrix.arch.suffix }}
+      - run: echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: nix run --override-input aldur-dotfiles . ./base_hosts/apple-container#${{ matrix.app.name }} -- ghcr.io/${{ github.repository_owner }} "$TAG_PREFIX-${{ matrix.arch.suffix }}"
 
   manifest:
     needs: push
@@ -58,6 +66,8 @@ jobs:
           persist-credentials: false
       - uses: DeterminateSystems/determinate-nix-action@1d699fc25db3f9e079cd2f168ca007a4183389be # v3.15.1
 
-      # Multi-arch `:latest`.
-      - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-      - run: nix run --override-input aldur-dotfiles . ./base_hosts/apple-container#${{ matrix.app }} -- ghcr.io/${{ github.repository_owner }}
+      # Multi-arch manifest for the branch's tag prefix (`latest` on master).
+      - run: echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: nix run --override-input aldur-dotfiles . ./base_hosts/apple-container#${{ matrix.app }} -- ghcr.io/${{ github.repository_owner }} "$TAG_PREFIX"
