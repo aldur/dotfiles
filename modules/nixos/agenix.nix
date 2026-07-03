@@ -14,7 +14,7 @@ in
     { ... }:
     {
       imports = [ inputs.agenix.homeManagerModules.default ];
-      systemd.user.services.agenix.Service.Environment = "PATH=$PATH:${
+      systemd.user.services.agenix.Service.Environment = "PATH=${
         lib.makeBinPath [ pkgs.age-plugin-yubikey ]
       }";
     };
