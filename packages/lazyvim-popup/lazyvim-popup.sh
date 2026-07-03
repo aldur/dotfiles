@@ -42,7 +42,12 @@ if tmux has-session -t "=${session}" 2>/dev/null; then
     # re-run shows freshly-captured content instead of the stale buffer. q only
     # backgrounds from normal mode, so nvim is in normal mode here; `:edit!`
     # force-reloads from disk.
-    [ -n "$file" ] && tmux send-keys -t "${session}" ":edit! ${file}" Enter
+    # Backslash-escape spaces and backslashes so nvim's ex command line doesn't
+    # split the path (it isn't shell, so this is nvim cmdline escaping).
+    if [ -n "$file" ]; then
+        file_esc=$(printf '%s' "$file" | sed -e 's/\\/\\\\/g' -e 's/ /\\ /g')
+        tmux send-keys -t "${session}" ":edit! ${file_esc}" Enter
+    fi
 else
     # LAZYVIM_BIN comes from the wrapper (default.nix): the session command
     # runs with the tmux *server's* environment, whose PATH may not include
