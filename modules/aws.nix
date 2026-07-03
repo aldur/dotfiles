@@ -4,8 +4,8 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkEnableOption mkIf;
   name = "aws-cli";
   cfg = config.programs.${name};
 in

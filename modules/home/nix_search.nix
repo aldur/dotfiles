@@ -5,8 +5,8 @@
   inputs,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkEnableOption mkIf;
   name = "better-nix-search";
   cfg = config.programs.${name};
 in

@@ -6,9 +6,8 @@
   ...
 }:
 
-with lib;
-
 let
+  inherit (lib) mkEnableOption mkOption types mkIf;
   cfg = config.programs.qemu-vm;
 
   vmScript = pkgs.callPackage ../../packages/qemu-vm/qemu-vm.nix {

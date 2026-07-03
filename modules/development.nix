@@ -4,8 +4,8 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkEnableOption mkIf mkOption types;
   claudeCfg = config.programs.aldur.claude-code;
 
   # CLI utils useful for development. 
