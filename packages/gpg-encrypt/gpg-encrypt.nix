@@ -10,9 +10,8 @@ stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = [ makeWrapper ];
-  buildInputs = [ gnupg ];
 
-  phases = [ "installPhase" "fixupPhase" ];
+  dontUnpack = true;
 
   installPhase = ''
     runHook preInstall
@@ -33,5 +32,6 @@ stdenv.mkDerivation rec {
   meta = with lib; {
     description = "GPG encryption wrapper that encrypts to all keys for a given email in the GPG keyring";
     platforms = platforms.unix;
+    mainProgram = "gpg-encrypt";
   };
 }
