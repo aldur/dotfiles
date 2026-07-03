@@ -44,7 +44,7 @@ echo "Found input: github:$OWNER/$REPO" >&2
 UNTIL_DATE=$(date -u -d "$TIME_AGO" +%Y-%m-%dT%H:%M:%SZ)
 
 API_URL="https://api.github.com/repos/$OWNER/$REPO/commits?until=$UNTIL_DATE&per_page=1"
-RESPONSE=$(curl --no-verbose -s "$API_URL")
+RESPONSE=$(curl --no-verbose -fsSL "$API_URL")
 
 COMMIT=$(echo "$RESPONSE" | jq -r '.[0].sha // empty')
 
@@ -63,8 +63,8 @@ echo "Date: $COMMIT_DATE" >&2
 echo "Message: $COMMIT_MSG" >&2
 echo ""
 
-CMD="nix flake update $INPUT_NAME --override-input $INPUT_NAME github:$OWNER/$REPO/$COMMIT"
-echo "Will run: '$CMD'" >&2
+CMD=(nix flake update "$INPUT_NAME" --override-input "$INPUT_NAME" "github:$OWNER/$REPO/$COMMIT")
+echo "Will run: ${CMD[*]}" >&2
 read -rp "Press Enter to continue (Ctrl-C to cancel): " >&2
 
-$CMD
+"${CMD[@]}"
