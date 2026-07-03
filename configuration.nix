@@ -1,5 +1,5 @@
 # Shared configuration between NixOS and nix-darwin
-{ inputs, ... }:
+{ ... }:
 
 {
   imports = [
@@ -14,23 +14,13 @@
     ./modules/nixpkgs.nix
     ./modules/users.nix
 
-    (
-      { config, ... }:
-      {
-        home-manager = {
-          useGlobalPkgs = true;
-          useUserPackages = true;
-          backupFileExtension = "home-manager-backup";
-
-          # Optionally, use home-manager.extraSpecialArgs to pass
-          # arguments to home.nix
-          extraSpecialArgs = {
-            inherit (config.system) stateVersion;
-            inherit inputs;
-          };
-        };
-      }
-    )
+    {
+      home-manager = {
+        useGlobalPkgs = true;
+        useUserPackages = true;
+        backupFileExtension = "home-manager-backup";
+      };
+    }
 
     (
       { inputs, ... }:
