@@ -306,13 +306,10 @@ in
 
       };
 
-      plugins = [
-        {
-          name = "z";
-          src = pkgs.fishPlugins.z;
-        }
-      ];
     };
+
+    # `z` directory-jump command (zoxide's default fish integration).
+    zoxide.enable = true;
 
     pet = {
       enable = true;
