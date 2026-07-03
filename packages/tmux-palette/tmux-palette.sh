@@ -51,6 +51,6 @@ cmd=${choice#*$'\t'}
 # don't render over an active popup either. `run-shell -b` queues a shell
 # command that fires once the palette is gone, so the dispatched action
 # always runs against the original calling pane.
-runner=$(mktemp /tmp/tmux-palette.XXXXXX)
+runner=$(mktemp "$palette_dir/runner.XXXXXX")
 printf 'tmux %s\nrm -f -- %q\n' "$cmd" "$runner" > "$runner"
 tmux run-shell -b "bash $runner"
