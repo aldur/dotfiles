@@ -46,13 +46,13 @@ in
 
     persistClaudeCode = lib.mkOption {
       type = lib.types.bool;
-      default = config.programs.aldur.claude-code.enable;
+      default = config.programs.aldur.claude-code.enable or false;
       description = "Persist Claude Code state (.claude, .claude.json).";
     };
 
     persistLazyvim = lib.mkOption {
       type = lib.types.bool;
-      default = config.programs.aldur.lazyvim.enable;
+      default = config.programs.aldur.lazyvim.enable or false;
       description = "Persist LazyVim state.";
     };
 
