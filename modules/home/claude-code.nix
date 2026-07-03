@@ -57,8 +57,9 @@ let
         "${target}" ${source} > "${target}.tmp"
       cat "${target}.tmp" > "${target}"
       rm -f "${target}.tmp"
+      chmod 600 "${target}"
     else
-      install -Dm644 ${source} "${target}"
+      install -Dm600 ${source} "${target}"
     fi
   '';
 
@@ -97,14 +98,15 @@ let
     # the sandboxed Claude spawn arbitrary commands as a transient user
     # unit (outside the bwrap, with full access to every shadowed path).
     bus_addr="''${DBUS_SESSION_BUS_ADDRESS:-unix:path=$runtime/bus}"
-    proxy_sock=$(${pkgs.coreutils}/bin/mktemp -u /tmp/claude-dbus-proxy.XXXXXX)
+    proxy_dir=$(${pkgs.coreutils}/bin/mktemp -d /tmp/claude-dbus-proxy.XXXXXX)
+    proxy_sock="$proxy_dir/bus"
     ${lib.getExe pkgs.xdg-dbus-proxy} "$bus_addr" "$proxy_sock" --filter \
       --talk=org.freedesktop.DBus \
       ${
         lib.concatMapStringsSep " \\\n      " (n: "--talk=${lib.escapeShellArg n}") sandboxCfg.extraDbusTalk
       } &
     proxy_pid=$!
-    trap 'kill "$proxy_pid" 2>/dev/null; rm -f "$proxy_sock"' EXIT
+    trap 'kill "$proxy_pid" 2>/dev/null; rm -rf "$proxy_dir"' EXIT
     for _ in 1 2 3 4 5 6 7 8 9 10; do
       [ -S "$proxy_sock" ] && break
       sleep 0.1
