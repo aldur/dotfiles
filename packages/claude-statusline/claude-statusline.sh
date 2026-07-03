@@ -1,10 +1,23 @@
-#!/bin/bash
 input=$(cat)
 
-MODEL=$(echo "$input" | jq -r '.model.display_name')
-DIR=$(echo "$input" | jq -r '.workspace.current_dir')
-PCT=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
-CTX_SIZE=$(echo "$input" | jq -r '.context_window.context_window_size // 0')
+# One jq pass; degrade to empty/zero on malformed JSON rather than rendering
+# nothing (the six separate jq calls would each fail on bad input).
+IFS=$'\t' read -r MODEL DIR PCT CTX_SIZE CACHE_READ CACHE_CREATE INPUT < <(
+  jq -r '[
+    .model.display_name,
+    .workspace.current_dir,
+    ((.context_window.used_percentage // 0) | floor),
+    (.context_window.context_window_size // 0),
+    (.context_window.current_usage.cache_read_input_tokens // 0),
+    (.context_window.current_usage.cache_creation_input_tokens // 0),
+    (.context_window.current_usage.input_tokens // 0)
+  ] | @tsv' <<<"$input" 2>/dev/null
+) || true
+PCT=${PCT:-0}
+CTX_SIZE=${CTX_SIZE:-0}
+CACHE_READ=${CACHE_READ:-0}
+CACHE_CREATE=${CACHE_CREATE:-0}
+INPUT=${INPUT:-0}
 CTX_K=$((CTX_SIZE / 1000))k
 
 GREEN='\033[32m'
@@ -50,9 +63,6 @@ printf '%b' "${DIR_SHORT}"
 [ -n "$REPO_NAME" ] && printf '%b' " ${CYAN}${REPO_NAME}${RESET}"
 
 # Cache hit ratio
-CACHE_READ=$(echo "$input" | jq -r '.context_window.current_usage.cache_read_input_tokens // 0')
-CACHE_CREATE=$(echo "$input" | jq -r '.context_window.current_usage.cache_creation_input_tokens // 0')
-INPUT=$(echo "$input" | jq -r '.context_window.current_usage.input_tokens // 0')
 TOTAL_IN=$((CACHE_READ + CACHE_CREATE + INPUT))
 if [ "$TOTAL_IN" -gt 0 ]; then
   CACHE_PCT=$((CACHE_READ * 100 / TOTAL_IN))
