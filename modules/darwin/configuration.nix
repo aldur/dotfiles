@@ -1,7 +1,12 @@
 # macOS-specific configuration
-{ inputs, pkgsUnstable, ... }:
+{
+  inputs,
+  pkgsUnstable,
+  config,
+  ...
+}:
 let
-  user = "aldur";
+  user = config.mainUser;
 in
 {
   imports = [

@@ -1,5 +1,6 @@
-_: {
-  users.users.aldur = {
+{ config, ... }:
+{
+  users.users.${config.mainUser} = {
     extraGroups = [ "wheel" ];
     isNormalUser = true;
     homeMode = "700";

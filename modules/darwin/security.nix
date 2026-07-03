@@ -2,7 +2,7 @@
 {
   # Restrict `nix` user
   nix.settings = {
-    allowed-users = [ config.users.users.aldur.name ];
+    allowed-users = [ config.mainUser ];
   };
 
   security.pam.services.sudo_local = {

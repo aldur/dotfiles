@@ -26,13 +26,9 @@ let
       parts = lib.splitString "/" relPath;
       n = lib.length parts;
     in
-    lib.genList (i: lib.concatStringsSep "/" (lib.take (i + 1) parts)) (
-      lib.max 0 (n - 1)
-    );
+    lib.genList (i: lib.concatStringsSep "/" (lib.take (i + 1) parts)) (lib.max 0 (n - 1));
 
-  intermediateParents = lib.unique (
-    lib.concatMap (e: parentsOf (toRelPath e)) persistedDirs
-  );
+  intermediateParents = lib.unique (lib.concatMap (e: parentsOf (toRelPath e)) persistedDirs);
 in
 {
   options.aldur.preservation-user = {
@@ -40,7 +36,9 @@ in
 
     username = lib.mkOption {
       type = lib.types.str;
-      default = "aldur";
+      # `or "aldur"` so the exported module still evaluates standalone, where
+      # modules/users.nix (which declares mainUser) isn't imported.
+      default = config.mainUser or "aldur";
       description = "User whose home directory is preserved into /persist.";
     };
 

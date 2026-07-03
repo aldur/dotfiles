@@ -28,8 +28,7 @@ in
 
     nix-homebrew = {
       # User owning the Homebrew prefix
-      # NOTE: Hardcoded to `aldur`
-      user = config.users.users.aldur.name;
+      user = config.mainUser;
 
       # Install Homebrew under the default prefix
       enable = true;

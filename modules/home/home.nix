@@ -64,7 +64,7 @@ in
   home = {
     inherit stateVersion;
 
-    username = "aldur";
+    username = osConfig.mainUser;
     packages = customTools ++ [
       aldurs-tools
       pkgs.moreutils

@@ -7,7 +7,7 @@
     settings = {
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
-      AllowUsers = [ config.users.users.aldur.name ];
+      AllowUsers = [ config.mainUser ];
       LogLevel = "VERBOSE";
     };
   };

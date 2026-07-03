@@ -2,6 +2,7 @@
   inputs,
   pkgs,
   pkgsUnstable,
+  config,
   ...
 }:
 let
@@ -12,9 +13,5 @@ in
     lazyvim.defaultModule
   ];
 
-  home-manager.users.aldur =
-    { config, ... }: # home-manager's config, not the OS one
-    {
-      imports = [ lazyvim.defaultHomeModule ];
-    };
+  home-manager.users.${config.mainUser}.imports = [ lazyvim.defaultHomeModule ];
 }

@@ -2,6 +2,7 @@
   inputs,
   lib,
   pkgs,
+  config,
   ...
 }:
 let
@@ -9,7 +10,7 @@ let
 in
 {
   age.ageBin = ageBin;
-  home-manager.users.aldur =
+  home-manager.users.${config.mainUser} =
     { ... }:
     {
       imports = [ inputs.agenix.homeManagerModules.default ];

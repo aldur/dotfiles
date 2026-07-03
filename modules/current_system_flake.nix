@@ -1,4 +1,9 @@
-{ inputs, pkgs, ... }:
+{
+  inputs,
+  pkgs,
+  config,
+  ...
+}:
 let
   inherit (inputs) self;
 
@@ -26,5 +31,5 @@ in
   environment.etc.${flakeName}.source = self;
 
   # Script to copy the flake to ~/flake and make it writable.
-  home-manager.users.aldur.home.packages = [ editCurrentFlake ];
+  home-manager.users.${config.mainUser}.home.packages = [ editCurrentFlake ];
 }
