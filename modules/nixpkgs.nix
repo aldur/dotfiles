@@ -29,7 +29,7 @@ with lib;
     # https://discourse.nixos.org/t/mixing-stable-and-unstable-packages-on-flake-based-nixos-system/50351/4
     _module.args.pkgsUnstable = import inputs.nixpkgs-unstable {
       inherit (pkgs.stdenv.hostPlatform) system;
-      inherit (config.nixpkgs) config;
+      inherit (config.nixpkgs) config overlays;
     };
   };
 }
