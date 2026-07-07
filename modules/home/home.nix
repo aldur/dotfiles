@@ -101,6 +101,11 @@ in
         # (e.g. local yubikey-agent) if the symlink isn't a live socket.
         if set -q SSH_CONNECTION; and test -S "$HOME/.ssh/auth_sock"
             set -gx SSH_AUTH_SOCK "$HOME/.ssh/auth_sock"
+        else if set -q TMUX; and not set -q SSH_AUTH_SOCK
+            # Panes born under the linger-started tmux server (cold boot)
+            # have no SSH context yet; adopt the symlink without a liveness
+            # test — it resolves once a forwarded agent connects.
+            set -gx SSH_AUTH_SOCK "$HOME/.ssh/auth_sock"
         end
 
         # gw completions
