@@ -1,11 +1,11 @@
 { buildGoModule, fetchFromGitHub }:
-buildGoModule rec {
-  name = "llmcat";
-  version = "950be582c022f8245b0caa74b53d76a39609c600";
+buildGoModule {
+  pname = "llmcat";
+  version = "0.0.7-unstable-2025-03-22";
   src = fetchFromGitHub {
     owner = "everestmz";
-    repo = name;
-    rev = version;
+    repo = "llmcat";
+    rev = "950be582c022f8245b0caa74b53d76a39609c600";
     hash = "sha256-yV+LaLWVhgwHQj69K/KbI6OX+itBxbM9EtRazB1HlkI=";
   };
 

@@ -1,0 +1,165 @@
+name: Update pinned packages
+
+# Dependabot's nix ecosystem only tracks flake.lock inputs, so it can't bump
+# packages pinned by tag or rev inside this repo's Nix expressions. nix-update
+# does: it updates the version, the pinned tag/rev, the source hash, and any
+# dependent hashes (cargoDeps, vendorHash, npmDepsHash). Each package is
+# bumped and verified in its own matrix leg, then opened as its own PR, so one
+# broken update doesn't block the others.
+#
+# Not covered (nothing sensible for nix-update to track):
+# - packages/tiktoken: pins a raw data file, no upstream versioning
+# - packages/mlx: prebuilt wheels with per-platform/python hashes
+# - overlays/overrides/yubikey-agent.nix: pins a single patch, not a release
+# - packages/solidity-docset's inline Python deps: pinned PyPI libraries
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch: # allow manual runs from the Actions tab
+
+permissions: {}
+
+jobs:
+  build:
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Fork pinned to a branch commit; overrideAttrs keeps upstream's
+          # meta.position, so point nix-update at the override file.
+          - package: beancount-language-server
+            runner: ubuntu-24.04
+            nix-update-args: >-
+              --version=branch
+              --override-filename overlays/overrides/beancount-language-server.nix
+          - package: llmcat
+            runner: ubuntu-24.04
+            nix-update-args: --version=branch
+          - package: shrink-pdf
+            runner: ubuntu-24.04
+            nix-update-args: --version=branch
+          # remarks' flake output is a shell wrapper with no src; bump the
+          # inner Python package, exposed as a passthru.
+          - package: remarks
+            attr: remarks.remarks
+            runner: ubuntu-24.04
+            nix-update-args: --version=branch
+          # pi-llama is pinned to a commit on the default branch; it is not a
+          # flake output of its own, only a passthru of the pi wrapper. The
+          # wrapper hardcodes <pi-llama>/index.ts, so check it still exists.
+          - package: pi-llama
+            attr: pi.pi-llama
+            runner: ubuntu-24.04
+            nix-update-args: --version=branch
+            verify: >-
+              nix build .#pi -L &&
+              test -f "$(nix build .#pi.pi-llama -L --print-out-paths)/index.ts"
+          # Pinned to upstream release tags: nix-update's default.
+          - package: nomicfoundation-solidity-language-server
+            runner: ubuntu-24.04
+          # Upstream also tags pre-releases (v0.8.36-pre.1) that nix-update's
+          # stable heuristic doesn't filter; only accept vX.Y.Z tags.
+          - package: solidity-docset
+            runner: ubuntu-24.04
+            nix-update-args: --version-regex 'v(\d+\.\d+\.\d+)$'
+          # Darwin-only packages need a macOS runner (and the flake only
+          # exposes them there).
+          - package: uvc-util
+            runner: macos-26
+            nix-update-args: --version=branch
+          # llm-mlx comes from PyPI; build the whole llm env to catch plugin
+          # breakage, mirroring the nix-darwin-ci-llm job.
+          - package: llm-mlx
+            runner: macos-26
+            verify: nix build .#llm -L
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - uses: DeterminateSystems/determinate-nix-action@629b284231c2a82554b724e357e47fc6020833c8 # v3.21.2
+
+      - name: Bump ${{ matrix.package }} with nix-update
+        run: |
+          nix run nixpkgs#nix-update -- \
+            --flake \
+            ${{ matrix.nix-update-args }} \
+            ${{ matrix.attr || matrix.package }}
+
+      - name: Verify it builds
+        run: ${{ matrix.verify || format('nix build .#{0} -L', matrix.package) }}
+
+      - name: Capture changes
+        id: diff
+        run: |
+          git diff > update.patch
+          if [ -s update.patch ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload the patch
+        if: steps.diff.outputs.changed == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: patch-${{ matrix.package }}
+          path: update.patch
+
+  # Only this job holds the write token, and only to open the PR. It runs on a
+  # cheap Linux runner: applying a text patch needs no Nix or macOS. It runs
+  # even if another matrix leg's build failed (!cancelled()), so one broken
+  # package doesn't block the others' PRs; a leg whose build produced no patch
+  # is skipped via the missing artifact.
+  pull-request:
+    needs: build
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - beancount-language-server
+          - llmcat
+          - shrink-pdf
+          - remarks
+          - pi-llama
+          - nomicfoundation-solidity-language-server
+          - solidity-docset
+          - uvc-util
+          - llm-mlx
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Download the patch
+        id: patch
+        continue-on-error: true # no artifact means no update for this package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: patch-${{ matrix.package }}
+
+      - name: Apply the update
+        if: steps.patch.outcome == 'success'
+        run: |
+          git apply update.patch
+          rm update.patch
+
+      - name: Open pull request
+        if: steps.patch.outcome == 'success'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          branch: automated/update-${{ matrix.package }}
+          title: "packages: bump ${{ matrix.package }}"
+          commit-message: "packages: bump ${{ matrix.package }}"
+          body: |
+            Automated `${{ matrix.package }}` bump via `nix-update`.
+
+            Updates the pinned version/rev and source hashes,
+            verified to build on the runner before opening this PR.
+          delete-branch: true

@@ -8,7 +8,7 @@ let
 
   remarks = python3Packages.buildPythonPackage {
     pname = "remarks";
-    version = "unstable-2023-03-08";
+    version = "0-unstable-2023-03-08";
 
     src = fetchFromGitHub {
       owner = "lucasrla";
@@ -45,4 +45,8 @@ writeShellApplication {
 
   runtimeInputs = [ pythonWithRemarks ];
   text = ''${pythonWithRemarks}/bin/python3 -m remarks "$@"'';
+
+  # Reachable as `remarks.remarks`: nix-update can't inspect the wrapper
+  # (no src), so CI bumps the inner Python package through this path.
+  derivationArgs.passthru = { inherit remarks; };
 }

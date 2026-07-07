@@ -7,7 +7,7 @@
 
 stdenv.mkDerivation {
   pname = "uvc-util";
-  version = "1.2.0";
+  version = "0-unstable-2024-02-26";
 
   src = fetchFromGitHub {
     owner = "jtfrey";

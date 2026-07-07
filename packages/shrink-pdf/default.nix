@@ -9,7 +9,7 @@
 
 stdenv.mkDerivation {
   pname = "shrink-pdf";
-  version = "git-2025-12-02";
+  version = "1.2-unstable-2025-11-27";
 
   src = fetchFromGitHub {
     owner = "aklomp";
