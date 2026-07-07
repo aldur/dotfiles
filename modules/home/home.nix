@@ -13,20 +13,25 @@ let
     sha256 = "sha256-x1H++Oqax/ZacnsTgurRFWI9I+/E7wb5pj8PXf7fhmw=";
   };
 
-  customTools = with pkgs; [
-    claude-log
-    flake-lock-cooldown
-    flatten-pdf
-    fps
-    gpg-encrypt
-    (lazyvim-popup.override (lib.optionalAttrs (lazyvim-bin != null) { inherit lazyvim-bin; }))
-    lstrip
-    shrink-pdf
-    split-pdf
-    tmux-palette
-    totp-qr-decode
-    watermark-pdf
-  ];
+  customTools =
+    with pkgs;
+    [
+      claude-log
+      flake-lock-cooldown
+      flatten-pdf
+      fps
+      gpg-encrypt
+      (lazyvim-popup.override (lib.optionalAttrs (lazyvim-bin != null) { inherit lazyvim-bin; }))
+      lstrip
+      shrink-pdf
+      split-pdf
+      tmux-palette
+      totp-qr-decode
+      watermark-pdf
+    ]
+    # The Linux counterpart of the darwin `faraday` shell alias
+    # (sandbox-exec based, see modules/darwin/home.nix).
+    ++ lib.optionals stdenv.isLinux [ faraday ];
 
   aldurs-tools = pkgs.callPackage ../../packages/aldurs-tools { tools = customTools; };
 
@@ -440,6 +445,13 @@ in
     gdl = "git -c diff.external=difft log -p --ext-diff";
     gds = "git -c diff.external=difft show --ext-diff";
   }
+  //
+    # Linux mirror of the darwin `sandbox` alias (see
+    # modules/darwin/home.nix): no network, personal directories hidden.
+    # `faraday --mask` skips directories that don't exist on this machine.
+    lib.optionalAttrs pkgs.stdenv.isLinux {
+      sandbox = "faraday --mask ~/Documents --mask ~/Desktop --mask ~/Developer --mask ~/Movies --mask ~/Music --mask ~/Pictures";
+    }
   //
     # `lv` shortcut whenever a `lazyvim` command is on PATH: either the nixCats
     # module (`aldur.lazyvim.enable`) or a sandboxed `jailed-lazyvim` wrapper

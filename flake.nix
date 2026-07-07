@@ -101,6 +101,9 @@
         }
         // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
           inherit (pkgs) uvc-util c920-defaults;
+        }
+        // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+          inherit (pkgs) faraday;
         };
 
         # Legacy packages are not automatically flake-checked
@@ -159,6 +162,8 @@
         git = import ./modules/shared/programs/git.nix;
         tmux = import ./modules/shared/programs/tmux.nix;
       };
+
+      lib.overrideUntilUpgrade = import ./utils/override-until-upgrade.nix;
 
       # Build `specialArgs` for a descendant flake (e.g. those in
       # `base_hosts`): merge its own inputs with this flake's, the latter

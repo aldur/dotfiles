@@ -15,6 +15,7 @@ final: prev: {
   split-pdf = prev.callPackage ../packages/split-pdf { };
   totp-qr-decode = prev.callPackage ../packages/totp-qr-decode { };
   flake-lock-cooldown = prev.callPackage ../packages/flake-lock-cooldown { };
+  faraday = prev.callPackage ../packages/faraday { };
   fps = prev.callPackage ../packages/fps { };
   lstrip = prev.callPackage ../packages/lstrip { };
   claude-log = prev.callPackage ../packages/claude-log { };
