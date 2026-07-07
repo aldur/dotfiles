@@ -1,3 +1,4 @@
+{ self }:
 final: prev: {
   nomicfoundation-solidity-language-server =
     prev.callPackage
@@ -27,6 +28,18 @@ final: prev: {
   tiktoken = prev.callPackage ../packages/tiktoken/tiktoken.nix { };
   llmcat = prev.callPackage ../packages/llmcat/llmcat.nix { };
 
+  # pi releases often; stable nixpkgs lags too far behind, so follow
+  # unstable by default. `legacyPackages` (rather than a fresh `import`)
+  # reuses the flake's memoized, un-overlaid package set.
+  pi-coding-agent =
+    self.inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system}.pi-coding-agent;
+
+  piPlugins = {
+    pi-llama = prev.callPackage ../packages/pi/plugins/pi-llama.nix { };
+  };
+  pi = prev.callPackage ../packages/pi/pi.nix { plugins = final.piPlugins; };
+
+  llm-mlx = prev.callPackage ../packages/llm-mlx { };
   llmWithPlugins = prev.python3.withPackages (
     ps:
     [
@@ -35,10 +48,9 @@ final: prev: {
       ps.llm-gguf
       ps.llm-openrouter
       ps.llm-docs
+      ps.llm-llama-server
     ]
-    ++ prev.lib.optional (prev.stdenv.isDarwin && prev.stdenv.isAarch64) (
-      prev.callPackage ../packages/llm-mlx { }
-    )
+    ++ prev.lib.optional (prev.stdenv.isDarwin && prev.stdenv.isAarch64) final.llm-mlx
   );
 
   markdownlint-cli2 = final.callPackage ../packages/markdownlint-cli2 {

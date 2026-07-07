@@ -47,16 +47,16 @@ jobs:
             attr: remarks.remarks
             runner: ubuntu-24.04
             nix-update-args: --version=branch
-          # pi-llama is pinned to a commit on the default branch; it is not a
-          # flake output of its own, only a passthru of the pi wrapper. The
-          # wrapper hardcodes <pi-llama>/index.ts, so check it still exists.
+          # pi plugins are pinned to a commit on their default branch; they
+          # are not flake outputs of their own, only passthrus of the pi
+          # wrapper. The wrapper loads <plugin>/index.ts, so check it exists.
           - package: pi-llama
-            attr: pi.pi-llama
+            attr: pi.plugins.pi-llama
             runner: ubuntu-24.04
             nix-update-args: --version=branch
             verify: >-
               nix build .#pi -L &&
-              test -f "$(nix build .#pi.pi-llama -L --print-out-paths)/index.ts"
+              test -f "$(nix build .#pi.plugins.pi-llama -L --print-out-paths)/index.ts"
           # Pinned to upstream release tags: nix-update's default.
           - package: nomicfoundation-solidity-language-server
             runner: ubuntu-24.04

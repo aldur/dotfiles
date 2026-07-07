@@ -16,5 +16,5 @@
   )
 
   (import ./argc.nix { inherit self; })
-  (import ./packages.nix)
+  (import ./packages.nix { inherit self; })
 ]

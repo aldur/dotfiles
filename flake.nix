@@ -96,11 +96,16 @@
             flatten-pdf
             watermark-pdf
             flake-lock-cooldown
+            llmcat
+            pi # pi-coding-agent bundled with plugins
             ;
           llm = pkgs.llmWithPlugins;
         }
         // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
           inherit (pkgs) uvc-util c920-defaults;
+        }
+        // pkgs.lib.optionalAttrs (pkgs.stdenv.isDarwin && pkgs.stdenv.isAarch64) {
+          inherit (pkgs) llm-mlx;
         }
         // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
           inherit (pkgs) faraday;
