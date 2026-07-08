@@ -116,6 +116,35 @@
           inherit qemu-vm;
         };
 
+        checks = pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+          headless-defaults =
+            let
+              headless = nixpkgs.lib.nixosSystem {
+                inherit system;
+                specialArgs = {
+                  inputs = inputs // {
+                    inherit self;
+                  };
+                };
+                modules = [
+                  self.nixosModules.default
+                  (
+                    { modulesPath, ... }:
+                    {
+                      imports = [ "${modulesPath}/virtualisation/qemu-vm.nix" ];
+                      networking.hostName = "headless";
+                      # This system is only evaluated, never booted
+                      users.allowNoPasswordLogin = true;
+                    }
+                  )
+                ];
+              };
+            in
+            pkgs.writeText "headless-defaults-toplevel" (
+              builtins.unsafeDiscardStringContext headless.config.system.build.toplevel.drvPath
+            );
+        };
+
         apps.validate-claude-settings = {
           type = "app";
           program =
