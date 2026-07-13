@@ -45,9 +45,10 @@ let
   # USER_SHELL empty and the boot exits 127. Make /bin/sh a thin wrapper that
   # *appends* /bin:/usr/bin as a last-resort fallback (any inherited PATH still
   # wins, so only the empty-PATH case changes) before handing off to the real
-  # shell. Wired through `environment.binsh` below, so activation's own `binsh`
-  # snippet reinstalls it on every boot — a bare image-side symlink would be
-  # clobbered the first time activation runs.
+  # shell. Wired through `environment.binsh` below, not just the image symlink:
+  # envfs owns /bin under `container machine` and serves /bin/sh from a
+  # fallback-path built from `environment.binsh`, so that option is the only
+  # knob that actually governs /bin/sh at runtime there.
   binSh = pkgs.writeShellScript "container-bin-sh" ''
     export PATH="''${PATH:+$PATH:}/bin:/usr/bin"
     exec ${pkgs.bashInteractive}/bin/sh "$@"
@@ -324,8 +325,8 @@ in
 
     # See `binSh` above: /bin/sh gains a /bin:/usr/bin fallback so Apple's
     # empty-PATH `/sbin.machine/init` can resolve id/grep/cut and `--root` boots.
-    # Set here (not just in the image) so activation's `binsh` snippet reinstalls
-    # the wrapper on every boot rather than reverting to a bare bash symlink.
+    # Must set the option, not just the image symlink: under `container machine`
+    # envfs serves /bin/sh from a fallback-path derived from `environment.binsh`.
     environment.binsh = lib.mkForce "${binSh}";
 
     networking = {
