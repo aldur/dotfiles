@@ -117,6 +117,8 @@
         };
 
         checks = pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+          merge-container-config = pkgs.callPackage ./modules/darwin/tests/merge-container-config-test.nix { };
+
           headless-defaults =
             let
               headless = nixpkgs.lib.nixosSystem {
