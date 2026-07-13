@@ -25,6 +25,9 @@
     # enable hyperlinks
     set -as terminal-features ",*:hyperlinks"
 
+    # required by terminal UIs that distinguish modified Enter keys
+    set -g extended-keys on
+
     # enable undercurl and strikethrough
     set -as terminal-features ',*:usstyle'
     set -as terminal-features ',*:strikethrough'
