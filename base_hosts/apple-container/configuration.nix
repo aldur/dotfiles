@@ -1,6 +1,9 @@
 { inputs, lib, ... }:
 {
-  imports = [ ./apple-container.nix ];
+  imports = [
+    ./apple-container.nix
+    "${inputs.self}/modules/nixos/pragmatism.nix"
+  ];
 
   users.users.aldur.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
 
@@ -25,6 +28,7 @@
     programs = {
       git.settings.gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | grep -i sign)'";
       better-nix-search.enable = true;
+      llm.enable = true;
     };
   };
 }
