@@ -2,8 +2,13 @@
 {
   nixpkgs.hostPlatform = "aarch64-darwin";
 
-  # Set to true to enable homebrew integration.
-  programs.homebrew.enable = false;
+  programs = {
+    # Set to true to enable homebrew integration.
+    homebrew.enable = false;
+
+    # Set to true if you want to use Determinate Nix
+    determinate-nix.enable = false;
+  };
 
   # To enable the smarter Linux builder:
   #
@@ -14,9 +19,6 @@
   # nix.linux-builder.enable = false;
   # 4. Set `services.linux-builder.enable` to true.
   services.linux-builder.enable = false;
-
-  # Set to true if you want to use Determinate Nix
-  programs.determinate-nix.enable = false;
 
   # Then, add brews, casks, and masApps here
   homebrew = {
@@ -31,9 +33,6 @@
 
   home-manager.users.aldur = _: {
     programs = {
-      # Set to true for https://github.com/simonw/llm and plugins support
-      llm.enable = false;
-
       aldur.lazyvim.enable = true;
       aldur.lazyvim.packageNames = [ "lazyvim" ];
     };
