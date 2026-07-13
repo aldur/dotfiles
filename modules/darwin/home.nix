@@ -2,8 +2,13 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }:
+let
+  pythonWithTomlkit = pkgs.python3.withPackages (ps: [ ps.tomlkit ]);
+  mergeContainerConfig = ./merge-container-config.py;
+in
 {
   imports = [ ../home/home.nix ];
 
@@ -20,10 +25,12 @@
     # Silence "Last login: ..."
     file.".hushlogin".text = "";
 
-    # Don't mount $HOME into `container` VMs
-    file."Library/Application Support/com.apple.container/config/config.toml".text = ''
-      [machine]
-      home-mount = "none"
+    # Don't mount $HOME into `container` VMs.
+    activation.appleContainerConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      config="$HOME/.config/container/config.toml"
+      run mkdir -p "$(dirname "$config")"
+      run ${pythonWithTomlkit}/bin/python3 ${mergeContainerConfig} "$config"
+      run chmod 644 "$config"
     '';
 
     shellAliases = {
