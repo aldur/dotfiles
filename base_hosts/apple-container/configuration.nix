@@ -1,4 +1,4 @@
-{ inputs, lib, ... }:
+{ inputs, lib, pkgs, ... }:
 {
   imports = [
     ./apple-container.nix
@@ -6,6 +6,10 @@
   ];
 
   users.users.aldur.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
+
+  # `aldur` gets git via home-manager, but root has none — put it in the system
+  # profile so root can drive a flake clone (`nixos-rebuild --flake …`).
+  environment.systemPackages = [ pkgs.git ];
 
   virtualisation.appleContainer = {
     # Literal, not `config.users.users.aldur.name`: the module declares
