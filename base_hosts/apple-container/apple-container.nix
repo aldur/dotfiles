@@ -357,7 +357,13 @@ in
         # Sources/Plugins/MachineAPIServer/Resources/init).
         extraCommands = ''
           mkdir -p sbin tmp proc sys dev etc/machine run var home bin usr/bin
-          ln -sfn ${toplevel}/init sbin/init
+          # /sbin/init follows the rolling system profile (seeded below).
+          # Apple's `container machine` re-execs /sbin/init on
+          # every boot, so pointing it at the profile lets an in-place
+          # `nixos-rebuild switch` inside the machine (whose /nix/store is its
+          # own persistent volume) survive reboots — there's no bootloader here
+          # to record the current generation, this symlink is that record.
+          ln -sfn /nix/var/nix/profiles/system/init sbin/init
           : > etc/resolv.conf
           printf '127.0.0.1 localhost\n' > etc/hosts
           ln -s ${config.environment.etc."os-release".source} etc/os-release
@@ -394,6 +400,16 @@ in
             "UPDATE ValidPaths SET registrationTime = ''${SOURCE_DATE_EPOCH}"
           mkdir -p nix/var/nix/gcroots/docker
           ln -s ${toplevel} ${lib.optionalString hasHomeManager hmActivate} nix/var/nix/gcroots/docker/
+
+          # Seed the system profile at generation 1 so the /sbin/init symlink
+          # above resolves on first boot, and so `nix-env -p …/system --set`
+          # (what `nixos-rebuild switch` runs) continues the generation chain
+          # from here. `system` -> `system-1-link` mirrors nix's own layout: a
+          # relative link to the numbered generation, which points at the store.
+          # Profiles are GC roots themselves, so this also roots the toplevel.
+          mkdir -p nix/var/nix/profiles
+          ln -s ${toplevel} nix/var/nix/profiles/system-1-link
+          ln -s system-1-link nix/var/nix/profiles/system
         '';
 
         config = {
