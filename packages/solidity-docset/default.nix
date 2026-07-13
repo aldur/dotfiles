@@ -127,13 +127,13 @@ let
 in
 pkgs.stdenv.mkDerivation (finalAttrs: {
   pname = "solidity-dash-docset";
-  version = "0.8.35";
+  version = "0.8.36";
 
   src = pkgs.fetchFromGitHub {
     owner = "argotorg";
     repo = "solidity";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-YK5+fZzr1nM9Tc6zuc7oGU7l6qDL8IVGTXg8yL1wxEY=";
+    hash = "sha256-KU9ihjMyi23P4jXiNikSMrXNIoXEHvdbqK0LszOiE4Y=";
   };
 
   nativeBuildInputs = [
