@@ -14,9 +14,8 @@
     username = "aldur";
     imageName = "aldur-nixos";
     homeManagerMarker = ".config/fish/config.fish";
+    hostName = "nixos-apple-container"; # Default container name
   };
-
-  networking.hostName = "nixos-apple-container";
 
   programs.aldur = {
     lazyvim.enable = true;

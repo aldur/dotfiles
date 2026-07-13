@@ -131,10 +131,12 @@ let
       || fail "system activation failed" "$logdir/system-activation.log"
 
     # vminitd names the UTS namespace after the container ID (the OCI spec
-    # default) and no systemd runs in this door to apply networking.hostName.
-    # Tolerated if the runtime withholds CAP_SYS_ADMIN.
-    echo ${lib.escapeShellArg config.networking.hostName} > /proc/sys/kernel/hostname 2>/dev/null \
-      || true
+    # default) and no systemd runs to apply a hostname, so set the configured
+    # one ourselves. Tolerated if the runtime withholds CAP_SYS_ADMIN.
+    ${lib.optionalString (cfg.hostName != "") ''
+      echo ${lib.escapeShellArg cfg.hostName} > /proc/sys/kernel/hostname 2>/dev/null \
+        || true
+    ''}
 
     ${lib.optionalString hasHomeManager ''
       ${runuser} -u ${username} -- ${coreutils}/bin/mkdir -p /home/${username}/.local/state/nix/profiles
@@ -264,6 +266,20 @@ in
         wrapper's 60s timeout if it never appears.
       '';
     };
+
+    hostName = lib.mkOption {
+      type = lib.types.str;
+      default = cfg.imageName;
+      defaultText = lib.literalExpression "config.virtualisation.appleContainer.imageName";
+      description = ''
+        Hostname applied under the `container run`, whose UTS namespace the
+        runtime otherwise names after the container id.
+
+        Use --name with `container machine`.
+
+        Set to `""` to leave the container-id name untouched.
+      '';
+    };
   };
 
   config = {
@@ -275,6 +291,15 @@ in
       # and don't let resolvconf replace /etc/resolv.conf afterwards.
       useDHCP = false;
       resolvconf.enable = lib.mkForce false;
+
+      # Under `container machine`, Apple's /sbin.machine/init writes
+      # /etc/hostname from the machine's `--name` (its CONTAINER_MACHINE_ID) on
+      # every boot, right before exec'ing systemd — see apple/container
+      # Sources/Plugins/MachineAPIServer/Resources/init. Keeping
+      # networking.hostName empty means NixOS manages no /etc/hostname of its
+      # own, so that runtime-written file survives activation and systemd
+      # applies it: a machine created `--name wasp` gets hostname `wasp`.
+      hostName = lib.mkDefault "";
     };
 
     users = {

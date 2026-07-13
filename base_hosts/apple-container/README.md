@@ -91,12 +91,11 @@ env -u SSH_AUTH_SOCK container machine run -n dev
 - **DNS:** `container machine`'s bootstrap writes `/etc/resolv.conf` /
   `/etc/hosts` before the guest boots, so the image ships placeholder files (so
   `/etc` is a writable target) and disables the guest's DHCP/resolvconf.
-- **Hostname:** under `container run` the entrypoint applies
-  `networking.hostName` itself (the runtime otherwise names the container after
-  its UUID). Under `container machine` the runtime first sets the machine's
-  name (e.g. `dev`) and systemd applies `networking.hostName` during boot — a
-  shell that opened early may keep showing the old name (fish caches it at
-  startup).
+- **Hostname:** under `container run` the entrypoint applies the
+  `virtualisation.appleContainer.hostName` option. Under `container machine`,
+  Apple's `/sbin.machine/init` writes `/etc/hostname` from the machine's
+  `--name` on every boot, just before starting systemd — so `container machine
+  create … --name wasp` yields hostname `wasp`.
 - **No ICMP:** `ping` from inside shows 100% loss while TCP/UDP (DNS, HTTPS)
   work — Apple's vmnet NAT doesn't forward ICMP echo
   ([apple/container#345][1]); under `container run` there's additionally no
