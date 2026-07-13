@@ -1,4 +1,7 @@
 _: {
+  # Install terminfo entries for all terminal emulators in nixpkgs
+  environment.enableAllTerminfo = true;
+
   environment.shellAliases = {
     gst = "git status";
     gp = "git push";
