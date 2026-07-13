@@ -38,6 +38,21 @@ let
   inherit (pkgs) coreutils;
   runuser = "${pkgs.util-linux}/bin/runuser";
 
+  # Apple's /sbin.machine/init is `#!/bin/sh` and vminitd execs it with an empty
+  # PATH. NixOS bash falls back to `/no-such-path` (a purity measure), not the
+  # FHS `/bin:/usr/bin`, so the init's unqualified `id`/`grep`/`cut` (resolving
+  # the session shell from /etc/passwd) fail — under `--root` that leaves
+  # USER_SHELL empty and the boot exits 127. Make /bin/sh a thin wrapper that
+  # *appends* /bin:/usr/bin as a last-resort fallback (any inherited PATH still
+  # wins, so only the empty-PATH case changes) before handing off to the real
+  # shell. Wired through `environment.binsh` below, so activation's own `binsh`
+  # snippet reinstalls it on every boot — a bare image-side symlink would be
+  # clobbered the first time activation runs.
+  binSh = pkgs.writeShellScript "container-bin-sh" ''
+    export PATH="''${PATH:+$PATH:}/bin:/usr/bin"
+    exec ${pkgs.bashInteractive}/bin/sh "$@"
+  '';
+
   shellBin = baseNameOf (lib.getExe cfg.shell);
   runtimeShell = "/run/current-system/sw/bin/${shellBin}";
 
@@ -306,6 +321,12 @@ in
 
   config = {
     boot.isContainer = true;
+
+    # See `binSh` above: /bin/sh gains a /bin:/usr/bin fallback so Apple's
+    # empty-PATH `/sbin.machine/init` can resolve id/grep/cut and `--root` boots.
+    # Set here (not just in the image) so activation's `binsh` snippet reinstalls
+    # the wrapper on every boot rather than reverting to a bare bash symlink.
+    environment.binsh = lib.mkForce "${binSh}";
 
     networking = {
       # `container machine`'s bootstrap writes /etc/resolv.conf and /etc/hosts
