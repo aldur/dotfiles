@@ -41,20 +41,29 @@ let
   shellBin = baseNameOf (lib.getExe cfg.shell);
   runtimeShell = "/run/current-system/sw/bin/${shellBin}";
 
-  # The user's login shell, both in the baked /etc/passwd and the NixOS user
-  # declaration: Apple's `container machine` opens its session
-  # (`/sbin.machine/init -s`) as soon as the container starts, racing NixOS
-  # first-boot activation AND the home-manager service (observed, separate
-  # runs: nameless uid with bare PATH; "…/fish: No such file or directory"
-  # from passwd already rewritten but the symlink not yet made; shell up but
-  # its config missing). Wait for both, then exec a login shell.
-  # A bin-in-package path (not a bare store file): NixOS' toShellPath rejects
-  # plain store paths as login shells, but passes path strings through.
-  machineSessionShell = "${pkgs.writeShellScriptBin "machine-session-shell" ''
+  # Login-shell wrapper for machine sessions, used as the declared shell for
+  # BOTH the interactive user and root. Apple's `container machine` opens its
+  # session (`/sbin.machine/init -s`) as soon as the container starts, racing
+  # NixOS first-boot activation AND the home-manager service (observed, separate
+  # runs: nameless uid with bare PATH; "…/fish: No such file or directory" from
+  # passwd already rewritten but the symlink not yet made; shell up but its
+  # config missing). Wait for what's needed, then exec a login shell. The bare
+  # declaration produces /run/current-system/sw/bin/<shell>, which doesn't exist
+  # until activation finishes — so `container machine run --root` (root's shell)
+  # hits exactly that race without this wrapper. A bin-in-package path (not a
+  # bare store file): NixOS' toShellPath rejects plain store paths as login
+  # shells, but passes path strings through.
+  mkSessionShell =
+    {
+      name,
+      user,
+      waitForHomeManager,
+    }:
+    "${pkgs.writeShellScriptBin name ''
     ready() {
       [ -x ${runtimeShell} ] || return 1
       ${lib.optionalString (
-        cfg.homeManagerMarker != null
+        waitForHomeManager && cfg.homeManagerMarker != null
       ) ''[ -e "$HOME"/${lib.escapeShellArg cfg.homeManagerMarker} ] || return 1''}
       return 0
     }
@@ -70,7 +79,7 @@ let
     # inherits the result. USER/LOGNAME first: it builds PATH entries like
     # /etc/profiles/per-user/$USER/bin from them, and login(1) would have set
     # them anyway.
-    export USER=${username} LOGNAME=${username}
+    export USER=${user} LOGNAME=${user}
     [ -z "''${__NIXOS_SET_ENVIRONMENT_DONE:-}" ] && [ -r /etc/set-environment ] \
       && . /etc/set-environment
     # `nix shell`/`nix develop` spawn $SHELL and fall back to literal "bash"
@@ -92,7 +101,20 @@ let
       esac
     fi
     exec ${runtimeShell} -l "$@"
-  ''}/bin/machine-session-shell";
+  ''}/bin/${name}";
+
+  # The interactive user also waits for home-manager (its shell config lives
+  # there); root has no home-manager, so it waits only for the system shell.
+  machineSessionShell = mkSessionShell {
+    name = "machine-session-shell";
+    user = username;
+    waitForHomeManager = true;
+  };
+  rootSessionShell = mkSessionShell {
+    name = "root-session-shell";
+    user = "root";
+    waitForHomeManager = false;
+  };
 
   # Apple `container` boots a lightweight VM whose init runs this OCI image's
   # entrypoint as a single process — there is no systemd PID 1.
@@ -331,6 +353,13 @@ in
         # there is no user manager, no /run/user/<uid>, and no user services.
         linger = true;
       };
+
+      # `container machine run --root` opens a root session that races first-boot
+      # activation just like the interactive user's — root's default shell is the
+      # activation-dependent /run/current-system/sw/bin/<shell>, which isn't there
+      # yet ("…/fish: No such file or directory"). Give root the same boot-wait
+      # wrapper (it has no home-manager, so it waits only for the system shell).
+      users.root.shell = lib.mkForce "${rootSessionShell}";
     };
 
     # Make `specialfs` skip what the runtime already mounted and mount/tolerate
