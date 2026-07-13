@@ -21,6 +21,7 @@
     lazyvim.enable = true;
     lazyvim.packageNames = [ "lazyvim" ];
     claude-code.enable = true;
+    codex.enable = true;
   };
 
   home-manager.users.aldur = _: {

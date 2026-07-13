@@ -67,6 +67,8 @@ in
     };
   };
 
+  options.programs.aldur.codex.enable = mkEnableOption "codex";
+
   config = {
     environment.systemPackages = basePackages;
     nixpkgs.allowUnfreeByName = mkIf claudeCfg.enable [ "claude-code" ];

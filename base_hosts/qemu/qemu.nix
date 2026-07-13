@@ -23,6 +23,7 @@
       lazyvim.packageNames = [ "lazyvim" ];
 
       claude-code.enable = true;
+      codex.enable = true;
     };
 
   };

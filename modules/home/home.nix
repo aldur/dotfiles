@@ -58,6 +58,7 @@ in
   imports = [
     inputs.clipshare.homeManagerModules.default
     ./claude-code.nix
+    ./codex.nix
     ./dash.nix
     ./w3m.nix
     ./direnv.nix
