@@ -39,18 +39,34 @@ let
   runuser = "${pkgs.util-linux}/bin/runuser";
 
   # Apple's /sbin.machine/init is `#!/bin/sh` and vminitd execs it with an empty
-  # PATH. NixOS bash falls back to `/no-such-path` (a purity measure), not the
-  # FHS `/bin:/usr/bin`, so the init's unqualified `id`/`grep`/`cut` (resolving
-  # the session shell from /etc/passwd) fail — under `--root` that leaves
-  # USER_SHELL empty and the boot exits 127. Make /bin/sh a thin wrapper that
-  # *appends* /bin:/usr/bin as a last-resort fallback (any inherited PATH still
-  # wins, so only the empty-PATH case changes) before handing off to the real
-  # shell. Wired through `environment.binsh` below, not just the image symlink:
-  # envfs owns /bin under `container machine` and serves /bin/sh from a
-  # fallback-path built from `environment.binsh`, so that option is the only
-  # knob that actually governs /bin/sh at runtime there.
+  # PATH. NixOS bash falls back to `/no-such-path` (a purity measure), so the
+  # init's unqualified `id`/`grep`/`cut` (resolving the session shell from
+  # /etc/passwd, `-s` branch only — the boot branch uses just builtins, which is
+  # why machines boot while sessions break) fail; under `--root` that leaves
+  # USER_SHELL empty and the session exits 127. Make /bin/sh a thin wrapper that
+  # *appends* a fallback PATH (any inherited PATH still wins, so only the
+  # empty-PATH case changes) before handing off to the real shell.
+  #
+  # The fallback points at the coreutils/gnugrep *store paths*, not /bin: post-
+  # boot envfs owns /bin, and envfs resolves each lookup from the *calling
+  # process's* /proc/<pid>/environ — it consults its fallback-path dir (sh/env
+  # only) solely when that environ carries no PATH at all, and skips /bin and
+  # /usr/bin PATH entries to dodge recursion. So the moment a wrapper exports
+  # PATH=/bin:/usr/bin, nothing resolves through /bin anymore (verified live);
+  # store paths resolve in every mount/boot state. Wired through
+  # `environment.binsh` below (not just the image symlink) because envfs serves
+  # /bin/sh from a fallback-path built from that option — it's the only knob
+  # governing /bin/sh.
+  #
+  # Testing trap: `env -i /bin/sh -c …` does NOT reproduce the empty-PATH case —
+  # /proc/<pid>/environ is frozen at exec, so envfs still sees `env`'s inherited
+  # full PATH and serves whatever `sh` that PATH reaches (the plain sw/bin one),
+  # bypassing this wrapper. Faithful reproduction, mirroring how vminitd (empty
+  # environ) execs the init:
+  #   env -i "$(readlink -f /run/current-system/sw/bin/bash)" \
+  #     -c 'exec /bin/sh -c "id -un"'
   binSh = pkgs.writeShellScript "container-bin-sh" ''
-    export PATH="''${PATH:+$PATH:}/bin:/usr/bin"
+    export PATH="''${PATH:+$PATH:}${coreutils}/bin:${pkgs.gnugrep}/bin:/bin:/usr/bin"
     exec ${pkgs.bashInteractive}/bin/sh "$@"
   '';
 
@@ -323,10 +339,11 @@ in
   config = {
     boot.isContainer = true;
 
-    # See `binSh` above: /bin/sh gains a /bin:/usr/bin fallback so Apple's
-    # empty-PATH `/sbin.machine/init` can resolve id/grep/cut and `--root` boots.
-    # Must set the option, not just the image symlink: under `container machine`
-    # envfs serves /bin/sh from a fallback-path derived from `environment.binsh`.
+    # See `binSh` above: /bin/sh gains a store-path PATH fallback so Apple's
+    # empty-PATH `/sbin.machine/init` can resolve id/grep/cut and `--root`
+    # sessions open. Must set the option, not just the image symlink: under
+    # `container machine` envfs serves /bin/sh from a fallback-path derived from
+    # `environment.binsh`.
     environment.binsh = lib.mkForce "${binSh}";
 
     networking = {
@@ -339,10 +356,15 @@ in
       # Under `container machine`, Apple's /sbin.machine/init writes
       # /etc/hostname from the machine's `--name` (its CONTAINER_MACHINE_ID) on
       # every boot, right before exec'ing systemd — see apple/container
-      # Sources/Plugins/MachineAPIServer/Resources/init. Keeping
-      # networking.hostName empty means NixOS manages no /etc/hostname of its
-      # own, so that runtime-written file survives activation and systemd
-      # applies it: a machine created `--name wasp` gets hostname `wasp`.
+      # Sources/Plugins/MachineAPIServer/Resources/init. The write is
+      # builtins-only (`echo > /etc/hostname`), so it succeeds even when the
+      # init's command lookups are broken. Keeping networking.hostName empty
+      # means NixOS manages no /etc/hostname of its own, so that runtime-written
+      # file survives activation and systemd applies it: a machine created
+      # `--name wasp` gets hostname `wasp`. A generation that *sets* hostName
+      # instead clobbers Apple's file on every activation — and switching such a
+      # machine back to "" deletes the managed file live, leaving the old name
+      # as a transient hostname until the next boot rewrites /etc/hostname.
       hostName = lib.mkDefault "";
     };
 
