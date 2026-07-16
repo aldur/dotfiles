@@ -8,6 +8,32 @@
 }:
 let
   enabled = osConfig.programs.aldur.codex.enable;
+  tomlFormat = pkgs.formats.toml { };
+  tomlPython = pkgs.python3.withPackages (ps: [ ps.tomlkit ]);
+
+  codexSettings = {
+    analytics.enabled = false;
+    feedback.enabled = false;
+    otel = {
+      exporter = "none";
+      metrics_exporter = "none";
+      trace_exporter = "none";
+    };
+
+    tui = {
+      status_line = [
+        "current-dir"
+        "git-branch"
+        "project-name"
+        "context-used"
+        "used-tokens"
+        "model-with-reasoning"
+        "context-window-size"
+      ];
+      status_line_use_colors = true;
+    };
+  };
+  codexSettingsFile = tomlFormat.generate "codex-config" codexSettings;
 
   # Prefer Codex's standalone release after `codex update`. The standalone
   # installer keeps its current release under ~/.codex; checking it directly
@@ -36,39 +62,27 @@ let
   };
 in
 {
-  # Package installation and config.toml generation are provided by Home
-  # Manager's upstream programs.codex module. Setting its package to null lets
-  # this wrapper occupy the command name while the upstream module keeps
-  # managing the configuration.
+  # Keep config.toml writable: Codex stores runtime state such as project trust
+  # in the same file. The activation below recursively merges these declarative
+  # defaults into that state, with the Nix-managed values winning conflicts.
   config = lib.mkIf enabled {
     programs.codex = {
       enable = true;
       package = null;
-      settings = {
-        analytics.enabled = false;
-        feedback.enabled = false;
-        otel = {
-          exporter = "none";
-          metrics_exporter = "none";
-          trace_exporter = "none";
-        };
-
-        tui = {
-          status_line = [
-            "current-dir"
-            "git-branch"
-            "project-name"
-            "context-used"
-            "used-tokens"
-            "model-with-reasoning"
-            "context-window-size"
-          ];
-          status_line_use_colors = true;
-        };
-      };
     };
 
     home = {
+      activation.codexSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        target="$HOME/.codex/config.toml"
+        if [[ -v DRY_RUN ]]; then
+          echo "Would merge Codex settings from ${codexSettingsFile} into $target"
+        else
+          mkdir -p "$(dirname "$target")"
+          ${lib.getExe tomlPython} ${./merge-codex-config.py} \
+            ${codexSettingsFile} "$target"
+        fi
+      '';
+
       packages = [ codex ];
       shellAliases.codex-yolo = "codex --dangerously-bypass-approvals-and-sandbox";
     };
