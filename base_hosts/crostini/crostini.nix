@@ -35,6 +35,10 @@ in
 
   config = {
     crostini.impermanence.enable = lib.mkDefault true;
+
+    # Crostini guests run the ChromeOS kernel, not the one this
+    # configuration builds; see the option's description.
+    hardening.foreignKernel = true;
     users.users = {
       # We rely on the UID in a few places, so better making sure about it.
       ${username} = {

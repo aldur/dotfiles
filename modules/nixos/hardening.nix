@@ -59,6 +59,20 @@ in
       '';
     };
 
+    foreignKernel = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Set on hosts whose running kernel is supplied by the platform
+        rather than by this configuration (e.g. crostini guests, which
+        run the ChromeOS kernel). Drops sysctl values that upstream
+        derives from the configured kernel's build config
+        (sysctl.d/55-nixos-aslr-entropy.conf): they may exceed the
+        running kernel's limits and fail systemd-sysctl.service with
+        EINVAL.
+      '';
+    };
+
     webcam.enable = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -105,6 +119,12 @@ in
       ];
     }
 
+    (lib.mkIf cfg.foreignKernel {
+      # See the option description: this file's values come from a kernel
+      # config the running (platform-supplied) kernel may not match.
+      environment.etc."sysctl.d/55-nixos-aslr-entropy.conf".enable = false;
+    })
+
     (lib.mkIf cfg.sysctl.enable {
       boot.kernel.sysctl = {
         "kernel.core_pattern" = "|/bin/false";
@@ -121,13 +141,15 @@ in
         "kernel.dmesg_restrict" = 1;
         "kernel.yama.ptrace_scope" = 2;
         "kernel.perf_event_paranoid" = 3;
-        "kernel.kexec_load_disabled" = 1;
+        # `-`-prefixed keys are best-effort: systemd-sysctl logs but does
+        # not fail the unit when the sysctl doesn't exist.
+        "-kernel.kexec_load_disabled" = 1;
         "kernel.sysrq" = 0;
         "kernel.randomize_va_space" = 2;
-        "vm.unprivileged_userfaultfd" = 0;
+        "-vm.unprivileged_userfaultfd" = 0;
         "dev.tty.ldisc_autoload" = 0;
         "kernel.unprivileged_bpf_disabled" = 1;
-        "net.core.bpf_jit_harden" = 2;
+        "-net.core.bpf_jit_harden" = 2;
 
         # 2 = block io_uring creation for everyone (including root).
         # Recurring CVE source; most services here are Go/Python/Node
