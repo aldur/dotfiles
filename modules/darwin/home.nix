@@ -49,6 +49,23 @@ in
     pinentry.package = pkgs.pinentry_mac;
   };
 
+  # Copy app bundles (rather than symlinking them) into
+  # ~/Applications/Home Manager Apps so that Spotlight indexes them.
+  # This is the default for home.stateVersion >= 25.11; ours predates it.
+  targets.darwin.copyApps.enable = true;
+  targets.darwin.linkApps.enable = false;
+
+  programs.ghostty = {
+    enable = true;
+    # `pkgs.ghostty` (source build) is broken on darwin; use the upstream
+    # binary release instead.
+    package = pkgs.ghostty-bin;
+    settings = {
+      # Installed system-wide through `fonts.packages` in `packages.nix`.
+      font-family = "FiraCode Nerd Font";
+    };
+  };
+
   # Override the shared default (true): secureSocket points TMUX_TMPDIR at
   # /run/user/$uid, which macOS lacks; the sessionVariables override above
   # handles the per-user socket dir here instead.
