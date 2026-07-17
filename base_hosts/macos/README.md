@@ -11,8 +11,18 @@ Use:
 sudo darwin-rebuild --flake .#macOS switch
 ```
 
+## Bootstrapping
+
+After installing [`nix`][1]:
+
+```bash
+sudo nix --extra-experimental-features "nix-command flakes" \
+  run nix-darwin/master#darwin-rebuild -- .#macOS switch
+```
+
 ## Configuration
 
 See `macos.nix` for how to customize the install.
 
 [0]: https://github.com/nix-darwin/nix-darwin
+[1]: https://nixos.org/download/
