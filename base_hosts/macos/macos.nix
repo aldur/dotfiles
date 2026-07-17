@@ -32,9 +32,14 @@
   };
 
   home-manager.users.aldur = _: {
-    programs = {
-      aldur.lazyvim.enable = true;
-      aldur.lazyvim.packageNames = [ "lazyvim" ];
+    # SSH agent backed by a YubiKey (launchd agent listening on
+    # /tmp/yubikey-agent.sock). Shells pick up SSH_AUTH_SOCK from it unless
+    # an agent is forwarded in over SSH.
+    services.yubikey-agent.enable = true;
+
+    programs.aldur = {
+      lazyvim.enable = true;
+      lazyvim.packageNames = [ "lazyvim" ];
     };
 
     home.packages = with pkgs; [
