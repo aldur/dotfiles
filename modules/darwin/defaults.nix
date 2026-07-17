@@ -24,6 +24,10 @@
     NSGlobalDomain.NSWindowShouldDragOnGesture = true;
     NSGlobalDomain.NSAutomaticWindowAnimationsEnabled = false;
 
+    # Tap to click, no pressure needed
+    trackpad.Clicking = true;
+    NSGlobalDomain."com.apple.mouse.tapBehavior" = 1;
+
     trackpad.TrackpadThreeFingerDrag = true;
 
     menuExtraClock = {
