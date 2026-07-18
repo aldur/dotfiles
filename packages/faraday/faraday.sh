@@ -28,6 +28,19 @@ set -euo pipefail
 # @flag -v --verbose               Show relay diagnostics
 # @arg cmd~ Command to run inside the sandbox
 
+# The nix wrapper pins these, but the raw script (`bash faraday.sh …`)
+# picks them up from the ambient PATH, where a missing binary otherwise
+# fails confusingly: no argc means an empty --argc-eval expansion
+# ("missing command"), no socat means a silent relay ("failed to
+# start" — its stderr is discarded). bwrap only fails at sandbox
+# launch, after the relays are already up.
+for dep in argc bwrap socat; do
+  command -v "$dep" >/dev/null 2>&1 || {
+    echo "faraday: required dependency '$dep' not found in PATH" >&2
+    exit 1
+  }
+done
+
 # argc only assigns the variables for options that were actually passed,
 # and bash 5.3's nounset chokes on merely-declared arrays, so give every
 # one a real (empty/zero) value first.
@@ -197,6 +210,13 @@ fi
 # be exec'd. It runs in the background with the same signal handling as
 # the outer wrapper: SIGINT is left to the terminal to deliver to the
 # foreground process group, SIGTERM is forwarded to the command.
+#
+# Both this inner shell and the outer wrapper background their child —
+# and a non-interactive shell reassigns a background job's stdin to
+# /dev/null (POSIX), which detaches TUIs from the terminal (observed: pi
+# exiting instantly with no output). Explicit redirections are applied
+# *after* that assignment, so each level saves the real stdin on fd 3
+# and hands it back across the `&`.
 inner=$(
   cat <<'EOF'
 set -euo pipefail
@@ -237,7 +257,8 @@ for port in "${ports[@]}"; do
   fi
 done
 
-"$@" &
+exec 3<&0
+"$@" <&3 3<&- &
 app=$!
 trap 'kill -TERM "$app" 2>/dev/null || true' TERM
 trap ':' INT
@@ -251,15 +272,16 @@ exit "$status"
 EOF
 )
 
+exec 3<&0
 if [ "${#hosts[@]}" -gt 0 ]; then
   bwrap_args+=(
     --setenv FARADAY_PORTS "${local_ports[*]}"
     --setenv FARADAY_SOCKS "${socks[*]}"
     --setenv FARADAY_VERBOSE "$verbose"
   )
-  bwrap "${bwrap_args[@]}" bash -c "$inner" faraday-sandbox "${argc_cmd[@]}" &
+  bwrap "${bwrap_args[@]}" bash -c "$inner" faraday-sandbox "${argc_cmd[@]}" <&3 3<&- &
 else
-  bwrap "${bwrap_args[@]}" "${argc_cmd[@]}" &
+  bwrap "${bwrap_args[@]}" "${argc_cmd[@]}" <&3 3<&- &
 fi
 child=$!
 
