@@ -70,8 +70,17 @@
       nixpkgs-unstable,
       ...
     }@inputs:
-    (flake-utils.lib.eachDefaultSystem (
-      system:
+    # Not `eachDefaultSystem`: nixpkgs 26.11 dropped x86_64-darwin, so
+    # evaluating the unstable-following packages (e.g. `pi`) for it throws.
+    # No host here is an Intel Mac; don't export outputs for it.
+    (flake-utils.lib.eachSystem
+      [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+      ]
+      (
+        system:
       let
         pkgsArgs = {
           inherit system;
