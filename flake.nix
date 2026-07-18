@@ -105,6 +105,7 @@
             flatten-pdf
             watermark-pdf
             flake-lock-cooldown
+            aldurs-dotfiles-version
             llmcat
             pi # pi-coding-agent bundled with plugins
             ;

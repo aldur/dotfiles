@@ -8,10 +8,16 @@
 }:
 
 let
-  inherit (lib) substring optionalString;
+  inherit (lib)
+    substring
+    removeSuffix
+    escapeShellArg
+    ;
 
-  rev = self.rev or self.dirtyRev or "unknown";
+  rev = self.rev or self.dirtyRev or null;
   shortRev = self.shortRev or self.dirtyShortRev or "unknown";
+  # On a dirty tree the link points at the underlying (last) commit.
+  commitUrl = "https://github.com/aldur/dotfiles/commit/${removeSuffix "-dirty" rev}";
 
   # "YYYYMMDDHHMMSS" -> "YYYY-MM-DD HH:MM:SS UTC"
   lmd = self.lastModifiedDate or null;
@@ -26,12 +32,19 @@ writeShellApplication {
   name = "aldurs-dotfiles-version";
   text = ''
     echo "aldurs-dotfiles ${shortRev}"
-    echo "commit:        ${rev}"
+    ${
+      if rev == null then
+        ''
+          echo "commit:        unknown"
+        ''
+      else
+        # OSC 8 hyperlink: clickable in supporting terminals, plain text elsewhere.
+        ''
+          printf 'commit:        \e]8;;%s\e\\%s\e]8;;\e\\\n' ${escapeShellArg commitUrl} ${escapeShellArg rev}
+        ''
+    }
     echo "last modified: ${lastModified}"
     echo "narHash:       ${self.narHash or "unknown"}"
     echo "nixpkgs:       ${self.inputs.nixpkgs.shortRev or "unknown"}"
-    ${optionalString (self ? rev) ''
-      echo "url:           https://github.com/aldur/dotfiles/commit/${rev}"
-    ''}
   '';
 }

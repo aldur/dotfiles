@@ -3,6 +3,7 @@
   # CLI utils we want available on all systems.
   environment.systemPackages = with pkgs; [
     age
+    aldurs-dotfiles-version
     bashInteractive
     bat
     coreutils-prefixed
