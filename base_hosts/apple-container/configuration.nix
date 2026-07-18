@@ -1,4 +1,4 @@
-{ inputs, lib, pkgs, ... }:
+{ inputs, pkgs, ... }:
 {
   imports = [
     ./apple-container.nix
@@ -34,5 +34,10 @@
       better-nix-search.enable = true;
       llm.enable = true;
     };
+
+    # A llama-server on the macOS host is reachable at the gateway of Apple
+    # `container`'s default subnet. The bundled pi-llama plugin reads
+    # LLAMA_BASE_URL (an OpenAI-style base, /v1 included).
+    home.shellAliases.pi = "env LLAMA_BASE_URL=http://192.168.64.1:8080/v1 pi";
   };
 }

@@ -36,7 +36,7 @@ So to let `pi` talk to a llama.cpp server on the VM host:
 
 ```sh
 faraday --allow 192.168.64.1:8080 -- \
-  env LLAMA_SERVER_URL=http://127.0.0.1:8080 pi
+  env LLAMA_BASE_URL=http://127.0.0.1:8080/v1 pi
 ```
 
 Note the URL says `127.0.0.1`, not `192.168.64.1`. If the app hardcodes the
@@ -69,7 +69,7 @@ For `pi`, roughly:
 ```sh
 faraday --allow 192.168.64.1:8080 \
   --rw ~/.pi --rw ~/.config --rw ~/.cache --rw ~/.local/state \
-  -- env LLAMA_SERVER_URL=http://127.0.0.1:8080 pi
+  -- env LLAMA_BASE_URL=http://127.0.0.1:8080/v1 pi
 ```
 
 (`--rw` paths must already exist.) `--writable-home` is the blunt opt-out.

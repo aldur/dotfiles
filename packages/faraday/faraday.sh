@@ -13,7 +13,7 @@ set -euo pipefail
 #
 # Example, pi against a local llama.cpp server:
 #     faraday --allow 192.168.64.1:8080 -- \
-#         env LLAMA_SERVER_URL=http://127.0.0.1:8080 pi
+#         env LLAMA_BASE_URL=http://127.0.0.1:8080/v1 pi
 #
 # With no --allow, the command runs fully offline.
 #
