@@ -1,4 +1,9 @@
-{ pkgs, pkgsUnstable }:
+{
+  pkgs,
+  pkgsUnstable,
+  # Rev-pinned plugins, see ./plugins.
+  pinnedPlugins,
+}:
 (with pkgs.vimPlugins; {
   general = [
     lazy-nvim
@@ -73,73 +78,32 @@
       name = "catppuccin";
     }
 
-    rec {
-      plugin = pkgs.vimUtils.buildVimPlugin {
-        inherit name;
-        src = pkgs.fetchFromGitHub {
-          owner = "aldur";
-          repo = name;
-          rev = "f1caf374827de0e01a7bc90bdb6761fcbfab3b1f";
-          hash = "sha256-Sl+L3fQMs/YsVllDuJpmwFNGtaDeta5okH3Kl5+xI1g=";
-        };
-      };
+    {
+      plugin = pinnedPlugins.tinymd-nvim;
       name = "tinymd.nvim";
     }
 
     {
+      # The plugin ships only the queries, so pair it with the parser.
       plugin = pkgs.symlinkJoin {
         name = "clarity.nvim_treesitter";
         paths = [
-          (pkgs.vimUtils.buildVimPlugin {
-            name = "clarity.nvim";
-            src = pkgs.fetchFromGitHub {
-              owner = "aldur";
-              repo = "clarity.nvim";
-              rev = "5c9d8accc29e0262fd9fb2013e1dc45b01bcba1e";
-              hash = "sha256-EGrC3wY+WCOykYMJnPqeK6IrcGzByIe7hP8ktdXA2sI=";
-            };
-            doCheck = false; # Missing runtime dependencies for "require" check
-          })
-          (pkgs.neovimUtils.grammarToPlugin (
-            pkgs.tree-sitter.buildGrammar rec {
-              language = "clarity";
-              version = "f3b7520fa336e877fc7bb180902e325d465da052";
-              src = pkgs.fetchFromGitHub {
-                owner = "xlittlerag";
-                repo = "tree-sitter-${language}";
-                rev = version;
-                hash = "sha256-C+pWyVQC0gtU2VO2lkecijbNIKPbqEks0V6vhfN/oso=";
-              };
-            }
-          ))
+          pinnedPlugins.clarity-nvim
+          (pkgs.neovimUtils.grammarToPlugin pinnedPlugins.tree-sitter-clarity)
         ];
       };
       name = "clarity.nvim";
     }
 
-    rec {
-      plugin = pkgs.vimUtils.buildVimPlugin {
-        inherit name;
-        src = pkgs.fetchFromGitHub {
-          owner = "qadzek";
-          repo = name;
-          rev = "53e09621fc0dcee54e3231422029be19dab75018";
-          hash = "sha256-YjKFDv9QyuWDfWiKP6EvjSRbkz/K6e/Neq76ckghKh0=";
-        };
-      };
+    {
+      plugin = pinnedPlugins.link-vim;
       name = "link.vim";
     }
 
-    rec {
-      plugin = pkgs.vimUtils.buildVimPlugin {
-        inherit name;
-        src = pkgs.fetchFromGitHub {
-          owner = "linux-cultist";
-          repo = name;
-          rev = "cc4bb3975de8835291f9bb45889e96c6b2795fc4";
-          hash = "sha256-+GRJuvsO4nf+RczyDOojfUc+nfsM9JIENUv43fEZPYU=";
-        };
-      };
+    {
+      # nixpkgs' stable channel trails the rev this was pinned to, so take it
+      # from unstable, where it currently matches exactly.
+      plugin = pkgsUnstable.vimPlugins.venv-selector-nvim;
       name = "venv-selector.nvim";
     }
 

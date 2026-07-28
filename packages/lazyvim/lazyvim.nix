@@ -7,11 +7,13 @@ let
   inherit (inputs.nixCats) utils;
   luaPath = ./.;
 
+  pinnedPlugins = pkgs.callPackage ./plugins { inherit pkgsUnstable; };
+
   categoryDefinitions =
     { pkgs, ... }:
     {
       lspsAndRuntimeDeps = pkgs.callPackage ./runtime.nix { };
-      startupPlugins = pkgs.callPackage ./plugins.nix { inherit pkgsUnstable; };
+      startupPlugins = pkgs.callPackage ./plugins.nix { inherit pkgsUnstable pinnedPlugins; };
       environmentVariables = pkgs.callPackage ./environment.nix { };
     };
 
@@ -65,7 +67,17 @@ let
     inherit pkgs;
   } categoryDefinitions packageDefinitions;
 
-  defaultPackage = nixCatsBuilder defaultPackageName;
+  # Rev-pinned plugins stay reachable (e.g. `lazyvim.plugins.tinymd-nvim`) so
+  # nix-update can bump their pins in CI without dedicated flake outputs.
+  withPinnedPlugins =
+    drv:
+    drv.overrideAttrs (prev: {
+      passthru = (prev.passthru or { }) // {
+        plugins = pinnedPlugins;
+      };
+    });
+
+  defaultPackage = withPinnedPlugins (nixCatsBuilder defaultPackageName);
   moduleArgs = {
     inherit
       luaPath
