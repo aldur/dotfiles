@@ -13,4 +13,7 @@ vimUtils.buildVimPlugin {
     rev = "53e09621fc0dcee54e3231422029be19dab75018";
     hash = "sha256-YjKFDv9QyuWDfWiKP6EvjSRbkz/K6e/Neq76ckghKh0=";
   };
+
+  # Tracks its default branch; nothing is tagged upstream.
+  passthru.updatePin.args = "--version=branch";
 }

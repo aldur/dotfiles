@@ -1,17 +1,8 @@
 name: Update pinned packages
 
-# Dependabot's nix ecosystem only tracks flake.lock inputs, so it can't bump
-# packages pinned by tag or rev inside this repo's Nix expressions. nix-update
-# does: it updates the version, the pinned tag/rev, the source hash, and any
-# dependent hashes (cargoDeps, vendorHash, npmDepsHash). Each package is
-# bumped and verified in its own matrix leg, then opened as its own PR, so one
-# broken update doesn't block the others.
+# Bumps every package in this repo that pins a source, using nix-update.
 #
-# Not covered (nothing sensible for nix-update to track):
-# - packages/tiktoken: pins a raw data file, no upstream versioning
-# - packages/mlx: prebuilt wheels with per-platform/python hashes
-# - overlays/overrides/yubikey-agent.nix: pins a single patch, not a release
-# - packages/solidity-docset's inline Python deps: pinned PyPI libraries
+# See the `updatePins` flake output.
 on:
   schedule:
     - cron: "0 6 * * 1" # Mondays 06:00 UTC
@@ -20,61 +11,39 @@ on:
 permissions: {}
 
 jobs:
+  # Both matrices below are built from the same list, so they can't drift apart.
+  discover:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      legs: ${{ steps.read.outputs.legs }}
+      packages: ${{ steps.read.outputs.packages }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - uses: DeterminateSystems/determinate-nix-action@c70cb8ae92d68c66953db28a26a63db1665bc837 # v3.21.5
+
+      - name: Derive the matrix from the packages themselves
+        id: read
+        run: |
+          legs=$(nix eval --json .#updatePins)
+          {
+            echo "legs=$legs"
+            echo "packages=$(jq -c 'map(.package)' <<< "$legs")"
+          } >> "$GITHUB_OUTPUT"
+
   build:
+    needs: discover
     runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
     strategy:
       fail-fast: false
       matrix:
-        include:
-          # Fork pinned to a branch commit; overrideAttrs keeps upstream's
-          # meta.position, so point nix-update at the override file.
-          - package: beancount-language-server
-            runner: ubuntu-24.04
-            nix-update-args: >-
-              --version=branch
-              --override-filename overlays/overrides/beancount-language-server.nix
-          - package: llmcat
-            runner: ubuntu-24.04
-            nix-update-args: --version=branch
-          - package: shrink-pdf
-            runner: ubuntu-24.04
-            nix-update-args: --version=branch
-          # remarks' flake output is a shell wrapper with no src; bump the
-          # inner Python package, exposed as a passthru.
-          - package: remarks
-            attr: remarks.remarks
-            runner: ubuntu-24.04
-            nix-update-args: --version=branch
-          # pi plugins are pinned to a commit on their default branch; they
-          # are not flake outputs of their own, only passthrus of the pi
-          # wrapper. The wrapper loads <plugin>/index.ts, so check it exists.
-          - package: pi-llama
-            attr: pi.plugins.pi-llama
-            runner: ubuntu-24.04
-            nix-update-args: --version=branch
-            verify: >-
-              nix build .#pi -L &&
-              test -f "$(nix build .#pi.plugins.pi-llama -L --print-out-paths)/index.ts"
-          # Pinned to upstream release tags: nix-update's default.
-          - package: nomicfoundation-solidity-language-server
-            runner: ubuntu-24.04
-          # Upstream also tags pre-releases (v0.8.36-pre.1) that nix-update's
-          # stable heuristic doesn't filter; only accept vX.Y.Z tags.
-          - package: solidity-docset
-            runner: ubuntu-24.04
-            nix-update-args: --version-regex 'v(\d+\.\d+\.\d+)$'
-          # Darwin-only packages need a macOS runner (and the flake only
-          # exposes them there).
-          - package: uvc-util
-            runner: macos-26
-            nix-update-args: --version=branch
-          # llm-mlx comes from PyPI; build the whole llm env to catch plugin
-          # breakage, mirroring the nix-darwin-ci-llm job.
-          - package: llm-mlx
-            runner: macos-26
-            verify: nix build .#llm -L
+        include: ${{ fromJSON(needs.discover.outputs.legs) }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -83,14 +52,20 @@ jobs:
       - uses: DeterminateSystems/determinate-nix-action@c70cb8ae92d68c66953db28a26a63db1665bc837 # v3.21.5
 
       - name: Bump ${{ matrix.package }} with nix-update
+        # --test runs the package's `passthru.tests` when it has any, and is a
+        # no-op otherwise, so a package gaining tests is covered without
+        # touching this workflow.
         run: |
           nix run nixpkgs#nix-update -- \
             --flake \
+            --test \
             ${{ matrix.nix-update-args }} \
-            ${{ matrix.attr || matrix.package }}
+            ${{ matrix.attr }}
 
+      # `verify` is always set: utils/update-pin-legs.nix defaults it to
+      # building whatever top-level package the pin hangs off.
       - name: Verify it builds
-        run: ${{ matrix.verify || format('nix build .#{0} -L', matrix.package) }}
+        run: ${{ matrix.verify }}
 
       - name: Capture changes
         id: diff
@@ -113,8 +88,8 @@ jobs:
   # package doesn't block the others' PRs; a leg whose build produced no patch
   # is skipped via the missing artifact.
   pull-request:
-    needs: build
-    if: ${{ !cancelled() }}
+    needs: [discover, build]
+    if: ${{ !cancelled() && needs.discover.result == 'success' }}
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -122,16 +97,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package:
-          - beancount-language-server
-          - llmcat
-          - shrink-pdf
-          - remarks
-          - pi-llama
-          - nomicfoundation-solidity-language-server
-          - solidity-docset
-          - uvc-util
-          - llm-mlx
+        package: ${{ fromJSON(needs.discover.outputs.packages) }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:

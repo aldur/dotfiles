@@ -11,5 +11,11 @@ final: prev: {
       inherit src;
       hash = "sha256-qy5CH0j9eqaUUFc0zKbtGqp4Z9SLxaUC+vKQFRBLY+k=";
     };
+
+    # A fork on a branch commit; overrideAttrs keeps upstream's meta.position,
+    # so nix-update has to be told which file actually holds the pin.
+    passthru = old.passthru or { } // {
+      updatePin.args = "--version=branch --override-filename overlays/overrides/beancount-language-server.nix";
+    };
   });
 }

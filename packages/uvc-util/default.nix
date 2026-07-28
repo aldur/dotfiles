@@ -37,6 +37,9 @@ stdenv.mkDerivation {
     runHook postInstall
   '';
 
+  # Tracks its default branch; nothing is tagged upstream.
+  passthru.updatePin.args = "--version=branch";
+
   meta = {
     description = "USB Video Class (UVC) control utility for macOS";
     homepage = "https://github.com/jtfrey/uvc-util";

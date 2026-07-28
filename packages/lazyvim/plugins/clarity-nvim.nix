@@ -15,4 +15,7 @@ vimUtils.buildVimPlugin {
   };
 
   doCheck = false; # Missing runtime dependencies for "require" check
+
+  # Tracks its default branch; nothing is tagged upstream.
+  passthru.updatePin.args = "--version=branch";
 }

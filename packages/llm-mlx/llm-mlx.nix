@@ -39,4 +39,11 @@ buildPythonPackage rec {
     llm
     mlx-lm
   ];
+
+  passthru.updatePin = {
+    # Follows PyPI releases: nix-update's default, so no extra flags.
+    # Build the whole llm env to catch plugin breakage, mirroring
+    # the nix-darwin-ci-llm job.
+    verify = "nix build .#llm -L";
+  };
 }

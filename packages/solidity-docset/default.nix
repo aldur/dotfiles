@@ -136,6 +136,10 @@ pkgs.stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-KU9ihjMyi23P4jXiNikSMrXNIoXEHvdbqK0LszOiE4Y=";
   };
 
+  # Upstream also tags pre-releases (v0.8.36-pre.1) that nix-update's stable
+  # heuristic doesn't filter; only accept vX.Y.Z tags.
+  passthru.updatePin.args = "--version-regex 'v(\\d+\\.\\d+\\.\\d+)$'";
+
   nativeBuildInputs = [
     pythonEnv
     pkgs.sqlite

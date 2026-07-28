@@ -46,4 +46,7 @@ buildNpmPackage (finalAttrs: {
 
   # Taken from: https://github.com/NixOS/nixpkgs/pull/378937/files
   dontCheckForBrokenSymlinks = true;
+
+  # Follows upstream release tags: nix-update's default, so no extra flags.
+  passthru.updatePin = { };
 })

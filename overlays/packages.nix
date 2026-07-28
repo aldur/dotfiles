@@ -21,6 +21,7 @@ final: prev: {
   fps = prev.callPackage ../packages/fps { };
   lstrip = prev.callPackage ../packages/lstrip { };
   claude-log = prev.callPackage ../packages/claude-log { };
+  claude-skills = prev.callPackage ../packages/claude-skills { };
   telegram = prev.callPackage ../packages/telegram { };
   remarks = prev.callPackage ../packages/remarks { };
   tmux-palette = prev.callPackage ../packages/tmux-palette { };

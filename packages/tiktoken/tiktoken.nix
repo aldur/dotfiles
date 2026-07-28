@@ -11,6 +11,10 @@ pkgs.stdenv.mkDerivation {
     url = "https://openaipublic.blob.core.windows.net/encodings/o200k_base.tiktoken";
     hash = "sha256-RGqVOMtsNI41FhINfAiwn1fDZJXirP/+WaW/iwz7Gi0=";
   };
+  # Pins a raw data file by URL; there is no upstream versioning to follow, so
+  # this one is deliberately never bumped.
+  passthru.updatePin.exempt = "pins a raw data file by URL; no upstream versioning";
+
   dontUnpack = true;
   buildPhase = ''
     # This is just the base64 of the URL.

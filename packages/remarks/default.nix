@@ -37,6 +37,9 @@ let
     };
 
     pythonImportsCheck = [ "remarks" ];
+
+    # Tracks its default branch; nothing is tagged upstream.
+    passthru.updatePin.args = "--version=branch";
   };
   pythonWithRemarks = python3.withPackages (ps: [ remarks ]);
 in

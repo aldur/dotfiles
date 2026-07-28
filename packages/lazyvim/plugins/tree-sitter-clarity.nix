@@ -16,9 +16,9 @@ in
 overrideUntilUpgrade {
   package = tree-sitter-grammars.tree-sitter-clarity;
   version = "0.0.5-unstable-2025-11-17";
-  note = "Drop packages/lazyvim/plugins/tree-sitter-clarity.nix, and its leg in .github/workflows/update-pinned-packages.yml, if nixpkgs' grammar has caught up with clarity.nvim's queries.";
+  note = "Drop packages/lazyvim/plugins/tree-sitter-clarity.nix, and with it the CI bump leg its updatePin creates, if nixpkgs' grammar has caught up with clarity.nvim's queries.";
 
-  replacement = tree-sitter-grammars.tree-sitter-clarity.overrideAttrs (_: {
+  replacement = tree-sitter-grammars.tree-sitter-clarity.overrideAttrs (prev: {
     version = "0.0.5-unstable-2026-07-27";
 
     src = fetchFromGitHub {
@@ -26,6 +26,12 @@ overrideUntilUpgrade {
       repo = "tree-sitter-clarity";
       rev = "f3b7520fa336e877fc7bb180902e325d465da052";
       hash = "sha256-C+pWyVQC0gtU2VO2lkecijbNIKPbqEks0V6vhfN/oso=";
+    };
+
+    # overrideAttrs keeps nixpkgs' meta.position, so nix-update has to be told
+    # which file actually holds the pin.
+    passthru = prev.passthru or { } // {
+      updatePin.args = "--version=branch --override-filename packages/lazyvim/plugins/tree-sitter-clarity.nix";
     };
   });
 }

@@ -22,4 +22,11 @@ stdenvNoCC.mkDerivation {
     cp -r . $out
     runHook postInstall
   '';
+
+  passthru.updatePin = {
+    # Tracks its default branch; nothing is tagged upstream.
+    args = "--version=branch";
+    # pi loads <plugin>/index.ts, so building the wrapper is not enough.
+    verify = "nix build .#pi -L && test -f \"$(nix build .#pi.plugins.pi-llama -L --print-out-paths)/index.ts\"";
+  };
 }

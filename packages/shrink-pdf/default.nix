@@ -68,4 +68,7 @@ stdenv.mkDerivation {
         ]
       }
   '';
+
+  # Tracks its default branch; nothing is tagged upstream.
+  passthru.updatePin.args = "--version=branch";
 }

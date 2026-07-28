@@ -233,14 +233,7 @@ in
 
       nixManagedHookMarkers = [ "claude-tmux-silence" ];
 
-      skills = "${
-        pkgs.fetchFromGitHub {
-          owner = "anthropics";
-          repo = "skills";
-          rev = "da20c92503b2e8ff1cf28ca81a0df4673debdbf7";
-          hash = "sha256-BiZvEV7VK1AwhiGg+pNMgTUQmt4exevLWwL0Brx4YyE=";
-        }
-      }/skills";
+      skills = "${pkgs.claude-skills}/skills";
     };
 
     home = {

@@ -81,111 +81,145 @@
       ]
       (
         system:
-      let
-        pkgsArgs = {
-          inherit system;
-          overlays = import ./overlays { inherit self; };
-        };
+        let
+          pkgsArgs = {
+            inherit system;
+            overlays = import ./overlays { inherit self; };
+          };
 
-        pkgs = import nixpkgs pkgsArgs;
-        pkgsUnstable = import nixpkgs-unstable pkgsArgs;
-        lazyvims = pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs pkgsUnstable; };
-        qemu-vm = pkgs.callPackage ./packages/qemu-vm/qemu-vm.nix { inherit inputs; };
-      in
-      {
-        packages = {
-          inherit (lazyvims) lazyvim lazyvim-light;
-          inherit (pkgs)
-            beancount-language-server # from aldur/beancount-language-server
-            nomicfoundation-solidity-language-server
-            claude-log
-            shrink-pdf
-            solidity-docset
-            remarks
-            flatten-pdf
-            watermark-pdf
-            flake-lock-cooldown
-            aldurs-dotfiles-version
-            llmcat
-            pi # pi-coding-agent bundled with plugins
-            ;
-          llm = pkgs.llmWithPlugins;
-        }
-        // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
-          inherit (pkgs) uvc-util c920-defaults;
-        }
-        // pkgs.lib.optionalAttrs (pkgs.stdenv.isDarwin && pkgs.stdenv.isAarch64) {
-          inherit (pkgs) llm-mlx;
-        }
-        // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
-          inherit (pkgs) faraday;
-        };
+          pkgs = import nixpkgs pkgsArgs;
+          pkgsUnstable = import nixpkgs-unstable pkgsArgs;
+          lazyvims = pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs pkgsUnstable; };
+          qemu-vm = pkgs.callPackage ./packages/qemu-vm/qemu-vm.nix { inherit inputs; };
 
-        # Legacy packages are not automatically flake-checked
-        legacyPackages = {
-          inherit qemu-vm;
-        };
+          # Only the overlay's attribute names matter; the values come from
+          # `pkgs`, which already has it applied. Fed `pkgs` as both arguments so
+          # the enumeration keeps working if the overlay ever consults
+          # `final`/`prev` at its top level.
+          overlayPackages = builtins.intersectAttrs (import ./overlays/packages.nix {
+            inherit self;
+          } pkgs pkgs) pkgs;
 
-        checks = pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
-          merge-container-config = pkgs.callPackage ./modules/darwin/tests/merge-container-config-test.nix { };
+          # Bound here rather than inline below so the pinned-packages check can
+          # walk the same set without going through `self`.
+          packages = {
+            inherit (lazyvims) lazyvim lazyvim-light;
+            inherit (pkgs)
+              beancount-language-server # from aldur/beancount-language-server
+              nomicfoundation-solidity-language-server
+              claude-log
+              claude-skills # consumed by modules/home/claude-code.nix
+              shrink-pdf
+              solidity-docset
+              remarks
+              flatten-pdf
+              watermark-pdf
+              flake-lock-cooldown
+              aldurs-dotfiles-version
+              llmcat
+              pi # pi-coding-agent bundled with plugins
+              ;
+            llm = pkgs.llmWithPlugins;
+          }
+          // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
+            inherit (pkgs) uvc-util c920-defaults;
+          }
+          // pkgs.lib.optionalAttrs (pkgs.stdenv.isDarwin && pkgs.stdenv.isAarch64) {
+            inherit (pkgs) llm-mlx;
+          }
+          // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+            inherit (pkgs) faraday;
+          };
+        in
+        {
+          inherit packages;
 
-          headless-defaults =
-            let
-              headless = nixpkgs.lib.nixosSystem {
-                inherit system;
-                specialArgs = {
-                  inputs = inputs // {
-                    inherit self;
+          # Legacy packages are not automatically flake-checked
+          legacyPackages = {
+            inherit qemu-vm;
+
+            # Every package here that fetches a pinned source, with the
+            # `passthru.updatePin` it carries. Merged across systems into the
+            # top-level `updatePins` output that CI reads.
+            discoveredPins = import ./utils/discover-pins.nix { inherit (pkgs) lib; } {
+              inherit self packages overlayPackages;
+              inherit (pkgs.stdenv) hostPlatform;
+            };
+          };
+
+          checks = {
+            # Fails if a package pins a source without saying how to bump it.
+            pinned-packages = pkgs.callPackage ./packages/pinned-packages-check.nix {
+              discovered = self.legacyPackages.${system}.discoveredPins;
+            };
+
+            # Carried as `passthru.tests` on the package, so `nix-update --test`
+            # runs it on a bump too.
+            gpg-encrypt = pkgs.gpg-encrypt.tests.integration;
+          }
+          // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+            merge-container-config =
+              pkgs.callPackage ./modules/darwin/tests/merge-container-config-test.nix
+                { };
+
+            headless-defaults =
+              let
+                headless = nixpkgs.lib.nixosSystem {
+                  inherit system;
+                  specialArgs = {
+                    inputs = inputs // {
+                      inherit self;
+                    };
                   };
+                  modules = [
+                    self.nixosModules.default
+                    (
+                      { modulesPath, ... }:
+                      {
+                        imports = [ "${modulesPath}/virtualisation/qemu-vm.nix" ];
+                        networking.hostName = "headless";
+                        # This system is only evaluated, never booted
+                        users.allowNoPasswordLogin = true;
+                      }
+                    )
+                  ];
                 };
-                modules = [
-                  self.nixosModules.default
-                  (
-                    { modulesPath, ... }:
-                    {
-                      imports = [ "${modulesPath}/virtualisation/qemu-vm.nix" ];
-                      networking.hostName = "headless";
-                      # This system is only evaluated, never booted
-                      users.allowNoPasswordLogin = true;
-                    }
-                  )
-                ];
-              };
-            in
-            pkgs.writeText "headless-defaults-toplevel" (
-              builtins.unsafeDiscardStringContext headless.config.system.build.toplevel.drvPath
-            );
-        };
+              in
+              pkgs.writeText "headless-defaults-toplevel" (
+                builtins.unsafeDiscardStringContext headless.config.system.build.toplevel.drvPath
+              );
+          };
 
-        apps.validate-claude-settings = {
-          type = "app";
-          program =
-            let
-              script = pkgs.writeShellApplication {
-                name = "validate-claude-settings";
-                runtimeInputs = [
-                  pkgs.curl
-                  pkgs.check-jsonschema
-                ];
-                text = ''
-                  settings="''${1:-$HOME/.claude/settings.json}"
-                  if [ ! -f "$settings" ]; then
-                    echo "error: $settings does not exist" >&2
-                    exit 1
-                  fi
-                  schema=$(mktemp)
-                  trap 'rm -f "$schema"' EXIT
-                  curl -sSL --fail \
-                    "https://json.schemastore.org/claude-code-settings.json" \
-                    -o "$schema"
-                  check-jsonschema --schemafile "$schema" "$settings"
-                '';
-              };
-            in
-            "${script}/bin/validate-claude-settings";
-        };
-      }
-    ))
+          apps.validate-claude-settings = {
+            type = "app";
+            program =
+              let
+                script = pkgs.writeShellApplication {
+                  name = "validate-claude-settings";
+                  runtimeInputs = [
+                    pkgs.curl
+                    pkgs.check-jsonschema
+                  ];
+                  text = ''
+                    settings="''${1:-$HOME/.claude/settings.json}"
+                    if [ ! -f "$settings" ]; then
+                      echo "error: $settings does not exist" >&2
+                      exit 1
+                    fi
+                    schema=$(mktemp)
+                    trap 'rm -f "$schema"' EXIT
+                    curl -sSL --fail \
+                      "https://json.schemastore.org/claude-code-settings.json" \
+                      -o "$schema"
+                    check-jsonschema --schemafile "$schema" "$settings"
+                  '';
+                };
+              in
+              "${script}/bin/validate-claude-settings";
+          };
+        }
+      )
+    )
     // {
       templates = {
         vm-nogui = {
@@ -204,19 +238,37 @@
 
       utils.github-keys = import ./utils/github-keys.nix { };
 
-      lib.programs = {
-        git = import ./modules/shared/programs/git.nix;
-        tmux = import ./modules/shared/programs/tmux.nix;
-      };
+      # The CI bump matrix, derived from the `passthru.updatePin` each pinned
+      # package carries — see .github/workflows/update-pinned-packages.yml.
+      # Read with `nix eval --json .#updatePins`.
+      updatePins =
+        let
+          runners = {
+            linux = "ubuntu-24.04";
+            darwin = "macos-26";
+          };
+        in
+        import ./utils/update-pin-legs.nix { inherit (nixpkgs) lib; } {
+          inherit runners;
+          linux = self.legacyPackages.x86_64-linux.discoveredPins;
+          darwin = self.legacyPackages.aarch64-darwin.discoveredPins;
+        };
 
-      lib.overrideUntilUpgrade = import ./utils/override-until-upgrade.nix;
+      lib = {
+        programs = {
+          git = import ./modules/shared/programs/git.nix;
+          tmux = import ./modules/shared/programs/tmux.nix;
+        };
 
-      # Build `specialArgs` for a descendant flake (e.g. those in
-      # `base_hosts`): merge its own inputs with this flake's, the latter
-      # winning so `self` resolves to aldur-dotfiles. Encodes the merge
-      # order once so consumers can't get it backwards.
-      lib.mkSpecialArgs = hostInputs: {
-        inputs = hostInputs // inputs;
+        overrideUntilUpgrade = import ./utils/override-until-upgrade.nix;
+
+        # Build `specialArgs` for a descendant flake (e.g. those in
+        # `base_hosts`): merge its own inputs with this flake's, the latter
+        # winning so `self` resolves to aldur-dotfiles. Encodes the merge
+        # order once so consumers can't get it backwards.
+        mkSpecialArgs = hostInputs: {
+          inputs = hostInputs // inputs;
+        };
       };
 
       nixosModules = {

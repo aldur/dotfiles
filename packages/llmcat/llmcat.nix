@@ -10,4 +10,7 @@ buildGoModule {
   };
 
   vendorHash = "sha256-lRIR6UubOi613KUn+IFv8kjK8HkTvYluhO3H94/TbsQ=";
+
+  # Tracks its default branch; nothing is tagged upstream.
+  passthru.updatePin.args = "--version=branch";
 }
