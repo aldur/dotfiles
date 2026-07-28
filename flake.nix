@@ -147,47 +147,14 @@
             };
           };
 
-          checks = {
-            # Fails if a package pins a source without saying how to bump it.
-            pinned-packages = pkgs.callPackage ./packages/pinned-packages-check.nix {
-              discovered = self.legacyPackages.${system}.discoveredPins;
-            };
-
-            # Carried as `passthru.tests` on the package, so `nix-update --test`
-            # runs it on a bump too.
-            gpg-encrypt = pkgs.gpg-encrypt.tests.integration;
-          }
-          // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
-            merge-container-config =
-              pkgs.callPackage ./modules/darwin/tests/merge-container-config-test.nix
-                { };
-
-            headless-defaults =
-              let
-                headless = nixpkgs.lib.nixosSystem {
-                  inherit system;
-                  specialArgs = {
-                    inputs = inputs // {
-                      inherit self;
-                    };
-                  };
-                  modules = [
-                    self.nixosModules.default
-                    (
-                      { modulesPath, ... }:
-                      {
-                        imports = [ "${modulesPath}/virtualisation/qemu-vm.nix" ];
-                        networking.hostName = "headless";
-                        # This system is only evaluated, never booted
-                        users.allowNoPasswordLogin = true;
-                      }
-                    )
-                  ];
-                };
-              in
-              pkgs.writeText "headless-defaults-toplevel" (
-                builtins.unsafeDiscardStringContext headless.config.system.build.toplevel.drvPath
-              );
+          checks = import ./checks {
+            inherit
+              pkgs
+              self
+              inputs
+              packages
+              overlayPackages
+              ;
           };
 
           apps.validate-claude-settings = {
