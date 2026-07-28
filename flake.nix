@@ -117,6 +117,7 @@
               flake-lock-cooldown
               aldurs-dotfiles-version
               llmcat
+              taskmd
               pi # pi-coding-agent bundled with plugins
               ;
             llm = pkgs.llmWithPlugins;
