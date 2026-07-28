@@ -40,7 +40,11 @@ jobs:
         with:
           persist-credentials: false
       - uses: DeterminateSystems/determinate-nix-action@c70cb8ae92d68c66953db28a26a63db1665bc837 # v3.21.5
-      - run: nix build .#checks.${{ matrix.system }}.headless-defaults
+      # Every check relevant to this system.
+      - run: |
+          nix eval --json .#checks.${{ matrix.system }} --apply builtins.attrNames \
+            | jq -r '.[] | ".#checks.${{ matrix.system }}." + .' \
+            | xargs -r nix build -L
 
   # One job per (runner, target): the image builds each need tens of GB of
   # scratch space (full-system tarball + 16GiB disk image + copy into the
