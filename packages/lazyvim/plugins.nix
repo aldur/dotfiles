@@ -95,20 +95,20 @@
             src = pkgs.fetchFromGitHub {
               owner = "aldur";
               repo = "clarity.nvim";
-              rev = "da3f1a5e13d5149a8a8fed07ae800017e7cbdb91";
-              hash = "sha256-BouigvD3x1WjQXZUNXf4+Or1imGedZq4k4SGDdyvt4E=";
+              rev = "5c9d8accc29e0262fd9fb2013e1dc45b01bcba1e";
+              hash = "sha256-EGrC3wY+WCOykYMJnPqeK6IrcGzByIe7hP8ktdXA2sI=";
             };
             doCheck = false; # Missing runtime dependencies for "require" check
           })
           (pkgs.neovimUtils.grammarToPlugin (
             pkgs.tree-sitter.buildGrammar rec {
               language = "clarity";
-              version = "1436da3946359fcd7ac2d81917aaa78ef1e01755";
+              version = "f3b7520fa336e877fc7bb180902e325d465da052";
               src = pkgs.fetchFromGitHub {
                 owner = "xlittlerag";
                 repo = "tree-sitter-${language}";
                 rev = version;
-                hash = "sha256-Ja79mtXHcZQbs/aPWCaCELWH8RIfeQ35gcRifgIyW/0=";
+                hash = "sha256-C+pWyVQC0gtU2VO2lkecijbNIKPbqEks0V6vhfN/oso=";
               };
             }
           ))
