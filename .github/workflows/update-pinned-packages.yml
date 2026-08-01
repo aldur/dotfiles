@@ -24,7 +24,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: DeterminateSystems/determinate-nix-action@c70cb8ae92d68c66953db28a26a63db1665bc837 # v3.21.5
+      - uses: DeterminateSystems/determinate-nix-action@d96678350ffd6a456235832eb11e1c491589b7bb # v3.21.8
 
       - name: Derive the matrix from the packages themselves
         id: read
@@ -49,7 +49,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: DeterminateSystems/determinate-nix-action@c70cb8ae92d68c66953db28a26a63db1665bc837 # v3.21.5
+      - uses: DeterminateSystems/determinate-nix-action@d96678350ffd6a456235832eb11e1c491589b7bb # v3.21.8
 
       - name: Bump ${{ matrix.package }} with nix-update
         # --test runs the package's `passthru.tests` when it has any, and is a
