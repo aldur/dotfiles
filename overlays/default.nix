@@ -16,5 +16,6 @@
   )
 
   (import ./argc.nix { inherit self; })
+  (import ./mlx.nix { nixpkgs = self.inputs.nixpkgs-darwin; })
   (import ./packages.nix { inherit self; })
 ]

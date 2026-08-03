@@ -5,6 +5,13 @@
   buildPythonPackage,
   fetchPypi,
   python,
+  # The CPython the wheel `wheelHash` was fetched for; supplied by the
+  # overlay, which derives it from this repo's own nixpkgs pin.
+  wheelPythonVersion,
+  # Hash of the cp-specific mlx wheel for `wheelPythonVersion`. Defaults to
+  # the pin this repo maintains (bumped by nix-update); overridable together
+  # with `python`/`wheelPythonVersion` to run a newer CPython than we ship.
+  wheelHash ? "sha256-3rKE86XNDD6HvtgMK+6dy/lGva1E11WS9vt4Tah4wcA=",
 }:
 let
   version = "0.32.0";
@@ -13,8 +20,10 @@ let
 
   # The mlx wheel is CPython-specific; follow whatever interpreter this
   # package set is built for, e.g. "313" -> "cp313". PyPI ships wheels for
-  # every current CPython, but each has its own hash: a Python bump makes
-  # the fetch fail loudly until `hash` matches the new wheel.
+  # every current CPython, but each has its own hash — `wheelHash` matches
+  # exactly one of them, the one for wheelPythonVersion. The assert turns an
+  # interpreter/hash mismatch into a readable error instead of a failed
+  # fetch. (The mlx_metal wheel is py3-none: one hash fits all interpreters.)
   pyShort = lib.replaceStrings [ "." ] [ "" ] python.pythonVersion;
   cpTag = "cp${pyShort}";
 
@@ -46,6 +55,8 @@ in
 #
 # Building `mlx` with `metal` support in macOS requires a sandbox escape.
 # The version shipped in `nixpkgs` does not do any acceleration.
+assert lib.assertMsg (python.pythonVersion == wheelPythonVersion)
+  "mlx: the wheel hash is for CPython ${wheelPythonVersion}, but this package set uses ${python.pythonVersion}; use the `mlx-python` interpreter from the overlay, or build the overlay for another CPython via `lib.mkMlxOverlay`";
 buildPythonPackage rec {
   inherit version format;
   pname = "mlx";
@@ -57,7 +68,7 @@ buildPythonPackage rec {
       format
       platform
       ;
-    hash = "sha256-3rKE86XNDD6HvtgMK+6dy/lGva1E11WS9vt4Tah4wcA=";
+    hash = wheelHash;
     python = cpTag;
     dist = cpTag;
     abi = cpTag;

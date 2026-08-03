@@ -67,6 +67,7 @@
       self,
       flake-utils,
       nixpkgs,
+      nixpkgs-darwin,
       nixpkgs-unstable,
       ...
     }@inputs:
@@ -87,7 +88,8 @@
             overlays = import ./overlays { inherit self; };
           };
 
-          pkgs = import nixpkgs pkgsArgs;
+          pkgsBase = if nixpkgs.lib.hasSuffix "-darwin" system then nixpkgs-darwin else nixpkgs;
+          pkgs = import pkgsBase pkgsArgs;
           pkgsUnstable = import nixpkgs-unstable pkgsArgs;
           lazyvims = pkgs.callPackage ./packages/lazyvim/lazyvim.nix { inherit inputs pkgsUnstable; };
           qemu-vm = pkgs.callPackage ./packages/qemu-vm/qemu-vm.nix { inherit inputs; };
@@ -208,11 +210,7 @@
       utils.github-keys = import ./utils/github-keys.nix { };
 
       overlays = {
-        # Metal-enabled `mlx` (plus mlx-lm runtime fixes) for Apple Silicon.
-        # Already part of this flake's own overlay stack (overlays/default.nix
-        # picks it up); exported so other flakes (e.g. aldur/sandboxed-ai) can
-        # apply it to their own nixpkgs.
-        mlx = import ./overlays/overrides/mlx.nix;
+        mlx = import ./overlays/mlx.nix { nixpkgs = nixpkgs-darwin; };
       };
 
       # The CI bump matrix, derived from the `passthru.updatePin` each pinned
@@ -236,6 +234,18 @@
           git = import ./modules/shared/programs/git.nix;
           tmux = import ./modules/shared/programs/tmux.nix;
         };
+
+        mkMlxOverlay =
+          args:
+          import ./overlays/mlx.nix (
+            {
+              nixpkgs = nixpkgs-darwin;
+              # To override Python version and wheel hash:
+              #     wheelPythonVersion = "3.14";
+              #     wheelHash = "sha256-…"; # the matching cp314 mlx wheel on PyPI
+            }
+            // args
+          );
 
         overrideUntilUpgrade = import ./utils/override-until-upgrade.nix;
 
