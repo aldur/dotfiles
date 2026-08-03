@@ -38,7 +38,13 @@ let
     # are named after it.
     package = e.name;
     attr = e.path;
-    nix-update-args = e.pin.args or "";
+    # nix-update's `--test` dies outright on a package with no
+    # `passthru.tests`, so it is only requested when tests exist; a package
+    # gaining tests still picks it up without touching the workflow.
+    nix-update-args = lib.concatStringsSep " " (
+      lib.optional ((e.drv.passthru.tests or { }) != { }) "--test"
+      ++ lib.optional ((e.pin.args or "") != "") e.pin.args
+    );
     # Building a passthru derivation on its own often proves little — a Neovim
     # plugin is just Lua copied into the store — so the default builds whatever
     # top-level package it reaches the tree through.

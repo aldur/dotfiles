@@ -52,13 +52,12 @@ jobs:
       - uses: DeterminateSystems/determinate-nix-action@d96678350ffd6a456235832eb11e1c491589b7bb # v3.21.8
 
       - name: Bump ${{ matrix.package }} with nix-update
-        # --test runs the package's `passthru.tests` when it has any, and is a
-        # no-op otherwise, so a package gaining tests is covered without
-        # touching this workflow.
+        # `--test` is injected per-leg by utils/update-pin-legs.nix, only for
+        # packages that define `passthru.tests`: nix-update fails outright on
+        # packages without any, rather than treating it as a no-op.
         run: |
           nix run nixpkgs#nix-update -- \
             --flake \
-            --test \
             ${{ matrix.nix-update-args }} \
             ${{ matrix.attr }}
 
