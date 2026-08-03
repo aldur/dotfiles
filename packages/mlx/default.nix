@@ -4,11 +4,19 @@
   fixDarwinDylibNames,
   buildPythonPackage,
   fetchPypi,
+  python,
 }:
 let
-  version = "0.31.2";
+  version = "0.32.0";
   format = "wheel";
   platform = "macosx_15_0_arm64";
+
+  # The mlx wheel is CPython-specific; follow whatever interpreter this
+  # package set is built for, e.g. "313" -> "cp313". PyPI ships wheels for
+  # every current CPython, but each has its own hash: a Python bump makes
+  # the fetch fail loudly until `hash` matches the new wheel.
+  pyShort = lib.replaceStrings [ "." ] [ "" ] python.pythonVersion;
+  cpTag = "cp${pyShort}";
 
   mlx_metal = buildPythonPackage rec {
     inherit version format;
@@ -21,21 +29,23 @@ let
         format
         platform
         ;
-      hash = "sha256-6dTl/ObKEKh6DjiFl/mVGa1ZTQnmdHCLUxK9i9T1mX0=";
+      hash = "sha256-G9lKHOWwOgyJh3Gj51nwEkMAxqtRVRJ5BqHVCx8/zxk=";
       python = "py3";
       dist = "py3";
     };
 
     dontStrip = true;
     doCheck = false;
+
+    # Shares `version` with mlx; bumped in lockstep by the parent's
+    # `--subpackage mlx_metal` nix-update flag, not as a leg of its own.
+    passthru.updatePin.exempt = "bumped with mlx via --subpackage";
   };
 in
 # https://github.com/NixOS/nixpkgs/blob/b3d51a0365f6695e7dd5cdf3e180604530ed33b4/pkgs/development/python-modules/mlx/default.nix#L78
 #
 # Building `mlx` with `metal` support in macOS requires a sandbox escape.
 # The version shipped in `nixpkgs` does not do any acceleration.
-#
-# WARN: This will likely break when switching Python versions.
 buildPythonPackage rec {
   inherit version format;
   pname = "mlx";
@@ -47,10 +57,10 @@ buildPythonPackage rec {
       format
       platform
       ;
-    hash = "sha256-NLAXHNnrXEP92CCR9hNdbMxaBlNjpKPmj6xk+05T03w=";
-    python = "cp313";
-    dist = "cp313";
-    abi = "cp313";
+    hash = "sha256-3rKE86XNDD6HvtgMK+6dy/lGva1E11WS9vt4Tah4wcA=";
+    python = cpTag;
+    dist = cpTag;
+    abi = cpTag;
   };
 
   nativeBuildInputs = [
@@ -60,16 +70,16 @@ buildPythonPackage rec {
   # After pip installs the mlx wheel, extract mlx_metal and copy its lib directory
   # NOTE: This is not copying any other file, e.g. headers.
   postInstall = ''
-    libdir=${mlx_metal}/lib/python3.13/site-packages/mlx
-    cp -r "$libdir/lib" "$out/lib/python3.13/site-packages/mlx/"
+    libdir=${mlx_metal}/${python.sitePackages}/mlx
+    cp -r "$libdir/lib" "$out/${python.sitePackages}/mlx/"
   '';
 
   postFixup = lib.optionalString stdenv.isDarwin ''
-    libdir="$out/lib/python3.13/site-packages/mlx"
+    libdir="$out/${python.sitePackages}/mlx"
 
     if [ -f "$libdir/lib/libmlx.dylib" ]; then
       for so in "$libdir"/*.so; do
-        if [ -f "$so" ] && [ "$so" != "$libdir/core.cpython-313-darwin.so" ]; then
+        if [ -f "$so" ] && [ "$so" != "$libdir/core.cpython-${pyShort}-darwin.so" ]; then
           install_name_tool -add_rpath "$libdir/lib" "$so" 2>/dev/null || true
           install_name_tool -change @rpath/libmlx.dylib "$libdir/lib/libmlx.dylib" "$so" 2>/dev/null || true
         fi
@@ -93,6 +103,21 @@ buildPythonPackage rec {
   pythonImportsCheck = [
     "mlx.core"
   ];
+
+  passthru = {
+    # Exposed so nix-update's `--subpackage mlx_metal` can reach it.
+    inherit mlx_metal;
+    updatePin = {
+      # nix-update can't infer PyPI from a *wheel* fetchPypi src (only the
+      # `mirror://pypi` sdist form), so point it at the project explicitly.
+      # Both wheels share `version`; `--subpackage` keeps the mlx_metal hash
+      # in sync.
+      args = "--url mirror://pypi/m/mlx --subpackage mlx_metal";
+      # Build the whole llm env to catch mlx-lm/plugin breakage, mirroring
+      # the llm-mlx leg.
+      verify = "nix build .#llm -L";
+    };
+  };
 
   meta = {
     platforms = lib.platforms.darwin;

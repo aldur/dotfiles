@@ -127,6 +127,7 @@
           }
           // pkgs.lib.optionalAttrs (pkgs.stdenv.isDarwin && pkgs.stdenv.isAarch64) {
             inherit (pkgs) llm-mlx;
+            mlx = pkgs.python3.pkgs.mlx;
           }
           // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
             inherit (pkgs) faraday;
@@ -205,6 +206,14 @@
       };
 
       utils.github-keys = import ./utils/github-keys.nix { };
+
+      overlays = {
+        # Metal-enabled `mlx` (plus mlx-lm runtime fixes) for Apple Silicon.
+        # Already part of this flake's own overlay stack (overlays/default.nix
+        # picks it up); exported so other flakes (e.g. aldur/sandboxed-ai) can
+        # apply it to their own nixpkgs.
+        mlx = import ./overlays/overrides/mlx.nix;
+      };
 
       # The CI bump matrix, derived from the `passthru.updatePin` each pinned
       # package carries — see .github/workflows/update-pinned-packages.yml.
