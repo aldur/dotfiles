@@ -25,8 +25,9 @@
     # enable hyperlinks
     set -as terminal-features ",*:hyperlinks"
 
-    # required by terminal UIs that distinguish modified Enter keys
+    # required by terminal UIs that distinguish modified Enter keys.
     set -g extended-keys on
+    set -g extended-keys-format csi-u
 
     # enable undercurl and strikethrough
     set -as terminal-features ',*:usstyle'
