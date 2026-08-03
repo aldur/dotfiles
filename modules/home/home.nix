@@ -347,21 +347,29 @@ in
           skipAmendWarning = true;
           nerdFontsVersion = "3";
         };
-      }
-      //
-        # `e` should open our wrapped nvim, when this configuration has it.
-        # These mirror lazygit's built-in "nvim" editPreset with the binary
-        # swapped; lazygit quotes {{filename}} itself, and editInTerminal
-        # suspends lazygit while nvim runs.
-        lib.optionalAttrs (lazyvim-bin != null) {
-          os = {
+
+        os =
+          # `e` should open our wrapped nvim, when this configuration has it.
+          # These mirror lazygit's built-in "nvim" editPreset with the binary
+          # swapped; lazygit quotes {{filename}} itself, and editInTerminal
+          # suspends lazygit while nvim runs.
+          lib.optionalAttrs (lazyvim-bin != null) {
             edit = "${lazyvim-bin} -- {{filename}}";
             editAtLine = "${lazyvim-bin} +{{line}} -- {{filename}}";
             editAtLineAndWait = "${lazyvim-bin} +{{line}} -- {{filename}}";
             openDirInEditor = "${lazyvim-bin} -- {{dir}}";
             editInTerminal = true;
-          };
-        };
+          }
+          //
+            # Without this, lazygit falls back to a library that shells out to
+            # xclip/xsel/wl-copy — none of which these hosts have — so copying a
+            # hash silently does nothing. tcopy uses OSC 52 instead, which tmux
+            # forwards to the outer terminal (`set-clipboard on`). Darwin keeps
+            # the native pbcopy path. lazygit shell-quotes {{text}} itself.
+            lib.optionalAttrs pkgs.stdenv.isLinux {
+              copyToClipboardCmd = "${lib.getExe pkgs.tcopy} -- {{text}}";
+            };
+      };
     };
 
     difftastic = {

@@ -25,6 +25,7 @@ final: prev: {
   telegram = prev.callPackage ../packages/telegram { };
   remarks = prev.callPackage ../packages/remarks { };
   tmux-palette = prev.callPackage ../packages/tmux-palette { };
+  tcopy = prev.callPackage ../packages/tcopy { };
   lazyvim-popup = prev.callPackage ../packages/lazyvim-popup { };
   taskmd = prev.callPackage ../packages/taskmd { };
 
