@@ -220,6 +220,7 @@ in
       writableSettings = {
         "$schema" = "https://json.schemastore.org/claude-code-settings.json";
         theme = "dark";
+        tui = "default";
         skipDangerousModePermissionPrompt = true;
         # Retain session transcripts effectively forever. Claude Code prunes
         # JSONL logs older than `cleanupPeriodDays` (default 30) at startup, and
