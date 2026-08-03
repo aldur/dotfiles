@@ -27,6 +27,7 @@ let
       shrink-pdf
       split-pdf
       taskmd
+      tcopy
       tmux-palette
       totp-qr-decode
       watermark-pdf
@@ -226,17 +227,6 @@ in
             end
 
             cd $path
-          '';
-        };
-
-        tcopy = {
-          description = "Copy stdin to system clipboard via OSC 52 escape sequence";
-          body = ''
-            read -z data
-            # `base64 | tr -d '\n'` not `base64 -w 0`: -w is GNU-only and
-            # macOS /usr/bin/base64 rejects it. tr gives single-line output
-            # on both.
-            printf "\033]52;c;%s\007" (printf "%s" $data | base64 | tr -d '\n')
           '';
         };
 
