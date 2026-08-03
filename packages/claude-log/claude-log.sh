@@ -15,8 +15,8 @@ If PATH is omitted, picks among sessions for the current project
 first (ordered by last message timestamp, not file mtime).
 
 In the session picker (type to full-text search the whole conversation —
-prompts, replies, thinking, tool calls and results — by exact substring;
-space separates AND terms):
+prompts, replies, thinking, tool calls and results — by exact substring,
+case-insensitive; space separates AND terms):
   enter      open the session in the turn picker
   alt-a      view the full conversation in a pager (returns to the picker)
   alt-v      open the full conversation in nvim (read-only markdown)
@@ -24,8 +24,9 @@ space separates AND terms):
   alt-p      toggle the preview pane
   ctrl-a     broaden to sessions from all projects
 
-In the turn picker (rows are timestamped; type to full-text search the
-entire text of every turn by exact substring, not just the visible snippet):
+In the turn picker (rows are timestamped; type to full-text search the entire
+text of every turn by exact substring, case-insensitive, not just the visible
+snippet):
   enter      print the selected turn(s)
   tab        mark/unmark a turn and move down (multi-select)
   shift-tab  mark/unmark a turn and move up (extend a range)
@@ -512,7 +513,7 @@ pick_session() {
     # the turn picker. Output is "<key>\n<selected row>"; key is empty on enter.
     out=$(list_sessions "$scope" \
         | fzf --prompt="$prompt" --reverse --height=60% --ansi \
-              --delimiter=$'\t' --with-nth=1,3 --exact \
+              --delimiter=$'\t' --with-nth=1,3 --exact -i \
               --expect=alt-i \
               --preview="$self --_summary {2}" \
               --preview-window=right,60%,wrap \
@@ -577,7 +578,7 @@ else
     # back via $FZF_PROMPT.
     selected=$(turn_lines "$SESSION" new \
         | fzf --prompt='turn newest-first> ' --reverse --ansi \
-              --delimiter=$'\t' --with-nth=1,2,3,4 --exact --multi \
+              --delimiter=$'\t' --with-nth=1,2,3,4 --exact -i --multi \
               --preview="$self --_render {1} \"$SESSION\"" \
               --preview-window=right,60%,wrap \
               --bind='alt-p:toggle-preview' \
