@@ -131,7 +131,7 @@ let
       --ro-bind-try "$data_home/lazyvim" "$data_home/lazyvim"
       --unsetenv TMUX
       --unsetenv TMUX_PANE
-      --unsetenv TMUX_TMPDIR
+      --setenv TMUX_TMPDIR /dev/null
       --unsetenv SSH_AUTH_SOCK
       --unsetenv SSH_AGENT_PID
       --unsetenv GNUPGHOME
