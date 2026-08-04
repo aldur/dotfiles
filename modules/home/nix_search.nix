@@ -16,13 +16,20 @@ in
     enable = mkEnableOption "Better Nix search";
   };
 
-  config = mkIf cfg.enable {
-    programs.nix-index.enable = true;
-    programs.nix-index-database.comma.enable = true;
+  config = lib.mkMerge [
+    {
+      # Override defaults inherited by importing the nix-index-database module.
+      programs.nix-index.enable = cfg.enable;
+      programs.nix-index.symlinkToCacheHome = lib.mkDefault cfg.enable;
+    }
 
-    home.packages = with pkgs; [
-      nix-doc
-      nix-search
-    ];
-  };
+    (mkIf cfg.enable {
+      programs.nix-index-database.comma.enable = true;
+
+      home.packages = with pkgs; [
+        nix-doc
+        nix-search
+      ];
+    })
+  ];
 }
