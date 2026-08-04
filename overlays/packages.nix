@@ -10,8 +10,10 @@ final: prev: {
   gpg-encrypt = prev.callPackage ../packages/gpg-encrypt/gpg-encrypt.nix { };
   totp-cli = final.callPackage ../packages/totp-cli-ephemeral { inherit (prev) totp-cli; };
 
-  shrink-pdf = prev.callPackage ../packages/shrink-pdf { };
-  flatten-pdf = prev.callPackage ../packages/flatten-pdf { };
+  # Headless: they only shell out to `gs`, and the default ghostscript build
+  # carries X11 and gtk (~95M) for a window no wrapper ever opens.
+  shrink-pdf = prev.callPackage ../packages/shrink-pdf { ghostscript = prev.ghostscript_headless; };
+  flatten-pdf = prev.callPackage ../packages/flatten-pdf { ghostscript = prev.ghostscript_headless; };
   watermark-pdf = prev.callPackage ../packages/watermark-pdf { };
   split-pdf = prev.callPackage ../packages/split-pdf { };
   totp-qr-decode = prev.callPackage ../packages/totp-qr-decode { };
