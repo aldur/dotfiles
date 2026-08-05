@@ -13,6 +13,14 @@ let
     sha256 = "sha256-x1H++Oqax/ZacnsTgurRFWI9I+/E7wb5pj8PXf7fhmw=";
   };
 
+  # Keys anyone verifying signatures should trust, straight from the
+  # `gh-signing-keys` flake input (see there for the refresh command).
+  allowedSigners = pkgs.writeText "allowed_signers" (
+    lib.concatMapStringsSep "\n" (
+      k: ''aldur@users.noreply.github.com namespaces="git" ${k.key}''
+    ) (builtins.fromJSON (builtins.readFile inputs.gh-signing-keys.outPath))
+  );
+
   customTools =
     with pkgs;
     [
@@ -339,6 +347,15 @@ in
         git = {
           autoFetch = false;
         };
+        customCommands = [
+          {
+            key = "X";
+            context = "commits, subCommits";
+            description = "Show commit signature";
+            command = "git show --no-patch --show-signature {{.SelectedCommit.Hash}}";
+            output = "popup";
+          }
+        ];
         gui = {
           skipAmendWarning = true;
           nerdFontsVersion = "3";
@@ -388,6 +405,7 @@ in
           tag.gpgsign = true;
           tag.forceSignAnnotated = true;
           gpg.format = "ssh";
+          gpg.ssh.allowedSignersFile = "${allowedSigners}";
 
           # NOTE: This will default to the _second_ key offered by the agent.
           gpg.ssh.defaultKeyCommand = lib.mkDefault "sh -c 'echo key::$(ssh-add -L | tail -n 1)'";

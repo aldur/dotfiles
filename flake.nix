@@ -57,6 +57,13 @@
 
     # preservation has no inputs of its own (pure NixOS module).
     preservation.url = "github:nix-community/preservation";
+
+    # SSH signing keys registered on GitHub, rendered into git's
+    # allowed-signers file; refresh with `nix flake update gh-signing-keys`.
+    gh-signing-keys = {
+      url = "file+https://api.github.com/users/aldur/ssh_signing_keys";
+      flake = false;
+    };
   };
   outputs =
     {

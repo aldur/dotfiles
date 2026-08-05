@@ -112,6 +112,18 @@
         "type": "github"
       }
     },
+    "gh-signing-keys": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-se65vQP9ypXDnXUAW/prNtPqNyeuHJjUgvuYxxMgGrw=",
+        "type": "file",
+        "url": "https://api.github.com/users/aldur/ssh_signing_keys"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://api.github.com/users/aldur/ssh_signing_keys"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -252,6 +264,7 @@
         "dashp": "dashp",
         "detnix": "detnix",
         "flake-utils": "flake-utils",
+        "gh-signing-keys": "gh-signing-keys",
         "home-manager": "home-manager",
         "nix-index-database": "nix-index-database",
         "nixCats": "nixCats",
