@@ -94,6 +94,9 @@ in
     packages = customTools ++ [
       aldurs-tools
       pkgs.moreutils
+      # Standalone output (no reference back to git itself): keeps
+      # `git help <cmd>` working next to the manual-less gitMinimal-runtime.
+      pkgs.git.doc
     ];
 
     file."Documents/Notes/.marksman.toml".text = "";
@@ -392,6 +395,12 @@ in
 
     git = {
       enable = true;
+
+      # The same git the editor ships (overlays/slim.nix), so one copy
+      # serves both. Nothing here needs what full git adds: send-email
+      # (perl), git-p4 (python), `grep -P` (pcre2), osxkeychain — remotes
+      # are ssh and signing is ssh-based. Manpages come from git.doc below.
+      package = pkgs.gitMinimal-runtime;
 
       settings = lib.recursiveUpdate (import ../shared/programs/git.nix) (
         {
