@@ -5,7 +5,7 @@ pkgs.stdenv.mkDerivation {
     pkgs.python3Packages.wrapPython
   ];
   propagatedBuildInputs = [
-    (pkgs.python312.withPackages (ps: with ps; [ tiktoken ]))
+    (pkgs.python3.withPackages (ps: with ps; [ tiktoken ]))
   ];
   src = pkgs.fetchurl {
     url = "https://openaipublic.blob.core.windows.net/encodings/o200k_base.tiktoken";
