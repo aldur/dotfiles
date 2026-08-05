@@ -29,28 +29,23 @@ in
       };
     }
 
-    # Pin nixpkgs to the flake input.
-    (
-      let
-        inherit (pkgs.stdenv) isDarwin;
-
-        # `nix-darwin` 25.11+ does this automatically via nixpkgs.flake.setFlakeRegistry,
-        # so we only set it manually on Linux or if that option is disabled.
-        darwinFlakeRegistryDisabled =
-          isDarwin
-          && config ? nixpkgs
-          && config.nixpkgs ? flake
-          && config.nixpkgs.flake ? setFlakeRegistry
-          && !config.nixpkgs.flake.setFlakeRegistry;
-        shouldSetRegistry = pkgs.stdenv.isLinux || darwinFlakeRegistryDisabled;
-      in
-      lib.mkIf shouldSetRegistry {
-        nix.registry.nixpkgs.flake = inputs.nixpkgs;
-        warnings = lib.optionals darwinFlakeRegistryDisabled [
-          "nixpkgs.flake.setFlakeRegistry is disabled; falling back to manual nix.registry.nixpkgs configuration from dotfiles."
-        ];
-      }
-    )
+    # Pin nixpkgs to the flake input's rev, by reference.
+    # The narHash lets nix resolve store-first, so no fetch on machines that
+    # evaluated the flake; elsewhere it's a one-time tarball per rev.
+    {
+      nix.registry.nixpkgs.to =
+        let
+          # The branch this system is actually built from — the darwin
+          # binary cache covers nixpkgs-darwin revs, not nixos ones.
+          base = if pkgs.stdenv.isDarwin then inputs.nixpkgs-darwin else inputs.nixpkgs;
+        in
+        {
+          type = "github";
+          owner = "NixOS";
+          repo = "nixpkgs";
+          inherit (base) rev narHash;
+        };
+    }
 
     (lib.mkIf cfg.enable {
       nix.package = lib.mkForce (
