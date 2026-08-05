@@ -20,33 +20,6 @@ final: prev: {
   flake-lock-cooldown = prev.callPackage ../packages/flake-lock-cooldown { };
   neovim-nightly = prev.callPackage ../packages/neovim-nightly { };
 
-  # node-gyp is a build tool, but packages ship it anyway and its residue
-  # retains build inputs at runtime: config.gypi records store paths (the
-  # npm-deps fixed-output derivation among them), and its own python
-  # scripts get store-python shebangs at fixup — an interpreter in the
-  # closure for scripts nothing runs.
-  withoutNpmBuildResidue =
-    drv:
-    drv.overrideAttrs (old: {
-      postInstall = (old.postInstall or "") + ''
-        find "$out" -name config.gypi -delete
-        find "$out" -type d -name node-gyp -prune -exec rm -rf {} +
-        # Native modules' build trees: only the compiled Release/*.node is
-        # runtime; Makefiles and .deps depfiles record compiler and include
-        # store paths (glib-dev, and with it python, in keytar's case).
-        find "$out" -type d \( -name .deps -o -name obj.target \) -prune -exec rm -rf {} +
-        find "$out" -path "*/build/*" \( -name "*.mk" -o -name Makefile \) -delete
-        # Vendored dev scripts (katex ships its font-generation tooling):
-        # fixup patches their shebangs, putting a python in the closure for
-        # scripts no node package ever executes.
-        find "$out" -path "*/node_modules/*" -name "*.py" -delete
-        # The pruned trees leave .bin/node-gyp symlinks dangling, which
-        # noBrokenSymlinks rightly rejects.
-        find "$out" -xtype l -delete
-      '';
-    });
-
-  basedpyright = final.withoutNpmBuildResidue prev.basedpyright; # Leaks npm-deps through keytar's config.gypi.
   aldurs-dotfiles-version = prev.callPackage ../packages/aldurs-dotfiles-version { inherit self; };
   faraday = prev.callPackage ../packages/faraday { };
   fps = prev.callPackage ../packages/fps { };

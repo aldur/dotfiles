@@ -24,8 +24,8 @@ let
     suffix-LD = true;
     wrapRc = true;
     configDirName = defaultPackageName;
-    # hosts.python3.enable = false;
-    # hosts.node.enable = false;
+    hosts.python3.enable = false;
+    hosts.node.enable = false;
     # aliases = [ defaultPackageName ];
   };
 

@@ -14,7 +14,7 @@
     ++ [
       curl
       fd
-      gitMinimal
+      gitMinimal-runtime
       lazygit
       ripgrep
       shfmt
@@ -34,7 +34,7 @@
 
   rust = [ rust-analyzer ];
   go = [ gopls ];
-  typescript = [ (vtsls.override { nodejs-slim_22 = nodejs-slim; }) ];
+  typescript = [ (withoutNpmBuildResidue (vtsls.override { nodejs-slim_22 = nodejs-slim; })) ];
   solidity = [
     (pkgs.callPackage
       ../nomicfoundation-solidity-language-server/nomicfoundation-solidity-language-server.nix
@@ -53,7 +53,6 @@
   markdown = [
     markdownlint-cli2
     marksman
-    nodejs-slim # required by markdown-preview
     pandoc
     (pkgs.callPackage ../pandoc_md2html_assets/md2html.nix { })
   ];

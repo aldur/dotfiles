@@ -1,0 +1,105 @@
+# Strip packages to what's required at runtime to reduce disk space (without
+# rebuilding the world).
+final: prev: {
+  # uvwasi ships a pkg-config file (and headers) in its runtime output, pinning
+  # libuv's -dev headers; node links the library, never the headers. Same name
+  # → same store path length, so the copy can replace the original
+  # byte-for-byte inside node's ELF below.
+  uvwasi-runtime = prev.runCommand prev.uvwasi.name { } ''
+    cp -a ${prev.uvwasi} $out
+    chmod -R u+w $out
+    rm -rf $out/lib/pkgconfig $out/lib/cmake $out/include
+  '';
+
+  # node compiles its build configuration into the binary (process.config),
+  # which pins the -dev output of every build dependency — headers and
+  # static libs only `node-gyp rebuild` would ever read, ~24M of closure,
+  # and projects that compile addons bring their own toolchain anyway.
+  # remove-references-to swaps each hash for an invalid one of the same
+  # length, so patching the ELF in place is safe; no rebuild of node.
+  nodejs-slim-runtime =
+    prev.runCommand prev.nodejs-slim.name
+      {
+        nativeBuildInputs = [ prev.removeReferencesTo ];
+        closure = prev.closureInfo { rootPaths = [ prev.nodejs-slim ]; };
+        # vtsls' buildNpmPackage reads meta.platforms from the node it gets.
+        inherit (prev.nodejs-slim) meta;
+      }
+      ''
+        cp -a ${prev.nodejs-slim} $out
+        chmod -R u+w $out
+        grep -e '-dev$' "$closure/store-paths" | while IFS= read -r p; do
+          find $out -type f -exec remove-references-to -t "$p" {} +
+        done
+        # node's own prefix, recorded in include/node/config.gypi, would
+        # chain the copy to the original store path and everything it pins.
+        find $out -type f -exec remove-references-to -t ${prev.nodejs-slim} {} +
+        # Equal-length swap (see uvwasi-runtime), safe in the ELF's rpath.
+        find $out -type f -exec sed -i "s|${prev.uvwasi}|${final.uvwasi-runtime}|g" {} +
+      '';
+
+  # node-gyp is a build tool, but packages ship it anyway and its residue
+  # retains build inputs at runtime: config.gypi records store paths (the
+  # npm-deps fixed-output derivation among them), and its own python
+  # scripts get store-python shebangs at fixup — an interpreter in the
+  # closure for scripts nothing runs.
+  withoutNpmBuildResidue =
+    drv:
+    drv.overrideAttrs (old: {
+      postInstall = (old.postInstall or "") + ''
+        find "$out" -name config.gypi -delete
+        find "$out" -type d -name node-gyp -prune -exec rm -rf {} +
+        # Native modules' build trees: only the compiled Release/*.node is
+        # runtime; Makefiles and .deps depfiles record compiler and include
+        # store paths (glib-dev, and with it python, in keytar's case).
+        find "$out" -type d \( -name .deps -o -name obj.target \) -prune -exec rm -rf {} +
+        find "$out" -path "*/build/*" \( -name "*.mk" -o -name Makefile \) -delete
+        # Vendored dev scripts (katex ships its font-generation tooling):
+        # fixup patches their shebangs, putting a python in the closure for
+        # scripts no node package ever executes.
+        find "$out" -path "*/node_modules/*" -name "*.py" -delete
+        # The pruned trees leave .bin/node-gyp symlinks dangling, which
+        # noBrokenSymlinks rightly rejects.
+        find "$out" -xtype l -delete
+      '';
+      # buildNpmPackage shebangs its outputs with the full `nodejs` — the
+      # slim+npm+corepack symlink join — though at runtime they only exec
+      # `node`. Re-point everything at the runtime node, dropping npm,
+      # corepack and node's own -dev pins from the closure. postFixup, not
+      # postInstall: patchShebangs writes these references during fixup.
+      # Bundled JS can carry NUL bytes, so no `grep -I`: skip only real
+      # ELF objects, where a different-length path would corrupt offsets.
+      postFixup = (old.postFixup or "") + ''
+        for nodePath in ${prev.nodejs} ${prev.nodejs-slim}; do
+          { grep -rlZ "$nodePath" "$out" || true; } | while IFS= read -r -d ''' f; do
+            [ "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" = 7f454c46 ] && continue
+            sed -i "s|$nodePath|${final.nodejs-slim-runtime}|g" "$f"
+          done
+        done
+      '';
+    });
+
+  basedpyright = final.withoutNpmBuildResidue prev.basedpyright; # Leaks npm-deps through keytar's config.gypi.
+  # Only lazyvim ships these; both wrap their entry points with the full
+  # nodejs join, which withoutNpmBuildResidue re-points at the runtime node.
+  prettierd = final.withoutNpmBuildResidue prev.prettierd;
+  # Its entry points are makeBinaryWrapper ELFs that exec nodejs-slim, so
+  # the node has to be swapped at build time; sed can't touch them.
+  vscode-langservers-extracted = final.withoutNpmBuildResidue (
+    prev.vscode-langservers-extracted.override { nodejs-slim = final.nodejs-slim-runtime; }
+  );
+
+  # lazygit and the git plugins only run plumbing, so drop the translation
+  # machinery. NO_GETTEXT alone is not enough: nixpkgs' git-sh-i18n patch
+  # hardcodes the gettext store path into a branch NO_GETTEXT makes dead,
+  # and `contrib` — which nothing on any code path reaches — retains
+  # bash-interactive through its patched shebangs. ~32M off every variant.
+  gitMinimal-runtime = (prev.gitMinimal.override { nlsSupport = false; }).overrideAttrs (old: {
+    postInstall = (old.postInstall or "") + ''
+      rm -rf $out/share/git/contrib
+      find $out -xtype l -delete
+      sed -i -e 's|${prev.gettext}|/gettext-elided-see-slim-overlay|g' \
+        $out/libexec/git-core/git-sh-i18n
+    '';
+  });
+}
