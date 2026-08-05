@@ -385,11 +385,25 @@ final: prev: {
         find $out -type f -exec remove-references-to -t ${prev.gettext} {} +
       '';
 
-  # rga shells out to ffmpeg for media adapters (subtitles, metadata);
-  # the default ffmpeg build carries gtk3/gtk4, sdl2, x265, flite and
-  # friends — ~1G of desktop and encoder closure for a tool that only
-  # ever decodes. ffmpeg-headless keeps the decoders and ffprobe.
-  ripgrep-all = prev.ripgrep-all.override { ffmpeg = prev.ffmpeg-headless; };
+  # Repack of the cached build. rga shells out to ffmpeg for media
+  # adapters (subtitles, metadata); the default ffmpeg build carries
+  # gtk3/gtk4, sdl2, x265, flite and friends — ~1G of desktop and encoder
+  # closure for a tool that only ever decodes. ffmpeg-headless keeps the
+  # decoders and ffprobe. Only the text wrappers reference ffmpeg (via
+  # PATH) — different-length store names, so the ELF binaries, which
+  # reference no ffmpeg, must not be touched.
+  ripgrep-all = prev.runCommand prev.ripgrep-all.name { inherit (prev.ripgrep-all) meta; } ''
+    cp -a ${prev.ripgrep-all} $out
+    chmod -R u+w $out
+    grep -rlF ${prev.lib.getBin prev.ffmpeg} $out | while IFS= read -r f; do
+      [ "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" = 7f454c46 ] && continue
+      sed -i \
+        -e "s|${prev.ripgrep-all}|$out|g" \
+        -e "s|${prev.lib.getBin prev.ffmpeg}|${prev.lib.getBin prev.ffmpeg-headless}|g" "$f"
+    done
+    # A leftover reference would silently keep the full ffmpeg closure.
+    ! grep -r ${prev.lib.getBin prev.ffmpeg} $out
+  '';
 
   # The MCP server only ever drives chromium (its wrapper hard-sets
   # PLAYWRIGHT_BROWSERS_PATH), yet it retains firefox, webkit and the
