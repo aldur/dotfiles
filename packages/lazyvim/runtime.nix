@@ -32,7 +32,8 @@
     prettierd
   ];
 
-  rust = [ rust-analyzer ];
+  # the wrapper brings rust-lib-src, but projects have their own with direnv
+  rust = [ rust-analyzer-unwrapped ];
   go = [ gopls ];
   typescript = [ vtsls ];
   solidity = [
