@@ -1,4 +1,4 @@
-vim.keymap.set({"n", "v"}, "mc", ":s/!/*/c<CR>", {
+vim.keymap.set({"n", "v"}, "mc", ":s/[!?]/*/c<CR>", {
     desc = "beancount: mark transactions as reconciled",
     noremap = true,
     silent = true,
