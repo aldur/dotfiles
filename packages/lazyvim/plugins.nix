@@ -145,13 +145,11 @@ with pkgs.vimPlugins;
               };
 
             spells = builtins.attrValues (
+              # Neovim's 'encoding' is hardwired to utf-8, so it only ever
+              # loads {lang}.utf-8.{spl,sug}; latin1 variants are dead weight.
               builtins.mapAttrs getSpell {
-                "it.latin1.spl" = "sha256:05sxffxdasmszd9r2xzw5w70jd41qs1kb02b122m9cccgbhkf8dz";
-                "it.latin1.sug" = "sha256:1b4swv4khh7s4lp1w6dq6arjhni3649cxbm0pmfrcy0q1i0yyfmx";
                 "it.utf-8.spl" = "sha256:04vlmri8fsza38w7pvkslyi3qrlzyb1c3f0a1iwm6vc37s8361yq";
                 "it.utf-8.sug" = "sha256:0jnf4hkpr4hjwpc8yl9l5dddah6qs3sg9ym8fmmr4w4jlxhigfz0";
-                "es.latin1.spl" = "sha256:0h8lhir0yk2zcs8rjn2xdsj2y533kdz7aramsnv0syaw1y82mhq7";
-                "es.latin1.sug" = "sha256:0jryzc3l1n4yfrf43cx188h0xmk5qfpzc4dqnxn627dx57gn799b";
                 "es.utf-8.spl" = "sha256:1qvv6sp4d25p1542vk0xf6argimlss9c7yh7y8dsby2wjan3fdln";
                 "es.utf-8.sug" = "sha256:0v5x05438r8aym2lclvndmjbshsfzzxjhqq80pljlg35m9w383z7";
               }
