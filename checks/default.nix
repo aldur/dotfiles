@@ -46,6 +46,29 @@ in
   lazyvim-variants = pkgs.callPackage ./lazyvim-variants.nix {
     inherit (packages) lazyvim lazyvim-light;
   };
+
+  # Budgets and forbidden-path guards for every derivation the flake
+  # exports, discovered rather than enumerated so nothing is forgotten
+  # (see overlays/slim.nix for why silent regressions are the risk).
+  slim-closures = pkgs.callPackage ./slim-closures.nix {
+    packagesUnderGuard =
+      let
+        # Same trick as `overlayPackages` in flake.nix: the overlay's own
+        # attr names, resolved through the final `pkgs`.
+        slimPackages = builtins.intersectAttrs (import ../overlays/slim.nix pkgs pkgs) pkgs;
+      in
+      pkgs.lib.filterAttrs (
+        _: v:
+        # tryEval: packages for other platforms throw when forced — some
+        # only once instantiation reaches a platform-gated dependency
+        # (c920-defaults wraps darwin's uvc-util), hence the drvPath probe.
+        (builtins.tryEval (
+          pkgs.lib.isDerivation v
+          && pkgs.lib.meta.availableOn pkgs.stdenv.hostPlatform v
+          && v.drvPath != null
+        )).value or false
+      ) (slimPackages // overlayPackages // packages);
+  };
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
   # Tests a darwin module's config merging, which is pure evaluation and so

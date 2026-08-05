@@ -17,6 +17,8 @@
 
   (import ./argc.nix { inherit self; })
   (import ./mlx.nix { nixpkgs = self.inputs.nixpkgs-darwin; })
-  (import ./slim.nix)
   (import ./packages.nix { inherit self; })
+  # After packages.nix: it slims some of the packages defined there
+  # (remarks), so it needs them in `prev`.
+  (import ./slim.nix)
 ]

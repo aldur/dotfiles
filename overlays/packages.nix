@@ -27,7 +27,7 @@ final: prev: {
   claude-log = prev.callPackage ../packages/claude-log { };
   claude-skills = prev.callPackage ../packages/claude-skills { };
   telegram = prev.callPackage ../packages/telegram { };
-  remarks = prev.callPackage ../packages/remarks { inherit (final) tesseract-lite; };
+  remarks = prev.callPackage ../packages/remarks { };
   tmux-palette = prev.callPackage ../packages/tmux-palette { };
   tcopy = prev.callPackage ../packages/tcopy { };
   lazyvim-popup = prev.callPackage ../packages/lazyvim-popup { };

@@ -41,8 +41,67 @@ let
       done
     done
   '';
+
+  # remarks' pymupdf drags the full-language tesseract wrapper — 1G of
+  # OCR models — through the mupdf variant it links. Reconstructing that
+  # variant the way python-modules/pymupdf does lets both be repacked as
+  # same-name copies (equal store path length, byte-exact swaps), never
+  # rebuilt. If the reconstruction drifts from what pymupdf actually
+  # linked, the positive asserts below fail the build instead of letting
+  # the tessdata silently return; checks/slim-closures.nix guards the
+  # closure end, too.
+  mupdfOcr = prev.lib.getLib (
+    prev.mupdf.override {
+      enableOcr = true;
+      enableCxx = true;
+      enablePython = true;
+      enableBarcode = true;
+      inherit (prev) python3;
+    }
+  );
+  mupdfLite = prev.runCommand mupdfOcr.name { } ''
+    cp -a ${mupdfOcr} $out
+    chmod -R u+w $out
+    find $out -type f -exec sed -i \
+      -e "s|${mupdfOcr}|$out|g" \
+      -e "s|${prev.tesseract}|${final.tesseract-lite}|g" {} +
+    grep -rq ${final.tesseract-lite} $out
+    ! grep -rq ${prev.tesseract} $out
+  '';
+  pythonForRemarks = prev.python3.override {
+    packageOverrides = pyself: pysuper: {
+      pymupdf = pyself.toPythonModule (
+        prev.runCommand pysuper.pymupdf.name
+          {
+            # Python envs are assembled from eval-level propagation, and
+            # the raw copy would lose it: re-propagate the original
+            # inputs with the OCR mupdf swapped for the lite repack (it
+            # provides the `mupdf` bindings module).
+            propagatedBuildInputs = map (
+              d: if (d.outPath or null) == mupdfOcr.outPath then pyself.toPythonModule mupdfLite else d
+            ) pysuper.pymupdf.propagatedBuildInputs;
+          }
+          ''
+            cp -a ${pysuper.pymupdf} $out
+            chmod -R u+w $out
+            find $out -type f -exec sed -i \
+              -e "s|${pysuper.pymupdf}|$out|g" \
+              -e "s|${mupdfOcr}|${mupdfLite}|g" {} +
+            grep -rq ${mupdfLite} $out
+            ! grep -rq ${mupdfOcr} $out
+          ''
+      );
+    };
+  };
 in
 {
+  # The vanilla package (overlays/packages.nix), re-called with the
+  # python set whose pymupdf rides the lite OCR chain above.
+  remarks = prev.remarks.override {
+    python3 = pythonForRemarks;
+    python3Packages = pythonForRemarks.pkgs;
+  };
+
   # Several of node's C dependencies have no dev output: headers, cmake
   # exports and pkg-config files ride in the runtime output (uvwasi's .pc
   # even pins libuv's -dev headers). node links the libraries, never the
@@ -178,6 +237,9 @@ in
     find $out -type f -exec sed -i \
       -e "s|${prev.vtsls}|$out|g" \
       -e "s|${prev.nodejs-slim_22}|${final.nodejs-slim-runtime}|g" {} +
+    # A no-op swap (input drift after a bump) would silently keep node 22.
+    grep -rq ${final.nodejs-slim-runtime} $out
+    ! grep -rq ${prev.nodejs-slim_22} $out
   '';
 
   # Repack of the cached build. prettierd declares only core_d and
@@ -200,6 +262,9 @@ in
         find $out -type f -exec sed -i \
           -e "s|${prev.prettierd}|$out|g" \
           -e "s|${prev.nodejs}|${final.nodejs-slim-runtime}|g" {} +
+        # A no-op swap would silently keep the npm/corepack join.
+        grep -rq ${final.nodejs-slim-runtime} $out
+        ! grep -rq ${prev.nodejs} $out
       '';
 
   # Repack of the cached build. Only jsonls is wired up (checked by the
@@ -224,6 +289,9 @@ in
         find $out -type f -exec sed -i \
           -e "s|${prev.vscode-langservers-extracted}|$out|g" \
           -e "s|${prev.nodejs-slim}|${final.nodejs-slim-runtime}|g" {} +
+        # A no-op swap would silently keep the unstripped node.
+        grep -rq ${final.nodejs-slim-runtime} $out
+        ! grep -rq ${prev.nodejs-slim} $out
       '';
 
   # Repack of the cached build. lua_ls serves nvim configs here: the
@@ -392,6 +460,10 @@ in
         # self-contained instead of chained to the original.
         find $out -type f -exec sed -i "s|${prev.gitMinimal}|$out|g" {} +
         find $out -type f -exec remove-references-to -t ${prev.gettext} {} +
+        # Leftovers would silently chain the copy back to the original
+        # (and with it gettext and contrib's bash-interactive).
+        ! grep -rq ${prev.gitMinimal} $out
+        ! grep -rq ${prev.gettext} $out
       '';
 
   # Repack of the cached build. rga shells out to ffmpeg for media

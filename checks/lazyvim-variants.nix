@@ -20,15 +20,6 @@ let
   fullClosure = closureInfo { rootPaths = [ lazyvim ]; };
   lightClosure = closureInfo { rootPaths = [ lazyvim-light ]; };
 
-  # Closure budgets in MiB, ~10% above the measured sizes (2026-08: full
-  # ~1240, light ~230). Named residue below catches known offenders; this
-  # catches the unknown ones — a plugin or tool quietly dragging in a
-  # runtime. Grows legitimately? Re-measure and raise the budget here.
-  maxMiB = {
-    full = 1370;
-    light = 250;
-  };
-
   # Name fragments of the tooling that must separate the two variants.
   # (No "dotnet": marksman's runtime rides inside its own store path —
   # see overlays/slim.nix — and the attach test proves it boots.)
@@ -150,87 +141,58 @@ runCommand "lazyvim-variants"
     nativeBuildInputs = [ git ];
   }
   ''
-    export HOME=$TMPDIR \
-      XDG_CONFIG_HOME=$TMPDIR/.config \
-      XDG_DATA_HOME=$TMPDIR/.data \
-      XDG_STATE_HOME=$TMPDIR/.state
+        export HOME=$TMPDIR \
+          XDG_CONFIG_HOME=$TMPDIR/.config \
+          XDG_DATA_HOME=$TMPDIR/.data \
+          XDG_STATE_HOME=$TMPDIR/.state
 
-    # Booting also opens :help and parses it: the repacked neovim (see
-    # overlays/slim.nix) drops its bundled parsers, so vimdoc must
-    # resolve from the curated nvim-treesitter grammars in every variant.
-    ${lib.concatMapStringsSep "\n"
-      (bin: ''
-        ${bin} --headless \
-          "+lua local ok,err=pcall(function() vim.cmd('help api') vim.treesitter.get_parser(0):parse() end) io.write(ok and 'HELP-TS-OK\n' or 'HELP-TS-FAIL: '..tostring(err)..'\n') vim.cmd('qa!')" \
-          2>&1 | grep -a HELP-TS-OK \
-          || { echo "${bin}: :help did not parse"; exit 1; }
-      '')
-      [
-        (lib.getExe' lazyvim "lazyvim")
-        (lib.getExe' lazyvim-light "lazyvim-light")
-      ]
-    }
+        # Booting also opens :help and parses it: the repacked neovim (see
+        # overlays/slim.nix) drops its bundled parsers, so vimdoc must
+        # resolve from the curated nvim-treesitter grammars in every variant.
+        ${lib.concatMapStringsSep "\n"
+          (bin: ''
+            ${bin} --headless \
+              "+lua local ok,err=pcall(function() vim.cmd('help api') vim.treesitter.get_parser(0):parse() end) io.write(ok and 'HELP-TS-OK\n' or 'HELP-TS-FAIL: '..tostring(err)..'\n') vim.cmd('qa!')" \
+              2>&1 | grep -a HELP-TS-OK \
+              || { echo "${bin}: :help did not parse"; exit 1; }
+          '')
+          [
+            (lib.getExe' lazyvim "lazyvim")
+            (lib.getExe' lazyvim-light "lazyvim-light")
+          ]
+        }
 
-    ${lib.concatMapStringsSep "\n" (
-      t:
-      let
-        want = if t.diag then "DIAGNOSED" else "ATTACHED";
-      in
-      ''
-        printf '%s\n' ${lib.escapeShellArg t.text} > "$TMPDIR/attach.${t.ext}"
-        ${lib.getExe' lazyvim "lazyvim"} --headless \
-          ${lib.escapeShellArg "+lua ${attachLua t}"} \
-          "+edit $TMPDIR/attach.${t.ext}" 2>&1 | grep -a "${want}: ${t.server}" \
-          || { echo "${t.server}: no '${want}' for attach.${t.ext}"; exit 1; }
-      ''
-    ) attach}
+        ${lib.concatMapStringsSep "\n" (
+          t:
+          let
+            want = if t.diag then "DIAGNOSED" else "ATTACHED";
+          in
+          ''
+            printf '%s\n' ${lib.escapeShellArg t.text} > "$TMPDIR/attach.${t.ext}"
+            ${lib.getExe' lazyvim "lazyvim"} --headless \
+              ${lib.escapeShellArg "+lua ${attachLua t}"} \
+              "+edit $TMPDIR/attach.${t.ext}" 2>&1 | grep -a "${want}: ${t.server}" \
+              || { echo "${t.server}: no '${want}' for attach.${t.ext}"; exit 1; }
+          ''
+        ) attach}
 
-    ${lib.concatMapStringsSep "\n" (p: ''
-      grep -q -e ${lib.escapeShellArg p} ${fullClosure}/store-paths \
-        || { echo "full build lost ${p}"; exit 1; }
-      if grep -q -e ${lib.escapeShellArg p} ${lightClosure}/store-paths; then
-        echo "light build gained ${p}"; exit 1
-      fi
-    '') heavy}
-
-    # `-e` keeps grep from reading leading-dash fragments as options — an
-    # error `if` would otherwise swallow, silently retiring the assertion.
-    ${lib.concatMapStringsSep "\n" (p: ''
-      for closure in ${fullClosure} ${lightClosure}; do
-        if grep -q -e ${lib.escapeShellArg p} "$closure"/store-paths; then
-          echo "build residue ${p} crept back in ($closure)"; exit 1
-        fi
-      done
-    '') residue}
-
-    ${lib.concatMapStringsSep "\n"
-      (
-        {
-          name,
-          closure,
-          max,
-        }:
-        ''
-          sizeMiB=$(( $(cat ${closure}/total-nar-size) / 1024 / 1024 ))
-          echo "${name} closure: $sizeMiB MiB (budget ${toString max} MiB)"
-          if [ "$sizeMiB" -gt ${toString max} ]; then
-            echo "${name} closure outgrew its budget"; exit 1
+        ${lib.concatMapStringsSep "\n" (p: ''
+          grep -q -e ${lib.escapeShellArg p} ${fullClosure}/store-paths \
+            || { echo "full build lost ${p}"; exit 1; }
+          if grep -q -e ${lib.escapeShellArg p} ${lightClosure}/store-paths; then
+            echo "light build gained ${p}"; exit 1
           fi
-        ''
-      )
-      [
-        {
-          name = "full";
-          closure = fullClosure;
-          max = maxMiB.full;
-        }
-        {
-          name = "light";
-          closure = lightClosure;
-          max = maxMiB.light;
-        }
-      ]
-    }
+        '') heavy}
+
+        # `-e` keeps grep from reading leading-dash fragments as options — an
+        # error `if` would otherwise swallow, silently retiring the assertion.
+        ${lib.concatMapStringsSep "\n" (p: ''
+          for closure in ${fullClosure} ${lightClosure}; do
+            if grep -q -e ${lib.escapeShellArg p} "$closure"/store-paths; then
+              echo "build residue ${p} crept back in ($closure)"; exit 1
+            fi
+          done
+        '') residue}
 
     touch $out
   ''
