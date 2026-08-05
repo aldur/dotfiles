@@ -18,12 +18,13 @@ let
   basePackages =
     with pkgs;
     [
-      autossh
       ripgrep-all
+    ]
+    ++ lib.optional devCfg.difftastic.enable difftastic # Enable saving ~120M.
+    ++ lib.optionals config.programs.aldur.workstation.enable [
       universal-ctags
       watch
-    ]
-    ++ lib.optional devCfg.difftastic.enable difftastic; # Enable saving ~120M.
+    ];
 in
 {
   imports = [
@@ -78,9 +79,19 @@ in
 
     codex.enable = mkEnableOption "codex";
 
-    development.difftastic.enable = mkOption {
+    # Interactive-workstation comforts: atuin, clipshare, difftastic, spare
+    # dev CLIs. A headless or agent guest sets this to false and keeps only
+    # the essentials.
+    workstation.enable = mkOption {
       type = types.bool;
       default = true;
+      description = "Install interactive-workstation comforts.";
+    };
+
+    development.difftastic.enable = mkOption {
+      type = types.bool;
+      default = config.programs.aldur.workstation.enable;
+      defaultText = lib.literalExpression "config.programs.aldur.workstation.enable";
       description = "Install difftastic (and keep the `gd` git aliases working).";
     };
   };

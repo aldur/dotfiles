@@ -43,6 +43,10 @@ let
 
   withDifftastic = osConfig.programs.aldur.development.difftastic.enable or true;
 
+  # Workstation comforts (see modules/development.nix); a headless or agent
+  # guest turns the knob off and sheds them here too.
+  workstation = osConfig.programs.aldur.workstation.enable or true;
+
   # Absolute path to the `lazyvim` binary, or null when no variant of it is
   # part of this configuration. The nixCats modules expose their built package
   # under `out.packages` (only populated while enabled); the sandboxed
@@ -101,7 +105,7 @@ in
   };
 
   programs = {
-    clipshare.enable = true;
+    clipshare.enable = workstation;
 
     fish = {
       enable = true;
@@ -401,7 +405,7 @@ in
     home-manager.enable = true;
 
     atuin = {
-      enable = true;
+      enable = workstation;
       daemon.enable = true;
       settings = {
         enter_accept = false;
@@ -438,7 +442,7 @@ in
   # atuin's daemon (as of 18.10) bind()s its unix socket without unlink()-ing
   # a stale one first, so launchd's KeepAlive crash-loops with EADDRINUSE
   # after any unclean shutdown. Strip the leftover socket before exec.
-  launchd.agents = lib.mkIf pkgs.stdenv.isDarwin {
+  launchd.agents = lib.mkIf (pkgs.stdenv.isDarwin && config.programs.atuin.enable) {
     atuin-daemon.config.ProgramArguments = lib.mkForce [
       "/bin/sh"
       "-c"
