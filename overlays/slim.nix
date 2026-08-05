@@ -271,4 +271,38 @@ final: prev: {
         $out/libexec/git-core/git-sh-i18n
     '';
   });
+  # The MCP server only ever drives chromium (its wrapper hard-sets
+  # PLAYWRIGHT_BROWSERS_PATH), yet it retains firefox, webkit and the
+  # chromium headless shell — ~670M of browsers no code path launches —
+  # through two references to the full browser farm: its own wrapper, and
+  # the bin/playwright wrapper inside the playwright-test package it
+  # symlinks its node modules from. Headless launches fall back to the
+  # full chromium binary when the shell is absent (verified end-to-end:
+  # MCP navigate over stdio with --headless). Both farms are linkFarm
+  # "playwright-browsers" — equal length, safe to swap in the text
+  # wrapper.
+  playwright-mcp =
+    let
+      inherit (prev.playwright-driver.passthru) browsers browsers-chromium;
+      playwright-test-chromium =
+        prev.runCommand prev.playwright-test.name { inherit (prev.playwright-test) meta; }
+          ''
+            cp -a ${prev.playwright-test} $out
+            chmod -R u+w $out
+            # bin/playwright embeds the original's prefix (NODE_PATH,
+            # --add-flags); left alone it chains the copy to the original
+            # and the full farm it pins.
+            find $out -type f -exec sed -i \
+              -e "s|${prev.playwright-test}|$out|g" \
+              -e "s|${browsers}|${browsers-chromium}|g" {} +
+          '';
+    in
+    prev.playwright-mcp.override {
+      playwright-test = playwright-test-chromium;
+      playwright-driver = prev.playwright-driver.overrideAttrs (old: {
+        passthru = old.passthru // {
+          browsers = browsers-chromium;
+        };
+      });
+    };
 }
