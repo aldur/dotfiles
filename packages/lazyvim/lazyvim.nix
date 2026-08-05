@@ -26,6 +26,9 @@ let
     configDirName = defaultPackageName;
     hosts.python3.enable = false;
     hosts.node.enable = false;
+    # Repacked without the tree-sitter CLI, translations and duplicate
+    # bundled parsers (see overlays/slim.nix).
+    neovim-unwrapped = pkgs.neovim-unwrapped-runtime;
     # aliases = [ defaultPackageName ];
   };
 

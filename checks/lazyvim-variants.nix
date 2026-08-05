@@ -21,12 +21,12 @@ let
   lightClosure = closureInfo { rootPaths = [ lazyvim-light ]; };
 
   # Closure budgets in MiB, ~10% above the measured sizes (2026-08: full
-  # ~1290, light ~280). Named residue below catches known offenders; this
+  # ~1230, light ~245). Named residue below catches known offenders; this
   # catches the unknown ones — a plugin or tool quietly dragging in a
   # runtime. Grows legitimately? Re-measure and raise the budget here.
   maxMiB = {
-    full = 1420;
-    light = 320;
+    full = 1350;
+    light = 270;
   };
 
   # Name fragments of the tooling that must separate the two variants.
@@ -148,8 +148,21 @@ runCommand "lazyvim-variants"
       XDG_DATA_HOME=$TMPDIR/.data \
       XDG_STATE_HOME=$TMPDIR/.state
 
-    ${lib.getExe' lazyvim "lazyvim"} --headless "+lua print('full: started')" +qa
-    ${lib.getExe' lazyvim-light "lazyvim-light"} --headless "+lua print('light: started')" +qa
+    # Booting also opens :help and parses it: the repacked neovim (see
+    # overlays/slim.nix) drops its bundled parsers, so vimdoc must
+    # resolve from the curated nvim-treesitter grammars in every variant.
+    ${lib.concatMapStringsSep "\n"
+      (bin: ''
+        ${bin} --headless \
+          "+lua local ok,err=pcall(function() vim.cmd('help api') vim.treesitter.get_parser(0):parse() end) io.write(ok and 'HELP-TS-OK\n' or 'HELP-TS-FAIL: '..tostring(err)..'\n') vim.cmd('qa!')" \
+          2>&1 | grep -a HELP-TS-OK \
+          || { echo "${bin}: :help did not parse"; exit 1; }
+      '')
+      [
+        (lib.getExe' lazyvim "lazyvim")
+        (lib.getExe' lazyvim-light "lazyvim-light")
+      ]
+    }
 
     ${lib.concatMapStringsSep "\n" (
       t:

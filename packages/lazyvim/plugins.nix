@@ -63,7 +63,12 @@ with pkgs.vimPlugins;
     vim-illuminate
     vim-startuptime
     which-key-nvim
-    snacks-nvim
+    # snacks ships its test suite — 18M of fixtures beside 1.3M of lua.
+    (snacks-nvim.overrideAttrs (old: {
+      postInstall = (old.postInstall or "") + ''
+        rm -rf $out/tests
+      '';
+    }))
     dial-nvim
 
     nvim-treesitter-textobjects

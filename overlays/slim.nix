@@ -139,12 +139,55 @@ final: prev: {
 
   # Only lazyvim ships these; both wrap their entry points with the full
   # nodejs join, which withoutNpmBuildResidue re-points at the runtime node.
-  prettierd = final.withoutNpmBuildResidue prev.prettierd;
+  # prettierd declares only core_d and prettier; typescript (23M), babel
+  # and friends are devDependencies the vendored install unpacked anyway —
+  # prettier brings its own typescript parser.
+  prettierd = final.withoutNpmBuildResidue (
+    prev.prettierd.overrideAttrs (old: {
+      postInstall = (old.postInstall or "") + ''
+        node ${./prune-node-modules.js} $out/lib/node_modules/@fsouza/prettierd
+      '';
+    })
+  );
   # Its entry points are makeBinaryWrapper ELFs that exec nodejs-slim, so
   # the node has to be swapped at build time; sed can't touch them.
   vscode-langservers-extracted = final.withoutNpmBuildResidue (
     prev.vscode-langservers-extracted.override { nodejs-slim = final.nodejs-slim-runtime; }
   );
+
+  # nvim links libtree-sitter out of a package that is 97% CLI: 11M of
+  # `tree-sitter` generate/test tooling against 260K of library.
+  tree-sitter-runtime = prev.runCommand prev.tree-sitter.name { } ''
+    cp -a ${prev.tree-sitter} $out
+    chmod -R u+w $out
+    rm -rf $out/bin $out/include $out/share $out/config.schema.json $out/lib/pkgconfig
+  '';
+
+  # A repack of neovim, not a rebuild: swap the tree-sitter package for
+  # the library-only copy (same name → equal length, safe inside the
+  # ELF), drop message translations, and drop the bundled parsers — the
+  # curated nvim-treesitter grammars ship the same seven in every
+  # variant, with queries matching their versions. The variants check
+  # opens :help and parses it to prove vimdoc still resolves.
+  neovim-unwrapped-runtime =
+    prev.runCommand prev.neovim-unwrapped.name
+      {
+        inherit (prev.neovim-unwrapped) meta version;
+        # nixCats builds the wrapper's lua env out of this passthru.
+        passthru = {
+          inherit (prev.neovim-unwrapped) lua;
+        };
+      }
+      ''
+        cp -a ${prev.neovim-unwrapped} $out
+        chmod -R u+w $out
+        rm -rf $out/share/locale $out/lib/nvim/parser
+        # nvim embeds its own prefix (the default VIMRUNTIME); left alone
+        # it chains the copy to the original and everything it references.
+        find $out -type f -exec sed -i \
+          -e "s|${prev.neovim-unwrapped}|$out|g" \
+          -e "s|${prev.tree-sitter}|${final.tree-sitter-runtime}|g" {} +
+      '';
 
   # The editor only runs the language server (lua/plugins/harper.lua);
   # harper-cli is a second 55M copy of the same embedded dictionaries. A
