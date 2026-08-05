@@ -1,8 +1,4 @@
 -- Update the statusline to inform the user this is a light version.
-if not require("nixCatsUtils").isNixCats then
-	return {}
-end
-
 local name = (require("nixCats").settings or {}).nixCats_packageName
 if not name or name == "lazyvim" then
 	return {}

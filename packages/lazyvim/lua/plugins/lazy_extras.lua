@@ -1,5 +1,4 @@
-local isNixCats = require("nixCatsUtils").isNixCats
-
+-- Skip categories and specs at once.
 local extras = {
 	{ "go", "lazyvim.plugins.extras.lang.go" },
 	{ "json", "lazyvim.plugins.extras.lang.json" },
@@ -15,7 +14,7 @@ local specs = {
 	{ import = "lazyvim.plugins.extras.editor.dial" },
 }
 for _, extra in ipairs(extras) do
-	if not isNixCats or nixCats(extra[1]) then
+	if nixCats(extra[1]) then
 		table.insert(specs, { import = extra[2] })
 	end
 end
