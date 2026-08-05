@@ -493,12 +493,45 @@ in
   # the bin/playwright wrapper inside the playwright-test package it
   # symlinks its node modules from. Headless launches fall back to the
   # full chromium binary when the shell is absent (verified end-to-end:
-  # MCP navigate over stdio with --headless). Both farms are linkFarm
-  # "playwright-browsers" — equal length, safe to swap in the text
-  # wrapper.
+  # MCP navigate over stdio with --headless). Farm and trimmed farm share
+  # the "playwright-browsers" name — equal length, safe to swap in the
+  # text wrapper.
   playwright-mcp =
     let
       inherit (prev.playwright-driver.passthru) browsers browsers-chromium;
+      # An automation browser reads one locale and plays no DRM, yet the
+      # chromium bundle ships ~170 UI locales (49M) and Widevine (18M).
+      # Real copies, not farm links — a link would keep the full bundle
+      # in the closure — with each bundle's text wrapper re-pointed at
+      # its copy. Same "playwright-browsers" name → equal length, so the
+      # repacks' seds below stay byte-exact. Linux-only: pruning inside
+      # the darwin .app would invalidate its code signature.
+      browsers-trimmed =
+        if !prev.stdenv.hostPlatform.isLinux then
+          browsers-chromium
+        else
+          prev.runCommand "playwright-browsers" { } ''
+            mkdir $out
+            for entry in ${browsers-chromium}/*; do
+              name=''${entry##*/}
+              target=$(readlink -f "$entry")
+              cp -a "$target" "$out/$name"
+              chmod -R u+w "$out/$name"
+              { grep -rlF "$target" "$out/$name" || true; } | while IFS= read -r f; do
+                [ "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" = 7f454c46 ] && continue
+                sed -i "s|$target|$out/$name|g" "$f"
+              done
+            done
+            find $out -type d -name WidevineCdm -prune -exec rm -rf {} +
+            find $out -type d -name locales | while IFS= read -r d; do
+              find "$d" -name '*.pak' ! -name 'en-US.pak' -delete
+            done
+            # Chromium aborts without its locale .pak; a missing en-US
+            # means the bundle layout shifted under the trim.
+            [ -n "$(find $out -name en-US.pak)" ]
+            # A leftover would chain a copy back to the full bundle.
+            ! grep -r ${browsers-chromium} $out
+          '';
       playwright-test-chromium =
         prev.runCommand prev.playwright-test.name { inherit (prev.playwright-test) meta; }
           ''
@@ -509,7 +542,7 @@ in
             # and the full farm it pins.
             find $out -type f -exec sed -i \
               -e "s|${prev.playwright-test}|$out|g" \
-              -e "s|${browsers}|${browsers-chromium}|g" {} +
+              -e "s|${browsers}|${browsers-trimmed}|g" {} +
             # The shebangs point at the full nodejs join, though at runtime
             # they only exec node — the join would keep npm, corepack and a
             # second (unscrubbed) nodejs-slim in the closure.
@@ -519,34 +552,49 @@ in
             ! grep -r ${prev.nodejs} $out
           '';
     in
-    prev.runCommand prev.playwright-mcp.name { inherit (prev.playwright-mcp) meta; } ''
-      cp -a ${prev.playwright-mcp} $out
-      chmod -R u+w $out
-      # The node_modules playwright/playwright-core symlinks point into the
-      # original playwright-test; sed can't rewrite symlink targets.
-      find $out -type l | while IFS= read -r l; do
-        t=$(readlink "$l")
-        case "$t" in
-          ${prev.playwright-test}*)
-            ln -sfn "${playwright-test-chromium}''${t#${prev.playwright-test}}" "$l"
-            ;;
-        esac
-      done
-      # Both swaps are equal-length (same drv names), safe in any file.
-      find $out -type f -exec sed -i \
-        -e "s|${prev.playwright-mcp}|$out|g" \
-        -e "s|${browsers}|${browsers-chromium}|g" {} +
-      # The shebangs point at the full nodejs join, though at runtime
-      # they only exec node — the join would keep npm, corepack and a
-      # second (unscrubbed) nodejs-slim in the closure.
-      ${nodeJoinRepoint}
-      # A leftover would silently keep the full farm in the closure; a
-      # no-op repoint, the npm/corepack join.
-      ! grep -r ${browsers} $out
-      grep -rq ${final.nodejs-slim-runtime} $out
-      ! grep -r ${prev.nodejs} $out
-      [ -z "$(find $out -type l -lname "${prev.playwright-test}*")" ]
-    '';
+    prev.runCommand prev.playwright-mcp.name
+      {
+        nativeBuildInputs = [ prev.nodejs-slim ];
+        inherit (prev.playwright-mcp) meta;
+      }
+      ''
+        cp -a ${prev.playwright-mcp} $out
+        chmod -R u+w $out
+        # The node_modules playwright/playwright-core symlinks point into the
+        # original playwright-test; sed can't rewrite symlink targets.
+        find $out -type l | while IFS= read -r l; do
+          t=$(readlink "$l")
+          case "$t" in
+            ${prev.playwright-test}*)
+              ln -sfn "${playwright-test-chromium}''${t#${prev.playwright-test}}" "$l"
+              ;;
+          esac
+        done
+        # The vendored install unpacked the monorepo's toolchain (typescript,
+        # esbuild, babel) next to the two packages cli.js actually requires;
+        # the server bundles the rest. Trim and prune verified end-to-end:
+        # navigate + snapshot over stdio with --headless --isolated, the
+        # flags claude-code.nix passes. (Without --isolated the MCP puts
+        # its profile *inside* PLAYWRIGHT_BROWSERS_PATH — read-only here —
+        # so persistent mode has never worked from the store farm.)
+        node ${./prune-node-modules.js} $out/lib/node_modules/playwright-mcp-internal
+        find $out -xtype l -delete
+        # Both swaps are equal-length (same drv names), safe in any file.
+        find $out -type f -exec sed -i \
+          -e "s|${prev.playwright-mcp}|$out|g" \
+          -e "s|${browsers}|${browsers-trimmed}|g" {} +
+        # The shebangs point at the full nodejs join, though at runtime
+        # they only exec node — the join would keep npm, corepack and a
+        # second (unscrubbed) nodejs-slim in the closure.
+        ${nodeJoinRepoint}
+        # A leftover would silently keep the full farm in the closure; a
+        # no-op repoint, the npm/corepack join.
+        ! grep -r ${browsers} $out
+        ! grep -r ${browsers-chromium} $out
+        grep -rq ${final.nodejs-slim-runtime} $out
+        ! grep -r ${prev.nodejs} $out
+        [ -z "$(find $out -type l -lname "${prev.playwright-test}*")" ]
+      '';
 
   # Repack of the cached build. nixpkgs ships codex unstripped: of the
   # 373M main binary, ~72M is .symtab/.strtab only a debugger reads.
