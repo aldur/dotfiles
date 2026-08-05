@@ -96,7 +96,9 @@ final: prev: {
       postFixup = (old.postFixup or "") + ''
         for nodePath in ${prev.nodejs} ${prev.nodejs-slim}; do
           { grep -rlZ "$nodePath" "$out" || true; } | while IFS= read -r -d ''' f; do
-            [ "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" = 7f454c46 ] && continue
+            case "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" in
+              7f454c46 | feedfacf | cffaedfe | cafebabe | bebafeca) continue ;;
+            esac
             sed -i "s|$nodePath|${final.nodejs-slim-runtime}|g" "$f"
           done
         done
@@ -277,48 +279,52 @@ final: prev: {
   # inside the package (discovered from the original wrapper rather than
   # named, so a marksman bump can't pair it with the wrong runtime) and
   # the original chain — wrapped runtime → runtime → icu — drops out of
-  # the closure entirely.
+  # the closure entirely. Linux-only: patchelf cannot edit Mach-O, and on
+  # darwin dotnet uses the system ICU anyway, so there is nothing to trim.
   marksman =
-    prev.runCommand prev.marksman.name
-      {
-        nativeBuildInputs = [
-          prev.removeReferencesTo
-          prev.patchelf
-        ];
-        closure = prev.closureInfo { rootPaths = [ prev.marksman ]; };
-        inherit (prev.marksman) meta;
-      }
-      ''
-        cp -a ${prev.marksman} $out
-        chmod -R u+w $out
+    if !prev.stdenv.hostPlatform.isLinux then
+      prev.marksman
+    else
+      prev.runCommand prev.marksman.name
+        {
+          nativeBuildInputs = [
+            prev.removeReferencesTo
+            prev.patchelf
+          ];
+          closure = prev.closureInfo { rootPaths = [ prev.marksman ]; };
+          inherit (prev.marksman) meta;
+        }
+        ''
+          cp -a ${prev.marksman} $out
+          chmod -R u+w $out
 
-        droot=$(sed -n "s|^export DOTNET_ROOT='\([^']*\)'$|\1|p" $out/bin/marksman)
-        host=$(readlink -f "$droot/dotnet")
-        runtime=''${host%/share/dotnet/dotnet}
-        cp -a "$runtime" $out/dotnet-runtime
-        chmod -R u+w $out/dotnet-runtime
-        # buildDotnetModule patches the ICU sonames into the apphost's
-        # DT_NEEDED so managed dlopen resolves them; it imports no ICU
-        # symbols (checked with nm -D), so dropping the entries is safe
-        # even under BIND_NOW. The rpaths in the apphost and the
-        # runtime's globalization libs go the same way.
-        # Kerberos rides the same overlinking (dotnet's System.Net
-        # negotiate auth, no imported symbols either).
-        patchelf --remove-needed libicui18n.so --remove-needed libicuuc.so \
-          --remove-needed libgssapi_krb5.so \
-          $out/lib/marksman/marksman
-        grep -e '-icu4c-' -e '-krb5-' "$closure/store-paths" | while IFS= read -r p; do
-          find $out -type f -exec remove-references-to -t "$p" {} +
-        done
+          droot=$(sed -n "s|^export DOTNET_ROOT='\([^']*\)'$|\1|p" $out/bin/marksman)
+          host=$(readlink -f "$droot/dotnet")
+          runtime=''${host%/share/dotnet/dotnet}
+          cp -a "$runtime" $out/dotnet-runtime
+          chmod -R u+w $out/dotnet-runtime
+          # buildDotnetModule patches the ICU sonames into the apphost's
+          # DT_NEEDED so managed dlopen resolves them; it imports no ICU
+          # symbols (checked with nm -D), so dropping the entries is safe
+          # even under BIND_NOW. The rpaths in the apphost and the
+          # runtime's globalization libs go the same way.
+          # Kerberos rides the same overlinking (dotnet's System.Net
+          # negotiate auth, no imported symbols either).
+          patchelf --remove-needed libicui18n.so --remove-needed libicuuc.so \
+            --remove-needed libgssapi_krb5.so \
+            $out/lib/marksman/marksman
+          grep -e '-icu4c-' -e '-krb5-' "$closure/store-paths" | while IFS= read -r p; do
+            find $out -type f -exec remove-references-to -t "$p" {} +
+          done
 
-        cat > $out/bin/marksman <<EOF
-        #!${prev.runtimeShell} -e
-        export DOTNET_ROOT="$out/dotnet-runtime/share/dotnet"
-        export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-        exec "$out/lib/marksman/marksman" "\$@"
-        EOF
-        chmod +x $out/bin/marksman
-      '';
+          cat > $out/bin/marksman <<EOF
+          #!${prev.runtimeShell} -e
+          export DOTNET_ROOT="$out/dotnet-runtime/share/dotnet"
+          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+          exec "$out/lib/marksman/marksman" "\$@"
+          EOF
+          chmod +x $out/bin/marksman
+        '';
 
   # A repack of the cached gitMinimal, not a rebuild (its install checks
   # alone run a 29k-test suite). Plugins only run plumbing and porcelain:
