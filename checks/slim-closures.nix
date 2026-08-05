@@ -36,7 +36,7 @@ let
     pi = 650;
     pi-coding-agent = 580;
     ripgrep-all = 650;
-    playwright-mcp = 975;
+    playwright-mcp = 805;
     watermark-pdf = 330;
     nomicfoundation-solidity-language-server = 270;
     nodejs-slim-runtime = 200;
