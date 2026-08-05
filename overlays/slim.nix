@@ -1,6 +1,48 @@
 # Strip packages to what's required at runtime to reduce disk space (without
 # rebuilding the world).
-final: prev: {
+final: prev:
+let
+  # node-gyp is a build tool, but packages ship it anyway and its residue
+  # retains build inputs at runtime: config.gypi records store paths (the
+  # npm-deps fixed-output derivation among them), and its own python
+  # scripts get store-python shebangs at fixup — an interpreter in the
+  # closure for scripts nothing runs. Operates on $out; shared by the
+  # build hooks (withoutNpmBuildResidue) and the runCommand repacks.
+  npmResidueSweep = ''
+    find "$out" -name config.gypi -delete
+    find "$out" -type d -name node-gyp -prune -exec rm -rf {} +
+    # Native modules' build trees: only the compiled Release/*.node is
+    # runtime; Makefiles and .deps depfiles record compiler and include
+    # store paths (glib-dev, and with it python, in keytar's case).
+    find "$out" -type d \( -name .deps -o -name obj.target \) -prune -exec rm -rf {} +
+    find "$out" -path "*/build/*" \( -name "*.mk" -o -name Makefile \) -delete
+    # Vendored dev scripts (katex ships its font-generation tooling):
+    # fixup patches their shebangs, putting a python in the closure for
+    # scripts no node package ever executes.
+    find "$out" -path "*/node_modules/*" -name "*.py" -delete
+    # The pruned trees leave .bin/node-gyp symlinks dangling, which
+    # noBrokenSymlinks rightly rejects.
+    find "$out" -xtype l -delete
+  '';
+
+  # buildNpmPackage shebangs its outputs with the full `nodejs` — the
+  # slim+npm+corepack symlink join — though at runtime they only exec
+  # `node`. Re-point everything at the runtime node, dropping npm,
+  # corepack and node's own -dev pins from the closure. Bundled JS can
+  # carry NUL bytes, so no `grep -I`: skip only real ELF/Mach-O objects,
+  # where a different-length path would corrupt offsets.
+  nodeJoinRepoint = ''
+    for nodePath in ${prev.nodejs} ${prev.nodejs-slim}; do
+      { grep -rlZ "$nodePath" "$out" || true; } | while IFS= read -r -d ''' f; do
+        case "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" in
+          7f454c46 | feedfacf | cffaedfe | cafebabe | bebafeca) continue ;;
+        esac
+        sed -i "s|$nodePath|${final.nodejs-slim-runtime}|g" "$f"
+      done
+    done
+  '';
+in
+{
   # Several of node's C dependencies have no dev output: headers, cmake
   # exports and pkg-config files ride in the runtime output (uvwasi's .pc
   # even pins libuv's -dev headers). node links the libraries, never the
@@ -80,62 +122,37 @@ final: prev: {
     ];
   };
 
-  # node-gyp is a build tool, but packages ship it anyway and its residue
-  # retains build inputs at runtime: config.gypi records store paths (the
-  # npm-deps fixed-output derivation among them), and its own python
-  # scripts get store-python shebangs at fixup — an interpreter in the
-  # closure for scripts nothing runs.
+  # Build-hook flavor for packages we compile anyway (nomicfoundation):
+  # cached builds get the same scripts inside runCommand repacks instead.
   withoutNpmBuildResidue =
     drv:
     drv.overrideAttrs (old: {
-      postInstall = (old.postInstall or "") + ''
-        find "$out" -name config.gypi -delete
-        find "$out" -type d -name node-gyp -prune -exec rm -rf {} +
-        # Native modules' build trees: only the compiled Release/*.node is
-        # runtime; Makefiles and .deps depfiles record compiler and include
-        # store paths (glib-dev, and with it python, in keytar's case).
-        find "$out" -type d \( -name .deps -o -name obj.target \) -prune -exec rm -rf {} +
-        find "$out" -path "*/build/*" \( -name "*.mk" -o -name Makefile \) -delete
-        # Vendored dev scripts (katex ships its font-generation tooling):
-        # fixup patches their shebangs, putting a python in the closure for
-        # scripts no node package ever executes.
-        find "$out" -path "*/node_modules/*" -name "*.py" -delete
-        # The pruned trees leave .bin/node-gyp symlinks dangling, which
-        # noBrokenSymlinks rightly rejects.
-        find "$out" -xtype l -delete
-      '';
-      # buildNpmPackage shebangs its outputs with the full `nodejs` — the
-      # slim+npm+corepack symlink join — though at runtime they only exec
-      # `node`. Re-point everything at the runtime node, dropping npm,
-      # corepack and node's own -dev pins from the closure. postFixup, not
-      # postInstall: patchShebangs writes these references during fixup.
-      # Bundled JS can carry NUL bytes, so no `grep -I`: skip only real
-      # ELF objects, where a different-length path would corrupt offsets.
-      postFixup = (old.postFixup or "") + ''
-        for nodePath in ${prev.nodejs} ${prev.nodejs-slim}; do
-          { grep -rlZ "$nodePath" "$out" || true; } | while IFS= read -r -d ''' f; do
-            case "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" in
-              7f454c46 | feedfacf | cffaedfe | cafebabe | bebafeca) continue ;;
-            esac
-            sed -i "s|$nodePath|${final.nodejs-slim-runtime}|g" "$f"
-          done
-        done
-      '';
+      postInstall = (old.postInstall or "") + npmResidueSweep;
+      # postFixup, not postInstall: patchShebangs writes the node
+      # references during fixup.
+      postFixup = (old.postFixup or "") + nodeJoinRepoint;
     });
 
-  # dist/ is a self-contained webpack bundle — typeshed and a vendored
-  # vscode-languageserver ride inside it — while node_modules is 217M of
-  # pyright's monorepo tooling (@azure, prettier, npm-check-updates)
-  # nothing loads; it also leaked npm-deps through keytar's config.gypi.
-  # The .maps only ever served the upstream debugger.
-  basedpyright = final.withoutNpmBuildResidue (
-    prev.basedpyright.overrideAttrs (old: {
-      postInstall = (old.postInstall or "") + ''
-        rm -rf $out/lib/node_modules/pyright-root/node_modules
-        rm -f $out/lib/node_modules/pyright-root/dist/*.map
-      '';
-    })
-  );
+  # Repack of the cached build. dist/ is a self-contained webpack bundle —
+  # typeshed and a vendored vscode-languageserver ride inside it — while
+  # node_modules is 217M of pyright's monorepo tooling (@azure, prettier,
+  # npm-check-updates) nothing loads; it also leaked npm-deps through
+  # keytar's config.gypi and the node source through its depfiles. The
+  # .maps only ever served the upstream debugger. The bin scripts are
+  # text, so the full-nodejs shebang re-points at the runtime node
+  # (attach + diagnostics verified by the variants check).
+  basedpyright = prev.runCommand prev.basedpyright.name { inherit (prev.basedpyright) meta; } ''
+    cp -a ${prev.basedpyright} $out
+    chmod -R u+w $out
+    rm -rf $out/lib/node_modules/pyright-root/node_modules
+    rm -f $out/lib/node_modules/pyright-root/dist/*.map
+    ${npmResidueSweep}
+    ${nodeJoinRepoint}
+    find $out -type f -exec sed -i "s|${prev.basedpyright}|$out|g" {} +
+    # A leftover would silently keep the join or the npm FOD in the closure.
+    ! grep -r ${prev.nodejs} $out
+    ! grep -r ${prev.basedpyright.npmDeps} $out
+  '';
 
   # Repack of the cached build. The service is built (packages/service/
   # dist) from a vendored vscode source checkout that remains in the
@@ -423,12 +440,25 @@ final: prev: {
               -e "s|${browsers}|${browsers-chromium}|g" {} +
           '';
     in
-    prev.playwright-mcp.override {
-      playwright-test = playwright-test-chromium;
-      playwright-driver = prev.playwright-driver.overrideAttrs (old: {
-        passthru = old.passthru // {
-          browsers = browsers-chromium;
-        };
-      });
-    };
+    prev.runCommand prev.playwright-mcp.name { inherit (prev.playwright-mcp) meta; } ''
+      cp -a ${prev.playwright-mcp} $out
+      chmod -R u+w $out
+      # The node_modules playwright/playwright-core symlinks point into the
+      # original playwright-test; sed can't rewrite symlink targets.
+      find $out -type l | while IFS= read -r l; do
+        t=$(readlink "$l")
+        case "$t" in
+          ${prev.playwright-test}*)
+            ln -sfn "${playwright-test-chromium}''${t#${prev.playwright-test}}" "$l"
+            ;;
+        esac
+      done
+      # Both swaps are equal-length (same drv names), safe in any file.
+      find $out -type f -exec sed -i \
+        -e "s|${prev.playwright-mcp}|$out|g" \
+        -e "s|${browsers}|${browsers-chromium}|g" {} +
+      # A leftover would silently keep the full farm in the closure.
+      ! grep -r ${browsers} $out
+      [ -z "$(find $out -type l -lname "${prev.playwright-test}*")" ]
+    '';
 }
