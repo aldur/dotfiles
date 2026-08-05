@@ -24,8 +24,14 @@
 let
   defaultBudgetMiB = 150;
 
-  # MiB, ~10% above measured (2026-08). Only packages that outgrow the
-  # default belong here; stale names fail the eval.
+  # Budgets are measured on x86_64-linux; other architectures run larger
+  # across the board (aarch64 CI measured ~8-15% over x86 for the same
+  # closures), so every budget stretches by this factor off the baseline
+  # rather than growing per-entry guesswork. Percent, applied in-script.
+  archFactor = if stdenv.hostPlatform.system == "x86_64-linux" then 100 else 115;
+
+  # MiB, ~10% above measured on x86_64-linux (2026-08). Only packages
+  # that outgrow the default belong here; stale names fail the eval.
   budgets = {
     lazyvim = 1370;
     lazyvim-light = 250;
@@ -36,7 +42,10 @@ let
     pi = 650;
     pi-coding-agent = 580;
     ripgrep-all = 650;
-    playwright-mcp = 805;
+    # Not uniform drift: ARM chromium is ~40% bigger than x86's (CI
+    # measured 1040 there against ~730 here), beyond what archFactor
+    # models.
+    playwright-mcp = if stdenv.hostPlatform.isAarch64 then 1000 else 805;
     watermark-pdf = 330;
     nomicfoundation-solidity-language-server = 270;
     nodejs-slim-runtime = 200;
@@ -50,8 +59,6 @@ let
     tiktoken = 260;
     vscode-langservers-extracted = 200;
     vtsls = 240;
-    # Sizes are measured on x86_64-linux; aarch64 drifts a few percent,
-    # so the default's 3% headroom here would flake on the ARM runner.
     tesseract-lite = 170;
   };
 
@@ -93,7 +100,7 @@ runCommand "slim-closures" { } ''
     name:
     let
       closure = closureInfo { rootPaths = [ packagesUnderGuard.${name} ]; };
-      max = budgets.${name} or defaultBudgetMiB;
+      max = ((budgets.${name} or defaultBudgetMiB) * archFactor) / 100;
     in
     ''
       sizeMiB=$(( $(cat ${closure}/total-nar-size) / 1024 / 1024 ))
