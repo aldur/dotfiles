@@ -5,8 +5,8 @@
   pinnedPlugins,
 }:
 let
-  ts = pkgsUnstable.vimPlugins.nvim-treesitter;
-  grammar = name: pkgsUnstable.neovimUtils.grammarToPlugin ts.builtGrammars.${name};
+  ts = pkgs.vimPlugins.nvim-treesitter;
+  grammar = name: pkgs.neovimUtils.grammarToPlugin ts.builtGrammars.${name};
 
   # Minimal set of grammars for the -light version.
   curatedGrammars = [
@@ -66,10 +66,10 @@ with pkgs.vimPlugins;
     snacks-nvim
     dial-nvim
 
-    pkgsUnstable.vimPlugins.nvim-treesitter-textobjects
+    nvim-treesitter-textobjects
     # The core plugin only; grammars are per-category plugins below, which
     # init.lua discovers from the runtimepath (see its get_installed patch).
-    pkgsUnstable.vimPlugins.nvim-treesitter
+    nvim-treesitter
 
     vim-fugitive
     vim-rhubarb
@@ -176,7 +176,7 @@ with pkgs.vimPlugins;
 
   # Categories
   # NOTE: add new ones to `allCategories` in `./lazyvim.nix`.
-  treesitterAll = map pkgsUnstable.neovimUtils.grammarToPlugin ts.allGrammars;
+  treesitterAll = map pkgs.neovimUtils.grammarToPlugin ts.allGrammars;
   markdown = [
     markdown-preview-nvim
     render-markdown-nvim
