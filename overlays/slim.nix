@@ -62,6 +62,32 @@ final: prev: {
         ) headerlessSwaps}
       '';
 
+  # python3 ships its own embedding toolchain in the runtime output:
+  # libpython.a plus build config (60M), IDLE (6M) and the test suite —
+  # compile-time material for an interpreter that rides cli.nix onto
+  # every host and under three package envs. ensurepip stays so
+  # `python -m venv` keeps seeding pip. Equal-length self-rewrite keeps
+  # the copy off the original's closure (paths inside .pyc are
+  # length-prefixed strings, so the swap is byte-exact there too).
+  python3-runtime = prev.runCommand prev.python3.name { inherit (prev.python3) meta; } ''
+    cp -a ${prev.python3} $out
+    chmod -R u+w $out
+    rm -rf $out/lib/python*/config-* $out/lib/python*/idlelib \
+      $out/lib/python*/test $out/bin/idle*
+    find $out -type f -exec sed -i "s|${prev.python3}|$out|g" {} +
+  '';
+
+  # Rewrites a python application's whole closure onto python3-runtime:
+  # replaceDependency nar-copies each dependent path with the store path
+  # swapped (same name → equal length), no rebuilds.
+  withPython3Runtime =
+    drv:
+    prev.replaceDependency {
+      inherit drv;
+      oldDependency = prev.python3;
+      newDependency = final.python3-runtime;
+    };
+
   # node-gyp is a build tool, but packages ship it anyway and its residue
   # retains build inputs at runtime: config.gypi records store paths (the
   # npm-deps fixed-output derivation among them), and its own python
