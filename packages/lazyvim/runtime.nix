@@ -14,7 +14,7 @@
     ++ [
       curl
       fd
-      git
+      gitMinimal
       lazygit
       ripgrep
       shfmt
@@ -33,24 +33,15 @@
   ];
 
   # The `:TSInstall` toolchain; nix-built grammars don't need it at runtime.
+  # Slim: `tree-sitter generate` wants node, never npm.
   treesitterAll = [
-    nodejs
+    nodejs-slim
     tree-sitter
   ];
 
-  rust = [
-    cargo
-    rust-analyzer
-    stdenv.cc.cc
-  ];
-  go = [
-    go
-    gopls
-  ];
-  typescript = [
-    vtsls
-    typescript-language-server
-  ];
+  rust = [ rust-analyzer ];
+  go = [ gopls ];
+  typescript = [ (vtsls.override { nodejs-slim_22 = nodejs-slim; }) ];
   solidity = [
     (pkgs.callPackage
       ../nomicfoundation-solidity-language-server/nomicfoundation-solidity-language-server.nix

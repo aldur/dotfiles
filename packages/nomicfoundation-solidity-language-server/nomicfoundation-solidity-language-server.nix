@@ -6,9 +6,12 @@
   fetchFromGitHub,
   pkg-config,
   libsecret,
+  # See overlays/packages.nix: strips node-gyp residue that would retain
+  # the npm-deps fixed-output derivation (312M) in the runtime closure.
+  withoutNpmBuildResidue,
 }:
 
-buildNpmPackage (finalAttrs: {
+withoutNpmBuildResidue (buildNpmPackage (finalAttrs: {
   pname = "nomicfoundation-solidity-language-server";
   version = "0.8.29";
 
@@ -49,4 +52,4 @@ buildNpmPackage (finalAttrs: {
 
   # Follows upstream release tags: nix-update's default, so no extra flags.
   passthru.updatePin = { };
-})
+}))

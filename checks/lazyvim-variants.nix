@@ -28,6 +28,21 @@ let
     "marksman"
     "dotnet"
   ];
+
+  # Build residue that must appear in neither: npm dependency caches leaked
+  # through node-gyp's config.gypi, and toolchains the editor stopped
+  # bundling (projects bring their own through direnv).
+  residue = [
+    "npm-deps"
+    "rustc-bootstrap"
+    "-rustc-"
+    "cargo-"
+    # The editor ships no interpreter runtimes: python came in through
+    # node-gyp leftovers, full git and glib-dev; perl through full git.
+    # `-perl-5`, not `perl-`: the tree-sitter perl grammar is legitimate.
+    "python3-"
+    "-perl-5"
+  ];
 in
 runCommand "lazyvim-variants"
   {
@@ -50,6 +65,14 @@ runCommand "lazyvim-variants"
         echo "light build gained ${p}"; exit 1
       fi
     '') heavy}
+
+    ${lib.concatMapStringsSep "\n" (p: ''
+      for closure in ${fullClosure} ${lightClosure}; do
+        if grep -q ${lib.escapeShellArg p} "$closure"/store-paths; then
+          echo "build residue ${p} crept back in ($closure)"; exit 1
+        fi
+      done
+    '') residue}
 
     touch $out
   ''
