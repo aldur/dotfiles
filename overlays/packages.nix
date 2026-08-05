@@ -18,6 +18,7 @@ final: prev: {
   split-pdf = prev.callPackage ../packages/split-pdf { };
   totp-qr-decode = prev.callPackage ../packages/totp-qr-decode { };
   flake-lock-cooldown = prev.callPackage ../packages/flake-lock-cooldown { };
+  neovim-nightly = prev.callPackage ../packages/neovim-nightly { };
   aldurs-dotfiles-version = prev.callPackage ../packages/aldurs-dotfiles-version { inherit self; };
   faraday = prev.callPackage ../packages/faraday { };
   fps = prev.callPackage ../packages/fps { };

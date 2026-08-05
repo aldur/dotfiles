@@ -29,10 +29,6 @@
     };
 
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
-    neovim-nightly-overlay = {
-      url = "github:nix-community/neovim-nightly-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     clipshare = {
       url = "github:aldur/clipshare";
@@ -105,7 +101,7 @@
           # Bound here rather than inline below so the pinned-packages check can
           # walk the same set without going through `self`.
           packages = {
-            inherit (lazyvims) lazyvim lazyvim-light;
+            inherit (lazyvims) lazyvim lazyvim-light lazyvim-nightly;
             inherit (pkgs)
               beancount-language-server # from aldur/beancount-language-server
               nomicfoundation-solidity-language-server

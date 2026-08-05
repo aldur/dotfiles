@@ -55,8 +55,9 @@ let
     };
     "${defaultPackageName}-nightly" = _: {
       settings = settings // {
-        neovim-unwrapped =
-          inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        # From the overlay (packages/neovim-nightly): master built from
+        # source, no neovim-nightly-overlay input.
+        neovim-unwrapped = pkgs.neovim-nightly;
       };
       categories = allCategories;
       extra = { };
@@ -104,6 +105,7 @@ in
 {
   "${defaultPackageName}" = defaultPackage;
   "${defaultPackageName}-light" = nixCatsBuilder "${defaultPackageName}-light";
+  "${defaultPackageName}-nightly" = nixCatsBuilder "${defaultPackageName}-nightly";
 
   defaultModule = utils.mkNixosModules moduleArgs;
   defaultHomeModule = utils.mkHomeModules moduleArgs;
