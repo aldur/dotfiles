@@ -41,6 +41,8 @@ let
 
   aldurs-tools = pkgs.callPackage ../../packages/aldurs-tools { tools = customTools; };
 
+  withDifftastic = osConfig.programs.aldur.development.difftastic.enable or true;
+
   # Absolute path to the `lazyvim` binary, or null when no variant of it is
   # part of this configuration. The nixCats modules expose their built package
   # under `out.packages` (only populated while enabled); the sandboxed
@@ -363,33 +365,36 @@ in
     };
 
     difftastic = {
-      enable = true;
+      enable = withDifftastic;
       git.enable = false;
     };
 
     git = {
       enable = true;
 
-      settings = lib.recursiveUpdate (import ../shared/programs/git.nix) {
-        user = {
-          name = "aldur";
-          email = "aldur@users.noreply.github.com";
-        };
+      settings = lib.recursiveUpdate (import ../shared/programs/git.nix) (
+        {
+          user = {
+            name = "aldur";
+            email = "aldur@users.noreply.github.com";
+          };
 
-        commit.verbose = true;
-        commit.gpgsign = true;
-        tag.gpgsign = true;
-        tag.forceSignAnnotated = true;
-        gpg.format = "ssh";
+          commit.verbose = true;
+          commit.gpgsign = true;
+          tag.gpgsign = true;
+          tag.forceSignAnnotated = true;
+          gpg.format = "ssh";
 
-        # NOTE: This will default to the _second_ key offered by the agent.
-        gpg.ssh.defaultKeyCommand = lib.mkDefault "sh -c 'echo key::$(ssh-add -L | tail -n 1)'";
-
-        # difftastic as difftool only (not diff.external, which breaks fugitive)
-        diff.tool = "difftastic";
-        difftool.difftastic.cmd = ''difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"'';
-        pager.difftool = true;
-      };
+          # NOTE: This will default to the _second_ key offered by the agent.
+          gpg.ssh.defaultKeyCommand = lib.mkDefault "sh -c 'echo key::$(ssh-add -L | tail -n 1)'";
+        }
+        // lib.optionalAttrs withDifftastic {
+          # difftastic as difftool only (not diff.external, which breaks fugitive)
+          diff.tool = "difftastic";
+          difftool.difftastic.cmd = ''difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"'';
+          pager.difftool = true;
+        }
+      );
     };
 
     # Let Home Manager install and manage itself.
@@ -444,29 +449,30 @@ in
   # NOTE: Pinentry configured by each respective module
   services.gpg-agent.enable = true;
 
-  home.shellAliases = {
-    gd = "git -c diff.external=difft diff";
-    gdl = "git -c diff.external=difft log -p --ext-diff";
-    gds = "git -c diff.external=difft show --ext-diff";
-  }
-  //
-    # Linux mirror of the darwin `sandbox` alias (see
-    # modules/darwin/home.nix): no network, personal directories hidden.
-    # `faraday --mask` skips directories that don't exist on this machine.
-    lib.optionalAttrs pkgs.stdenv.isLinux {
-      sandbox = "faraday --mask ~/Documents --mask ~/Desktop --mask ~/Developer --mask ~/Movies --mask ~/Music --mask ~/Pictures";
+  home.shellAliases =
+    lib.optionalAttrs withDifftastic {
+      gd = "git -c diff.external=difft diff";
+      gdl = "git -c diff.external=difft log -p --ext-diff";
+      gds = "git -c diff.external=difft show --ext-diff";
     }
-  //
-    # `lv` shortcut whenever a `lazyvim` command is on PATH: either the nixCats
-    # module (`aldur.lazyvim.enable`) or a sandboxed `jailed-lazyvim` wrapper
-    # added to `home.packages`, which ships the same `lazyvim` binary.
-    lib.optionalAttrs
-      (
-        osConfig.programs.aldur.lazyvim.enable
-        || config.programs.aldur.lazyvim.enable
-        || lib.any (p: lib.getName p == "lazyvim") config.home.packages
-      )
-      {
-        lv = "lazyvim";
-      };
+    //
+      # Linux mirror of the darwin `sandbox` alias (see
+      # modules/darwin/home.nix): no network, personal directories hidden.
+      # `faraday --mask` skips directories that don't exist on this machine.
+      lib.optionalAttrs pkgs.stdenv.isLinux {
+        sandbox = "faraday --mask ~/Documents --mask ~/Desktop --mask ~/Developer --mask ~/Movies --mask ~/Music --mask ~/Pictures";
+      }
+    //
+      # `lv` shortcut whenever a `lazyvim` command is on PATH: either the nixCats
+      # module (`aldur.lazyvim.enable`) or a sandboxed `jailed-lazyvim` wrapper
+      # added to `home.packages`, which ships the same `lazyvim` binary.
+      lib.optionalAttrs
+        (
+          osConfig.programs.aldur.lazyvim.enable
+          || config.programs.aldur.lazyvim.enable
+          || lib.any (p: lib.getName p == "lazyvim") config.home.packages
+        )
+        {
+          lv = "lazyvim";
+        };
 }
