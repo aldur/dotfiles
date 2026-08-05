@@ -189,6 +189,25 @@ final: prev: {
           -e "s|${prev.tree-sitter}|${final.tree-sitter-runtime}|g" {} +
       '';
 
+  # The MANPAGER/EDITOR nvim: the runtime repack shared with lazyvim,
+  # plus the seven bundled parsers stock ftplugins assert at load (help,
+  # lua, markdown, query auto-start treesitter in 0.12) — real copies of
+  # dependency-free .so files, so the original nvim and its full
+  # tree-sitter link stay out of the closure. ~3M over the shared repack
+  # against the ~180M `pkgs.neovim` wrapper (second nvim, full
+  # tree-sitter, xdg-utils→perl).
+  neovim-bare =
+    prev.runCommand "${prev.neovim-unwrapped.name}-bare"
+      {
+        nativeBuildInputs = [ prev.makeWrapper ];
+        inherit (prev.neovim-unwrapped) meta;
+      }
+      ''
+        install -Dm444 -t $out/rtp/parser ${prev.neovim-unwrapped}/lib/nvim/parser/*.so
+        makeWrapper ${final.neovim-unwrapped-runtime}/bin/nvim $out/bin/nvim \
+          --add-flags "--cmd 'set rtp^=$out/rtp'"
+      '';
+
   # The editor only runs the language server (lua/plugins/harper.lua);
   # harper-cli is a second 55M copy of the same embedded dictionaries. A
   # real copy, not a symlink: linking would keep the whole original in

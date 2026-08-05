@@ -1,6 +1,6 @@
 { pkgs, ... }:
 {
-  home.packages = with pkgs; [ neovim ];
+  home.packages = [ pkgs.neovim-bare ];
   home.sessionVariables = {
     MANPAGER = "nvim +Man!";
     EDITOR = "nvim";
