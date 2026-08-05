@@ -69,6 +69,16 @@ require("lazyCat").setup(
 					end
 					return vim.tbl_keys(installed)
 				end
+
+				for _, cmd in ipairs({ "TSInstall", "TSUpdate", "TSUninstall" }) do
+					pcall(vim.api.nvim_del_user_command, cmd)
+					vim.api.nvim_create_user_command(cmd, function()
+						vim.notify(
+							cmd .. ": grammars come from nix; edit the lazyvim categories instead.",
+							vim.log.levels.WARN
+						)
+					end, { nargs = "*", desc = "Disabled: grammars come from nix" })
+				end
 			end,
 		},
 		{
