@@ -32,13 +32,6 @@
     prettierd
   ];
 
-  # The `:TSInstall` toolchain; nix-built grammars don't need it at runtime.
-  # Slim: `tree-sitter generate` wants node, never npm.
-  treesitterAll = [
-    nodejs-slim
-    tree-sitter
-  ];
-
   rust = [ rust-analyzer ];
   go = [ gopls ];
   typescript = [ (vtsls.override { nodejs-slim_22 = nodejs-slim; }) ];
@@ -60,6 +53,7 @@
   markdown = [
     markdownlint-cli2
     marksman
+    nodejs-slim # required by markdown-preview
     pandoc
     (pkgs.callPackage ../pandoc_md2html_assets/md2html.nix { })
   ];
