@@ -40,6 +40,12 @@ in
   # them on a bump too.
   gpg-encrypt = pkgs.gpg-encrypt.tests.integration;
   taskmd = pkgs.taskmd.tests.version;
+
+  # The editor's light/full split stays split: both start headless, the heavy
+  # language tooling stays in full and out of light.
+  lazyvim-variants = pkgs.callPackage ./lazyvim-variants.nix {
+    inherit (packages) lazyvim lazyvim-light;
+  };
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
   # Tests a darwin module's config merging, which is pure evaluation and so
