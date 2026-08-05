@@ -17,6 +17,17 @@ stdenvNoCC.mkDerivation {
     hash = "sha256-5cTimbW+wLYiAUsqoNUi9AbArrWUR2Mzd+22zkwrTlg=";
   };
 
+  # llama.cpp has no output-token cap (generation is bounded only by n_ctx),
+  # but the plugin clamps maxTokens to a hardcoded 16384, truncating long
+  # thinking-model responses mid-turn. Report the backend's actual bound
+  # instead; pi's compaction.reserveTokens owns the headroom policy.
+  # Drop once fixed upstream: https://github.com/huggingface/pi-llama
+  postPatch = ''
+    substituteInPlace index.ts \
+      --replace-fail "Math.min(DEFAULT_MAX_TOKENS, contextWindow)" "contextWindow" \
+      --replace-fail "Math.min(DEFAULT_MAX_TOKENS, nCtx)" "nCtx"
+  '';
+
   installPhase = ''
     runHook preInstall
     cp -r . $out
