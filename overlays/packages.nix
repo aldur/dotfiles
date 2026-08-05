@@ -43,7 +43,15 @@ final: prev: {
   piPlugins = {
     pi-llama = prev.callPackage ../packages/pi/plugins/pi-llama.nix { };
   };
-  pi = prev.callPackage ../packages/pi/pi.nix { plugins = final.piPlugins; };
+  pi = prev.callPackage ../packages/pi/pi.nix {
+    plugins = final.piPlugins;
+    # pi-coding-agent (above) comes from unstable; hand the wrapper the same
+    # channel's node and pnpm so the closure carries one copy, not twins.
+    inherit (self.inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system})
+      nodejs
+      pnpm
+      ;
+  };
 
   llm-mlx = prev.callPackage ../packages/llm-mlx { };
   llmWithPlugins = prev.python3.withPackages (
