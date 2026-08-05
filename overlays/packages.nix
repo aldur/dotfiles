@@ -14,7 +14,7 @@ final: prev: {
   # carries X11 and gtk (~95M) for a window no wrapper ever opens.
   shrink-pdf = prev.callPackage ../packages/shrink-pdf { ghostscript = prev.ghostscript_headless; };
   flatten-pdf = prev.callPackage ../packages/flatten-pdf { ghostscript = prev.ghostscript_headless; };
-  watermark-pdf = final.withPython3Runtime (prev.callPackage ../packages/watermark-pdf { });
+  watermark-pdf = prev.callPackage ../packages/watermark-pdf { };
   split-pdf = prev.callPackage ../packages/split-pdf { };
   totp-qr-decode = prev.callPackage ../packages/totp-qr-decode { };
   flake-lock-cooldown = prev.callPackage ../packages/flake-lock-cooldown { };
@@ -27,7 +27,7 @@ final: prev: {
   claude-log = prev.callPackage ../packages/claude-log { };
   claude-skills = prev.callPackage ../packages/claude-skills { };
   telegram = prev.callPackage ../packages/telegram { };
-  remarks = final.withPython3Runtime (prev.callPackage ../packages/remarks { });
+  remarks = prev.callPackage ../packages/remarks { inherit (final) tesseract-lite; };
   tmux-palette = prev.callPackage ../packages/tmux-palette { };
   tcopy = prev.callPackage ../packages/tcopy { };
   lazyvim-popup = prev.callPackage ../packages/lazyvim-popup { };
@@ -62,19 +62,17 @@ final: prev: {
   pi-rust = prev.callPackage ../packages/pi-rust/pi-rust.nix { };
 
   llm-mlx = prev.callPackage ../packages/llm-mlx { };
-  llmWithPlugins = final.withPython3Runtime (
-    prev.python3.withPackages (
-      ps:
-      [
-        ps.llm
-        ps.llm-ollama
-        ps.llm-gguf
-        ps.llm-openrouter
-        ps.llm-docs
-        ps.llm-llama-server
-      ]
-      ++ prev.lib.optional (prev.stdenv.isDarwin && prev.stdenv.isAarch64) final.llm-mlx
-    )
+  llmWithPlugins = prev.python3.withPackages (
+    ps:
+    [
+      ps.llm
+      ps.llm-ollama
+      ps.llm-gguf
+      ps.llm-openrouter
+      ps.llm-docs
+      ps.llm-llama-server
+    ]
+    ++ prev.lib.optional (prev.stdenv.isDarwin && prev.stdenv.isAarch64) final.llm-mlx
   );
 
   markdownlint-cli2 = final.callPackage ../packages/markdownlint-cli2 {

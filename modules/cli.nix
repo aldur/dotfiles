@@ -16,7 +16,7 @@
     killall
     less
     pv
-    python3-runtime # sans libpython.a/IDLE/tests, see overlays/slim.nix
+    python3
     rig
     ripgrep
     tmux
