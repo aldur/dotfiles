@@ -21,11 +21,11 @@ let
   lightClosure = closureInfo { rootPaths = [ lazyvim-light ]; };
 
   # Closure budgets in MiB, ~10% above the measured sizes (2026-08: full
-  # ~1410, light ~280). Named residue below catches known offenders; this
+  # ~1290, light ~280). Named residue below catches known offenders; this
   # catches the unknown ones — a plugin or tool quietly dragging in a
   # runtime. Grows legitimately? Re-measure and raise the budget here.
   maxMiB = {
-    full = 1550;
+    full = 1420;
     light = 320;
   };
 
@@ -63,6 +63,9 @@ let
     "corepack"
     "-npm"
     "-dev$"
+    # rust-analyzer's wrapper would pin this stdlib-source fallback;
+    # projects bring their own toolchain through direnv.
+    "rust-lib-src"
   ];
 
   # One file per runtime that overlays/slim.nix rewires: jsonls runs
@@ -105,6 +108,13 @@ let
       ext = "md";
       text = "# a heading";
       server = "marksman";
+      diag = false;
+    }
+    # harper-ls is the single binary copied out of the harper package.
+    {
+      ext = "md";
+      text = "# a heading";
+      server = "harper_ls";
       diag = false;
     }
   ];
