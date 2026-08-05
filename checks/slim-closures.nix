@@ -1,5 +1,6 @@
 {
   lib,
+  stdenv,
   runCommand,
   closureInfo,
   # Every derivation the flake exports for this system — packages, the
@@ -32,12 +33,15 @@ let
     pi = 650;
     pi-coding-agent = 580;
     ripgrep-all = 650;
-    playwright-mcp = 1050;
+    playwright-mcp = 975;
     watermark-pdf = 330;
     nomicfoundation-solidity-language-server = 270;
     nodejs-slim-runtime = 200;
     marksman = 180;
     basedpyright = 230;
+    # The strip repack is Linux-only; darwin ships upstream's unstripped
+    # binary (estimate — re-measure on a darwin host and tighten).
+    codex = if stdenv.hostPlatform.isLinux then 345 else 550;
     markdownlint-cli2 = 220;
     prettierd = 210;
     tiktoken = 260;
@@ -63,6 +67,9 @@ let
     playwright-mcp = [
       "firefox"
       "webkit"
+      # The full nodejs join, re-pointed to nodejs-slim-runtime.
+      "-npm$"
+      "corepack"
     ];
   };
 

@@ -510,6 +510,13 @@ in
             find $out -type f -exec sed -i \
               -e "s|${prev.playwright-test}|$out|g" \
               -e "s|${browsers}|${browsers-chromium}|g" {} +
+            # The shebangs point at the full nodejs join, though at runtime
+            # they only exec node — the join would keep npm, corepack and a
+            # second (unscrubbed) nodejs-slim in the closure.
+            ${nodeJoinRepoint}
+            # A no-op repoint would silently keep the npm/corepack join.
+            grep -rq ${final.nodejs-slim-runtime} $out
+            ! grep -r ${prev.nodejs} $out
           '';
     in
     prev.runCommand prev.playwright-mcp.name { inherit (prev.playwright-mcp) meta; } ''
@@ -529,8 +536,49 @@ in
       find $out -type f -exec sed -i \
         -e "s|${prev.playwright-mcp}|$out|g" \
         -e "s|${browsers}|${browsers-chromium}|g" {} +
-      # A leftover would silently keep the full farm in the closure.
+      # The shebangs point at the full nodejs join, though at runtime
+      # they only exec node — the join would keep npm, corepack and a
+      # second (unscrubbed) nodejs-slim in the closure.
+      ${nodeJoinRepoint}
+      # A leftover would silently keep the full farm in the closure; a
+      # no-op repoint, the npm/corepack join.
       ! grep -r ${browsers} $out
+      grep -rq ${final.nodejs-slim-runtime} $out
+      ! grep -r ${prev.nodejs} $out
       [ -z "$(find $out -type l -lname "${prev.playwright-test}*")" ]
     '';
+
+  # Repack of the cached build. nixpkgs ships codex unstripped: of the
+  # 373M main binary, ~72M is .symtab/.strtab only a debugger reads.
+  # strip is data-only — the .dep-v0 section stays so cargo-auditable
+  # tooling can still read the dependency record. Linux-only: GNU strip
+  # cannot edit Mach-O, and on darwin it would invalidate the signature.
+  codex =
+    if !prev.stdenv.hostPlatform.isLinux then
+      prev.codex
+    else
+      prev.runCommand prev.codex.name
+        {
+          nativeBuildInputs = [ prev.binutils ];
+          inherit (prev.codex) meta;
+        }
+        ''
+          cp -a ${prev.codex} $out
+          chmod -R u+w $out
+          find $out/bin -type f -exec strip --keep-section=.dep-v0 {} +
+          # bin/codex is a binary wrapper pinning the original's prefix;
+          # same name → equal length, safe inside the ELF.
+          find $out -type f -exec sed -i "s|${prev.codex}|$out|g" {} +
+          # A leftover would silently chain the copy to the original; a
+          # no-op strip would silently keep the symbol tables. The layout
+          # shifts across versions (0.133 ships one binary, 0.144 three),
+          # so sweep every ELF rather than naming one.
+          ! grep -r ${prev.codex} $out
+          find $out/bin -type f | while IFS= read -r f; do
+            [ "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" = 7f454c46 ] || continue
+            if readelf -SW "$f" | grep -qe '\.symtab'; then
+              echo "unstripped: $f"; exit 1
+            fi
+          done
+        '';
 }
