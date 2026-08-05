@@ -32,11 +32,18 @@ let
   allCategories = {
     general = true;
 
+    ide = true;
+    treesitterAll = true;
+
     beancount = false;
     go = true;
+    json = true;
+    markdown = true;
     nix = true;
+    python = true;
     rust = true;
     solidity = true;
+    toml = true;
     typescript = true;
   };
 

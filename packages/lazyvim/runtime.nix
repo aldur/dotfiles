@@ -2,6 +2,9 @@
 # `nix-store -qR (nix build --no-link --print-out-paths .#lazyvim-light)| xargs du -hd0 | sort -rh | head`
 { pkgs }:
 (with pkgs; {
+  # The survival kit: what every variant needs to start up and edit text.
+  # Language servers, formatters and their toolchains live in categories, so
+  # `lazyvim-light` stays actually light (see `allCategories` in ./lazyvim.nix).
   general =
     lib.optionals pkgs.stdenv.isLinux [
       # Fixes the following:
@@ -9,35 +12,32 @@
       inotify-tools
     ]
     ++ [
-      ast-grep
-      basedpyright
       curl
       fd
       git
-      harper
       lazygit
-      lua-language-server
-      markdownlint-cli2
-      marksman
-      prettierd
       ripgrep
-      ruff
       shfmt
       stylua
-      taplo
-      vscode-langservers-extracted
-
-      # Required by nvim-treesitter-main
-      nodejs
-      tree-sitter
-
-      pandoc
-
-      (pkgs.callPackage ../pandoc_md2html_assets/md2html.nix { })
     ];
 
   # Categories
   # NOTE: add new ones to `allCategories` in `./lazyvim.nix`.
+
+  # Workstation comforts that no single language claims.
+  ide = [
+    ast-grep
+    harper
+    lua-language-server
+    prettierd
+  ];
+
+  # The `:TSInstall` toolchain; nix-built grammars don't need it at runtime.
+  treesitterAll = [
+    nodejs
+    tree-sitter
+  ];
+
   rust = [
     cargo
     rust-analyzer
@@ -62,8 +62,20 @@
     nixfmt
     statix
   ];
-  beancount = [
-    beancount
-    beancount-language-server
+  python = [
+    basedpyright
+    ruff
   ];
+  markdown = [
+    markdownlint-cli2
+    marksman
+    pandoc
+    (pkgs.callPackage ../pandoc_md2html_assets/md2html.nix { })
+  ];
+  json = [ vscode-langservers-extracted ];
+  toml = [ taplo ];
+  # Only the editor side; bean-check/bean-format come from the surrounding
+  # ledger environment, so diagnostics run against *its* beancount rather
+  # than a second copy's.
+  beancount = [ beancount-language-server ];
 })

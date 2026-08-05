@@ -4,7 +4,36 @@
   # Rev-pinned plugins, see ./plugins.
   pinnedPlugins,
 }:
-(with pkgs.vimPlugins; {
+let
+  ts = pkgsUnstable.vimPlugins.nvim-treesitter;
+  grammar = name: pkgsUnstable.neovimUtils.grammarToPlugin ts.builtGrammars.${name};
+
+  # Minimal set of grammars for the -light version.
+  curatedGrammars = [
+    "bash"
+    "c"
+    "diff"
+    "fish"
+    "json"
+    "lua"
+    "luadoc"
+    "luap"
+    "markdown"
+    "markdown_inline"
+    "nix"
+    "printf"
+    "python"
+    "query"
+    "regex"
+    "toml"
+    "vim"
+    "vimdoc"
+    "xml"
+    "yaml"
+  ];
+in
+with pkgs.vimPlugins;
+{
   general = [
     lazy-nvim
     LazyVim
@@ -38,24 +67,16 @@
     dial-nvim
 
     pkgsUnstable.vimPlugins.nvim-treesitter-textobjects
-    pkgsUnstable.vimPlugins.nvim-treesitter.withAllGrammars
+    # The core plugin only; grammars are per-category plugins below, which
+    # init.lua discovers from the runtimepath (see its get_installed patch).
+    pkgsUnstable.vimPlugins.nvim-treesitter
 
     vim-fugitive
     vim-rhubarb
 
-    # rust
-    rustaceanvim
-    crates-nvim
-
-    SchemaStore-nvim
-
     wiki-vim
 
     auto-save-nvim
-
-    # markdown
-    markdown-preview-nvim
-    render-markdown-nvim
 
     {
       plugin = mini-ai;
@@ -98,13 +119,6 @@
     {
       plugin = pinnedPlugins.link-vim;
       name = "link.vim";
-    }
-
-    {
-      # nixpkgs' stable channel trails the rev this was pinned to, so take it
-      # from unstable, where it currently matches exactly.
-      plugin = pkgsUnstable.vimPlugins.venv-selector-nvim;
-      name = "venv-selector.nvim";
     }
 
     rec {
@@ -157,5 +171,28 @@
       };
       name = "spells";
     }
+  ]
+  ++ map grammar curatedGrammars;
+
+  # Categories
+  # NOTE: add new ones to `allCategories` in `./lazyvim.nix`.
+  treesitterAll = map pkgsUnstable.neovimUtils.grammarToPlugin ts.allGrammars;
+  markdown = [
+    markdown-preview-nvim
+    render-markdown-nvim
   ];
-})
+  python = [
+    {
+      # nixpkgs' stable channel trails the rev this was pinned to, so take it
+      # from unstable, where it currently matches exactly.
+      plugin = pkgsUnstable.vimPlugins.venv-selector-nvim;
+      name = "venv-selector.nvim";
+    }
+  ];
+  json = [ SchemaStore-nvim ];
+  rust = [
+    rustaceanvim
+    crates-nvim
+  ];
+  beancount = [ (grammar "beancount") ];
+}
