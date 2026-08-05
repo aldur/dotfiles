@@ -21,11 +21,11 @@ let
   lightClosure = closureInfo { rootPaths = [ lazyvim-light ]; };
 
   # Closure budgets in MiB, ~10% above the measured sizes (2026-08: full
-  # ~2340, light ~280). Named residue below catches known offenders; this
+  # ~1565, light ~280). Named residue below catches known offenders; this
   # catches the unknown ones — a plugin or tool quietly dragging in a
   # runtime. Grows legitimately? Re-measure and raise the budget here.
   maxMiB = {
-    full = 2600;
+    full = 1720;
     light = 320;
   };
 
@@ -69,39 +69,55 @@ let
   # vtsls and basedpyright are npm bundles re-pointed at it, and the
   # solidity server rides the same path. Attaching exercises the whole
   # chain — lspconfig wiring, the wrapper PATH, and the node those servers
-  # exec — where mere presence in the closure would not.
+  # exec — where mere presence in the closure would not. For the two
+  # servers whose packages are pruned hardest, attach is not enough: the
+  # file carries a type error and the server must *diagnose* it, proving
+  # vtsls still spawns tsserver from the kept typescript package and
+  # basedpyright still reads its embedded typeshed.
   attach = [
     {
       ext = "json";
       text = ''{"name":"x"}'';
       server = "jsonls";
+      diag = false;
     }
     {
       ext = "ts";
-      text = "const a: number = 1;";
+      text = ''const a: number = "wrong";'';
       server = "vtsls";
+      diag = true;
     }
     {
       ext = "py";
-      text = "x = 1";
+      text = ''x: int = "wrong"'';
       server = "basedpyright";
+      diag = true;
     }
     {
       ext = "sol";
       text = "pragma solidity ^0.8.0;\ncontract C {}";
       server = "solidity_ls_nomicfoundation";
+      diag = false;
     }
   ];
 
-  # Announce every attach, quit on the expected one; time out loudly (cq)
-  # rather than hang the build.
+  # Announce every attach; once the expected server arrives, either quit
+  # (attach-only) or poll until it publishes a diagnostic. Time out loudly
+  # (cq) rather than hang the build.
   attachLua =
-    server:
+    { server, diag, ... }:
     "vim.api.nvim_create_autocmd('LspAttach',{callback=function(a)"
     + " local c=vim.lsp.get_client_by_id(a.data.client_id)"
     + " io.write('ATTACHED: '..c.name..'\\n')"
-    + " if c.name=='${server}' then vim.schedule(function() vim.cmd('qa!') end) end"
-    + " end}); vim.defer_fn(function() io.write('no attach\\n') vim.cmd('cq') end, 120000)";
+    + " if c.name=='${server}' then"
+    + (
+      if diag then
+        " local t=vim.uv.new_timer() t:start(2000,2000,vim.schedule_wrap(function()"
+        + " if #vim.diagnostic.get(a.buf)>0 then io.write('DIAGNOSED: ${server}\\n') t:stop() vim.cmd('qa!') end end))"
+      else
+        " vim.schedule(function() vim.cmd('qa!') end)"
+    )
+    + " end end}); vim.defer_fn(function() io.write('no attach\\n') vim.cmd('cq') end, 240000)";
 in
 runCommand "lazyvim-variants"
   {
@@ -117,13 +133,19 @@ runCommand "lazyvim-variants"
     ${lib.getExe' lazyvim "lazyvim"} --headless "+lua print('full: started')" +qa
     ${lib.getExe' lazyvim-light "lazyvim-light"} --headless "+lua print('light: started')" +qa
 
-    ${lib.concatMapStringsSep "\n" (t: ''
-      printf '%s\n' ${lib.escapeShellArg t.text} > "$TMPDIR/attach.${t.ext}"
-      ${lib.getExe' lazyvim "lazyvim"} --headless \
-        ${lib.escapeShellArg "+lua ${attachLua t.server}"} \
-        "+edit $TMPDIR/attach.${t.ext}" 2>&1 | grep -a "ATTACHED: ${t.server}" \
-        || { echo "${t.server} did not attach to attach.${t.ext}"; exit 1; }
-    '') attach}
+    ${lib.concatMapStringsSep "\n" (
+      t:
+      let
+        want = if t.diag then "DIAGNOSED" else "ATTACHED";
+      in
+      ''
+        printf '%s\n' ${lib.escapeShellArg t.text} > "$TMPDIR/attach.${t.ext}"
+        ${lib.getExe' lazyvim "lazyvim"} --headless \
+          ${lib.escapeShellArg "+lua ${attachLua t}"} \
+          "+edit $TMPDIR/attach.${t.ext}" 2>&1 | grep -a "${want}: ${t.server}" \
+          || { echo "${t.server}: no '${want}' for attach.${t.ext}"; exit 1; }
+      ''
+    ) attach}
 
     ${lib.concatMapStringsSep "\n" (p: ''
       grep -q -e ${lib.escapeShellArg p} ${fullClosure}/store-paths \

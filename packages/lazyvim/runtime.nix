@@ -34,7 +34,7 @@
 
   rust = [ rust-analyzer ];
   go = [ gopls ];
-  typescript = [ (withoutNpmBuildResidue (vtsls.override { nodejs-slim_22 = nodejs-slim; })) ];
+  typescript = [ vtsls ];
   solidity = [
     (pkgs.callPackage
       ../nomicfoundation-solidity-language-server/nomicfoundation-solidity-language-server.nix

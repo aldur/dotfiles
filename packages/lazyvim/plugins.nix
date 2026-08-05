@@ -176,7 +176,14 @@ with pkgs.vimPlugins;
   # NOTE: add new ones to `allCategories` in `./lazyvim.nix`.
   treesitterAll = map pkgs.neovimUtils.grammarToPlugin ts.allGrammars;
   markdown = [
-    (markdown-preview-nvim.overrideAttrs { runtimeDeps = [ pkgs.nodejs-slim-runtime ]; })
+    (markdown-preview-nvim.overrideAttrs (old: {
+      runtimeDeps = [ pkgs.nodejs-slim-runtime ];
+      postInstall = (old.postInstall or "") + ''
+        chmod -R u+w $out/app/node_modules
+        node ${../../overlays/prune-node-modules.js} $out/app
+        find $out/app/node_modules -xtype l -delete
+      '';
+    }))
     render-markdown-nvim
   ];
   python = [

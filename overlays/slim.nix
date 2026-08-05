@@ -79,7 +79,40 @@ final: prev: {
       '';
     });
 
-  basedpyright = final.withoutNpmBuildResidue prev.basedpyright; # Leaks npm-deps through keytar's config.gypi.
+  # dist/ is a self-contained webpack bundle — typeshed and a vendored
+  # vscode-languageserver ride inside it — while node_modules is 217M of
+  # pyright's monorepo tooling (@azure, prettier, npm-check-updates)
+  # nothing loads; it also leaked npm-deps through keytar's config.gypi.
+  # The .maps only ever served the upstream debugger.
+  basedpyright = final.withoutNpmBuildResidue (
+    prev.basedpyright.overrideAttrs (old: {
+      postInstall = (old.postInstall or "") + ''
+        rm -rf $out/lib/node_modules/pyright-root/node_modules
+        rm -f $out/lib/node_modules/pyright-root/dist/*.map
+      '';
+    })
+  );
+
+  # The service is built (packages/service/dist) from a vendored vscode
+  # source checkout that remains in the output — 144M no code path reads
+  # again — alongside the pnpm store entries of its build toolchain. The
+  # typescript package stays: the service spawns tsserver from it.
+  vtsls = final.withoutNpmBuildResidue (
+    (prev.vtsls.override { nodejs-slim_22 = prev.nodejs-slim; }).overrideAttrs (old: {
+      postInstall = (old.postInstall or "") + ''
+        root=$out/lib/vtsls-language-server
+        rm -rf "$root"/packages/service/{vscode,src,patches}
+        for dev in \
+          "esbuild@" "@esbuild+" "eslint@" "@eslint+" "@eslint-community+" \
+          "@typescript-eslint+" "typescript-eslint@" "rollup@" "@rollup+" \
+          "vite@" "vitest@" "@vitest+" "@types+" "lint-staged@" \
+          "simple-git-hooks@" "prettier@" "husky@"; do
+          rm -rf "$root"/node_modules/.pnpm/"$dev"*
+        done
+      '';
+    })
+  );
+
   # Only lazyvim ships these; both wrap their entry points with the full
   # nodejs join, which withoutNpmBuildResidue re-points at the runtime node.
   prettierd = final.withoutNpmBuildResidue prev.prettierd;
