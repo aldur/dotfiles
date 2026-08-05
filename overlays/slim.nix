@@ -1,15 +1,18 @@
 # Strip packages to what's required at runtime to reduce disk space (without
 # rebuilding the world).
 final: prev: {
-  # uvwasi ships a pkg-config file (and headers) in its runtime output, pinning
-  # libuv's -dev headers; node links the library, never the headers. Same name
-  # → same store path length, so the copy can replace the original
-  # byte-for-byte inside node's ELF below.
-  uvwasi-runtime = prev.runCommand prev.uvwasi.name { } ''
-    cp -a ${prev.uvwasi} $out
-    chmod -R u+w $out
-    rm -rf $out/lib/pkgconfig $out/lib/cmake $out/include
-  '';
+  # Several of node's C dependencies have no dev output: headers, cmake
+  # exports and pkg-config files ride in the runtime output (uvwasi's .pc
+  # even pins libuv's -dev headers). node links the libraries, never the
+  # headers. Same name → same store path length, so the copies can
+  # replace the originals byte-for-byte inside node's ELF below.
+  withoutHeaders =
+    pkg:
+    prev.runCommand pkg.name { } ''
+      cp -a ${pkg} $out
+      chmod -R u+w $out
+      rm -rf $out/include $out/lib/pkgconfig $out/lib/cmake
+    '';
 
   # node compiles its build configuration into the binary (process.config),
   # which pins the -dev output of every build dependency — headers and
@@ -18,6 +21,23 @@ final: prev: {
   # remove-references-to swaps each hash for an invalid one of the same
   # length, so patching the ELF in place is safe; no rebuild of node.
   nodejs-slim-runtime =
+    let
+      # Dev-splitless runtime deps whose headers only addon builds would
+      # read; a version mismatch with node's actual link just makes the
+      # swap a no-op, so this list can trail nixpkgs safely.
+      headerlessSwaps =
+        map
+          (p: {
+            from = p;
+            to = final.withoutHeaders p;
+          })
+          [
+            prev.uvwasi
+            prev.simdjson
+            prev.simdutf
+            prev.ada
+          ];
+    in
     prev.runCommand prev.nodejs-slim.name
       {
         nativeBuildInputs = [ prev.removeReferencesTo ];
@@ -28,14 +48,18 @@ final: prev: {
       ''
         cp -a ${prev.nodejs-slim} $out
         chmod -R u+w $out
+        # Addon-build material node-gyp would read; node-gyp isn't shipped.
+        rm -rf $out/include
         grep -e '-dev$' "$closure/store-paths" | while IFS= read -r p; do
           find $out -type f -exec remove-references-to -t "$p" {} +
         done
-        # node's own prefix, recorded in include/node/config.gypi, would
+        # node's own prefix, recorded in the binary's process.config, would
         # chain the copy to the original store path and everything it pins.
         find $out -type f -exec remove-references-to -t ${prev.nodejs-slim} {} +
-        # Equal-length swap (see uvwasi-runtime), safe in the ELF's rpath.
-        find $out -type f -exec sed -i "s|${prev.uvwasi}|${final.uvwasi-runtime}|g" {} +
+        # Equal-length swaps (see withoutHeaders), safe in the ELF's rpath.
+        ${prev.lib.concatMapStringsSep "\n" (
+          s: ''find $out -type f -exec sed -i "s|${s.from}|${s.to}|g" {} +''
+        ) headerlessSwaps}
       '';
 
   # node-gyp is a build tool, but packages ship it anyway and its residue
@@ -121,6 +145,14 @@ final: prev: {
   vscode-langservers-extracted = final.withoutNpmBuildResidue (
     prev.vscode-langservers-extracted.override { nodejs-slim = final.nodejs-slim-runtime; }
   );
+
+  # The editor only runs the language server (lua/plugins/harper.lua);
+  # harper-cli is a second 55M copy of the same embedded dictionaries. A
+  # real copy, not a symlink: linking would keep the whole original in
+  # the closure.
+  harper = prev.runCommand prev.harper.name { inherit (prev.harper) meta; } ''
+    install -Dm755 ${prev.harper}/bin/harper-ls $out/bin/harper-ls
+  '';
 
   # The stock binary is linked with --export-dynamic, which keeps all
   # ~450k Haskell symbols in the dynamic table (59M of .dynsym/.dynstr)
