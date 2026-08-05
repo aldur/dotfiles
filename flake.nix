@@ -117,6 +117,7 @@
               llmcat
               taskmd
               pi # pi-coding-agent bundled with plugins
+              pi-rust # Rust port of pi, same wrapper affordances
               ;
             llm = pkgs.llmWithPlugins;
           }
