@@ -131,7 +131,7 @@ with pkgs.vimPlugins;
               pkgs.stdenv.mkDerivation {
                 pname = name;
                 version = "201901191939";
-                src = builtins.fetchurl {
+                src = pkgs.fetchurl {
                   url = "https://ftp.nluug.nl/pub/vim/runtime/spell/${name}";
                   sha256 = spellHash;
                 };
