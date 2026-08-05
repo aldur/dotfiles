@@ -7,6 +7,9 @@
   # overlay's tools and slim.nix's repacks — discovered by ./default.nix
   # rather than enumerated here.
   packagesUnderGuard,
+  # Attr names before platform filtering: staleness is judged against
+  # these, so an entry for a linux-only package doesn't fail darwin eval.
+  knownNames,
 }:
 
 # overlays/slim.nix strips cached derivations by repacking them; the
@@ -47,6 +50,9 @@ let
     tiktoken = 260;
     vscode-langservers-extracted = 200;
     vtsls = 240;
+    # Sizes are measured on x86_64-linux; aarch64 drifts a few percent,
+    # so the default's 3% headroom here would flake on the ARM runner.
+    tesseract-lite = 170;
   };
 
   # Name fragments that must never (re)appear in a closure.
@@ -74,7 +80,7 @@ let
   };
 
   names = builtins.attrNames packagesUnderGuard;
-  stale = lib.subtractLists names (builtins.attrNames (budgets // forbidden));
+  stale = lib.subtractLists knownNames (builtins.attrNames (budgets // forbidden));
 in
 
 assert lib.assertMsg (
