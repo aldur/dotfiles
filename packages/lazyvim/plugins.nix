@@ -179,7 +179,22 @@ with pkgs.vimPlugins;
 
   # Categories
   # NOTE: add new ones to `allCategories` in `./lazyvim.nix`.
-  treesitterAll = map pkgs.neovimUtils.grammarToPlugin ts.allGrammars;
+  # The complete grammar set minus languages this editor will never open;
+  # together they were a quarter of the set's weight.
+  treesitterAll =
+    let
+      denylist = map (n: "tree-sitter-" + n) [
+        "systemverilog" # 21M
+        "gnuplot" # 11M
+        "razor" # 11M
+        "fortran" # 6M
+        "fsharp" # 6M
+        "slang" # 5M
+      ];
+    in
+    map pkgs.neovimUtils.grammarToPlugin (
+      builtins.filter (g: !builtins.elem (pkgs.lib.getName g) denylist) ts.allGrammars
+    );
   markdown = [
     (markdown-preview-nvim.overrideAttrs (old: {
       runtimeDeps = [ pkgs.nodejs-slim-runtime ];

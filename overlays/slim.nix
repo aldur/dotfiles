@@ -117,43 +117,90 @@ final: prev: {
     })
   );
 
-  # The service is built (packages/service/dist) from a vendored vscode
-  # source checkout that remains in the output — 144M no code path reads
-  # again — alongside the pnpm store entries of its build toolchain. The
-  # typescript package stays: the service spawns tsserver from it.
-  vtsls = final.withoutNpmBuildResidue (
-    (prev.vtsls.override { nodejs-slim_22 = prev.nodejs-slim; }).overrideAttrs (old: {
-      postInstall = (old.postInstall or "") + ''
-        root=$out/lib/vtsls-language-server
-        rm -rf "$root"/packages/service/{vscode,src,patches}
-        for dev in \
-          "esbuild@" "@esbuild+" "eslint@" "@eslint+" "@eslint-community+" \
-          "@typescript-eslint+" "typescript-eslint@" "rollup@" "@rollup+" \
-          "vite@" "vitest@" "@vitest+" "@types+" "lint-staged@" \
-          "simple-git-hooks@" "prettier@" "husky@"; do
-          rm -rf "$root"/node_modules/.pnpm/"$dev"*
-        done
-      '';
-    })
-  );
+  # Repack of the cached build. The service is built (packages/service/
+  # dist) from a vendored vscode source checkout that remains in the
+  # output — 144M no code path reads again — alongside the pnpm store
+  # entries of its build toolchain. The typescript package stays: the
+  # service spawns tsserver from it. The cached build runs on
+  # nodejs-slim_22; its scripts are text, so re-pointing them at the
+  # runtime node keeps one node in the closure (attach + diagnostics
+  # verified by the variants check).
+  vtsls = prev.runCommand prev.vtsls.name { inherit (prev.vtsls) meta; } ''
+    cp -a ${prev.vtsls} $out
+    chmod -R u+w $out
+    root=$out/lib/vtsls-language-server
+    rm -rf "$root"/packages/service/{vscode,src,patches}
+    for dev in \
+      "esbuild@" "@esbuild+" "eslint@" "@eslint+" "@eslint-community+" \
+      "@typescript-eslint+" "typescript-eslint@" "rollup@" "@rollup+" \
+      "vite@" "vitest@" "@vitest+" "@types+" "lint-staged@" \
+      "simple-git-hooks@" "prettier@" "husky@"; do
+      rm -rf "$root"/node_modules/.pnpm/"$dev"*
+    done
+    find $out -xtype l -delete
+    find $out -type f -exec sed -i \
+      -e "s|${prev.vtsls}|$out|g" \
+      -e "s|${prev.nodejs-slim_22}|${final.nodejs-slim-runtime}|g" {} +
+  '';
 
-  # Only lazyvim ships these; both wrap their entry points with the full
-  # nodejs join, which withoutNpmBuildResidue re-points at the runtime node.
-  # prettierd declares only core_d and prettier; typescript (23M), babel
-  # and friends are devDependencies the vendored install unpacked anyway —
-  # prettier brings its own typescript parser.
-  prettierd = final.withoutNpmBuildResidue (
-    prev.prettierd.overrideAttrs (old: {
-      postInstall = (old.postInstall or "") + ''
+  # Repack of the cached build. prettierd declares only core_d and
+  # prettier; typescript (23M), babel and friends are devDependencies the
+  # vendored install unpacked anyway — prettier brings its own typescript
+  # parser. Its scripts are shebanged with the full nodejs join, though
+  # at runtime they only exec `node`.
+  prettierd =
+    prev.runCommand prev.prettierd.name
+      {
+        nativeBuildInputs = [ prev.nodejs-slim ];
+        inherit (prev.prettierd) meta;
+      }
+      ''
+        cp -a ${prev.prettierd} $out
+        chmod -R u+w $out
         node ${./prune-node-modules.js} $out/lib/node_modules/@fsouza/prettierd
+        find $out -name config.gypi -delete
+        find $out -xtype l -delete
+        find $out -type f -exec sed -i \
+          -e "s|${prev.prettierd}|$out|g" \
+          -e "s|${prev.nodejs}|${final.nodejs-slim-runtime}|g" {} +
       '';
-    })
-  );
-  # Its entry points are makeBinaryWrapper ELFs that exec nodejs-slim, so
-  # the node has to be swapped at build time; sed can't touch them.
-  vscode-langservers-extracted = final.withoutNpmBuildResidue (
-    prev.vscode-langservers-extracted.override { nodejs-slim = final.nodejs-slim-runtime; }
-  );
+
+  # Repack of the cached build. Only jsonls is wired up (checked by the
+  # variants attach test): the css, html and eslint servers go, along
+  # with the 17M typescript copy that only they load — the json server's
+  # dist is self-contained. Its entry points are makeBinaryWrapper ELFs
+  # that exec nodejs-slim by absolute path; same package name → same
+  # store path length, so the sed is byte-exact even there.
+  vscode-langservers-extracted =
+    prev.runCommand prev.vscode-langservers-extracted.name
+      { inherit (prev.vscode-langservers-extracted) meta; }
+      ''
+        cp -a ${prev.vscode-langservers-extracted} $out
+        chmod -R u+w $out
+        rm -rf $out/lib/extensions/node_modules \
+          $out/lib/extensions/css-language-features \
+          $out/lib/extensions/html-language-features \
+          $out/lib/extensions/eslint-language-features \
+          $out/bin/vscode-css-language-server \
+          $out/bin/vscode-html-language-server \
+          $out/bin/vscode-eslint-language-server
+        find $out -type f -exec sed -i \
+          -e "s|${prev.vscode-langservers-extracted}|$out|g" \
+          -e "s|${prev.nodejs-slim}|${final.nodejs-slim-runtime}|g" {} +
+      '';
+
+  # Repack of the cached build. lua_ls serves nvim configs here: the
+  # bundled third-party addon definitions and the zh-cn metas and
+  # messages never load.
+  lua-language-server =
+    prev.runCommand prev.lua-language-server.name { inherit (prev.lua-language-server) meta; }
+      ''
+        cp -a ${prev.lua-language-server} $out
+        chmod -R u+w $out
+        rm -rf $out/share/lua-language-server/meta/3rd
+        find "$out/share/lua-language-server" -depth -name '*zh-cn*' -exec rm -rf {} +
+        find $out -type f -exec sed -i "s|${prev.lua-language-server}|$out|g" {} +
+      '';
 
   # nvim links libtree-sitter out of a package that is 97% CLI: 11M of
   # `tree-sitter` generate/test tooling against 260K of library.
@@ -216,18 +263,11 @@ final: prev: {
     install -Dm755 ${prev.harper}/bin/harper-ls $out/bin/harper-ls
   '';
 
-  # The stock binary is linked with --export-dynamic, which keeps all
-  # ~450k Haskell symbols in the dynamic table (59M of .dynsym/.dynstr)
-  # and roots them against --gc-sections, so dead code stays too.
-  # Relinking without it more than halves the binary (209M → 95M); only
-  # the pandoc-cli executable rebuilds, the pandoc library stays cached.
-  # Lua filters keep working: they call registered functions, not dlsym
-  # (verified: md→html tables, --lua-filter, gfm→latex).
-  pandoc = prev.pandoc.overrideAttrs (old: {
-    configureFlags = (old.configureFlags or [ ]) ++ [
-      "--ghc-options=-optl-Wl,--no-export-dynamic"
-    ];
-  });
+  # NOTE: pandoc's stock binary carries 59M of dynamic symbol tables
+  # (--export-dynamic roots all ~450k Haskell symbols) and a relink with
+  # -optl-Wl,--no-export-dynamic more than halves it, 209M → 95M — but
+  # that means compiling pandoc-cli on every nixpkgs bump, so the cached
+  # binary ships as-is. Revisit if a substituter ever fronts these hosts.
 
   # marksman is the only dotnet consumer in the editor closure, and dotnet
   # only touches ICU through libSystem.Globalization.Native — 39M of
@@ -262,9 +302,12 @@ final: prev: {
         # symbols (checked with nm -D), so dropping the entries is safe
         # even under BIND_NOW. The rpaths in the apphost and the
         # runtime's globalization libs go the same way.
+        # Kerberos rides the same overlinking (dotnet's System.Net
+        # negotiate auth, no imported symbols either).
         patchelf --remove-needed libicui18n.so --remove-needed libicuuc.so \
+          --remove-needed libgssapi_krb5.so \
           $out/lib/marksman/marksman
-        grep -e '-icu4c-' "$closure/store-paths" | while IFS= read -r p; do
+        grep -e '-icu4c-' -e '-krb5-' "$closure/store-paths" | while IFS= read -r p; do
           find $out -type f -exec remove-references-to -t "$p" {} +
         done
 
@@ -277,19 +320,39 @@ final: prev: {
         chmod +x $out/bin/marksman
       '';
 
-  # lazygit and the git plugins only run plumbing, so drop the translation
-  # machinery. NO_GETTEXT alone is not enough: nixpkgs' git-sh-i18n patch
-  # hardcodes the gettext store path into a branch NO_GETTEXT makes dead,
-  # and `contrib` — which nothing on any code path reaches — retains
-  # bash-interactive through its patched shebangs. ~32M off every variant.
-  gitMinimal-runtime = (prev.gitMinimal.override { nlsSupport = false; }).overrideAttrs (old: {
-    postInstall = (old.postInstall or "") + ''
-      rm -rf $out/share/git/contrib
-      find $out -xtype l -delete
-      sed -i -e 's|${prev.gettext}|/gettext-elided-see-slim-overlay|g' \
-        $out/libexec/git-core/git-sh-i18n
-    '';
-  });
+  # A repack of the cached gitMinimal, not a rebuild (its install checks
+  # alone run a 29k-test suite). Plugins only run plumbing and porcelain:
+  # `contrib` (which pins bash-interactive through its patched shebangs),
+  # message catalogs, and the server/exotic-transport surface — scalar,
+  # the legacy dumb-http client, imap-send, the login shell — all go.
+  # Scrubbing gettext is safe on a live NLS build: git-sh-i18n probes
+  # gettext.sh with `type`, and the invalidated path falls through to the
+  # built-in scheme. sh-i18n--envsubst stays: that fallback still uses it
+  # to interpolate script messages (submodule et al.).
+  gitMinimal-runtime =
+    prev.runCommand prev.gitMinimal.name
+      {
+        nativeBuildInputs = [ prev.removeReferencesTo ];
+        inherit (prev.gitMinimal) meta;
+      }
+      ''
+        cp -a ${prev.gitMinimal} $out
+        chmod -R u+w $out
+        rm -rf $out/share/git/contrib $out/share/locale
+        rm -f $out/bin/scalar $out/bin/git-shell $out/bin/git-cvsserver \
+          $out/libexec/git-core/scalar \
+          $out/libexec/git-core/git-shell \
+          $out/libexec/git-core/git-imap-send \
+          $out/libexec/git-core/git-http-push \
+          $out/libexec/git-core/git-http-fetch \
+          $out/libexec/git-core/git-cvsserver
+        find $out -xtype l -delete
+        # git embeds its own prefix; equal-length rewrite keeps the copy
+        # self-contained instead of chained to the original.
+        find $out -type f -exec sed -i "s|${prev.gitMinimal}|$out|g" {} +
+        find $out -type f -exec remove-references-to -t ${prev.gettext} {} +
+      '';
+
   # rga shells out to ffmpeg for media adapters (subtitles, metadata);
   # the default ffmpeg build carries gtk3/gtk4, sdl2, x265, flite and
   # friends — ~1G of desktop and encoder closure for a tool that only

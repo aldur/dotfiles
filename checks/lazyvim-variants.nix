@@ -21,12 +21,12 @@ let
   lightClosure = closureInfo { rootPaths = [ lazyvim-light ]; };
 
   # Closure budgets in MiB, ~10% above the measured sizes (2026-08: full
-  # ~1230, light ~245). Named residue below catches known offenders; this
+  # ~1240, light ~230). Named residue below catches known offenders; this
   # catches the unknown ones — a plugin or tool quietly dragging in a
   # runtime. Grows legitimately? Re-measure and raise the budget here.
   maxMiB = {
-    full = 1350;
-    light = 270;
+    full = 1370;
+    light = 250;
   };
 
   # Name fragments of the tooling that must separate the two variants.
@@ -115,6 +115,13 @@ let
       ext = "md";
       text = "# a heading";
       server = "harper_ls";
+      diag = false;
+    }
+    # lua_ls runs with its addon/zh-cn metas pruned (see overlays/slim.nix).
+    {
+      ext = "lua";
+      text = "local x = 1";
+      server = "lua_ls";
       diag = false;
     }
   ];
