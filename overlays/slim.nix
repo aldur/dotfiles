@@ -271,6 +271,12 @@ final: prev: {
         $out/libexec/git-core/git-sh-i18n
     '';
   });
+  # rga shells out to ffmpeg for media adapters (subtitles, metadata);
+  # the default ffmpeg build carries gtk3/gtk4, sdl2, x265, flite and
+  # friends — ~1G of desktop and encoder closure for a tool that only
+  # ever decodes. ffmpeg-headless keeps the decoders and ffprobe.
+  ripgrep-all = prev.ripgrep-all.override { ffmpeg = prev.ffmpeg-headless; };
+
   # The MCP server only ever drives chromium (its wrapper hard-sets
   # PLAYWRIGHT_BROWSERS_PATH), yet it retains firefox, webkit and the
   # chromium headless shell — ~670M of browsers no code path launches —
