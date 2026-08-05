@@ -122,6 +122,67 @@ final: prev: {
     prev.vscode-langservers-extracted.override { nodejs-slim = final.nodejs-slim-runtime; }
   );
 
+  # The stock binary is linked with --export-dynamic, which keeps all
+  # ~450k Haskell symbols in the dynamic table (59M of .dynsym/.dynstr)
+  # and roots them against --gc-sections, so dead code stays too.
+  # Relinking without it more than halves the binary (209M → 95M); only
+  # the pandoc-cli executable rebuilds, the pandoc library stays cached.
+  # Lua filters keep working: they call registered functions, not dlsym
+  # (verified: md→html tables, --lua-filter, gfm→latex).
+  pandoc = prev.pandoc.overrideAttrs (old: {
+    configureFlags = (old.configureFlags or [ ]) ++ [
+      "--ghc-options=-optl-Wl,--no-export-dynamic"
+    ];
+  });
+
+  # marksman is the only dotnet consumer in the editor closure, and dotnet
+  # only touches ICU through libSystem.Globalization.Native — 39M of
+  # locale tables a markdown server has no use for. With invariant
+  # globalization that library never dlopens ICU, so the rpath entries
+  # remove-references-to invalidates are dead. The scrubbed runtime rides
+  # inside the package (discovered from the original wrapper rather than
+  # named, so a marksman bump can't pair it with the wrong runtime) and
+  # the original chain — wrapped runtime → runtime → icu — drops out of
+  # the closure entirely.
+  marksman =
+    prev.runCommand prev.marksman.name
+      {
+        nativeBuildInputs = [
+          prev.removeReferencesTo
+          prev.patchelf
+        ];
+        closure = prev.closureInfo { rootPaths = [ prev.marksman ]; };
+        inherit (prev.marksman) meta;
+      }
+      ''
+        cp -a ${prev.marksman} $out
+        chmod -R u+w $out
+
+        droot=$(sed -n "s|^export DOTNET_ROOT='\([^']*\)'$|\1|p" $out/bin/marksman)
+        host=$(readlink -f "$droot/dotnet")
+        runtime=''${host%/share/dotnet/dotnet}
+        cp -a "$runtime" $out/dotnet-runtime
+        chmod -R u+w $out/dotnet-runtime
+        # buildDotnetModule patches the ICU sonames into the apphost's
+        # DT_NEEDED so managed dlopen resolves them; it imports no ICU
+        # symbols (checked with nm -D), so dropping the entries is safe
+        # even under BIND_NOW. The rpaths in the apphost and the
+        # runtime's globalization libs go the same way.
+        patchelf --remove-needed libicui18n.so --remove-needed libicuuc.so \
+          $out/lib/marksman/marksman
+        grep -e '-icu4c-' "$closure/store-paths" | while IFS= read -r p; do
+          find $out -type f -exec remove-references-to -t "$p" {} +
+        done
+
+        cat > $out/bin/marksman <<EOF
+        #!${prev.runtimeShell} -e
+        export DOTNET_ROOT="$out/dotnet-runtime/share/dotnet"
+        export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+        exec "$out/lib/marksman/marksman" "\$@"
+        EOF
+        chmod +x $out/bin/marksman
+      '';
+
   # lazygit and the git plugins only run plumbing, so drop the translation
   # machinery. NO_GETTEXT alone is not enough: nixpkgs' git-sh-i18n patch
   # hardcodes the gettext store path into a branch NO_GETTEXT makes dead,

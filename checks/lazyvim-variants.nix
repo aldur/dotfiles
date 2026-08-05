@@ -21,22 +21,23 @@ let
   lightClosure = closureInfo { rootPaths = [ lazyvim-light ]; };
 
   # Closure budgets in MiB, ~10% above the measured sizes (2026-08: full
-  # ~1565, light ~280). Named residue below catches known offenders; this
+  # ~1410, light ~280). Named residue below catches known offenders; this
   # catches the unknown ones — a plugin or tool quietly dragging in a
   # runtime. Grows legitimately? Re-measure and raise the budget here.
   maxMiB = {
-    full = 1720;
+    full = 1550;
     light = 320;
   };
 
   # Name fragments of the tooling that must separate the two variants.
+  # (No "dotnet": marksman's runtime rides inside its own store path —
+  # see overlays/slim.nix — and the attach test proves it boots.)
   heavy = [
     "basedpyright"
     "markdown-preview"
     "pandoc-cli"
     "harper"
     "marksman"
-    "dotnet"
   ];
 
   # Build residue that must appear in neither: npm dependency caches leaked
@@ -97,6 +98,13 @@ let
       ext = "sol";
       text = "pragma solidity ^0.8.0;\ncontract C {}";
       server = "solidity_ls_nomicfoundation";
+      diag = false;
+    }
+    # marksman runs on the repacked, ICU-free dotnet runtime.
+    {
+      ext = "md";
+      text = "# a heading";
+      server = "marksman";
       diag = false;
     }
   ];
