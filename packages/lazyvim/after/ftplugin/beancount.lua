@@ -1,8 +1,11 @@
-vim.keymap.set({"n", "v"}, "mc", ":s/[!?]/*/c<CR>", {
-    desc = "beancount: mark transactions as reconciled",
-    noremap = true,
-    silent = true,
+vim.keymap.set({ "n", "v" }, "mc", ":s/[!?]/*/c<CR>", {
+	desc = "beancount: mark transactions as reconciled",
+	noremap = true,
+	silent = true,
 })
 
 vim.opt_local.commentstring = "; %s"
-vim.opt_global.iskeyword:append {":"}
+-- Account names are colon-separated, so `w`, `*` and `iw` should treat
+-- `Assets:Cash` as one word. Buffer-local: the global option would skip the
+-- buffer this ftplugin fired for and follow into every later one.
+vim.opt_local.iskeyword:append({ ":" })

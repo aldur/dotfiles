@@ -186,6 +186,15 @@ report(function()
 		check("beancount filetype", vim.bo[buf].filetype == "beancount", vim.bo[buf].filetype)
 		check("beancount commentstring", vim.bo[buf].commentstring == "; %s", vim.bo[buf].commentstring)
 		check("beancount reconcile mapping", vim.fn.maparg("mc", "n") ~= "")
+
+		-- Both directions: the option is buffer-local, so setting the global one
+		-- misses this buffer and follows into every buffer opened afterwards.
+		local function has_colon(b)
+			return vim.bo[b].iskeyword:find(":", 1, true) ~= nil
+		end
+		check("beancount iskeyword takes ':'", has_colon(buf), vim.bo[buf].iskeyword)
+		local after = open("after.lua", "local x = 1\n")
+		check("iskeyword stays out of other buffers", not has_colon(after), vim.bo[after].iskeyword)
 	end
 
 	-- Anything that threw along the way. A server whose `root_dir` shells out to a
