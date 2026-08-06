@@ -149,10 +149,13 @@ runCommand "lazyvim-variants"
         # Booting also opens :help and parses it: the repacked neovim (see
         # overlays/slim.nix) drops its bundled parsers, so vimdoc must
         # resolve from the curated nvim-treesitter grammars in every variant.
+        # The query lookup is the second half of that: nixpkgs ships parsers
+        # and queries as separate plugins, and a parser without its queries
+        # attaches to the buffer and highlights nothing at all.
         ${lib.concatMapStringsSep "\n"
           (bin: ''
             ${bin} --headless \
-              "+lua local ok,err=pcall(function() vim.cmd('help api') vim.treesitter.get_parser(0):parse() end) io.write(ok and 'HELP-TS-OK\n' or 'HELP-TS-FAIL: '..tostring(err)..'\n') vim.cmd('qa!')" \
+              "+lua local ok,err=pcall(function() vim.cmd('help api') vim.treesitter.get_parser(0):parse() assert(vim.treesitter.query.get('vimdoc','highlights'), 'no vimdoc highlights query') end) io.write(ok and 'HELP-TS-OK\n' or 'HELP-TS-FAIL: '..tostring(err)..'\n') vim.cmd('qa!')" \
               2>&1 | grep -a HELP-TS-OK \
               || { echo "${bin}: :help did not parse"; exit 1; }
           '')

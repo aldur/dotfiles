@@ -6,7 +6,17 @@
 }:
 let
   ts = pkgs.vimPlugins.nvim-treesitter;
-  grammar = name: pkgs.neovimUtils.grammarToPlugin ts.builtGrammars.${name};
+
+  # nixpkgs ships a grammar as two plugins: the parser, and the queries.
+  # We need both.
+  grammarPlugins =
+    g:
+    [ (pkgs.neovimUtils.grammarToPlugin g) ]
+    ++ (g.dependencies or [ ])
+    ++ pkgs.lib.optionals (g ? associatedQuery) (
+      [ g.associatedQuery ] ++ (g.associatedQuery.dependencies or [ ])
+    );
+  grammar = name: grammarPlugins ts.builtGrammars.${name};
 
   # Minimal set of grammars for the -light version.
   curatedGrammars = [
@@ -175,7 +185,7 @@ with pkgs.vimPlugins;
       name = "spells";
     }
   ]
-  ++ map grammar curatedGrammars;
+  ++ pkgs.lib.unique (pkgs.lib.concatMap grammar curatedGrammars);
 
   # Categories
   # NOTE: add new ones to `allCategories` in `./lazyvim.nix`.
@@ -192,8 +202,10 @@ with pkgs.vimPlugins;
         "slang" # 5M
       ];
     in
-    map pkgs.neovimUtils.grammarToPlugin (
-      builtins.filter (g: !builtins.elem (pkgs.lib.getName g) denylist) ts.allGrammars
+    pkgs.lib.unique (
+      pkgs.lib.concatMap grammarPlugins (
+        builtins.filter (g: !builtins.elem (pkgs.lib.getName g) denylist) ts.allGrammars
+      )
     );
   markdown = [
     (markdown-preview-nvim.overrideAttrs (old: {
@@ -219,5 +231,5 @@ with pkgs.vimPlugins;
     rustaceanvim
     crates-nvim
   ];
-  beancount = [ (grammar "beancount") ];
+  beancount = grammar "beancount";
 }
