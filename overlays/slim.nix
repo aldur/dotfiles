@@ -93,8 +93,8 @@ let
       );
     };
   };
-in
-{
+  slimmed = {
+
   # The vanilla package (overlays/packages.nix), re-called with the
   # python set whose pymupdf rides the lite OCR chain above.
   remarks = prev.remarks.override {
@@ -629,4 +629,25 @@ in
             fi
           done
         '';
-}
+  };
+in
+
+# The repacks buy closure size on the Linux hosts and cost correctness on
+# darwin, where rewriting a store path inside a Mach-O invalidates the ad-hoc
+# code signature the kernel then refuses to run (`Killed: 9`, no load error).
+# Hand back the stock packages there, keeping the runtime names the rest of the
+# repo consumes so nothing has to know which platform it is on.
+if prev.stdenv.hostPlatform.isLinux then
+  slimmed
+else
+  builtins.intersectAttrs slimmed prev
+  // {
+    withoutHeaders = pkg: pkg;
+    withoutNpmBuildResidue = pkg: pkg;
+    gitMinimal-runtime = prev.gitMinimal;
+    tesseract-lite = prev.tesseract;
+    neovim-bare = prev.neovim;
+    neovim-unwrapped-runtime = prev.neovim-unwrapped;
+    nodejs-slim-runtime = prev.nodejs-slim;
+    tree-sitter-runtime = prev.tree-sitter;
+  }

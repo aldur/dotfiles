@@ -56,6 +56,11 @@ in
       # attr names, resolved through the final `pkgs`.
       slimPackages = builtins.intersectAttrs (import ../overlays/slim.nix pkgs pkgs) pkgs;
       candidates = slimPackages // overlayPackages // packages;
+      # The repacks are Linux-only (see overlays/slim.nix), so darwin holds the
+      # stock packages and the budgets — measured against the repacks — would be
+      # judging someone else's closures. The names stay in `knownNames`, so a
+      # budget for a dropped package still fails everywhere.
+      measured = if pkgs.stdenv.hostPlatform.isLinux then candidates else overlayPackages // packages;
     in
     pkgs.callPackage ./slim-closures.nix {
       knownNames = builtins.attrNames candidates;
@@ -67,7 +72,7 @@ in
         (builtins.tryEval (
           pkgs.lib.isDerivation v && pkgs.lib.meta.availableOn pkgs.stdenv.hostPlatform v && v.drvPath != null
         )).value or false
-      ) candidates;
+      ) measured;
     };
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
