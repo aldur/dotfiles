@@ -4,12 +4,19 @@
 # nixos/modules/misc/*) become real github.com/NixOS/nixpkgs blob URLs at the
 # exact locked revision; anything else is reduced to a context-free relative path.
 #
-# Both nix-darwin and home-manager build such a manual, and each only rewrites
-# declarations under its own source tree, leaving nixpkgs ones as store paths.
-# Applied once to the system pkgs (darwin/nixpkgs.nix); because
+# NixOS, nix-darwin and home-manager each build such a manual, and each only
+# rewrites declarations under its own source tree, leaving nixpkgs ones as store
+# paths (e.g. home-manager's `meta.maintainers`, declared by nixpkgs'
+# modules/generic/meta-maintainers.nix).  Applied once to the system pkgs in
+# modules/nixpkgs.nix, which both platforms import; because
 # `home-manager.useGlobalPkgs` makes home-manager evaluate against that same
 # package set, its `man home-configuration.nix` (built via
 # `pkgs.buildPackages.nixosOptionsDoc`) inherits the wrapped derivation too.
+#
+# It has to sit on the shared path, not the darwin one: modules/home/qemu-vm.nix
+# evaluates a whole nixosSystem off the plain `nixpkgs` input, and that guest's
+# home-manager manual is otherwise built by a package set no darwin-only overlay
+# reaches.
 { inputs }:
 _final: prev:
 let

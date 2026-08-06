@@ -21,6 +21,9 @@ in
     nixpkgs = {
       overlays = (import ../overlays { inherit (inputs) self; }) ++ [
         inputs.dashp.overlays.default
+        # Keep the options manual free of raw /nix/store declaration paths
+        # (Determinate Nix flags them); see the overlay for details.
+        (import ../overlays/options-doc-links.nix { inherit inputs; })
       ];
 
       config.allowUnfreePredicate =
