@@ -42,5 +42,11 @@
     in
     {
       darwinConfigurations."macOS" = nix-darwin.lib.darwinSystem { inherit specialArgs modules; };
+
+      # Optionally enable (and test) having a linux-builder enabled.
+      darwinConfigurations."macOS-linux-builder" = nix-darwin.lib.darwinSystem {
+        inherit specialArgs;
+        modules = modules ++ [ { services.linux-builder.enable = true; } ];
+      };
     };
 }
