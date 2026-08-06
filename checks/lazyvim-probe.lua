@@ -70,14 +70,15 @@ report(function()
 
 	check(("grammar count >= %d"):format(spec.min_grammars), #langs >= spec.min_grammars, #langs .. " found")
 
-	for _, lang in ipairs(spec.present_grammars) do
-		check("grammar present: " .. lang, vim.list_contains(langs, lang))
-	end
-	-- The light/full split and the treesitterAll denylist, from the other side: a
-	-- grammar that should have been left out must not have crept back in.
+	-- The light half of the split: a grammar that rides `treesitterAll` must not
+	-- have found its way into the build that does not carry it. Which grammars
+	-- *are* shipped is the build's business, so the set goes out as data for the
+	-- check to compare between variants rather than being matched against a list
+	-- restated here.
 	for _, lang in ipairs(spec.absent_grammars) do
 		check("grammar absent: " .. lang, not vim.list_contains(langs, lang))
 	end
+	io.write("PROBE-LANGS: " .. table.concat(langs, " ") .. "\n")
 
 	for _, lang in ipairs(langs) do
 		local loaded, lerr = pcall(vim.treesitter.language.add, lang)

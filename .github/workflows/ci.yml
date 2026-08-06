@@ -155,6 +155,12 @@ jobs:
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             ./base_hosts/macos#darwinConfigurations.macOS.system
 
+      # Tets lazyvim on darwin too
+      - run: |
+          nix eval --json .#checks.aarch64-darwin --apply builtins.attrNames \
+            | jq -r '.[] | ".#checks.aarch64-darwin." + .' \
+            | xargs -r nix build -L
+
   nix-darwin-ci-llm:
     runs-on: macos-26  # arm, beta
     steps:

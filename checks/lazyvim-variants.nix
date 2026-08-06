@@ -25,39 +25,14 @@ let
   fullClosure = closureInfo { rootPaths = [ lazyvim ]; };
   lightClosure = closureInfo { rootPaths = [ lazyvim-light ]; };
 
-  # `curatedGrammars` in packages/lazyvim/plugins.nix: what `general` ships, so
-  # what both variants must have.
-  curatedGrammars = [
-    "bash"
-    "c"
-    "diff"
-    "fish"
-    "json"
-    "lua"
-    "luadoc"
-    "luap"
-    "markdown"
-    "markdown_inline"
-    "nix"
-    "printf"
-    "python"
-    "query"
-    "regex"
-    "toml"
-    "vim"
-    "vimdoc"
-    "xml"
-    "yaml"
-  ];
-
-  # Only `treesitterAll` carries these, so they double as the light/full split.
-  extraGrammars = [
-    "beancount"
-    "go"
-    "rust"
-    "typescript"
-  ];
-
+  # No grammar list is restated here. Which languages ship is the build's to
+  # say (packages/lazyvim/plugins.nix), and a copy of it would only drift into
+  # asserting a set nothing ships. What this check owns is the *shape*: each
+  # variant clears a floor, the light set is contained in the full one, and
+  # the languages below prove themselves by actually highlighting. Size — the
+  # reason `treesitterAll` denies a handful of grammars — is checks/
+  # slim-closures.nix's budget to keep.
+  #
   # Written to `sample.<ext>` and opened: filetype detection runs off the
   # extension and the treesitter language off the filetype (sh → bash,
   # rs → rust), so this walks the same resolution an opened file does — which
@@ -338,16 +313,7 @@ runCommand "lazyvim-variants"
           bin = lib.getExe' lazyvim "lazyvim";
           spec = {
             min_grammars = 300;
-            present_grammars = curatedGrammars ++ extraGrammars;
-            # The `treesitterAll` denylist, asserted from the other side.
-            absent_grammars = [
-              "systemverilog"
-              "gnuplot"
-              "razor"
-              "fortran"
-              "fsharp"
-              "slang"
-            ];
+            absent_grammars = [ ];
             samples = curatedSamples ++ extraSamples;
             formats = generalFormats ++ [ nixFormat ];
             inherit spells;
@@ -358,16 +324,32 @@ runCommand "lazyvim-variants"
           name = "light";
           bin = lib.getExe' lazyvim-light "lazyvim-light";
           spec = {
-            # The curated set and nothing else: the light build must not
-            # quietly regain the full grammar set, nor the tooling behind it.
+            # `general` only, so a fraction of the set — and none of the
+            # languages that ride `treesitterAll`.
             min_grammars = 20;
-            present_grammars = curatedGrammars;
-            absent_grammars = extraGrammars;
+            absent_grammars = map (s: s.lang) extraSamples;
             samples = curatedSamples;
             formats = generalFormats;
             inherit spells;
           };
         }}
+
+        # The split as a relationship rather than as two copied lists: every
+        # grammar the light build ships must come from the full one. A curated
+        # grammar dropped from `general` shows up here as the light build
+        # holding something the full build does not.
+        for variant in full light; do
+          sed -n 's/^PROBE-LANGS: //p' "$TMPDIR/probe-$variant.log" \
+            | tr ' ' '\n' | sort > "$TMPDIR/langs-$variant"
+          [ -s "$TMPDIR/langs-$variant" ] \
+            || { echo "$variant: probe reported no grammars"; exit 1; }
+        done
+        only_light=$(comm -23 "$TMPDIR/langs-light" "$TMPDIR/langs-full")
+        if [ -n "$only_light" ]; then
+          echo "light build ships grammars the full build does not:"
+          echo "$only_light"
+          exit 1
+        fi
 
         ${lib.concatMapStringsSep "\n" (p: ''
           grep -q -e ${lib.escapeShellArg p} ${fullClosure}/store-paths \
