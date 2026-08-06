@@ -18,6 +18,10 @@ permissions:
 # run` consumers pull from `latest`.
 env:
   TAG_PREFIX: ${{ github.ref_name == 'master' && 'latest' || github.ref_name }}
+  # See the same variable in ci.yml. Only the `push` legs need it: they
+  # realise the image, and so evaluate the system config that reads the keys.
+  # `manifest` below just stitches already-pushed tags and never touches them.
+  SIGNING_KEYS: /tmp/ssh_signing_keys.json
 
 jobs:
   push:
@@ -49,7 +53,15 @@ jobs:
       - run: echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: nix run --override-input aldur-dotfiles . ./base_hosts/apple-container#${{ matrix.app.name }} -- ghcr.io/${{ github.repository_owner }} "$TAG_PREFIX-${{ matrix.arch.suffix }}"
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: .github/scripts/fetch-signing-keys.sh
+
+      - run: |
+          nix run --override-input aldur-dotfiles . \
+            --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
+            ./base_hosts/apple-container#${{ matrix.app.name }} \
+            -- ghcr.io/${{ github.repository_owner }} "$TAG_PREFIX-${{ matrix.arch.suffix }}"
 
   manifest:
     needs: push

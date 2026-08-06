@@ -13,6 +13,11 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  # Where `.github/scripts/fetch-signing-keys.sh` leaves the verified keys,
+  # and what the jobs that need them override `gh-signing-keys` to.
+  SIGNING_KEYS: /tmp/ssh_signing_keys.json
+
 jobs:
   flake-check:
     runs-on: ubuntu-24.04
@@ -118,7 +123,14 @@ jobs:
           docker builder prune -af || true
           df -h /
 
-      - run: nix build --override-input aldur-dotfiles . ${{ matrix.target }}
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: .github/scripts/fetch-signing-keys.sh
+
+      - run: |
+          nix build --override-input aldur-dotfiles . \
+            --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
+            ${{ matrix.target }}
 
   nix-darwin-ci:
     runs-on: macos-26  # arm, beta
@@ -133,8 +145,15 @@ jobs:
       # host-independent and doesn't build packages — so re-running it on this
       # expensive macOS runner is pure duplication. Just build the darwin bits.
 
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: .github/scripts/fetch-signing-keys.sh
+
       # Test building nix-darwin configuration
-      - run: nix build --override-input aldur-dotfiles . ./base_hosts/macos#darwinConfigurations.macOS.system
+      - run: |
+          nix build --override-input aldur-dotfiles . \
+            --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
+            ./base_hosts/macos#darwinConfigurations.macOS.system
 
   nix-darwin-ci-llm:
     runs-on: macos-26  # arm, beta
