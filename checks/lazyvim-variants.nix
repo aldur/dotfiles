@@ -15,10 +15,153 @@
 # headless, which catches lua errors and any plugin lazy.nvim would try (and,
 # sandboxed, fail) to fetch from the network. The full build must also
 # *attach* one server per stripped runtime path, not merely ship it.
+#
+# Store paths being present is the weaker half. The editor has broken with
+# every path in place — grammars shipped without their queries, a server whose
+# `root_dir` threw before it could attach — so ./lazyvim-probe.lua asserts the
+# rest from inside a running editor, once per variant.
 
 let
   fullClosure = closureInfo { rootPaths = [ lazyvim ]; };
   lightClosure = closureInfo { rootPaths = [ lazyvim-light ]; };
+
+  # `curatedGrammars` in packages/lazyvim/plugins.nix: what `general` ships, so
+  # what both variants must have.
+  curatedGrammars = [
+    "bash"
+    "c"
+    "diff"
+    "fish"
+    "json"
+    "lua"
+    "luadoc"
+    "luap"
+    "markdown"
+    "markdown_inline"
+    "nix"
+    "printf"
+    "python"
+    "query"
+    "regex"
+    "toml"
+    "vim"
+    "vimdoc"
+    "xml"
+    "yaml"
+  ];
+
+  # Only `treesitterAll` carries these, so they double as the light/full split.
+  extraGrammars = [
+    "beancount"
+    "go"
+    "rust"
+    "typescript"
+  ];
+
+  # Written to `sample.<ext>` and opened: filetype detection runs off the
+  # extension and the treesitter language off the filetype (sh → bash,
+  # rs → rust), so this walks the same resolution an opened file does — which
+  # is why the extension, not the language, names the file. Snippets are short
+  # enough to stay obvious and long enough to carry a highlight; a grammar
+  # missing its queries yields captures for none of them.
+  samples = lang: ext: text: { inherit lang ext text; };
+
+  curatedSamples = [
+    (samples "bash" "sh" ''echo "hi"'')
+    (samples "json" "json" ''{ "a": 1 }'')
+    (samples "lua" "lua" "local x = 1")
+    (samples "markdown" "md" "# hi")
+    (samples "nix" "nix" "{ foo = 1; }")
+    (samples "python" "py" "import os")
+    (samples "toml" "toml" "a = 1")
+    (samples "vim" "vim" "set number")
+    (samples "xml" "xml" "<a>b</a>")
+    (samples "yaml" "yaml" "a: 1")
+  ];
+
+  extraSamples = [
+    (samples "beancount" "beancount" "2024-01-02 * \"Store\" \"Thing\"\n  Assets:Cash  -10.00 USD")
+    (samples "go" "go" "package main\n\nfunc main() {}")
+    (samples "rust" "rs" "fn main() {}")
+    (samples "typescript" "ts" "const a: number = 1;")
+  ];
+
+  # Formatter, input and the exact output the shipped binary produces. LazyVim
+  # configures a superset of what the editor ships and conform skips the rest
+  # in silence, so only the result tells the two apart. `nixfmt` rides the
+  # `nix` category; `stylua`, `shfmt` and conform's own `trim_whitespace` are
+  # in `general`, so they must work in both variants.
+  generalFormats = [
+    {
+      ext = "lua";
+      input = "local  x   =  1\n";
+      want = "local x = 1";
+    }
+    {
+      ext = "sh";
+      input = "if true; then\necho hi\nfi\n";
+      want = "if true; then\n  echo hi\nfi";
+    }
+    {
+      ext = "md";
+      input = "# hi\n\ntrailing   \n";
+      want = "# hi\n\ntrailing";
+    }
+  ];
+  nixFormat = {
+    ext = "nix";
+    input = "{foo=1;}\n";
+    want = "{ foo = 1; }";
+  };
+
+  # A word each dictionary knows and one no dictionary does, so a spellfile
+  # that is on the runtimepath but never read is still a failure.
+  spells = [
+    {
+      lang = "it";
+      known = "gatto";
+      unknown = "qwertyuiop";
+    }
+    {
+      lang = "es";
+      known = "gato";
+      unknown = "qwertyuiop";
+    }
+  ];
+
+  probe = ./lazyvim-probe.lua;
+
+  # One invocation per variant. The probe reports through its output and the
+  # shell gates on that: nvim's own exit status is not a signal here, since an
+  # LSP client that fails to shut down cleanly makes it non-zero after a run
+  # that asserted everything it was asked to. Redirecting rather than piping
+  # keeps stdenv's `pipefail` from turning that into a silent abort.
+  #
+  # The traceback grep is not redundant with the probe's own :messages check:
+  # an error thrown out of an autocmd headless goes straight to stderr and
+  # never reaches the message history, so only the log sees it.
+  #
+  # `-n` and a scratch directory per variant: the two runs share a state
+  # directory, so a swap file left behind by one turns the next one's buffers
+  # read-only (E325) over the same paths — a failure about nothing.
+  probeRun =
+    {
+      name,
+      bin,
+      spec,
+    }:
+    ''
+      echo "PROBE-START ${bin}"
+      rm -rf "$TMPDIR/probe-${name}" && mkdir -p "$TMPDIR/probe-${name}"
+      PROBE_DIR="$TMPDIR/probe-${name}" PROBE_SPEC=${lib.escapeShellArg (builtins.toJSON spec)} \
+        ${bin} -n --headless "+luafile ${probe}" > "$TMPDIR/probe-${name}.log" 2>&1 || true
+      cat "$TMPDIR/probe-${name}.log"
+      grep -aq PROBE-OK "$TMPDIR/probe-${name}.log" \
+        || { echo "${bin}: in-editor probe failed"; exit 1; }
+      if grep -aq -e "stack traceback" -e "Error executing" "$TMPDIR/probe-${name}.log"; then
+        echo "${bin}: lua error while probing"; exit 1
+      fi
+    '';
 
   # Name fragments of the tooling that must separate the two variants.
   # (No "dotnet": marksman's runtime rides inside its own store path —
@@ -149,13 +292,12 @@ runCommand "lazyvim-variants"
         # Booting also opens :help and parses it: the repacked neovim (see
         # overlays/slim.nix) drops its bundled parsers, so vimdoc must
         # resolve from the curated nvim-treesitter grammars in every variant.
-        # The query lookup is the second half of that: nixpkgs ships parsers
-        # and queries as separate plugins, and a parser without its queries
-        # attaches to the buffer and highlights nothing at all.
+        # (That the query behind it resolves too is ./lazyvim-probe.lua's job,
+        # for vimdoc and every other grammar.)
         ${lib.concatMapStringsSep "\n"
           (bin: ''
             ${bin} --headless \
-              "+lua local ok,err=pcall(function() vim.cmd('help api') vim.treesitter.get_parser(0):parse() assert(vim.treesitter.query.get('vimdoc','highlights'), 'no vimdoc highlights query') end) io.write(ok and 'HELP-TS-OK\n' or 'HELP-TS-FAIL: '..tostring(err)..'\n') vim.cmd('qa!')" \
+              "+lua local ok,err=pcall(function() vim.cmd('help api') vim.treesitter.get_parser(0):parse() end) io.write(ok and 'HELP-TS-OK\n' or 'HELP-TS-FAIL: '..tostring(err)..'\n') vim.cmd('qa!')" \
               2>&1 | grep -a HELP-TS-OK \
               || { echo "${bin}: :help did not parse"; exit 1; }
           '')
@@ -165,6 +307,11 @@ runCommand "lazyvim-variants"
           ]
         }
 
+        # A server can attach and still leave the buffer broken: LazyVim's go
+        # extra once threw out of `LspAttach` reading capabilities blink.cmp
+        # had not registered yet. So the run must also come back clean — a
+        # traceback here is a plugin crashing, not a tool that is missing
+        # (nvim-lint says "Error running forge" and that is expected).
         ${lib.concatMapStringsSep "\n" (
           t:
           let
@@ -172,12 +319,55 @@ runCommand "lazyvim-variants"
           in
           ''
             printf '%s\n' ${lib.escapeShellArg t.text} > "$TMPDIR/attach.${t.ext}"
-            ${lib.getExe' lazyvim "lazyvim"} --headless \
+            ${lib.getExe' lazyvim "lazyvim"} -n --headless \
               ${lib.escapeShellArg "+lua ${attachLua t}"} \
-              "+edit $TMPDIR/attach.${t.ext}" 2>&1 | grep -a "${want}: ${t.server}" \
+              "+edit $TMPDIR/attach.${t.ext}" > "$TMPDIR/attach.log" 2>&1 || true
+            cat "$TMPDIR/attach.log"
+            grep -aq "${want}: ${t.server}" "$TMPDIR/attach.log" \
               || { echo "${t.server}: no '${want}' for attach.${t.ext}"; exit 1; }
+            if grep -aq -e "stack traceback" -e "Error executing" "$TMPDIR/attach.log"; then
+              echo "${t.server}: lua error while attaching to attach.${t.ext}"; exit 1
+            fi
           ''
         ) attach}
+
+        # What the store paths cannot show: grammars that actually paint,
+        # formatters that actually run, spellfiles nvim actually reads.
+        ${probeRun {
+          name = "full";
+          bin = lib.getExe' lazyvim "lazyvim";
+          spec = {
+            min_grammars = 300;
+            present_grammars = curatedGrammars ++ extraGrammars;
+            # The `treesitterAll` denylist, asserted from the other side.
+            absent_grammars = [
+              "systemverilog"
+              "gnuplot"
+              "razor"
+              "fortran"
+              "fsharp"
+              "slang"
+            ];
+            samples = curatedSamples ++ extraSamples;
+            formats = generalFormats ++ [ nixFormat ];
+            inherit spells;
+          };
+        }}
+
+        ${probeRun {
+          name = "light";
+          bin = lib.getExe' lazyvim-light "lazyvim-light";
+          spec = {
+            # The curated set and nothing else: the light build must not
+            # quietly regain the full grammar set, nor the tooling behind it.
+            min_grammars = 20;
+            present_grammars = curatedGrammars;
+            absent_grammars = extraGrammars;
+            samples = curatedSamples;
+            formats = generalFormats;
+            inherit spells;
+          };
+        }}
 
         ${lib.concatMapStringsSep "\n" (p: ''
           grep -q -e ${lib.escapeShellArg p} ${fullClosure}/store-paths \
