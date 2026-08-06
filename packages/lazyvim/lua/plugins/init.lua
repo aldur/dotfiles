@@ -31,13 +31,4 @@ return {
 		opts = {},
 		keys = { { "<leader>uv", "<cmd>ASToggle<CR>", desc = "Toggle autosave" } },
 	},
-	{
-		"stevearc/conform.nvim",
-		opts = {
-			formatters_by_ft = {
-				beancount = { "bean-format", lsp_format = "fallback" },
-			},
-			formatters = { ["bean-format"] = { prepend_args = { "-c", "70" } } },
-		},
-	},
 }
