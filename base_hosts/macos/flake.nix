@@ -42,12 +42,5 @@
     in
     {
       darwinConfigurations."macOS" = nix-darwin.lib.darwinSystem { inherit specialArgs modules; };
-
-      # Optionally enable (and test) having a linux-builder enabled.
-      darwinConfigurations."macOS-linux-builder" = nix-darwin.lib.darwinSystem {
-        inherit specialArgs;
-        # `mkForce`: ./macos.nix defines the option at normal priority.
-        modules = modules ++ [ ({ lib, ... }: { services.linux-builder.enable = lib.mkForce true; }) ];
-      };
     };
 }

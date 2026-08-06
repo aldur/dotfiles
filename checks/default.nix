@@ -76,6 +76,11 @@ in
     };
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+  # Forces every attribute the darwin overlays introduce, against the same
+  # stable/unstable fixpoint a nix-darwin system would build. Pure evaluation,
+  # so it runs on the cheaper Linux runners.
+  darwin-overlays = pkgs.callPackage ./darwin-overlays.nix { inherit inputs; };
+
   # Tests a darwin module's config merging, which is pure evaluation and so
   # runs on the cheaper Linux runners.
   merge-container-config =
