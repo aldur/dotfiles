@@ -46,7 +46,8 @@
       # Optionally enable (and test) having a linux-builder enabled.
       darwinConfigurations."macOS-linux-builder" = nix-darwin.lib.darwinSystem {
         inherit specialArgs;
-        modules = modules ++ [ { services.linux-builder.enable = true; } ];
+        # `mkForce`: ./macos.nix defines the option at normal priority.
+        modules = modules ++ [ ({ lib, ... }: { services.linux-builder.enable = lib.mkForce true; }) ];
       };
     };
 }
