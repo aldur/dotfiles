@@ -1,6 +1,15 @@
-vim.lsp.enable({
-	"clarinet",
-	"beancount",
-	"solidity_ls_nomicfoundation",
-	"solidity_ls",
-})
+local servers = {
+	{ "beancount", "beancount-language-server" },
+	{ "clarinet", "clarinet" },
+	{ "solidity_ls", "vscode-solidity-server" },
+	{ "solidity_ls_nomicfoundation", "nomicfoundation-solidity-language-server" },
+}
+
+local enabled = {}
+for _, server in ipairs(servers) do
+	if vim.fn.executable(server[2]) == 1 then
+		table.insert(enabled, server[1])
+	end
+end
+
+vim.lsp.enable(enabled)
