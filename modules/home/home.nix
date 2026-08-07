@@ -16,9 +16,9 @@ let
   # Keys anyone verifying signatures should trust, straight from the
   # `gh-signing-keys` flake input (see there for the refresh command).
   allowedSigners = pkgs.writeText "allowed_signers" (
-    lib.concatMapStringsSep "\n" (
-      k: ''aldur@users.noreply.github.com namespaces="git" ${k.key}''
-    ) (builtins.fromJSON (builtins.readFile inputs.gh-signing-keys.outPath))
+    lib.concatMapStringsSep "\n" (k: ''aldur@users.noreply.github.com namespaces="git" ${k.key}'') (
+      builtins.fromJSON (builtins.readFile inputs.gh-signing-keys.outPath)
+    )
   );
 
   customTools =
@@ -439,9 +439,15 @@ in
       };
     };
 
-    fzf = {
-      enable = true;
-    };
+    fzf =
+      let
+        fd = lib.getExe pkgs.fd;
+        sed = lib.getExe pkgs.gnused;
+      in
+      {
+        enable = true;
+        fileWidgetCommand = ''${fd} --hidden --follow --no-require-git --exclude .git --exclude .direnv . "$dir" | ${sed} "s|^\./||"'';
+      };
 
     tmux = (import ../shared/programs/tmux.nix { inherit lib; }) // {
       enable = true;
