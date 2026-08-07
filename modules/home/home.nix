@@ -35,6 +35,7 @@ let
       shrink-pdf
       split-pdf
       taskmd
+      taskmd-ui
       tcopy
       tmux-palette
       totp-qr-decode

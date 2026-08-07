@@ -123,6 +123,7 @@
               aldurs-dotfiles-version
               llmcat
               taskmd
+              taskmd-ui
               pi # pi-coding-agent bundled with plugins
               pi-rust # Rust port of pi, same wrapper affordances
               ;

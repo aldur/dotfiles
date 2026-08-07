@@ -32,6 +32,7 @@ final: prev: {
   tcopy = prev.callPackage ../packages/tcopy { };
   lazyvim-popup = prev.callPackage ../packages/lazyvim-popup { };
   taskmd = prev.callPackage ../packages/taskmd { };
+  taskmd-ui = final.callPackage ../packages/taskmd-ui { };
 
   tiktoken = prev.callPackage ../packages/tiktoken/tiktoken.nix { };
   llmcat = prev.callPackage ../packages/llmcat/llmcat.nix { };
