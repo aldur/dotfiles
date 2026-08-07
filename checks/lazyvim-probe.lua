@@ -198,6 +198,211 @@ report(function()
 		check("iskeyword stays out of other buffers", not has_colon(after), vim.bo[after].iskeyword)
 	end
 
+	-- The beancount client is wired in this repo (packages/lazyvim/lsp/
+	-- beancount.lua) rather than taken from lspconfig: a `root_dir` that puts each
+	-- ledger on its own client, a `before_init` that hands that client its journal
+	-- and bean-check, and a diagnostics handler that drops paths outside the
+	-- ledger. The server binary rides a category that is off by default, so `cmd`
+	-- is swapped for an in-process one — what is under test is this repo's lua,
+	-- and a fake server can also push the diagnostics a real one would only emit
+	-- from a ledger that is already broken.
+	do
+		local beans = dir .. "/beans"
+		local function put(rel, text)
+			local path = beans .. "/" .. rel
+			vim.fn.mkdir(vim.fs.dirname(path), "p")
+			local fh = assert(io.open(path, "w"))
+			fh:write(text)
+			fh:close()
+			return path
+		end
+
+		-- Two ledgers side by side, one with a fragment, plus the file that must
+		-- never pull a client. `includes/` is what roots the workspace, and the
+		-- fragments in it are `.include`: nothing in neovim maps that extension,
+		-- so they carry the modeline that names the filetype, as the real ones do.
+		local modeline = "; vim: set ft=beancount:\n"
+		put("index.beancount", '2024-01-01 open Assets:Cash USD\n')
+		put("heartbit.beancount", "2024-01-01 open Assets:Bank USD\n")
+		put("includes/index/amex.include", modeline .. '2024-01-02 * "S" "T"\n')
+		put("prices.include", modeline .. "2024-01-01 price EUR 1.00 USD\n")
+		put("importer.py", "x = 1\n")
+		put(".venv/bin/bean-check", "")
+
+		-- lua/lsp.lua enables a server only when its binary is there, so that a
+		-- missing one stays quiet instead of failing validation on every FileType
+		-- event. The category that ships this one is off by default, which makes
+		-- the probe the place that proves the gate holds.
+		check(
+			"beancount stays disabled without its binary",
+			vim.fn.executable("beancount-language-server") == 1 or not vim.lsp.is_enabled("beancount")
+		)
+
+		-- One record per client, keyed by the root it initialised with; the
+		-- dispatchers come with it so the diagnostics handler can be driven.
+		local seen = {}
+		vim.lsp.config("beancount", {
+			cmd = function(dispatchers)
+				local rec, closing = { dispatchers = dispatchers }, false
+				return {
+					request = function(method, params, callback)
+						if method == "initialize" then
+							rec.init = params.initializationOptions
+							seen[vim.uri_to_fname(params.rootUri)] = rec
+							callback(nil, { capabilities = {} })
+						elseif method == "shutdown" then
+							callback(nil, nil)
+						end
+						return true, 1
+					end,
+					notify = function(method)
+						closing = closing or method == "exit"
+						return true
+					end,
+					is_closing = function()
+						return closing
+					end,
+					terminate = function()
+						closing = true
+					end,
+				}
+			end,
+		})
+
+		-- The gate above keeps it out of the enabled set on a build without the
+		-- server; everything below is about this repo's lua, so enable it by hand
+		-- now that `cmd` no longer needs one.
+		vim.lsp.enable("beancount")
+
+		local function beancount_client(buf)
+			local function found()
+				return vim.lsp.get_clients({ bufnr = buf, name = "beancount" })[1]
+			end
+			vim.wait(10000, function()
+				return found() ~= nil
+			end, 50)
+			return found()
+		end
+
+		--- Open `rel` and return the beancount client that attached to it, if any.
+		local function attach(rel)
+			local ok, err = pcall(vim.cmd.edit, beans .. "/" .. rel)
+			check("opens " .. rel, ok, err)
+			return beancount_client(vim.api.nvim_get_current_buf())
+		end
+
+		-- Each ledger on its own root, and the journal that root stands for.
+		-- Sharing a root would leave whichever ledger opened first deciding
+		-- `journal_file` for both, which the server only reveals as diagnostics
+		-- against the wrong book.
+		for _, case in ipairs({ { "index.beancount", "index" }, { "heartbit.beancount", "heartbit" } }) do
+			local rel, ledger = case[1], case[2]
+			local client = attach(rel)
+			check("beancount attaches: " .. rel, client ~= nil)
+			if client then
+				local want = beans .. "/includes/" .. ledger
+				check(("root for %s"):format(rel), client.config.root_dir == want, client.config.root_dir)
+				local init = (seen[want] or {}).init or {}
+				check(
+					("journal_file for %s"):format(rel),
+					init.journal_file == beans .. "/" .. rel,
+					vim.inspect(init.journal_file)
+				)
+				-- Rooting below the workspace puts `.venv` out of the server's own
+				-- reach, and a checker it cannot find is a silent no-diagnostics.
+				check(
+					("bean_check_cmd for %s"):format(rel),
+					(init.bean_check or {}).bean_check_cmd == beans .. "/.venv/bin/bean-check",
+					vim.inspect(init.bean_check)
+				)
+			end
+		end
+
+		local index = seen[beans .. "/includes/index"]
+		check("two ledgers, two clients", seen[beans .. "/includes/heartbit"] ~= nil and index ~= nil)
+
+		-- A fragment belongs to its ledger's client, not to one of its own.
+		do
+			local client = attach("includes/index/amex.include")
+			check("beancount attaches: fragment", client ~= nil)
+			if client then
+				check(
+					"fragment shares its ledger's root",
+					client.config.root_dir == beans .. "/includes/index",
+					client.config.root_dir
+				)
+			end
+		end
+
+		-- Self-contained shared definitions: their own ledger, and `journal_file`
+		-- has to fall through to `.include` because no `prices.beancount` exists.
+		do
+			local client = attach("prices.include")
+			check("beancount attaches: prices.include", client ~= nil)
+			if client then
+				local init = (seen[beans .. "/includes/prices"] or {}).init or {}
+				check(
+					"journal_file falls through to .include",
+					init.journal_file == beans .. "/prices.include",
+					vim.inspect(init.journal_file)
+				)
+			end
+		end
+
+		-- The regression this section exists for. `filetypes` is inherited from
+		-- lspconfig, and a config resolved without it means "ALL filetypes" — so
+		-- a python file next to the ledger is exactly what would attach.
+		for _, rel in ipairs({ "importer.py" }) do
+			local ok = pcall(vim.cmd.edit, beans .. "/" .. rel)
+			local buf = vim.api.nvim_get_current_buf()
+			vim.wait(500)
+			check(
+				"beancount stays off " .. rel,
+				ok and vim.lsp.get_clients({ bufnr = buf, name = "beancount" })[1] == nil,
+				vim.bo[buf].filetype
+			)
+		end
+
+		-- Diagnostics are published per path, not per attached buffer: neovim
+		-- `bufadd`s whatever the server names. A path outside the ledger must not
+		-- reach that, and — since it would land outside the server's forest too —
+		-- would otherwise never be cleared again.
+		if index then
+			local function publish(path)
+				index.dispatchers.notification("textDocument/publishDiagnostics", {
+					uri = vim.uri_from_fname(path),
+					diagnostics = {
+						{
+							range = {
+								start = { line = 0, character = 0 },
+								["end"] = { line = 0, character = 1 },
+							},
+							message = "probe",
+							severity = 1,
+						},
+					},
+				})
+				vim.wait(500)
+			end
+
+			-- Neither file is open, so a buffer existing afterwards is the handler's
+			-- doing and nothing else's.
+			local stray = beans .. "/never-opened.py"
+			publish(stray)
+			check("stray .py diagnostic dropped", vim.fn.bufexists(stray) == 0)
+
+			-- `.include` has to survive the filter: bean-check reports real errors
+			-- in fragments, and dropping those would trade one silent failure for
+			-- another.
+			local include = beans .. "/includes/index/never-opened.include"
+			publish(include)
+			check(
+				"ledger .include diagnostic kept",
+				vim.fn.bufexists(include) == 1 and #vim.diagnostic.get(vim.fn.bufnr(include)) > 0
+			)
+		end
+	end
+
 	-- Anything that threw along the way. A server whose `root_dir` shells out to a
 	-- toolchain that is not there takes this path: the file opens, nothing
 	-- attaches, and the only trace is a stack dump in :messages.
