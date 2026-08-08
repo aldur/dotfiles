@@ -45,6 +45,7 @@ final: prev: {
 
   piPlugins = {
     pi-llama = prev.callPackage ../packages/pi/plugins/pi-llama.nix { };
+    pi-statusline = prev.callPackage ../packages/pi/plugins/pi-statusline { };
   };
   pi = prev.callPackage ../packages/pi/pi.nix {
     plugins = final.piPlugins;
