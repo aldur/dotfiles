@@ -28,9 +28,14 @@ neovim-unwrapped.overrideAttrs (old: {
   dontVersionCheck = true;
 
   postInstall = (old.postInstall or "") + ''
-    # Master renamed the desktop entry (org.neovim.nvim.desktop); stable's
-    # neovim wrapper still substitutes the old name.
-    ln -s org.neovim.nvim.desktop $out/share/applications/nvim.desktop
+    # Master changed the name of the desktop entry to
+    # org.neovim.nvim.desktop. The neovim wrapper of stable nixpkgs uses
+    # the old name. Master installs the entry only on platforms that are
+    # not Apple (runtime/CMakeLists.txt, "if(NOT APPLE)"). Make the link
+    # only when the entry exists.
+    if [ -e $out/share/applications/org.neovim.nvim.desktop ]; then
+      ln -s org.neovim.nvim.desktop $out/share/applications/nvim.desktop
+    fi
   '';
 
   passthru = old.passthru or { } // {
