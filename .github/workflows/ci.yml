@@ -63,11 +63,13 @@ jobs:
               < /tmp/nix-cache/roots \
               || echo "::warning::nix cache seed failed; building cold"
           fi
-      # Every check relevant to this system.
+      # Every check relevant to this system. No `-L`: streaming every build
+      # log buries failures in megabytes of noise; on failure nix prints the
+      # failing derivation's log tail, and `--log-lines` sizes that tail.
       - run: |
           nix eval --json .#checks.${{ matrix.system }} --apply builtins.attrNames \
             | jq -r '.[] | ".#checks.${{ matrix.system }}." + .' \
-            | xargs -r nix build -L
+            | xargs -r nix build --log-lines 1000
       # `always()`: Keep what you can even on failure. 
       # Skip it if it was a cache hit.
       - name: Export locally-built paths to the cache
@@ -155,11 +157,12 @@ jobs:
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             ./base_hosts/macos#darwinConfigurations.macOS.system
 
-      # Tets lazyvim on darwin too
+      # Tets lazyvim on darwin too. `--log-lines` instead of `-L`: see the
+      # flake-checks-build job.
       - run: |
           nix eval --json .#checks.aarch64-darwin --apply builtins.attrNames \
             | jq -r '.[] | ".#checks.aarch64-darwin." + .' \
-            | xargs -r nix build -L
+            | xargs -r nix build --log-lines 1000
 
   nix-darwin-ci-llm:
     runs-on: macos-26  # arm, beta
