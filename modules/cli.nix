@@ -6,6 +6,7 @@
     aldurs-dotfiles-version
     bashInteractive
     bat
+    btop
     coreutils-prefixed
     curl
     dnsutils
