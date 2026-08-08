@@ -20,6 +20,10 @@
 # ones must fit the default, so a new heavy package fails loudly until it
 # gets a conscious entry — and the known regressions are pinned by name.
 # Grows legitimately? Re-measure and raise the budget here.
+#
+# ./default.nix wires this check up on Linux only, matching the repacks
+# themselves: darwin ships the stock packages, so these budgets have
+# nothing to say there.
 
 let
   defaultBudgetMiB = 150;
@@ -51,9 +55,7 @@ let
     nodejs-slim-runtime = 200;
     marksman = 180;
     basedpyright = 230;
-    # The strip repack is Linux-only; darwin ships upstream's unstripped
-    # binary (estimate — re-measure on a darwin host and tighten).
-    codex = if stdenv.hostPlatform.isLinux then 345 else 550;
+    codex = 345;
     markdownlint-cli2 = 220;
     prettierd = 210;
     tiktoken = 260;

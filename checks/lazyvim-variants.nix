@@ -1,5 +1,6 @@
 {
   lib,
+  stdenv,
   runCommand,
   closureInfo,
   git,
@@ -151,8 +152,11 @@ let
 
   # Build residue that must appear in neither: npm dependency caches leaked
   # through node-gyp's config.gypi, and toolchains the editor stopped
-  # bundling (projects bring their own through direnv).
-  residue = [
+  # bundling (projects bring their own through direnv). Linux-only: the
+  # sweeps that remove it are the slim repacks (overlays/slim.nix), which
+  # darwin hands back untouched — there the stock packages legitimately
+  # carry npm caches, the full git and store pythons.
+  residue = lib.optionals stdenv.hostPlatform.isLinux [
     "npm-deps"
     "rustc-bootstrap"
     "-rustc-"

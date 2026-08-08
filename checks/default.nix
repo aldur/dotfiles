@@ -48,20 +48,21 @@ in
     inherit (packages) lazyvim lazyvim-light;
   };
 
+}
+// pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
   # Budgets and forbidden-path guards for every derivation the flake
   # exports, discovered rather than enumerated so nothing is forgotten
   # (see overlays/slim.nix for why silent regressions are the risk).
+  # Linux-only, like the repacks the budgets were measured against:
+  # darwin hands back the stock packages, so there is no slimming to
+  # guard — weighing those closures would only spend the macOS runner
+  # building every package to judge it by someone else's numbers.
   slim-closures =
     let
       # Same trick as `overlayPackages` in flake.nix: the overlay's own
       # attr names, resolved through the final `pkgs`.
       slimPackages = builtins.intersectAttrs (import ../overlays/slim.nix pkgs pkgs) pkgs;
       candidates = slimPackages // overlayPackages // packages;
-      # The repacks are Linux-only (see overlays/slim.nix), so darwin holds the
-      # stock packages and the budgets — measured against the repacks — would be
-      # judging someone else's closures. The names stay in `knownNames`, so a
-      # budget for a dropped package still fails everywhere.
-      measured = if pkgs.stdenv.hostPlatform.isLinux then candidates else overlayPackages // packages;
     in
     pkgs.callPackage ./slim-closures.nix {
       knownNames = builtins.attrNames candidates;
@@ -73,10 +74,9 @@ in
         (builtins.tryEval (
           pkgs.lib.isDerivation v && pkgs.lib.meta.availableOn pkgs.stdenv.hostPlatform v && v.drvPath != null
         )).value or false
-      ) measured;
+      ) candidates;
     };
-}
-// pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+
   # Forces every attribute the darwin overlays introduce, against the same
   # stable/unstable fixpoint a nix-darwin system would build. Pure evaluation,
   # so it runs on the cheaper Linux runners.
