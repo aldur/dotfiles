@@ -1,4 +1,6 @@
 {
+  lib,
+  stdenv,
   neovim-unwrapped,
   fetchFromGitHub,
 }:
@@ -39,4 +41,15 @@ neovim-unwrapped.overrideAttrs (old: {
       verify = "nix build .#lazyvim-nightly -L";
     };
   };
+}
+// lib.optionalAttrs stdenv.hostPlatform.isDarwin {
+  # Master (neovim/neovim#40625) makes --listen error on socket paths past
+  # sun_path (104 bytes on macOS) instead of silently truncating. The test
+  # suite's sockets land under TMPDIR, and darwin's build dir beneath
+  # /private/var/folders/... pushes them over the limit, crashing every
+  # spawned nvim. Point TMPDIR somewhere short for the tests only.
+  preCheck = (old.preCheck or "") + ''
+    TMPDIR=$(mktemp -d /tmp/nvim-check.XXXXXX)
+    export TMPDIR
+  '';
 })
