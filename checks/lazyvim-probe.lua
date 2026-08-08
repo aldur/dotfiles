@@ -109,6 +109,14 @@ report(function()
 		end, 50)
 		check("highlighter attaches: " .. sample.lang, attached, "filetype " .. vim.bo[buf].filetype)
 
+		-- The highlighter parses in the background after it attaches (Nvim
+		-- 0.12), and get_captures_at_pos only reads trees that are already
+		-- parsed. A parse call without a callback is synchronous, so one
+		-- call here makes the scan below deterministic; `true` also parses
+		-- the injected languages.
+		pcall(function()
+			vim.treesitter.get_parser(buf):parse(true)
+		end)
 		local captured = false
 		for row = 0, vim.api.nvim_buf_line_count(buf) - 1 do
 			local line = vim.api.nvim_buf_get_lines(buf, row, row + 1, false)[1] or ""
