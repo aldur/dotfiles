@@ -66,10 +66,12 @@ jobs:
           key: nix-store-${{ matrix.system }}-${{ hashFiles('flake.lock') }}-${{ github.sha }}
           restore-keys: |
             nix-store-${{ matrix.system }}-${{ hashFiles('flake.lock') }}-
+      # `--quiet` on the copies: without it, nix writes one log line for
+      # each copied path, and that is thousands of lines for each run.
       - name: Seed the store from the cache
         run: |
           if [ -f /tmp/nix-cache/roots ]; then
-            xargs -r nix copy --no-check-sigs --from file:///tmp/nix-cache \
+            xargs -r nix copy --quiet --no-check-sigs --from file:///tmp/nix-cache \
               < /tmp/nix-cache/roots \
               || echo "::warning::nix cache seed failed; building cold"
           fi
@@ -87,7 +89,7 @@ jobs:
                 | select(.key | endswith(".drv") | not)
                 | .key' \
             | tee /tmp/nix-cache/roots \
-            | xargs -r nix copy --to 'file:///tmp/nix-cache?compression=zstd'
+            | xargs -r nix copy --quiet --to 'file:///tmp/nix-cache?compression=zstd'
           du -sh /tmp/nix-cache || true
 
   # One job for each (runner, target) pair. Each image build uses tens of
