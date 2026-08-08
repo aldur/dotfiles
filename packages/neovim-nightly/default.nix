@@ -38,7 +38,7 @@ neovim-unwrapped.overrideAttrs (old: {
       # overrideAttrs keeps upstream's meta.position, so nix-update has to be
       # told which file actually holds the pin.
       args = "--version=branch --override-filename packages/neovim-nightly/default.nix";
-      verify = "nix build .#lazyvim-nightly -L";
+      verify = "nix build .#lazyvim-nightly";
     };
   };
 }

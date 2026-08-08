@@ -48,7 +48,7 @@ let
     # Building a passthru derivation on its own often proves little — a Neovim
     # plugin is just Lua copied into the store — so the default builds whatever
     # top-level package it reaches the tree through.
-    verify = e.pin.verify or "nix build .#${e.root} -L";
+    verify = e.pin.verify or "nix build .#${e.root}";
   };
 in
 

@@ -126,7 +126,7 @@ buildPythonPackage rec {
       args = "--url mirror://pypi/m/mlx --subpackage mlx_metal";
       # Build the whole llm env to catch mlx-lm/plugin breakage, mirroring
       # the llm-mlx leg.
-      verify = "nix build .#llm -L";
+      verify = "nix build .#llm";
     };
   };
 

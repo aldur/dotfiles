@@ -76,7 +76,7 @@ buildGoModule (finalAttrs: {
     updatePin = {
       # Tracks the default branch; nothing is tagged upstream.
       args = "--version=branch";
-      verify = "nix build .#taskmd-ui -L";
+      verify = "nix build .#taskmd-ui";
     };
   };
 

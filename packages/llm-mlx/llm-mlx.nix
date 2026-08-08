@@ -44,6 +44,6 @@ buildPythonPackage rec {
     # Follows PyPI releases: nix-update's default, so no extra flags.
     # Build the whole llm env to catch plugin breakage, mirroring
     # the nix-darwin-ci-llm job.
-    verify = "nix build .#llm -L";
+    verify = "nix build .#llm";
   };
 }

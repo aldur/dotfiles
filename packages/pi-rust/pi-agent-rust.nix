@@ -38,7 +38,7 @@ rustPlatform.buildRustPackage {
     # the default branch, so track it — same reasoning as pi following
     # nixpkgs-unstable.
     args = "--version=branch";
-    verify = "nix build .#pi-rust -L";
+    verify = "nix build .#pi-rust";
   };
 
   meta = {
