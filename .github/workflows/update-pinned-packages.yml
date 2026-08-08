@@ -1,6 +1,7 @@
 name: Update pinned packages
 
-# Bumps every package in this repo that pins a source, using nix-update.
+# Use nix-update to update each package in this repository that pins a
+# source.
 #
 # See the `updatePins` flake output.
 on:
@@ -11,7 +12,8 @@ on:
 permissions: {}
 
 jobs:
-  # Both matrices below are built from the same list, so they can't drift apart.
+  # The two matrices below come from the same list. They cannot become
+  # different.
   discover:
     runs-on: ubuntu-24.04
     permissions:
@@ -20,11 +22,13 @@ jobs:
       legs: ${{ steps.read.outputs.legs }}
       packages: ${{ steps.read.outputs.packages }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - &checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - uses: DeterminateSystems/determinate-nix-action@d96678350ffd6a456235832eb11e1c491589b7bb # v3.21.8
+      - &setup-nix
+        uses: ./.github/actions/setup-nix
 
       - name: Derive the matrix from the packages themselves
         id: read
@@ -45,24 +49,21 @@ jobs:
       matrix:
         include: ${{ fromJSON(needs.discover.outputs.legs) }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - uses: DeterminateSystems/determinate-nix-action@d96678350ffd6a456235832eb11e1c491589b7bb # v3.21.8
+      - *checkout
+      - *setup-nix
 
       - name: Bump ${{ matrix.package }} with nix-update
-        # `--test` is injected per-leg by utils/update-pin-legs.nix, only for
-        # packages that define `passthru.tests`: nix-update fails outright on
-        # packages without any, rather than treating it as a no-op.
+        # utils/update-pin-legs.nix adds `--test` for each leg, but only for
+        # packages that have `passthru.tests`. For a package without tests,
+        # nix-update stops with an error. It does not continue without them.
         run: |
           nix run nixpkgs#nix-update -- \
             --flake \
             ${{ matrix.nix-update-args }} \
             ${{ matrix.attr }}
 
-      # `verify` is always set: utils/update-pin-legs.nix defaults it to
-      # building whatever top-level package the pin hangs off.
+      # `verify` is always set. If a pin gives no value,
+      # utils/update-pin-legs.nix builds the top-level package of that pin.
       - name: Verify it builds
         run: ${{ matrix.verify }}
 
@@ -81,11 +82,12 @@ jobs:
           name: patch-${{ matrix.package }}
           path: update.patch
 
-  # Only this job holds the write token, and only to open the PR. It runs on a
-  # cheap Linux runner: applying a text patch needs no Nix or macOS. It runs
-  # even if another matrix leg's build failed (!cancelled()), so one broken
-  # package doesn't block the others' PRs; a leg whose build produced no patch
-  # is skipped via the missing artifact.
+  # Only this job has the write token, and only to open the pull request.
+  # The job runs on a low-cost Linux runner, because a text patch does not
+  # need Nix or macOS. The job also runs when the build of a different
+  # matrix leg failed (!cancelled()). One defective package then does not
+  # block the pull requests of the other packages. If a leg made no patch,
+  # the artifact is missing, and the job skips that leg.
   pull-request:
     needs: [discover, build]
     if: ${{ !cancelled() && needs.discover.result == 'success' }}
@@ -98,9 +100,7 @@ jobs:
       matrix:
         package: ${{ fromJSON(needs.discover.outputs.packages) }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
+      - *checkout
 
       - name: Download the patch
         id: patch

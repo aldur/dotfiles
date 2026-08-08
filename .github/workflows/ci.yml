@@ -14,26 +14,36 @@ permissions:
   contents: read
 
 env:
-  # Where `.github/scripts/fetch-signing-keys.sh` leaves the verified keys,
-  # and what the jobs that need them override `gh-signing-keys` to.
+  # `.github/scripts/fetch-signing-keys.sh` writes the verified keys to this
+  # path. The jobs that use the keys point the `gh-signing-keys` input to it.
   SIGNING_KEYS: /tmp/ssh_signing_keys.json
 
+# The shared steps are YAML anchors (&name). The first use makes the anchor.
+# The steps that follow refer to it with an alias (*name). An alias can only
+# refer to an anchor that comes before it in the same file. Anchors do not
+# work across files. Because of this, the Nix setup is in
+# .github/actions/setup-nix, and all workflows use it.
 jobs:
   flake-check:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - &checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: DeterminateSystems/determinate-nix-action@d96678350ffd6a456235832eb11e1c491589b7bb # v3.21.8
+      - &setup-nix
+        uses: ./.github/actions/setup-nix
       - uses: DeterminateSystems/flake-checker-action@de924abd783455e8429c858962b9e43062d19da1  # v13
+        with:
+          send-statistics: false
       - run: nix flake check --all-systems --no-build .
 
-  # Build each Linux system's flake checks on a matching runner (flake-check
-  # above only evaluates them, see `--no-build`).
+  # Build the flake checks of each Linux system on a runner with the same
+  # architecture. The flake-check job above only evaluates the checks
+  # (`--no-build`).
   flake-checks-build:
     strategy:
-      # Keep going if one arch fails to still warm up the cache.
+      # If one architecture fails, continue with the other to fill the cache.
       fail-fast: false
       matrix:
         include:
@@ -43,10 +53,10 @@ jobs:
             system: aarch64-linux
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: DeterminateSystems/determinate-nix-action@d96678350ffd6a456235832eb11e1c491589b7bb # v3.21.8
+      - *checkout
+      # Not *setup-nix: the cache seed step below is only possible with a
+      # trusted user.
+      - uses: ./.github/actions/setup-nix
         with:
           trust-runner-user: true
       - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -63,15 +73,9 @@ jobs:
               < /tmp/nix-cache/roots \
               || echo "::warning::nix cache seed failed; building cold"
           fi
-      # Every check relevant to this system. No `-L`: streaming every build
-      # log buries failures in megabytes of noise; on failure nix prints the
-      # failing derivation's log tail, and `--log-lines` sizes that tail.
-      - run: |
-          nix eval --json .#checks.${{ matrix.system }} --apply builtins.attrNames \
-            | jq -r '.[] | ".#checks.${{ matrix.system }}." + .' \
-            | xargs -r nix build --log-lines 1000
-      # `always()`: Keep what you can even on failure. 
-      # Skip it if it was a cache hit.
+      - run: .github/scripts/build-flake-checks.sh ${{ matrix.system }}
+      # `always()`: keep the completed paths, also after a failure.
+      # Do not do this step if the cache had a hit.
       - name: Export locally-built paths to the cache
         if: always() && steps.nix-cache.outputs.cache-hit != 'true'
         run: |
@@ -86,46 +90,40 @@ jobs:
             | xargs -r nix copy --to 'file:///tmp/nix-cache?compression=zstd'
           du -sh /tmp/nix-cache || true
 
-  # One job per (runner, target): the image builds each need tens of GB of
-  # scratch space (full-system tarball + 16GiB disk image + copy into the
-  # store), so they get a fresh runner instead of sharing one disk.
+  # One job for each (runner, target) pair. Each image build uses tens of
+  # gigabytes of temporary space: a full-system tarball, a 16 GiB disk image,
+  # and a copy into the store. A new runner for each build prevents a full
+  # disk.
   nixos-ci:
     strategy:
-      fail-fast: false  # indepednent targets
+      fail-fast: false  # The targets are independent.
       matrix:
         include:
-          # Test building QEMU VM configuration
+          # Build the QEMU VM configuration as a test.
           - runner: ubuntu-24.04
             target: ./base_hosts/qemu#vm-nogui
           - runner: ubuntu-24.04-arm
             target: ./base_hosts/qemu#vm-nogui
 
-          # Test building the Crostini Baguette image (aarch64-only)
+          # Build the Crostini Baguette image as a test (only aarch64).
           - runner: ubuntu-24.04-arm
             target: ./base_hosts/crostini#baguette-image
 
-          # Test building the Apple `container` OCI image (serves `container
-          # run` and `container machine`; aarch64 is the target).
+          # Build the Apple `container` OCI image as a test. The image
+          # serves `container run` and `container machine`. The target is
+          # aarch64.
           - runner: ubuntu-24.04-arm
             target: ./base_hosts/apple-container#container-image
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: DeterminateSystems/determinate-nix-action@d96678350ffd6a456235832eb11e1c491589b7bb # v3.21.8
+      - *checkout
+      - *setup-nix
 
-      # Reclaim disk space
-      - run: |
-          df -h /
-          sudo rm -rf /usr/lib/jvm /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /usr/local/julia* \
-            /usr/local/lib/android /usr/local/share/chromium /opt/microsoft /opt/google \
-            /opt/az /usr/local/share/powershell /opt/hostedtoolcache
-          docker system prune -af || true
-          docker builder prune -af || true
-          df -h /
+      - name: Reclaim disk space
+        run: .github/scripts/reclaim-disk.sh
 
-      - env:
+      - &fetch-signing-keys
+        env:
           GH_TOKEN: ${{ github.token }}
         run: .github/scripts/fetch-signing-keys.sh
 
@@ -137,43 +135,35 @@ jobs:
   nix-darwin-ci:
     runs-on: macos-26  # arm, beta
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: DeterminateSystems/determinate-nix-action@d96678350ffd6a456235832eb11e1c491589b7bb # v3.21.8
+      - *checkout
+      - *setup-nix
 
-      # `nix flake check --all-systems` (in the flake-check job) already
-      # evaluates every system's outputs including darwin — evaluation is
-      # host-independent and doesn't build packages — so re-running it on this
-      # expensive macOS runner is pure duplication. Just build the darwin bits.
+      # The flake-check job runs `nix flake check --all-systems`. That
+      # command evaluates the outputs of all systems, darwin included.
+      # Evaluation is the same on each host and does not build packages. A
+      # second run on this macOS runner gives no new data. Only build the
+      # darwin outputs here.
 
-      - env:
-          GH_TOKEN: ${{ github.token }}
-        run: .github/scripts/fetch-signing-keys.sh
+      - *fetch-signing-keys
 
-      # Test building nix-darwin configuration
+      # Build the nix-darwin configuration as a test.
       - run: |
           nix build --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             ./base_hosts/macos#darwinConfigurations.macOS.system
 
-      # Tets lazyvim on darwin too. `--log-lines` instead of `-L`: see the
-      # flake-checks-build job.
-      - run: |
-          nix eval --json .#checks.aarch64-darwin --apply builtins.attrNames \
-            | jq -r '.[] | ".#checks.aarch64-darwin." + .' \
-            | xargs -r nix build --log-lines 1000
+      # Also build the flake checks (lazyvim included) for darwin.
+      - run: .github/scripts/build-flake-checks.sh aarch64-darwin
 
   nix-darwin-ci-llm:
     runs-on: macos-26  # arm, beta
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: DeterminateSystems/determinate-nix-action@d96678350ffd6a456235832eb11e1c491589b7bb # v3.21.8
+      - *checkout
+      - *setup-nix
 
-      # flake check runs once in the flake-check job (see nix-darwin-ci); no
-      # need to repeat it on this macOS runner.
+      # The flake-check job runs the flake check one time (see
+      # nix-darwin-ci). It is not necessary to run it again on this macOS
+      # runner.
 
-      # Explicitly build `llm` with `mlx`, which often breaks on Darwin.
+      # Build `llm` with `mlx`. This build frequently fails on Darwin.
       - run: nix build .#llm

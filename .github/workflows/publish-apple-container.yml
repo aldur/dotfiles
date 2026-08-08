@@ -12,14 +12,15 @@ concurrency:
 permissions:
   contents: read
 
-# Publish master to the production `latest` tags; publish any other branch
-# (e.g. staging) to `<branch>-*` tags so it can never clobber what `container
-# run` consumers pull from `latest`.
+# Publish the master branch to the production `latest` tags. Publish each
+# other branch (for example, staging) to `<branch>-*` tags. Then a branch
+# cannot overwrite the `latest` tags that `container run` users pull.
 env:
   TAG_PREFIX: ${{ github.ref_name == 'master' && 'latest' || github.ref_name }}
-  # See the same variable in ci.yml. Only the `push` legs need it: they
-  # realise the image, and so evaluate the system config that reads the keys.
-  # `manifest` below just stitches already-pushed tags and never touches them.
+  # See the same variable in ci.yml. Only the `push` jobs use the keys: they
+  # build the image, and the build evaluates the system configuration that
+  # reads the keys. The `manifest` job below only connects tags that were
+  # pushed before, and does not use the keys.
   SIGNING_KEYS: /tmp/ssh_signing_keys.json
 
 jobs:
@@ -27,7 +28,7 @@ jobs:
     name: ${{ matrix.app.name }} (${{ matrix.arch.suffix }})
     permissions:
       contents: read
-      packages: write # pushes the image to ghcr.io
+      packages: write # necessary to push the image to ghcr.io
     strategy:
       matrix:
         arch:
@@ -38,21 +39,18 @@ jobs:
           - { name: push-minimal, reclaim-disk: false }
     runs-on: ${{ matrix.arch.runner }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - &checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: DeterminateSystems/determinate-nix-action@d96678350ffd6a456235832eb11e1c491589b7bb # v3.21.8
+      - &setup-nix
+        uses: ./.github/actions/setup-nix
 
       - if: matrix.app.reclaim-disk
-        run: |
-          sudo rm -rf /usr/lib/jvm /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /usr/local/julia* \
-            /usr/local/lib/android /usr/local/share/chromium /opt/microsoft /opt/google \
-            /opt/az /usr/local/share/powershell /opt/hostedtoolcache
-          docker system prune -af || true
-          docker builder prune -af || true
-          df -h
+        run: .github/scripts/reclaim-disk.sh
 
-      - run: echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+      - &ghcr-login
+        run: echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - env:
@@ -70,7 +68,7 @@ jobs:
     name: ${{ matrix.app }}
     permissions:
       contents: read
-      packages: write # pushes the multi-arch manifest to ghcr.io
+      packages: write # necessary to push the multi-arch manifest to ghcr.io
     strategy:
       matrix:
         app:
@@ -78,13 +76,10 @@ jobs:
           - manifest-minimal
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: DeterminateSystems/determinate-nix-action@d96678350ffd6a456235832eb11e1c491589b7bb # v3.21.8
+      - *checkout
+      - *setup-nix
 
-      # Multi-arch manifest for the branch's tag prefix (`latest` on master).
-      - run: echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Push the multi-arch manifest for the tag prefix of the branch
+      # (`latest` on master).
+      - *ghcr-login
       - run: nix run --override-input aldur-dotfiles . ./base_hosts/apple-container#${{ matrix.app }} -- ghcr.io/${{ github.repository_owner }} "$TAG_PREFIX"

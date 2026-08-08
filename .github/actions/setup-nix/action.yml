@@ -1,0 +1,36 @@
+name: Set up Nix
+description: >-
+  Install Determinate Nix with the shared daemon configuration for this
+  repository. YAML anchors do not work across workflow files. This action
+  keeps the action pin and the configuration in one location.
+
+inputs:
+  trust-runner-user:
+    description: >-
+      The action sends this value to the installer. Set this value to "true"
+      only for jobs that use restricted client options, for example
+      `nix copy --no-check-sigs`.
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - uses: DeterminateSystems/determinate-nix-action@d96678350ffd6a456235832eb11e1c491589b7bb # v3.21.8
+      env:
+        # This variable stops the telemetry of all Determinate tools.
+        # modules/nix.nix sets the same variable on the real machines.
+        # https://docs.determinate.systems/guides/telemetry
+        DETSYS_IDS_TELEMETRY: disabled
+      with:
+        # An empty string stops the diagnostic reports of the installer.
+        diagnostic-endpoint: ""
+        trust-runner-user: ${{ inputs.trust-runner-user }}
+        # The CI does not stream the build logs (no `-L` flags), because
+        # full logs hide a failure in megabytes of unwanted data. When a
+        # build fails, nix shows the last lines of the log of that build.
+        # This option sets that count. 1000 lines are sufficient to show the
+        # first error of a long test suite. Set the option in the daemon
+        # configuration, not on the command line: log-lines is a restricted
+        # setting, and nix ignores it from a client that is not trusted.
+        extra-conf: log-lines = 1000

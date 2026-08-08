@@ -43,13 +43,14 @@ neovim-unwrapped.overrideAttrs (old: {
   };
 }
 // lib.optionalAttrs stdenv.hostPlatform.isDarwin {
-  # Master (neovim/neovim#40625) makes --listen error on socket paths past
-  # sun_path (104 bytes on macOS) instead of silently truncating. The test
-  # runner pins TMPDIR deep inside the build tree (cmake/RunTests.cmake),
-  # long enough here to blow that limit and crash every spawned nvim.
-  # $XDG_RUNTIME_DIR wins over the TMPDIR fallback for socket placement
-  # and the runner leaves it alone; upstream's own macOS CI survives only
-  # because its checkout path is a few bytes shorter.
+  # On master (neovim/neovim#40625), --listen stops with an error when the
+  # socket path is longer than sun_path (104 bytes on macOS). Before, the
+  # bind made the path shorter without a message. The test runner sets
+  # TMPDIR to a deep path in the build tree (cmake/RunTests.cmake). Here
+  # that path is too long, and each test nvim stops immediately. For the
+  # socket location, $XDG_RUNTIME_DIR has priority over TMPDIR, and the
+  # runner does not change it. The macOS CI of neovim passes only because
+  # its checkout path is some bytes shorter.
   preCheck = (old.preCheck or "") + ''
     export XDG_RUNTIME_DIR=$NIX_BUILD_TOP/xdg-run
     mkdir -p "$XDG_RUNTIME_DIR"
