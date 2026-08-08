@@ -33,7 +33,19 @@ entries=(
     $'Rename session\tcommand-prompt -p "session:" "rename-session %%"'
     $'Rename pane (sticky, empty clears)\tcommand-prompt -p "pane:" "set-option -p @pane_name \'%%\'"'
     $'Toggle pane border labels\tif-shell -F \'#{==:#{E:pane-border-status},off}\' \'set-window-option pane-border-status top ; display-message "Pane border labels: on"\' \'set-window-option pane-border-status off ; display-message "Pane border labels: off"\''
+    $'Toggle status bar\tif-shell -F \'#{==:#{status},on}\' \'set -g status off ; display-message "Status bar: off"\' \'set -g status on ; display-message "Status bar: on"\''
     $'Break pane to new window\tbreak-pane'
+    $'Layout: tiled (grid)\tselect-layout tiled'
+    $'Layout: even-horizontal\tselect-layout even-horizontal'
+    $'Layout: even-vertical\tselect-layout even-vertical'
+    $'Layout: main-horizontal\tselect-layout main-horizontal'
+    $'Layout: main-vertical\tselect-layout main-vertical'
+    # `#{config_files}` is the config tmux actually loaded, so this follows
+    # home-manager (~/.config/tmux/tmux.conf) and NixOS (/etc/tmux.conf) alike.
+    # The `new-session` line is stripped first: home-manager's `newSession`
+    # emits `new-session -A -s 0`, which on re-source would attach or, if no
+    # session "0" exists, spawn a stray one.
+    $'Reload tmux config\trun-shell \'f=$(tmux display-message -p "#{config_files}") ; grep -v "^new-session" "$f" > '"$palette_dir"$'/reload.conf && tmux source-file '"$palette_dir"$'/reload.conf && tmux display-message "Config reloaded"\''
     $'Show all keybindings\tdisplay-popup -E -w 80% -h 80% "tmux list-keys | fzf --reverse --no-sort --prompt=\'keybind> \'"'
 )
 
