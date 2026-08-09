@@ -107,6 +107,34 @@ let
 
   probe = ./lazyvim-probe.lua;
 
+  # The insert-mode fuzzy path keymap (lua/config/keymaps.lua) spans the
+  # picker, buffer surgery and a mode dance that has already broken twice in
+  # subtle ways — the path landing one byte off, insert mode dying to the
+  # picker prompt's late stopinsert. Its probe is separate from
+  # lazyvim-probe.lua because it must run evented in nvim's main loop (the
+  # chord travels through real input processing), which a synchronous
+  # vim.wait() script cannot host. Both variants run it: the keymap and
+  # snacks ride `general`, so the light build must not regress it either.
+  insertPathProbe = ./lazyvim-insert-path.lua;
+
+  insertPathRun =
+    {
+      name,
+      bin,
+    }:
+    ''
+      echo "INSERT-PATH-START ${bin}"
+      rm -rf "$TMPDIR/insert-path-${name}" && mkdir -p "$TMPDIR/insert-path-${name}"
+      PROBE_DIR="$TMPDIR/insert-path-${name}" \
+        ${bin} -n --headless "+luafile ${insertPathProbe}" > "$TMPDIR/insert-path-${name}.log" 2>&1 || true
+      cat "$TMPDIR/insert-path-${name}.log"
+      grep -aq INSERT-PATH-OK "$TMPDIR/insert-path-${name}.log" \
+        || { echo "${bin}: insert-path probe failed"; exit 1; }
+      if grep -aq -e "stack traceback" -e "Error executing" "$TMPDIR/insert-path-${name}.log"; then
+        echo "${bin}: lua error while probing insert-path"; exit 1
+      fi
+    '';
+
   # One invocation per variant. The probe reports through its output and the
   # shell gates on that: nvim's own exit status is not a signal here, since an
   # LSP client that fails to shut down cleanly makes it non-zero after a run
@@ -336,6 +364,16 @@ runCommand "lazyvim-variants"
             formats = generalFormats;
             inherit spells;
           };
+        }}
+
+        ${insertPathRun {
+          name = "full";
+          bin = lib.getExe' lazyvim "lazyvim";
+        }}
+
+        ${insertPathRun {
+          name = "light";
+          bin = lib.getExe' lazyvim-light "lazyvim-light";
         }}
 
         # The split as a relationship rather than as two copied lists: every
