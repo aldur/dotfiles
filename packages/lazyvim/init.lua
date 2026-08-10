@@ -1,4 +1,9 @@
-local lazyOptions = { lockfile = vim.fn.stdpath("config") .. "/lazy-lock.json" }
+local lazyOptions = {
+	lockfile = vim.fn.stdpath("config") .. "/lazy-lock.json",
+	-- Plugins come from nix. Without this, a spec with a rockspec would
+	-- make lazy download and build hererocks at runtime.
+	rocks = { enabled = false },
+}
 
 -- The lazy wrapper: require('lazy').setup(), with the store path of
 -- lazy.nvim as an extra first argument.
