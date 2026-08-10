@@ -26,6 +26,10 @@ let
     configDirName = defaultPackageName;
     hosts.python3.enable = false;
     hosts.node.enable = false;
+    # Only hosts listed here get their provider disabled; these two have
+    # no interpreter in the closure either.
+    hosts.perl.enable = false;
+    hosts.ruby.enable = false;
     # Repacked without the tree-sitter CLI, translations and duplicate
     # bundled parsers (see overlays/slim.nix).
     neovim-unwrapped = pkgs.neovim-unwrapped-runtime;
