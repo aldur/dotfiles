@@ -11,7 +11,11 @@ local function template(context)
 end
 
 local function match(_)
-	return true
+	-- `g:wiki_global_load` starts wiki.vim on every markdown buffer, also
+	-- outside of the wiki. wiki.vim sets `b:wiki.root` only for the buffers
+	-- inside the wiki. Add the template to those buffers only.
+	local wiki = vim.b.wiki
+	return wiki ~= nil and wiki.root ~= nil
 end
 
 return {
