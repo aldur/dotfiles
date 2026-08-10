@@ -33,13 +33,13 @@ rustPlatform.buildRustPackage {
   # upstream already gates its releases on; far too slow for a pin bump.
   doCheck = false;
 
-  passthru.updatePin = {
+  # There is no `verify`. CI finds this package in the wrapper's `passthru`,
+  # and the default is `nix build .#pi-rust`.
+  passthru.updatePin.args =
     # Upstream tags rarely (v0.1.9 trails master by months) and develops on
     # the default branch, so track it — same reasoning as pi following
     # nixpkgs-unstable.
-    args = "--version=branch";
-    verify = "nix build .#pi-rust";
-  };
+    "--version=branch";
 
   meta = {
     description = "Rust port of the pi coding agent";

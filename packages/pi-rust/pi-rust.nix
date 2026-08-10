@@ -1,10 +1,10 @@
 {
   lib,
+  callPackage,
   runCommand,
   writeShellApplication,
   fd,
   ripgrep,
-  pi-agent-rust,
   # Plugin derivations to bundle, keyed by name — the same auto-load
   # affordance as ../pi/pi.nix (pi-rust runs pi's TypeScript extension API on
   # an embedded QuickJS runtime). Empty by default: the one plugin pi bundles,
@@ -19,6 +19,10 @@
 # over to — the binary stays Nix's, and `pi-rust update` only manages
 # packages under ~/.pi.
 let
+  # The overlay has no attribute for the agent. No other package here uses
+  # the agent. CI finds it in the `passthru` below.
+  pi-agent-rust = callPackage ./pi-agent-rust.nix { };
+
   pluginFlags = lib.concatMapStringsSep " " (
     plugin: "-e ${lib.escapeShellArg (plugin.entryPoint or "${plugin}/index.ts")}"
   ) (lib.attrValues plugins);
@@ -54,6 +58,10 @@ in
 # writeShellApplication is named after its binary).
 runCommand "pi-rust-with-plugins-${pi-agent-rust.version}"
   {
+    # The wrapper has no source. The agent holds the pin. The bump leg
+    # `pi-rust.pi-agent-rust` names the agent.
+    passthru = { inherit pi-agent-rust; };
+
     # Unlike pi.nix, no `passthru.plugins`: the CI bump matrix names legs
     # after the plugin attribute, so a plugin shared with `pi.plugins` would
     # mint a duplicate leg. Nothing is bundled by default anyway.

@@ -60,7 +60,6 @@ final: prev: {
   # Rust port of pi, wrapped with the same affordances (plugin bundling, no
   # phone-home); the binary is `pi-rust` so both can sit on PATH. No plugins:
   # pi-llama's job is done by the built-in `llamacpp` provider.
-  pi-agent-rust = prev.callPackage ../packages/pi-rust/pi-agent-rust.nix { };
   pi-rust = prev.callPackage ../packages/pi-rust/pi-rust.nix { };
 
   llm-mlx = prev.callPackage ../packages/llm-mlx { };
