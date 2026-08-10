@@ -40,19 +40,24 @@ vim.keymap.set("i", "<C-x><C-f>", function()
 				if not (vim.api.nvim_win_is_valid(win) and vim.api.nvim_buf_is_valid(buf)) then
 					return
 				end
-				vim.api.nvim_buf_set_text(buf, row - 1, col, row - 1, col, { path })
-				vim.api.nvim_set_current_win(win)
+				-- Text, cursor and the queued `a` stay together, after the
+				-- mode has settled. Setting the text before that opens an
+				-- observable window where the line looks done while the
+				-- prompt's insert mode still awaits its queued stopinsert —
+				-- a key typed there executes as a normal-mode command once
+				-- the stopinsert applies.
 				local function resume()
 					if not (vim.api.nvim_win_is_valid(win) and vim.api.nvim_buf_is_valid(buf)) then
 						return
 					end
-					-- Leaving insert mode shifts the cursor left, so the
-					-- cursor is placed only now: on the path's last byte,
-					-- where the queued `a` resumes typing at exactly
-					-- col + #path, mid-line and at end of line alike. A
-					-- queued key is safe where `startinsert` is not — the
-					-- normal-mode loop processes it only after every
-					-- pending mode change has been applied.
+					vim.api.nvim_buf_set_text(buf, row - 1, col, row - 1, col, { path })
+					vim.api.nvim_set_current_win(win)
+					-- The cursor goes on the path's last byte, where the
+					-- queued `a` resumes typing at exactly col + #path,
+					-- mid-line and at end of line alike. A queued key is
+					-- safe where `startinsert` is not — the normal-mode
+					-- loop processes it only after every pending mode
+					-- change has been applied.
 					vim.api.nvim_win_set_cursor(win, { row, col + #path - 1 })
 					vim.api.nvim_feedkeys("a", "n", false)
 				end

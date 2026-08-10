@@ -48,6 +48,12 @@ in
     inherit (packages) lazyvim lazyvim-light;
   };
 
+  # The tmux popup wrapper: the per-window session, and the FILE reload on
+  # reattach, which must land in normal mode whatever mode the popup died in.
+  lazyvim-popup = pkgs.callPackage ./lazyvim-popup.nix {
+    inherit (packages) lazyvim-light;
+  };
+
   # Fails if the repo's own lua is not stylua-formatted.
   lua-format = pkgs.callPackage ./lua-format.nix { };
 

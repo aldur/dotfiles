@@ -169,6 +169,19 @@ report(function()
 		end
 	end
 
+	-- Nothing downloads at runtime. Mason is disabled and TSInstall is a stub
+	-- (asserted below); lazy's luarocks support has to stay off too — enabled,
+	-- the first spec with a rockspec makes lazy bootstrap hererocks.
+	check("lazy rocks support is off", require("lazy.core.config").options.rocks.enabled == false)
+
+	-- The wrapper ships no host interpreters, so every provider must be off:
+	-- one left on probes for its interpreter on each checkhealth. All four
+	-- ride `settings.hosts` (see lazyvim.nix) — nixCats only emits the
+	-- disable for hosts it is told about.
+	for _, provider in ipairs({ "python3", "node", "perl", "ruby" }) do
+		check("provider disabled: " .. provider, vim.g["loaded_" .. provider .. "_provider"] == 0)
+	end
+
 	-- Grammars come from nix, so the commands that would download one are stubs.
 	-- Left live they write into the install dir and shadow the store parsers.
 	for _, cmd in ipairs({ "TSInstall", "TSUpdate", "TSUninstall" }) do
@@ -412,6 +425,159 @@ report(function()
 				vim.fn.bufexists(include) == 1 and #vim.diagnostic.get(vim.fn.bufnr(include)) > 0
 			)
 		end
+	end
+
+	-- forge lint, unit then wired. The parser reads two shapes off one stderr
+	-- stream: rustc-style JSON for lint notes — stable across forge versions,
+	-- where the human rendering changed between 1.5 (` --> `) and 1.7 (`╭▸`) —
+	-- and text for compiler errors, which is identical on both. The editor
+	-- deliberately ships no forge (projects bring it through direnv), so a
+	-- stub stands in for the wired half.
+	do
+		local linter = require("lint.forge-lint")
+		local proj = dir .. "/forgeproj"
+		local sol = proj .. "/src/Probe.sol"
+
+		-- The condition gates on both halves; this build has no forge.
+		check("forge-lint off without forge", not linter.condition({ filename = sol }))
+
+		-- The note as every forge emits it under `--json`, encoded rather
+		-- than quoted so the shape under test is readable.
+		local note = vim.json.encode({
+			["$message_type"] = "diagnostic",
+			message = "mutable variables should use mixedCase",
+			code = { code = "mixed-case-variable" },
+			level = "note",
+			spans = {
+				{
+					file_name = "src/Probe.sol",
+					line_start = 4,
+					line_end = 4,
+					column_start = 10,
+					column_end = 21,
+					is_primary = true,
+				},
+			},
+		})
+
+		local function parsed(output, name)
+			return linter.parser(output, vim.fn.bufadd(name))
+		end
+
+		-- The JSON note, shifted to 0-indexed and end-exclusive.
+		local diags = parsed(note .. "\n", sol)
+		check("json note parses", #diags == 1, vim.inspect(diags))
+		if #diags == 1 then
+			local d = diags[1]
+			check(
+				"json note fields",
+				d.lnum == 3
+					and d.col == 9
+					and d.end_col == 20
+					and d.severity == vim.diagnostic.severity.HINT
+					and d.code == "mixed-case-variable",
+				vim.inspect(d)
+			)
+		end
+
+		-- Compiler errors stay text, with the trailing colon.
+		local errout = "Error: Compiler run failed:\nError (7576): Undeclared identifier.\n --> src/Probe.sol:4:27:\n"
+		diags = parsed(errout, sol)
+		check(
+			"compiler error parses",
+			#diags == 1 and diags[1].severity == vim.diagnostic.severity.ERROR and diags[1].code == "7576",
+			vim.inspect(diags)
+		)
+
+		-- The path boundary: `foosrc/Probe.sol` must not take `src/Probe.sol`'s.
+		check("forge-lint path boundary holds", #parsed(note .. "\n", proj .. "/foosrc/Probe.sol") == 0)
+
+		-- The wired half: LazyVim's condition, nvim-lint's spawn, the stderr
+		-- stream and the parser, ending in published diagnostics. The stub
+		-- prints the note above, so the assertion closes the whole loop.
+		local function put(rel, text, mode)
+			local path = proj .. "/" .. rel
+			vim.fn.mkdir(vim.fs.dirname(path), "p")
+			local fh = assert(io.open(path, "w"))
+			fh:write(text)
+			fh:close()
+			if mode then
+				vim.uv.fs_chmod(path, mode)
+			end
+			return path
+		end
+		put("fixture.jsonl", note .. "\n")
+		put("foundry.toml", '[profile.default]\nsrc = "src"\n')
+		put("bin/forge", "#!/bin/sh\ncat " .. proj .. "/fixture.jsonl >&2\n", 493)
+		put(
+			"src/Probe.sol",
+			"// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\ncontract Probe {\n    uint valid_until;\n}\n"
+		)
+
+		require("lazy").load({ plugins = { "nvim-lint" } })
+		local path_env = vim.env.PATH
+		vim.env.PATH = proj .. "/bin:" .. path_env
+
+		check("forge-lint on inside a project", linter.condition({ filename = sol }))
+
+		local opened, oerr = pcall(vim.cmd.edit, sol)
+		check("opens Probe.sol", opened, oerr)
+		local buf = vim.api.nvim_get_current_buf()
+		-- BufWritePost is one of LazyVim's lint events, and by now the plugin
+		-- is loaded, so the autocmd is there to fire.
+		vim.cmd.write()
+		local function forge_diags(b)
+			return vim.tbl_filter(function(d)
+				return d.source == "forge-lint"
+			end, vim.diagnostic.get(b))
+		end
+		local landed = vim.wait(15000, function()
+			return #forge_diags(buf) > 0
+		end, 100)
+		check("forge-lint publishes", landed, vim.inspect(vim.diagnostic.get(buf)))
+		if landed then
+			local d = forge_diags(buf)[1]
+			check("published note", d.lnum == 3 and d.code == "mixed-case-variable", vim.inspect(d))
+		end
+
+		-- Outside a project the condition keeps forge from spawning at all.
+		-- Before the gate, every lint pass here raised "Error running forge".
+		local stray = dir .. "/stray.sol"
+		local fh = assert(io.open(stray, "w"))
+		fh:write("pragma solidity ^0.8.0;\n")
+		fh:close()
+		opened, oerr = pcall(vim.cmd.edit, stray)
+		check("opens stray.sol", opened, oerr)
+		local sbuf = vim.api.nvim_get_current_buf()
+		vim.cmd.write()
+		vim.wait(1500)
+		check("no forge-lint outside a project", #forge_diags(sbuf) == 0, vim.inspect(vim.diagnostic.get(sbuf)))
+		local messages = vim.api.nvim_exec2("messages", { output = true }).output
+		check("no 'Error running forge'", not messages:find("Error running forge", 1, true), messages)
+
+		vim.env.PATH = path_env
+	end
+
+	-- A host without a wiki: $HOME here has no notes directory, so the spec's
+	-- init leaves `g:wiki_root` alone and wiki.vim's own load turns the unset
+	-- variable into "". Startup and the pickers both have to stay quiet — the
+	-- pages picker once globbed `**/*.md` from `/` when handed "".
+	do
+		check("wiki root stays unset without a wiki", (vim.g.wiki_root or "") == "", vim.inspect(vim.g.wiki_root))
+		local messages = vim.api.nvim_exec2("messages", { output = true }).output
+		check("no wiki_root warning at startup", not messages:find("wiki_root", 1, true), messages)
+
+		require("lazy").load({ plugins = { "snacks.nvim", "wiki.vim" } })
+		local notified
+		local orig = vim.notify
+		vim.notify = function(msg)
+			notified = msg
+		end
+		local ok, err = pcall(require("wiki.snacks").pages)
+		vim.notify = orig
+		check("pages() runs without a root", ok, err)
+		check("pages() refuses without a root", notified == "wiki_root is not set", vim.inspect(notified))
+		check("pages() opens no picker", #require("snacks").picker.get() == 0)
 	end
 
 	-- Visual-mode link insertion must consume the selection and make it the link
