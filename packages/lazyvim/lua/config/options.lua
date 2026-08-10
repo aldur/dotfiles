@@ -17,7 +17,11 @@ vim.g.lazyvim_python_lsp = "basedpyright"
 local virtual_text = vim.diagnostic.handlers.virtual_text
 vim.diagnostic.handlers.virtual_text = {
 	show = function(namespace, bufnr, diagnostics, opts)
+		-- Hide, do not only skip. `vim.diagnostic.show` does not clear the marks
+		-- before it calls the handlers; each handler clears its own. A buffer that
+		-- becomes markdown after the marks appear keeps them until this call.
 		if vim.bo[bufnr].filetype:match("^markdown") then
+			virtual_text.hide(namespace, bufnr)
 			return
 		end
 		virtual_text.show(namespace, bufnr, diagnostics, opts)
