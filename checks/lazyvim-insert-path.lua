@@ -140,17 +140,11 @@ end, function()
 	-- resume before the closing quote, not at end of line.
 	vim.api.nvim_buf_set_lines(0, 0, -1, false, { 'document: ""' })
 	vim.api.nvim_win_set_cursor(0, { 1, 11 })
-	scenario(
-		"mid-line",
-		"i",
-		'document: "' .. path .. '"',
-		'document: "' .. path .. 'X"',
-		function()
-			-- End of line: appending must not stumble over the normal-mode
-			-- cursor never resting past the last byte.
-			feed("<Esc>")
-			vim.api.nvim_buf_set_lines(0, 0, -1, false, { "document: " })
-			scenario("end-of-line", "A", "document: " .. path, "document: " .. path .. "X", finish)
-		end
-	)
+	scenario("mid-line", "i", 'document: "' .. path .. '"', 'document: "' .. path .. 'X"', function()
+		-- End of line: appending must not stumble over the normal-mode
+		-- cursor never resting past the last byte.
+		feed("<Esc>")
+		vim.api.nvim_buf_set_lines(0, 0, -1, false, { "document: " })
+		scenario("end-of-line", "A", "document: " .. path, "document: " .. path .. "X", finish)
+	end)
 end)

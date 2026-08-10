@@ -48,6 +48,9 @@ in
     inherit (packages) lazyvim lazyvim-light;
   };
 
+  # Fails if the repo's own lua is not stylua-formatted.
+  lua-format = pkgs.callPackage ./lua-format.nix { };
+
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
   # Budgets and forbidden-path guards for every derivation the flake

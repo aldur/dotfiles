@@ -230,7 +230,7 @@ report(function()
 		-- fragments in it are `.include`: nothing in neovim maps that extension,
 		-- so they carry the modeline that names the filetype, as the real ones do.
 		local modeline = "; vim: set ft=beancount:\n"
-		put("index.beancount", '2024-01-01 open Assets:Cash USD\n')
+		put("index.beancount", "2024-01-01 open Assets:Cash USD\n")
 		put("heartbit.beancount", "2024-01-01 open Assets:Bank USD\n")
 		put("includes/index/amex.include", modeline .. '2024-01-02 * "S" "T"\n')
 		put("prices.include", modeline .. "2024-01-01 price EUR 1.00 USD\n")
@@ -409,6 +409,59 @@ report(function()
 				vim.fn.bufexists(include) == 1 and #vim.diagnostic.get(vim.fn.bufnr(include)) > 0
 			)
 		end
+	end
+
+	-- Visual-mode link insertion must consume the selection and make it the link
+	-- text. `wiki#link#add` does that itself when it gets the "visual" mode, and
+	-- it is the only thing that can: the mapping leaves visual mode before the
+	-- lua runs, so a `normal! "wd` there is an operator with no motion and does
+	-- nothing at all. The selection then stayed in the buffer and the link text
+	-- came from whatever register `w` held from some earlier edit.
+	do
+		local wiki = dir .. "/wiki"
+		vim.fn.mkdir(wiki, "p")
+		for name, text in pairs({ ["note.md"] = "keep this text\n", ["target.md"] = "# target\n" }) do
+			local fh = assert(io.open(wiki .. "/" .. name, "w"))
+			fh:write(text)
+			fh:close()
+		end
+
+		require("lazy").load({ plugins = { "snacks.nvim", "wiki.vim" } })
+		vim.g.wiki_root = wiki
+		local opened, oerr = pcall(vim.cmd.edit, wiki .. "/note.md")
+		check("opens the wiki page", opened, oerr)
+		local buf = vim.api.nvim_get_current_buf()
+
+		-- Register `w` is the one wiki.vim cuts into. Fill it first: if the link
+		-- text comes from here rather than from the selection, this is what shows.
+		vim.fn.setreg("w", "STALE")
+
+		-- The `xnoremap` that calls this leaves visual mode first, so by now the
+		-- selection is only the `'<` and `'>` marks.
+		vim.cmd("normal! ggv$")
+		vim.cmd([[execute "normal! \<Esc>"]])
+
+		local ok, lerr = pcall(require("wiki.snacks").links, "visual")
+		check("visual link picker runs", ok, lerr)
+		local pickers = require("snacks").picker.get
+		vim.wait(5000, function()
+			return #pickers() > 0
+		end, 50)
+		-- Without this the assertions below also pass when the picker never opens.
+		check("visual link picker is open", #pickers() > 0)
+
+		for _, picker in ipairs(pickers()) do
+			pcall(function()
+				picker:action("confirm")
+			end)
+		end
+		vim.wait(2000, function()
+			return #pickers() == 0
+		end, 50)
+
+		local line = vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] or ""
+		check("visual link takes its text from the selection", line:match("^%[keep this text%]%(") ~= nil, line)
+		check("visual link does not read a stale register", not line:find("STALE", 1, true), line)
 	end
 
 	-- Anything that threw along the way. A server whose `root_dir` shells out to a
