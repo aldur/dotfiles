@@ -83,12 +83,33 @@ local function parse_forge_output(output, bufnr)
 	return diagnostics
 end
 
+-- The project root, from the buffer rather than from nvim's cwd: nvim-lint
+-- spawns the linter in the cwd, and a cwd outside the project would make
+-- `forge lint` fail in silence.
+local function project_root(name)
+	return vim.fs.root(name, "foundry.toml")
+end
+
 return {
 	cmd = "forge",
 	stdin = false,
 	append_fname = false,
-	args = { "lint" },
+	args = {
+		"lint",
+		"--root",
+		-- nvim-lint evaluates a function argument at spawn time, with the
+		-- buffer to lint current.
+		function()
+			return project_root(vim.api.nvim_buf_get_name(0)) or vim.fn.getcwd()
+		end,
+	},
 	stream = "stderr",
 	ignore_exitcode = true,
 	parser = parse_forge_output,
+	-- LazyVim extension, not nvim-lint: skip the linter when it cannot run.
+	-- The editor ships no `forge` (projects bring it through direnv), and
+	-- without this gate every lint pass raises "Error running forge: ENOENT".
+	condition = function(ctx)
+		return vim.fn.executable("forge") == 1 and project_root(ctx.filename) ~= nil
+	end,
 }
