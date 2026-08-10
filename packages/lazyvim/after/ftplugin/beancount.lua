@@ -1,5 +1,8 @@
+-- Buffer-local, like the options below: a global map would shadow the
+-- `mc` mark motion in every other buffer.
 vim.keymap.set({ "n", "v" }, "mc", ":s/[!?]/*/c<CR>", {
 	desc = "beancount: mark transactions as reconciled",
+	buffer = true,
 	noremap = true,
 	silent = true,
 })
