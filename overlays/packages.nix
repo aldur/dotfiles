@@ -45,6 +45,15 @@ final: prev: {
 
   piPlugins = {
     pi-llama = prev.callPackage ../packages/pi/plugins/pi-llama.nix { };
+    # final.callPackage: the build-time check must see the same
+    # pi-coding-agent (from unstable, above) that the wrapper runs. The
+    # unstable nodejs (24) strips TS types by default, which the check
+    # needs to load index.ts.
+    pi-no-docs = final.callPackage ../packages/pi/plugins/pi-no-docs {
+      inherit (self.inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system})
+        nodejs
+        ;
+    };
     pi-statusline = prev.callPackage ../packages/pi/plugins/pi-statusline { };
   };
   pi = prev.callPackage ../packages/pi/pi.nix {
