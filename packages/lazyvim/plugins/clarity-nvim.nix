@@ -5,7 +5,7 @@
 
 vimUtils.buildVimPlugin {
   pname = "clarity.nvim";
-  version = "0.2.0-unstable-2026-07-28";
+  version = "0.3.0-unstable-2026-07-28";
 
   src = fetchFromGitHub {
     owner = "aldur";
