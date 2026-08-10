@@ -12,13 +12,13 @@
 }:
 
 let
-  version = "0.2.7";
+  version = "0.3.0";
 
   src = fetchFromGitHub {
     owner = "driangle";
     repo = "taskmd";
     tag = "v${version}";
-    hash = "sha256-vDZcajc9it8NwLQDzfMEg8YdhSJ3ehYaz5LI4gX3k+k=";
+    hash = "sha256-g1lBIDVhdkMIGcw09Pb9EU+ctgfo8pqoddyZHnVC+Io=";
   };
 
   # Vendoring cannot run in workspace mode, so drop the workspace and wire the
@@ -49,7 +49,7 @@ let
         ;
       pnpm = pnpm_10;
       fetcherVersion = 4;
-      hash = "sha256-ozv1aGFlus2Wc7OZpoazfatpuULbc3n0Dw3salIkinc=";
+      hash = "sha256-tTJOg5zXQJ0JQkZ+WAjcnL+W0mTSkVk/w5D3LLdjsc4=";
 
       # Reachable as both `taskmd.pnpmDeps` and `taskmd.web.pnpmDeps`, and
       # bumped through taskmd's own pin either way.
