@@ -22,8 +22,11 @@ return {
 	{
 		"lervag/wiki.vim",
 		init = function()
-			vim.g.wiki_root = "~/Documents/Notes/"
+			vim.g.wiki_root = vim.env.WIKI_ROOT or "~/Documents/Notes/"
 
+			-- The assets and pandoc both ride the `markdown` category, so the light
+			-- build has neither. Configure the export only when pandoc can run it.
+			-- An export configuration without pandoc fails at use, not at start.
 			local assets_root = vim.env.LAZYVIM_MD2HTML_ASSETS
 			local pandoc_args = {}
 			if assets_root then
@@ -38,13 +41,15 @@ return {
 				}
 			end
 
-			vim.g.wiki_export = {
-				from_format = "markdown",
-				ext = "html",
-				view = true,
-				link_ext_replace = true,
-				args = vim.iter(pandoc_args):join(" "),
-			}
+			if vim.fn.executable("pandoc") == 1 then
+				vim.g.wiki_export = {
+					from_format = "markdown",
+					ext = "html",
+					view = true,
+					link_ext_replace = true,
+					args = vim.iter(pandoc_args):join(" "),
+				}
+			end
 
 			vim.g.wiki_templates = {
 				{ match_func = match, source_func = template },
