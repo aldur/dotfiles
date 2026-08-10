@@ -1,1 +1,1 @@
-return {{'aldur/tinymd.nvim', ft = "markdown"}}
+return { { "aldur/tinymd.nvim", ft = "markdown" } }

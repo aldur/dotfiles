@@ -1,3 +1,3 @@
 return {
-    {'aldur/clarity.nvim'},
+	{ "aldur/clarity.nvim" },
 }
