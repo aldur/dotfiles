@@ -317,8 +317,7 @@ runCommand "lazyvim-variants"
         # A server can attach and still leave the buffer broken: LazyVim's go
         # extra once threw out of `LspAttach` reading capabilities blink.cmp
         # had not registered yet. So the run must also come back clean — a
-        # traceback here is a plugin crashing, not a tool that is missing
-        # (nvim-lint says "Error running forge" and that is expected).
+        # traceback here is a plugin crashing, not a tool that is missing.
         ${lib.concatMapStringsSep "\n" (
           t:
           let

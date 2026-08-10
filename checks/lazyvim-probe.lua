@@ -204,6 +204,9 @@ report(function()
 		check("beancount iskeyword takes ':'", has_colon(buf), vim.bo[buf].iskeyword)
 		local after = open("after.lua", "local x = 1\n")
 		check("iskeyword stays out of other buffers", not has_colon(after), vim.bo[after].iskeyword)
+		-- The mapping needs the same treatment: `maparg` sees a global map from
+		-- any buffer, so an empty result here proves the map is buffer-local.
+		check("reconcile mapping stays out of other buffers", vim.fn.maparg("mc", "n") == "")
 	end
 
 	-- The beancount client is wired in this repo (packages/lazyvim/lsp/
