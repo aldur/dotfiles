@@ -39,14 +39,17 @@ session="_lazyvim${kind:+_${kind}}_${window_id#@}"
 
 if tmux has-session -t "=${session}" 2>/dev/null; then
     # Reattaching to a backgrounded session. If a FILE was given, reload it so a
-    # re-run shows freshly-captured content instead of the stale buffer. q only
-    # backgrounds from normal mode, so nvim is in normal mode here; `:edit!`
+    # re-run shows freshly-captured content instead of the stale buffer; `:edit!`
     # force-reloads from disk.
+    # q backgrounds from normal mode, but a killed popup client leaves nvim in
+    # whatever mode it was in — insert mode would take the command as text. So
+    # go to normal mode first: <C-\><C-n> does that from every mode and is a
+    # no-op in normal mode.
     # Backslash-escape spaces and backslashes so nvim's ex command line doesn't
     # split the path (it isn't shell, so this is nvim cmdline escaping).
     if [ -n "$file" ]; then
         file_esc=$(printf '%s' "$file" | sed -e 's/\\/\\\\/g' -e 's/ /\\ /g')
-        tmux send-keys -t "${session}" ":edit! ${file_esc}" Enter
+        tmux send-keys -t "${session}" "C-\\" "C-n" ":edit! ${file_esc}" Enter
     fi
 else
     # LAZYVIM_BIN comes from the wrapper (default.nix): the session command
