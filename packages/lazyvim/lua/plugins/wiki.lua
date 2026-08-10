@@ -22,7 +22,14 @@ return {
 	{
 		"lervag/wiki.vim",
 		init = function()
-			vim.g.wiki_root = vim.env.WIKI_ROOT or "~/Documents/Notes/"
+			-- Set the root only when the directory exists: wiki.vim warns
+			-- about a missing root at every start. A host without a wiki
+			-- (containers, the light build) stays quiet; the pickers report
+			-- the unset root when a wiki command runs.
+			local root = vim.fn.expand(vim.env.WIKI_ROOT or "~/Documents/Notes/")
+			if vim.fn.isdirectory(root) == 1 then
+				vim.g.wiki_root = root
+			end
 
 			-- The assets and pandoc both ride the `markdown` category, so the light
 			-- build has neither. Configure the export only when pandoc can run it.

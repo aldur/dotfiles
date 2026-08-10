@@ -4,24 +4,17 @@ local function get_force_create_key()
 	return vim.g.wiki_snacks_force_create_key or "<M-CR>"
 end
 
--- The public `input:get()` is empty in some picker states, so the window line is
--- the fallback. That line is snacks-internal and can change on an update. Keep
--- it in a `pcall`, because a picker that finds no text is correct behaviour, but
--- a picker that throws stops the user.
+-- `input:get()` reads the prompt window's line. Reading it after
+-- `picker:close()` works: the close only schedules the teardown, so the
+-- window is still there while a confirm action runs.
 local function get_picker_input(picker)
-	local input = picker.input and picker.input:get()
-	if not input or input == "" then
-		local ok, line = pcall(function()
-			return picker.input.win:valid() and picker.input.win:line() or nil
-		end)
-		input = ok and line or input
-	end
-	return input
+	return picker.input and picker.input:get()
 end
 
 M.pages = function()
 	local root = vim.g.wiki_root
-	if not root then
+	-- wiki.vim turns an unset root into "": both mean "no wiki here".
+	if not root or root == "" then
 		vim.notify("wiki_root is not set", vim.log.levels.ERROR)
 		return
 	end
@@ -152,7 +145,8 @@ M.links = function(mode)
 	local link_mode = mode == "visual" and "visual" or ""
 
 	local root = vim.g.wiki_root
-	if not root then
+	-- wiki.vim turns an unset root into "": both mean "no wiki here".
+	if not root or root == "" then
 		vim.notify("wiki_root is not set", vim.log.levels.ERROR)
 		return
 	end
@@ -222,7 +216,8 @@ end
 
 M.grep = function()
 	local root = vim.g.wiki_root
-	if not root then
+	-- wiki.vim turns an unset root into "": both mean "no wiki here".
+	if not root or root == "" then
 		vim.notify("wiki_root is not set", vim.log.levels.ERROR)
 		return
 	end
