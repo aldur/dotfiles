@@ -54,7 +54,9 @@ if [[ -z "$COMMIT" ]]; then
 fi
 
 COMMIT_DATE=$(echo "$RESPONSE" | jq -r '.[0].commit.committer.date')
-COMMIT_MSG=$(echo "$RESPONSE" | jq -r '.[0].commit.message | split("\n")[0]')
+# Remove the control characters: the message comes from a remote
+# repository and goes to the terminal.
+COMMIT_MSG=$(echo "$RESPONSE" | jq -r '.[0].commit.message | split("\n")[0]' | tr -d '[:cntrl:]')
 COMMIT_URL="https://github.com/$OWNER/$REPO/commit/$COMMIT"
 COMMIT_LINK=$'\e]8;;'"$COMMIT_URL"$'\e\\'"$COMMIT"$'\e]8;;\e\\'
 

@@ -45,10 +45,12 @@ if tmux has-session -t "=${session}" 2>/dev/null; then
     # whatever mode it was in — insert mode would take the command as text. So
     # go to normal mode first: <C-\><C-n> does that from every mode and is a
     # no-op in normal mode.
-    # Backslash-escape spaces and backslashes so nvim's ex command line doesn't
-    # split the path (it isn't shell, so this is nvim cmdline escaping).
+    # Backslash-escape the fnameescape() set, so nvim's ex command line takes
+    # the path as one literal name. Spaces split the argument; `|` separates
+    # commands (a path like `x|!cmd` would run `cmd`); % # < expand to other
+    # names; * ? [ { ` $ trigger wildcard and backtick expansion.
     if [ -n "$file" ]; then
-        file_esc=$(printf '%s' "$file" | sed -e 's/\\/\\\\/g' -e 's/ /\\ /g')
+        file_esc=$(printf '%s' "$file" | sed "s/[ \t*?[{\`\$\\\\%#'\"|!<]/\\\\&/g")
         tmux send-keys -t "${session}" "C-\\" "C-n" ":edit! ${file_esc}" Enter
     fi
 else

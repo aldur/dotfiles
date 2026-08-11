@@ -57,29 +57,7 @@ pub fn flatten(text: &str) -> String {
     let mut chars = text.chars().peekable();
     while let Some(ch) = chars.next() {
         if ch == '\x1b' {
-            // A CSI or an OSC sequence continues to its final byte. All the
-            // other sequences have two characters.
-            match chars.peek() {
-                Some('[') => {
-                    chars.next();
-                    while let Some(c) = chars.next() {
-                        if ('@'..='~').contains(&c) {
-                            break;
-                        }
-                    }
-                }
-                Some(']') => {
-                    chars.next();
-                    while let Some(c) = chars.next() {
-                        if c == '\x07' || c == '\x1b' {
-                            break;
-                        }
-                    }
-                }
-                _ => {
-                    chars.next();
-                }
-            }
+            skip_escape(&mut chars);
             continue;
         }
         let space = ch == '\n' || ch == '\r' || ch == '\t' || ch == ' ';
@@ -96,6 +74,54 @@ pub fn flatten(text: &str) -> String {
         last_was_space = space;
     }
     out.trim().to_string()
+}
+
+/// Move the iterator past one escape sequence. The caller consumed the
+/// `\x1b` already. A CSI or an OSC sequence continues to its final byte.
+/// All the other sequences have two characters.
+fn skip_escape(chars: &mut std::iter::Peekable<std::str::Chars>) {
+    match chars.peek() {
+        Some('[') => {
+            chars.next();
+            while let Some(c) = chars.next() {
+                if ('@'..='~').contains(&c) {
+                    break;
+                }
+            }
+        }
+        Some(']') => {
+            chars.next();
+            while let Some(c) = chars.next() {
+                if c == '\x07' || c == '\x1b' {
+                    break;
+                }
+            }
+        }
+        _ => {
+            chars.next();
+        }
+    }
+}
+
+/// Remove the control sequences and the control characters, and keep the
+/// line structure.
+///
+/// The full and the turn views print a whole turn to the terminal, to fzf
+/// or to a pager. A tool result can contain the output of a program, and
+/// thus escape sequences. A sequence that passes without change can move
+/// the cursor, erase the screen or write text into the terminal. Only the
+/// line breaks and the tabs of the source survive.
+pub fn sanitize(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    let mut chars = text.chars().peekable();
+    while let Some(ch) = chars.next() {
+        if ch == '\x1b' {
+            skip_escape(&mut chars);
+        } else if ch == '\n' || ch == '\t' || !ch.is_control() {
+            out.push(ch);
+        }
+    }
+    out
 }
 
 /// Cut the text at a character boundary. Do not divide a multi-byte

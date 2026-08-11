@@ -43,7 +43,7 @@ while getopts ":c:t:p:v:h" opt; do
 			echo "Usage: $0 [options] <message>"
 			echo "Options:"
 			echo "  -c, ID of the Telegram chat to send the message to"
-			echo "  -t, Your Telegram Bot Token"
+			echo "  -t, Your Telegram Bot Token (prefer the BOT_TOKEN environment variable: -t shows the token in the process list)"
 			echo "  -v, Send video at path"
 			echo "  -p, Send picture at path"
 			echo "  -h, Display this help and exit"
@@ -70,6 +70,14 @@ fi
 
 if [ -z "$BOT_TOKEN" ]; then
 	echo "Error: BOT_TOKEN cannot be empty. Use '-t' to set it."
+	exit 1
+fi
+
+# The token goes into a curl config file below. A quote or a line break
+# in the token would inject more config lines. Accept only the Telegram
+# token format.
+if ! [[ "$BOT_TOKEN" =~ ^[0-9]+:[A-Za-z0-9_-]+$ ]]; then
+	echo "Error: BOT_TOKEN does not match the Telegram token format (digits:base64url)."
 	exit 1
 fi
 

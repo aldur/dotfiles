@@ -117,10 +117,20 @@ EOF
     # always uses the same sequence is not an option.
     from_new=$(FZF_PROMPT="turn newest-first> " agent-log _order codex.jsonl)
     from_old=$(FZF_PROMPT="turn oldest-first> " agent-log _order codex.jsonl)
-    printf '%s' "$from_new" | grep "codex.jsonl\" old" > /dev/null
+    printf '%s' "$from_new" | grep "codex.jsonl' old" > /dev/null
     printf '%s' "$from_new" | grep "change-prompt(turn oldest-first> )" > /dev/null
-    printf '%s' "$from_old" | grep "codex.jsonl\" new" > /dev/null
+    printf '%s' "$from_old" | grep "codex.jsonl' new" > /dev/null
     printf '%s' "$from_old" | grep "change-prompt(turn newest-first> )" > /dev/null
+
+    # fzf gives an action string to `$SHELL -c`, and the name of a project
+    # directory can contain shell syntax. Thus each emitted action must
+    # single-quote the path.
+    cp codex.jsonl 'evil$(touch pwned).jsonl'
+    FZF_PROMPT="turn newest-first> " agent-log _order 'evil$(touch pwned).jsonl' \
+        | grep -F "'evil\$(touch pwned).jsonl'" > /dev/null
+    FZF_PROMPT="turn newest-first> " agent-log _page_action 'evil$(touch pwned).jsonl' \
+        | grep -F "'evil\$(touch pwned).jsonl'" > /dev/null
+    test ! -e pwned
 
     # The earliest turn is at one of the two ends of the list. The current
     # sequence gives its position.
@@ -335,6 +345,11 @@ ANSI
     test "$(agent-log --list ansi.jsonl | tr -dc "$esc" | wc -c)" -eq 0
     agent-log --list ansi.jsonl | cut -f5 | grep "before BOLD after" > /dev/null
     agent-log --full ansi.jsonl | head -1 | grep "t COLOUR x" > /dev/null
+    # The full view and the turn view print the body of a turn to the
+    # terminal or to a pager. The sequences must not survive there.
+    test "$(agent-log --full ansi.jsonl | tr -dc "$esc" | wc -c)" -eq 0
+    agent-log --full ansi.jsonl | grep "before BOLD after" > /dev/null
+    agent-log _show 1 ansi.jsonl --color=never | grep "before BOLD after" > /dev/null
     echo "  ✓ colour, NO_COLOR, escape stripping"
 
     echo "=== a file that is not a transcript is rejected, not guessed at ==="

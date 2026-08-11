@@ -43,7 +43,11 @@ fn turn_from(agent: Agent, records: &[serde_json::Value], key: &str) -> String {
             .find(|t| t.key == key)
             .map(|t| t.time)
             .unwrap_or_default();
-        return format!("{}\n\n{body}", style::heading(&kind, &time));
+        return format!(
+            "{}\n\n{}",
+            style::heading(&kind, &time),
+            crate::model::sanitize(&body)
+        );
     }
     let Ok(index) = key.parse::<usize>() else {
         return format!("agent-log: bad turn key {key}\n");
@@ -57,7 +61,11 @@ fn turn_from(agent: Agent, records: &[serde_json::Value], key: &str) -> String {
         Agent::Codex => adapters::codex::render(record),
         Agent::Wire => unreachable!("handled above"),
     };
-    format!("{}\n\n{body}\n", style::heading(&role, ""))
+    format!(
+        "{}\n\n{}\n",
+        style::heading(&role, ""),
+        crate::model::sanitize(&body)
+    )
 }
 
 /// The rule between the parts of the output. A blank line always comes after
@@ -172,6 +180,7 @@ pub fn full(path: &Path, no_tools: bool) -> String {
                 .unwrap_or_else(|| turn.text.clone()),
             _ => turn.text.clone(),
         };
+        let body = crate::model::sanitize(&body);
         // Use the same heading as the turn view when colour is on. Use a
         // markdown heading when colour is off.
         let heading = if style::enabled() {

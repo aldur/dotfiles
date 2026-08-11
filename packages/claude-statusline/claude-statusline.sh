@@ -20,12 +20,15 @@ CACHE_CREATE=${CACHE_CREATE:-0}
 INPUT=${INPUT:-0}
 CTX_K=$((CTX_SIZE / 1000))k
 
-GREEN='\033[32m'
-YELLOW='\033[33m'
-RED='\033[31m'
-CYAN='\033[36m'
-DIM='\033[2m'
-RESET='\033[0m'
+# Real escape bytes via $'…', so printf '%s' can render them. %b would
+# also expand backslash escapes in the JSON-derived fields (directory,
+# branch, repo and model names), which is a terminal injection channel.
+GREEN=$'\033[32m'
+YELLOW=$'\033[33m'
+RED=$'\033[31m'
+CYAN=$'\033[36m'
+DIM=$'\033[2m'
+RESET=$'\033[0m'
 
 # Color-coded compact context bar
 if [ "$PCT" -ge 90 ]; then
@@ -58,9 +61,9 @@ fi
 
 # Show last 2 path segments
 DIR_SHORT=$(echo "$DIR" | awk -F/ '{if (NF>2) print $(NF-1)"/"$NF; else print $0}')
-printf '%b' "${DIR_SHORT}"
-[ -n "$BRANCH" ] && printf '%b' " ${GREEN}${BRANCH}${RESET}"
-[ -n "$REPO_NAME" ] && printf '%b' " ${CYAN}${REPO_NAME}${RESET}"
+printf '%s' "${DIR_SHORT}"
+[ -n "$BRANCH" ] && printf '%s' " ${GREEN}${BRANCH}${RESET}"
+[ -n "$REPO_NAME" ] && printf '%s' " ${CYAN}${REPO_NAME}${RESET}"
 
 # Cache hit ratio
 TOTAL_IN=$((CACHE_READ + CACHE_CREATE + INPUT))
@@ -71,4 +74,4 @@ else
   CACHE_INFO=""
 fi
 
-printf '%b' " | ${BAR_COLOR}${BAR}${RESET} ${PCT}%${CACHE_INFO} ${CYAN}[${MODEL} ${CTX_K}]${RESET}\n"
+printf '%s\n' " | ${BAR_COLOR}${BAR}${RESET} ${PCT}%${CACHE_INFO} ${CYAN}[${MODEL} ${CTX_K}]${RESET}"

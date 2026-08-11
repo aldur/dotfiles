@@ -15,7 +15,9 @@ if [[ ! -f "$argc_image" ]]; then
   exit 1
 fi
 
-if ! uri=$(qrtool decode "$argc_image"); then
+# Remove the control characters. The QR content is untrusted; a raw
+# escape sequence can write to the terminal.
+if ! uri=$(qrtool decode "$argc_image" | tr -d '[:cntrl:]'); then
   echo "No QR code found in $argc_image" >&2
   exit 1
 fi
@@ -32,7 +34,11 @@ fi
 
 urldecode() {
   local s="${1//+/ }"
-  printf '%b' "${s//%/\\x}"
+  # Double the literal backslashes, so %b decodes only the %XX forms
+  # and not attacker-written escapes. Then remove the control
+  # characters that the %XX decode can produce.
+  s="${s//\\/\\\\}"
+  printf '%b' "${s//%/\\x}" | tr -d '[:cntrl:]'
 }
 
 # otpauth://TYPE/LABEL?PARAMS — the label is ISSUER:ACCOUNT, URL-encoded.

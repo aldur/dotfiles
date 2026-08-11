@@ -334,6 +334,48 @@ fn page(text: &str) {
     emit(text);
 }
 
+/// Quote a value for use inside an fzf action string. fzf gives the
+/// action to `$SHELL -c`. A transcript path contains the name of the
+/// project directory, and that name can contain `$(…)`, a backtick or a
+/// quote. Single quotes make the value literal; `'\''` gives one literal
+/// quote.
+fn shell_quote(text: &str) -> String {
+    format!("'{}'", text.replace('\'', "'\\''"))
+}
+
+/// Write the conversation to a private file and open nvim on it. A fixed
+/// name in /tmp is not safe: an other user can predict the name, put a
+/// symbolic link there, or read the transcript. Thus create the file with
+/// `O_EXCL` and mode 0600, prefer `XDG_RUNTIME_DIR`, and remove the file
+/// after nvim stops.
+fn view_in_nvim(text: &str) {
+    use std::os::unix::fs::OpenOptionsExt;
+    let dir = std::env::var("XDG_RUNTIME_DIR")
+        .map(PathBuf::from)
+        .ok()
+        .filter(|d| d.is_dir())
+        .unwrap_or_else(std::env::temp_dir);
+    for attempt in 0..100 {
+        let path = dir.join(format!("agent-log-{}-{attempt}.md", std::process::id()));
+        let mut file = match std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .open(&path)
+        {
+            Ok(file) => file,
+            Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => continue,
+            Err(e) => fail(&format!("cannot create {}: {e}", path.display())),
+        };
+        let _ = file.write_all(text.as_bytes());
+        drop(file);
+        let _ = Command::new("nvim").arg("-R").arg(&path).status();
+        let _ = std::fs::remove_file(&path);
+        return;
+    }
+    fail("cannot create a temporary file");
+}
+
 /// Send `text` to the input of a command. The result is false if the program
 /// is not available. Then the caller can try the next program.
 fn pipe_through(program: &str, args: &[&str], text: &str) -> bool {
@@ -405,7 +447,9 @@ impl Picker {
     /// that it did not receive. Thus each option reads the rows again.
     fn reload(&self, exe: &str, path: &str) -> String {
         format!(
-            "reload({exe} _turns \"{path}\" {}{})+change-prompt({})+first",
+            "reload({} _turns {} {}{})+change-prompt({})+first",
+            shell_quote(exe),
+            shell_quote(path),
             if self.oldest_first { "old" } else { "new" },
             if self.no_tools { " --no-tools" } else { "" },
             self.prompt()
@@ -457,6 +501,13 @@ fn main() {
             page(&render::full(&path, argv.iter().any(|a| a == "--no-tools")));
             return;
         }
+        Some("_view") => {
+            let path = PathBuf::from(argv.get(1).unwrap_or_else(|| fail("_view needs a path")));
+            // The file holds markdown; nvim adds the colours.
+            style::set(false);
+            view_in_nvim(&render::full(&path, false));
+            return;
+        }
         Some("_full") => {
             let path = PathBuf::from(argv.get(1).unwrap_or_else(|| fail("_full needs a path")));
             let no_tools = argv.iter().any(|a| a == "--no-tools");
@@ -494,7 +545,11 @@ fn main() {
         Some("_page_action") => {
             let path = argv.get(1).unwrap_or_else(|| fail("_page_action needs a path"));
             let flag = if Picker::current().no_tools { " --no-tools" } else { "" };
-            emit(&format!("execute({exe} _page \"{path}\"{flag})"));
+            emit(&format!(
+                "execute({} _page {}{flag})",
+                shell_quote(&exe),
+                shell_quote(path)
+            ));
             return;
         }
         Some("_jump") => {
@@ -556,12 +611,15 @@ fn main() {
                         "--with-nth=1,3".into(),
                         "--exact".into(),
                         "-i".into(),
-                        format!("--preview={exe} _full {{2}} --color=always"),
+                        format!("--preview={} _full {{2}} --color=always", shell_quote(&exe)),
                         "--preview-window=right,60%,wrap".into(),
                         "--bind=alt-p:toggle-preview".into(),
-                        format!("--bind=alt-a:execute({exe} _page {{2}})"),
-                        format!("--bind=alt-v:execute({exe} _full {{2}} > /tmp/agent-log.md; nvim -R /tmp/agent-log.md)"),
-                        format!("--bind=ctrl-a:reload({exe} _sessions --all)+change-prompt(all> )"),
+                        format!("--bind=alt-a:execute({} _page {{2}})", shell_quote(&exe)),
+                        format!("--bind=alt-v:execute({} _view {{2}})", shell_quote(&exe)),
+                        format!(
+                            "--bind=ctrl-a:reload({} _sessions --all)+change-prompt(all> )",
+                            shell_quote(&exe)
+                        ),
                         // alt-i selects a row, and fzf writes the name of the
                         // key on the first line. Thus this program can write
                         // the id and stop.
@@ -639,24 +697,34 @@ fn main() {
                 "--exact".into(),
                 "-i".into(),
                 "--multi".into(),
-                format!("--preview={exe} _show {{1}} \"{path}\" --color=always"),
+                format!(
+                    "--preview={} _show {{1}} {} --color=always",
+                    shell_quote(&exe),
+                    shell_quote(&path)
+                ),
                 "--preview-window=right,60%,wrap".into(),
                 "--bind=alt-p:toggle-preview".into(),
                 // The newest turn is at the bottom. Put the cursor there.
                 "--bind=start:last".into(),
                 // Select a row above the cursor. This is the opposite of tab.
                 "--bind=shift-tab:toggle+up".into(),
-                format!("--bind=alt-a:transform({exe} _page_action \"{path}\")"),
                 format!(
-                    "--bind=alt-v:execute({exe} _full \"{path}\" > /tmp/agent-log.md; nvim -R /tmp/agent-log.md)"
+                    "--bind=alt-a:transform({} _page_action {})",
+                    shell_quote(&exe),
+                    shell_quote(&path)
                 ),
+                format!("--bind=alt-v:execute({} _view {})", shell_quote(&exe), shell_quote(&path)),
                 // Use a transform, because the new sequence depends on the
                 // current sequence.
-                format!("--bind=ctrl-o:transform({exe} _order \"{path}\")"),
-                format!("--bind=ctrl-t:transform({exe} _tools \"{path}\")"),
-                format!("--bind=alt-enter:become({exe} _show {{1}} \"{path}\" --pretty)"),
-                format!("--bind=alt-g:transform({exe} _jump earliest)"),
-                format!("--bind=alt-G:transform({exe} _jump latest)"),
+                format!("--bind=ctrl-o:transform({} _order {})", shell_quote(&exe), shell_quote(&path)),
+                format!("--bind=ctrl-t:transform({} _tools {})", shell_quote(&exe), shell_quote(&path)),
+                format!(
+                    "--bind=alt-enter:become({} _show {{1}} {} --pretty)",
+                    shell_quote(&exe),
+                    shell_quote(&path)
+                ),
+                format!("--bind=alt-g:transform({} _jump earliest)", shell_quote(&exe)),
+                format!("--bind=alt-G:transform({} _jump latest)", shell_quote(&exe)),
                 "--wrap-sign=".into(),
                 footer(TURN_FOOTER),
             ],
