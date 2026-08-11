@@ -4,6 +4,7 @@
   bash,
   bubblewrap,
   coreutils,
+  getent,
   gnugrep,
   socat,
 }:
@@ -18,6 +19,7 @@ writeArgcApplication {
     bash
     bubblewrap
     coreutils
+    getent
     gnugrep
     socat
   ];

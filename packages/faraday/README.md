@@ -97,8 +97,15 @@ faraday --allow hostA:8080 --allow hostB:8080 --local-port 8080 --local-port 808
 ## Caveats / sharp edges
 
 - The sandbox has **no DNS**. Hostname destinations are resolved host-side
-  (at launch and per relay connection), so rotating-IP/CDN targets are
-  fragile. `--map` covers in-sandbox name lookups via `/etc/hosts`.
+  exactly once, at launch, and the relay dials the pinned IP. This makes
+  rotating-IP/CDN targets fragile, but it also means a DNS record that
+  changes after launch (rebinding, TTL=0) cannot redirect the relay to an
+  internal service. `--map` covers in-sandbox name lookups via `/etc/hosts`.
+- The read-only root includes all of `$HOME`: credentials such as `~/.aws`
+  or `~/.config/gh` are **readable** inside the jail. Use `--mask` to hide
+  them (the `sandbox` alias below does this for personal directories).
+- `--allow` restricts *destinations*, not data: any allowed destination is
+  also an exfiltration channel for everything readable inside the jail.
 - The nscd/nsncd socket (`/run/nscd/socket`) is masked inside the sandbox:
   being a Unix socket it crosses the namespace boundary and would both
   bypass `--map` and hand the sandbox host-side DNS resolution — an

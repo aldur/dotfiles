@@ -34,7 +34,7 @@ set -euo pipefail
 # ("missing command"), no socat means a silent relay ("failed to
 # start" — its stderr is discarded). bwrap only fails at sandbox
 # launch, after the relays are already up.
-for dep in argc bwrap socat; do
+for dep in argc bwrap getent socat; do
   command -v "$dep" >/dev/null 2>&1 || {
     echo "faraday: required dependency '$dep' not found in PATH" >&2
     exit 1
@@ -92,13 +92,29 @@ if [ "${#local_ports[@]}" -gt 0 ]; then
   [ -z "$dup" ] || err "in-sandbox port $dup assigned twice; disambiguate with --local-port"
 fi
 
-# The sandbox has no DNS, so hostnames resolve host-side, here and once
-# more when the relay dials out. This doubles as a reachability check so
-# a down/misspelled destination fails loudly at launch instead of as
-# silent connection resets through the relay.
+# The sandbox has no DNS, so hostnames resolve host-side — exactly once,
+# here. The relays dial the pinned address, not the hostname: socat would
+# resolve again on each connection, and a DNS record that changes after
+# launch (rebinding, TTL=0) would then point the relay at a different
+# host.
+dest_addrs=()
 for i in "${!hosts[@]}"; do
-  timeout 3 bash -c "exec 3<>/dev/tcp/${hosts[$i]}/${dest_ports[$i]}" 2>/dev/null ||
-    err "cannot reach ${hosts[$i]}:${dest_ports[$i]} from the host"
+  if [[ "${hosts[$i]}" =~ ^[0-9]+(\.[0-9]+){3}$ ]]; then
+    addr=${hosts[$i]}
+  else
+    addr=
+    read -r addr _ < <(getent ahostsv4 "${hosts[$i]}" 2>/dev/null) || true
+    [ -n "$addr" ] || err "cannot resolve ${hosts[$i]}"
+  fi
+  dest_addrs+=("$addr")
+done
+
+# Reachability check against the pinned address, so a down/misspelled
+# destination fails loudly at launch instead of as silent connection
+# resets through the relay.
+for i in "${!hosts[@]}"; do
+  timeout 3 bash -c "exec 3<>/dev/tcp/${dest_addrs[$i]}/${dest_ports[$i]}" 2>/dev/null ||
+    err "cannot reach ${hosts[$i]} (${dest_addrs[$i]}):${dest_ports[$i]} from the host"
 done
 
 relay_dir=$(mktemp -d "${TMPDIR:-/tmp}/faraday.XXXXXX")
@@ -123,9 +139,9 @@ socks=()
 for i in "${!hosts[@]}"; do
   sock="$relay_dir/$i.sock"
   if [ "$verbose" = 1 ]; then
-    socat -d -d "UNIX-LISTEN:$sock,fork" "TCP:${hosts[$i]}:${dest_ports[$i]}" &
+    socat -d -d "UNIX-LISTEN:$sock,fork" "TCP:${dest_addrs[$i]}:${dest_ports[$i]}" &
   else
-    socat "UNIX-LISTEN:$sock,fork" "TCP:${hosts[$i]}:${dest_ports[$i]}" 2>/dev/null &
+    socat "UNIX-LISTEN:$sock,fork" "TCP:${dest_addrs[$i]}:${dest_ports[$i]}" 2>/dev/null &
   fi
   relay_pids+=("$!")
   socks+=("$sock")
