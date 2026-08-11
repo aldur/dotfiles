@@ -301,13 +301,18 @@ EOF
     echo "=== scoped scanning skips directories without changing results ==="
     # A store in the format of Claude and pi. The name of a project directory
     # is the working directory, with a dash in place of each separator.
+    # The program compares physical paths. On macOS, /tmp is a symbolic link.
+    # Thus the test makes its own directories and resolves them with `pwd -P`.
     store="$work/home/.claude/projects"
-    mkdir -p "$store/-tmp-project" "$store/-tmp-elsewhere"
-    sed 's#/tmp/project#/tmp/project#' claude.jsonl > "$store/-tmp-project/a.jsonl"
+    mkdir -p "$work/scope/project" "$work/scope/oddly-named"
+    proj=$(cd "$work/scope/project" && pwd -P)
+    odd_dir=$(cd "$work/scope/oddly-named" && pwd -P)
+    proj_name=$(printf '%s' "$proj" | tr '/.' '--')
+    mkdir -p "$store/$proj_name" "$store/-tmp-elsewhere"
+    sed "s#/tmp/project#$proj#" claude.jsonl > "$store/$proj_name/a.jsonl"
     sed 's#/tmp/project#/tmp/elsewhere#' claude.jsonl > "$store/-tmp-elsewhere/b.jsonl"
 
-    mkdir -p /tmp/project
-    scoped=$(cd /tmp/project && HOME="$work/home" agent-log --list | grep -c .)
+    scoped=$(cd "$proj" && HOME="$work/home" agent-log --list | grep -c .)
     every=$(HOME="$work/home" agent-log --all --list | grep -c .)
     test "$scoped" -eq 1
     test "$every" -eq 2
@@ -315,9 +320,8 @@ EOF
     # The program must also find a directory with a different name. The filter
     # is only for speed, and must not change the results.
     mkdir -p "$store/an-unrelated-name"
-    sed 's#/tmp/project#/tmp/oddly-named#' claude.jsonl > "$store/an-unrelated-name/c.jsonl"
-    mkdir -p /tmp/oddly-named
-    odd=$(cd /tmp/oddly-named && HOME="$work/home" agent-log --list | grep -c .)
+    sed "s#/tmp/project#$odd_dir#" claude.jsonl > "$store/an-unrelated-name/c.jsonl"
+    odd=$(cd "$odd_dir" && HOME="$work/home" agent-log --list | grep -c .)
     test "$odd" -eq 1
     echo "  ✓ prefilter narrows without losing sessions"
 
