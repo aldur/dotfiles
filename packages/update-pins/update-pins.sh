@@ -1,6 +1,6 @@
-# Run the nix-update legs that CI runs, from the same `updatePins` output.
-# Each leg carries its `bump` and `verify` commands; this script runs them
-# verbatim. See .github/workflows/update-pinned-packages.yml.
+# Run the bump legs of the flake in the current directory. The flake must
+# export `updatePins`; see README.md next to this script. Each leg carries
+# its `bump` and `verify` commands, and this script runs them verbatim.
 
 legs=$(nix eval --json .#updatePins)
 
@@ -16,6 +16,9 @@ for package in "$@"; do
   leg=$(jq -c --arg p "$package" '.[] | select(.package == $p)' <<<"$legs")
   if [ -z "$leg" ]; then
     echo "error: no leg is named '$package'" >&2
+    echo >&2
+    echo "Available legs:" >&2
+    jq -r '.[].package' <<<"$legs" >&2
     exit 1
   fi
 

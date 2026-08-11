@@ -7,8 +7,12 @@
   # Discovered pins per platform, from utils/discover-pins.nix. A package is
   # bumped on the platform that exposes it.
   linux,
-  darwin,
-  runners,
+  darwin ? [ ],
+  # The GitHub runner labels the workflow schedules the legs on.
+  runners ? {
+    linux = "ubuntu-24.04";
+    darwin = "macos-26";
+  },
 }:
 
 let

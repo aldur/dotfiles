@@ -120,6 +120,7 @@
               flatten-pdf
               watermark-pdf
               flake-lock-cooldown
+              update-pins # runs a flake's `updatePins` bump legs locally
               aldurs-dotfiles-version
               llmcat
               taskmd
@@ -150,7 +151,7 @@
             # Every package here that fetches a pinned source, with the
             # `passthru.updatePin` it carries. Merged across systems into the
             # top-level `updatePins` output that CI reads.
-            discoveredPins = import ./utils/discover-pins.nix { inherit (pkgs) lib; } {
+            discoveredPins = self.lib.updatePins.discover { inherit (pkgs) lib; } {
               inherit self packages overlayPackages;
               inherit (pkgs.stdenv) hostPlatform;
             };
@@ -165,9 +166,6 @@
               overlayPackages
               ;
           };
-
-          # Run the same nix-update legs that CI runs.
-          apps.update-pins = import ./utils/update-pins.nix { inherit pkgs; };
 
           apps.validate-claude-settings = {
             type = "app";
@@ -225,18 +223,10 @@
       # package carries — see .github/workflows/update-pinned-packages.yml.
       # Read with `nix eval --json .#updatePins`.
       # Run a leg locally with `nix run .#update-pins -- <package>`.
-      updatePins =
-        let
-          runners = {
-            linux = "ubuntu-24.04";
-            darwin = "macos-26";
-          };
-        in
-        import ./utils/update-pin-legs.nix { inherit (nixpkgs) lib; } {
-          inherit runners;
-          linux = self.legacyPackages.x86_64-linux.discoveredPins;
-          darwin = self.legacyPackages.aarch64-darwin.discoveredPins;
-        };
+      updatePins = self.lib.updatePins.mkLegs { inherit (nixpkgs) lib; } {
+        linux = self.legacyPackages.x86_64-linux.discoveredPins;
+        darwin = self.legacyPackages.aarch64-darwin.discoveredPins;
+      };
 
       lib = {
         programs = {
@@ -257,6 +247,13 @@
           );
 
         overrideUntilUpgrade = import ./utils/override-until-upgrade.nix;
+
+        # The pin-bump machinery, for a flake that wants an `updatePins`
+        # output of its own; see packages/update-pins/README.md.
+        updatePins = {
+          discover = import ./utils/discover-pins.nix;
+          mkLegs = import ./utils/update-pin-legs.nix;
+        };
 
         # Build `specialArgs` for a descendant flake (e.g. those in
         # `base_hosts`): merge its own inputs with this flake's, the latter
