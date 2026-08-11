@@ -55,6 +55,7 @@ final: prev: {
         ;
     };
     pi-statusline = prev.callPackage ../packages/pi/plugins/pi-statusline { };
+    pi-system-prompt = prev.callPackage ../packages/pi/plugins/pi-system-prompt { };
   };
   pi = prev.callPackage ../packages/pi/pi.nix {
     plugins = final.piPlugins;
