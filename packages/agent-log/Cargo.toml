@@ -1,0 +1,17 @@
+[package]
+name = "agent-log"
+version = "0.1.0"
+edition = "2021"
+
+# serde_json is the only dependency. Each adapter reads the JSONL of another
+# program, thus a generic Value is correct. One crate also keeps the build fast
+# and the closure small. The standard library does the arguments, the threads
+# and the communication with fzf.
+[dependencies]
+serde_json = "1"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"

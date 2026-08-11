@@ -41,6 +41,7 @@ in
   gpg-encrypt = pkgs.gpg-encrypt.tests.integration;
   taskmd = pkgs.taskmd.tests.version;
   taskmd-ui = pkgs.taskmd-ui.tests.smoke;
+  agent-log = pkgs.agent-log.tests.integration;
 
   # The editor's light/full split stays split: both start headless, the heavy
   # language tooling stays in full and out of light.
@@ -96,6 +97,11 @@ in
   merge-container-config =
     pkgs.callPackage ../modules/darwin/tests/merge-container-config-test.nix
       { };
+
+  # agent-log is installed when any agent is, and only then.
+  agent-log-gating = pkgs.callPackage ./agent-log-gating.nix {
+    inherit self inputs system;
+  };
 
   headless-defaults = pkgs.callPackage ./headless-defaults.nix {
     inherit self inputs system;

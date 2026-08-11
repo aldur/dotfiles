@@ -62,7 +62,7 @@ nix run "github:aldur/dotfiles#qemu-vm"
 ### Everything else
 
 Use `nix flake show github:aldur/dotfiles` for a full list. Some of my
-favorites are `claude-log`, `flatten-pdf`, `shrink-pdf`, and `llm`.
+favorites are `agent-log`, `flatten-pdf`, `shrink-pdf`, and `llm`.
 
 ## Templates
 

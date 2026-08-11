@@ -44,9 +44,11 @@ let
     # The Linux counterpart of the darwin `faraday` shell alias
     # (sandbox-exec based, see modules/darwin/home.nix).
     ++ lib.optionals stdenv.isLinux [ faraday ]
-    # claude-log browses ~/.claude/projects session transcripts; without
-    # claude-code there is nothing to browse.
-    ++ lib.optionals osConfig.programs.aldur.claude-code.enable [ claude-log ];
+    ++ lib.optionals (
+      osConfig.programs.aldur.claude-code.enable
+      || osConfig.programs.aldur.codex.enable
+      || config.programs.llm.enable
+    ) [ agent-log ];
 
   aldurs-tools = pkgs.callPackage ../../packages/aldurs-tools { tools = customTools; };
 

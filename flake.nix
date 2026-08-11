@@ -112,7 +112,6 @@
             inherit (pkgs)
               beancount-language-server # from aldur/beancount-language-server
               nomicfoundation-solidity-language-server
-              claude-log
               claude-skills # consumed by modules/home/claude-code.nix
               shrink-pdf
               solidity-docset
@@ -127,6 +126,7 @@
               taskmd-ui
               pi # pi-coding-agent bundled with plugins
               pi-rust # Rust port of pi, same wrapper affordances
+              agent-log # one picker over claude, pi and codex conversations
               ;
             llm = pkgs.llmWithPlugins;
           }

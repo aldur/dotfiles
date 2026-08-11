@@ -25,7 +25,6 @@ final: prev: {
   faraday = prev.callPackage ../packages/faraday { };
   fps = prev.callPackage ../packages/fps { };
   lstrip = prev.callPackage ../packages/lstrip { };
-  claude-log = prev.callPackage ../packages/claude-log { };
   claude-skills = prev.callPackage ../packages/claude-skills { };
   telegram = prev.callPackage ../packages/telegram { };
   remarks = prev.callPackage ../packages/remarks { };
@@ -71,6 +70,8 @@ final: prev: {
   # phone-home); the binary is `pi-rust` so both can sit on PATH. No plugins:
   # pi-llama's job is done by the built-in `llamacpp` provider.
   pi-rust = prev.callPackage ../packages/pi-rust/pi-rust.nix { };
+
+  agent-log = final.callPackage ../packages/agent-log { };
 
   llm-mlx = prev.callPackage ../packages/llm-mlx { };
   llmWithPlugins = prev.python3.withPackages (
