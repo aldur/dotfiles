@@ -270,6 +270,19 @@ let
   # Announce every attach; once the expected server arrives, either quit
   # (attach-only) or poll until it publishes a diagnostic. Time out loudly
   # (cq) rather than hang the build.
+  #
+  # An empty poll tick also rewrites line 1 with its own content. Neovim
+  # pulls diagnostics (textDocument/diagnostic) and fires several pulls
+  # around attach, cancelling the older ones — but it still dispatches the
+  # response of a request it cancelled. pyright answers a cancelled pull
+  # with an empty "full" report that carries the current resultId instead
+  # of an error. The client stores the empty set and the resultId, so the
+  # next pull sends that id as previousResultId and gets "unchanged" back:
+  # the empty set becomes final. In the editor the next keystroke breaks
+  # the trap; headless nothing does, and the run would idle into the
+  # timeout. The byte-identical edit is that keystroke — its didChange
+  # bumps the document version, which forces a fresh full report, and it
+  # cannot add a diagnostic of its own.
   attachLua =
     { server, diag, ... }:
     "vim.api.nvim_create_autocmd('LspAttach',{callback=function(a)"
@@ -279,7 +292,8 @@ let
     + (
       if diag then
         " local t=vim.uv.new_timer() t:start(2000,2000,vim.schedule_wrap(function()"
-        + " if #vim.diagnostic.get(a.buf)>0 then io.write('DIAGNOSED: ${server}\\n') t:stop() vim.cmd('qa!') end end))"
+        + " if #vim.diagnostic.get(a.buf)>0 then io.write('DIAGNOSED: ${server}\\n') t:stop() vim.cmd('qa!')"
+        + " else vim.api.nvim_buf_set_lines(a.buf,0,1,false,vim.api.nvim_buf_get_lines(a.buf,0,1,false)) end end))"
       else
         " vim.schedule(function() vim.cmd('qa!') end)"
     )
