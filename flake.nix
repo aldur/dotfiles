@@ -166,6 +166,9 @@
               ;
           };
 
+          # Run the same nix-update legs that CI runs.
+          apps.update-pins = import ./utils/update-pins.nix { inherit pkgs; };
+
           apps.validate-claude-settings = {
             type = "app";
             program =
@@ -221,6 +224,7 @@
       # The CI bump matrix, derived from the `passthru.updatePin` each pinned
       # package carries — see .github/workflows/update-pinned-packages.yml.
       # Read with `nix eval --json .#updatePins`.
+      # Run a leg locally with `nix run .#update-pins -- <package>`.
       updatePins =
         let
           runners = {

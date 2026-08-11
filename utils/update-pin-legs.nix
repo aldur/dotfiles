@@ -22,28 +22,34 @@ let
     && darwinByPath.${path}.source == "packages"
     && (linuxByPath.${path} or { source = "overlay"; }).source != "packages";
 
+  # `os` names the platform in `uname -s` terms. It travels with the runner
+  # so consumers (the local `update-pins` app) do not re-derive it from the
+  # runner's name.
+  onDarwin = e: e // { runner = runners.darwin; os = "Darwin"; };
+  onLinux = e: e // { runner = runners.linux; os = "Linux"; };
+
   chosen =
     lib.mapAttrsToList (
-      path: e:
-      if preferDarwin path then
-        darwinByPath.${path} // { runner = runners.darwin; }
-      else
-        e // { runner = runners.linux; }
+      path: e: if preferDarwin path then onDarwin darwinByPath.${path} else onLinux e
     ) linuxByPath
-    ++ map (e: e // { runner = runners.darwin; }) (lib.filter (e: !(linuxByPath ? ${e.path})) darwin);
+    ++ map onDarwin (lib.filter (e: !(linuxByPath ? ${e.path})) darwin);
 
   leg = e: {
-    inherit (e) runner;
+    inherit (e) runner os;
     # `lazyvim.plugins.foo` becomes the leg `foo`; the branch, PR and artifact
     # are named after it.
     package = e.name;
-    attr = e.path;
+    # The full bump command. CI and the local `update-pins` app run this
+    # string verbatim, so the command has one source.
+    #
     # nix-update's `--test` dies outright on a package with no
     # `passthru.tests`, so it is only requested when tests exist; a package
     # gaining tests still picks it up without touching the workflow.
-    nix-update-args = lib.concatStringsSep " " (
-      lib.optional ((e.drv.passthru.tests or { }) != { }) "--test"
+    bump = lib.concatStringsSep " " (
+      [ "nix run nixpkgs#nix-update -- --flake" ]
+      ++ lib.optional ((e.drv.passthru.tests or { }) != { }) "--test"
       ++ lib.optional ((e.pin.args or "") != "") e.pin.args
+      ++ [ e.path ]
     );
     # Building a passthru derivation on its own often proves little — a Neovim
     # plugin is just Lua copied into the store — so the default builds whatever

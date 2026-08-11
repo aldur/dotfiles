@@ -53,14 +53,9 @@ jobs:
       - *setup-nix
 
       - name: Bump ${{ matrix.package }} with nix-update
-        # utils/update-pin-legs.nix adds `--test` for each leg, but only for
-        # packages that have `passthru.tests`. For a package without tests,
-        # nix-update stops with an error. It does not continue without them.
-        run: |
-          nix run nixpkgs#nix-update -- \
-            --flake \
-            ${{ matrix.nix-update-args }} \
-            ${{ matrix.attr }}
+        # utils/update-pin-legs.nix builds the full command, flags included.
+        # The local `update-pins` app runs the same string.
+        run: ${{ matrix.bump }}
 
       # `verify` is always set. If a pin gives no value,
       # utils/update-pin-legs.nix builds the top-level package of that pin.
