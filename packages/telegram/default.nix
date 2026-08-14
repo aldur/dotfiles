@@ -1,10 +1,14 @@
 {
-  writeShellApplication,
+  writeArgcApplication,
   curl,
+  gnused,
 }:
 
-writeShellApplication {
+writeArgcApplication {
   name = "telegram";
-  runtimeInputs = [ curl ];
-  text = builtins.readFile ./telegram.sh;
+  file = ./telegram.sh;
+  runtimeInputs = [
+    curl
+    gnused
+  ];
 }

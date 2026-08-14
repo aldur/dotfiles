@@ -25,6 +25,7 @@ final: prev: {
   faraday = prev.callPackage ../packages/faraday { };
   fps = prev.callPackage ../packages/fps { };
   lstrip = prev.callPackage ../packages/lstrip { };
+  trim = prev.callPackage ../packages/trim { };
   claude-skills = prev.callPackage ../packages/claude-skills { };
   telegram = prev.callPackage ../packages/telegram { };
   remarks = prev.callPackage ../packages/remarks { };

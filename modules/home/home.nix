@@ -39,6 +39,7 @@ let
       tcopy
       tmux-palette
       totp-qr-decode
+      trim
       watermark-pdf
     ]
     # The Linux counterpart of the darwin `faraday` shell alias

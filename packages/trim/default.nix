@@ -4,7 +4,7 @@
 }:
 
 writeArgcApplication {
-  name = "lstrip";
-  file = ./lstrip.sh;
+  name = "trim";
+  file = ./trim.sh;
   runtimeInputs = [ gnused ];
 }
