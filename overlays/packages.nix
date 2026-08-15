@@ -55,6 +55,7 @@ final: prev: {
         nodejs
         ;
     };
+    pi-show-compaction = prev.callPackage ../packages/pi/plugins/pi-show-compaction { };
     pi-statusline = prev.callPackage ../packages/pi/plugins/pi-statusline { };
     pi-system-prompt = prev.callPackage ../packages/pi/plugins/pi-system-prompt { };
   };
