@@ -36,7 +36,15 @@ jobs:
       - uses: DeterminateSystems/flake-checker-action@de924abd783455e8429c858962b9e43062d19da1  # v13
         with:
           send-statistics: false
-      - run: nix flake check --all-systems --no-build .
+      - &fetch-signing-keys
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: .github/scripts/fetch-signing-keys.sh
+      # The override stops an unauthenticated eval-time fetch of
+      # api.github.com, which hits the shared rate limit.
+      - run: |
+          nix flake check --all-systems --no-build \
+            --override-input gh-signing-keys "file+file://$SIGNING_KEYS" .
 
   # Build the flake checks of each Linux system on a runner with the same
   # architecture. The flake-check job above only evaluates the checks
@@ -75,6 +83,7 @@ jobs:
               < /tmp/nix-cache/roots \
               || echo "::warning::nix cache seed failed; building cold"
           fi
+      - *fetch-signing-keys
       - run: .github/scripts/build-flake-checks.sh ${{ matrix.system }}
       # `always()`: keep the completed paths, also after a failure.
       # Do not do this step if the cache had a hit.
@@ -124,10 +133,7 @@ jobs:
       - name: Reclaim disk space
         run: .github/scripts/reclaim-disk.sh
 
-      - &fetch-signing-keys
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: .github/scripts/fetch-signing-keys.sh
+      - *fetch-signing-keys
 
       - run: |
           nix build --override-input aldur-dotfiles . \

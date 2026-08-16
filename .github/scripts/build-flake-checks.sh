@@ -6,6 +6,14 @@ set -euo pipefail
 
 system=${1:?system is necessary, for example x86_64-linux}
 
-nix eval --json ".#checks.$system" --apply builtins.attrNames \
+# With $SIGNING_KEYS set, point the `gh-signing-keys` input at the local
+# copy from `fetch-signing-keys.sh`. This stops an unauthenticated fetch
+# of api.github.com, which hits the shared rate limit.
+override=()
+if [ -n "${SIGNING_KEYS:-}" ]; then
+  override=(--override-input gh-signing-keys "file+file://$SIGNING_KEYS")
+fi
+
+nix eval --json ".#checks.$system" --apply builtins.attrNames "${override[@]}" \
   | jq -r --arg s "$system" '.[] | ".#checks.\($s)." + .' \
-  | xargs -r nix build
+  | xargs -r nix build "${override[@]}"
