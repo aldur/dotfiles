@@ -44,6 +44,8 @@ in
     }:
     assert (text != null) != (file != null);
     let
+      # Set meta.mainProgram so lib.getExe works without a warning.
+      meta' = { mainProgram = name; } // meta;
       rawSource = if file != null then builtins.readFile file else text;
       # Inject @version before @describe (or at the start if no @describe).
       # The injected lines must start at column 0: argc only recognizes
@@ -61,13 +63,15 @@ in
       scriptFile = prev.writeText "${name}.sh" scriptSource;
 
       shellApp = prev.writeShellApplication {
-        inherit name meta;
+        inherit name;
+        meta = meta';
         runtimeInputs = [ final.argc ] ++ runtimeInputs;
         text = scriptSource;
       };
     in
     prev.stdenv.mkDerivation {
-      inherit name version meta passthru;
+      inherit name version passthru;
+      meta = meta';
       nativeBuildInputs = [ prev.installShellFiles ];
       buildCommand = ''
         mkdir -p $out
