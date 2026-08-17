@@ -9,25 +9,36 @@
 # state. Wrapped by ./pi-rust.nix, which is what ends up on PATH.
 rustPlatform.buildRustPackage {
   pname = "pi-agent-rust";
-  version = "0.1.23-unstable-2026-08-06";
+  version = "0.1.23-unstable-2026-08-17";
 
   src = fetchFromGitHub {
     owner = "Dicklesworthstone";
     repo = "pi_agent_rust";
-    rev = "44ddf80ff1fccbeb08501c1e8eaa69f2b5dd5d92";
-    hash = "sha256-vxga3i9IYv4Hp2KNLo2mpsdAmoMce8GbmfVldoh2mm8=";
+    rev = "6453c0b61d8d53da2358058367ed85639333fa70";
+    hash = "sha256-kbfln3VWvdmhGDGhJNkcrep0pNkiWCqCl8YJ4nXPc9o=";
   };
 
-  cargoHash = "sha256-dP4YpStLGpJBtC55p2yTUda2kESw2sZQmfInNEiS5RQ=";
+  cargoHash = "sha256-NDW4K1OY4CygAfIIkAS+6LxFe3/wkn6fnHW5QxMQzqw=";
 
   # The affordance the pi wrapper gets from PI_SKIP_VERSION_CHECK: no start-up
   # release probe (api.github.com here) for a binary Nix manages. There is no
   # env toggle — the default lives in code — so flip it there;
   # `checkForUpdates: true` in settings.json still turns it back on.
   postPatch = ''
+    # Upstream pins a nightly toolchain and passes `-Z threads=4` through
+    # `.cargo/config.toml`. The stable rustc from nixpkgs rejects `-Z`
+    # options, so remove the file. It only tunes build parallelism, release
+    # code layout, and FreeBSD search paths.
+    rm -f .cargo/config.toml
+
     substituteInPlace src/config.rs \
       --replace-fail 'self.check_for_updates.unwrap_or(true)' 'self.check_for_updates.unwrap_or(false)'
   '';
+
+  # The vendored fsqlite crates enable `feature(core_intrinsics)` on x86_64,
+  # which needs a nightly rustc. Upstream pins one in rust-toolchain.toml.
+  # RUSTC_BOOTSTRAP lets the stable rustc from nixpkgs accept the gate.
+  env.RUSTC_BOOTSTRAP = 1;
 
   # Thousands of tests (proptest, conformance, live-tool integration) that
   # upstream already gates its releases on; far too slow for a pin bump.
