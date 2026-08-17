@@ -319,6 +319,13 @@ function show(id) {
 		return;
 	}
 
+	// The request fields that are not the thread: the sampling and template
+	// knobs. With `--rendered`, a knob prints beside its effect on the string.
+	const knobs = Object.entries(record.request ?? {})
+		.filter(([key]) => key !== "messages" && key !== "tools")
+		.map(([key, value]) => `${key} ${value !== null && typeof value === "object" ? JSON.stringify(value) : value}`);
+	if (knobs.length) out(`${dim(knobs.join(" · "))}\n`);
+
 	// The rendered string already contains the whole thread inline, so showing
 	// the structured messages beside it is duplication unless asked for.
 	const wantsThread = !opts.rendered || opts.full;

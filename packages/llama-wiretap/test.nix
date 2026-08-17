@@ -117,6 +117,8 @@ stdenvNoCC.mkDerivation {
       # The reader splits the same exchange back into its parts — every message
       # by role, not just the last, so the system prompt is visible.
       shown=$(llama-wiretap-show "$log")
+      # The sampling knobs print with the exchange.
+      printf '%s' "$shown" | grep -- "model m · stream true" > /dev/null
       printf '%s' "$shown" | grep -- "1. SYSTEM" > /dev/null
       printf '%s' "$shown" | grep "SYSMARK" > /dev/null
       printf '%s' "$shown" | grep "USERMARK" > /dev/null
@@ -253,8 +255,9 @@ SESSION
     }
 
     # A good turn appends to the thread. The prompts then share their prefix,
-    # up to the re-rendered turn tail.
-    followup=$(jq -c '.messages += [{"role":"assistant","content":"hello"},{"role":"user","content":"NEXTMARK"}]' <<< "$request")
+    # up to the re-rendered turn tail. The turn also carries template kwargs,
+    # the spelling pi-llama uses for the thinking knobs.
+    followup=$(jq -c '.messages += [{"role":"assistant","content":"hello"},{"role":"user","content":"NEXTMARK"}] | .chat_template_kwargs = {reasoning_effort: "medium"}' <<< "$request")
     # An edited system prompt diverges at the top. Every cached token after
     # that point is lost. The model also changes, so the break comes with a
     # template swap for the audit to name.
@@ -290,6 +293,10 @@ SESSION
     printf '%s' "$tpl" | grep "TEMPLATEMARK-m2" > /dev/null
     llama-wiretap-show tcp-uds.jsonl --template --id 2 | grep "TEMPLATEMARK-m " > /dev/null
     echo "  ✓ template snapshot"
+
+    # The template kwargs print as a knob on their exchange.
+    llama-wiretap-show tcp-uds.jsonl --id 3 | grep 'chat_template_kwargs {"reasoning_effort":"medium"}' > /dev/null
+    echo "  ✓ knobs"
 
     # The transcripts stay in the build log: they carry timestamps and the
     # builder's temporary directory, and copying them into $out would make an
