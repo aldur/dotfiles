@@ -19,20 +19,30 @@ Usage: llama-wiretap-show [log] [options]
 
   log            transcript to read      (default ./llama-wire.jsonl)
   --id <n>       a specific exchange     (default: the last completed one)
-  --list         one line per exchange
+  --list         one line per exchange, with a prefix column when prompts exist
+  --prefix       check each rendered prompt against the previous one
   --rendered     the literal templated string plus the reply, without the thread
   --full         everything: the thread, the literal string, thinking, answer
   --all          every exchange in the log, not just one
   --raw          the response stream as it arrived, unparsed
   --help
+
+--prefix audits the server's prompt cache. A good turn appends: the new
+prompt starts with the old one, and the server reuses the KV of the shared
+part. When the harness edits the history — a changed system prompt,
+compaction, a template that strips old reasoning — the prompts diverge
+early, and the server computes the whole tail again. The report shows the
+divergence point and both continuations, so the edit that broke the cache
+has a name.
 `;
 
-const opts = { log: "llama-wire.jsonl", id: undefined, list: false, raw: false, rendered: false, full: false, all: false };
+const opts = { log: "llama-wire.jsonl", id: undefined, list: false, prefix: false, raw: false, rendered: false, full: false, all: false };
 const argv = process.argv.slice(2);
 for (let i = 0; i < argv.length; i++) {
 	const arg = argv[i];
 	if (arg === "--help" || arg === "-h") { process.stdout.write(USAGE); process.exit(0); }
 	else if (arg === "--list") opts.list = true;
+	else if (arg === "--prefix") opts.prefix = true;
 	else if (arg === "--raw") opts.raw = true;
 	else if (arg === "--rendered") opts.rendered = true;
 	else if (arg === "--full") opts.full = true;
@@ -137,12 +147,68 @@ if (isSession) {
 
 const ids = [...new Set(records.filter(isCompletion).map((r) => r.id))];
 
+// The server's prompt cache reuses the KV of the longest shared prefix
+// between one request and the next. The comparison is on characters of the
+// rendered string; the cache works on tokens, but the divergence point is
+// the same place. The turn tail — the assistant header and the prefill —
+// renders again on each turn, so a loss inside the last TAIL characters is
+// normal. A larger loss means the harness edited the history.
+const TAIL = 64;
+const sharedPrefix = (a, b) => {
+	const limit = Math.min(a.length, b.length);
+	let i = 0;
+	while (i < limit && a[i] === b[i]) i++;
+	return i;
+};
+const withPrompt = ids
+	.map((id) => ({ id, done: exchange(id).done }))
+	.filter((e) => typeof e.done?.prompt === "string");
+const comparisons = withPrompt.slice(1).map((curr, i) => {
+	const prev = withPrompt[i];
+	const shared = sharedPrefix(prev.done.prompt, curr.done.prompt);
+	return { prev, curr, shared, broke: prev.done.prompt.length - shared > TAIL };
+});
+
+if (opts.prefix) {
+	if (withPrompt.length < 2) {
+		process.stderr.write(
+			"llama-wiretap-show: --prefix needs two completed exchanges with a rendered\n" +
+			"prompt — capture against llama.cpp, without --no-render.\n",
+		);
+		process.exit(1);
+	}
+	// One line per snippet: a raw line break would detach it from its label.
+	const flat = (text) => text.replace(/\n/g, "\\n");
+	let breaks = 0;
+	for (const { prev, curr, shared, broke } of comparisons) {
+		if (!broke) {
+			out(`exchange ${curr.id}: keeps the prefix of exchange ${prev.id} ${dim(`(+${curr.done.prompt.length - shared} chars)`)}\n`);
+			continue;
+		}
+		breaks += 1;
+		const kept = Math.floor((shared / prev.done.prompt.length) * 100);
+		out(`${bold(`exchange ${curr.id}: breaks the prefix of exchange ${prev.id}`)} at char ${shared} of ${prev.done.prompt.length} (${kept}% kept)\n`);
+		out(`  shared    ${dim(`…${flat(prev.done.prompt.slice(Math.max(0, shared - 40), shared))}`)}\n`);
+		out(`  ${String(prev.id).padStart(3)} sent  ${flat(prev.done.prompt.slice(shared, shared + 70))}…\n`);
+		out(`  ${String(curr.id).padStart(3)} sent  ${flat(curr.done.prompt.slice(shared, shared + 70))}…\n`);
+	}
+	out(dim(`${withPrompt.length} exchanges, ${breaks} prefix break${breaks === 1 ? "" : "s"}\n`));
+	process.exit(0);
+}
+
 if (opts.list) {
+	const notes = new Map(comparisons.map(({ prev, curr, shared, broke }) => [
+		curr.id,
+		broke
+			? `prefix broke @${Math.floor((shared / prev.done.prompt.length) * 100)}%`
+			: dim("prefix kept"),
+	]));
 	for (const id of ids) {
 		const e = exchange(id);
 		const state = e.done ? `done ${e.done.status}` : (e.failed?.state ?? "in flight");
 		const tokens = e.done?.promptTokens ? `${e.done.promptTokens} prompt tokens` : "";
-		process.stdout.write(`${String(id).padStart(3)}  ${(e.open?.at ?? "").slice(11, 19)}  ${state.padEnd(12)} ${tokens}\n`);
+		const note = notes.has(id) ? `  ${notes.get(id)}` : "";
+		process.stdout.write(`${String(id).padStart(3)}  ${(e.open?.at ?? "").slice(11, 19)}  ${state.padEnd(12)} ${tokens}${note}\n`);
 	}
 	process.exit(0);
 }

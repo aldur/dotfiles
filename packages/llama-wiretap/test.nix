@@ -240,6 +240,43 @@ SESSION
     exercise uds-uds "$work/uds-uds.sock" http://localhost --unix-socket "$work/uds-uds.sock"
     exercise tcp-uds 127.0.0.1:18083 http://127.0.0.1:18083
 
+    echo "=== prefix breaks are visible ==="
+    # Wait until the log holds $2 completed chat exchanges.
+    wait_for_chats() {
+      for _ in $(seq 1 100); do
+        n=$(jq -c 'select(.path == "/v1/chat/completions" and .state == "done")' "$1" | grep -c . || true)
+        if [ "$n" -ge "$2" ]; then return 0; fi
+        sleep 0.1
+      done
+      echo "timed out waiting for $2 completed chats in $1" >&2
+      exit 1
+    }
+
+    # A good turn appends to the thread. The prompts then share their prefix,
+    # up to the re-rendered turn tail.
+    followup=$(jq -c '.messages += [{"role":"assistant","content":"hello"},{"role":"user","content":"NEXTMARK"}]' <<< "$request")
+    # An edited system prompt diverges at the top. Every cached token after
+    # that point is lost.
+    broken=$(jq -c '.messages[0].content = "MUTATEDSYSMARK"' <<< "$followup")
+
+    curl -sS --max-time 10 http://127.0.0.1:18083/v1/chat/completions \
+      -H 'content-type: application/json' -d "$followup" > /dev/null
+    wait_for_chats tcp-uds.jsonl 2
+    curl -sS --max-time 10 http://127.0.0.1:18083/v1/chat/completions \
+      -H 'content-type: application/json' -d "$broken" > /dev/null
+    wait_for_chats tcp-uds.jsonl 3
+
+    audit=$(llama-wiretap-show tcp-uds.jsonl --prefix)
+    printf '%s' "$audit" | grep "keeps the prefix" > /dev/null
+    printf '%s' "$audit" | grep "breaks the prefix" > /dev/null
+    # The divergence snippet names the edit itself.
+    printf '%s' "$audit" | grep "MUTATEDSYSMARK" > /dev/null
+    printf '%s' "$audit" | grep "1 prefix break" > /dev/null
+
+    llama-wiretap-show tcp-uds.jsonl --list | grep "prefix kept" > /dev/null
+    llama-wiretap-show tcp-uds.jsonl --list | grep "prefix broke @" > /dev/null
+    echo "  ✓ prefix audit"
+
     # The transcripts stay in the build log: they carry timestamps and the
     # builder's temporary directory, and copying them into $out would make an
     # otherwise reproducible derivation differ on every run.
