@@ -1,0 +1,57 @@
+diff --git a/index.ts b/index.ts
+index fd5e90c..1dc807b 100644
+--- a/index.ts
++++ b/index.ts
+@@ -130,6 +130,31 @@ function applyTemplateThinkingSupport(model: MutableModelMetadata): void {
+ 	};
+ }
+ 
++// A template that reads reasoning_effort accepts graded levels (for example
++// Qwen 3.8). The official Qwen 3.8 template accepts only low, medium, and
++// xhigh, and raises an exception on other values. Expose those three, map
++// Pi's max to xhigh, and hide the rest.
++const EFFORT_THINKING_LEVEL_MAP = {
++	minimal: null,
++	high: null,
++	max: "xhigh",
++} satisfies NonNullable<LlamaModel["thinkingLevelMap"]>;
++
++// Mark a model as using chat_template_kwargs.reasoning_effort graded control.
++function applyTemplateEffortSupport(model: MutableModelMetadata): void {
++	model.reasoning = true;
++	model.thinkingLevelMap = EFFORT_THINKING_LEVEL_MAP;
++	model.compat = {
++		...model.compat,
++		thinkingFormat: "chat-template",
++		chatTemplateKwargs: {
++			enable_thinking: { $var: "thinking.enabled" },
++			preserve_thinking: true,
++			reasoning_effort: { $var: "thinking.effort", omitWhenOff: true },
++		},
++	};
++}
++
+ // Pi invalidates a captured ctx when the session is replaced (e.g. new_session in
+ // RPC mode). Any later ctx access then throws this error. Background work started
+ // before the replacement should treat it as "session gone" and stop quietly.
+@@ -497,10 +522,17 @@ export default async function (pi: ExtensionAPI) {
+ 				selectedModel.contextWindow = model.contextWindow;
+ 				selectedModel.maxTokens = model.maxTokens;
+ 			}
+-			if (data.chat_template?.includes("enable_thinking") === true) {
+-				applyTemplateThinkingSupport(model);
++			const chatTemplate = data.chat_template ?? "";
++			// Prefer graded reasoning_effort over the boolean enable_thinking.
++			const applyThinkingSupport = chatTemplate.includes("reasoning_effort")
++				? applyTemplateEffortSupport
++				: chatTemplate.includes("enable_thinking")
++					? applyTemplateThinkingSupport
++					: undefined;
++			if (applyThinkingSupport) {
++				applyThinkingSupport(model);
+ 				if (selectedModel) {
+-					applyTemplateThinkingSupport(selectedModel);
++					applyThinkingSupport(selectedModel);
+ 					if (pi.getThinkingLevel() === "off") {
+ 						pi.setThinkingLevel("medium");
+ 					}

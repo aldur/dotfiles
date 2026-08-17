@@ -17,6 +17,13 @@ stdenvNoCC.mkDerivation {
     hash = "sha256-5cTimbW+wLYiAUsqoNUi9AbArrWUR2Mzd+22zkwrTlg=";
   };
 
+  # A chat template that reads reasoning_effort accepts graded thinking
+  # levels (for example Qwen 3.8), but the plugin only sniffs the boolean
+  # enable_thinking and caps the UI at off/medium. Sniff reasoning_effort
+  # too and register Pi's generic "chat-template" format for it.
+  # Drop once merged upstream: https://github.com/huggingface/pi-llama
+  patches = [ ./pi-llama-reasoning-effort.patch ];
+
   # llama.cpp has no output-token cap (generation is bounded only by n_ctx),
   # but the plugin clamps maxTokens to a hardcoded 16384, truncating long
   # thinking-model responses mid-turn. Report the backend's actual bound
