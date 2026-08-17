@@ -288,7 +288,7 @@ EOF
     # `cmd` fails. Here that condition is the correct result.
     for mode in "--full" "_full"; do
         # shellcheck disable=SC2086
-        following=$(agent-log $mode pi.jsonl | grep -A1 "pi-wire-proxy for those" | sed -n 2p)
+        following=$(agent-log $mode pi.jsonl | grep -A1 "llama-wiretap for those" | sed -n 2p)
         if [ -n "$following" ]; then
             echo "$mode: caveat runs into '$following'"
             exit 1

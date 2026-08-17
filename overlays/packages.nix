@@ -74,6 +74,10 @@ final: prev: {
   # pi-llama's job is done by the built-in `llamacpp` provider.
   pi-rust = prev.callPackage ../packages/pi-rust/pi-rust.nix { };
 
+  llama-wiretap = final.callPackage ../packages/llama-wiretap {
+    nodejs-slim = final.nodejs-slim-runtime;
+  };
+
   agent-log = final.callPackage ../packages/agent-log { };
 
   llm-mlx = prev.callPackage ../packages/llm-mlx { };

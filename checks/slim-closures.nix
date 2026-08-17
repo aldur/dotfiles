@@ -45,6 +45,9 @@ let
     llmWithPlugins = 650;
     pi = 650;
     pi-coding-agent = 580;
+    # A node interpreter and one stdlib-only script; it is nodejs-slim-runtime
+    # plus a wrapper, so it inherits that entry's budget.
+    llama-wiretap = 200;
     ripgrep-all = 650;
     # Not uniform drift: ARM chromium is ~40% bigger than x86's (CI
     # measured 1040 there against ~730 here), beyond what archFactor

@@ -1,4 +1,4 @@
-//! The reader for a pi-wire-proxy transcript. The file is the value of
+//! The reader for a llama-wiretap transcript. The file is the value of
 //! `--log`.
 //!
 //! This is not the store of an agent. It is the only record that has the

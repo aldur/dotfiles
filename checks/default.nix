@@ -41,6 +41,7 @@ in
   gpg-encrypt = pkgs.gpg-encrypt.tests.integration;
   taskmd = pkgs.taskmd.tests.version;
   taskmd-ui = pkgs.taskmd-ui.tests.smoke;
+  llama-wiretap = pkgs.llama-wiretap.tests.integration;
   agent-log = pkgs.agent-log.tests.integration;
 
   # The editor's light/full split stays split: both start headless, the heavy

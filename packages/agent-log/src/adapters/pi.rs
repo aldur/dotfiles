@@ -7,7 +7,7 @@
 //! `text`, `thinking`, `toolCall` and `toolResult`.
 //!
 //! A session does not contain the system prompt or the tool definitions. pi
-//! makes them again at each start. Only a pi-wire-proxy transcript has them.
+//! makes them again at each start. Only a llama-wiretap transcript has them.
 
 use serde_json::Value;
 

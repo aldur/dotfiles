@@ -142,7 +142,7 @@ pub fn full(path: &Path, no_tools: bool) -> String {
         // prompt.
         Agent::Pi => Some(
             "A pi session records turns only — no system prompt, tool schemas or \
-             rendered string. Capture through pi-wire-proxy for those.",
+             rendered string. Capture through llama-wiretap for those.",
         ),
         Agent::Codex => Some(
             "The Codex reader is built from the published rollout format and has \

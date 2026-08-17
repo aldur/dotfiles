@@ -126,6 +126,7 @@
               taskmd-ui
               pi # pi-coding-agent bundled with plugins
               pi-rust # Rust port of pi, same wrapper affordances
+              llama-wiretap # records what clients send to llama-server
               agent-log # one picker over claude, pi and codex conversations
               ;
             llm = pkgs.llmWithPlugins;
