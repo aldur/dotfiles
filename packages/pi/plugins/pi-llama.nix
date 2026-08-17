@@ -22,7 +22,10 @@ stdenvNoCC.mkDerivation {
   # enable_thinking and caps the UI at off/medium. Sniff reasoning_effort
   # too and register Pi's generic "chat-template" format for it.
   # Drop once merged upstream: https://github.com/huggingface/pi-llama
-  patches = [ ./pi-llama-reasoning-effort.patch ];
+  patches = [
+    ./pi-llama-reasoning-effort.patch
+    ./pi-llama-startup-discovery.patch
+  ];
 
   # llama.cpp has no output-token cap (generation is bounded only by n_ctx),
   # but the plugin clamps maxTokens to a hardcoded 16384, truncating long

@@ -1,0 +1,21 @@
+diff --git a/index.ts b/index.ts
+index 1dc807b..e7abc46 100644
+--- a/index.ts
++++ b/index.ts
+@@ -599,6 +599,16 @@ export default async function (pi: ExtensionAPI) {
+ 		void discoverModelMetadata(event.model.id, ctx, true, PROPS_TIMEOUT_MS, event.model);
+ 	});
+ 
++	// A model restored at startup emits no model_select. Discovery then waits
++	// for the first request, and thinking stays off until that point. Discover
++	// the active model when the session starts.
++	pi.on("session_start", (_event, ctx) => {
++		const model = ctx.model;
++		if (model?.provider === PROVIDER_ID) {
++			void discoverModelMetadata(model.id, ctx, true, PROPS_TIMEOUT_MS, model);
++		}
++	});
++
+ 	// Discover /props for already-active models because re-selecting them does not emit model_select.
+ 	pi.on("before_provider_request", (event, ctx) => {
+ 		try {
