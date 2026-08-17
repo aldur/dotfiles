@@ -320,6 +320,11 @@ RENDERR
     printf '%s' "$toks" | grep "SYSMARK" > /dev/null
     printf '%s' "$toks" | grep "matches the capture" > /dev/null
     ! printf '%s' "$toks" | grep -q "drifted"
+    # The server target also takes the upstream's socket, or a pasted URL.
+    llama-wiretap-show tcp-uds.jsonl --tokens --id 2 --server "$upstream" \
+      | grep "matches the capture" > /dev/null
+    llama-wiretap-show tcp-uds.jsonl --tokens --id 2 --server "http://127.0.0.1:18083/v1" \
+      | grep "matches the capture" > /dev/null
     echo "  ✓ tokens"
 
     # The transcripts stay in the build log: they carry timestamps and the

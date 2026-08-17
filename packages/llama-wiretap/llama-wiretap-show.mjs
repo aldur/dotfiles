@@ -24,7 +24,8 @@ Usage: llama-wiretap-show [log] [options]
   --prefix       check each rendered prompt against the previous one
   --template     the jinja template the server executed for the exchange
   --tokens       re-tokenize the recorded prompt against a live server
-  --server <t>   the server --tokens asks     (default 127.0.0.1:8080)
+  --server <t>   the server --tokens asks: host:port, a .sock path, or an
+                 http URL                     (default 127.0.0.1:8080)
   --rendered     the literal templated string plus the reply, without the thread
   --full         everything: the thread, the literal string, thinking, answer
   --all          every exchange in the log, not just one
@@ -195,12 +196,18 @@ const templateFor = new Map();
 	}
 }
 
-// The same target rule the proxy follows: host:port, or a .sock path.
+// The same target rule the proxy follows — host:port, or a .sock path —
+// plus a pasted URL, whose scheme and path are noise here.
 function parseTarget(value) {
+	if (!value) {
+		process.stderr.write("llama-wiretap-show: --server needs host:port, a .sock path, or an http URL\n");
+		process.exit(2);
+	}
 	if (value.endsWith(".sock")) return { socketPath: value };
-	const match = /^(.*):(\d+)$/.exec(value);
+	const bare = value.replace(/^https?:\/\//, "").replace(/\/.*$/, "");
+	const match = /^(.*):(\d+)$/.exec(bare);
 	if (!match) {
-		process.stderr.write(`llama-wiretap-show: --server wants host:port or a path ending in .sock, got "${value}"\n`);
+		process.stderr.write(`llama-wiretap-show: --server wants host:port, a path ending in .sock, or an http URL, got "${value}"\n`);
 		process.exit(2);
 	}
 	return { host: match[1].replace(/^\[(.*)\]$/, "$1"), port: Number(match[2]) };
