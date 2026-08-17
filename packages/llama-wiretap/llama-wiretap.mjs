@@ -172,16 +172,28 @@ function get(upstream, path) {
 // One record per template, not per exchange: a template is a few KB and only
 // changes with a model swap or a server restart. The record goes in before
 // the exchange's own "done" record. Thus a reader in file order knows which
-// template each exchange used.
+// template each exchange used. The llama.cpp build is part of the snapshot:
+// tokenizer fixes land in builds, so `--tokens` drift reports can name the
+// build that made the capture.
 const seenTemplates = new Map();
 async function snapshotTemplate(upstream, model) {
 	const path = model ? `/props?model=${encodeURIComponent(model)}&autoload=false` : "/props";
 	const props = await get(upstream, path);
 	if (props.status !== 200) return;
-	const template = asJsonOrText(props.body).json?.chat_template;
-	if (typeof template !== "string" || seenTemplates.get(model ?? "") === template) return;
-	seenTemplates.set(model ?? "", template);
-	write({ at: new Date().toISOString(), state: "template", model: model ?? null, chatTemplate: template });
+	const json = asJsonOrText(props.body).json;
+	const template = json?.chat_template;
+	if (typeof template !== "string") return;
+	const buildInfo = typeof json.build_info === "string" ? json.build_info : undefined;
+	const stamp = `${buildInfo ?? ""} ${template}`;
+	if (seenTemplates.get(model ?? "") === stamp) return;
+	seenTemplates.set(model ?? "", stamp);
+	write({
+		at: new Date().toISOString(),
+		state: "template",
+		model: model ?? null,
+		...(buildInfo ? { buildInfo } : {}),
+		chatTemplate: template,
+	});
 }
 
 const opts = parseArgs(process.argv.slice(2));
@@ -224,7 +236,7 @@ const server = createServer((clientReq, clientRes) => {
 				});
 				upstreamRes.on("end", () => {
 					clientRes.end();
-					void record(id, startedAt, clientReq, reqBody, upstreamRes, Buffer.concat(resChunks));
+					void record(id, clientReq, reqBody, upstreamRes, Buffer.concat(resChunks));
 				});
 			},
 		);
@@ -243,11 +255,13 @@ const server = createServer((clientReq, clientRes) => {
 	});
 });
 
-async function record(id, at, clientReq, reqBody, upstreamRes, resBody) {
+async function record(id, clientReq, reqBody, upstreamRes, resBody) {
 	const request = asJsonOrText(reqBody);
 	const entry = {
 		id,
-		at,
+		// Its own timestamp, not the open one: the distance between the two
+		// records is the latency of the exchange.
+		at: new Date().toISOString(),
 		state: "done",
 		method: clientReq.method,
 		path: clientReq.url,

@@ -12,6 +12,7 @@
 // schemas and control tokens included, and is what actually gets tokenized.
 
 import { readFileSync } from "node:fs";
+import { request as httpRequest } from "node:http";
 
 const USAGE = `llama-wiretap-show — read one exchange out of a llama-wiretap transcript
 
@@ -22,6 +23,8 @@ Usage: llama-wiretap-show [log] [options]
   --list         one line per exchange, with a prefix column when prompts exist
   --prefix       check each rendered prompt against the previous one
   --template     the jinja template the server executed for the exchange
+  --tokens       re-tokenize the recorded prompt against a live server
+  --server <t>   the server --tokens asks     (default 127.0.0.1:8080)
   --rendered     the literal templated string plus the reply, without the thread
   --full         everything: the thread, the literal string, thinking, answer
   --all          every exchange in the log, not just one
@@ -36,9 +39,15 @@ early, and the server computes the whole tail again. The report shows the
 divergence point and both continuations, so the edit that broke the cache
 has a name. A template change between two exchanges is reported with the
 break, because it explains a divergence no message edit accounts for.
+
+--tokens is the only online mode: it asks a live llama-server to tokenize
+the recorded prompt again. The ids are true to the capture while the model
+and the llama.cpp build stay the same. The token count in the record is the
+checksum — a different count means the server drifted since the capture,
+and the report says so.
 `;
 
-const opts = { log: "llama-wire.jsonl", id: undefined, list: false, prefix: false, template: false, raw: false, rendered: false, full: false, all: false };
+const opts = { log: "llama-wire.jsonl", id: undefined, list: false, prefix: false, template: false, tokens: false, server: "127.0.0.1:8080", raw: false, rendered: false, full: false, all: false };
 const argv = process.argv.slice(2);
 for (let i = 0; i < argv.length; i++) {
 	const arg = argv[i];
@@ -46,6 +55,8 @@ for (let i = 0; i < argv.length; i++) {
 	else if (arg === "--list") opts.list = true;
 	else if (arg === "--prefix") opts.prefix = true;
 	else if (arg === "--template") opts.template = true;
+	else if (arg === "--tokens") opts.tokens = true;
+	else if (arg === "--server") opts.server = argv[++i];
 	else if (arg === "--raw") opts.raw = true;
 	else if (arg === "--rendered") opts.rendered = true;
 	else if (arg === "--full") opts.full = true;
@@ -184,6 +195,83 @@ const templateFor = new Map();
 	}
 }
 
+// The same target rule the proxy follows: host:port, or a .sock path.
+function parseTarget(value) {
+	if (value.endsWith(".sock")) return { socketPath: value };
+	const match = /^(.*):(\d+)$/.exec(value);
+	if (!match) {
+		process.stderr.write(`llama-wiretap-show: --server wants host:port or a path ending in .sock, got "${value}"\n`);
+		process.exit(2);
+	}
+	return { host: match[1].replace(/^\[(.*)\]$/, "$1"), port: Number(match[2]) };
+}
+
+function ask(target, path, payload) {
+	return new Promise((resolve, reject) => {
+		const body = payload === undefined ? undefined : JSON.stringify(payload);
+		const req = httpRequest(
+			{
+				...target,
+				path,
+				method: body === undefined ? "GET" : "POST",
+				headers: body === undefined ? {} : { "content-type": "application/json", "content-length": Buffer.byteLength(body) },
+			},
+			(res) => {
+				const chunks = [];
+				res.on("data", (chunk) => chunks.push(chunk));
+				res.on("end", () => {
+					try {
+						resolve(JSON.parse(Buffer.concat(chunks).toString("utf8")));
+					} catch {
+						resolve(undefined);
+					}
+				});
+			},
+		);
+		req.on("error", reject);
+		req.end(body);
+	});
+}
+
+if (opts.tokens) {
+	const id = opts.id ?? [...ids].reverse().find((i) => typeof exchange(i).done?.prompt === "string");
+	const done = id === undefined ? undefined : exchange(id).done;
+	if (typeof done?.prompt !== "string") {
+		process.stderr.write("llama-wiretap-show: no exchange with a rendered prompt to tokenize\n");
+		process.exit(1);
+	}
+	const target = parseTarget(opts.server);
+	let reply;
+	try {
+		// add_special false: the rendered string already carries its special
+		// tokens, and the capture-time count was made the same way.
+		reply = await ask(target, "/tokenize", { content: done.prompt, add_special: false, with_pieces: true });
+	} catch (error) {
+		process.stderr.write(`llama-wiretap-show: cannot reach ${opts.server}: ${error.message}\n`);
+		process.exit(1);
+	}
+	if (!Array.isArray(reply?.tokens)) {
+		process.stderr.write(`llama-wiretap-show: ${opts.server} returned no tokens — is it llama-server?\n`);
+		process.exit(1);
+	}
+	out(`exchange ${id} — ${done.promptTokens ?? "?"} prompt tokens at capture, re-tokenized against ${opts.server}\n`);
+	const drifted = typeof done.promptTokens === "number" && done.promptTokens !== reply.tokens.length;
+	if (drifted) {
+		const capturedOn = templateFor.get(id)?.buildInfo;
+		const serverNow = (await ask(target, "/props").catch(() => undefined))?.build_info;
+		const builds = capturedOn || serverNow ? ` (captured on ${capturedOn ?? "?"}, server is ${serverNow ?? "?"})` : "";
+		out(`${bold(`server drifted since capture: ${done.promptTokens} tokens then, ${reply.tokens.length} now`)}${dim(builds)}\n`);
+	}
+	reply.tokens.forEach((token, index) => {
+		const tokenId = typeof token === "object" && token !== null ? token.id : token;
+		const piece = typeof token === "object" && token !== null ? token.piece : undefined;
+		const shown = typeof piece === "string" ? piece.replace(/\n/g, "\\n") : piece === undefined ? "" : JSON.stringify(piece);
+		out(`${String(index).padStart(6)}  ${String(tokenId).padStart(7)}  ${shown}\n`);
+	});
+	if (!drifted && typeof done.promptTokens === "number") out(dim(`${reply.tokens.length} tokens, matches the capture\n`));
+	process.exit(0);
+}
+
 if (opts.template) {
 	const id = opts.id ?? [...ids].reverse().find((i) => templateFor.get(i));
 	const record = id === undefined ? undefined : templateFor.get(id);
@@ -242,9 +330,10 @@ if (opts.list) {
 	for (const id of ids) {
 		const e = exchange(id);
 		const state = e.done ? `done ${e.done.status}` : (e.failed?.state ?? "in flight");
+		const took = humanMs(duration(e.open, e.done));
 		const tokens = e.done?.promptTokens ? `${e.done.promptTokens} prompt tokens` : "";
 		const note = notes.has(id) ? `  ${notes.get(id)}` : "";
-		process.stdout.write(`${String(id).padStart(3)}  ${(e.open?.at ?? "").slice(11, 19)}  ${state.padEnd(12)} ${tokens}${note}\n`);
+		process.stdout.write(`${String(id).padStart(3)}  ${(e.open?.at ?? "").slice(11, 19)}  ${state.padEnd(12)} ${took.padStart(7)}  ${tokens}${note}\n`);
 	}
 	process.exit(0);
 }
@@ -287,7 +376,9 @@ function label(message, index) {
 }
 
 function deltas(response, field) {
-	if (typeof response !== "string") return "";
+	// A non-streamed response is stored as parsed JSON, with the parts on the
+	// message instead of on deltas.
+	if (typeof response !== "string") return response?.choices?.[0]?.message?.[field] ?? "";
 	return response
 		.split("\n")
 		.filter((line) => line.startsWith("data: {"))
@@ -299,6 +390,50 @@ function deltas(response, field) {
 			}
 		})
 		.join("");
+}
+
+// Tool calls stream as fragments: one delta names the function, the rest
+// append argument text. Rebuild each call by its index.
+function streamToolCalls(response) {
+	if (typeof response !== "string") {
+		return (response?.choices?.[0]?.message?.tool_calls ?? [])
+			.map((call) => ({ name: call.function?.name ?? "?", args: call.function?.arguments ?? "" }));
+	}
+	const calls = [];
+	for (const line of response.split("\n")) {
+		if (!line.startsWith("data: {")) continue;
+		try {
+			for (const fragment of JSON.parse(line.slice(6)).choices?.[0]?.delta?.tool_calls ?? []) {
+				const slot = (calls[fragment.index ?? 0] ??= { name: "", args: "" });
+				if (fragment.function?.name) slot.name += fragment.function.name;
+				if (fragment.function?.arguments) slot.args += fragment.function.arguments;
+			}
+		} catch {
+			// A malformed line does not lose the other calls.
+		}
+	}
+	return calls.filter(Boolean);
+}
+
+// The last chunks of a stream carry the accounting: `usage` when the client
+// asked for it, `timings` from llama-server, and the finish_reason.
+function streamMeta(response) {
+	if (typeof response !== "string") {
+		return { usage: response?.usage, timings: response?.timings, finish: response?.choices?.[0]?.finish_reason ?? undefined };
+	}
+	const meta = { usage: undefined, timings: undefined, finish: undefined };
+	for (const line of response.split("\n")) {
+		if (!line.startsWith("data: {")) continue;
+		try {
+			const event = JSON.parse(line.slice(6));
+			if (event.usage) meta.usage = event.usage;
+			if (event.timings) meta.timings = event.timings;
+			if (event.choices?.[0]?.finish_reason) meta.finish = event.choices[0].finish_reason;
+		} catch {
+			// Skip the malformed line.
+		}
+	}
+	return meta;
 }
 
 
@@ -325,6 +460,20 @@ function show(id) {
 		.filter(([key]) => key !== "messages" && key !== "tools")
 		.map(([key, value]) => `${key} ${value !== null && typeof value === "object" ? JSON.stringify(value) : value}`);
 	if (knobs.length) out(`${dim(knobs.join(" · "))}\n`);
+
+	if (done) {
+		const meta = streamMeta(done.response);
+		const stats = [];
+		const took = duration(open, done);
+		if (took !== undefined) stats.push(humanMs(took));
+		if (meta.usage?.completion_tokens !== undefined) stats.push(`${meta.usage.completion_tokens} completion tokens`);
+		if (typeof meta.timings?.predicted_per_second === "number") stats.push(`${meta.timings.predicted_per_second.toFixed(1)} tok/s`);
+		if (meta.finish && meta.finish !== "length") stats.push(`finish ${meta.finish}`);
+		if (stats.length) out(`${dim(stats.join(" · "))}\n`);
+		// "length" is a silent truncation, not an answer. Say it loudly.
+		if (meta.finish === "length") out(`${bold("finish length — the reply hit the token ceiling and was cut off")}\n`);
+	}
+	if (record.renderError) out(`${bold("prompt render failed")}: ${record.renderError}\n`);
 
 	// The rendered string already contains the whole thread inline, so showing
 	// the structured messages beside it is duplication unless asked for.
@@ -359,7 +508,10 @@ function show(id) {
 
 	if (done) {
 		out(section("THINKING", deltas(done.response, "reasoning_content")));
-		out(section("ANSWER", deltas(done.response, "content")));
+		// An agent turn is frequently a tool call with no prose at all; the
+		// calls belong in the answer, as on the request side.
+		const calls = streamToolCalls(done.response).map((call) => `→ ${call.name}(${call.args})`);
+		out(section("ANSWER", [deltas(done.response, "content"), ...calls].filter(Boolean).join("\n")));
 	} else {
 		// Nothing came back yet. Say so rather than printing two empty sections
 		// that read like the model answered with silence.

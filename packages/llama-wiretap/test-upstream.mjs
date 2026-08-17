@@ -31,7 +31,7 @@ createServer((req, res) => {
 			// asked for the right one and dedups per model.
 			const model = new URL(req.url, "http://upstream").searchParams.get("model") ?? "default";
 			res.writeHead(200, { "content-type": "application/json" });
-			res.end(JSON.stringify({ chat_template: `TEMPLATEMARK-${model} {{ messages }}` }));
+			res.end(JSON.stringify({ chat_template: `TEMPLATEMARK-${model} {{ messages }}`, build_info: "b0-test" }));
 			return;
 		}
 		if (req.url === "/apply-template") {
@@ -40,8 +40,11 @@ createServer((req, res) => {
 			return;
 		}
 		if (req.url === "/tokenize") {
+			const words = tokenize(payload.content);
 			res.writeHead(200, { "content-type": "application/json" });
-			res.end(JSON.stringify({ tokens: tokenize(payload.content).map((_, i) => i + 1) }));
+			res.end(JSON.stringify({
+				tokens: payload.with_pieces ? words.map((piece, i) => ({ id: i + 1, piece })) : words.map((_, i) => i + 1),
+			}));
 			return;
 		}
 		if (req.url === "/v1/chat/completions") {
@@ -54,7 +57,12 @@ createServer((req, res) => {
 				for (const word of ["he", "llo"]) {
 					res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: word } }] })}\n\n`);
 				}
-				res.write(`data: ${JSON.stringify({ usage: { prompt_tokens: promptTokens } })}\n\n`);
+				// A tool call streams in fragments: the name first, then the
+				// argument text. The reader has to reassemble them.
+				res.write(`data: ${JSON.stringify({ choices: [{ delta: { tool_calls: [{ index: 0, function: { name: "STREAMTOOLMARK", arguments: '{"x"' } }] } }] })}\n\n`);
+				res.write(`data: ${JSON.stringify({ choices: [{ delta: { tool_calls: [{ index: 0, function: { arguments: ":1}" } }] } }] })}\n\n`);
+				res.write(`data: ${JSON.stringify({ choices: [{ delta: {}, finish_reason: "stop" }] })}\n\n`);
+				res.write(`data: ${JSON.stringify({ usage: { prompt_tokens: promptTokens, completion_tokens: 7 }, timings: { predicted_per_second: 42.5 } })}\n\n`);
 				res.end("data: [DONE]\n\n");
 				return;
 			}

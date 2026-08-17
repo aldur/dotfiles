@@ -119,6 +119,10 @@ stdenvNoCC.mkDerivation {
       shown=$(llama-wiretap-show "$log")
       # The sampling knobs print with the exchange.
       printf '%s' "$shown" | grep -- "model m · stream true" > /dev/null
+      # The accounting from the stream: latency, size, speed, finish reason.
+      printf '%s' "$shown" | grep -E "(ms|[0-9]s) · 7 completion tokens · 42.5 tok/s · finish stop" > /dev/null
+      # The model's tool call, reassembled from its streamed fragments.
+      printf '%s' "$shown" | grep -F -- '→ STREAMTOOLMARK({"x":1})' > /dev/null
       printf '%s' "$shown" | grep -- "1. SYSTEM" > /dev/null
       printf '%s' "$shown" | grep "SYSMARK" > /dev/null
       printf '%s' "$shown" | grep "USERMARK" > /dev/null
@@ -287,6 +291,8 @@ SESSION
     # Three chat exchanges, two models: one snapshot per template, not per
     # exchange.
     test "$(jq -r 'select(.state == "template") | .model' tcp-uds.jsonl | paste -sd, -)" = "m,m2"
+    # The snapshot stamps the llama.cpp build, for the drift reports.
+    test "$(jq -r 'select(.state == "template") | .buildInfo' tcp-uds.jsonl | sort -u)" = "b0-test"
     # The reader assigns each exchange the template in effect for it.
     tpl=$(llama-wiretap-show tcp-uds.jsonl --template)
     printf '%s' "$tpl" | grep -- "── CHAT TEMPLATE" > /dev/null
@@ -297,6 +303,24 @@ SESSION
     # The template kwargs print as a knob on their exchange.
     llama-wiretap-show tcp-uds.jsonl --id 3 | grep 'chat_template_kwargs {"reasoning_effort":"medium"}' > /dev/null
     echo "  ✓ knobs"
+
+    echo "=== a failed render says so ==="
+    cat > render-error.jsonl <<'RENDERR'
+{"id":1,"at":"2026-08-17T12:00:00.000Z","state":"open","method":"POST","path":"/v1/chat/completions","request":{"messages":[{"role":"user","content":"hi"}]}}
+{"id":1,"at":"2026-08-17T12:00:01.000Z","state":"done","method":"POST","path":"/v1/chat/completions","status":200,"request":{"messages":[{"role":"user","content":"hi"}]},"response":"data: [DONE]\n\n","renderError":"Error: ECONNREFUSED"}
+RENDERR
+    llama-wiretap-show render-error.jsonl | grep "prompt render failed" | grep ECONNREFUSED > /dev/null
+    echo "  ✓ render error"
+
+    echo "=== --tokens re-tokenizes against a live server ==="
+    # Through the proxy on purpose: /tokenize is passthrough traffic, and the
+    # exchange it logs must not disturb the analyses above.
+    toks=$(llama-wiretap-show tcp-uds.jsonl --tokens --id 2 --server 127.0.0.1:18083)
+    printf '%s' "$toks" | grep "re-tokenized against 127.0.0.1:18083" > /dev/null
+    printf '%s' "$toks" | grep "SYSMARK" > /dev/null
+    printf '%s' "$toks" | grep "matches the capture" > /dev/null
+    ! printf '%s' "$toks" | grep -q "drifted"
+    echo "  ✓ tokens"
 
     # The transcripts stay in the build log: they carry timestamps and the
     # builder's temporary directory, and copying them into $out would make an
