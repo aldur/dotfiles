@@ -256,8 +256,9 @@ SESSION
     # up to the re-rendered turn tail.
     followup=$(jq -c '.messages += [{"role":"assistant","content":"hello"},{"role":"user","content":"NEXTMARK"}]' <<< "$request")
     # An edited system prompt diverges at the top. Every cached token after
-    # that point is lost.
-    broken=$(jq -c '.messages[0].content = "MUTATEDSYSMARK"' <<< "$followup")
+    # that point is lost. The model also changes, so the break comes with a
+    # template swap for the audit to name.
+    broken=$(jq -c '.messages[0].content = "MUTATEDSYSMARK" | .model = "m2"' <<< "$followup")
 
     curl -sS --max-time 10 http://127.0.0.1:18083/v1/chat/completions \
       -H 'content-type: application/json' -d "$followup" > /dev/null
@@ -272,10 +273,23 @@ SESSION
     # The divergence snippet names the edit itself.
     printf '%s' "$audit" | grep "MUTATEDSYSMARK" > /dev/null
     printf '%s' "$audit" | grep "1 prefix break" > /dev/null
+    # The break came with a model swap; the audit says so.
+    printf '%s' "$audit" | grep -- "template changed here: m -> m2" > /dev/null
 
     llama-wiretap-show tcp-uds.jsonl --list | grep "prefix kept" > /dev/null
     llama-wiretap-show tcp-uds.jsonl --list | grep "prefix broke @" > /dev/null
     echo "  ✓ prefix audit"
+
+    echo "=== the template travels with the transcript ==="
+    # Three chat exchanges, two models: one snapshot per template, not per
+    # exchange.
+    test "$(jq -r 'select(.state == "template") | .model' tcp-uds.jsonl | paste -sd, -)" = "m,m2"
+    # The reader assigns each exchange the template in effect for it.
+    tpl=$(llama-wiretap-show tcp-uds.jsonl --template)
+    printf '%s' "$tpl" | grep -- "── CHAT TEMPLATE" > /dev/null
+    printf '%s' "$tpl" | grep "TEMPLATEMARK-m2" > /dev/null
+    llama-wiretap-show tcp-uds.jsonl --template --id 2 | grep "TEMPLATEMARK-m " > /dev/null
+    echo "  ✓ template snapshot"
 
     # The transcripts stay in the build log: they carry timestamps and the
     # builder's temporary directory, and copying them into $out would make an

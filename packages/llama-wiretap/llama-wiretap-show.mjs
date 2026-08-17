@@ -21,6 +21,7 @@ Usage: llama-wiretap-show [log] [options]
   --id <n>       a specific exchange     (default: the last completed one)
   --list         one line per exchange, with a prefix column when prompts exist
   --prefix       check each rendered prompt against the previous one
+  --template     the jinja template the server executed for the exchange
   --rendered     the literal templated string plus the reply, without the thread
   --full         everything: the thread, the literal string, thinking, answer
   --all          every exchange in the log, not just one
@@ -33,16 +34,18 @@ part. When the harness edits the history — a changed system prompt,
 compaction, a template that strips old reasoning — the prompts diverge
 early, and the server computes the whole tail again. The report shows the
 divergence point and both continuations, so the edit that broke the cache
-has a name.
+has a name. A template change between two exchanges is reported with the
+break, because it explains a divergence no message edit accounts for.
 `;
 
-const opts = { log: "llama-wire.jsonl", id: undefined, list: false, prefix: false, raw: false, rendered: false, full: false, all: false };
+const opts = { log: "llama-wire.jsonl", id: undefined, list: false, prefix: false, template: false, raw: false, rendered: false, full: false, all: false };
 const argv = process.argv.slice(2);
 for (let i = 0; i < argv.length; i++) {
 	const arg = argv[i];
 	if (arg === "--help" || arg === "-h") { process.stdout.write(USAGE); process.exit(0); }
 	else if (arg === "--list") opts.list = true;
 	else if (arg === "--prefix") opts.prefix = true;
+	else if (arg === "--template") opts.template = true;
 	else if (arg === "--raw") opts.raw = true;
 	else if (arg === "--rendered") opts.rendered = true;
 	else if (arg === "--full") opts.full = true;
@@ -169,6 +172,33 @@ const comparisons = withPrompt.slice(1).map((curr, i) => {
 	return { prev, curr, shared, broke: prev.done.prompt.length - shared > TAIL };
 });
 
+// The template in effect for each exchange. The proxy writes a template
+// record before the "done" record of the exchange that saw it change, so
+// file order gives the assignment.
+const templateFor = new Map();
+{
+	let current;
+	for (const r of records) {
+		if (r.state === "template") current = r;
+		else if (isCompletion(r) && r.state === "done" && !templateFor.has(r.id)) templateFor.set(r.id, current);
+	}
+}
+
+if (opts.template) {
+	const id = opts.id ?? [...ids].reverse().find((i) => templateFor.get(i));
+	const record = id === undefined ? undefined : templateFor.get(id);
+	if (!record) {
+		process.stderr.write(
+			"llama-wiretap-show: no template record — capture against llama.cpp,\n" +
+			"without --no-render.\n",
+		);
+		process.exit(1);
+	}
+	out(`exchange ${id} — template for ${record.model ?? "the loaded model"}, captured ${record.at}\n`);
+	out(section("CHAT TEMPLATE (jinja, what /apply-template executed)", record.chatTemplate));
+	process.exit(0);
+}
+
 if (opts.prefix) {
 	if (withPrompt.length < 2) {
 		process.stderr.write(
@@ -188,6 +218,12 @@ if (opts.prefix) {
 		breaks += 1;
 		const kept = Math.floor((shared / prev.done.prompt.length) * 100);
 		out(`${bold(`exchange ${curr.id}: breaks the prefix of exchange ${prev.id}`)} at char ${shared} of ${prev.done.prompt.length} (${kept}% kept)\n`);
+		const prevTemplate = templateFor.get(prev.id);
+		const currTemplate = templateFor.get(curr.id);
+		if (currTemplate && currTemplate !== prevTemplate) {
+			const swap = prevTemplate?.model !== currTemplate.model ? `: ${prevTemplate?.model ?? "?"} -> ${currTemplate.model ?? "?"}` : "";
+			out(`  ${bold("template changed here")}${swap}\n`);
+		}
 		out(`  shared    ${dim(`…${flat(prev.done.prompt.slice(Math.max(0, shared - 40), shared))}`)}\n`);
 		out(`  ${String(prev.id).padStart(3)} sent  ${flat(prev.done.prompt.slice(shared, shared + 70))}…\n`);
 		out(`  ${String(curr.id).padStart(3)} sent  ${flat(curr.done.prompt.slice(shared, shared + 70))}…\n`);

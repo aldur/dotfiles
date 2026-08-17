@@ -16,6 +16,10 @@
 // and tools were sent; the template decides how tool schemas are serialised
 // into the system block and where the reasoning prefill lands, and that is
 // what the model tokenizes.
+//
+// A `template` record snapshots the upstream's chat_template from /props —
+// once per model, and again when it changes. Thus an archived transcript
+// also carries the template source that made its prompts.
 
 import { createServer, request as httpRequest } from "node:http";
 import { chmodSync, appendFileSync, unlinkSync, statSync } from "node:fs";
@@ -28,7 +32,7 @@ Usage: llama-wiretap [options]
   --listen <target>    accept connections on <target>  (default 127.0.0.1:8080)
   --upstream <target>  forward to <target>             (default 127.0.0.1:8081)
   --log <file>         JSONL transcript                (default ./llama-wire.jsonl)
-  --no-render          skip the /apply-template lookup of the real prompt
+  --no-render          skip the /apply-template and /props lookups
   --no-redact          keep Authorization/API-key headers in the log
   --help
 
@@ -153,6 +157,33 @@ function once(upstream, path, body) {
 	});
 }
 
+function get(upstream, path) {
+	return new Promise((resolve, reject) => {
+		const req = httpRequest({ ...upstream, path, method: "GET" }, (res) => {
+			const chunks = [];
+			res.on("data", (chunk) => chunks.push(chunk));
+			res.on("end", () => resolve({ status: res.statusCode, body: Buffer.concat(chunks) }));
+		});
+		req.on("error", reject);
+		req.end();
+	});
+}
+
+// One record per template, not per exchange: a template is a few KB and only
+// changes with a model swap or a server restart. The record goes in before
+// the exchange's own "done" record. Thus a reader in file order knows which
+// template each exchange used.
+const seenTemplates = new Map();
+async function snapshotTemplate(upstream, model) {
+	const path = model ? `/props?model=${encodeURIComponent(model)}&autoload=false` : "/props";
+	const props = await get(upstream, path);
+	if (props.status !== 200) return;
+	const template = asJsonOrText(props.body).json?.chat_template;
+	if (typeof template !== "string" || seenTemplates.get(model ?? "") === template) return;
+	seenTemplates.set(model ?? "", template);
+	write({ at: new Date().toISOString(), state: "template", model: model ?? null, chatTemplate: template });
+}
+
 const opts = parseArgs(process.argv.slice(2));
 const listen = parseTarget(opts.listen, "--listen");
 const upstream = parseTarget(opts.upstream, "--upstream");
@@ -233,6 +264,12 @@ async function record(id, at, clientReq, reqBody, upstreamRes, resBody) {
 			if (rendered) Object.assign(entry, rendered);
 		} catch (error) {
 			entry.renderError = String(error);
+		}
+		try {
+			await snapshotTemplate(upstream, request.json.model);
+		} catch {
+			// A non-llama.cpp upstream has no /props. The exchange record
+			// stands on its own.
 		}
 	}
 	write(entry);

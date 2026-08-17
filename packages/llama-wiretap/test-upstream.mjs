@@ -26,6 +26,14 @@ createServer((req, res) => {
 		const body = Buffer.concat(chunks).toString("utf8");
 		const payload = body ? JSON.parse(body) : {};
 
+		if (req.url.startsWith("/props")) {
+			// The template names the model, so the test can see that the proxy
+			// asked for the right one and dedups per model.
+			const model = new URL(req.url, "http://upstream").searchParams.get("model") ?? "default";
+			res.writeHead(200, { "content-type": "application/json" });
+			res.end(JSON.stringify({ chat_template: `TEMPLATEMARK-${model} {{ messages }}` }));
+			return;
+		}
 		if (req.url === "/apply-template") {
 			res.writeHead(200, { "content-type": "application/json" });
 			res.end(JSON.stringify({ prompt: render(payload) }));
