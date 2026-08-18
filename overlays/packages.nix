@@ -91,7 +91,7 @@ final: prev: {
       ps.llm-docs
       ps.llm-llama-server
     ]
-    ++ prev.lib.optional (prev.stdenv.isDarwin && prev.stdenv.isAarch64) final.llm-mlx
+    ++ prev.lib.optional (prev.stdenv.hostPlatform.isDarwin && prev.stdenv.hostPlatform.isAarch64) final.llm-mlx
   );
 
   markdownlint-cli2 = final.callPackage ../packages/markdownlint-cli2 {

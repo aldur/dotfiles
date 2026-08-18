@@ -6,7 +6,7 @@
   # Language servers, formatters and their toolchains live in categories, so
   # `lazyvim-light` stays actually light (see `allCategories` in ./lazyvim.nix).
   general =
-    lib.optionals pkgs.stdenv.isLinux [
+    lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       # Fixes the following:
       # `libuv-watchdirs has known performance issues. Consider installing inotify-tools.`
       inotify-tools

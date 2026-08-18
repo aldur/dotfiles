@@ -85,7 +85,7 @@ buildPythonPackage rec {
     cp -r "$libdir/lib" "$out/${python.sitePackages}/mlx/"
   '';
 
-  postFixup = lib.optionalString stdenv.isDarwin ''
+  postFixup = lib.optionalString stdenv.hostPlatform.isDarwin ''
     libdir="$out/${python.sitePackages}/mlx"
 
     if [ -f "$libdir/lib/libmlx.dylib" ]; then
@@ -132,6 +132,6 @@ buildPythonPackage rec {
 
   meta = {
     platforms = lib.platforms.darwin;
-    broken = !stdenv.isDarwin || !stdenv.isAarch64;
+    broken = !stdenv.hostPlatform.isDarwin || !stdenv.hostPlatform.isAarch64;
   };
 }

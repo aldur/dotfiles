@@ -60,7 +60,7 @@ in
   lua-format = pkgs.callPackage ./lua-format.nix { };
 
 }
-// pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+// pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
   # Budgets and forbidden-path guards for every derivation the flake
   # exports, discovered rather than enumerated so nothing is forgotten
   # (see overlays/slim.nix for why silent regressions are the risk).

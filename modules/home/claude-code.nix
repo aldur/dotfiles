@@ -268,9 +268,9 @@ in
       shellAliases = lib.optionalAttrs enabled {
         claude-yolo =
           let
-            needsPathPrefix = if pkgs.stdenv.isDarwin then true else osConfig.programs.nix-ld.enable;
+            needsPathPrefix = if pkgs.stdenv.hostPlatform.isDarwin then true else osConfig.programs.nix-ld.enable;
             pathPrefix = lib.optionalString needsPathPrefix "PATH=~/.local/bin/:$PATH ";
-            sandboxPrefix = lib.optionalString (sandbox && pkgs.stdenv.isLinux) "${claude-bwrap} ";
+            sandboxPrefix = lib.optionalString (sandbox && pkgs.stdenv.hostPlatform.isLinux) "${claude-bwrap} ";
           in
           "${claude-trust-cwd}; ${pathPrefix}IS_SANDBOX=1 CLAUBBIT=1 DISABLE_TELEMETRY=1 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 ${sandboxPrefix}claude --dangerously-skip-permissions";
       };

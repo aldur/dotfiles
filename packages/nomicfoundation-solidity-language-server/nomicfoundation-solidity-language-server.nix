@@ -36,7 +36,7 @@ withoutNpmBuildResidue (
       pkg-config
     ]
     # https://github.com/NixOS/nixpkgs/pull/451937/files
-    ++ lib.optionals stdenv.isDarwin [ clang_20 ];
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [ clang_20 ];
 
     buildInputs = [ libsecret ];
 

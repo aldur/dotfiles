@@ -131,14 +131,14 @@
               ;
             llm = pkgs.llmWithPlugins;
           }
-          // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
+          // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
             inherit (pkgs) uvc-util c920-defaults;
           }
-          // pkgs.lib.optionalAttrs (pkgs.stdenv.isDarwin && pkgs.stdenv.isAarch64) {
+          // pkgs.lib.optionalAttrs (pkgs.stdenv.hostPlatform.isDarwin && pkgs.stdenv.hostPlatform.isAarch64) {
             inherit (pkgs) llm-mlx;
             mlx = pkgs.python3.pkgs.mlx;
           }
-          // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+          // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
             inherit (pkgs) faraday;
           };
         in

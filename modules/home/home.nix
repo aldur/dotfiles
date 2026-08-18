@@ -44,7 +44,7 @@ let
     ]
     # The Linux counterpart of the darwin `faraday` shell alias
     # (sandbox-exec based, see modules/darwin/home.nix).
-    ++ lib.optionals stdenv.isLinux [ faraday ]
+    ++ lib.optionals stdenv.hostPlatform.isLinux [ faraday ]
     ++ lib.optionals (
       osConfig.programs.aldur.claude-code.enable
       || osConfig.programs.aldur.codex.enable
@@ -386,7 +386,7 @@ in
             # hash silently does nothing. tcopy uses OSC 52 instead, which tmux
             # forwards to the outer terminal (`set-clipboard on`). Darwin keeps
             # the native pbcopy path. lazygit shell-quotes {{text}} itself.
-            lib.optionalAttrs pkgs.stdenv.isLinux {
+            lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
               copyToClipboardCmd = "${lib.getExe pkgs.tcopy} -- {{text}}";
             };
       };
@@ -479,7 +479,7 @@ in
   # atuin's daemon (as of 18.10) bind()s its unix socket without unlink()-ing
   # a stale one first, so launchd's KeepAlive crash-loops with EADDRINUSE
   # after any unclean shutdown. Strip the leftover socket before exec.
-  launchd.agents = lib.mkIf (pkgs.stdenv.isDarwin && config.programs.atuin.enable) {
+  launchd.agents = lib.mkIf (pkgs.stdenv.hostPlatform.isDarwin && config.programs.atuin.enable) {
     atuin-daemon.config.ProgramArguments = lib.mkForce [
       "/bin/sh"
       "-c"
@@ -500,7 +500,7 @@ in
       # Linux mirror of the darwin `sandbox` alias (see
       # modules/darwin/home.nix): no network, personal directories hidden.
       # `faraday --mask` skips directories that don't exist on this machine.
-      lib.optionalAttrs pkgs.stdenv.isLinux {
+      lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
         sandbox = "faraday --mask ~/Documents --mask ~/Desktop --mask ~/Developer --mask ~/Movies --mask ~/Music --mask ~/Pictures";
       }
     //

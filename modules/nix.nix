@@ -37,7 +37,7 @@ in
         let
           # The branch this system is actually built from — the darwin
           # binary cache covers nixpkgs-darwin revs, not nixos ones.
-          base = if pkgs.stdenv.isDarwin then inputs.nixpkgs-darwin else inputs.nixpkgs;
+          base = if pkgs.stdenv.hostPlatform.isDarwin then inputs.nixpkgs-darwin else inputs.nixpkgs;
         in
         {
           type = "github";

@@ -16,7 +16,7 @@ stdenv.mkDerivation {
     hash = "sha256-deE9zmr+nxEF1tBQAspIR6Uf6lwACfPR+OCK0HvA9Lw=";
   };
 
-  buildInputs = lib.optionals stdenv.isDarwin [
+  buildInputs = lib.optionals stdenv.hostPlatform.isDarwin [
     apple-sdk_15
   ];
 

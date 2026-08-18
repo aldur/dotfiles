@@ -38,7 +38,7 @@ in
       sandbox = {
         enable = mkOption {
           type = types.bool;
-          default = pkgs.stdenv.isLinux;
+          default = pkgs.stdenv.hostPlatform.isLinux;
           description = ''
             On Linux, wrap claude-yolo in bubblewrap to shadow `tmux` and `ssh`
             sockets, providing _a layer of defense_ against a rogue `claude-code`
