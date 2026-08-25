@@ -450,7 +450,10 @@ in
       in
       {
         enable = true;
-        fileWidgetCommand = ''${fd} --hidden --follow --no-require-git --exclude .git --exclude .direnv . "$dir" | ${sed} "s|^\./||"'';
+        # home-manager puts this raw inside `export FZF_CTRL_T_COMMAND="..."`.
+        # Escape the inner quotes and `$dir`, or the pipes leak out as
+        # shell operators and break `hm-session-vars` at source time.
+        fileWidgetCommand = "${fd} --hidden --follow --no-require-git --exclude .git --exclude .direnv . \\\"\\$dir\\\" | ${sed} 's|^\\./||'";
       };
 
     tmux = (import ../shared/programs/tmux.nix { inherit lib; }) // {
