@@ -78,11 +78,12 @@ buildPythonPackage rec {
     fixDarwinDylibNames
   ];
 
-  # After pip installs the mlx wheel, extract mlx_metal and copy its lib directory
-  # NOTE: This is not copying any other file, e.g. headers.
+  # After pip installs the mlx wheel, copy lib/ and include/ from mlx_metal.
+  # The runtime loads lib/ (libmlx.dylib, mlx.metallib). Native extensions,
+  # for example the mtplx paged-attention module, compile against include/.
   postInstall = ''
-    libdir=${mlx_metal}/${python.sitePackages}/mlx
-    cp -r "$libdir/lib" "$out/${python.sitePackages}/mlx/"
+    metaldir=${mlx_metal}/${python.sitePackages}/mlx
+    cp -r "$metaldir/lib" "$metaldir/include" "$out/${python.sitePackages}/mlx/"
   '';
 
   postFixup = lib.optionalString stdenv.hostPlatform.isDarwin ''
@@ -107,8 +108,9 @@ buildPythonPackage rec {
 
   # The mlx wheel declares a runtime dependency on `mlx-metal`, which we don't
   # install as a separate Python package (both wheels would collide on the
-  # `mlx/` namespace). Instead its `lib/` is vendored in via postInstall above,
-  # so the runtime-deps check has nothing to find and would fail spuriously.
+  # `mlx/` namespace). Instead its `lib/` and `include/` are vendored in via
+  # postInstall above, so the runtime-deps check has nothing to find and would
+  # fail spuriously.
   dontCheckRuntimeDeps = true;
 
   pythonImportsCheck = [
