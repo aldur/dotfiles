@@ -28,7 +28,7 @@ With no PATH, picks among conversations whose cwd is the current directory.
 
 Options:
   --all             Every project, not just the current directory
-  --agent <name>    Only claude, pi, codex or wire
+  --agent <name>    Only claude, pi or codex
   --newest          Skip the picker; take the most recent match
   --full            Print the whole conversation and exit
   --turn <n>        Print the nth turn and exit (negative counts from the end)
@@ -219,9 +219,6 @@ fn collect_sessions(opts: &Options, cwd: &Path) -> Vec<model::Session> {
     let mut sessions = scan::summarize_all(&paths, opts.agent);
     if !opts.all {
         let here = cwd.to_string_lossy().to_string();
-        // A proxy transcript records no working directory. Thus it is only
-        // available with `--all`. Do not connect it to the current
-        // directory.
         sessions.retain(|s| s.cwd == here);
     }
     for session in &mut sessions {
@@ -275,9 +272,14 @@ fn turn_rows(path: &Path, no_tools: bool) -> Vec<(String, String)> {
                 k if k.contains("user") => style::user,
                 k if k.contains("thinking") => style::thinking,
                 k if k.contains("tool_result") || k.contains("tool result") => style::result,
-                k if k.contains("tool") || k.contains("flight") => style::tool,
+                k if k.contains("tool") => style::tool,
                 _ => style::assistant,
             };
+            // Show the start of the text bright and the remainder dim. fzf
+            // searches only the visible fields, thus the full text must stay
+            // in the row.
+            let shown = model::truncate(&t.text, 200);
+            let rest = t.text[shown.len()..].to_string();
             (
                 t.key.clone(),
                 format!(
@@ -285,8 +287,8 @@ fn turn_rows(path: &Path, no_tools: bool) -> Vec<(String, String)> {
                     t.key,
                     colour(&format!("{:<14}", model::truncate(&t.kind, 14))),
                     style::dim(&format!("{:>8}", t.time)),
-                    t.label,
-                    style::dim(&t.text)
+                    shown,
+                    style::dim(&rest)
                 ),
             )
         })

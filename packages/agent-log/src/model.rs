@@ -7,18 +7,15 @@
 
 /// One turn: a single user message, assistant reply, tool call or tool result.
 pub struct Turn {
-    /// The address of the turn in its file. Most formats use a line number.
-    /// A proxy transcript uses an exchange id. Only the adapter reads it.
+    /// The address of the turn in its file: the number of its line. Only the
+    /// adapter reads it.
     pub key: String,
     /// For example `user`, `assistant`, `thinking` or `tool: bash`.
     /// The value is free text, because the agents use different names.
     pub kind: String,
     /// The time as HH:MM:SS. The value is empty if the record has no time.
     pub time: String,
-    /// The single line that the picker shows.
-    pub label: String,
-    /// The full turn on one line. The search uses this text. The label is
-    /// only for display.
+    /// The full turn on one line. The picker row and the search use it.
     pub text: String,
 }
 
@@ -28,7 +25,7 @@ pub struct Session {
     /// The name that the agent gives to the conversation. A resume command
     /// takes this value. If the format records no name, use the file stem.
     pub id: String,
-    /// `claude`, `pi`, `codex`, `wire`.
+    /// `claude`, `pi`, `codex`.
     pub agent: &'static str,
     /// The working directory of the conversation, if the format records it.
     /// The picker uses it to show only the sessions of the current project.

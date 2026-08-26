@@ -8,7 +8,7 @@
 
 use serde_json::Value;
 
-use crate::model::{flatten, truncate, Session, Turn};
+use crate::model::{flatten, Session, Turn};
 use crate::style;
 
 use super::{clock, parse_timestamp};
@@ -180,7 +180,6 @@ pub fn turns(records: &[Value], no_tools: bool) -> Vec<Turn> {
             key: (index + 1).to_string(),
             kind,
             time: clock(record.get("timestamp").and_then(Value::as_str).unwrap_or("")),
-            label: truncate(&text, 200),
             text,
         });
     }

@@ -42,12 +42,6 @@ EOF
 {"timestamp":"2026-08-10T12:00:06.000Z","type":"response_item","payload":{"type":"message","role":"assistant","content":[{"type":"output_text","text":"CODEXANSWERMARK"}]}}
 EOF
 
-    cat > wire.jsonl <<'EOF'
-{"id":1,"at":"2026-08-10T13:00:00.000Z","state":"open","method":"POST","path":"/v1/chat/completions","request":{"model":"WIREMODELMARK","messages":[{"role":"system","content":"WIRESYSMARK"},{"role":"user","content":"WIREUSERMARK"}]}}
-{"id":1,"at":"2026-08-10T13:00:00.000Z","state":"done","method":"POST","path":"/v1/chat/completions","status":200,"request":{"model":"WIREMODELMARK","messages":[{"role":"system","content":"WIRESYSMARK"},{"role":"user","content":"WIREUSERMARK"}]},"response":"data: {\"choices\":[{\"delta\":{\"reasoning_content\":\"WIRETHINKMARK\"}}]}\n\ndata: {\"choices\":[{\"delta\":{\"content\":\"WIREANSWERMARK\"}}]}\n\ndata: [DONE]\n\n","prompt":"WIRERENDEREDMARK","promptTokens":42}
-{"id":2,"at":"2026-08-10T13:05:00.000Z","state":"open","method":"POST","path":"/v1/chat/completions","request":{"messages":[{"role":"user","content":"WIRESTALLEDMARK"}]}}
-EOF
-
     check() {
         local file="$1"; shift
         local out
@@ -69,23 +63,6 @@ EOF
     check codex.jsonl CODEXMODELMARK CODEXUSERMARK CODEXTHINKMARK CODEXTOOLMARK CODEXANSWERMARK CODEXRESULTMARK
     agent-log --full codex.jsonl | grep "not been checked against a real session" > /dev/null
     echo "  ✓ codex"
-    check wire.jsonl WIRESYSMARK WIREUSERMARK
-    # An exchange contains a full conversation and a sequence of parts. Thus
-    # the reader makes it again, and does not use the line for the search.
-    wire=$(agent-log _show 1 wire.jsonl --color=always)
-    printf '%s' "$wire" | grep -- "▌ done 200" > /dev/null
-    printf '%s' "$wire" | grep -- "▌ system" > /dev/null
-    printf '%s' "$wire" | grep -- "▌ user" > /dev/null
-    printf '%s' "$wire" | grep -- "▌ thinking" > /dev/null
-    printf '%s' "$wire" | grep "WIRETHINKMARK" > /dev/null
-    printf '%s' "$wire" | grep -- "▌ answer" > /dev/null
-    printf '%s' "$wire" | grep "WIREANSWERMARK" > /dev/null
-    printf '%s' "$wire" | grep "42 prompt tokens" > /dev/null
-    # An exchange without a response shows a message, and not an empty
-    # answer.
-    agent-log _show 2 wire.jsonl | grep "No response recorded" > /dev/null
-    echo "  ✓ wire"
-
     echo "=== turn addressing ==="
     agent-log --turn 1 claude.jsonl | grep CLAUDEUSERMARK > /dev/null
     agent-log --turn -1 claude.jsonl | grep CLAUDERESULTMARK > /dev/null
@@ -93,17 +70,6 @@ EOF
     agent-log --turn -1 codex.jsonl | grep CODEXANSWERMARK > /dev/null
     if agent-log --turn 99 claude.jsonl 2>/dev/null; then echo "out-of-range turn should fail"; exit 1; fi
     echo "  ✓ turns"
-
-    echo "=== wire exchanges collapse to one row each ==="
-    rows=$(agent-log --list wire.jsonl)
-    test "$(printf '%s\n' "$rows" | grep -c .)" -eq 2
-    printf '%s' "$rows" | grep "done 200" > /dev/null
-    printf '%s' "$rows" | grep "in flight" > /dev/null
-    # The label must be the text that a person wrote. The system prompt starts
-    # each request, thus it makes all the rows the same.
-    printf '%s\n' "$rows" | grep "done 200" | cut -f4 | grep WIREUSERMARK > /dev/null
-    ! printf '%s\n' "$rows" | grep "done 200" | cut -f4 | grep -q WIRESYSMARK
-    echo "  ✓ wire exchanges"
 
     echo "=== picker plumbing the keybinds depend on ==="
     # Each sequence is a separate read of the rows. Thus the two sequences
@@ -194,10 +160,10 @@ EOF
     echo "=== identifiers, tool blocks, colour and pipes ==="
     # alt-i must give the session id, because a resume command takes that
     # value. Thus the id is a field of the row, and not the path.
-    test "$(agent-log --list wire.jsonl | head -1 | awk -F'\t' '{print NF}')" -ge 4
+    test "$(agent-log --list claude.jsonl | head -1 | awk -F'\t' '{print NF}')" -ge 4
 
-    # The id of each format. Claude and wire use the name of the file. pi and
-    # Codex record an id.
+    # The id of each format. Claude uses the name of the file. pi and Codex
+    # record an id.
     hdr=$(agent-log --turn 1 pi.jsonl)
     printf '%s' "$hdr" | grep "session: s1" > /dev/null
     printf '%s' "$hdr" | grep "title:" > /dev/null
@@ -243,8 +209,8 @@ EOF
     test "$(agent-log --full claude.jsonl)" = "$(agent-log --full --pretty claude.jsonl)"
 
     # Rust disables SIGPIPE, and a command with `| head` is usual.
-    agent-log --list wire.jsonl | head -1 > /dev/null
-    err=$(agent-log --list wire.jsonl 2>&1 >/dev/null | head -c 100 || true)
+    agent-log --list claude.jsonl | head -1 > /dev/null
+    err=$(agent-log --list claude.jsonl 2>&1 >/dev/null | head -c 100 || true)
     test -z "$err"
     echo "  ✓ ids, --no-tools, --pretty, SIGPIPE"
 
@@ -288,7 +254,7 @@ EOF
     # `cmd` fails. Here that condition is the correct result.
     for mode in "--full" "_full"; do
         # shellcheck disable=SC2086
-        following=$(agent-log $mode pi.jsonl | grep -A1 "llama-wiretap for those" | sed -n 2p)
+        following=$(agent-log $mode pi.jsonl | grep -A1 "rendered string" | sed -n 2p)
         if [ -n "$following" ]; then
             echo "$mode: caveat runs into '$following'"
             exit 1
@@ -330,7 +296,7 @@ EOF
     # Output to a pipe or a file has no escape sequences, for all the possible
     # content of a transcript.
     test "$(agent-log --turn 1 claude.jsonl | tr -dc "$esc" | wc -c)" -eq 0
-    test "$(agent-log --list wire.jsonl | tr -dc "$esc" | wc -c)" -eq 0
+    test "$(agent-log --list codex.jsonl | tr -dc "$esc" | wc -c)" -eq 0
     test "$(agent-log --full claude.jsonl | tr -dc "$esc" | wc -c)" -eq 0
     # --color=always gives colour, because fzf shows the colours in a
     # preview.
@@ -347,7 +313,10 @@ EOF
 {"type":"ai-title","aiTitle":"t \u001b[36mCOLOUR\u001b[0m x"}
 ANSI
     test "$(agent-log --list ansi.jsonl | tr -dc "$esc" | wc -c)" -eq 0
-    agent-log --list ansi.jsonl | cut -f5 | grep "before BOLD after" > /dev/null
+    agent-log --list ansi.jsonl | cut -f4 | grep "before BOLD after" > /dev/null
+    # A short turn fits in the label. Then the text column is empty, and the
+    # row does not show the same text two times.
+    test -z "$(agent-log --list ansi.jsonl | head -1 | cut -f5)"
     agent-log --full ansi.jsonl | head -1 | grep "t COLOUR x" > /dev/null
     # The full view and the turn view print the body of a turn to the
     # terminal or to a pager. The sequences must not survive there.
@@ -364,6 +333,6 @@ ANSI
     echo "  ✓ rejection"
 
     mkdir -p $out
-    echo "claude, pi, codex and wire transcripts all read" > $out/result
+    echo "claude, pi and codex transcripts all read" > $out/result
   '';
 }

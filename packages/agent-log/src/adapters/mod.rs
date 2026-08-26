@@ -10,14 +10,12 @@ use crate::model::{Session, Turn};
 pub mod claude;
 pub mod codex;
 pub mod pi;
-pub mod wire;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Agent {
     Claude,
     Pi,
     Codex,
-    Wire,
 }
 
 impl Agent {
@@ -26,7 +24,6 @@ impl Agent {
             "claude" => Some(Agent::Claude),
             "pi" => Some(Agent::Pi),
             "codex" => Some(Agent::Codex),
-            "wire" => Some(Agent::Wire),
             _ => None,
         }
     }
@@ -47,10 +44,6 @@ pub fn detect(records: &[Value]) -> Option<Agent> {
                     return Some(Agent::Codex);
                 }
             }
-        }
-        // Only a proxy transcript has a state for the request.
-        if record.get("state").is_some() && record.get("path").is_some() {
-            return Some(Agent::Wire);
         }
         match record.get("type").and_then(Value::as_str) {
             // pi puts the message in a `message` field and starts with a
@@ -73,7 +66,6 @@ pub fn summarize(agent: Agent, path: &str, records: &[Value], mtime: i64) -> Ses
         Agent::Claude => claude::summarize(path, records, mtime),
         Agent::Pi => pi::summarize(path, records, mtime),
         Agent::Codex => codex::summarize(path, records, mtime),
-        Agent::Wire => wire::summarize(path, records, mtime),
     }
 }
 
@@ -85,7 +77,6 @@ pub fn turns(agent: Agent, records: &[Value], no_tools: bool) -> Vec<Turn> {
         Agent::Claude => claude::turns(records, no_tools),
         Agent::Pi => pi::turns(records, no_tools),
         Agent::Codex => codex::turns(records, no_tools),
-        Agent::Wire => wire::turns(records),
     }
 }
 

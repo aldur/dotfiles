@@ -36,19 +36,6 @@ pub fn turn(path: &Path, key: &str) -> String {
 }
 
 fn turn_from(agent: Agent, records: &[serde_json::Value], key: &str) -> String {
-    if agent == Agent::Wire {
-        let (kind, body) = adapters::wire::render(records, key);
-        let time = adapters::turns(agent, records, false)
-            .into_iter()
-            .find(|t| t.key == key)
-            .map(|t| t.time)
-            .unwrap_or_default();
-        return format!(
-            "{}\n\n{}",
-            style::heading(&kind, &time),
-            crate::model::sanitize(&body)
-        );
-    }
     let Ok(index) = key.parse::<usize>() else {
         return format!("agent-log: bad turn key {key}\n");
     };
@@ -59,7 +46,6 @@ fn turn_from(agent: Agent, records: &[serde_json::Value], key: &str) -> String {
         Agent::Claude => adapters::claude::render(record),
         Agent::Pi => adapters::pi::render(record),
         Agent::Codex => adapters::codex::render(record),
-        Agent::Wire => unreachable!("handled above"),
     };
     format!(
         "{}\n\n{}\n",
@@ -142,7 +128,7 @@ pub fn full(path: &Path, no_tools: bool) -> String {
         // prompt.
         Agent::Pi => Some(
             "A pi session records turns only — no system prompt, tool schemas or \
-             rendered string. Capture through llama-wiretap for those.",
+             rendered string.",
         ),
         Agent::Codex => Some(
             "The Codex reader is built from the published rollout format and has \
@@ -166,20 +152,18 @@ pub fn full(path: &Path, no_tools: bool) -> String {
     for turn in adapters::turns(agent, &records, no_tools) {
         // `turn.text` is the single line for the search. It contains no line
         // breaks. Thus the conversation view uses the adapter again.
-        let body = match (agent, turn.key.parse::<usize>().ok()) {
-            (Agent::Wire, _) => adapters::wire::render(&records, &turn.key).1,
-            (_, Some(index)) => index
-                .checked_sub(1)
-                .and_then(|i| records.get(i))
-                .map(|record| match agent {
-                    Agent::Claude => adapters::claude::render(record).1,
-                    Agent::Pi => adapters::pi::render(record).1,
-                    Agent::Codex => adapters::codex::render(record).1,
-                    Agent::Wire => unreachable!("handled above"),
-                })
-                .unwrap_or_else(|| turn.text.clone()),
-            _ => turn.text.clone(),
-        };
+        let body = turn
+            .key
+            .parse::<usize>()
+            .ok()
+            .and_then(|index| index.checked_sub(1))
+            .and_then(|i| records.get(i))
+            .map(|record| match agent {
+                Agent::Claude => adapters::claude::render(record).1,
+                Agent::Pi => adapters::pi::render(record).1,
+                Agent::Codex => adapters::codex::render(record).1,
+            })
+            .unwrap_or_else(|| turn.text.clone());
         let body = crate::model::sanitize(&body);
         // Use the same heading as the turn view when colour is on. Use a
         // markdown heading when colour is off.
