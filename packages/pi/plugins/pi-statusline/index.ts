@@ -95,8 +95,13 @@ export default function (pi: ExtensionAPI) {
 					const usage = ctx.getContextUsage();
 					const contextWindow = usage?.contextWindow ?? ctx.model?.contextWindow ?? 0;
 					// null right after compaction, until the next response reports usage.
+					// Can pass 100 when usage exceeds the declared context window
+					// (local llama servers), so clamp the bar.
 					const percent = usage?.percent ?? null;
-					const filled = percent === null ? 0 : Math.floor((percent * BAR_WIDTH) / 100);
+					const filled =
+						percent === null
+							? 0
+							: Math.min(BAR_WIDTH, Math.max(0, Math.floor((percent * BAR_WIDTH) / 100)));
 					const bar = "█".repeat(filled) + "░".repeat(BAR_WIDTH - filled);
 
 					const assistants: AssistantMessage[] = [];
