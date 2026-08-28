@@ -1,6 +1,7 @@
 local servers = {
 	{ "beancount", "beancount-language-server" },
 	{ "clarinet", "clarinet" },
+	{ "forge_lsp", "forge" },
 	{ "solidity_ls", "vscode-solidity-server" },
 	{ "solidity_ls_nomicfoundation", "nomicfoundation-solidity-language-server" },
 }
