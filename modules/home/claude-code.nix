@@ -233,11 +233,14 @@ in
       };
 
       nixManagedHookMarkers = [ "claude-tmux-silence" ];
-
-      skills = "${pkgs.claude-skills}/skills";
     };
 
     home = {
+      # NOTE: `home.file` instead of `skills` to enable cross-platform evaluation used in checks.
+      file = lib.mkIf enabled {
+        "${cfg.configDir}/skills".source = "${pkgs.claude-skills}/skills";
+      };
+
       # Write settings and MCP config as writable files (not read-only symlinks).
       # The native claude binary from ~/.local/bin bypasses the Nix wrapper,
       # so MCP servers must be configured via ~/.claude.json directly.
@@ -268,7 +271,8 @@ in
       shellAliases = lib.optionalAttrs enabled {
         claude-yolo =
           let
-            needsPathPrefix = if pkgs.stdenv.hostPlatform.isDarwin then true else osConfig.programs.nix-ld.enable;
+            needsPathPrefix =
+              if pkgs.stdenv.hostPlatform.isDarwin then true else osConfig.programs.nix-ld.enable;
             pathPrefix = lib.optionalString needsPathPrefix "PATH=~/.local/bin/:$PATH ";
             sandboxPrefix = lib.optionalString (sandbox && pkgs.stdenv.hostPlatform.isLinux) "${claude-bwrap} ";
           in
