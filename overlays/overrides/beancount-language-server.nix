@@ -2,12 +2,12 @@ final: prev: {
   beancount-language-server = prev.beancount-language-server.overrideAttrs (old: rec {
     # Build the `next` branch of the aldur fork. The branch carries the
     # patches that this overlay applied before.
-    version = "1.9.2-unstable-2026-08-10";
+    version = "1.9.2-unstable-2026-08-24";
     src = prev.fetchFromGitHub {
       owner = "aldur";
       repo = "beancount-language-server";
-      rev = "8f6975913524985e2695190eb052d9a59839d6fc";
-      hash = "sha256-ikNu4I+shYiYsuC8/u6hYXXwwVxaJ/Y5QOtjMMKS+qk=";
+      rev = "172668106182960c12d183dfaa56b3cd1252d640";
+      hash = "sha256-hriqCkFWZH1LurGPQ8If4S/v0zonkElVYuTdUIgtlPA=";
     };
     cargoDeps = prev.rustPlatform.fetchCargoVendor {
       inherit src;
