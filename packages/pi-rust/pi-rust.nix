@@ -5,7 +5,6 @@
   writeShellApplication,
   fd,
   ripgrep,
-  rustPlatform,
   # Plugin derivations to bundle, keyed by name — the same auto-load
   # affordance as ../pi/pi.nix (pi-rust runs pi's TypeScript extension API on
   # an embedded QuickJS runtime). Empty by default: the one plugin pi bundles,
@@ -22,7 +21,7 @@
 let
   # The overlay has no attribute for the agent. No other package here uses
   # the agent. CI finds it in the `passthru` below.
-  pi-agent-rust = callPackage ./pi-agent-rust.nix { inherit rustPlatform; };
+  pi-agent-rust = callPackage ./pi-agent-rust.nix { };
 
   pluginFlags = lib.concatMapStringsSep " " (
     plugin: "-e ${lib.escapeShellArg (plugin.entryPoint or "${plugin}/index.ts")}"

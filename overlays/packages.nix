@@ -69,7 +69,7 @@ in
   # Rust port of pi, wrapped with the same affordances (plugin bundling, no
   # phone-home); the binary is `pi-rust` so both can sit on PATH. No plugins:
   # pi-llama's job is done by the built-in `llamacpp` provider.
-  pi-rust = prev.callPackage ../packages/pi-rust/pi-rust.nix { inherit (unstable) rustPlatform; };
+  pi-rust = unstable.callPackage ../packages/pi-rust/pi-rust.nix { };
 
   llama-wiretap = final.callPackage ../packages/llama-wiretap {
     nodejs-slim = final.nodejs-slim-runtime;
