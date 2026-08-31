@@ -1,5 +1,10 @@
 { self }:
-final: prev: {
+final: prev:
+let
+  # `legacyPackages` reuses the flake's memoized, un-overlaid package set.
+  unstable = self.inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system};
+in
+{
   nomicfoundation-solidity-language-server =
     prev.callPackage
       ../packages/nomicfoundation-solidity-language-server/nomicfoundation-solidity-language-server.nix
@@ -39,10 +44,8 @@ final: prev: {
   llmcat = prev.callPackage ../packages/llmcat/llmcat.nix { };
 
   # pi releases often; stable nixpkgs lags too far behind, so follow
-  # unstable by default. `legacyPackages` (rather than a fresh `import`)
-  # reuses the flake's memoized, un-overlaid package set.
-  pi-coding-agent =
-    self.inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system}.pi-coding-agent;
+  # unstable by default.
+  inherit (unstable) pi-coding-agent;
 
   piPlugins = {
     pi-llama = prev.callPackage ../packages/pi/plugins/pi-llama.nix { };
@@ -51,9 +54,7 @@ final: prev: {
     # unstable nodejs (24) strips TS types by default, which the check
     # needs to load index.ts.
     pi-no-docs = final.callPackage ../packages/pi/plugins/pi-no-docs {
-      inherit (self.inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system})
-        nodejs
-        ;
+      inherit (unstable) nodejs;
     };
     pi-statusline = prev.callPackage ../packages/pi/plugins/pi-statusline { };
     pi-system-prompt = prev.callPackage ../packages/pi/plugins/pi-system-prompt { };
@@ -62,16 +63,13 @@ final: prev: {
     plugins = final.piPlugins;
     # pi-coding-agent (above) comes from unstable; hand the wrapper the same
     # channel's node and pnpm so the closure carries one copy, not twins.
-    inherit (self.inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system})
-      nodejs
-      pnpm
-      ;
+    inherit (unstable) nodejs pnpm;
   };
 
   # Rust port of pi, wrapped with the same affordances (plugin bundling, no
   # phone-home); the binary is `pi-rust` so both can sit on PATH. No plugins:
   # pi-llama's job is done by the built-in `llamacpp` provider.
-  pi-rust = prev.callPackage ../packages/pi-rust/pi-rust.nix { };
+  pi-rust = prev.callPackage ../packages/pi-rust/pi-rust.nix { inherit (unstable) rustPlatform; };
 
   llama-wiretap = final.callPackage ../packages/llama-wiretap {
     nodejs-slim = final.nodejs-slim-runtime;
@@ -90,7 +88,9 @@ final: prev: {
       ps.llm-docs
       ps.llm-llama-server
     ]
-    ++ prev.lib.optional (prev.stdenv.hostPlatform.isDarwin && prev.stdenv.hostPlatform.isAarch64) final.llm-mlx
+    ++ prev.lib.optional (
+      prev.stdenv.hostPlatform.isDarwin && prev.stdenv.hostPlatform.isAarch64
+    ) final.llm-mlx
   );
 
   markdownlint-cli2 = final.callPackage ../packages/markdownlint-cli2 {
