@@ -132,7 +132,12 @@ with pkgs.vimPlugins;
     }
 
     {
-      plugin = pinnedPlugins.link-vim;
+      plugin =
+        pkgs.lib.throwIf (pkgs.vimPlugins ? link-vim)
+          ''
+            nixpkgs' stable channel now packages link-vim.
+            Take it from `pkgs` instead of `pkgsUnstable`, and drop this guard.''
+          pkgsUnstable.vimPlugins.link-vim;
       name = "link.vim";
     }
 
