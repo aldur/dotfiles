@@ -21,7 +21,6 @@
 let
   plugins = {
     clarity-nvim = callPackage ./clarity-nvim.nix { };
-    link-vim = callPackage ./link-vim.nix { };
     tinymd-nvim = callPackage ./tinymd-nvim.nix { };
     tree-sitter-clarity = callPackage ./tree-sitter-clarity.nix { };
   };
