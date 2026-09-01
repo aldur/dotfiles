@@ -58,7 +58,8 @@ let
     nodejs-slim-runtime = 200;
     marksman = 180;
     basedpyright = 230;
-    codex = 345;
+    # 0.146 adds the codex-code-mode-host helper binary (63M).
+    codex = 470;
     markdownlint-cli2 = 220;
     prettierd = 210;
     tiktoken = 260;
