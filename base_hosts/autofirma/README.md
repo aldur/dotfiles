@@ -27,7 +27,13 @@ links to the usual sedes. The serial console stays on the terminal.
 AutoFirma reads the certificates from the Firefox store. Import your
 certificate one time:
 
-1. On the host: `scp -P 2222 cert.p12 aldur@localhost:`
+1. On the host, copy the file over SSH. The guest sshd has no SFTP, so
+   `scp` does not work:
+
+   ```bash
+   cat cert.p12 | ssh -p 2222 aldur@localhost "cat - > cert.p12"
+   ```
+
 2. In a terminal in the guest: `import-certificate cert.p12`
 3. Restart Firefox.
 
@@ -51,8 +57,8 @@ text. It does not assert.
 
 ## Notes
 
-- There is no shared folder. The nixpkgs QEMU on macOS has no 9p. Use
-  `scp`.
+- There is no shared folder. The nixpkgs QEMU on macOS has no 9p. Copy
+  files over SSH with `cat` (see above).
 - The guest closure is 4.8 GiB. See the "Size" section of `guest.nix`. The
   JDK, Firefox, and the LLVM of mesa stay large.
 - The Maven dependency hashes in `guest.nix` differ from the upstream ones.

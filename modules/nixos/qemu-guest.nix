@@ -64,8 +64,9 @@ in
       # Make the nixStoreImage from above writable.
       writableStore = true;
 
-      # No shared directories. The nixpkgs qemu on macOS has no 9p. Use
-      # scp through the forwarded SSH port.
+      # No shared directories. The nixpkgs qemu on macOS has no 9p. Copy
+      # files over the forwarded SSH port with `cat`. sshd has no SFTP
+      # here (modules/nixos/ssh.nix), so scp does not work.
       sharedDirectories = lib.mkForce { };
 
       # Serial only by default. `qemu-vm --gui` adds the display devices.

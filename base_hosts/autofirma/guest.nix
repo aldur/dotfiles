@@ -94,8 +94,9 @@ let
       <p>AutoFirma and its root certificate live in this VM only.</p>
       <h2>First run</h2>
       <ol>
-        <li>Copy your certificate into the VM:
-          <code>scp -P 2222 cert.p12 ${user}@localhost:</code></li>
+        <li>Copy your certificate into the VM (the guest sshd has no SFTP,
+          so <code>scp</code> does not work):
+          <code>cat cert.p12 | ssh -p 2222 ${user}@localhost "cat - &gt; cert.p12"</code></li>
         <li>In a terminal here, run <code>import-certificate cert.p12</code>.</li>
         <li>Restart Firefox.</li>
       </ol>
