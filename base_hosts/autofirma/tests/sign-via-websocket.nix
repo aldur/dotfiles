@@ -28,7 +28,8 @@ let
       -addext "keyUsage=critical,digitalSignature,nonRepudiation" \
       -addext "extendedKeyUsage=clientAuth,emailProtection"
     openssl pkcs12 -export -out $out/ciudadano.p12 -inkey key.pem -in cert.pem \
-      -name "ciudadano ficticio" -passout pass:
+      -name "ciudadano ficticio" -passout pass:ficticio
+    printf '%s' ficticio > $out/password
   '';
 in
 pkgs.testers.runNixOSTest {
@@ -43,6 +44,9 @@ pkgs.testers.runNixOSTest {
     imports = [
       baseModule
       guestModule
+      # The guest side of `qemu-vm --file`; the launcher's VM module
+      # (autofirma.nix) brings it through nixosModules.qemu-guest.
+      "${specialArgs.inputs.self}/modules/nixos/qemu-vm-files.nix"
       (import ./test-server.nix {
         autoscriptDir = "${autofirma-nix.inputs.autofirma-src}/afirma-ui-miniapplet-deploy/src/main/webapp/js";
         testJs = ./websocket-sign.js;
@@ -52,9 +56,17 @@ pkgs.testers.runNixOSTest {
     # Clicks the button on the page. The test driver has no mouse.
     environment.systemPackages = [ pkgs.xdotool ];
 
+    # The session opens the test page instead of the start page.
+    programs.firefox.policies.Homepage.URL = lib.mkForce "https://sede.test/";
+
     virtualisation = {
       memorySize = 4096;
       cores = 4;
+      # What `qemu-vm --file cert.p12=… --file cert.password=…` passes.
+      qemu.options = [
+        "-fw_cfg name=opt/qemu-vm/cert.p12,file=${testCert}/ciudadano.p12"
+        "-fw_cfg name=opt/qemu-vm/cert.password,file=${testCert}/password"
+      ];
     };
   }
   // lib.optionalAttrs diagnose {
@@ -76,13 +88,14 @@ pkgs.testers.runNixOSTest {
       machine.wait_for_unit("create-autofirma-cert.service")
       machine.wait_for_open_port(443)
 
-      # Take DISPLAY and XAUTHORITY from the auto-login session.
+      # Take the display and the session bus from the auto-login session.
+      # Firefox reaches its running instance over the session bus.
       machine.wait_until_succeeds(f"pgrep -u {USER} -f xfce4-session")
       environ = machine.succeed(
           f"cat /proc/$(pgrep -u {USER} -f xfce4-session | head -n1)/environ | tr '\\0' '\\n'"
       )
       session = dict(
-          line.split("=", 1) for line in environ.splitlines() if line.startswith(("DISPLAY=", "XAUTHORITY="))
+          line.split("=", 1) for line in environ.splitlines() if line.startswith(("DISPLAY=", "XAUTHORITY=", "DBUS_SESSION_BUS_ADDRESS=", "XDG_RUNTIME_DIR="))
       )
       assert "DISPLAY" in session, environ
 
@@ -90,20 +103,15 @@ pkgs.testers.runNixOSTest {
           env = f"HOME=/home/{USER} MOZ_LEGACY_HOME=1 " + " ".join(f"{k}={shlex.quote(v)}" for k, v in session.items())
           return f"runuser -u {USER} -- env {env} sh -c {shlex.quote(cmd)}"
 
-      # The first start creates the profile and its NSS database.
-      machine.execute(as_user("firefox >/tmp/firefox.log 2>&1 &"))
-      machine.wait_until_succeeds(as_user("ls ~/.mozilla/firefox/*/cert9.db"))
-      machine.wait_until_succeeds(as_user("ls ~/.mozilla/firefox/*/key4.db"))
-      machine.sleep(5)
-      machine.succeed(f"pkill -u {USER} firefox; sleep 3; true")
+      # The session starts Firefox through autofirma-vm-firefox. That
+      # wrapper imports the certificate from the fw_cfg files first.
+      machine.wait_for_unit("qemu-vm-files.service")
+      machine.succeed(f"test -r /run/qemu-vm-files/cert.p12 && stat -c %U /run/qemu-vm-files/cert.p12 | grep -x {USER}")
+      machine.wait_until_succeeds(as_user("certutil -L -d sql:$(dirname ~/.mozilla/firefox/*/cert9.db) | grep -i ficticio"))
 
-      # Import the test certificate the way the user does.
-      machine.succeed(as_user('import-certificate ${testCert}/ciudadano.p12 ""'))
-      machine.succeed(as_user("certutil -L -d sql:$(dirname ~/.mozilla/firefox/*/cert9.db) | grep -i ficticio"))
-
-      # The button on the page opens afirma://. AutoFirma starts, and the
-      # page connects to its WebSocket.
-      machine.execute(as_user("firefox --new-tab https://sede.test/ >>/tmp/firefox.log 2>&1 &"))
+      # Firefox opens the test page as its start page. The button on the
+      # page opens afirma://. AutoFirma starts, and the page connects to
+      # its WebSocket.
       machine.wait_until_succeeds(as_user("xdotool search --name 'AutoFirma test page'"))
       machine.sleep(5)
       machine.succeed(as_user(

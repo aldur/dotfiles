@@ -15,6 +15,7 @@ in
 {
   imports = [
     ../current_system_flake.nix
+    ./qemu-vm-files.nix
 
     # This is not technically required since the `vm-nogui` format already
     # imports this modules.

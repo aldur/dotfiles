@@ -43,7 +43,8 @@ let
   autofirma = upstream.override (mavenHashes // { buildFHSEnv = buildFHSEnvSmallLocales; });
 
   # Imports a PKCS#12 certificate into each Firefox profile of the user.
-  # AutoFirma reads the certificates from the Firefox (NSS) store.
+  # AutoFirma reads the certificates from the Firefox (NSS) store. With no
+  # password file, pk12util asks on the terminal.
   import-certificate = pkgs.writeShellApplication {
     name = "import-certificate";
     runtimeInputs = [
@@ -52,7 +53,7 @@ let
     ];
     text = ''
       if [ $# -lt 1 ]; then
-        echo "usage: import-certificate CERT.p12 [PASSWORD]" >&2
+        echo "usage: import-certificate CERT.p12 [PASSWORD-FILE]" >&2
         exit 2
       fi
       cert="$1"
@@ -69,12 +70,47 @@ let
         [ -f "$dir/cert9.db" ] || continue
         echo "Importing into $dir"
         if [ $# -ge 2 ]; then
-          pk12util -i "$cert" -d "sql:$dir" -W "$2"
+          pk12util -i "$cert" -d "sql:$dir" -w "$2"
         else
           pk12util -i "$cert" -d "sql:$dir"
         fi
       done
       echo "Done. Restart Firefox so it picks the certificate up."
+    '';
+  };
+
+  # Starts Firefox for the session. On a fresh profile, it first imports
+  # the certificate that `qemu-vm --file cert.p12=…` passed in. The
+  # password comes from `cert.password` if passed, else from a dialog.
+  # The password only touches a private file in /run/user.
+  firefox-session = pkgs.writeShellApplication {
+    name = "autofirma-vm-firefox";
+    runtimeInputs = [
+      config.programs.firefox.finalPackage
+      import-certificate
+      pkgs.nss.tools
+      pkgs.zenity
+      pkgs.gnugrep
+    ];
+    text = ''
+      cert=/run/qemu-vm-files/cert.p12
+      profiles_ini="$HOME/.mozilla/firefox/profiles.ini"
+      if [ -r "$cert" ] && [ ! -f "$profiles_ini" ]; then
+        firefox --headless --CreateProfile default >/dev/null 2>&1
+        profile=$(grep -oP '^Path=\K.*' "$profiles_ini" | head -n1)
+        dir="$HOME/.mozilla/firefox/$profile"
+        certutil -N -d "sql:$dir" --empty-password
+        password_file=$(mktemp -p "''${XDG_RUNTIME_DIR:-/tmp}" cert-password.XXXXXX)
+        trap 'rm -f "$password_file"' EXIT
+        if [ -r /run/qemu-vm-files/cert.password ]; then
+          cp /run/qemu-vm-files/cert.password "$password_file"
+        else
+          zenity --password --title "AutoFirma VM" > "$password_file"
+        fi
+        import-certificate "$cert" "$password_file" \
+          || zenity --error --title "AutoFirma VM" --text "The certificate import failed."
+      fi
+      exec firefox
     '';
   };
 
@@ -94,10 +130,15 @@ let
       <p>AutoFirma and its root certificate live in this VM only.</p>
       <h2>First run</h2>
       <ol>
-        <li>Copy your certificate into the VM (the guest sshd has no SFTP,
-          so <code>scp</code> does not work):
-          <code>cat cert.p12 | ssh -p 2222 ${user}@localhost "cat - &gt; cert.p12"</code></li>
-        <li>In a terminal here, run <code>import-certificate cert.p12</code>.</li>
+        <li>Stop the VM. Start it again with your certificate:
+          <code>autofirma-vm --gui --file cert.p12=/path/to/cert.p12</code></li>
+        <li>Type the certificate password in the dialog that opens.</li>
+      </ol>
+      <p>Or copy the file over SSH (the guest sshd has no SFTP, so
+        <code>scp</code> does not work) and import it by hand:</p>
+      <ol>
+        <li><code>cat cert.p12 | ssh -p 2222 ${user}@localhost "cat - &gt; cert.p12"</code></li>
+        <li>In a terminal here: <code>import-certificate cert.p12</code></li>
         <li>Restart Firefox.</li>
       </ol>
       <h2>Links</h2>
@@ -181,13 +222,15 @@ in
       [Desktop Entry]
       Type=Application
       Name=Firefox
-      Exec=firefox
+      Exec=${lib.getExe firefox-session}
       OnlyShowIn=XFCE;
     '';
 
     systemPackages = [
       import-certificate
       pkgs.nss.tools
+      # For clipboard checks by hand; see the README.
+      pkgs.xclip
     ];
 
     # Firefox 154 creates new profiles under ~/.config/mozilla. On Linux,
@@ -228,6 +271,10 @@ in
     # and webkitgtk. Thunar works without them.
     gvfs.enable = lib.mkForce false;
     tumbler.enable = lib.mkForce false;
+
+    # Clipboard sharing with the host. The agent needs the virtio serial
+    # port that `qemu-vm --clipboard` adds. Without it, it exits.
+    spice-vdagentd.enable = true;
 
     # -- Desktop --------------------------------------------------------------
     xserver = {

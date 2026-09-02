@@ -30,6 +30,10 @@
           defaultMemory = 4096;
           defaultCores = 4;
           defaultDiskSize = 16;
+          # Nothing survives a session: no profile, no cookies, no CA. The
+          # certificate comes in with `--file` each time.
+          defaultEphemeral = true;
+          defaultClipboard = true;
         };
       };
 

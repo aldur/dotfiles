@@ -6,6 +6,11 @@
   defaultMemory ? 1024 * 16,
   defaultCores ? 8,
   defaultDiskSize ? 64,
+  # Discard disk writes at exit unless `--persistent` is given.
+  defaultEphemeral ? false,
+  # Share the clipboard with the guest unless `--no-clipboard` is given.
+  # The guest must run spice-vdagent (services.spice-vdagentd).
+  defaultClipboard ? false,
   qemuModule ? ../../base_hosts/qemu/qemu.nix,
   ...
 }:
@@ -137,14 +142,28 @@ pkgs.writeArgcApplication {
     # @option --store-image <PATH> Path to pre-built Nix store image [default: built-in]
     # @flag -v --verbose Verbose output
     # @flag --clean Remove existing VM state
-    # @flag --ephemeral Do not write to the VM disk
+    # @option -f --file* <NAME=PATH> Expose a host file to the guest as /run/qemu-vm-files/NAME
+    # @flag --ephemeral Do not write to the VM disk${if defaultEphemeral then " (default)" else ""}
+    # @flag --persistent Write to the VM disk${if defaultEphemeral then "" else " (default)"}
     # @flag --show-boot Show boot console messages
     # @flag --gui Open a graphical display (virtio-gpu, keyboard, tablet)
+    # @flag --clipboard Share the clipboard with the guest${
+      if defaultClipboard then " (default)" else ""
+    }
+    # @flag --no-clipboard Do not share the clipboard${if defaultClipboard then "" else " (default)"}
 
     declare argc_dir argc_port argc_memory argc_cores argc_disk_size
-    declare argc_store_image
-    declare argc_verbose argc_clean argc_ephemeral argc_show_boot argc_gui
+    declare argc_store_image argc_file
+    declare argc_verbose argc_clean argc_ephemeral argc_persistent argc_show_boot argc_gui
+    declare argc_clipboard argc_no_clipboard
     eval "$(argc --argc-eval "$0" "$@")"
+
+    EPHEMERAL=${if defaultEphemeral then "1" else "0"}
+    [[ "''${argc_ephemeral:-0}" -eq 1 ]] && EPHEMERAL=1
+    [[ "''${argc_persistent:-0}" -eq 1 ]] && EPHEMERAL=0
+    CLIPBOARD=${if defaultClipboard then "1" else "0"}
+    [[ "''${argc_clipboard:-0}" -eq 1 ]] && CLIPBOARD=1
+    [[ "''${argc_no_clipboard:-0}" -eq 1 ]] && CLIPBOARD=0
 
     VM_DIR="''${argc_dir:-${defaultVmDir}}"
     MEMORY="''${argc_memory:-${toString defaultMemory}}"
@@ -177,9 +196,9 @@ pkgs.writeArgcApplication {
     # Build QEMU network arguments
     QEMU_NET_OPTS=""
     if [[ -n "''${argc_port:-}" ]]; then
-      IFS=$'\n' read -r -d "" -a PORTS <<< "''${argc_port:-}" || true
-      for i in "''${!PORTS[@]}"; do
-        port_spec="''${PORTS[$i]}"
+      # argc returns a repeated option as an array.
+      for i in "''${!argc_port[@]}"; do
+        port_spec="''${argc_port[$i]}"
         if [[ "$port_spec" =~ ^([0-9]+):([0-9]+)$ ]]; then
           guest_port="''${BASH_REMATCH[1]}"
           host_port="''${BASH_REMATCH[2]}"
@@ -226,11 +245,36 @@ pkgs.writeArgcApplication {
     if [[ -n "$QEMU_NET_OPTS" ]]; then
       echo "  Network: $QEMU_NET_OPTS"
     fi
-    if [[ "''${argc_ephemeral:-0}" -eq 1 ]]; then
+    if [[ "$EPHEMERAL" -eq 1 ]]; then
       echo "  Ephemeral mode: enabled"
     fi
     if [[ "''${argc_gui:-0}" -eq 1 ]]; then
       echo "  Display: graphical window (serial console stays on this terminal)"
+    fi
+    if [[ "$CLIPBOARD" -eq 1 ]]; then
+      echo "  Clipboard: shared"
+    fi
+
+    # Files for the guest. QEMU exposes them through fw_cfg. The guest
+    # module (modules/nixos/qemu-guest.nix) copies them to
+    # /run/qemu-vm-files at boot.
+    FILE_ARGS=()
+    if [[ -n "''${argc_file:-}" ]]; then
+      for file_spec in "''${argc_file[@]}"; do
+        if [[ "$file_spec" =~ ^([A-Za-z0-9._-]+)=(.+)$ ]]; then
+          file_name="''${BASH_REMATCH[1]}"
+          file_path="''${BASH_REMATCH[2]}"
+        else
+          echo "Invalid file specification: $file_spec (want NAME=PATH)"
+          exit 1
+        fi
+        if [[ ! -r "$file_path" ]]; then
+          echo "Cannot read file: $file_path"
+          exit 1
+        fi
+        FILE_ARGS+=(-fw_cfg "name=opt/qemu-vm/$file_name,file=$file_path")
+        echo "  File: $file_path -> /run/qemu-vm-files/$file_name"
+      done
     fi
     echo ""
 
@@ -300,8 +344,22 @@ pkgs.writeArgcApplication {
       QEMU_ARGS+=(-nographic)
     fi
 
+    # -- Clipboard --
+    # QEMU speaks the vdagent protocol itself, so no SPICE is needed. The
+    # Cocoa display syncs its clipboard with the guest agent. The GTK
+    # display does not: nixpkgs builds QEMU without `gtk-clipboard`.
+    if [[ "$CLIPBOARD" -eq 1 ]]; then
+      QEMU_ARGS+=(
+        -device virtio-serial-pci
+        -chardev "qemu-vdagent,id=vdagent,name=vdagent,clipboard=on"
+        -device "virtserialport,chardev=vdagent,name=com.redhat.spice.0"
+      )
+    fi
+
+    QEMU_ARGS+=("''${FILE_ARGS[@]}")
+
     # Snapshot mode: changes to drives are not persisted
-    if [[ "''${argc_ephemeral:-0}" -eq 1 ]]; then
+    if [[ "$EPHEMERAL" -eq 1 ]]; then
       QEMU_ARGS+=(-snapshot)
     fi
 
