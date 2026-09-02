@@ -9,9 +9,10 @@ let
   inherit (pkgs.stdenv.hostPlatform) system;
   user = config.mainUser;
 
-  # You'll need to change this if Maven in nixpkgs changes.
   upstream = inputs.autofirma-nix.packages.${system}.autofirma;
-  autofirma = upstream.override {
+
+  # You'll need to change this if Maven in nixpkgs changes.
+  mavenHashes = {
     jmulticard = upstream.clienteafirma.dependencies.jmulticard.override {
       maven-dependencies-hash = "sha256-xqzFxC+AT5NEEnTxKbNckwTBllMo0Glluuz5GtJLfgg=";
     };
@@ -19,24 +20,27 @@ let
       maven-dependencies-hash = "sha256-JxbIpnHG0PEzEw3xEbZhxEoDOBGrVvawoFXpajgLmOw=";
     };
     maven-dependencies-hash = "sha256-5nnqmv8v4QlTlyuckb4x/rWJoSu5b3SyeIiOlxSOvXU=";
-
-    # buildFHSEnv puts the full glibc locale archive (220 MiB) in the
-    # sandbox. The trimmed archive of the guest is sufficient. The inner
-    # buildFHSEnv.nix takes the archive from its `pkgs` argument. This
-    # `callPackage` wrapper replaces that argument.
-    buildFHSEnv = pkgs.buildFHSEnv.override {
-      callPackage =
-        path: args:
-        pkgs.callPackage path (
-          args
-          // lib.optionalAttrs ((lib.functionArgs (import path)) ? pkgs) {
-            pkgs = pkgs // {
-              glibcLocales = config.i18n.glibcLocales;
-            };
-          }
-        );
-    };
   };
+
+  # A size trim, like the "Size" section below. buildFHSEnv puts the full
+  # glibc locale archive (220 MiB) in the sandbox. The trimmed archive of
+  # the guest is sufficient. The inner buildFHSEnv.nix takes the archive
+  # from its `pkgs` argument. This `callPackage` wrapper replaces that
+  # argument.
+  buildFHSEnvSmallLocales = pkgs.buildFHSEnv.override {
+    callPackage =
+      path: args:
+      pkgs.callPackage path (
+        args
+        // lib.optionalAttrs ((lib.functionArgs (import path)) ? pkgs) {
+          pkgs = pkgs // {
+            glibcLocales = config.i18n.glibcLocales;
+          };
+        }
+      );
+  };
+
+  autofirma = upstream.override (mavenHashes // { buildFHSEnv = buildFHSEnvSmallLocales; });
 
   # Imports a PKCS#12 certificate into each Firefox profile of the user.
   # AutoFirma reads the certificates from the Firefox (NSS) store.
