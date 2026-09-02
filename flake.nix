@@ -267,6 +267,12 @@
         mkSpecialArgs = hostInputs: {
           inputs = hostInputs // inputs;
         };
+
+        # The outputs of a `qemu-vm` guest flake (base_hosts/qemu,
+        # base_hosts/autofirma). See utils/qemu-guest.nix.
+        mkQemuGuest = import ./utils/qemu-guest.nix {
+          inherit self nixpkgs flake-utils;
+        };
       };
 
       nixosModules = {
@@ -275,6 +281,7 @@
         docker = ./modules/nixos/docker.nix;
         pragmatism = ./modules/nixos/pragmatism.nix;
         default-editor = ./modules/nixos/default_editor.nix;
+        qemu-guest = ./modules/nixos/qemu-guest.nix;
         cli = ./modules/cli.nix;
         development = ./modules/development.nix;
         environment = ./modules/environment.nix;

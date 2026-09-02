@@ -59,17 +59,6 @@ See [the README](base_hosts/qemu/README.md) for more information.
 nix run "github:aldur/dotfiles#qemu-vm"
 ```
 
-### `autofirma-vm`
-
-A desktop VM that keeps [AutoFirma][2] and its root certificate off the
-host. See [the README](base_hosts/autofirma/README.md).
-
-```bash
-nix run "github:aldur/dotfiles?dir=base_hosts/autofirma" -- --gui -p 22:2222
-```
-
-[2]: https://firmaelectronica.gob.es/Home/Descargas.html
-
 ### Everything else
 
 Use `nix flake show github:aldur/dotfiles` for a full list. Some of my

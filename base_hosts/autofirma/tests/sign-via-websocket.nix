@@ -1,10 +1,10 @@
-# End-to-end: the guest boots to the XFCE desktop, Firefox gets a test
-# certificate, a page calls AutoScript, Firefox opens the afirma:// handler,
-# AutoFirma starts, the page connects to its WebSocket on 127.0.0.1 and a
-# CAdES signature comes back.
+# End-to-end test. The guest boots to the XFCE desktop. Firefox gets a test
+# certificate. A page calls AutoScript. Firefox opens the afirma:// handler.
+# AutoFirma starts. The page connects to its WebSocket on 127.0.0.1 and gets
+# a CAdES signature.
 #
-# AutoScript comes from the clienteafirma sources; the certificate is a
-# self-signed one made at build time.
+# AutoScript comes from the clienteafirma sources. The certificate is
+# self-signed and made at build time.
 {
   pkgs,
   lib,
@@ -12,14 +12,14 @@
   guestModule,
   baseModule,
   autofirma-nix,
-  # Print what the guest does instead of asserting; for debugging.
+  # Print what the guest does instead of an assertion. For debugging.
   diagnose ? false,
 }:
 let
   openssl = lib.getExe pkgs.openssl;
 
-  # A self-signed "citizen" certificate. Deterministic assets beat a
-  # download: the fictitious kits the CAs publish change without notice.
+  # A self-signed "citizen" certificate. A local certificate is stable.
+  # The fictitious kits from the CAs change without notice.
   testCert = pkgs.runCommand "autofirma-test-cert" { nativeBuildInputs = [ pkgs.openssl ]; } ''
     mkdir -p $out
     openssl req -x509 -newkey rsa:2048 -nodes -days 365 -sha256 \
@@ -36,7 +36,7 @@ pkgs.testers.runNixOSTest {
   enableOCR = diagnose;
 
   node.specialArgs = specialArgs;
-  # The dotfiles base module sets nixpkgs.config and overlays itself.
+  # The dotfiles base module sets nixpkgs.config and overlays.
   node.pkgsReadOnly = false;
 
   nodes.machine = {
@@ -49,7 +49,7 @@ pkgs.testers.runNixOSTest {
       })
     ];
 
-    # Clicks the page's button; the test driver has no mouse.
+    # Clicks the button on the page. The test driver has no mouse.
     environment.systemPackages = [ pkgs.xdotool ];
 
     virtualisation = {
@@ -58,7 +58,7 @@ pkgs.testers.runNixOSTest {
     };
   }
   // lib.optionalAttrs diagnose {
-    # Page console output lands in Firefox's stdout.
+    # Sends the page console output to the Firefox stdout.
     programs.firefox.autoConfig = lib.mkAfter ''
       pref("devtools.console.stdout.content", true);
       pref("browser.dom.window.dump.enabled", true);
@@ -76,7 +76,7 @@ pkgs.testers.runNixOSTest {
       machine.wait_for_unit("create-autofirma-cert.service")
       machine.wait_for_open_port(443)
 
-      # The auto-login session; take DISPLAY and XAUTHORITY from it.
+      # Take DISPLAY and XAUTHORITY from the auto-login session.
       machine.wait_until_succeeds(f"pgrep -u {USER} -f xfce4-session")
       environ = machine.succeed(
           f"cat /proc/$(pgrep -u {USER} -f xfce4-session | head -n1)/environ | tr '\\0' '\\n'"
@@ -90,18 +90,19 @@ pkgs.testers.runNixOSTest {
           env = f"HOME=/home/{USER} MOZ_LEGACY_HOME=1 " + " ".join(f"{k}={shlex.quote(v)}" for k, v in session.items())
           return f"runuser -u {USER} -- env {env} sh -c {shlex.quote(cmd)}"
 
-      # First start creates the profile and its NSS database.
+      # The first start creates the profile and its NSS database.
       machine.execute(as_user("firefox >/tmp/firefox.log 2>&1 &"))
       machine.wait_until_succeeds(as_user("ls ~/.mozilla/firefox/*/cert9.db"))
       machine.wait_until_succeeds(as_user("ls ~/.mozilla/firefox/*/key4.db"))
       machine.sleep(5)
       machine.succeed(f"pkill -u {USER} firefox; sleep 3; true")
 
-      # Import the fictitious citizen certificate the way the user would.
+      # Import the test certificate the way the user does.
       machine.succeed(as_user('import-certificate ${testCert}/ciudadano.p12 ""'))
       machine.succeed(as_user("certutil -L -d sql:$(dirname ~/.mozilla/firefox/*/cert9.db) | grep -i ficticio"))
 
-      # The page's button triggers afirma:// → AutoFirma → WebSocket → signature.
+      # The button on the page opens afirma://. AutoFirma starts, and the
+      # page connects to its WebSocket.
       machine.execute(as_user("firefox --new-tab https://sede.test/ >>/tmp/firefox.log 2>&1 &"))
       machine.wait_until_succeeds(as_user("xdotool search --name 'AutoFirma test page'"))
       machine.sleep(5)
@@ -134,8 +135,8 @@ pkgs.testers.runNixOSTest {
       print(output[:200])
       assert output.startswith("Signature Successful: "), output
 
-      # A detached CAdES (CMS) signature by the test certificate over the
-      # page's text: the signature must verify against that exact text.
+      # The result is a detached CAdES (CMS) signature over the page text.
+      # It must verify against that exact text.
       signature = output[len("Signature Successful: "):].strip()
       machine.succeed(f"echo {shlex.quote(signature)} | base64 -d > /tmp/signature.der")
       machine.succeed("printf '%s' 'Signed from the AutoFirma VM test page.' > /tmp/content.txt")
@@ -151,7 +152,8 @@ pkgs.testers.runNixOSTest {
           "${openssl} pkcs7 -inform DER -in /tmp/signature.der -print_certs -noout | grep 'CIUDADANO FICTICIO'"
       )
 
-      # The point of the VM: the generated root CA exists only in the guest.
+      # The root CA must exist only in the guest. That is the purpose of
+      # the VM.
       machine.succeed(
           "${openssl} x509 -in /etc/Autofirma/Autofirma_ROOT.cer -noout -subject | grep 'AutoFirma ROOT'"
       )

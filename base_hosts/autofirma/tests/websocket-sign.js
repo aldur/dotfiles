@@ -1,14 +1,17 @@
 // Page script for tests/sign-via-websocket.nix.
 //
-// On a desktop browser AutoScript picks its WebSocket client: Firefox opens
-// afirma://, AutoFirma starts a TLS WebSocket server on 127.0.0.1 and the
-// page connects to it. (`setForceWSMode` is NOT that: "WS" there means the
-// web-service relay through the storage/retriever servlets.)
-// The result, good or bad, goes to /result so the test can read it.
+// On a desktop browser, AutoScript uses its WebSocket client. Firefox opens
+// afirma://. AutoFirma starts a TLS WebSocket server on 127.0.0.1. The page
+// connects to it. Note: `setForceWSMode` does not select this mode. There,
+// "WS" means the web service relay through the storage and retriever
+// servlets.
 //
-// Signing starts from a click on a full-page button: Firefox only opens an
-// external protocol from an iframe (AutoScript's method) after a user
-// gesture, and a real sede also puts the signature behind a button.
+// The page reports the result, good or bad, to /result. The test reads it
+// there.
+//
+// A click on a full-page button starts the signature. Firefox opens an
+// external protocol from an iframe (the AutoScript method) only after a
+// user gesture. A real sede also puts the signature behind a button.
 (function () {
   function report(message) {
     console.log(message);
@@ -18,7 +21,7 @@
   function sign() {
     AutoScript.cargarAppAfirma();
 
-    // Base64 of ASCII text: btoa() rejects anything outside Latin-1.
+    // Base64 of ASCII text. btoa() rejects characters outside Latin-1.
     var data = btoa("Signed from the AutoFirma VM test page.");
     try {
       AutoScript.sign(

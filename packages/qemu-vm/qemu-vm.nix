@@ -286,9 +286,9 @@ pkgs.writeArgcApplication {
     )
 
     # -- Display --
-    # `-nodefaults` above leaves the guest without a GPU. `--gui` adds a
-    # virtio GPU plus keyboard and absolute-pointer devices and opens the
-    # host's native display; otherwise the VM is serial-only.
+    # `-nodefaults` above gives the guest no GPU. `--gui` adds a virtio GPU,
+    # a keyboard, and an absolute pointer, and opens the native display of
+    # the host. Without it, the VM has only the serial console.
     if [[ "''${argc_gui:-0}" -eq 1 ]]; then
       QEMU_ARGS+=(
         -display ${if isLinuxHost then "gtk" else "cocoa"}

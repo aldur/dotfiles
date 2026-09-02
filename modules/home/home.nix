@@ -95,13 +95,14 @@ in
     inherit stateVersion;
 
     username = osConfig.mainUser;
-    packages = customTools ++ [
-      aldurs-tools
-      pkgs.moreutils
-      # Standalone output (no reference back to git itself): keeps
-      # `git help <cmd>` working next to the manual-less gitMinimal-runtime.
-      pkgs.git.doc
-    ];
+    packages =
+      # The workstation option controls the custom tools.
+      lib.optionals workstation (customTools ++ [ aldurs-tools ]) ++ [
+        pkgs.moreutils
+        # Standalone output (no reference back to git itself): keeps
+        # `git help <cmd>` working next to the manual-less gitMinimal-runtime.
+        pkgs.git.doc
+      ];
 
     file."Documents/Notes/.marksman.toml".text = "";
 
@@ -417,11 +418,14 @@ in
           commit.gpgsign = true;
           tag.gpgsign = true;
           tag.forceSignAnnotated = true;
-          gpg.format = "ssh";
-          gpg.ssh.allowedSignersFile = "${allowedSigners}";
 
-          # NOTE: This will default to the _second_ key offered by the agent.
-          gpg.ssh.defaultKeyCommand = lib.mkDefault "sh -c 'echo key::$(ssh-add -L | tail -n 1)'";
+          gpg = {
+            format = "ssh";
+            ssh.allowedSignersFile = "${allowedSigners}";
+
+            # NOTE: This will default to the _second_ key offered by the agent.
+            ssh.defaultKeyCommand = lib.mkDefault "sh -c 'echo key::$(ssh-add -L | tail -n 1)'";
+          };
         }
         // lib.optionalAttrs withDifftastic {
           # difftastic as difftool only (not diff.external, which breaks fugitive)

@@ -1,13 +1,3 @@
-# The AutoFirma guest: an XFCE desktop that logs `aldur` in, Firefox, and
-# AutoFirma wired to it through the afirma:// protocol handler.
-#
-# Why a VM at all: AutoFirma talks to the browser over a TLS WebSocket on
-# 127.0.0.1 and, to make the browser trust it, installs its own root CA into
-# the system trust store. Here that CA lands in /etc/Autofirma and in the
-# guest's Firefox only. The host trust store never sees it.
-#
-# This file holds what runs. VM plumbing (disks, RAM, serial console) lives
-# in autofirma.nix so the NixOS test in tests/ can reuse the guest as is.
 {
   config,
   inputs,
@@ -19,20 +9,36 @@ let
   inherit (pkgs.stdenv.hostPlatform) system;
   user = config.mainUser;
 
-  # autofirma-nix pins the Maven dependency trees as fixed-output
-  # derivations. Two of the pinned hashes no longer match what Maven
-  # Central serves (probed on 2026-09-02, upstream at ea43f59). Rebuild
-  # those two with the hashes observed today. Drop these overrides once
-  # upstream refreshes fixed-output-derivations.lock.
+  # You'll need to change this if Maven in nixpkgs changes.
   upstream = inputs.autofirma-nix.packages.${system}.autofirma;
   autofirma = upstream.override {
     jmulticard = upstream.clienteafirma.dependencies.jmulticard.override {
-      maven-dependencies-hash = "sha256-2lUqrN8s0KTbk8wd76FkU5wgaPZnzmpO9rgTE6Oe+os=";
+      maven-dependencies-hash = "sha256-xqzFxC+AT5NEEnTxKbNckwTBllMo0Glluuz5GtJLfgg=";
     };
-    maven-dependencies-hash = "sha256-aNtvfZuu84dS3/ZvbuVlmt2ELQFHr0OtNABnDo/Hdp4=";
+    clienteafirma-external = upstream.clienteafirma.dependencies.clienteafirma-external.override {
+      maven-dependencies-hash = "sha256-JxbIpnHG0PEzEw3xEbZhxEoDOBGrVvawoFXpajgLmOw=";
+    };
+    maven-dependencies-hash = "sha256-5nnqmv8v4QlTlyuckb4x/rWJoSu5b3SyeIiOlxSOvXU=";
+
+    # buildFHSEnv puts the full glibc locale archive (220 MiB) in the
+    # sandbox. The trimmed archive of the guest is sufficient. The inner
+    # buildFHSEnv.nix takes the archive from its `pkgs` argument. This
+    # `callPackage` wrapper replaces that argument.
+    buildFHSEnv = pkgs.buildFHSEnv.override {
+      callPackage =
+        path: args:
+        pkgs.callPackage path (
+          args
+          // lib.optionalAttrs ((lib.functionArgs (import path)) ? pkgs) {
+            pkgs = pkgs // {
+              glibcLocales = config.i18n.glibcLocales;
+            };
+          }
+        );
+    };
   };
 
-  # Import a PKCS#12 certificate into every Firefox profile of the user.
+  # Imports a PKCS#12 certificate into each Firefox profile of the user.
   # AutoFirma reads the certificates from the Firefox (NSS) store.
   import-certificate = pkgs.writeShellApplication {
     name = "import-certificate";
@@ -107,101 +113,137 @@ in
 
   networking.hostName = "autofirma-vm";
 
-  # -- AutoFirma + Firefox --------------------------------------------------
+  programs = {
+    autofirma = {
+      enable = true;
+      package = autofirma;
+      # Creates the local CA in /etc/Autofirma and makes Firefox trust it.
+      firefoxIntegration.enable = true;
+    };
 
-  programs.autofirma = {
-    enable = true;
-    package = autofirma;
-    # Generates the local CA in /etc/Autofirma and makes Firefox trust it.
-    firefoxIntegration.enable = true;
+    firefox = {
+      enable = true;
+      autoConfig = ''
+        pref("network.protocol-handler.expose.afirma", true);
+        // Do not show the "Allow this site to open afirma links?" prompt.
+        // AutoScript polls AutoFirma for a short time after the click. An
+        // open prompt fails the signature. AutoFirma is the only external
+        // handler in this guest.
+        pref("security.external_protocol_requires_permission", false);
+      '';
+      policies = {
+        # Send afirma:// to the desktop entry. Do not show the application
+        # chooser.
+        Handlers.schemes.afirma = {
+          action = "useSystemDefault";
+          ask = false;
+        };
+        DisableAppUpdate = true;
+        DisableTelemetry = true;
+        Homepage = {
+          StartPage = "homepage";
+          URL = "file:///etc/autofirma-vm/index.html";
+        };
+        OverrideFirstRunPage = "";
+        OverridePostUpdatePage = "";
+      };
+    };
+
+    # -- Size -----------------------------------------------------------------
+    # Removes the interactive tools of the shared home config.
+    aldur.workstation.enable = false;
+    firefox.wrapperConfig.speechSynthesisSupport = false;
+
+    # -- User -----------------------------------------------------------------
+
+    # Keep the editor out. This guest is a browser appliance.
+    aldur.lazyvim.enable = lib.mkDefault false;
   };
 
-  # The module's oneshot writes the WebSocket keystore as root with mode
-  # 0600. AutoFirma runs as the user, cannot read it, and every socket
-  # attempt fails with SAF_45. Its password is fixed upstream ("654321"),
-  # so world-readable loses nothing. Upstream's tests run as root and miss
-  # this.
+  # The oneshot of the module writes the WebSocket keystore as root with
+  # mode 0600. AutoFirma runs as the user and cannot read it. Each socket
+  # attempt then fails with SAF_45. The keystore password is fixed
+  # upstream ("654321"), so mode 0644 loses nothing. The upstream tests
+  # run as root and do not see this.
   systemd.services.create-autofirma-cert.serviceConfig.ExecStartPost =
     "${pkgs.coreutils}/bin/chmod 0644 /etc/Autofirma/autofirma.pfx";
 
-  programs.firefox = {
-    enable = true;
-    autoConfig = ''
-      pref("network.protocol-handler.expose.afirma", true);
-      // No "Allow this site to open afirma links?" prompt. AutoScript
-      // polls AutoFirma for a short while after the click; a missed
-      // prompt fails the signature. AutoFirma is the only external
-      // handler in this guest.
-      pref("security.external_protocol_requires_permission", false);
+  environment = {
+    etc."autofirma-vm/index.html".source = startPage;
+
+    # Start Firefox with the session.
+    etc."xdg/autostart/autofirma-vm-firefox.desktop".text = ''
+      [Desktop Entry]
+      Type=Application
+      Name=Firefox
+      Exec=firefox
+      OnlyShowIn=XFCE;
     '';
-    policies = {
-      # Hand afirma:// to the desktop entry, no application chooser.
-      Handlers.schemes.afirma = {
-        action = "useSystemDefault";
-        ask = false;
-      };
-      DisableAppUpdate = true;
-      DisableTelemetry = true;
-      Homepage = {
-        StartPage = "homepage";
-        URL = "file:///etc/autofirma-vm/index.html";
-      };
-      OverrideFirstRunPage = "";
-      OverridePostUpdatePage = "";
-    };
+
+    systemPackages = [
+      import-certificate
+      pkgs.nss.tools
+    ];
+
+    # Firefox 154 creates new profiles under ~/.config/mozilla. On Linux,
+    # AutoFirma only reads ~/.mozilla/firefox/profiles.ini. Keep the legacy
+    # location, or AutoFirma finds no certificates.
+    sessionVariables.MOZ_LEGACY_HOME = "1";
+
+    # XFCE programs this guest does not use. The xapp portal alone pulls the
+    # MATE panel and libmateweather.
+    xfce.excludePackages = with pkgs; [
+      mousepad
+      parole
+      pavucontrol
+      ristretto
+      xfce4-appfinder
+      xfce4-screenshooter
+      xfce4-taskmanager
+      xdg-desktop-portal-xapp
+    ];
   };
 
-  environment.etc."autofirma-vm/index.html".source = startPage;
-
-  # Open Firefox with the session; the VM exists for it.
-  environment.etc."xdg/autostart/autofirma-vm-firefox.desktop".text = ''
-    [Desktop Entry]
-    Type=Application
-    Name=Firefox
-    Exec=firefox
-    OnlyShowIn=XFCE;
-  '';
-
-  environment.systemPackages = [
-    import-certificate
-    pkgs.nss.tools
+  # All glibc locales take 220 MiB. Two locales are sufficient.
+  i18n.supportedLocales = [
+    "en_US.UTF-8/UTF-8"
+    "es_ES.UTF-8/UTF-8"
   ];
 
-  # Firefox 154 puts new profiles under ~/.config/mozilla. AutoFirma only
-  # looks in ~/.mozilla/firefox/profiles.ini on Linux, so keep the legacy
-  # location or it finds no certificates.
-  environment.sessionVariables.MOZ_LEGACY_HOME = "1";
+  # The X server enables the default font set. That set includes the CJK
+  # Noto fonts (120 MiB). fonts.packages below covers Latin scripts.
+  fonts.enableDefaultPackages = false;
 
-  # -- Desktop --------------------------------------------------------------
+  services = {
+    # Speech synthesis pulls speech-dispatcher and 650 MiB of mbrola voices.
+    # Each graphical desktop enables it, and the Firefox wrapper too.
+    speechd.enable = lib.mkForce false;
 
-  services.xserver = {
-    enable = true;
-    desktopManager.xfce = {
+    # Virtual filesystems and thumbnails pull samba, GNOME online accounts,
+    # and webkitgtk. Thunar works without them.
+    gvfs.enable = lib.mkForce false;
+    tumbler.enable = lib.mkForce false;
+
+    # -- Desktop --------------------------------------------------------------
+    xserver = {
       enable = true;
-      enableScreensaver = false;
+      desktopManager.xfce = {
+        enable = true;
+        enableScreensaver = false;
+      };
+      displayManager.lightdm.enable = true;
     };
-    displayManager.lightdm.enable = true;
+
+    displayManager.autoLogin = {
+      enable = true;
+      inherit user;
+    };
   };
 
-  services.displayManager.autoLogin = {
-    enable = true;
-    inherit user;
-  };
+  documentation.nixos.enable = false;
 
   fonts.packages = with pkgs; [
     dejavu_fonts
     liberation_ttf
   ];
-
-  # -- User -----------------------------------------------------------------
-
-  users.users.${user}.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
-  security.sudo-rs.wheelNeedsPassword = false;
-
-  # Serial console login for debugging; the desktop is on the display.
-  services.getty.autologinUser = user;
-
-  # The base config ships a large CLI toolbox. Keep the editor out: this
-  # guest is a browser kiosk, not a workstation.
-  programs.aldur.lazyvim.enable = lib.mkDefault false;
 }

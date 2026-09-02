@@ -1,12 +1,12 @@
-# A stand-in "sede": an HTTPS site that loads AutoScript (the JavaScript
-# side of AutoFirma) and a page script, plus an endpoint that stores what
-# the page reports. Self-contained: the upstream autofirma-nix harness
-# downloads its assets from administracionelectronica.gob.es, and those
-# links are dead.
+# A test "sede". It is an HTTPS site that serves AutoScript (the JavaScript
+# side of AutoFirma) and a page script. An endpoint stores what the page
+# reports. The upstream autofirma-nix test harness downloads its assets
+# from administracionelectronica.gob.es, and those links are dead. This
+# module has no downloads.
 {
-  # Directory holding autoscript.js; ships in the clienteafirma sources.
+  # Directory with autoscript.js. The clienteafirma sources ship it.
   autoscriptDir,
-  # The page script; must end by POSTing its result to /result.
+  # The page script. It must POST its result to /result.
   testJs,
   host ? "sede.test",
 }:

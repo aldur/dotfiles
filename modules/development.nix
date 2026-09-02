@@ -17,11 +17,9 @@ let
   # CLI utils useful for development.
   basePackages =
     with pkgs;
-    [
-      ripgrep-all
-    ]
-    ++ lib.optional devCfg.difftastic.enable difftastic # Enable saving ~120M.
+    lib.optional devCfg.difftastic.enable difftastic # Enable saving ~120M.
     ++ lib.optionals config.programs.aldur.workstation.enable [
+      ripgrep-all # ~350M with pandoc
       universal-ctags
       watch
     ];
@@ -80,8 +78,8 @@ in
     codex.enable = mkEnableOption "codex";
 
     # Interactive-workstation comforts: atuin, clipshare, difftastic, spare
-    # dev CLIs. A headless or agent guest sets this to false and keeps only
-    # the essentials.
+    # dev CLIs, the custom tools of modules/home/home.nix. A headless or
+    # agent guest sets this to false and keeps only the essentials.
     workstation.enable = mkOption {
       type = types.bool;
       default = true;

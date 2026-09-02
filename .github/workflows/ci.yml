@@ -116,8 +116,8 @@ jobs:
           - runner: ubuntu-24.04-arm
             target: ./base_hosts/qemu#vm-nogui
 
-          # Build the AutoFirma VM launcher as a test. The end-to-end
-          # signing test is a `checks` output of that flake; run it locally.
+          # Build the AutoFirma VM launcher as a test. The signing test is a
+          # `checks` output of that flake. Run it locally.
           - runner: ubuntu-24.04
             target: ./base_hosts/autofirma#autofirma-vm
           - runner: ubuntu-24.04-arm
