@@ -204,6 +204,10 @@
           path = ./base_hosts/qemu;
           description = "A QEMU VM";
         };
+        autofirma-vm = {
+          path = ./base_hosts/autofirma;
+          description = "A QEMU VM with a desktop, Firefox and AutoFirma";
+        };
         lxc-nixos = {
           path = ./base_hosts/crostini;
           description = "An lxc-nixos container to run in ChromeOS Crostini";

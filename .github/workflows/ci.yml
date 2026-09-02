@@ -116,6 +116,13 @@ jobs:
           - runner: ubuntu-24.04-arm
             target: ./base_hosts/qemu#vm-nogui
 
+          # Build the AutoFirma VM launcher as a test. The end-to-end
+          # signing test is a `checks` output of that flake; run it locally.
+          - runner: ubuntu-24.04
+            target: ./base_hosts/autofirma#autofirma-vm
+          - runner: ubuntu-24.04-arm
+            target: ./base_hosts/autofirma#autofirma-vm
+
           # Build the Crostini Baguette image as a test (only aarch64).
           - runner: ubuntu-24.04-arm
             target: ./base_hosts/crostini#baguette-image

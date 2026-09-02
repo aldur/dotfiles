@@ -139,10 +139,11 @@ pkgs.writeArgcApplication {
     # @flag --clean Remove existing VM state
     # @flag --ephemeral Do not write to the VM disk
     # @flag --show-boot Show boot console messages
+    # @flag --gui Open a graphical display (virtio-gpu, keyboard, tablet)
 
     declare argc_dir argc_port argc_memory argc_cores argc_disk_size
     declare argc_store_image
-    declare argc_verbose argc_clean argc_ephemeral argc_show_boot
+    declare argc_verbose argc_clean argc_ephemeral argc_show_boot argc_gui
     eval "$(argc --argc-eval "$0" "$@")"
 
     VM_DIR="''${argc_dir:-${defaultVmDir}}"
@@ -228,6 +229,9 @@ pkgs.writeArgcApplication {
     if [[ "''${argc_ephemeral:-0}" -eq 1 ]]; then
       echo "  Ephemeral mode: enabled"
     fi
+    if [[ "''${argc_gui:-0}" -eq 1 ]]; then
+      echo "  Display: graphical window (serial console stays on this terminal)"
+    fi
     echo ""
 
     # Build the QEMU command — no shell passthrough, all options are explicit.
@@ -258,7 +262,6 @@ pkgs.writeArgcApplication {
 
       # -- Console --
       # Mux serial console with QEMU monitor on stdio; Ctrl-B switches to monitor
-      -nographic
       -serial mon:stdio
       -echr 0x02
 
@@ -281,6 +284,21 @@ pkgs.writeArgcApplication {
       -initrd ${initrd}
       -append "$(cat ${toplevel}/kernel-params) init=${toplevel}/init regInfo=${regInfo}/registration console=${serialDevice},115200n8 $EXTRA_KERNEL_PARAMS"
     )
+
+    # -- Display --
+    # `-nodefaults` above leaves the guest without a GPU. `--gui` adds a
+    # virtio GPU plus keyboard and absolute-pointer devices and opens the
+    # host's native display; otherwise the VM is serial-only.
+    if [[ "''${argc_gui:-0}" -eq 1 ]]; then
+      QEMU_ARGS+=(
+        -display ${if isLinuxHost then "gtk" else "cocoa"}
+        -device virtio-gpu-pci
+        -device virtio-keyboard-pci
+        -device virtio-tablet-pci
+      )
+    else
+      QEMU_ARGS+=(-nographic)
+    fi
 
     # Snapshot mode: changes to drives are not persisted
     if [[ "''${argc_ephemeral:-0}" -eq 1 ]]; then
