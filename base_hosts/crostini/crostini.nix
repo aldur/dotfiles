@@ -22,6 +22,12 @@ in
     };
   };
 
+  # The LXC module of nixpkgs imports the installer channel module. That
+  # module pins the flake registry to a copy of the nixpkgs source in the
+  # image (200 MiB), for `nixos-install`. modules/nix.nix pins the
+  # registry to GitHub, and the two definitions conflict.
+  disabledModules = [ "installer/cd-dvd/channel.nix" ];
+
   imports = [
     "${inputs.self}/modules/current_system_flake.nix"
     "${inputs.self}/modules/nixos/pragmatism.nix"
@@ -58,7 +64,7 @@ in
       root.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
     };
 
-    hardware.graphics.enable = true;
+    hardware.graphics.enable = lib.mkDefault true;
     # Enable Wayland compatibility for Chrome and Electron apps.
     environment.sessionVariables.NIXOS_OZONE_WL = "1";
 

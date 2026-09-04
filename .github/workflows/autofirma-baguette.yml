@@ -1,0 +1,43 @@
+# Builds the AutoFirma Baguette image and stores it as a workflow artifact. 
+on:
+  workflow_dispatch:
+    inputs:
+      retention-days:
+        description: Days to keep the artifact
+        type: number
+        default: 7
+
+permissions:
+  contents: read
+
+env:
+  # See ci.yml, aldur's SSH signing keys fetched from GH and cached to save API calls
+  SIGNING_KEYS: /tmp/ssh_signing_keys.json
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+
+      - name: Reclaim disk space
+        run: .github/scripts/reclaim-disk.sh
+
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: .github/scripts/fetch-signing-keys.sh
+
+      - run: |
+          nix build --override-input aldur-dotfiles . \
+            --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
+            ./base_hosts/autofirma#baguette-zimage
+
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: autofirma-baguette-arm64
+          path: result/*.zst
+          if-no-files-found: error
+          retention-days: ${{ inputs.retention-days }}

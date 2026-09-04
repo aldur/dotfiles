@@ -36,7 +36,19 @@
       specialArgs = aldur-dotfiles.lib.mkSpecialArgs inputs;
 
       crostiniModule = nixos-crostini.nixosModules.crostini;
-      baguetteModule = nixos-crostini.nixosModules.baguette;
+      baguetteModules = [
+        nixos-crostini.nixosModules.baguette
+        ./baguette.nix
+      ];
+
+      generator =
+        system: moreModules:
+        nixpkgs.lib.nixosSystem {
+          inherit specialArgs system;
+          modules = modules ++ moreModules;
+        };
+
+      lxc-nixos = generator "aarch64-linux" [ crostiniModule ];
     in
     aldur-dotfiles.inputs.flake-utils.lib.eachSystem
       [
@@ -52,41 +64,25 @@
           };
           default = crostini-lxc;
 
-          crostini-lxc-metadata = nixos-generators.nixosGenerate {
-            inherit system specialArgs modules;
-            format = "lxc-metadata";
-          };
-
           baguette-tarball = self.nixosConfigurations.baguette-nixos.config.system.build.tarball;
           baguette-image = self.nixosConfigurations.baguette-nixos.config.system.build.btrfsImage;
         };
-      })
-    // (
-      let
-        generator =
-          system: moreModules:
-          nixpkgs.lib.nixosSystem {
-            inherit specialArgs system;
-            modules = modules ++ moreModules;
-          };
 
-        lxc-nixos = generator "aarch64-linux" [ crostiniModule ];
-      in
-      {
-        nixosConfigurations = {
-          # Having this allows rebuilding the image _within_ the container.
-          inherit lxc-nixos;
-          lxc-nixos-arm = lxc-nixos;
-          lxc-nixos-x86 = generator "x86_64-linux" [ crostiniModule ];
-
-          baguette-nixos = generator "aarch64-linux" [
-            baguetteModule
-            (_: {
-              virtualisation.buildMemorySize = 1024 * 8;
-              virtualisation.diskImageSize = 1024 * 16;
-            })
-          ];
+        # Boots the Baguette image of this system in crosvm and probes it.
+        # See utils/baguette-test.nix of the dotfiles.
+        checks.baguette-boot = aldur-dotfiles.lib.mkBaguetteTest {
+          configuration = generator system baguetteModules;
+          name = "crostini-baguette-boot";
         };
-      }
-    );
+      })
+    // {
+      nixosConfigurations = {
+        # Having this allows rebuilding the image _within_ the container.
+        inherit lxc-nixos;
+        lxc-nixos-arm = lxc-nixos;
+        lxc-nixos-x86 = generator "x86_64-linux" [ crostiniModule ];
+
+        baguette-nixos = generator "aarch64-linux" baguetteModules;
+      };
+    };
 }

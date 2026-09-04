@@ -2,7 +2,7 @@
 {
   imports = [
     inputs.self.nixosModules.qemu-guest
-    ./guest.nix
+    ./desktop.nix
   ];
 
   aldur.qemuGuest.sshHostKeyDir = ./.;
