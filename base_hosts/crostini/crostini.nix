@@ -64,7 +64,16 @@ in
       root.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
     };
 
-    hardware.graphics.enable = lib.mkDefault true;
+    # No /run/opengl-driver: mesa and its LLVM take 800 MiB. The sommelier
+    # of ChromeOS brings its own libraries with the tools. Programs render
+    # in software.
+    hardware.graphics.enable = false;
+
+    # -- Size -------------------------------------------------------------
+    # The `doc` outputs of the system packages (Python alone is 54 MiB) and
+    # the NixOS manual. The man pages stay.
+    documentation.doc.enable = false;
+    documentation.nixos.enable = false;
     # Enable Wayland compatibility for Chrome and Electron apps.
     environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
@@ -73,13 +82,18 @@ in
         lazyvim.enable = true;
         lazyvim.packageNames = [ "lazyvim" ];
         claude-code.enable = true;
+        codex.enable = true;
+        # 120 MiB.
+        development.difftastic.enable = false;
         # The hooks defined below in home-manager invoke notify-send when
         # Claude finishes or needs input; that requires the session bus
         # path through the sandbox to org.freedesktop.Notifications.
         claude-code.sandbox.extraDbusTalk = [ "org.freedesktop.Notifications" ];
       };
 
-      gnupg.agent.pinentryPackage = pkgs.pinentry-qt;
+      # pinentry over X11 through sommelier. The Qt one brings the Qt
+      # stack and its own ICU (320 MiB); GTK 2 costs 27 MiB.
+      gnupg.agent.pinentryPackage = pkgs.pinentry-gtk2;
 
       # This configures default SSH connections (including those initiated by
       # root when using a remote builder) to go through yubikey-agent.
@@ -132,9 +146,8 @@ in
       { config, lib, ... }: # home-manager's config, not the OS one
       {
         programs = {
-          llm = {
-            enable = true;
-          };
+          # The local models of llm cost 550 MiB with their plugins.
+          llm.enable = false;
           better-nix-search.enable = true;
           claude-code.writableSettings.hooks = {
             Stop = [

@@ -1,7 +1,14 @@
-# Builds the AutoFirma Baguette image and stores it as a workflow artifact. 
+# Builds a ChromeOS Baguette image and keeps it as a workflow artifact. 
 on:
   workflow_dispatch:
     inputs:
+      image:
+        description: The flake under base_hosts that builds the image
+        type: choice
+        options:
+          - autofirma
+          - crostini
+        default: autofirma
       retention-days:
         description: Days to keep the artifact
         type: number
@@ -11,7 +18,7 @@ permissions:
   contents: read
 
 env:
-  # See ci.yml, aldur's SSH signing keys fetched from GH and cached to save API calls
+  # See ci.yml. These are just cached SSH public keys pulled from the API.
   SIGNING_KEYS: /tmp/ssh_signing_keys.json
 
 jobs:
@@ -33,11 +40,11 @@ jobs:
       - run: |
           nix build --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
-            ./base_hosts/autofirma#baguette-zimage
+            "./base_hosts/${{ inputs.image }}#baguette-zimage"
 
       - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
-          name: autofirma-baguette-arm64
+          name: ${{ inputs.image }}-baguette-arm64
           path: result/*.zst
           if-no-files-found: error
           retention-days: ${{ inputs.retention-days }}

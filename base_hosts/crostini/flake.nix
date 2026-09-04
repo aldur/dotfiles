@@ -66,6 +66,7 @@
 
           baguette-tarball = self.nixosConfigurations.baguette-nixos.config.system.build.tarball;
           baguette-image = self.nixosConfigurations.baguette-nixos.config.system.build.btrfsImage;
+          baguette-zimage = self.nixosConfigurations.baguette-nixos.config.system.build.btrfsImageCompressed;
         };
 
         # Boots the Baguette image of this system in crosvm and probes it.

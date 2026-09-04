@@ -62,10 +62,11 @@ restart Firefox.
 
 ## Baguette
 
-The workflow `autofirma-baguette.yml` builds the arm64 image on demand
-(`workflow_dispatch`) and keeps it as the artifact `autofirma-baguette-arm64`
-for a few days. The push pipeline only builds the system closure as a test.
-Download the artifact, then create the VM in `crosh`:
+The workflow `baguette-image.yml` builds the arm64 image on demand
+(`workflow_dispatch`, image `autofirma`) and keeps it as the artifact
+`autofirma-baguette-arm64` for a few days. The push pipeline only builds
+the system closure as a test. Download the artifact, then create the VM in
+`crosh`:
 
 ```bash
 gh run download --repo aldur/dotfiles --name autofirma-baguette-arm64
