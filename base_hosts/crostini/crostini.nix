@@ -22,12 +22,6 @@ in
     };
   };
 
-  # The LXC module of nixpkgs imports the installer channel module. That
-  # module pins the flake registry to a copy of the nixpkgs source in the
-  # image (200 MiB), for `nixos-install`. modules/nix.nix pins the
-  # registry to GitHub, and the two definitions conflict.
-  disabledModules = [ "installer/cd-dvd/channel.nix" ];
-
   imports = [
     "${inputs.self}/modules/current_system_flake.nix"
     "${inputs.self}/modules/nixos/pragmatism.nix"
