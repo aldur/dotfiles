@@ -44,27 +44,21 @@ in
   llmcat = prev.callPackage ../packages/llmcat/llmcat.nix { };
 
   # pi releases often; stable nixpkgs lags too far behind, so follow
-  # unstable by default.
-  inherit (unstable) pi-coding-agent;
+  # unstable by default. Build it with the stable Node toolchain: slim.nix
+  # re-points the stable node paths at the one runtime node of this repo,
+  # and an unstable node would stay behind as a twin. Both channels ship
+  # Node 24, which strips TS types by default.
+  pi-coding-agent = unstable.pi-coding-agent.override { inherit (prev) buildNpmPackage; };
 
   piPlugins = {
     pi-llama = prev.callPackage ../packages/pi/plugins/pi-llama.nix { };
     # final.callPackage: the build-time check must see the same
-    # pi-coding-agent (from unstable, above) that the wrapper runs. The
-    # unstable nodejs (24) strips TS types by default, which the check
-    # needs to load index.ts.
-    pi-no-docs = final.callPackage ../packages/pi/plugins/pi-no-docs {
-      inherit (unstable) nodejs;
-    };
+    # pi-coding-agent (above) that the wrapper runs.
+    pi-no-docs = final.callPackage ../packages/pi/plugins/pi-no-docs { };
     pi-statusline = prev.callPackage ../packages/pi/plugins/pi-statusline { };
     pi-system-prompt = prev.callPackage ../packages/pi/plugins/pi-system-prompt { };
   };
-  pi = prev.callPackage ../packages/pi/pi.nix {
-    plugins = final.piPlugins;
-    # pi-coding-agent (above) comes from unstable; hand the wrapper the same
-    # channel's node and pnpm so the closure carries one copy, not twins.
-    inherit (unstable) nodejs pnpm;
-  };
+  pi = prev.callPackage ../packages/pi/pi.nix { plugins = final.piPlugins; };
 
   # Rust port of pi, wrapped with the same affordances (plugin bundling, no
   # phone-home); the binary is `pi-rust` so both can sit on PATH. No plugins:
