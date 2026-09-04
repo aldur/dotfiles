@@ -1,0 +1,39 @@
+The treesitter highlighter can lose conceal_lines marks after an edit.
+
+A buffer edit clears all conceal_lines marks and the _conceal_checked
+flags. When the next parse runs asynchronously (it takes more than 3
+ms), a redraw happens with `parsing == true`. That redraw iterates
+stale highlight states, so it adds no conceal_lines marks back. Still,
+on_range_impl marks every visible row as checked. The parse completion
+callback invalidates only the rows in the tree diff. A row outside the
+diff keeps checked == true with no mark, and its line never conceals
+again until the next edit.
+
+The functional test "treesitter highlighting (markdown) works with
+concealed lines" (highlight_spec.lua:1462) fails this way on slow CI
+machines. To reproduce on a fast machine, set default_parse_timeout_ns
+to 1 in languagetree.lua; the test then fails on each run.
+
+The fix: do not mark rows as checked while `parsing` is true. The full
+redraw after the parse completes checks them again and adds the marks.
+
+Drop this patch when upstream neovim fixes the race.
+
+--- a/runtime/lua/vim/treesitter/highlighter.lua
++++ b/runtime/lua/vim/treesitter/highlighter.lua
+@@ -357,8 +357,13 @@
+       range_end_col = 0
+     end
+   end
+-  for i = range_start_row, range_end_row - 1 do
+-    self._conceal_checked[i] = self._conceal_line or nil
++  -- A redraw during an incomplete async parse iterates stale highlight
++  -- states and cannot add conceal_lines marks. Do not mark rows checked;
++  -- the full redraw after the parse completes checks them again.
++  if not self.parsing then
++    for i = range_start_row, range_end_row - 1 do
++      self._conceal_checked[i] = self._conceal_line or nil
++    end
+   end
+ 
+   local MAX_ROW = 2147483647 -- sentinel for skipping to the end of file
