@@ -137,7 +137,15 @@ with pkgs.vimPlugins;
           ''
             nixpkgs' stable channel now packages link-vim.
             Take it from `pkgs` instead of `pkgsUnstable`, and drop this guard.''
-          pkgsUnstable.vimPlugins.link-vim;
+          (
+            # No need for `.git_hooks`, let's save space (it would otherwise bring bash in)
+            pkgs.runCommandLocal pkgsUnstable.vimPlugins.link-vim.name { } ''
+              cp -a ${pkgsUnstable.vimPlugins.link-vim} $out
+              chmod -R u+w $out
+              rm -rf $out/.git_hooks
+              ! grep -r /nix/store/ $out
+            ''
+          );
       name = "link.vim";
     }
 

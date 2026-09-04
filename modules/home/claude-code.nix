@@ -59,7 +59,11 @@ let
       rm -f "${target}.tmp"
       chmod 600 "${target}"
     else
-      install -Dm600 ${source} "${target}"
+      # Write through, no replace: with impermanence, the target is a
+      # bind mount, empty on the first boot. A replace fails on it.
+      mkdir -p "$(dirname "${target}")"
+      cat ${source} > "${target}"
+      chmod 600 "${target}"
     fi
   '';
 

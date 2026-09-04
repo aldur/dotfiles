@@ -9,35 +9,10 @@
   };
   outputs =
     { aldur-dotfiles, ... }@inputs:
-    let
-      specialArgs = aldur-dotfiles.lib.mkSpecialArgs inputs;
+    aldur-dotfiles.lib.mkQemuGuest {
+      inherit inputs;
+      name = "vm-nogui";
+      hostName = "qemu-nixos";
       qemuModule = ./qemu.nix;
-    in
-    aldur-dotfiles.inputs.flake-utils.lib.eachDefaultSystem (system: {
-      packages = rec {
-        vm-nogui = aldur-dotfiles.legacyPackages.${system}.qemu-vm.override { inherit qemuModule; };
-        default = vm-nogui;
-      };
-    })
-    // (
-      let
-        cfg =
-          targetSystem:
-          aldur-dotfiles.inputs.nixpkgs.lib.nixosSystem {
-            inherit specialArgs;
-            modules = aldur-dotfiles.legacyPackages.${targetSystem}.qemu-vm.modules ++ [ qemuModule ];
-            system = targetSystem;
-          };
-
-        qemu-nixos-aarch64 = cfg "aarch64-linux";
-        qemu-nixos-x86_64 = cfg "x86_64-linux";
-
-      in
-      {
-        nixosConfigurations = {
-          qemu-nixos = qemu-nixos-aarch64;
-          inherit qemu-nixos-aarch64 qemu-nixos-x86_64;
-        };
-      }
-    );
+    };
 }

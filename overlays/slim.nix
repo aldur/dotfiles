@@ -93,6 +93,21 @@ let
       );
     };
   };
+  # Repack of the cached build. pnpm's entry point execs nodejs-slim by
+  # absolute path; same name → same store path length. Private: pnpm is
+  # also a build tool of other packages, and a new derivation there would
+  # rebuild them.
+  pnpmRuntime =
+    prev.runCommand prev.pnpm.name { inherit (prev.pnpm) meta; } ''
+      cp -a ${prev.pnpm} $out
+      chmod -R u+w $out
+      find $out -type f -exec sed -i \
+        -e "s|${prev.pnpm}|$out|g" \
+        -e "s|${prev.nodejs-slim}|${final.nodejs-slim-runtime}|g" {} +
+      # A no-op swap would silently keep the unstripped node.
+      grep -rq ${final.nodejs-slim-runtime} $out
+      ! grep -rq ${prev.nodejs-slim} $out
+    '';
   slimmed = {
 
   # The vanilla package (overlays/packages.nix), re-called with the
@@ -100,6 +115,20 @@ let
   remarks = prev.remarks.override {
     python3 = pythonForRemarks;
     python3Packages = pythonForRemarks.pkgs;
+  };
+
+  # pi-coding-agent's scripts are shebanged with the full nodejs join
+  # (overlays/packages.nix builds it with the stable toolchain). The
+  # residue hook re-points them at the runtime node, and drops npm and
+  # corepack from the closure.
+  pi-coding-agent = final.withoutNpmBuildResidue prev.pi-coding-agent;
+
+  # The pi wrapper (packages/pi/pi.nix), re-called with the runtime node
+  # and the repacks: the runtime has `node`, which is all pnpm and pi run.
+  pi = prev.pi.override {
+    nodejs = final.nodejs-slim-runtime;
+    pnpm = pnpmRuntime;
+    inherit (final) pi-coding-agent;
   };
 
   # Several of node's C dependencies have no dev output: headers, cmake

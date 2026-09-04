@@ -36,6 +36,14 @@ qemu-vm --clean -p 22:2222
 # Enable GUI mode
 qemu-vm --gui -p 22:2222
 
+# Share the clipboard with the guest (the guest must run spice-vdagent).
+# Works with the Cocoa display on macOS; the GTK display on Linux has no
+# clipboard support in the nixpkgs build.
+qemu-vm --gui --clipboard -p 22:2222
+
+# Expose a host file to the guest as /run/qemu-vm-files/notes.txt
+qemu-vm --file notes.txt=~/notes.txt -p 22:2222
+
 # Show all options
 qemu-vm --help
 ```

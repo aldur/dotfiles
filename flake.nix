@@ -204,6 +204,10 @@
           path = ./base_hosts/qemu;
           description = "A QEMU VM";
         };
+        autofirma-vm = {
+          path = ./base_hosts/autofirma;
+          description = "A QEMU VM with a desktop, Firefox and AutoFirma";
+        };
         lxc-nixos = {
           path = ./base_hosts/crostini;
           description = "An lxc-nixos container to run in ChromeOS Crostini";
@@ -263,6 +267,18 @@
         mkSpecialArgs = hostInputs: {
           inputs = hostInputs // inputs;
         };
+
+        # The outputs of a `qemu-vm` guest flake (base_hosts/qemu,
+        # base_hosts/autofirma). See utils/qemu-guest.nix.
+        mkQemuGuest = import ./utils/qemu-guest.nix {
+          inherit self nixpkgs flake-utils;
+        };
+
+        # A boot test for a ChromeOS Baguette image, for any flake that
+        # builds one. See utils/baguette-test.nix.
+        mkBaguetteTest = import ./utils/baguette-test.nix {
+          inherit (nixpkgs) lib;
+        };
       };
 
       nixosModules = {
@@ -271,6 +287,7 @@
         docker = ./modules/nixos/docker.nix;
         pragmatism = ./modules/nixos/pragmatism.nix;
         default-editor = ./modules/nixos/default_editor.nix;
+        qemu-guest = ./modules/nixos/qemu-guest.nix;
         cli = ./modules/cli.nix;
         development = ./modules/development.nix;
         environment = ./modules/environment.nix;

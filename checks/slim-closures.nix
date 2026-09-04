@@ -43,8 +43,8 @@ let
     remarks = 700;
     llm = 650; # the flake alias of llmWithPlugins
     llmWithPlugins = 650;
-    pi = 650;
-    pi-coding-agent = 580;
+    pi = 455;
+    pi-coding-agent = 415;
     # A node interpreter and one stdlib-only script; it is nodejs-slim-runtime
     # plus a wrapper, so it inherits that entry's budget.
     llama-wiretap = 200;
@@ -58,7 +58,8 @@ let
     nodejs-slim-runtime = 200;
     marksman = 180;
     basedpyright = 230;
-    codex = 345;
+    # 0.146 adds the codex-code-mode-host helper binary (63M).
+    codex = 470;
     markdownlint-cli2 = 220;
     prettierd = 210;
     tiktoken = 260;
