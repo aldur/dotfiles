@@ -38,6 +38,7 @@ in
       text ? null,
       file ? null,
       runtimeInputs ? [ ],
+      excludeShellChecks ? [ ],
       version ? defaultVersion,
       meta ? { },
       passthru ? { },
@@ -45,7 +46,10 @@ in
     assert (text != null) != (file != null);
     let
       # Set meta.mainProgram so lib.getExe works without a warning.
-      meta' = { mainProgram = name; } // meta;
+      meta' = {
+        mainProgram = name;
+      }
+      // meta;
       rawSource = if file != null then builtins.readFile file else text;
       # Inject @version before @describe (or at the start if no @describe).
       # The injected lines must start at column 0: argc only recognizes
@@ -54,16 +58,13 @@ in
         if builtins.match ".*# @version.*" rawSource != null then
           rawSource # Already has version
         else if builtins.match ".*# @describe.*" rawSource != null then
-          builtins.replaceStrings
-            [ "# @describe" ]
-            [ "# @version ${version}\n# @describe" ]
-            rawSource
+          builtins.replaceStrings [ "# @describe" ] [ "# @version ${version}\n# @describe" ] rawSource
         else
           "# @version ${version}\n" + rawSource;
       scriptFile = prev.writeText "${name}.sh" scriptSource;
 
       shellApp = prev.writeShellApplication {
-        inherit name;
+        inherit name excludeShellChecks;
         meta = meta';
         runtimeInputs = [ final.argc ] ++ runtimeInputs;
         text = scriptSource;

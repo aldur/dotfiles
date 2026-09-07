@@ -79,6 +79,7 @@ in
 {
   imports = [
     inputs.clipshare.homeManagerModules.default
+    ./agent-sandbox
     ./claude-code.nix
     ./codex.nix
     ./dash.nix

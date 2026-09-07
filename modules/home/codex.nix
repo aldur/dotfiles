@@ -8,6 +8,8 @@
 }:
 let
   enabled = osConfig.programs.aldur.codex.enable;
+  sandboxCfg = osConfig.programs.aldur.codex.sandbox;
+  sandbox = sandboxCfg.enable && pkgs.stdenv.hostPlatform.isLinux;
   tomlFormat = pkgs.formats.toml { };
   tomlPython = pkgs.python3.withPackages (ps: [ ps.tomlkit ]);
 
@@ -84,7 +86,14 @@ in
       '';
 
       packages = [ codex ];
-      shellAliases.codex-yolo = "codex --dangerously-bypass-approvals-and-sandbox";
+      # The flag turns off Codex's native sandbox and approvals.
+      # The outer wrapper supplies the filesystem allowlist
+      # and filters session sockets for the entire agent process.
+      shellAliases.codex-yolo =
+        let
+          sandboxPrefix = lib.optionalString sandbox "${lib.getExe config.programs.agent-sandbox.package} --profile codex -- ";
+        in
+        "${sandboxPrefix}codex --dangerously-bypass-approvals-and-sandbox";
     };
   };
 }

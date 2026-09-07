@@ -61,6 +61,11 @@ in
 
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+  agent-sandbox = pkgs.callPackage ../modules/home/agent-sandbox/tests { };
+  agent-sandbox-modules = pkgs.callPackage ../modules/home/agent-sandbox/tests/modules.nix {
+    inherit self inputs system;
+  };
+
   # Budgets and forbidden-path guards for every derivation the flake
   # exports, discovered rather than enumerated so nothing is forgotten
   # (see overlays/slim.nix for why silent regressions are the risk).

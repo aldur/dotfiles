@@ -10,7 +10,6 @@ let
   enabled = osConfig.programs.aldur.claude-code.enable;
   sandboxCfg = osConfig.programs.aldur.claude-code.sandbox;
   sandbox = sandboxCfg.enable;
-  runtimeAllowlist = sandboxCfg.extraRuntimeDirAllowlist;
   jsonFormat = pkgs.formats.json { };
   cfg = config.programs.claude-code;
 
@@ -81,93 +80,6 @@ let
     ${lib.getExe pkgs.jq} --arg cwd "$PWD" \
       '.projects[$cwd].hasTrustDialogAccepted = true' "$config" > "$tmp"
     cat "$tmp" > "$config"
-  '';
-
-  # Shadow the user's tmux server, ssh-agent socket from subprocesses Claude
-  # spawns under YOLO. Filesystem and network pass through so editing, nix
-  # builds, and the Claude API still work. CLAUDE_NO_SANDBOX=1 skips the wrapper.
-  claude-bwrap = pkgs.writeShellScript "claude-bwrap" ''
-    set -euo pipefail
-
-    if [ "''${CLAUDE_NO_SANDBOX:-0}" = "1" ]; then
-      exec "$@"
-    fi
-
-    uid=$(${pkgs.coreutils}/bin/id -u)
-    runtime="''${XDG_RUNTIME_DIR:-/run/user/$uid}"
-    data_home="''${XDG_DATA_HOME:-$HOME/.local/share}"
-
-    # Spawn xdg-dbus-proxy: filtered view of the session bus. Closes the
-    # systemd-run / StartTransientUnit escape, which would otherwise let
-    # the sandboxed Claude spawn arbitrary commands as a transient user
-    # unit (outside the bwrap, with full access to every shadowed path).
-    bus_addr="''${DBUS_SESSION_BUS_ADDRESS:-unix:path=$runtime/bus}"
-    proxy_dir=$(${pkgs.coreutils}/bin/mktemp -d /tmp/claude-dbus-proxy.XXXXXX)
-    proxy_sock="$proxy_dir/bus"
-    ${lib.getExe pkgs.xdg-dbus-proxy} "$bus_addr" "$proxy_sock" --filter \
-      --talk=org.freedesktop.DBus \
-      ${
-        lib.concatMapStringsSep " \\\n      " (n: "--talk=${lib.escapeShellArg n}") sandboxCfg.extraDbusTalk
-      } &
-    proxy_pid=$!
-    trap 'kill "$proxy_pid" 2>/dev/null; rm -rf "$proxy_dir"' EXIT
-    for _ in 1 2 3 4 5 6 7 8 9 10; do
-      [ -S "$proxy_sock" ] && break
-      sleep 0.1
-    done
-    [ -S "$proxy_sock" ] || { echo "claude-bwrap: xdg-dbus-proxy did not come up" >&2; exit 1; }
-
-    # Simple `bwrap` invocation that shadows `runtime`, the `tmux`/`ssh` sockets, 
-    # and hides pid/ipc/uts. 
-    #
-    # WARNING: Doesn't try to be bullet-proof.
-    args=(
-      --dev-bind / /
-      --proc /proc
-      --tmpfs "$runtime"
-      --tmpfs "/tmp/tmux-$uid"
-      --tmpfs "$HOME/.ssh"
-      --ro-bind-try "$HOME/.config/git" "$HOME/.config/git"
-      --tmpfs "$HOME/.config/nix"
-      --ro-bind-try "$HOME/.config/systemd" "$HOME/.config/systemd"
-      --ro-bind-try "$HOME/.config/fish" "$HOME/.config/fish"
-      --ro-bind-try "$HOME/.local/bin" "$HOME/.local/bin"
-      --ro-bind-try "$data_home/lazyvim" "$data_home/lazyvim"
-      --unsetenv TMUX
-      --unsetenv TMUX_PANE
-      --setenv TMUX_TMPDIR /dev/null
-      --unsetenv SSH_AUTH_SOCK
-      --unsetenv SSH_AGENT_PID
-      --unsetenv GNUPGHOME
-      --unsetenv GPG_TTY
-      --die-with-parent
-      --unshare-pid
-      --unshare-ipc
-      --unshare-uts
-    )
-
-    # Re-bind allowlist into the empty runtime tmpfs. The list is the
-    # value of programs.aldur.claude-code.sandbox.extraRuntimeDirAllowlist.
-    # The session bus is handled separately below via xdg-dbus-proxy.
-    for entry in ${lib.concatMapStringsSep " " lib.escapeShellArg runtimeAllowlist}; do
-      src="$runtime/$entry"
-      [ -e "$src" ] && args+=(--bind "$src" "$runtime/$entry")
-    done
-
-    # Bind the filtered bus and point DBUS_SESSION_BUS_ADDRESS at it.
-    args+=(
-      --bind "$proxy_sock" "$runtime/bus"
-      --setenv DBUS_SESSION_BUS_ADDRESS "unix:path=$runtime/bus"
-    )
-
-    # Shell history files.
-    for f in "$data_home/fish/fish_history" \
-             "$HOME/.bash_history"; do
-      [ -f "$f" ] && args+=(--bind /dev/null "$f")
-    done
-
-    # Not exec'd so the EXIT trap can clean up the proxy.
-    ${lib.getExe pkgs.bubblewrap} "''${args[@]}" -- "$@"
   '';
 
   claudeSettings = jsonFormat.generate "claude-code-settings.json" cfg.writableSettings;
@@ -278,7 +190,9 @@ in
             needsPathPrefix =
               if pkgs.stdenv.hostPlatform.isDarwin then true else osConfig.programs.nix-ld.enable;
             pathPrefix = lib.optionalString needsPathPrefix "PATH=~/.local/bin/:$PATH ";
-            sandboxPrefix = lib.optionalString (sandbox && pkgs.stdenv.hostPlatform.isLinux) "${claude-bwrap} ";
+            sandboxPrefix = lib.optionalString (
+              sandbox && pkgs.stdenv.hostPlatform.isLinux
+            ) "${lib.getExe config.programs.agent-sandbox.package} --profile claude -- ";
           in
           "${claude-trust-cwd}; ${pathPrefix}IS_SANDBOX=1 CLAUBBIT=1 DISABLE_TELEMETRY=1 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 ${sandboxPrefix}claude --dangerously-skip-permissions";
       };
