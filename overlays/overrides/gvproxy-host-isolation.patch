@@ -1,0 +1,330 @@
+gvproxy forwards every guest connection to wherever the guest points it,
+including the host: its loopback, once the NAT mapping is gone, still
+answers on every interface address, so a guest reaches whatever the host
+binds on 0.0.0.0 or on its LAN address. The forwards of `stack.forwards`
+bind whatever address the config names, so a typo publishes the guest to
+the LAN.
+
+This adds two switches to the stack configuration and the command line.
+`denyHostAccess` / `-deny-host-access` refuses TCP and UDP from the guest
+to loopback, to the unspecified address, to every address of a host
+interface, and to the gateway and virtual IPs of gvproxy itself, which
+would otherwise go out on the host network; the interface list is re-read
+every ten seconds, and while it cannot be read every destination is
+refused. `loopbackForwardsOnly` / `-loopback-forwards-only` rejects a TCP
+or UDP forward that binds a non-loopback address. Applies on top of
+gvproxy-guest-isolation.patch. packages/qemu-vm sets both. Drop this patch
+when upstream ships the switches.
+
+diff --git a/cmd/gvproxy/config.go b/cmd/gvproxy/config.go
+index 36a5fb9..6f4776b 100644
+--- a/cmd/gvproxy/config.go
++++ b/cmd/gvproxy/config.go
+@@ -26,28 +26,30 @@ const (
+ )
+ 
+ type GvproxyArgs struct {
+-	config             string
+-	endpoints          arrayFlags
+-	debug              bool
+-	mtu                int
+-	sshPort            int
+-	vpnkitSocket       string
+-	qemuSocket         string
+-	bessSocket         string
+-	stdioSocket        string
+-	vfkitSocket        string
+-	notificationSocket string
+-	forwardSocket      arrayFlags
+-	forwardDest        arrayFlags
+-	forwardUser        arrayFlags
+-	forwardIdentify    arrayFlags
+-	pidFile            string
+-	pcapFile           string
+-	logFile            string
+-	servicesEndpoint   string
+-	ec2MetadataAccess  bool
+-	disableGuestAPI    bool
+-	disableHostNAT     bool
++	config               string
++	endpoints            arrayFlags
++	debug                bool
++	mtu                  int
++	sshPort              int
++	vpnkitSocket         string
++	qemuSocket           string
++	bessSocket           string
++	stdioSocket          string
++	vfkitSocket          string
++	notificationSocket   string
++	forwardSocket        arrayFlags
++	forwardDest          arrayFlags
++	forwardUser          arrayFlags
++	forwardIdentify      arrayFlags
++	pidFile              string
++	pcapFile             string
++	logFile              string
++	servicesEndpoint     string
++	ec2MetadataAccess    bool
++	disableGuestAPI      bool
++	disableHostNAT       bool
++	denyHostAccess       bool
++	loopbackForwardsOnly bool
+ }
+ 
+ type GvproxyConfig struct {
+@@ -139,6 +141,8 @@ func GvproxyArgParse(flagSet *flag.FlagSet, args *GvproxyArgs, argv []string) (*
+ 	flagSet.StringVar(&args.notificationSocket, "notification", "", "Socket to be used to send network-ready notifications")
+ 	flagSet.BoolVar(&args.disableGuestAPI, "disable-guest-api", false, "Do not serve the forwarder API to the guest on the gateway IP")
+ 	flagSet.BoolVar(&args.disableHostNAT, "disable-host-nat", false, "Do not map a virtual IP to the host loopback")
++	flagSet.BoolVar(&args.denyHostAccess, "deny-host-access", false, "Refuse guest connections to loopback and to every address of the host")
++	flagSet.BoolVar(&args.loopbackForwardsOnly, "loopback-forwards-only", false, "Refuse port forwards that bind a non-loopback address")
+ 	if err := flagSet.Parse(argv); err != nil {
+ 		return nil, err
+ 	}
+@@ -163,6 +167,12 @@ func GvproxyConfigure(config *GvproxyConfig, args *GvproxyArgs, version string)
+ 	if args.disableHostNAT {
+ 		config.DisableHostNAT = true
+ 	}
++	if args.denyHostAccess {
++		config.Stack.DenyHostAccess = true
++	}
++	if args.loopbackForwardsOnly {
++		config.Stack.LoopbackForwardsOnly = true
++	}
+ 
+ 	// Set log level
+ 	if logLevel, err := log.ParseLevel(strings.ToLower(config.LogLevel)); err != nil {
+diff --git a/pkg/services/forwarder/host.go b/pkg/services/forwarder/host.go
+new file mode 100644
+index 0000000..6d5ada6
+--- /dev/null
++++ b/pkg/services/forwarder/host.go
+@@ -0,0 +1,91 @@
++package forwarder
++
++import (
++	"net"
++	"sync"
++	"time"
++
++	log "github.com/sirupsen/logrus"
++	"gvisor.dev/gvisor/pkg/tcpip"
++)
++
++// hostGuardRefresh bounds how stale the interface list may be.
++const hostGuardRefresh = 10 * time.Second
++
++// HostGuard tells whether an address belongs to the host: loopback,
++// unspecified, assigned to one of its interfaces, or one of the fixed
++// addresses it was given, such as the gateway of the virtual network.
++type HostGuard struct {
++	mu        sync.Mutex
++	fixed     map[string]struct{}
++	addresses map[string]struct{}
++	refreshed time.Time
++	err       error
++}
++
++func NewHostGuard(fixed ...string) *HostGuard {
++	g := &HostGuard{fixed: make(map[string]struct{}, len(fixed))}
++	for _, address := range fixed {
++		if ip := net.ParseIP(address); ip != nil {
++			g.fixed[ip.String()] = struct{}{}
++		}
++	}
++	return g
++}
++
++// IsHost reports whether addr is an address of the host. While the
++// interface list cannot be read, every address counts as the host's:
++// the guard fails closed.
++func (g *HostGuard) IsHost(addr tcpip.Address) bool {
++	ip := net.IP(addr.AsSlice())
++	if ip.IsLoopback() || ip.IsUnspecified() {
++		return true
++	}
++	if _, ok := g.fixed[ip.String()]; ok {
++		return true
++	}
++	g.mu.Lock()
++	defer g.mu.Unlock()
++	if time.Since(g.refreshed) > hostGuardRefresh {
++		g.refresh()
++	}
++	if g.err != nil {
++		return true
++	}
++	_, ok := g.addresses[ip.String()]
++	return ok
++}
++
++func (g *HostGuard) refresh() {
++	g.refreshed = time.Now()
++	interfaceAddresses, err := net.InterfaceAddrs()
++	if err != nil {
++		log.Errorf("cannot list host addresses, refusing every destination: %v", err)
++		g.err = err
++		return
++	}
++	g.err = nil
++	g.addresses = make(map[string]struct{}, len(interfaceAddresses))
++	for _, address := range interfaceAddresses {
++		var ip net.IP
++		switch v := address.(type) {
++		case *net.IPNet:
++			ip = v.IP
++		case *net.IPAddr:
++			ip = v.IP
++		}
++		if ip != nil {
++			g.addresses[ip.String()] = struct{}{}
++		}
++	}
++}
++
++// isLoopbackListen reports whether a host:port bind address is loopback.
++func isLoopbackListen(local string) bool {
++	host, _, err := net.SplitHostPort(local)
++	if err != nil {
++		return false
++	}
++	ip := net.ParseIP(host)
++	return ip != nil && ip.IsLoopback()
++}
+diff --git a/pkg/services/forwarder/ports.go b/pkg/services/forwarder/ports.go
+index f5d9aa6..f64e0c9 100644
+--- a/pkg/services/forwarder/ports.go
++++ b/pkg/services/forwarder/ports.go
+@@ -30,6 +30,9 @@ type ProxyKey string
+ type PortsForwarder struct {
+ 	stack *stack.Stack
+ 
++	// Refuse TCP and UDP forwards that bind a non-loopback address
++	loopbackOnly bool
++
+ 	proxiesLock sync.Mutex
+ 	proxies     map[ProxyKey]proxy
+ }
+@@ -60,10 +63,11 @@ func (w CloseWrapper) Close() error {
+ 	return w()
+ }
+ 
+-func NewPortsForwarder(s *stack.Stack) *PortsForwarder {
++func NewPortsForwarder(s *stack.Stack, loopbackOnly bool) *PortsForwarder {
+ 	return &PortsForwarder{
+-		stack:   s,
+-		proxies: make(map[ProxyKey]proxy),
++		stack:        s,
++		loopbackOnly: loopbackOnly,
++		proxies:      make(map[ProxyKey]proxy),
+ 	}
+ }
+ 
+@@ -73,6 +77,9 @@ func (f *PortsForwarder) Expose(protocol types.TransportProtocol, local, remote
+ 	if _, ok := f.proxies[key(protocol, local)]; ok {
+ 		return errors.New("proxy already running")
+ 	}
++	if f.loopbackOnly && (protocol == types.TCP || protocol == types.UDP) && !isLoopbackListen(local) {
++		return fmt.Errorf("forward %s does not bind a loopback address", local)
++	}
+ 
+ 	switch protocol {
+ 	case types.UNIX, types.NPIPE:
+diff --git a/pkg/services/forwarder/tcp.go b/pkg/services/forwarder/tcp.go
+index ae18ada..22479e7 100644
+--- a/pkg/services/forwarder/tcp.go
++++ b/pkg/services/forwarder/tcp.go
+@@ -17,7 +17,7 @@ import (
+ 
+ const linkLocalSubnet = "169.254.0.0/16"
+ 
+-func TCP(s *stack.Stack, nat map[tcpip.Address]tcpip.Address, natLock *sync.Mutex, ec2MetadataAccess bool) *tcp.Forwarder {
++func TCP(s *stack.Stack, nat map[tcpip.Address]tcpip.Address, natLock *sync.Mutex, ec2MetadataAccess bool, hostGuard *HostGuard) *tcp.Forwarder {
+ 	return tcp.NewForwarder(s, 0, 10, func(r *tcp.ForwarderRequest) {
+ 		localAddress := r.ID().LocalAddress
+ 
+@@ -31,6 +31,11 @@ func TCP(s *stack.Stack, nat map[tcpip.Address]tcpip.Address, natLock *sync.Mute
+ 			localAddress = replaced
+ 		}
+ 		natLock.Unlock()
++		if hostGuard != nil && hostGuard.IsHost(localAddress) {
++			log.Debugf("refusing guest connection to host address %s", localAddress)
++			r.Complete(true)
++			return
++		}
+ 		outbound, err := net.Dial("tcp", net.JoinHostPort(localAddress.String(), fmt.Sprint(r.ID().LocalPort)))
+ 		if err != nil {
+ 			log.Tracef("net.Dial() = %v", err)
+diff --git a/pkg/services/forwarder/udp.go b/pkg/services/forwarder/udp.go
+index 7b00312..29d011e 100644
+--- a/pkg/services/forwarder/udp.go
++++ b/pkg/services/forwarder/udp.go
+@@ -14,7 +14,7 @@ import (
+ 	"gvisor.dev/gvisor/pkg/waiter"
+ )
+ 
+-func UDP(s *stack.Stack, nat map[tcpip.Address]tcpip.Address, natLock *sync.Mutex, ec2MetadataAccess bool) *udp.Forwarder {
++func UDP(s *stack.Stack, nat map[tcpip.Address]tcpip.Address, natLock *sync.Mutex, ec2MetadataAccess bool, hostGuard *HostGuard) *udp.Forwarder {
+ 	return udp.NewForwarder(s, func(r *udp.ForwarderRequest) {
+ 		localAddress := r.ID().LocalAddress
+ 
+@@ -27,6 +27,10 @@ func UDP(s *stack.Stack, nat map[tcpip.Address]tcpip.Address, natLock *sync.Mute
+ 			localAddress = replaced
+ 		}
+ 		natLock.Unlock()
++		if hostGuard != nil && hostGuard.IsHost(localAddress) {
++			log.Debugf("refusing guest datagram to host address %s", localAddress)
++			return
++		}
+ 
+ 		var wq waiter.Queue
+ 		ep, tcpErr := r.CreateEndpoint(&wq)
+diff --git a/pkg/types/configuration.go b/pkg/types/configuration.go
+index cf56dc3..befdd15 100644
+--- a/pkg/types/configuration.go
++++ b/pkg/types/configuration.go
+@@ -53,6 +53,12 @@ type Configuration struct {
+ 
+ 	// EC2 Metadata Service Access
+ 	Ec2MetadataAccess bool `yaml:"ec2MetadataAccess,omitempty"`
++
++	// Refuse guest connections to loopback and to every address of the host
++	DenyHostAccess bool `yaml:"denyHostAccess,omitempty"`
++
++	// Refuse port forwards that bind a non-loopback address
++	LoopbackForwardsOnly bool `yaml:"loopbackForwardsOnly,omitempty"`
+ }
+ 
+ type Protocol string
+diff --git a/pkg/virtualnetwork/services.go b/pkg/virtualnetwork/services.go
+index 57c5daf..dae8b11 100644
+--- a/pkg/virtualnetwork/services.go
++++ b/pkg/virtualnetwork/services.go
+@@ -24,9 +24,15 @@ func addServices(configuration *types.Configuration, s *stack.Stack, ipPool *tap
+ 	var natLock sync.Mutex
+ 	translation := parseNATTable(configuration)
+ 
+-	tcpForwarder := forwarder.TCP(s, translation, &natLock, configuration.Ec2MetadataAccess)
++	var hostGuard *forwarder.HostGuard
++	if configuration.DenyHostAccess {
++		// The gateway and its virtual IPs are this process; a guest probe of
++		// them must not go out on the host's network.
++		hostGuard = forwarder.NewHostGuard(append([]string{configuration.GatewayIP}, configuration.GatewayVirtualIPs...)...)
++	}
++	tcpForwarder := forwarder.TCP(s, translation, &natLock, configuration.Ec2MetadataAccess, hostGuard)
+ 	s.SetTransportProtocolHandler(tcp.ProtocolNumber, tcpForwarder.HandlePacket)
+-	udpForwarder := forwarder.UDP(s, translation, &natLock, configuration.Ec2MetadataAccess)
++	udpForwarder := forwarder.UDP(s, translation, &natLock, configuration.Ec2MetadataAccess, hostGuard)
+ 	s.SetTransportProtocolHandler(udp.ProtocolNumber, udpForwarder.HandlePacket)
+ 
+ 	dnsMux, err := dnsServer(configuration, s)
+@@ -107,7 +113,7 @@ func dhcpServer(configuration *types.Configuration, s *stack.Stack, ipPool *tap.
+ }
+ 
+ func forwardHostVM(configuration *types.Configuration, s *stack.Stack) (http.Handler, error) {
+-	fw := forwarder.NewPortsForwarder(s)
++	fw := forwarder.NewPortsForwarder(s, configuration.LoopbackForwardsOnly)
+ 	for local, remote := range configuration.Forwards {
+ 		if strings.HasPrefix(local, "udp:") {
+ 			if err := fw.Expose(types.UDP, strings.TrimPrefix(local, "udp:"), remote); err != nil {

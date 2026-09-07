@@ -1,0 +1,92 @@
+gvproxy serves a forwarder API to the guest on the gateway IP, port 80,
+with no switch to turn it off. The `expose` endpoint takes any `local`
+address from the guest. A guest can open host ports on all interfaces,
+create or remove unix sockets at any path the user owns, and publish
+host loopback services. gvproxy also maps a virtual IP to the host
+loopback by default, so the guest reaches every local service of the
+host.
+
+This adds two switches, on the command line and in the config file:
+`disable-guest-api` skips the gateway listener, and `disable-host-nat`
+skips the loopback mapping. packages/qemu-vm sets both. Drop this patch
+when upstream ships the switches.
+
+--- a/cmd/gvproxy/config.go	2026-09-04 15:29:28.083452901 +0200
++++ b/cmd/gvproxy/config.go	2026-09-04 15:29:28.454351232 +0200
+@@ -46,6 +46,8 @@
+ 	logFile            string
+ 	servicesEndpoint   string
+ 	ec2MetadataAccess  bool
++	disableGuestAPI    bool
++	disableHostNAT     bool
+ }
+ 
+ type GvproxyConfig struct {
+@@ -65,6 +67,8 @@
+ 	Services           string                 `yaml:"services,omitempty"`
+ 	Ec2MetadataAccess  bool                   `yaml:"ec2-metadata-access,omitempty"`
+ 	NotificationSocket string                 `yaml:"notification,omitempty"`
++	DisableGuestAPI    bool                   `yaml:"disable-guest-api,omitempty"`
++	DisableHostNAT     bool                   `yaml:"disable-host-nat,omitempty"`
+ }
+ 
+ type GvproxyConfigForward struct {
+@@ -133,6 +137,8 @@
+ 	flagSet.StringVar(&args.servicesEndpoint, "services", "", "Exposes the same HTTP API as the --listen flag, without the /connect endpoint")
+ 	flagSet.BoolVar(&args.ec2MetadataAccess, "ec2-metadata-access", false, "Permits access to EC2 Metadata Service and Amazon Time Sync Service")
+ 	flagSet.StringVar(&args.notificationSocket, "notification", "", "Socket to be used to send network-ready notifications")
++	flagSet.BoolVar(&args.disableGuestAPI, "disable-guest-api", false, "Do not serve the forwarder API to the guest on the gateway IP")
++	flagSet.BoolVar(&args.disableHostNAT, "disable-host-nat", false, "Do not map a virtual IP to the host loopback")
+ 	if err := flagSet.Parse(argv); err != nil {
+ 		return nil, err
+ 	}
+@@ -151,6 +157,12 @@
+ 	if config.LogLevel == "" {
+ 		config.LogLevel = "info"
+ 	}
++	if args.disableGuestAPI {
++		config.DisableGuestAPI = true
++	}
++	if args.disableHostNAT {
++		config.DisableHostNAT = true
++	}
+ 
+ 	// Set log level
+ 	if logLevel, err := log.ParseLevel(strings.ToLower(config.LogLevel)); err != nil {
+@@ -208,7 +220,7 @@
+ 	if config.Stack.GatewayMacAddress == "" {
+ 		config.Stack.GatewayMacAddress = "5a:94:ef:e4:0c:dd"
+ 	}
+-	if len(config.Stack.NAT) == 0 {
++	if len(config.Stack.NAT) == 0 && !config.DisableHostNAT {
+ 		config.Stack.NAT = map[string]string{
+ 			luaddr.String(): "127.0.0.1",
+ 		}
+--- a/cmd/gvproxy/main.go	2026-09-04 15:29:28.083452901 +0200
++++ b/cmd/gvproxy/main.go	2026-09-04 15:29:28.470366928 +0200
+@@ -157,15 +157,17 @@
+ 		httpServe(ctx, g, ln, vn.ServicesMux())
+ 	}
+ 
+-	ln, err := vn.Listen("tcp", fmt.Sprintf("%s:80", config.Stack.GatewayIP))
+-	if err != nil {
+-		return err
++	if !config.DisableGuestAPI {
++		ln, err := vn.Listen("tcp", fmt.Sprintf("%s:80", config.Stack.GatewayIP))
++		if err != nil {
++			return err
++		}
++		mux := http.NewServeMux()
++		mux.Handle("/services/forwarder/all", vn.Mux())
++		mux.Handle("/services/forwarder/expose", vn.Mux())
++		mux.Handle("/services/forwarder/unexpose", vn.Mux())
++		httpServe(ctx, g, ln, mux)
+ 	}
+-	mux := http.NewServeMux()
+-	mux.Handle("/services/forwarder/all", vn.Mux())
+-	mux.Handle("/services/forwarder/expose", vn.Mux())
+-	mux.Handle("/services/forwarder/unexpose", vn.Mux())
+-	httpServe(ctx, g, ln, mux)
+ 
+ 	if InDebugMode() {
+ 		g.Go(func() error {

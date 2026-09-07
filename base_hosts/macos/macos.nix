@@ -20,6 +20,13 @@
   # 4. Set `services.linux-builder.enable` to true.
   services.linux-builder.enable = false;
 
+  # Coding agents; see modules/home/claude-code.nix and modules/home/codex.nix.
+  # `claude-yolo` runs unsandboxed here (the bubblewrap wrapper is Linux-only).
+  programs.aldur = {
+    claude-code.enable = true;
+    codex.enable = true;
+  };
+
   # Then, add brews, casks, and masApps here
   homebrew = {
     # https://nix-darwin.github.io/nix-darwin/manual/index.html#opt-homebrew.masApps
