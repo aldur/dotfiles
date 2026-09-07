@@ -65,6 +65,15 @@ in
   # pi-llama's job is done by the built-in `llamacpp` provider.
   pi-rust = unstable.callPackage ../packages/pi-rust/pi-rust.nix { };
 
+  # AppArmor unix socket rules on a kernel newer than 6.16 need parser 5.
+  # Stable ships 4, which downgrades those rules with a warning.
+  apparmor-parser = import ../utils/override-until-upgrade.nix {
+    package = prev.apparmor-parser;
+    version = "4.1.7";
+    note = "Drop the unstable apparmor-parser once stable ships version 5.";
+    replacement = unstable.apparmor-parser;
+  };
+
   llama-wiretap = final.callPackage ../packages/llama-wiretap {
     nodejs-slim = final.nodejs-slim-runtime;
   };

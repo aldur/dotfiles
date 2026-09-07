@@ -11,6 +11,7 @@
     ../../configuration.nix
 
     ./agenix.nix
+    ./apparmor.nix
     ./default_editor.nix
     ./direnv.nix
     ./documentation.nix

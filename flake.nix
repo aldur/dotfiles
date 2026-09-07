@@ -291,6 +291,7 @@
         audit = ./modules/nixos/audit.nix;
         docker = ./modules/nixos/docker.nix;
         pragmatism = ./modules/nixos/pragmatism.nix;
+        apparmor = ./modules/nixos/apparmor.nix;
         default-editor = ./modules/nixos/default_editor.nix;
         qemu-guest = ./modules/nixos/qemu-guest.nix;
         cli = ./modules/cli.nix;
