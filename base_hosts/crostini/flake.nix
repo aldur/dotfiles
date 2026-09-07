@@ -69,6 +69,13 @@
           baguette-zimage = self.nixosConfigurations.baguette-nixos.config.system.build.btrfsImageCompressed;
         };
 
+        # The SBOM of the system in baguette-zimage. CI attests it to the
+        # image.
+        apps.sbom-baguette = aldur-dotfiles.lib.mkSbomApp {
+          pkgs = nixpkgs.legacyPackages.${system};
+          configuration = self.nixosConfigurations.baguette-nixos;
+        };
+
         # Boots the Baguette image of this system in crosvm and probes it.
         # See utils/baguette-test.nix of the dotfiles.
         checks.baguette-boot = aldur-dotfiles.lib.mkBaguetteTest {

@@ -12,9 +12,19 @@ software), no `doc` outputs, no llm models, no difftastic, a GTK pinentry.
 `baguette.nix` has the disk size of the image. The image has no kernel:
 Baguette boots the ChromeOS kernel.
 
-The workflow `baguette-image.yml` of the dotfiles builds the arm64 image
-on demand (`workflow_dispatch`, image `crostini`) and keeps it as the
-artifact `crostini-baguette-arm64` for a few days.
+The workflow `baguette-image.yml` of the dotfiles builds the arm64 image on
+demand (`workflow_dispatch`, image `crostini`) and keeps it as the artifact
+`crostini-baguette-arm64` for a few days. The workflow attests the image.
+Verify the download and  `vmc create`:
+
+```bash
+gh run download --repo aldur/dotfiles --name crostini-baguette-arm64
+gh attestation verify baguette_rootfs.img.zst --repo aldur/dotfiles \
+  --signer-workflow aldur/dotfiles/.github/workflows/baguette-image.yml
+```
+
+`--predicate-type https://spdx.dev/Document` selects the SBOM instead.
+`nix run .#sbom-baguette -- ./sbom` writes the same SBOM for a local build.
 
 `nix flake check` boots the image of the same system in crosvm and probes
 it, with `lib.mkBaguetteTest` of the dotfiles. See `utils/baguette-test.nix`
@@ -69,4 +79,3 @@ No live Chromebook is exercised by the automated checks.
 
 [0]: https://aldur.blog/articles/2025/06/19/nixos-in-crostini
 [1]: https://github.com/aldur/nixos-crostini/tree/main
-[2]: https://www.chromium.org/chromium-os/developer-library/reference/security/port-forwarding/

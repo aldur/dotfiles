@@ -157,17 +157,29 @@ let
   #
   # `exec "$@"` keeps the OCI Cmd overridable: `container run <img> <cmd>` still
   # activates first, then runs <cmd>.
+  #
+  # The script fails closed: a failed step stops PID 1, so the container exits
+  # and no shell opens on a half-activated system. `fail` prints the banner and
+  # the log tails first, because the ephemeral container takes /var/log with it.
+  # The ERR trap covers every command without an explicit `|| fail` branch.
   entrypoint = pkgs.writeShellScript "container-entrypoint" ''
-    set -u
+    set -euo pipefail
     export PATH=${coreutils}/bin:${pkgs.util-linux}/bin
     export NIX_SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
 
     logdir=/var/log/entrypoint
     mkdir -p "$logdir"
     fail() {
-      printf '\033[1;31mentrypoint: %s — full log: %s\033[0m\n' "$1" "$2"
-      tail -n 15 "$2" 2>/dev/null
+      local msg=$1
+      shift
+      printf '\033[1;31mentrypoint: %s\033[0m\n' "$msg"
+      for log; do
+        printf '\033[1;31mentrypoint: last lines of %s\033[0m\n' "$log"
+        tail -n 30 "$log" 2>/dev/null || true
+      done
+      exit 1
     }
+    trap 'fail "command failed at line $LINENO: $BASH_COMMAND"' ERR
 
     mkdir -p /nix/var/nix/daemon-socket
     # Detach the daemon from the controlling terminal.
@@ -188,7 +200,7 @@ let
     # default) and no systemd runs to apply a hostname, so set the configured
     # one ourselves. Tolerated if the runtime withholds CAP_SYS_ADMIN.
     ${lib.optionalString (cfg.hostName != "") ''
-      echo ${lib.escapeShellArg cfg.hostName} > /proc/sys/kernel/hostname 2>/dev/null \
+      { echo ${lib.escapeShellArg cfg.hostName} > /proc/sys/kernel/hostname; } 2>/dev/null \
         || true
     ''}
 
@@ -198,10 +210,9 @@ let
         ${runuser} -u ${username} -- ${config.nix.package}/bin/nix-store -q --hash ${hmActivate} \
           && ${runuser} -u ${username} -- ${config.nix.package}/bin/nix-store --realise ${hmActivate} \
             --add-root /tmp/.hm-preflight-root
-      } >"$logdir/nix-preflight.log" 2>&1 || {
-        fail "nix daemon preflight failed (home-manager activation will too)" "$logdir/nix-preflight.log"
-        fail "nix-daemon's own log" "$logdir/nix-daemon.log"
-      }
+      } >"$logdir/nix-preflight.log" 2>&1 \
+        || fail "nix daemon preflight failed (home-manager activation would too)" \
+          "$logdir/nix-preflight.log" "$logdir/nix-daemon.log"
       ${runuser} -u ${username} -- ${hmActivate}/activate --driver-version 1 \
         >"$logdir/home-manager.log" 2>&1 \
         || fail "home-manager activation failed" "$logdir/home-manager.log"
@@ -418,6 +429,9 @@ in
       }
       source ${config.system.build.earlyMountScript}
     '';
+
+    # Exposed for tests that run the entrypoint outside an image.
+    system.build.containerEntrypoint = entrypoint;
 
     system.build.containerImage = mkOciArchive {
       name = cfg.imageName;

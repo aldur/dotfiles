@@ -11,7 +11,7 @@
     { aldur-dotfiles, ... }@inputs:
     let
       specialArgs = aldur-dotfiles.lib.mkSpecialArgs inputs;
-      inherit (aldur-dotfiles.inputs) nixpkgs flake-utils;
+      inherit (aldur-dotfiles.inputs) nixpkgs flake-utils home-manager;
 
       # One image serves both: `container run` uses the OCI entrypoint, while
       # `container machine` execs /sbin/init. Same closure, two entry doors.
@@ -46,6 +46,17 @@
             }
           ];
         };
+
+      # `minimal` plus home-manager, so the entrypoint test exercises every
+      # activation stage.
+      entrypointTest =
+        system:
+        (minimal system).extendModules {
+          modules = [
+            home-manager.nixosModules.home-manager
+            { home-manager.users.nixos.home.stateVersion = nixpkgs.lib.trivial.release; }
+          ];
+        };
     in
     # The image is always a Linux artifact. On a Darwin host (the usual case —
     # Apple silicon) map to the matching linux system so `#container-image`
@@ -66,6 +77,10 @@
           container-image = (cfg targetSystem).config.system.build.containerImage;
           minimal-image = (minimal targetSystem).config.system.build.containerImage;
           default = container-image;
+        };
+
+        checks.entrypoint-fails-closed = import ./entrypoint-test.nix {
+          nixos = entrypointTest targetSystem;
         };
 
         # Build + load in one step: the image is the script's dependency, so
@@ -101,8 +116,15 @@
                   set -eu
                   repo="''${1:-ghcr.io/aldur}"
                   tag="''${2:-latest}"
+                  # The third argument names a file. skopeo writes the digest
+                  # of the pushed manifest to it. CI attests that digest.
+                  digestfile="''${3:-}"
+                  args=()
+                  if [ -n "$digestfile" ]; then
+                    args+=(--digestfile "$digestfile")
+                  fi
                   echo "pushing ${name} -> $repo/${name}:$tag"
-                  exec ${nixpkgs.lib.getExe pkgs.skopeo} copy \
+                  exec ${nixpkgs.lib.getExe pkgs.skopeo} copy "''${args[@]}" \
                     oci-archive:${image} "docker://$repo/${name}:$tag"
                 ''}";
               };
@@ -123,11 +145,28 @@
                   repo="''${1:-ghcr.io/aldur}"
                   tag="''${2:-latest}"
                   img="$repo/${name}"
+                  # The third argument names a file. The script writes the
+                  # digest of the new index to it. CI attests that digest.
+                  digestfile="''${3:-}"
                   echo "assembling $img:$tag from :$tag-amd64 + :$tag-arm64"
-                  exec ${pkgs.regclient}/bin/regctl index create "$img:$tag" \
+                  ${pkgs.regclient}/bin/regctl index create "$img:$tag" \
                     --ref "$img:$tag-amd64" \
                     --ref "$img:$tag-arm64"
+                  # A HEAD request without a platform returns the digest of
+                  # the index itself, not of one of its images.
+                  digest=$(${pkgs.regclient}/bin/regctl image digest "$img:$tag")
+                  echo "$img:$tag -> $digest"
+                  if [ -n "$digestfile" ]; then
+                    printf '%s\n' "$digest" > "$digestfile"
+                  fi
                 ''}";
+              };
+            mkSbom =
+              c:
+              aldur-dotfiles.lib.mkSbomApp {
+                inherit pkgs;
+                configuration = c;
+                name = c.config.virtualisation.appleContainer.imageName;
               };
           in
           rec {
@@ -150,6 +189,11 @@
             # Registry-only, so it runs on any one runner after both pushes.
             manifest = mkManifest (cfg targetSystem);
             manifest-minimal = mkManifest (minimal targetSystem);
+
+            # Write the SBOM of the system in the image to a directory:
+            # `nix run …#sbom -- ./sbom`. CI attests it to the pushed image.
+            sbom = mkSbom (cfg targetSystem);
+            sbom-minimal = mkSbom (minimal targetSystem);
           };
       }
     )

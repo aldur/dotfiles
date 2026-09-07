@@ -67,6 +67,11 @@
       }
       // flake-utils.lib.eachSystem linuxSystems (system: {
         packages.baguette-zimage = (mkBaguette system).config.system.build.btrfsImageCompressed;
+        # The SBOM of the same system. CI attests it to the image.
+        apps.sbom-baguette = aldur-dotfiles.lib.mkSbomApp {
+          pkgs = nixpkgs.legacyPackages.${system};
+          configuration = mkBaguette system;
+        };
       });
 
       checks = flake-utils.lib.eachSystem linuxSystems (

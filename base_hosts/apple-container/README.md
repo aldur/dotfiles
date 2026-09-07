@@ -10,7 +10,7 @@ on Apple silicon:
 
 ## Run from GHCR
 
-CI publishes images to GHCR, so there's no need to build locally:
+CI publishes attested images to GHCR, so there's no need to build locally:
 
 ```bash
 container run -it --rm ghcr.io/aldur/aldur-nixos:latest
@@ -85,9 +85,12 @@ env -u SSH_AUTH_SOCK container machine run -n dev
 - If you need `root`, you can use `container exec --user 0` or `container
   machine run --root`.
 - **Logs & debugging:** the entrypoint writes to `/var/log/entrypoint/`
-  (`nix-daemon.log`, `system-activation.log`, `home-manager.log`) and prints a
-  red banner + log tail when a step fails. Run with `CONTAINER_DEBUG=1` in the
-  environment to also dump the tty state before the shell hand-off.
+  (`nix-daemon.log`, `system-activation.log`, `home-manager.log`). When a step
+  fails it prints a red banner + log tail and exits, so the container stops
+  instead of opening a shell on a half-activated system. Run with
+  `CONTAINER_DEBUG=1` in the environment to also dump the tty state before the
+  shell hand-off. `nix build .#checks.<system>.entrypoint-fails-closed` runs
+  the real entrypoint against fakes and forces each stage to fail in turn.
 - **DNS:** `container machine`'s bootstrap writes `/etc/resolv.conf` /
   `/etc/hosts` before the guest boots, so the image ships placeholder files (so
   `/etc` is a writable target) and disables the guest's DHCP/resolvconf.

@@ -292,6 +292,11 @@
         mkBaguetteTest = import ./utils/baguette-test.nix {
           inherit (nixpkgs) lib;
         };
+
+        # An app that writes the SBOM of the runtime closure of a NixOS
+        # configuration. CI attests it to the image it publishes. See
+        # utils/sbom.nix.
+        mkSbomApp = import ./utils/sbom.nix { inherit nixpkgs; };
       };
 
       nixosModules = {

@@ -64,12 +64,14 @@ restart Firefox.
 
 The workflow `baguette-image.yml` builds the arm64 image on demand
 (`workflow_dispatch`, image `autofirma`) and keeps it as the artifact
-`autofirma-baguette-arm64` for a few days. The push pipeline only builds
-the system closure as a test. Download the artifact, then create the VM in
-`crosh`:
+`autofirma-baguette-arm64` for a few days. The push pipeline only builds the
+system closure as a test. The workflow attests the image: download the
+artifact, verify it, then create the VM in `crosh`:
 
 ```bash
 gh run download --repo aldur/dotfiles --name autofirma-baguette-arm64
+gh attestation verify baguette_rootfs.img.zst --repo aldur/dotfiles \
+  --signer-workflow aldur/dotfiles/.github/workflows/baguette-image.yml
 
 vmc create --vm-type BAGUETTE --size 10G \
   --source /home/chronos/user/MyFiles/Downloads/baguette_rootfs.img.zst \
