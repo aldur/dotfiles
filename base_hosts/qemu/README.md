@@ -81,6 +81,25 @@ display needs; the GPU stays denied, so it renders in software.
 `--no-sandbox` turns all of it off. On Linux hosts there is no equivalent
 yet; the gvproxy patches still keep the host out of the guest's reach.
 
+### Checking the sandbox
+
+The profiles list what each process was seen to need and nothing more, so
+a change to the launcher, to gvproxy, or to macOS can only be judged by
+running it. On a Mac:
+
+```bash
+nix run "github:aldur/dotfiles#qemu-vm-sandbox-check"
+# One scenario, from: headless, disk, gui, no-network, no-sandbox
+nix run "github:aldur/dotfiles#qemu-vm-sandbox-check" -- --only gui
+```
+
+It boots an Alpine live ISO through the same launcher script, with only
+the boot block swapped, so it needs no Linux builder. Each scenario checks
+what the guest can reach, what the host side sees, and which sandbox
+denials the unified log reports; a denial outside the known benign set
+fails the run. The `gui` scenario opens a window for a minute. See
+`packages/qemu-vm/sandbox-check`.
+
 ## SSH Keys
 
 The SSH keys in this folder are only used within the `qemu` VM, which is not

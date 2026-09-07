@@ -7,13 +7,14 @@ the LAN.
 
 This adds two switches to the stack configuration and the command line.
 `denyHostAccess` / `-deny-host-access` refuses TCP and UDP from the guest
-to loopback, to the unspecified address, and to every address of a host
-interface; the interface list is re-read every ten seconds, and while it
-cannot be read every destination is refused. `loopbackForwardsOnly` /
-`-loopback-forwards-only` rejects a TCP or UDP forward that binds a
-non-loopback address. Applies on top of gvproxy-guest-isolation.patch.
-packages/qemu-vm sets both. Drop this patch when upstream ships the
-switches.
+to loopback, to the unspecified address, to every address of a host
+interface, and to the gateway and virtual IPs of gvproxy itself, which
+would otherwise go out on the host network; the interface list is re-read
+every ten seconds, and while it cannot be read every destination is
+refused. `loopbackForwardsOnly` / `-loopback-forwards-only` rejects a TCP
+or UDP forward that binds a non-loopback address. Applies on top of
+gvproxy-guest-isolation.patch. packages/qemu-vm sets both. Drop this patch
+when upstream ships the switches.
 
 diff --git a/cmd/gvproxy/config.go b/cmd/gvproxy/config.go
 index 36a5fb9..6f4776b 100644
@@ -96,10 +97,10 @@ index 36a5fb9..6f4776b 100644
  	if logLevel, err := log.ParseLevel(strings.ToLower(config.LogLevel)); err != nil {
 diff --git a/pkg/services/forwarder/host.go b/pkg/services/forwarder/host.go
 new file mode 100644
-index 0000000..7fdbfcf
+index 0000000..6d5ada6
 --- /dev/null
 +++ b/pkg/services/forwarder/host.go
-@@ -0,0 +1,80 @@
+@@ -0,0 +1,91 @@
 +package forwarder
 +
 +import (
@@ -115,16 +116,24 @@ index 0000000..7fdbfcf
 +const hostGuardRefresh = 10 * time.Second
 +
 +// HostGuard tells whether an address belongs to the host: loopback,
-+// unspecified, or assigned to one of its interfaces.
++// unspecified, assigned to one of its interfaces, or one of the fixed
++// addresses it was given, such as the gateway of the virtual network.
 +type HostGuard struct {
 +	mu        sync.Mutex
++	fixed     map[string]struct{}
 +	addresses map[string]struct{}
 +	refreshed time.Time
 +	err       error
 +}
 +
-+func NewHostGuard() *HostGuard {
-+	return &HostGuard{}
++func NewHostGuard(fixed ...string) *HostGuard {
++	g := &HostGuard{fixed: make(map[string]struct{}, len(fixed))}
++	for _, address := range fixed {
++		if ip := net.ParseIP(address); ip != nil {
++			g.fixed[ip.String()] = struct{}{}
++		}
++	}
++	return g
 +}
 +
 +// IsHost reports whether addr is an address of the host. While the
@@ -133,6 +142,9 @@ index 0000000..7fdbfcf
 +func (g *HostGuard) IsHost(addr tcpip.Address) bool {
 +	ip := net.IP(addr.AsSlice())
 +	if ip.IsLoopback() || ip.IsUnspecified() {
++		return true
++	}
++	if _, ok := g.fixed[ip.String()]; ok {
 +		return true
 +	}
 +	g.mu.Lock()
@@ -286,17 +298,19 @@ index cf56dc3..befdd15 100644
  
  type Protocol string
 diff --git a/pkg/virtualnetwork/services.go b/pkg/virtualnetwork/services.go
-index 57c5daf..ec1daae 100644
+index 57c5daf..dae8b11 100644
 --- a/pkg/virtualnetwork/services.go
 +++ b/pkg/virtualnetwork/services.go
-@@ -24,9 +24,13 @@ func addServices(configuration *types.Configuration, s *stack.Stack, ipPool *tap
+@@ -24,9 +24,15 @@ func addServices(configuration *types.Configuration, s *stack.Stack, ipPool *tap
  	var natLock sync.Mutex
  	translation := parseNATTable(configuration)
  
 -	tcpForwarder := forwarder.TCP(s, translation, &natLock, configuration.Ec2MetadataAccess)
 +	var hostGuard *forwarder.HostGuard
 +	if configuration.DenyHostAccess {
-+		hostGuard = forwarder.NewHostGuard()
++		// The gateway and its virtual IPs are this process; a guest probe of
++		// them must not go out on the host's network.
++		hostGuard = forwarder.NewHostGuard(append([]string{configuration.GatewayIP}, configuration.GatewayVirtualIPs...)...)
 +	}
 +	tcpForwarder := forwarder.TCP(s, translation, &natLock, configuration.Ec2MetadataAccess, hostGuard)
  	s.SetTransportProtocolHandler(tcp.ProtocolNumber, tcpForwarder.HandlePacket)
@@ -305,7 +319,7 @@ index 57c5daf..ec1daae 100644
  	s.SetTransportProtocolHandler(udp.ProtocolNumber, udpForwarder.HandlePacket)
  
  	dnsMux, err := dnsServer(configuration, s)
-@@ -107,7 +111,7 @@ func dhcpServer(configuration *types.Configuration, s *stack.Stack, ipPool *tap.
+@@ -107,7 +113,7 @@ func dhcpServer(configuration *types.Configuration, s *stack.Stack, ipPool *tap.
  }
  
  func forwardHostVM(configuration *types.Configuration, s *stack.Stack) (http.Handler, error) {

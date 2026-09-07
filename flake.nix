@@ -196,6 +196,15 @@
               "${script}/bin/validate-claude-settings";
           };
         }
+        // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
+          # Boots a live guest through the qemu-vm launcher and probes its
+          # sandbox. Not a check: it needs the hypervisor, sandbox-exec and
+          # the network. See packages/qemu-vm/sandbox-check.
+          apps.qemu-vm-sandbox-check = {
+            type = "app";
+            program = "${qemu-vm.sandboxCheck}/bin/qemu-vm-sandbox-check";
+          };
+        }
       )
     )
     // {

@@ -17,6 +17,7 @@
 
 let
   inherit (inputs) self nixpkgs;
+  inherit (nixpkgs) lib;
 
   # Determine target system based on host
   targetSystem = if pkgs.stdenv.hostPlatform.isAarch64 then "aarch64-linux" else "x86_64-linux";
@@ -132,21 +133,35 @@ let
     '';
   };
 
-in
-pkgs.writeArgcApplication {
-  name = "qemu-vm";
-  runtimeInputs = with pkgs; [
-    qemu
-    gvproxy
-    coreutils
-    e2fsprogs
-  ];
-  passthru = {
-    modules = baseModules;
-    storeImage = nixStoreImage;
-    nixosConfig = qemuNixos;
-  };
-  text = ''
+  # The launcher, as a function of what it boots. The package boots the
+  # NixOS kernel from the closure; the sandbox check boots a live ISO
+  # through the very same script, so it needs no Linux build.
+  mkLauncher =
+    {
+      name ? "qemu-vm",
+      # The `# -- Boot --` block of the QEMU command line.
+      bootArgs,
+      # The files that boot reads, for the QEMU sandbox.
+      bootFiles,
+      # The default of `--store-image`.
+      storeImage,
+      passthru ? { },
+      excludeShellChecks ? [ ],
+    }:
+    let
+      literals = map (f: "(literal \"${f}\")" ) bootFiles;
+      bootReadRule = "(allow file-read* ${lib.concatStringsSep " " literals})";
+      bootAncestors = lib.concatMapStringsSep " " (f: "$(ancestors \"${f}\")") bootFiles;
+    in
+    pkgs.writeArgcApplication {
+      inherit name passthru excludeShellChecks;
+      runtimeInputs = with pkgs; [
+        qemu
+        gvproxy
+        coreutils
+        e2fsprogs
+      ];
+      text = ''
     # @describe Spawn a NixOS VM
     # @option -d --dir <DIR> VM disk location [default: ${defaultVmDir}]
     # @option -p --port* <PORT> Forward guest port to host (GUEST_PORT[:HOST_PORT])
@@ -197,7 +212,7 @@ pkgs.writeArgcApplication {
     CORES="''${argc_cores:-${toString defaultCores}}"
     DISK_SIZE="''${argc_disk_size:-${toString defaultDiskSize}}"
     NIX_DISK_IMAGE="$VM_DIR/nixos.qcow2"
-    STORE_IMAGE="''${argc_store_image:-${nixStoreImage}/store.img}"
+    STORE_IMAGE="''${argc_store_image:-${storeImage}}"
     # Canonical, like the disk image: the sandbox matches canonical paths.
     STORE_IMAGE=$(readlink -f "$STORE_IMAGE")
 
@@ -355,9 +370,9 @@ pkgs.writeArgcApplication {
         # sizes its coroutine stacks from the page size.
         echo "(allow file-read* (literal \"/\"))"
         echo "(allow sysctl-read (sysctl-name \"kern.bootargs\") (sysctl-name \"security.mac.lockdown_mode_state\") (sysctl-name-prefix \"hw.optional.\") (sysctl-name \"hw.pagesize_compat\") (sysctl-name \"hw.cachelinesize\") (sysctl-name \"machdep.cpu.brand_string\"))"
-        echo "(allow file-read* (literal \"${toplevel}/kernel\") (literal \"${kernelImage}\") (literal \"${initrd}\"))"
+        echo '${bootReadRule}'
         echo "(allow file-read* (literal \"$TMPDIR/store.img\") (literal \"$STORE_IMAGE\"))"
-        echo "(allow file-read-metadata $(ancestors "$TMPDIR/store.img") $(ancestors "$STORE_IMAGE") $(ancestors "$NIX_DISK_IMAGE") $(ancestors "${qemuExe}") $(ancestors "${kernelImage}") $(ancestors "${initrd}"))"
+        echo "(allow file-read-metadata $(ancestors "$TMPDIR/store.img") $(ancestors "$STORE_IMAGE") $(ancestors "$NIX_DISK_IMAGE") $(ancestors "${qemuExe}") ${bootAncestors})"
         echo "(allow file-read* file-write* (literal \"$NIX_DISK_IMAGE\"))"
         printf '%s\n' "''${FILE_READ_RULES[@]}"
         # /dev/null: QEMU opens it read-write to probe file locking.
@@ -533,10 +548,7 @@ pkgs.writeArgcApplication {
       -device "virtio-blk-pci,bootindex=2,drive=drive2"
 
       # -- Boot --
-      # Direct kernel boot from the Nix closure (no bootloader, no env var overrides)
-      -kernel ${toplevel}/kernel
-      -initrd ${initrd}
-      -append "$(cat ${toplevel}/kernel-params) init=${toplevel}/init regInfo=${regInfo}/registration console=${serialDevice},115200n8 $EXTRA_KERNEL_PARAMS"
+      ${bootArgs}
     )
 
     # -- Network --
@@ -620,4 +632,37 @@ pkgs.writeArgcApplication {
 
     "''${QEMU_WRAP[@]}" ${qemuBinary} "''${QEMU_ARGS[@]}"
   '';
-}
+    };
+
+  # The stock boot: the NixOS kernel and initrd straight from the closure.
+  directBoot = {
+    bootArgs = ''
+      # Direct kernel boot from the Nix closure (no bootloader, no env var overrides)
+      -kernel ${toplevel}/kernel
+      -initrd ${initrd}
+      -append "$(cat ${toplevel}/kernel-params) init=${toplevel}/init regInfo=${regInfo}/registration console=${serialDevice},115200n8 $EXTRA_KERNEL_PARAMS"
+    '';
+    # `toplevel/kernel` is a symlink to the kernel image.
+    bootFiles = [
+      "${toplevel}/kernel"
+      kernelImage
+      initrd
+    ];
+    storeImage = "${nixStoreImage}/store.img";
+  };
+in
+mkLauncher (
+  directBoot
+  // {
+    passthru = {
+      modules = baseModules;
+      storeImage = nixStoreImage;
+      nixosConfig = qemuNixos;
+      # Boots a live ISO through this same script and probes the sandbox
+      # from both sides. macOS only, and not a Nix check: it needs the
+      # hypervisor, sandbox-exec, and the network. `nix run
+      # .#qemu-vm-sandbox-check`.
+      sandboxCheck = pkgs.callPackage ./sandbox-check { inherit mkLauncher targetSystem; };
+    };
+  }
+)
