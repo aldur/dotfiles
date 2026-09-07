@@ -40,6 +40,18 @@ stdenvNoCC.mkDerivation {
       exit 1
     }
 
+    # Observe startup without sending a request: existing transcripts must
+    # already be private when the proxy starts accepting connections.
+    wait_for_listener() {
+      for _ in $(seq 1 100); do
+        if grep -q '^llama-wiretap: ' "$1"; then return 0; fi
+        sleep 0.1
+      done
+      cat "$1" >&2
+      echo "timed out waiting for the listener" >&2
+      exit 1
+    }
+
     # Readiness against a listener that is already serving requests. Sent
     # through the proxy on purpose for the proxy's own probe: it proves the
     # whole path works, and leaves a record the probe assertions then use.
@@ -174,16 +186,34 @@ stdenvNoCC.mkDerivation {
       printf '%s' "$all" | grep -- "── ANSWER ──" > /dev/null
     }
 
-    # One exchange over one topology, from a cold listener to a checked
-    # transcript. $1 names the leg, $2 is the proxy's --listen, $3 the base URL
-    # to reach it, and anything after that extra curl arguments.
+    # One exchange over one topology, with either a new or an existing log.
+    # $1 names the leg, $2 the log state, $3 the proxy's --listen, $4 the base
+    # URL to reach it, and anything after that extra curl arguments.
     exercise() {
       leg="$1"
-      listen="$2"
-      url="$3"
-      shift 3
+      log_state="$2"
+      listen="$3"
+      url="$4"
+      shift 4
 
-      llama-wiretap --listen "$listen" --upstream "$upstream" --log "$leg.jsonl" & pids="$pids $!"
+      existing_record='{"state":"fixture","marker":"EXISTINGLOGMARK"}'
+      if [ "$log_state" = existing ]; then
+        printf '%s\n' "$existing_record" > "$leg.jsonl"
+        chmod 0644 "$leg.jsonl"
+      else
+        test ! -e "$leg.jsonl"
+      fi
+
+      # Reproduce the common ambient umask that used to expose transcripts.
+      (umask 0022; exec llama-wiretap --listen "$listen" --upstream "$upstream" --log "$leg.jsonl") \
+        > "$leg.stderr" 2>&1 & pids="$pids $!"
+      wait_for_listener "$leg.stderr"
+      test "$(stat -c %a "$leg.jsonl")" = "600"
+      if [ "$log_state" = existing ]; then
+        test "$(cat "$leg.jsonl")" = "$existing_record"
+      else
+        test ! -s "$leg.jsonl"
+      fi
       if [ "''${listen%.sock}" != "$listen" ]; then
         wait_for_path "$listen"
         # The socket is as sensitive as the transcript behind it.
@@ -194,12 +224,19 @@ stdenvNoCC.mkDerivation {
       # A request carrying no messages is still proxied and still logged, but
       # there is no chat template to render, so it carries no prompt.
       wait_for_record "$leg.jsonl" /apply-template
+      test "$(stat -c %a "$leg.jsonl")" = "600"
       jq -e 'select(.path == "/apply-template" and .state == "done") | has("prompt") | not' "$leg.jsonl" > /dev/null
 
+      # Each append must repair permissions, even if they change after startup.
+      chmod 0666 "$leg.jsonl"
       curl -sS --max-time 10 "$@" "$url/v1/chat/completions" \
         -H 'content-type: application/json' -H 'authorization: Bearer SECRET' \
         -d "$request" > "$leg.sse"
       wait_for_record "$leg.jsonl" /v1/chat/completions
+      test "$(stat -c %a "$leg.jsonl")" = "600"
+      if [ "$log_state" = existing ]; then
+        test "$(head -n 1 "$leg.jsonl")" = "$existing_record"
+      fi
       assert_transcript "$leg.jsonl" "$leg.sse"
       echo "  ✓ $leg"
     }
@@ -235,16 +272,20 @@ SESSION
     wait_for_http http://127.0.0.1:18081/apply-template -d '{}'
     upstream=127.0.0.1:18081
 
-    exercise tcp-tcp 127.0.0.1:18082 http://127.0.0.1:18082
-    exercise uds-tcp "$work/uds-tcp.sock" http://localhost --unix-socket "$work/uds-tcp.sock"
+    exercise tcp-tcp new 127.0.0.1:18082 http://127.0.0.1:18082
+    exercise tcp-tcp-existing existing 127.0.0.1:18084 http://127.0.0.1:18084
+    exercise uds-tcp new "$work/uds-tcp.sock" http://localhost --unix-socket "$work/uds-tcp.sock"
+    exercise uds-tcp-existing existing "$work/uds-tcp-existing.sock" http://localhost --unix-socket "$work/uds-tcp-existing.sock"
 
     echo "=== Unix socket upstream ==="
     node ${./test-upstream.mjs} "$work/upstream.sock" & pids="$pids $!"
     wait_for_path "$work/upstream.sock"
     upstream="$work/upstream.sock"
 
-    exercise uds-uds "$work/uds-uds.sock" http://localhost --unix-socket "$work/uds-uds.sock"
-    exercise tcp-uds 127.0.0.1:18083 http://127.0.0.1:18083
+    exercise uds-uds new "$work/uds-uds.sock" http://localhost --unix-socket "$work/uds-uds.sock"
+    exercise uds-uds-existing existing "$work/uds-uds-existing.sock" http://localhost --unix-socket "$work/uds-uds-existing.sock"
+    exercise tcp-uds new 127.0.0.1:18083 http://127.0.0.1:18083
+    exercise tcp-uds-existing existing 127.0.0.1:18085 http://127.0.0.1:18085
 
     echo "=== prefix breaks are visible ==="
     # Wait until the log holds $2 completed chat exchanges.
@@ -331,6 +372,6 @@ RENDERR
     # builder's temporary directory, and copying them into $out would make an
     # otherwise reproducible derivation differ on every run.
     mkdir -p $out
-    echo "all four listener/upstream transport combinations proxied and logged" > $out/result
+    echo "all four listener/upstream transport combinations proxied and logged with private new and existing transcripts" > $out/result
   '';
 }

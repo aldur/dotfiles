@@ -22,7 +22,7 @@
 // also carries the template source that made its prompts.
 
 import { createServer, request as httpRequest } from "node:http";
-import { chmodSync, appendFileSync, unlinkSync, statSync } from "node:fs";
+import { chmodSync, appendFileSync, openSync, fchmodSync, closeSync, unlinkSync, statSync } from "node:fs";
 import { brotliDecompressSync, gunzipSync, inflateSync } from "node:zlib";
 
 const USAGE = `llama-wiretap — log what a coding agent sends to an inference server
@@ -199,6 +199,10 @@ async function snapshotTemplate(upstream, model) {
 const opts = parseArgs(process.argv.slice(2));
 const listen = parseTarget(opts.listen, "--listen");
 const upstream = parseTarget(opts.upstream, "--upstream");
+// Defense in depth for every file and socket this process creates.
+process.umask(0o077);
+// Secure existing transcripts and fail on log errors before accepting traffic.
+appendLog("");
 let exchangeId = 0;
 
 const server = createServer((clientReq, clientRes) => {
@@ -290,7 +294,19 @@ async function record(id, clientReq, reqBody, upstreamRes, resBody) {
 }
 
 function write(entry) {
-	appendFileSync(opts.log, `${JSON.stringify(entry)}\n`);
+	appendLog(`${JSON.stringify(entry)}\n`);
+}
+
+function appendLog(text) {
+	const fd = openSync(opts.log, "a", 0o600);
+	try {
+		// Creation mode does not affect existing files. Repair the descriptor
+		// we will actually write to, before appending any transcript contents.
+		fchmodSync(fd, 0o600);
+		appendFileSync(fd, text);
+	} finally {
+		closeSync(fd);
+	}
 }
 
 if (listen.socketPath) {
