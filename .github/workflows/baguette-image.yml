@@ -24,12 +24,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-24.04-arm
-    permissions:
-      contents: read
-      id-token: write # necessary to sign the attestations with Sigstore
-      attestations: write # necessary to store the attestations on GitHub
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - &checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-nix
@@ -51,17 +48,14 @@ jobs:
       - run: |
           nix run --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
-            "./base_hosts/${{ inputs.image }}#sbom-baguette" -- /tmp/sbom
+            "./base_hosts/${{ inputs.image }}#sbom-baguette" -- /tmp/subject
 
-      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-        with:
-          subject-path: result/*.zst
-      - uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e # v4.1.0
-        with:
-          subject-path: result/*.zst
-          sbom-path: /tmp/sbom/sbom.spdx.json
+      # The attest job below attests the image by its checksum. The subject
+      # name is the file name in the checksums file, so run the command in
+      # the directory of the image.
+      - run: (cd result && sha256sum -- *.zst) > /tmp/subject/checksums.txt
 
-      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ inputs.image }}-baguette-arm64
           path: result/*.zst
@@ -70,3 +64,30 @@ jobs:
           # deflate in the zip gains nothing. Level 0 stores it as it is.
           compression-level: 0
           retention-days: ${{ inputs.retention-days }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ${{ inputs.image }}-baguette-arm64-subject
+          path: |
+            /tmp/subject/checksums.txt
+            /tmp/subject/sbom.spdx.json
+          if-no-files-found: error
+          retention-days: 1
+
+  # A separate job without Nix: see .github/actions/attest.
+  attest:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write # necessary to sign the attestations with Sigstore
+      attestations: write # necessary to store the attestations on GitHub
+    steps:
+      - *checkout
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ${{ inputs.image }}-baguette-arm64-subject
+          path: subject
+      - uses: ./.github/actions/attest
+        with:
+          subject-checksums: subject/checksums.txt
+          sbom-path: subject/sbom.spdx.json

@@ -1,0 +1,61 @@
+name: Attest
+description: >-
+  Attest the build provenance and the SBOM of one subject. YAML anchors do
+  not work across workflow files. This action keeps the action pin and the
+  attestation steps in one location.
+
+  Run this action in a job that does not install Nix. The job needs
+  `id-token: write`. With that permission, the Nix installer logs in to
+  FlakeHub, and the login fails: this repository does not use FlakeHub. The
+  job also needs `attestations: write`, and `packages: write` when
+  `push-to-registry` is true.
+
+inputs:
+  subject-checksums:
+    description: >-
+      Path to a checksums file in the `sha256sum` format. Each line names one
+      subject file. Use this for a file subject.
+    required: false
+  subject-name:
+    description: The full name of an OCI image subject, without a tag.
+    required: false
+  subject-digest:
+    description: The digest of the OCI image subject, as `sha256:<hex>`.
+    required: false
+  sbom-path:
+    description: >-
+      Path to the SPDX JSON SBOM of the subject. An empty value skips the
+      SBOM attestation.
+    required: false
+    default: ""
+  push-to-registry:
+    description: Push the attestations to the registry of the OCI image subject.
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    # Without a predicate, the action makes a SLSA build provenance.
+    #
+    # NODE_OPTIONS: node limits the headers of one response to 16 KiB. Some
+    # OCI registries send more with `push-to-registry`. The wrapper actions
+    # of GitHub set the same limit.
+    - uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+      env:
+        NODE_OPTIONS: --max-http-header-size=32768
+      with:
+        subject-checksums: ${{ inputs.subject-checksums }}
+        subject-name: ${{ inputs.subject-name }}
+        subject-digest: ${{ inputs.subject-digest }}
+        push-to-registry: ${{ inputs.push-to-registry }}
+    - if: inputs.sbom-path != ''
+      uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+      env:
+        NODE_OPTIONS: --max-http-header-size=32768
+      with:
+        subject-checksums: ${{ inputs.subject-checksums }}
+        subject-name: ${{ inputs.subject-name }}
+        subject-digest: ${{ inputs.subject-digest }}
+        sbom-path: ${{ inputs.sbom-path }}
+        push-to-registry: ${{ inputs.push-to-registry }}

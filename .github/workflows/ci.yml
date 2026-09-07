@@ -22,7 +22,8 @@ env:
 # The steps that follow refer to it with an alias (*name). An alias can only
 # refer to an anchor that comes before it in the same file. Anchors do not
 # work across files. Because of this, the Nix setup is in
-# .github/actions/setup-nix, and all workflows use it.
+# .github/actions/setup-nix, and all workflows use it. The attestation steps
+# are in .github/actions/attest for the same reason.
 jobs:
   flake-check:
     runs-on: ubuntu-24.04
