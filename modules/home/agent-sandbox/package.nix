@@ -66,6 +66,7 @@ let
     "/etc/ssl/certs"
     "/etc/nix/nix.conf"
     "/etc/nix/registry.json"
+    "/etc/direnv"
   ];
 
   userReadOnlyPaths = [
@@ -75,6 +76,7 @@ let
     "~/.config/git"
     "~/.gitconfig"
     "~/.config/fish"
+    "~/.config/direnv"
   ];
 
   shellConfig = ''

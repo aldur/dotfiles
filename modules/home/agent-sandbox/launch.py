@@ -145,6 +145,11 @@ class Policy:
         self.fds = []
         self.environment = []
         self.shared_sources = set()
+        self.direnv_roots = {
+            (home / ".local/share/direnv").resolve(),
+            (Path(os.environ.get("XDG_DATA_HOME") or home / ".local/share") / "direnv").resolve(),
+        }
+        self.shared_sources.update(root for root in self.direnv_roots if root.is_dir())
         self.reservations = Reservations()
 
     def bind(self, source, destination, readonly=True):
@@ -262,6 +267,11 @@ class Policy:
                 git_pointer(path)
 
         for source, destination in writable:
+            for root in self.direnv_roots:
+                if (within(source, root) or within(root, source)
+                    or (root.exists() and any(os.path.samefile(parent, root)
+                                             for parent in (source, *source.parents)))):
+                    fail(f"cannot grant host direnv approvals or caches: {destination}")
             managed = self.reservations.root
             if within(source, managed) or within(managed, source):
                 fail(f"cannot grant sandbox lifecycle state: {destination}")
@@ -287,6 +297,8 @@ class Policy:
             # symlinks or descending into the metadata we are about to protect.
             for directory_name, dirs, files in os.walk(source, followlinks=False, onerror=walk_error):
                 parent = Path(directory_name)
+                if any(root.exists() and os.path.samefile(parent, root) for root in self.direnv_roots):
+                    fail(f"writable grant includes host direnv state: {destination}")
                 for name in files:
                     remember_hardlink(parent / name)
                 for name in names:

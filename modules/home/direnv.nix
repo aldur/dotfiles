@@ -5,6 +5,7 @@ in
 {
   programs.direnv = {
     enable = true;
+    stdlib = import ../shared/programs/direnv/stdlib.nix { inherit pkgs; };
     nix-direnv = {
       enable = true;
       # nix-direnv 3.1.2 (the latest release) logs via >/dev/stderr,
@@ -32,6 +33,6 @@ in
         };
       };
     };
-    config = import ../shared/programs/direnv.nix;
+    config = import ../shared/programs/direnv;
   };
 }

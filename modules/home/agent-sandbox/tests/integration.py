@@ -341,3 +341,4 @@ print("passed: inherited descriptors closed", flush=True)
 # This suite launches many individually bounded commands; allow slower target
 # kernels enough time for the group, including concurrent-wrapper checks.
 subprocess.run([sys.executable, "@metadataTests@", wrapper], check=True, timeout=120)
+subprocess.run([sys.executable, "@direnvTests@", wrapper], check=True, timeout=120)

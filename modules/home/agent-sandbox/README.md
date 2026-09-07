@@ -37,8 +37,9 @@ metadata, and project-scoped agent homes. Host defaults are copied once;
 project state is never written back to them.
 
 Remaining gaps: shared networking; terminal control sequences; host review
-helpers referencing editable files; direnv input/cache approval; newly created
-nested metadata. These requirements are not fully enforced by this patch.
+helpers referencing editable files; unselected/external direnv inputs or custom cache
+paths; newly created nested metadata. These requirements are not fully enforced
+by this patch.
 
 Trust the host kernel, bubblewrap, launcher and existing host processes.
 Kernel exploits, resource exhaustion and intentionally running unreviewed code
@@ -86,6 +87,11 @@ expire or refresh-token rotation invalidates another copy, log in within the
 affected project profile. Live OAuth refresh has not been tested.
 Review proposed shared changes and apply them outside the sandbox.
 
+Direnv approvals and caches use the sandbox's private home. Host direnv state
+cannot be granted writable, including preservation aliases. See the
+[global direnv policy](../../shared/programs/direnv/README.md) for input approvals
+and cache configuration.
+
 ## Configuration and checks
 
 Persistent grants use `programs.aldur.<agent>.sandbox.filesystem.readOnlyPaths`
@@ -104,6 +110,7 @@ nix build path:.#checks.x86_64-linux.agent-sandbox-apparmor --no-link
 
 Tests use synthetic files, credentials and services. They cover filesystem and
 metadata protection, preservation aliases, concurrency/cleanup, project state,
-atomic writes, environment, descriptors, signals and seccomp. The AppArmor
+atomic writes, direnv reapproval/cache isolation, environment, descriptors,
+signals and seccomp. The AppArmor
 check boots VMs with the policy enforced, in complain mode and absent. Optional
 [CLI smoke tests](tests/cli-smoke.py) run installed agents offline.

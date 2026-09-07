@@ -104,6 +104,14 @@ let
     metadataTests = pkgs.replaceVars ./metadata.py {
       git = "${pkgs.git}/bin/git";
     };
+    direnvTests = pkgs.replaceVars ./direnv.py {
+      direnv = lib.getExe pkgs.direnv;
+      git = lib.getExe pkgs.git;
+      bash = "${pkgs.bash}/bin/bash";
+      stdlib = pkgs.writeText "direnvrc" (
+        import ../../../shared/programs/direnv/stdlib.nix { inherit pkgs; }
+      );
+    };
   };
 in
 pkgs.runCommand "agent-sandbox-test"
@@ -118,6 +126,7 @@ pkgs.runCommand "agent-sandbox-test"
   ''
     fixture=$PWD/fixture
     user_state=$fixture/persist/home/tester
+    mkdir -p "$fixture/home/.local/share/direnv"
     mkdir -p "$fixture/home" "$user_state/.ssh" "$user_state/Work" \
       "$user_state/.local/share/fish" "$user_state/.config/fish"
     for dir in 'Reference notes' 'Extra reference' 'Shared code' 'Extra output' 'Other workspace' Unrelated; do
@@ -183,6 +192,7 @@ pkgs.runCommand "agent-sandbox-test"
       if [ "$persistence" = present ]; then
         args+=(--bind "$fixture/persist" /persist)
         args+=(--bind "$fixture/home/.codex" /persist/home/tester/.codex)
+        args+=(--bind "$fixture/home/.local/share/direnv" /persist/home/tester/.local/share/direnv)
       fi
       bwrap "''${args[@]}" -- dbus-run-session \
         --config-file=${pkgs.dbus}/share/dbus-1/session.conf -- \

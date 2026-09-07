@@ -1,0 +1,13 @@
+--- a/stdlib.sh
++++ b/stdlib.sh
+@@ -283,7 +283,9 @@ require_allowed() {
+ 
+   # Check if files are in the allowed-required DB
+   # Pass $PWD/.envrc as the envrc path since we're executing in the .envrc's directory
+-  eval "$("$direnv" check-required bash "$PWD/.envrc" "$@")"
++  local required
++  required=$("$direnv" check-required bash "$PWD/.envrc" "$@") || exit 1
++  eval "$required"
+ }
+ 
+ # Usage: user_rel_path <abs_path>
