@@ -1,0 +1,32 @@
+--- a/direnvrc
++++ b/direnvrc
+@@ -351,9 +351,11 @@
+ 
+   if [[ ${#newer_files[@]} -gt 0 ]]; then
+     _nix_direnv_info "cache invalidated: files newer than cache:"
+-    echo -n "$_NIX_DIRENV_LOG_PREFIX" >&2
+-    printf "%s\n" "${newer_files[@]:0:5}" >&2
+-    [[ ${#newer_files[@]} -gt 5 ]] && echo "And $((${#newer_files[@]} - 5)) more" >&2
++    local newer_file
++    for newer_file in "${newer_files[@]:0:5}"; do
++      _nix_direnv_info "  $newer_file"
++    done
++    [[ ${#newer_files[@]} -gt 5 ]] && _nix_direnv_info "  and $((${#newer_files[@]} - 5)) more"
+   fi
+ 
+   if [[ $profile_missing -eq 1 || $profile_rc_missing -eq 1 || ${#newer_files[@]} -gt 0 ]]; then
+@@ -544,9 +546,11 @@
+ 
+   if [[ ${#newer_files[@]} -gt 0 ]]; then
+     _nix_direnv_info "cache invalidated: files newer than cache:"
+-    echo -n "$_NIX_DIRENV_LOG_PREFIX" >&2
+-    printf "%s\n" "${newer_files[@]:0:5}" >&2
+-    [[ ${#newer_files[@]} -gt 5 ]] && echo "And $((${#newer_files[@]} - 5)) more" >&2
++    local newer_file
++    for newer_file in "${newer_files[@]:0:5}"; do
++      _nix_direnv_info "  $newer_file"
++    done
++    [[ ${#newer_files[@]} -gt 5 ]] && _nix_direnv_info "  and $((${#newer_files[@]} - 5)) more"
+   fi
+ 
+   if [[ $profile_missing -eq 1 || $profile_rc_missing -eq 1 || ${#newer_files[@]} -gt 0 ]]; then

@@ -1,0 +1,48 @@
+diff --git a/internal/cmd/cmd_allow.go b/internal/cmd/cmd_allow.go
+index 7fd1e13..1693e1d 100644
+--- a/internal/cmd/cmd_allow.go
++++ b/internal/cmd/cmd_allow.go
+@@ -120,7 +120,7 @@ func allowRequiredFiles(rcPath, requiredPaths string, config *Config) error {
+ 			return fmt.Errorf("failed to write allowed-required file entry: %w", err)
+ 		}
+ 
+-		fmt.Printf("direnv: allowing %s\n", relPath)
++		logStatus(config, "allowing %s", relPath)
+ 	}
+ 
+ 	return nil
+diff --git a/internal/cmd/log.go b/internal/cmd/log.go
+index 5a0ef08..7e27a7b 100644
+--- a/internal/cmd/log.go
++++ b/internal/cmd/log.go
+@@ -25,7 +25,11 @@ func setupLogging(env Env) {
+ }
+ 
+ func logError(c *Config, msg string, a ...interface{}) {
+-	if c.LogColor {
++	// A custom log_format also styles errors. The default format keeps
++	// the error color.
++	if c.LogFormat != "" && c.LogFormat != defaultLogFormat {
++		logMsg(c.LogFormat, msg, a...)
++	} else if c.LogColor {
+ 		logMsg(defaultLogFormat, msg, a...)
+ 	} else {
+ 		logMsg(errorColor+defaultLogFormat+clearColor, msg, a...)
+diff --git a/internal/cmd/mod.go b/internal/cmd/mod.go
+index 88e95b4..c13047c 100644
+--- a/internal/cmd/mod.go
++++ b/internal/cmd/mod.go
+@@ -24,7 +24,12 @@ func Main(env Env, args []string, modBashPath string, modStdlib string, modVersi
+ 
+ 	err := CommandsDispatch(env, args)
+ 	if err != nil {
+-		fmt.Fprintf(os.Stderr, "%sdirenv: error %v%s\n", errorColor, err, clearColor)
++		// Use the configured log_format when the config loads.
++		if config, configErr := LoadConfig(env); configErr == nil {
++			logError(config, "error %v", err)
++		} else {
++			fmt.Fprintf(os.Stderr, "%sdirenv: error %v%s\n", errorColor, err, clearColor)
++		}
+ 	}
+ 	return err
+ }

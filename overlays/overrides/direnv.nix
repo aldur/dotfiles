@@ -17,6 +17,8 @@ final: prev: {
         ./direnv-require-allowed-fail-closed.patch
         # Keep approvals tied to the actual .envrc for parent/sibling inputs.
         ./direnv-require-allowed-parent-inputs.patch
+        # Apply log_format to errors and to `direnv allow` output.
+        ./direnv-log-format-everywhere.patch
       ];
     });
   };
