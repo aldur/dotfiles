@@ -12,11 +12,12 @@ updates:
         patterns:
           - "*"
   # The workflows pin actions by full SHA; without this, those pins never get
-  # update PRs and silently rot. Scans .github/workflows/.
+  # update PRs and silently rot. Scans .github/workflows/ and each composite
+  # action under .github/actions/.
   - package-ecosystem: "github-actions"
     directories:
       - "/"
-      - "/.github/actions/setup-nix"
+      - "/.github/actions/*"
     schedule:
       interval: "cron"
       cronjob: "0 9 1,15 * *"
