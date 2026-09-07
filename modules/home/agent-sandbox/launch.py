@@ -24,8 +24,17 @@ FILES = (".lazygit.yml",)
 INSTRUCTION_FILES = ("AGENTS.md", "CLAUDE.md", "CLAUDE.local.md")
 # Only trusted defaults are imported. Runtime state never flows back to them.
 DEFAULT_FILES = {
-    "codex": ("config.toml", "auth.json", "AGENTS.md"),
-    "claude": ("settings.json", ".credentials.json", "CLAUDE.md"),
+    "codex": ("config.toml", "AGENTS.md"),
+    "claude": ("settings.json", "CLAUDE.md"),
+}
+# One writable host file per agent, shared by every project and the host.
+# Both agents rotate their OAuth refresh token, so a copy expires the others.
+# Codex writes in place. Claude Code renames a staging file over the mount
+# point, gets EBUSY, and then writes in place. The value seeds a missing
+# host file; None requires a login on the host first.
+SHARED_FILES = {
+    "codex": {"auth.json": None},
+    "claude": {".credentials.json": b"{}\n"},
 }
 SHARED_DIRECTORIES = ("skills", "plugins", "packages", "bin", "commands", "agents", "rules", "output-styles")
 
@@ -208,6 +217,19 @@ class Policy:
                     fresh.rename(state)
         directory(state)
         mounts = self.bind(state, root, readonly=False)
+        for name, seed in SHARED_FILES[kind].items():
+            shared = source / name
+            if seed is None:
+                if not shared.is_file():
+                    fail(f"log in to {kind} outside the sandbox first: {shared}")
+            else:
+                # A first login inside the sandbox must reach the host file too.
+                fd = os.open(shared, os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+                if os.fstat(fd).st_size == 0:
+                    os.write(fd, seed)
+                os.close(fd)
+            self.shared_sources.add(shared)
+            mounts += self.bind(shared, root / name, readonly=False)
         for name in SHARED_DIRECTORIES:
             original = source / name
             if original.is_dir():
