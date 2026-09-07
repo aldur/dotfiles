@@ -44,6 +44,9 @@ qemu-vm --gui --clipboard -p 22:2222
 # Expose a host file to the guest as /run/qemu-vm-files/notes.txt
 qemu-vm --file notes.txt=~/notes.txt -p 22:2222
 
+# No network device at all, and no gvproxy process
+qemu-vm --no-network
+
 # Show all options
 qemu-vm --help
 ```
@@ -59,10 +62,15 @@ Thanks to [`hostPkgs`][0], the VM host can be either Linux or macOS (through
 process and does the NAT, the DHCP, the DNS, and the port forwards of `-p`.
 QEMU only holds a unix socket to it, so it has no in-process SLiRP.
 
-The guest has the address `192.168.127.2`. It cannot reach the host: the
-launcher turns off the loopback mapping and the guest-facing API of gvproxy
-(see `overlays/overrides/gvproxy-guest-isolation.patch`). On macOS, both
-QEMU and gvproxy run under `sandbox-exec` with deny-by-default profiles
+The guest has the address `192.168.127.2`. It cannot reach the host:
+gvproxy refuses connections to loopback and to every address of the host,
+maps no virtual IP to the host, serves no API to the guest, and binds the
+`-p` forwards on loopback only (see the two `gvproxy-*.patch` files in
+`overlays/overrides`). `--no-network` gives the guest no NIC at all and
+starts no gvproxy.
+
+On macOS, both QEMU and gvproxy run under `sandbox-exec` with
+deny-by-default profiles
 that list only what each process was seen to need: its own closure, the
 kernel and initrd, the disk and store images, the sockets and files of
 the run directory, and the files of `--file`. QEMU has no host network,
@@ -70,9 +78,8 @@ reads nothing under the home directory, and cannot spawn processes.
 gvproxy dials no address of the host, reaches no unix socket but the
 resolver, and binds only the `-p` forwards. `--gui` adds what the Cocoa
 display needs; the GPU stays denied, so it renders in software.
-`--no-sandbox` turns all of it off. On Linux hosts there is no equivalent,
-so there the guest can reach host services bound to a non-loopback
-address.
+`--no-sandbox` turns all of it off. On Linux hosts there is no equivalent
+yet; the gvproxy patches still keep the host out of the guest's reach.
 
 ## SSH Keys
 

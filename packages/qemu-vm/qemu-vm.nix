@@ -165,6 +165,7 @@ pkgs.writeArgcApplication {
       if defaultClipboard then " (default)" else ""
     }
     # @flag --no-clipboard Do not share the clipboard${if defaultClipboard then "" else " (default)"}
+    # @flag --no-network No network device and no gvproxy
     ${
       if isLinuxHost then
         ""
@@ -175,7 +176,7 @@ pkgs.writeArgcApplication {
     declare argc_dir argc_port argc_memory argc_cores argc_disk_size
     declare argc_store_image argc_file
     declare argc_verbose argc_clean argc_ephemeral argc_persistent argc_show_boot argc_gui
-    declare argc_clipboard argc_no_clipboard argc_no_sandbox
+    declare argc_clipboard argc_no_clipboard argc_no_sandbox argc_no_network
     eval "$(argc --argc-eval "$0" "$@")"
 
     EPHEMERAL=${if defaultEphemeral then "1" else "0"}
@@ -184,6 +185,12 @@ pkgs.writeArgcApplication {
     CLIPBOARD=${if defaultClipboard then "1" else "0"}
     [[ "''${argc_clipboard:-0}" -eq 1 ]] && CLIPBOARD=1
     [[ "''${argc_no_clipboard:-0}" -eq 1 ]] && CLIPBOARD=0
+    NETWORK=1
+    [[ "''${argc_no_network:-0}" -eq 1 ]] && NETWORK=0
+    if [[ "$NETWORK" -eq 0 && -n "''${argc_port:-}" ]]; then
+      echo "--port needs a network; drop --no-network"
+      exit 1
+    fi
 
     VM_DIR="''${argc_dir:-${defaultVmDir}}"
     MEMORY="''${argc_memory:-${toString defaultMemory}}"
@@ -270,20 +277,26 @@ pkgs.writeArgcApplication {
     GVPROXY_CONFIG="$TMPDIR/gvproxy.yaml"
     GVPROXY_LOG="$TMPDIR/gvproxy.log"
     # disable-guest-api and disable-host-nat come from
-    # overlays/overrides/gvproxy-guest-isolation.patch.
-    {
-      echo "log-level: $([[ "''${argc_verbose:-0}" -eq 1 ]] && echo info || echo warning)"
-      echo "log-file: $GVPROXY_LOG"
-      echo "disable-guest-api: true"
-      echo "disable-host-nat: true"
-      echo "interfaces:"
-      echo "  qemu: unix://$NET_SOCKET"
-      echo "stack:"
-      echo "  dhcpStaticLeases:"
-      echo "    $GUEST_IP: $GUEST_MAC"
-      echo "  forwards:"
-      printf '%s\n' "''${FORWARDS[@]}"
-    } > "$GVPROXY_CONFIG"
+    # overlays/overrides/gvproxy-guest-isolation.patch; denyHostAccess
+    # and loopbackForwardsOnly from gvproxy-host-isolation.patch. With
+    # them the guest reaches no address of the host, on any platform.
+    if [[ "$NETWORK" -eq 1 ]]; then
+      {
+        echo "log-level: $([[ "''${argc_verbose:-0}" -eq 1 ]] && echo info || echo warning)"
+        echo "log-file: $GVPROXY_LOG"
+        echo "disable-guest-api: true"
+        echo "disable-host-nat: true"
+        echo "interfaces:"
+        echo "  qemu: unix://$NET_SOCKET"
+        echo "stack:"
+        echo "  denyHostAccess: true"
+        echo "  loopbackForwardsOnly: true"
+        echo "  dhcpStaticLeases:"
+        echo "    $GUEST_IP: $GUEST_MAC"
+        echo "  forwards:"
+        printf '%s\n' "''${FORWARDS[@]}"
+      } > "$GVPROXY_CONFIG"
+    fi
 
     # macOS: confine both processes with the Seatbelt sandbox. The
     # profiles deny by default and allow exactly what each process was
@@ -352,10 +365,12 @@ pkgs.writeArgcApplication {
         # Entropy for virtio-rng.
         echo "(allow file-read* (literal \"/dev/urandom\"))"
         echo "(allow file-read* file-write* file-ioctl $TTY_RULE)"
-        # The sockets: QEMU dials gvproxy and serves the monitor.
+        # The sockets: QEMU serves the monitor and dials gvproxy.
         echo "(allow file-write* (literal \"$MONITOR_SOCKET\"))"
-        echo "(allow network-outbound (literal \"$NET_SOCKET\"))"
         echo "(allow network-bind network-inbound (literal \"$MONITOR_SOCKET\"))"
+        if [[ "$NETWORK" -eq 1 ]]; then
+          echo "(allow network-outbound (literal \"$NET_SOCKET\"))"
+        fi
         if [[ "$EPHEMERAL" -eq 1 ]]; then
           # The temporary disk of -snapshot.
           echo "(allow file-read* file-write* (regex #\"^$TMPDIR_RE/vl\\.\"))"
@@ -387,7 +402,7 @@ pkgs.writeArgcApplication {
           echo "(allow iokit-open-user-client (iokit-user-client-class \"IOSurfaceRootUserClient\") (iokit-user-client-class \"IOHIDParamUserClient\"))"
         fi
       } > "$TMPDIR/qemu.sb"
-      {
+      [[ "$NETWORK" -eq 1 ]] && {
         echo "(version 1)"
         echo "(deny default)"
         echo "(allow process-exec (literal \"${pkgs.gvproxy}/bin/gvproxy\"))"
@@ -396,6 +411,8 @@ pkgs.writeArgcApplication {
         # init; the Go runtime reads two more.
         echo "(allow file-read* (literal \"/\"))"
         echo "(allow sysctl-read (sysctl-name \"kern.bootargs\") (sysctl-name \"security.mac.lockdown_mode_state\") (sysctl-name \"hw.ncpu\") (sysctl-name \"hw.pagesize_compat\"))"
+        # denyHostAccess lists the interface addresses through the routing table.
+        echo "(allow sysctl-read (sysctl-name-prefix \"net.routetable.\"))"
         echo "(allow file-read* (literal \"$GVPROXY_CONFIG\"))"
         # The log is opened read-write.
         echo "(allow file-read* file-write* (literal \"$GVPROXY_LOG\"))"
@@ -427,7 +444,11 @@ pkgs.writeArgcApplication {
     else
       echo "  Boot output: hidden (use --show-boot to see)"
     fi
-    echo "  Network: gvproxy, guest $GUEST_IP"
+    if [[ "$NETWORK" -eq 1 ]]; then
+      echo "  Network: gvproxy, guest $GUEST_IP"
+    else
+      echo "  Network: none"
+    fi
     echo "  Monitor: nc -U $MONITOR_SOCKET"
     if [[ "$SANDBOX" -eq 1 ]]; then
       echo "  Sandbox: sandbox-exec (use --no-sandbox to disable)"
@@ -502,13 +523,6 @@ pkgs.writeArgcApplication {
       -serial chardev:console
       -monitor "unix:$MONITOR_SOCKET,server=on,wait=off"
 
-      # -- Network --
-      # gvproxy does NAT, DHCP, DNS, and the port forwards in its own
-      # process, with the memory-safe stack of gVisor. QEMU only holds a
-      # unix socket to it, so it has no in-process SLiRP.
-      -device "virtio-net-pci,netdev=net0,mac=$GUEST_MAC"
-      -netdev "stream,id=net0,server=off,addr.type=unix,addr.path=$NET_SOCKET"
-
       # -- Storage --
       # Root disk (qcow2, writable). The explicit format stops QEMU from
       # probing the image, which a guest could otherwise shape.
@@ -524,6 +538,18 @@ pkgs.writeArgcApplication {
       -initrd ${initrd}
       -append "$(cat ${toplevel}/kernel-params) init=${toplevel}/init regInfo=${regInfo}/registration console=${serialDevice},115200n8 $EXTRA_KERNEL_PARAMS"
     )
+
+    # -- Network --
+    # gvproxy does NAT, DHCP, DNS, and the port forwards in its own
+    # process, with the memory-safe stack of gVisor. QEMU only holds a
+    # unix socket to it, so it has no in-process SLiRP. `--no-network`
+    # leaves the guest without a NIC.
+    if [[ "$NETWORK" -eq 1 ]]; then
+      QEMU_ARGS+=(
+        -device "virtio-net-pci,netdev=net0,mac=$GUEST_MAC"
+        -netdev "stream,id=net0,server=off,addr.type=unix,addr.path=$NET_SOCKET"
+      )
+    fi
 
     # -- Display --
     # `-nodefaults` above gives the guest no GPU. `--gui` adds a virtio GPU,
@@ -563,8 +589,10 @@ pkgs.writeArgcApplication {
       echo "QEMU binary: ${qemuBinary}"
       echo "QEMU args:"
       printf '  %s\n' "''${QEMU_ARGS[@]}"
-      echo "gvproxy config: $GVPROXY_CONFIG"
-      echo "gvproxy log: $GVPROXY_LOG"
+      if [[ "$NETWORK" -eq 1 ]]; then
+        echo "gvproxy config: $GVPROXY_CONFIG"
+        echo "gvproxy log: $GVPROXY_LOG"
+      fi
       echo ""
     fi
 
@@ -573,18 +601,21 @@ pkgs.writeArgcApplication {
     # The log-file setting covers gvproxy's own logger only. Its TCP
     # proxy logs dial errors to stderr, so send that to the file too and
     # keep the terminal for the serial console.
-    "''${GVPROXY_WRAP[@]}" gvproxy -config "$GVPROXY_CONFIG" >>"$GVPROXY_LOG" 2>&1 &
-    GVPROXY_PID=$!
+    GVPROXY_PID=""
     # gvproxy exits by itself when QEMU closes the socket, so the kill
     # may find nothing.
-    trap 'kill "$GVPROXY_PID" 2>/dev/null || true; rm -rf "$TMPDIR"' EXIT
-    for _ in $(seq 50); do
-      [[ -S "$NET_SOCKET" ]] && break
-      sleep 0.1
-    done
-    if [[ ! -S "$NET_SOCKET" ]]; then
-      echo "gvproxy did not open $NET_SOCKET; see $GVPROXY_LOG"
-      exit 1
+    trap 'if [[ -n "$GVPROXY_PID" ]]; then kill "$GVPROXY_PID" 2>/dev/null || true; fi; rm -rf "$TMPDIR"' EXIT
+    if [[ "$NETWORK" -eq 1 ]]; then
+      "''${GVPROXY_WRAP[@]}" gvproxy -config "$GVPROXY_CONFIG" >>"$GVPROXY_LOG" 2>&1 &
+      GVPROXY_PID=$!
+      for _ in $(seq 50); do
+        [[ -S "$NET_SOCKET" ]] && break
+        sleep 0.1
+      done
+      if [[ ! -S "$NET_SOCKET" ]]; then
+        echo "gvproxy did not open $NET_SOCKET; see $GVPROXY_LOG"
+        exit 1
+      fi
     fi
 
     "''${QEMU_WRAP[@]}" ${qemuBinary} "''${QEMU_ARGS[@]}"
