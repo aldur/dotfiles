@@ -15,9 +15,12 @@
     enabled = true;
     autoUpdate = true;
   };
-  # Disable hooks globally: a bogus hooksPath means git finds no hooks to run.
-  # Re-enable per repository with e.g. `git config core.hooksPath .husky`.
+  # Disable hooks by default; repository settings can override this.
+  # Re-enable for trusted repositories with e.g. `git config core.hooksPath .husky`.
   core.hooksPath = "/dev/null";
+  # Require --git-dir or GIT_DIR for bare repositories instead of discovering
+  # them implicitly inside a checkout. Normal working repositories still work.
+  safe.bareRepository = "explicit";
   column.ui = "auto";
   branch.sort = "-committerdate";
   merge.conflictStyle = "zdiff3";
