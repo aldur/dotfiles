@@ -58,7 +58,23 @@ with pkgs.vimPlugins;
     noice-nvim
     lualine-nvim
     nui-nvim
-    nvim-lint
+    # nixpkgs fetches nvim-lint from codeberg.org. nixpkgs cannot read the
+    # license from codeberg, so it marks the plugin unfree, and Hydra does not
+    # build it. Each CI run then fetches the source from codeberg, and codeberg
+    # at times answers 504. Fetch the same rev from the GitHub mirror instead.
+    # The fixed-output hash and the store path stay the same.
+    (pkgs.lib.throwIf (!pkgs.lib.hasPrefix "https://codeberg.org/" nvim-lint.src.url)
+      ''
+        nixpkgs no longer fetches nvim-lint from codeberg.org.
+        Drop the source override in packages/lazyvim/plugins.nix.''
+      (
+        nvim-lint.overrideAttrs (old: {
+          src = old.src.overrideAttrs (_: {
+            url = "https://github.com/mfussenegger/nvim-lint";
+          });
+        })
+      )
+    )
     nvim-ts-autotag
     ts-comments-nvim
     blink-cmp
