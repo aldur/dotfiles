@@ -4,6 +4,7 @@
   services.openssh = {
     enable = true;
     allowSFTP = false;
+    authorizedKeysInHomedir = false;
     settings = {
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
