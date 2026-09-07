@@ -31,7 +31,6 @@ let
           extraEnvironmentAllowlist = agents.claude-code.sandbox.extraEnvironmentAllowlist ++ [
             "IS_SANDBOX"
             "CLAUBBIT"
-            "DISABLE_TELEMETRY"
             "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC"
           ];
         };

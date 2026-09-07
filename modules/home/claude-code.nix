@@ -82,6 +82,91 @@ let
     cat "$tmp" > "$config"
   '';
 
+  needsPathPrefix =
+    if pkgs.stdenv.hostPlatform.isDarwin then true else osConfig.programs.nix-ld.enable;
+  sandboxed = sandbox && pkgs.stdenv.hostPlatform.isLinux;
+  agentSandbox = lib.getExe config.programs.agent-sandbox.package;
+
+  # `claude-yolo` runs claude without permission prompts, in the sandbox
+  # when it is enabled, and with nonessential traffic off. The env below:
+  # IS_SANDBOX lets `--dangerously-skip-permissions` run as root.
+  # CLAUBBIT skips the trust, MCP, and CLAUDE.md dialogs.
+  # CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC also turns off telemetry,
+  # the feature flag fetch, and the auto-updater. Remote Control needs
+  # the flag fetch, so it stays off. It also skips the bootstrap request
+  # that lists the models of the account, so claude only sees the models
+  # cached in ~/.claude.json. The wrapper refreshes that cache with one
+  # short run without the variable when the claude version changed or
+  # the last refresh is older than a week. `claude -p /model` does the
+  # startup fetch and exits with no inference call, in about a second.
+  # A failed refresh never blocks the launch.
+  # Wrapper flags come first; everything after them goes to claude.
+  claude-yolo = pkgs.writeArgcApplication {
+    name = "claude-yolo";
+    runtimeInputs = [ pkgs.coreutils ];
+    text = ''
+      # @describe Run claude in the sandbox, with no permission prompts and no nonessential traffic
+      # @flag --refresh Refresh the model list before the launch
+      # @flag --online Keep the sandbox, but let nonessential traffic through (Remote Control works)
+      # @arg args~ Arguments for claude
+      declare argc_refresh argc_online
+      argc_args=()
+      # Only the wrapper flags at the front are for argc. The scan inserts
+      # the `--` itself, so claude arguments need no separator.
+      wrapper_args=()
+      while [ $# -gt 0 ]; do
+        case "$1" in
+          --refresh | --online | -h | --help) wrapper_args+=("$1") ;;
+          --) shift; break ;;
+          *) break ;;
+        esac
+        shift
+      done
+      eval "$(argc --argc-eval "$0" "''${wrapper_args[@]}" -- "$@")"
+      set -- "''${argc_args[@]}"
+
+      ${lib.optionalString needsPathPrefix ''export PATH="$HOME/.local/bin:$PATH"''}
+      stamp="$HOME/.claude/yolo-refresh"
+      max_age=$((7 * 24 * 3600))
+
+      refresh_due() {
+        local version now last_version="" last_at=""
+        version=$(claude --version 2>/dev/null | cut -d' ' -f1) || return 1
+        [ -n "$version" ] || return 1
+        now=$(date +%s)
+        if [ "''${argc_refresh:-0}" -eq 0 ] && [ -r "$stamp" ]; then
+          read -r last_version last_at < "$stamp" || true
+          [ "$last_version" = "$version" ] && [ $((now - ''${last_at:-0})) -lt "$max_age" ] && return 1
+        fi
+        echo "$version $now" > "$stamp.next"
+      }
+
+      # The refresh skips project hooks and MCP servers: it only needs the
+      # startup fetch.
+      if [ "''${argc_online:-0}" -eq 0 ] && refresh_due; then
+        echo "claude-yolo: refreshing the model list" >&2
+        if env -u CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC -u DISABLE_TELEMETRY \
+          DISABLE_AUTOUPDATER=1 timeout 15 \
+          ${lib.optionalString sandboxed "${agentSandbox} --profile claude --env DISABLE_AUTOUPDATER -- "}claude \
+          -p /model --strict-mcp-config --settings '{"disableAllHooks":true}' >/dev/null 2>&1; then
+          mv "$stamp.next" "$stamp"
+        else
+          rm -f "$stamp.next"
+          echo "claude-yolo: model list refresh failed, using the cached list" >&2
+        fi
+      fi
+
+      ${claude-trust-cwd}
+      export IS_SANDBOX=1 CLAUBBIT=1
+      if [ "''${argc_online:-0}" -eq 1 ]; then
+        unset CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC DISABLE_TELEMETRY
+      else
+        export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+      fi
+      exec ${lib.optionalString sandboxed "${agentSandbox} --profile claude -- "}claude --dangerously-skip-permissions "$@"
+    '';
+  };
+
   claudeSettings = jsonFormat.generate "claude-code-settings.json" cfg.writableSettings;
 
   claudeMcpConfig = jsonFormat.generate "claude-mcp.json" {
@@ -146,6 +231,15 @@ in
           type = "command";
           command = "${claude-statusline}/bin/claude-statusline";
         };
+        # These apply to every `claude` invocation, sandboxed or not.
+        env = {
+          # Skip the "How is Claude doing this session?" surveys.
+          CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY = "1";
+          # Clone plugin marketplaces over HTTPS. This stops the
+          # `ssh -T git@github.com` probe that a fresh install makes.
+          # https://github.com/anthropics/claude-code/issues/21108
+          CLAUDE_CODE_PLUGIN_PREFER_HTTPS = "1";
+        };
       };
 
       nixManagedHookMarkers = [ "claude-tmux-silence" ];
@@ -184,18 +278,7 @@ in
         ''
       );
 
-      shellAliases = lib.optionalAttrs enabled {
-        claude-yolo =
-          let
-            needsPathPrefix =
-              if pkgs.stdenv.hostPlatform.isDarwin then true else osConfig.programs.nix-ld.enable;
-            pathPrefix = lib.optionalString needsPathPrefix "PATH=~/.local/bin/:$PATH ";
-            sandboxPrefix = lib.optionalString (
-              sandbox && pkgs.stdenv.hostPlatform.isLinux
-            ) "${lib.getExe config.programs.agent-sandbox.package} --profile claude -- ";
-          in
-          "${claude-trust-cwd}; ${pathPrefix}IS_SANDBOX=1 CLAUBBIT=1 DISABLE_TELEMETRY=1 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 ${sandboxPrefix}claude --dangerously-skip-permissions";
-      };
+      packages = lib.optionals enabled [ claude-yolo ];
     };
 
     # The upstream HM module creates a read-only symlink for settings.json when
