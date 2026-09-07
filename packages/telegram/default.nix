@@ -2,6 +2,7 @@
   writeArgcApplication,
   curl,
   gnused,
+  callPackage,
 }:
 
 writeArgcApplication {
@@ -11,4 +12,5 @@ writeArgcApplication {
     curl
     gnused
   ];
+  passthru.tests.integration = callPackage ./test.nix { };
 }

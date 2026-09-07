@@ -1,23 +1,22 @@
 #!/usr/bin/env bash
 
+# Disable inherited xtrace before parsing arguments or handling credentials.
+# DEBUG uses curl's status/timing output below; tracing requests reveals tokens.
+set +x
 set -euo pipefail
 
 # @describe Send a message, photo or video with a Telegram bot
+# Supply the bot token through the BOT_TOKEN environment variable.
 # @option -c --chat-id ID of the Telegram chat to send the message to (defaults to the CHAT_ID environment variable)
-# @option -t --bot-token Your Telegram bot token (prefer the BOT_TOKEN environment variable: an option shows the token in the process list)
 # @option -p --photo Send the picture at this path, with the message as its caption
 # @option -v --video Send the video at this path, with the message as its caption
 # @arg message! The text to send
 
-declare argc_chat_id argc_bot_token argc_photo argc_video argc_message
+declare argc_chat_id argc_photo argc_video argc_message
 eval "$(argc --argc-eval "$0" "$@")"
 
-if [ -n "${DEBUG+x}" ]; then
-	set -x
-fi
-
 CHAT_ID="${argc_chat_id:-${CHAT_ID:-}}"
-BOT_TOKEN="${argc_bot_token:-${BOT_TOKEN:-}}"
+BOT_TOKEN="${BOT_TOKEN:-}"
 
 if [ -z "$CHAT_ID" ]; then
 	echo "Error: CHAT_ID cannot be empty. Use '--chat-id' to set it."
@@ -25,7 +24,7 @@ if [ -z "$CHAT_ID" ]; then
 fi
 
 if [ -z "$BOT_TOKEN" ]; then
-	echo "Error: BOT_TOKEN cannot be empty. Use '--bot-token' to set it."
+	echo "Error: BOT_TOKEN cannot be empty. Set the BOT_TOKEN environment variable."
 	exit 1
 fi
 
@@ -67,7 +66,13 @@ else
 	ENDPOINT="sendMessage"
 fi
 
+if [ -n "${DEBUG+x}" ]; then
+	# --verbose/--trace include the request URL and therefore the bot token.
+	# Only report curl's status and timings, keeping the response on stdout.
+	CURL_ARGS+=(--write-out "%{stderr}telegram: ${ENDPOINT}: HTTP %{http_code}; connect %{time_connect}s; first byte %{time_starttransfer}s; total %{time_total}s\n")
+fi
+
 # The URL embeds the bot token; pass it via a config file on stdin so it
 # never appears in the process list.
-printf 'url = "https://api.telegram.org/bot%s/%s"\n' "$BOT_TOKEN" "$ENDPOINT" \
-	| curl "${CURL_ARGS[@]}" --config -
+printf 'url = "https://api.telegram.org/bot%s/%s"\n' "$BOT_TOKEN" "$ENDPOINT" |
+	curl "${CURL_ARGS[@]}" --config -
