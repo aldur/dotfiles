@@ -7,6 +7,7 @@ set -euo pipefail
 # @option --ro* <PATH> Additional existing read-only file or directory
 # @option --rw* <PATH> Additional existing writable file or directory
 # @option --env* <NAME> Additional inherited environment variable (repeatable)
+# @flag --git-write Allow Git metadata writes for this launch (including hooks/config)
 # @arg cmd~ Command to run inside the sandbox (required)
 
 # @sandbox-configuration@
@@ -18,6 +19,7 @@ argc_workspace=$PWD
 argc_ro=()
 argc_rw=()
 argc_env=()
+argc_git_write=0
 argc_cmd=()
 eval "$(argc --argc-eval "$0" "$@")"
 
@@ -233,6 +235,7 @@ environment_args+=(
   --setenv DBUS_SESSION_BUS_ADDRESS "unix:path=$runtime/bus"
   --setenv TMUX_TMPDIR /dev/null
   --setenv GNUPGHOME "$home_dir/.gnupg"
+  --setenv GIT_DISCOVERY_ACROSS_FILESYSTEM 1
   "${nix_environment[@]}"
 )
 
@@ -242,14 +245,24 @@ isolation_args=(
   --seccomp 3
 )
 
+policy_args=()
+for ((index = 0; index < ${#writable_mounts[@]}; index += 3)); do
+  policy_args+=(--writable "${writable_mounts[index + 1]}" "${writable_mounts[index + 2]}")
+done
+for ((index = 0; index < ${#read_only_mounts[@]}; index += 3)); do
+  policy_args+=(--readonly "${read_only_mounts[index + 1]}" "${read_only_mounts[index + 2]}")
+done
+
 # Keep the wrapper alive so its EXIT trap cleans up the proxy.
 (
   close_extra_fds
-  exec bwrap \
+  exec "$sandbox_python" -I "$sandbox_launcher" \
+    --home "$home_dir" --workspace "$workspace" --state-kind "$agent_state_kind" --git-write "$argc_git_write" \
+    "${policy_args[@]}" -- bwrap \
     "${filesystem_args[@]}" \
     "${system_mounts[@]}" \
-    "${writable_mounts[@]}" \
-    "${read_only_mounts[@]}" \
+    --sandbox-writable \
+    --sandbox-state \
     "${service_mounts[@]}" \
     "${environment_args[@]}" \
     "${isolation_args[@]}" \

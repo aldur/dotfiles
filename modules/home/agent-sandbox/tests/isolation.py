@@ -61,15 +61,9 @@ run("@seccompProbe@")
 run("@bash@", "-c", 'exec "$1"', "probe", "@seccompProbe@")
 
 # Normal development still supports subprocesses, pipes, Git and an inner
-# bubblewrap sandbox. Workspace Git metadata is intentionally writable.
+# bubblewrap sandbox. Repository metadata has separate integration coverage.
 run("@bash@", "-c", "printf hello | cat > pipe-result")
 assert Path("pipe-result").read_text() == "hello"
-run("@git@", "init", "--quiet", "dev-repo")
-run("@git@", "-C", "dev-repo", "config", "user.name", "Fixture")
-run("@git@", "-C", "dev-repo", "config", "user.email", "fixture@example.invalid")
-Path("dev-repo/file").write_text("workspace edit")
-run("@git@", "-C", "dev-repo", "add", "file")
-run("@git@", "-C", "dev-repo", "-c", "commit.gpgsign=false", "commit", "--quiet", "--allow-empty", "-m", "fixture")
 run("@bwrap@", "--ro-bind", "/", "/", "--unshare-pid", "--", "@bash@", "-c", "true")
 
 daemon = Path("/nix/var/nix/daemon-socket/socket")

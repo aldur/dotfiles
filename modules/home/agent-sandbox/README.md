@@ -1,156 +1,109 @@
 # Agent sandbox
 
-On Linux, `agent-sandbox` runs a required command inside bubblewrap.
-`codex-yolo` and `claude-yolo` select their mount profiles and supply their
-commands and flags automatically.
-It starts with an empty root, private home, temporary directories and runtime
-directory. It mounts the launch directory read/write and a list of system
-tools and configuration read-only. `/persist` and unrelated host directories
-are not mounted. Mount groups live in [package.nix](package.nix);
-argument parsing and assembly live in [agent-sandbox.sh](agent-sandbox.sh).
-The module and agent profiles live in [default.nix](default.nix), with shared
-NixOS options in [options.nix](options.nix).
-The command uses the repository's `writeArgcApplication` helper, with generated
-help and Bash, Zsh and Fish completions from the script's argc annotations.
-
-## Add paths for one command
-
-Use `agent-sandbox` for any command:
+`agent-sandbox` runs a required command inside bubblewrap on Linux.
+`codex-yolo` and `claude-yolo` supply their profiles and commands automatically.
 
 ```sh
-agent-sandbox \
-  --workspace ~/Work/project \
-  --ro ~/Documents/reference \
-  --rw ~/Work/shared-library \
-  -- bash
-
-agent-sandbox --profile codex --rw ~/Work/shared-library -- codex
-agent-sandbox --profile claude --rw ~/Work/shared-library -- claude
+agent-sandbox --workspace ~/Work/project --ro ~/Documents/reference --rw ~/Work/library -- bash
+agent-sandbox --profile codex -- codex
+agent-sandbox --profile claude -- claude
 ```
 
-Without `--profile`, the base sandbox includes tools and the workspace, with
-no agent state. `--profile codex` and `--profile claude` add the corresponding
-agent's state and Nix settings. Profiles are available when that agent is
-enabled. The command after `--` is always required, even with a profile; it
-can be any program. Existing `codex-yolo` and `claude-yolo` usage is unchanged.
+Repeat `--ro PATH`, `--rw PATH`, or `--env NAME` as needed. Paths must exist;
+broad grants such as the whole home are refused. Explicit read-only grants
+win over writable grants. Without a profile, no agent state is exposed.
+`--help` and shell completions come from argc.
 
-`--workspace` replaces the default launch directory. Repeat `--ro` and `--rw`
-for more paths, including files. Put the command and its arguments after `--`.
-Paths may be relative to the launch directory, absolute, or start with `~/`.
-Quote paths with spaces. Missing paths fail at launch. Whole-root and whole-home
-grants are refused. Read-only mounts are applied after writable mounts, so
-`--ro` can restrict a directory inside the writable workspace.
+## Threat model
 
-## Add paths in Nix
+An untrusted agent working in A must not silently change what I trust while
+working in B. Integrity matters more than confidentiality. Reviewing A with
+host tools should be safe before approving its changes.
 
-Both agent profiles expose the same options:
+- Agents may edit project source and instructions. I review changes before
+  deliberately executing them on the host. Staging/committing stays mine.
+- Tasks within one project may share state. Other projects and global
+  preferences, skills, installations and host services remain separate.
+- Promoting project changes into shared configuration requires my review.
+- Nix builds and Playwright with a fresh browser profile are wanted; host tmux
+  control and clipboard access are not. Crostini completion notifications are
+  allowed. Additional host services require an explicit trust decision.
+- Direnv should require reapproval when environment inputs change, including
+  imported files; approval records and host caches must remain protected.
 
-```nix
-programs.aldur.codex.sandbox.filesystem = {
-  readOnlyPaths = [ "~/Documents/reference" ];
-  readWritePaths = [ "~/Work/shared-library" ];
-};
+Current controls: explicit mounts, private home/tmp/runtime/dev, filtered
+environment, closed descriptors, seccomp, a new session, protected Git/Lazygit
+metadata, and project-scoped agent homes. Host defaults are copied once;
+project state is never written back to them.
 
-programs.aldur.claude-code.sandbox.filesystem = {
-  readOnlyPaths = [ "/srv/documentation" ];
-  readWritePaths = [ "~/Work/shared-library" ];
-};
-```
+Remaining gaps: shared networking; terminal control sequences; host review
+helpers referencing editable files; direnv input/cache approval; newly created
+nested metadata. These requirements are not fully enforced by this patch.
 
-These must be strings, not Nix path literals: their contents should not be
-copied into the Nix store. The selected profile's configured paths and
-command-line paths are combined.
+Trust the host kernel, bubblewrap, launcher and existing host processes.
+Kernel exploits, resource exhaustion and intentionally running unreviewed code
+are outside this boundary. Explicit grants, `--git-write` and bypass variables
+weaken it. Tests cover fixtures, not every escape or live authentication flow.
 
-## State and services
+## Policy
 
-The selected agent's existing state is an explicit writable exception:
-`~/.codex` for Codex, and `~/.claude` plus `~/.claude.json` for Claude. Existing
-standalone installations are mounted read-only. Other home files created by
-the command are ephemeral. Authentication and configuration within admitted
-state remain accessible to the agent; this change does not separate those
-from session data. Workspace contents, including `.git`, remain writable.
+- Empty root; private home, `/tmp`, runtime directory and minimal `/dev`.
+  No root/home/`/persist` bind. System tools and selected configuration are
+  read-only; workspace and explicit writable grants persist.
+- `.git` and `.lazygit.yml` are protected at grant roots and existing nested
+  locations. Worktrees, submodules and admitted aliases are covered.
+  Missing mountpoints are reserved until the last concurrent launch exits.
+- Project `.agents`, `.codex`, `.claude`, `.mcp.json` and instruction files
+  follow ordinary write grants. Review changes before using them outside the
+  project sandbox. Parent instructions remain readable from subdirectories.
+- `--git-write` permits Git metadata changes, including hooks/configuration,
+  and prints a warning. `--rw .git` alone does not override protection.
+- Environment allowlist, descriptor closure, capability removal, seccomp and
+  `--new-session` remain enforced. Terminal output is not filtered.
+- On a NixOS host with `aldur.apparmor`, the launcher enters the
+  [`agent-sandbox`](apparmor/agent-sandbox) AppArmor policy. It closes abstract
+  Unix sockets, io_uring, ptrace and nested namespaces. When the LSM is on and
+  the policy is absent, the launch fails.
+- Networking is unchanged. The Nix daemon, filtered session bus and explicitly
+  configured runtime sockets retain their existing grants.
 
-Host `/run/dbus`, `/run/pcscd`, shared `/tmp` sockets (including SSH agents and
-X11), and hardware device nodes are absent. Bubblewrap creates a minimal
-private `/dev`. The default and any custom host GnuPG homes are absent;
-`GNUPGHOME` points to a private, ephemeral directory. GPG can start a new
-agent there without accessing the host's keys or sockets.
+## Project state
 
-Network access stays enabled, including host TCP services and Linux abstract
-Unix sockets. This is not network isolation; those endpoints do not depend on
-filesystem mounts. The filtered session bus and any configured
-`extraRuntimeDirAllowlist` entries are exposed. `sandbox.allowNixDaemon`
-defaults to `true`, exposing the host daemon socket when present so builds
-work with a read-only Nix store. Set it to `false` to omit the socket. Daemon
-access carries the invoking user's Nix permissions, so a trusted Nix user
-is unsuitable for confinement. The store itself is readable, including any
-data that was previously copied into it.
+Each profile mounts one writable home from
+`~/.<agent>/agent-sandbox/projects/<project-path-hash>`. Repository subdirectories
+share state; different worktrees have separate state. Non-repository launches
+use their workspace path. These paths sit under the existing preserved agent
+homes on Crostini.
 
-## Environment and syscalls
+Trusted settings, instructions and credentials are copied on first use.
+Shared installations, skills and plugins are mounted read-only. Sessions,
+SQLite databases, settings and credential refreshes stay within that project.
+There is no host writeback or automatic import of old conversations/databases.
+Global settings changes do not overwrite an existing project's copy.
 
-The wrapper clears the inherited environment and passes an explicit list of
-tool, terminal, locale and certificate settings (listed in
-[agent-sandbox.sh](agent-sandbox.sh)). Desktop endpoints, SSH agent variables,
-shell startup hooks, and unrelated API tokens are not passed by default.
-The Claude profile also preserves the settings supplied by `claude-yolo`.
+Initialize/login outside the sandbox before first use. If copied credentials
+expire or refresh-token rotation invalidates another copy, log in within the
+affected project profile. Live OAuth refresh has not been tested.
+Review proposed shared changes and apply them outside the sandbox.
 
-Grant additional environment variables by name when a command needs them:
+## Configuration and checks
+
+Persistent grants use `programs.aldur.<agent>.sandbox.filesystem.readOnlyPaths`
+and `readWritePaths`: lists of strings, not Nix path literals. Mount defaults
+live in [package.nix](package.nix); CLI assembly in
+[agent-sandbox.sh](agent-sandbox.sh); state and metadata policy in
+[launch.py](launch.py).
+
+`AGENT_NO_SANDBOX=1`, `CODEX_NO_SANDBOX=1` or `CLAUDE_NO_SANDBOX=1` bypasses
+applicable wrapping and prints a warning.
 
 ```sh
-agent-sandbox --profile codex --env OPENAI_API_KEY --env HTTPS_PROXY -- codex
+nix build path:.#checks.x86_64-linux.agent-sandbox path:.#checks.x86_64-linux.agent-sandbox-modules --no-link
+nix build path:.#checks.x86_64-linux.agent-sandbox-apparmor --no-link
 ```
 
-For persistent profile settings:
-
-```nix
-programs.aldur.codex.sandbox.extraEnvironmentAllowlist = [ "OPENAI_API_KEY" ];
-```
-
-Values come from the launch environment, so secrets stay out of the Nix
-configuration. Missing variables are omitted. Sandbox home, temporary and
-runtime locations override explicit environment grants. Files within granted
-paths, including agent state, can still contain secrets.
-
-Every sandbox uses `--new-session`, drops capabilities, and requires a seccomp
-filter. The filter denies terminal injection/control requests `TIOCSTI` and
-`TIOCLINUX`, host kernel keyring operations, `bpf`, `perf_event_open`, and
-`userfaultfd`. It applies to descendants and compatible ABIs, independently
-of the host's TIOCSTI sysctl. An unsupported kernel fails at launch; there is
-no automatic fallback. Normal terminal input, mode and size operations remain
-available through inherited stdin/stdout/stderr.
-Other inherited file descriptors are closed before starting either the proxy
-or sandbox, so an open host file or socket cannot bypass the mount policy.
-
-This is a small syscall denylist, not a general syscall allowlist. Nested
-sandboxes remain supported. See [Bubblewrap's security notes](https://github.com/containers/bubblewrap#limitations)
-for the terminal and service-access concerns behind these choices.
-
-## Bypass
-
-`AGENT_NO_SANDBOX=1` bypasses the sandbox for any command or profile.
-`CODEX_NO_SANDBOX=1` and `CLAUDE_NO_SANDBOX=1` continue to bypass their respective
-profiles, including when invoked through the `-yolo` aliases.
-The wrapper prints a warning to stderr before running the command directly;
-arguments and exit status are preserved. For example:
-
-```text
-agent-sandbox: WARNING: CODEX_NO_SANDBOX=1; running without the sandbox.
-```
-
-## Tests
-
-```sh
-nix build .#checks.x86_64-linux.agent-sandbox .#checks.x86_64-linux.agent-sandbox-modules
-```
-
-The integration check runs the real wrapper in a synthetic host namespace,
-both with and without `/persist`. It covers filesystem grants and symlinks,
-host sockets/devices/GnuPG state, environment grants, session bus filtering,
-Nix socket policy, seccomp enforcement and failure, descendant restrictions,
-Git and nested sandboxes, PTY input and Ctrl-C, cleanup, argument forwarding,
-exit status, inherited descriptors, bypass warnings, and generated completions.
-Module checks cover installation and aliases with neither agent, either agent,
-or both enabled.
-Run the integration check on each target kernel, especially Crostini: the
-synthetic filesystem covers its persistence layout but cannot emulate a
-foreign ChromeOS kernel.
+Tests use synthetic files, credentials and services. They cover filesystem and
+metadata protection, preservation aliases, concurrency/cleanup, project state,
+atomic writes, environment, descriptors, signals and seccomp. The AppArmor
+check boots VMs with the policy enforced, in complain mode and absent. Optional
+[CLI smoke tests](tests/cli-smoke.py) run installed agents offline.

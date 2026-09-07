@@ -1,6 +1,7 @@
 import os
 import errno
 import fcntl
+import hashlib
 from pathlib import Path
 import pty
 import select
@@ -108,7 +109,10 @@ for agent in ["claude", "codex"]:
         assert Path("/home/tester/Custom GPG/secret.key").read_text() == "custom-key-fixture\n"
         assert Path("/home/tester/Shared code/result").read_text() == "edited\n"
         assert Path("/home/tester/Extra output/result").read_text() == "edited\n"
-        assert Path(f"/home/tester/.{agent}/session").read_text() == "session\n"
+        key = hashlib.sha256(b"/home/tester/Work").hexdigest()
+        state = Path(f"/home/tester/.{agent}/agent-sandbox/projects/{key}")
+        assert (state / "sessions/probe-session").read_text() == "session\n"
+        assert not Path(f"/home/tester/.{agent}/sessions/probe-session").exists()
         if Path("/persist").exists():
             assert Path("/persist/home/tester/Work/result").read_text() == "edited\n"
             assert Path("/persist/system-state").read_text() == "system\n"
@@ -146,7 +150,7 @@ for agent in ["claude", "codex"]:
         git_config.unlink()
 
     help_result = run([wrapper, "--help"], capture_output=True, text=True, check=True)
-    for option in ["--profile", "--workspace", "--ro", "--rw", "--env"]:
+    for option in ["--profile", "--workspace", "--ro", "--rw", "--env", "--git-write"]:
         assert option in help_result.stdout + help_result.stderr
 
     # An explicit bypass warns on stderr, preserves argv and exit status,
@@ -333,3 +337,7 @@ with open("/home/tester/Unrelated/secret", "rb") as secret:
     ], pass_fds=(secret.fileno(),), capture_output=True)
 assert result.returncode == 0, result.stderr
 print("passed: inherited descriptors closed", flush=True)
+
+# This suite launches many individually bounded commands; allow slower target
+# kernels enough time for the group, including concurrent-wrapper checks.
+subprocess.run([sys.executable, "@metadataTests@", wrapper], check=True, timeout=120)

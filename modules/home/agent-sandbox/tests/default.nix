@@ -8,7 +8,7 @@ let
       extraDbusTalk = [ "org.example.Allowed" ];
       readOnlyPaths = [ "~/Reference notes" ];
       readWritePaths = [ "~/Shared code" ];
-      agentReadWritePaths = [ "~/.${name}" ];
+      stateKind = name;
       agentReadOnlyPaths = [ "~/.${name}/bin" ];
       extraEnvironmentAllowlist = [ "PROFILE_VALUE" ];
       allowNixDaemon = name == "codex";
@@ -31,7 +31,6 @@ let
   securityProbe = pkgs.replaceVars ./isolation.py {
     inherit seccompProbe;
     gpg = "${pkgs.gnupg}/bin/gpg";
-    git = "${pkgs.git}/bin/git";
     bwrap = "${pkgs.bubblewrap}/bin/bwrap";
     bash = "${pkgs.bash}/bin/bash";
   };
@@ -69,8 +68,8 @@ let
       echo 'read-only mount must override the writable grant' >&2
       exit 1
     fi
-    test "$(cat "$HOME/.$TEST_AGENT/auth")" = fixture-auth
-    echo session > "$HOME/.$TEST_AGENT/session"
+    mkdir -p "$HOME/.$TEST_AGENT/sessions"
+    echo session > "$HOME/.$TEST_AGENT/sessions/probe-session"
     "$HOME/.$TEST_AGENT/bin/tool"
     if (echo changed > "$HOME/.$TEST_AGENT/bin/tool") 2>/dev/null; then
       echo 'agent installation must stay read-only' >&2
@@ -102,6 +101,9 @@ let
     bwrap = "${pkgs.bubblewrap}/bin/bwrap";
     dbusTestTool = "${pkgs.dbus}/bin/dbus-test-tool";
     dbusSend = "${pkgs.dbus}/bin/dbus-send";
+    metadataTests = pkgs.replaceVars ./metadata.py {
+      git = "${pkgs.git}/bin/git";
+    };
   };
 in
 pkgs.runCommand "agent-sandbox-test"
@@ -127,6 +129,11 @@ pkgs.runCommand "agent-sandbox-test"
       printf '#!${pkgs.bash}/bin/bash\nexit 0\n' > "$fixture/home/.$agent/bin/tool"
       chmod +x "$fixture/home/.$agent/bin/tool"
     done
+    echo '{"token":"fixture"}' > "$fixture/home/.codex/auth.json"
+    echo '{"token":"fixture"}' > "$fixture/home/.claude/.credentials.json"
+    echo 'model = "fixture"' > "$fixture/home/.codex/config.toml"
+    echo '{}' > "$fixture/home/.claude/settings.json"
+    echo '{"mcpServers":{},"fixture":true}' > "$fixture/home/.claude.json"
     echo reference > "$fixture/home/Reference notes/marker"
     echo reference > "$fixture/home/Extra reference/marker"
     echo unrelated > "$fixture/home/Unrelated/secret"
@@ -175,6 +182,7 @@ pkgs.runCommand "agent-sandbox-test"
       )
       if [ "$persistence" = present ]; then
         args+=(--bind "$fixture/persist" /persist)
+        args+=(--bind "$fixture/home/.codex" /persist/home/tester/.codex)
       fi
       bwrap "''${args[@]}" -- dbus-run-session \
         --config-file=${pkgs.dbus}/share/dbus-1/session.conf -- \

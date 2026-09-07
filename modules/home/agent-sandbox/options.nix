@@ -11,9 +11,10 @@ alias: bypassVar: {
       On Linux, wrap `${alias}` in bubblewrap with an empty root and a
       private home, /tmp and runtime directory. Bind system tools and
       selected configuration read-only, and the launch directory and
-      the selected agent's state read/write. Other host paths, including
-      /persist, are absent unless explicitly granted. Network access is
-      unchanged; writable workspaces and agent state remain persistent.
+      project-scoped agent state read/write. Git metadata is protected.
+      Other host paths, including /persist, are absent unless explicitly
+      granted. Network access is unchanged; writable workspaces and agent
+      state remain persistent.
 
       Set ${bypassVar}=1 in the environment to bypass the wrapper for a
       single invocation without a rebuild. Bypassing prints a warning.
@@ -41,6 +42,8 @@ alias: bypassVar: {
         Additional existing files or directories to expose read/write,
         beyond the launch directory and the selected agent's state.
         Use absolute paths or ~/. Changes affect the host directly.
+        Repository metadata protections still apply. Use --git-write for an
+        explicit per-launch Git metadata exception; --rw cannot override it.
         The agent-sandbox command applies these paths with the matching
         --profile; it also accepts repeated --rw PATH and --workspace DIR
         to replace the default launch directory.
