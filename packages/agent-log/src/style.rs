@@ -86,9 +86,27 @@ pub fn rule() -> String {
     dim(&"─".repeat(width()))
 }
 
-/// The heading of a turn. It has a bar in the colour of the role, the name of
-/// the role, and the time.
+/// The heading of a block in a turn: the thinking, a tool call or a tool
+/// result. With colour, it has a bar in the colour of the role, the name of
+/// the role, and the time. Without colour, it is a markdown sub-heading,
+/// because the output goes to a file, a pager or glow.
 pub fn heading(role: &str, time: &str) -> String {
+    styled_heading("###", role, time)
+}
+
+/// The heading of a turn. It is one level above the heading of a block.
+pub fn turn_heading(role: &str, time: &str) -> String {
+    styled_heading("##", role, time)
+}
+
+fn styled_heading(level: &str, role: &str, time: &str) -> String {
+    if !enabled() {
+        return if time.is_empty() {
+            format!("{level} {role}")
+        } else {
+            format!("{level} {role} · {time}")
+        };
+    }
     let colour: fn(&str) -> String = match role {
         r if r.contains("user") => user,
         r if r.contains("thinking") => thinking,

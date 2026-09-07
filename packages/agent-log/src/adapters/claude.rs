@@ -40,6 +40,18 @@ fn block_text(block: &Value) -> String {
     }
 }
 
+/// A signed thinking block without text. Claude Code writes one for each
+/// reply. The condensed trace, if there is one, comes as a second block with
+/// text. The empty block gives no information to a person.
+fn is_empty_thinking(block: &Value) -> bool {
+    block.get("type").and_then(Value::as_str) == Some("thinking")
+        && block
+            .get("thinking")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .is_empty()
+}
+
 fn is_tool_block(block: &Value) -> bool {
     matches!(
         block.get("type").and_then(Value::as_str),
@@ -165,6 +177,7 @@ pub fn turns(records: &[Value], no_tools: bool) -> Vec<Turn> {
                 let mut kinds: Vec<&str> = blocks
                     .iter()
                     .filter(|b| !(no_tools && is_tool_block(b)))
+                    .filter(|b| !is_empty_thinking(b))
                     .filter_map(|b| b.get("type").and_then(Value::as_str))
                     .collect();
                 kinds.dedup();
@@ -188,8 +201,8 @@ pub fn turns(records: &[Value], no_tools: bool) -> Vec<Turn> {
 
 /// One turn as the role and the body. The caller makes the heading, because
 /// the conversation view uses markdown for a file and a coloured bar for a
-/// terminal.
-pub fn render(record: &Value) -> (String, String) {
+/// terminal. `no_tools` removes the tool blocks, as in `turns`.
+pub fn render(record: &Value, no_tools: bool) -> (String, String) {
     let Some(message) = record.get("message") else {
         return (String::new(), String::new());
     };
@@ -198,6 +211,8 @@ pub fn render(record: &Value) -> (String, String) {
         Some(Value::String(text)) => text.clone(),
         Some(Value::Array(blocks)) => blocks
             .iter()
+            .filter(|block| !is_empty_thinking(block))
+            .filter(|block| !(no_tools && is_tool_block(block)))
             .map(|block| match block.get("type").and_then(Value::as_str) {
                 Some("thinking") => format!("{}\n{}", style::heading("thinking", ""), style::thinking(&block_text(block))),
                 Some("tool_use") => format!(

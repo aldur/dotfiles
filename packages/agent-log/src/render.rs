@@ -43,13 +43,13 @@ fn turn_from(agent: Agent, records: &[serde_json::Value], key: &str) -> String {
         return format!("agent-log: no turn {key}\n");
     };
     let (role, body) = match agent {
-        Agent::Claude => adapters::claude::render(record),
-        Agent::Pi => adapters::pi::render(record),
+        Agent::Claude => adapters::claude::render(record, false),
+        Agent::Pi => adapters::pi::render(record, false),
         Agent::Codex => adapters::codex::render(record),
     };
     format!(
         "{}\n\n{}\n",
-        style::heading(&role, ""),
+        style::turn_heading(&role, ""),
         crate::model::sanitize(&body)
     )
 }
@@ -159,27 +159,13 @@ pub fn full(path: &Path, no_tools: bool) -> String {
             .and_then(|index| index.checked_sub(1))
             .and_then(|i| records.get(i))
             .map(|record| match agent {
-                Agent::Claude => adapters::claude::render(record).1,
-                Agent::Pi => adapters::pi::render(record).1,
+                Agent::Claude => adapters::claude::render(record, no_tools).1,
+                Agent::Pi => adapters::pi::render(record, no_tools).1,
                 Agent::Codex => adapters::codex::render(record).1,
             })
             .unwrap_or_else(|| turn.text.clone());
         let body = crate::model::sanitize(&body);
-        // Use the same heading as the turn view when colour is on. Use a
-        // markdown heading when colour is off.
-        let heading = if style::enabled() {
-            style::heading(&turn.kind, &turn.time)
-        } else {
-            format!(
-                "## {}{}",
-                turn.kind,
-                if turn.time.is_empty() {
-                    String::new()
-                } else {
-                    format!(" · {}", turn.time)
-                }
-            )
-        };
+        let heading = style::turn_heading(&turn.kind, &turn.time);
         out.push_str(&format!("{heading}\n\n{body}\n\n"));
     }
     out

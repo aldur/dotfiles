@@ -19,6 +19,7 @@ stdenvNoCC.mkDerivation {
     cat > claude.jsonl <<'EOF'
 {"type":"user","timestamp":"2026-08-10T10:00:00.000Z","cwd":"/tmp/project","message":{"role":"user","content":"CLAUDEUSERMARK"}}
 {"type":"assistant","timestamp":"2026-08-10T10:00:05.000Z","message":{"role":"assistant","model":"claude-opus-5","content":[{"type":"thinking","thinking":"CLAUDETHINKMARK"},{"type":"tool_use","name":"CLAUDETOOLMARK","input":{"command":"ls"}},{"type":"text","text":"CLAUDEANSWERMARK"}]}}
+{"type":"assistant","timestamp":"2026-08-10T10:00:05.000Z","message":{"role":"assistant","model":"claude-opus-5","content":[{"type":"thinking","thinking":"","signature":"CLAUDESIGMARK"},{"type":"text","text":"CLAUDEEMPTYTHINKMARK"}]}}
 {"type":"user","timestamp":"2026-08-10T10:00:06.000Z","message":{"role":"user","content":[{"type":"tool_result","content":"CLAUDERESULTMARK"}]}}
 {"type":"ai-title","aiTitle":"CLAUDETITLEMARK"}
 EOF
@@ -41,6 +42,12 @@ EOF
 {"timestamp":"2026-08-10T12:00:05.000Z","type":"response_item","payload":{"type":"function_call_output","output":"CODEXRESULTMARK"}}
 {"timestamp":"2026-08-10T12:00:06.000Z","type":"response_item","payload":{"type":"message","role":"assistant","content":[{"type":"output_text","text":"CODEXANSWERMARK"}]}}
 EOF
+
+    # `! cmd` never stops a script with `set -e`. Thus a negative test sends
+    # the output to this function.
+    absent() {
+        if grep -- "$1" > /dev/null; then echo "UNEXPECTED $1"; exit 1; fi
+    }
 
     check() {
         local file="$1"; shift
@@ -118,8 +125,8 @@ EOF
         done
     done
     agent-log _footer session | grep "alt-i id" > /dev/null
-    ! agent-log _footer session | grep "path" > /dev/null
-    ! agent-log _footer turn | grep "path" > /dev/null
+    agent-log _footer session | absent "path"
+    agent-log _footer turn | absent "path"
     state() { sed 's/.*change-prompt(\([^)]*\)).*/\1/'; }
 
     # A person reads a conversation from the oldest turn to the newest turn.
@@ -148,13 +155,12 @@ EOF
     all_rows=$(agent-log _turns codex.jsonl new --color=never | grep -c .)
     dialogue=$(agent-log _turns codex.jsonl new --no-tools --color=never | grep -c .)
     test "$dialogue" -lt "$all_rows"
-    ! agent-log _turns codex.jsonl new --no-tools --color=never | cut -f2 | grep "tool" > /dev/null
+    agent-log _turns codex.jsonl new --no-tools --color=never | cut -f2 | absent "tool"
 
     # alt-a opens the whole conversation in whichever view is showing.
     FZF_PROMPT="turn newest-first · dialogue> " agent-log _page_action codex.jsonl \
         | grep -- "--no-tools" > /dev/null
-    ! FZF_PROMPT="turn newest-first> " agent-log _page_action codex.jsonl \
-        | grep -- "--no-tools" > /dev/null
+    FZF_PROMPT="turn newest-first> " agent-log _page_action codex.jsonl | absent "--no-tools"
     echo "  ✓ ordering, tool toggle, jumps and keybind help"
 
     echo "=== identifiers, tool blocks, colour and pipes ==="
@@ -197,12 +203,19 @@ EOF
     dialogue=$(agent-log --full --no-tools claude.jsonl)
     printf '%s' "$dialogue" | grep CLAUDEANSWERMARK > /dev/null
     printf '%s' "$dialogue" | grep CLAUDETHINKMARK > /dev/null
-    ! printf '%s' "$dialogue" | grep CLAUDETOOLMARK > /dev/null
-    ! printf '%s' "$dialogue" | grep CLAUDERESULTMARK > /dev/null
+    printf '%s' "$dialogue" | absent CLAUDETOOLMARK
+    printf '%s' "$dialogue" | absent CLAUDERESULTMARK
     # A turn with only a tool result becomes empty, thus the reader removes
     # it.
     test "$(printf '%s' "$dialogue" | grep -c "^## ")" -lt \
          "$(agent-log --full claude.jsonl | grep -c "^## ")"
+
+    # Claude Code writes a signed thinking block without text before each
+    # reply. It gives no information. Thus the reader removes it from the
+    # kind of the turn and from the conversation view.
+    test "$(agent-log --full claude.jsonl | grep -c "^### thinking")" -eq 1
+    test "$(agent-log _turns claude.jsonl new --color=never \
+            | grep CLAUDEEMPTYTHINKMARK | cut -f2 | tr -d ' ')" = text
 
     # --pretty must do nothing if the output is not a terminal. If not, each
     # file gets different line breaks.
@@ -238,13 +251,13 @@ EOF
     printf '%s' "$conv" | grep "model:" > /dev/null
     printf '%s' "$conv" | grep "claude-opus-5" > /dev/null
     printf '%s' "$turn" | grep "session:" > /dev/null
-    ! printf '%s' "$conv" | grep -- "# CLAUDETITLEMARK" > /dev/null
+    printf '%s' "$conv" | absent "# CLAUDETITLEMARK"
 
     # Without colour, the conversation view uses markdown, because the output
     # goes to a file, a pager or glow.
     agent-log --full claude.jsonl | grep "^## " > /dev/null
     agent-log --full claude.jsonl | grep "^# CLAUDETITLEMARK" > /dev/null
-    ! agent-log --full claude.jsonl | grep -- "▌" > /dev/null
+    agent-log --full claude.jsonl | absent "▌"
 
     # A warning is part of the header in the two modes. A blank line is
     # always between the warning and the first turn.

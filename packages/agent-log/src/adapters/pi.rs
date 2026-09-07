@@ -157,7 +157,7 @@ pub fn turns(records: &[Value], no_tools: bool) -> Vec<Turn> {
 }
 
 /// One turn as the role and the body. Refer to claude::render.
-pub fn render(record: &Value) -> (String, String) {
+pub fn render(record: &Value, no_tools: bool) -> (String, String) {
     let Some(message) = record.get("message") else {
         return (String::new(), String::new());
     };
@@ -166,6 +166,7 @@ pub fn render(record: &Value) -> (String, String) {
         Some(Value::String(text)) => text.clone(),
         Some(Value::Array(blocks)) => blocks
             .iter()
+            .filter(|block| !(no_tools && is_tool_block(block)))
             .map(|block| match block.get("type").and_then(Value::as_str) {
                 Some("thinking") => format!("{}\n{}", style::heading("thinking", ""), style::thinking(&block_text(block))),
                 Some("toolCall") => format!(
