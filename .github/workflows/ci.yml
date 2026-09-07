@@ -150,12 +150,48 @@ jobs:
       - name: Reclaim disk space
         run: .github/scripts/reclaim-disk.sh
 
+      # The AutoFirma truststore fetches its certificates from the web sites
+      # of the Spanish certificate providers. A provider site is at times
+      # unreachable from a runner. The certificates are fixed-output paths,
+      # so nix accepts them from a cache without a signature, and the paths
+      # are the same on both architectures. Keep them between runs. The job
+      # index in the key gives each job its own entry: with one shared key,
+      # the parallel jobs race to save it.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        if: contains(matrix.target, 'autofirma')
+        id: autofirma-certs
+        with:
+          path: /tmp/autofirma-certs
+          key: autofirma-certs-${{ strategy.job-index }}-${{ hashFiles('base_hosts/autofirma/flake.lock') }}
+          restore-keys: |
+            autofirma-certs-
+      - name: Seed the store with the cached certificates
+        if: contains(matrix.target, 'autofirma')
+        run: |
+          if [ -f /tmp/autofirma-certs/nix-cache-info ]; then
+            nix copy --quiet --all --from file:///tmp/autofirma-certs
+          fi
+
       - *fetch-signing-keys
 
       - run: |
           nix build --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             ${{ matrix.target }}
+
+      # `always()`: keep the certificates that did download, also after a
+      # failure. Do not do this step if the cache had a hit. The Baguette
+      # configuration uses the same truststore as the VM.
+      - name: Export the certificates to the cache
+        if: always() && contains(matrix.target, 'autofirma') && steps.autofirma-certs.outputs.cache-hit != 'true'
+        run: |
+          nix eval --json --override-input aldur-dotfiles . \
+            --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
+            "./base_hosts/autofirma#nixosConfigurations.autofirma-vm-$(uname -m).config.programs.autofirma.package.clienteafirma.truststore.govTrustedCerts" \
+            --apply 'map (cert: cert.outPath)' \
+            | jq -r '.[]' \
+            | while read -r path; do if [ -e "$path" ]; then echo "$path"; fi; done \
+            | xargs -r nix copy --quiet --to file:///tmp/autofirma-certs
 
   nix-darwin-ci:
     runs-on: macos-26  # arm, beta
