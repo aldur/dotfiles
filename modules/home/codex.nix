@@ -14,6 +14,10 @@ let
   tomlPython = pkgs.python3.withPackages (ps: [ ps.tomlkit ]);
 
   codexSettings = {
+    # The model catalog sets the summary to "none" for gpt-6-astra. Without a
+    # summary, a session records only the encrypted reasoning, and agent-log
+    # cannot show a thinking turn.
+    model_reasoning_summary = "auto";
     analytics.enabled = false;
     feedback.enabled = false;
     otel = {
