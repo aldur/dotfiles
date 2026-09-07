@@ -66,4 +66,7 @@ jobs:
           name: ${{ inputs.image }}-baguette-arm64
           path: result/*.zst
           if-no-files-found: error
+          # The artifact is always a zip. The image is zstd-compressed, so
+          # deflate in the zip gains nothing. Level 0 stores it as it is.
+          compression-level: 0
           retention-days: ${{ inputs.retention-days }}
