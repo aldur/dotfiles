@@ -70,7 +70,13 @@ let
     inherit (nixpkgs) lib;
     inherit (guestPkgs) stdenv;
   };
-  qemuBinary = qemu-common.qemuBinary pkgs.qemu;
+  # forceAccel: no TCG fallback. Without it, a broken hypervisor makes
+  # QEMU emulate the whole CPU in C, with a larger attack surface, and
+  # says nothing.
+  qemuBinary = qemu-common.qemuBinaryWith {
+    qemuPkg = pkgs.qemu;
+    forceAccel = true;
+  };
   serialDevice = qemu-common.qemuSerialDevice;
   isLinuxHost = pkgs.stdenv.hostPlatform.isLinux;
 
@@ -124,6 +130,7 @@ pkgs.writeArgcApplication {
   name = "qemu-vm";
   runtimeInputs = with pkgs; [
     qemu
+    gvproxy
     coreutils
     e2fsprogs
   ];
@@ -151,11 +158,17 @@ pkgs.writeArgcApplication {
       if defaultClipboard then " (default)" else ""
     }
     # @flag --no-clipboard Do not share the clipboard${if defaultClipboard then "" else " (default)"}
+    ${
+      if isLinuxHost then
+        ""
+      else
+        "# @flag --no-sandbox Do not confine QEMU and gvproxy with sandbox-exec"
+    }
 
     declare argc_dir argc_port argc_memory argc_cores argc_disk_size
     declare argc_store_image argc_file
     declare argc_verbose argc_clean argc_ephemeral argc_persistent argc_show_boot argc_gui
-    declare argc_clipboard argc_no_clipboard
+    declare argc_clipboard argc_no_clipboard argc_no_sandbox
     eval "$(argc --argc-eval "$0" "$@")"
 
     EPHEMERAL=${if defaultEphemeral then "1" else "0"}
@@ -193,12 +206,19 @@ pkgs.writeArgcApplication {
 
     NIX_DISK_IMAGE=$(readlink -f "$NIX_DISK_IMAGE")
 
-    # Build QEMU network arguments
-    QEMU_NET_OPTS=""
+    # The guest network. gvproxy serves DHCP on 192.168.127.0/24 and
+    # gives this MAC the fixed lease 192.168.127.2. The port forwards
+    # below point at that address.
+    GUEST_IP=192.168.127.2
+    GUEST_MAC=5a:94:ef:e4:0c:ee
+
+    # Port forwards, as `stack.forwards` entries of the gvproxy config,
+    # and the host ports that the gvproxy sandbox lets it bind.
+    FORWARDS=()
+    BIND_RULES=()
     if [[ -n "''${argc_port:-}" ]]; then
       # argc returns a repeated option as an array.
-      for i in "''${!argc_port[@]}"; do
-        port_spec="''${argc_port[$i]}"
+      for port_spec in "''${argc_port[@]}"; do
         if [[ "$port_spec" =~ ^([0-9]+):([0-9]+)$ ]]; then
           guest_port="''${BASH_REMATCH[1]}"
           host_port="''${BASH_REMATCH[2]}"
@@ -210,11 +230,8 @@ pkgs.writeArgcApplication {
           exit 1
         fi
 
-        if [[ $i -eq 0 ]]; then
-          QEMU_NET_OPTS="hostfwd=tcp::$host_port-:$guest_port"
-        else
-          QEMU_NET_OPTS="$QEMU_NET_OPTS,hostfwd=tcp::$host_port-:$guest_port"
-        fi
+        FORWARDS+=("    127.0.0.1:$host_port: $GUEST_IP:$guest_port")
+        BIND_RULES+=("(allow network-inbound (local ip \"localhost:$host_port\"))")
 
         if [[ "''${argc_verbose:-0}" -eq 1 ]]; then
           echo "Forwarding: localhost:$host_port -> guest:$guest_port"
@@ -229,9 +246,66 @@ pkgs.writeArgcApplication {
       EXTRA_KERNEL_PARAMS="quiet loglevel=0 systemd.show_status=no"
     fi
 
-    # Set up TMPDIR with the pre-built Nix store image (symlink; drive is readonly)
+    # The run directory: the store image symlink, the sockets, the gvproxy
+    # config and log, and the sandbox profiles. Exported, so the
+    # temporary disk of `--ephemeral` lands here too.
     TMPDIR=$(mktemp -d nix-vm.XXXXXXXXXX --tmpdir)
+    export TMPDIR
     ln -s "$STORE_IMAGE" "$TMPDIR/store.img"
+
+    # gvproxy listens here for the QEMU stream netdev.
+    NET_SOCKET="$TMPDIR/net.sock"
+    MONITOR_SOCKET="$TMPDIR/monitor.sock"
+    GVPROXY_CONFIG="$TMPDIR/gvproxy.yaml"
+    GVPROXY_LOG="$TMPDIR/gvproxy.log"
+    # disable-guest-api and disable-host-nat come from
+    # overlays/overrides/gvproxy-guest-isolation.patch.
+    {
+      echo "log-level: $([[ "''${argc_verbose:-0}" -eq 1 ]] && echo info || echo warning)"
+      echo "log-file: $GVPROXY_LOG"
+      echo "disable-guest-api: true"
+      echo "disable-host-nat: true"
+      echo "interfaces:"
+      echo "  qemu: unix://$NET_SOCKET"
+      echo "stack:"
+      echo "  dhcpStaticLeases:"
+      echo "    $GUEST_IP: $GUEST_MAC"
+      echo "  forwards:"
+      printf '%s\n' "''${FORWARDS[@]}"
+    } > "$GVPROXY_CONFIG"
+
+    # macOS: confine both processes with the Seatbelt sandbox. The
+    # profiles allow by default and deny the two things a guest can
+    # reach for: the host network and host files. gvproxy binds only the
+    # `--port` forwards and cannot dial the host loopback. QEMU has no
+    # host network at all, only the unix sockets in the run directory.
+    # A later rule wins over an earlier one.
+    QEMU_WRAP=()
+    GVPROXY_WRAP=()
+    SANDBOX=${if isLinuxHost then "0" else "1"}
+    [[ "''${argc_no_sandbox:-0}" -eq 1 ]] && SANDBOX=0
+    if [[ "$SANDBOX" -eq 1 ]]; then
+      {
+        echo "(version 1)"
+        echo "(allow default)"
+        echo "(deny network*)"
+        echo "(allow network* (subpath \"$TMPDIR\"))"
+        echo "(deny file-write*)"
+        echo "(allow file-write* (subpath \"$TMPDIR\") (literal \"$NIX_DISK_IMAGE\"))"
+        echo "(allow file-write* (literal \"/dev/tty\") (regex #\"^/dev/ttys[0-9]+$\"))"
+      } > "$TMPDIR/qemu.sb"
+      {
+        echo "(version 1)"
+        echo "(allow default)"
+        echo "(deny network-inbound (local ip \"*:*\"))"
+        printf '%s\n' "''${BIND_RULES[@]}"
+        echo "(deny network-outbound (remote ip \"localhost:*\"))"
+        echo "(deny file-write*)"
+        echo "(allow file-write* (subpath \"$TMPDIR\"))"
+      } > "$TMPDIR/gvproxy.sb"
+      QEMU_WRAP=(/usr/bin/sandbox-exec -f "$TMPDIR/qemu.sb")
+      GVPROXY_WRAP=(/usr/bin/sandbox-exec -f "$TMPDIR/gvproxy.sb")
+    fi
 
     echo "Starting VM..."
     echo "  Memory: ''${MEMORY}MB"
@@ -242,8 +316,10 @@ pkgs.writeArgcApplication {
     else
       echo "  Boot output: hidden (use --show-boot to see)"
     fi
-    if [[ -n "$QEMU_NET_OPTS" ]]; then
-      echo "  Network: $QEMU_NET_OPTS"
+    echo "  Network: gvproxy, guest $GUEST_IP"
+    echo "  Monitor: nc -U $MONITOR_SOCKET"
+    if [[ "$SANDBOX" -eq 1 ]]; then
+      echo "  Sandbox: sandbox-exec (use --no-sandbox to disable)"
     fi
     if [[ "$EPHEMERAL" -eq 1 ]]; then
       echo "  Ephemeral mode: enabled"
@@ -305,18 +381,25 @@ pkgs.writeArgcApplication {
       -device virtio-rng-pci
 
       # -- Console --
-      # Mux serial console with QEMU monitor on stdio; Ctrl-B switches to monitor
-      -serial mon:stdio
-      -echr 0x02
+      # The serial console is on this terminal. signal=off gives Ctrl-C
+      # to the guest. The monitor runs host commands, so it is not on
+      # the terminal: nothing the guest writes to the terminal can reach
+      # it. Connect with `nc -U`.
+      -chardev "stdio,id=console,signal=off"
+      -serial chardev:console
+      -monitor "unix:$MONITOR_SOCKET,server=on,wait=off"
 
       # -- Network --
-      # User-mode (SLiRP) networking — guest is NAT'd, no host bridge exposure
-      -net "nic,netdev=user.0,model=virtio"
-      -netdev "user,id=user.0''${QEMU_NET_OPTS:+,$QEMU_NET_OPTS}"
+      # gvproxy does NAT, DHCP, DNS, and the port forwards in its own
+      # process, with the memory-safe stack of gVisor. QEMU only holds a
+      # unix socket to it, so it has no in-process SLiRP.
+      -device "virtio-net-pci,netdev=net0,mac=$GUEST_MAC"
+      -netdev "stream,id=net0,server=off,addr.type=unix,addr.path=$NET_SOCKET"
 
       # -- Storage --
-      # Root disk (qcow2, writable)
-      -drive "cache=writeback,file=$NIX_DISK_IMAGE,id=drive1,if=none,index=1,werror=report"
+      # Root disk (qcow2, writable). The explicit format stops QEMU from
+      # probing the image, which a guest could otherwise shape.
+      -drive "cache=writeback,file=$NIX_DISK_IMAGE,format=qcow2,id=drive1,if=none,index=1,werror=report"
       -device "virtio-blk-pci,bootindex=1,drive=drive1,serial=root"
       # Nix store image (EROFS, readonly — guest uses overlayfs for writes)
       -drive "file=$TMPDIR/store.img,format=raw,readonly=on,id=drive2,if=none,index=2"
@@ -341,7 +424,7 @@ pkgs.writeArgcApplication {
         -device virtio-tablet-pci
       )
     else
-      QEMU_ARGS+=(-nographic)
+      QEMU_ARGS+=(-display none)
     fi
 
     # -- Clipboard --
@@ -367,9 +450,30 @@ pkgs.writeArgcApplication {
       echo "QEMU binary: ${qemuBinary}"
       echo "QEMU args:"
       printf '  %s\n' "''${QEMU_ARGS[@]}"
+      echo "gvproxy config: $GVPROXY_CONFIG"
+      echo "gvproxy log: $GVPROXY_LOG"
       echo ""
     fi
 
-    exec ${qemuBinary} "''${QEMU_ARGS[@]}"
+    # gvproxy must listen before QEMU connects. QEMU runs as a child, not
+    # with exec, so the trap can stop gvproxy at exit.
+    # The log-file setting covers gvproxy's own logger only. Its TCP
+    # proxy logs dial errors to stderr, so send that to the file too and
+    # keep the terminal for the serial console.
+    "''${GVPROXY_WRAP[@]}" gvproxy -config "$GVPROXY_CONFIG" >>"$GVPROXY_LOG" 2>&1 &
+    GVPROXY_PID=$!
+    # gvproxy exits by itself when QEMU closes the socket, so the kill
+    # may find nothing.
+    trap 'kill "$GVPROXY_PID" 2>/dev/null || true; rm -rf "$TMPDIR"' EXIT
+    for _ in $(seq 50); do
+      [[ -S "$NET_SOCKET" ]] && break
+      sleep 0.1
+    done
+    if [[ ! -S "$NET_SOCKET" ]]; then
+      echo "gvproxy did not open $NET_SOCKET; see $GVPROXY_LOG"
+      exit 1
+    fi
+
+    "''${QEMU_WRAP[@]}" ${qemuBinary} "''${QEMU_ARGS[@]}"
   '';
 }

@@ -53,6 +53,17 @@ qemu-vm --help
 Thanks to [`hostPkgs`][0], the VM host can be either Linux or macOS (through
 [`nix-rosetta-builder`][1]).
 
+## Network
+
+[gvproxy][2] gives the guest its network. It runs next to QEMU as its own
+process and does the NAT, the DHCP, the DNS, and the port forwards of `-p`.
+QEMU only holds a unix socket to it, so it has no in-process SLiRP.
+
+The guest has the address `192.168.127.2`. It cannot reach the host: the
+launcher turns off the loopback mapping and the guest-facing API of gvproxy
+(see `overlays/overrides/gvproxy-guest-isolation.patch`). On macOS, both
+QEMU and gvproxy run under `sandbox-exec`; `--no-sandbox` turns that off.
+
 ## SSH Keys
 
 The SSH keys in this folder are only used within the `qemu` VM, which is not
@@ -74,3 +85,4 @@ The VM configuration is built as part of the package derivation in
 
 [0]: https://github.com/NixOS/nixpkgs/blob/554be6495561ff07b6c724047bdd7e0716aa7b46/nixos/modules/virtualisation/qemu-vm.nix#L25
 [1]: https://github.com/cpick/nix-rosetta-builder
+[2]: https://github.com/containers/gvisor-tap-vsock

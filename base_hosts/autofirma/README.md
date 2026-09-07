@@ -23,8 +23,8 @@ nix run "github:aldur/dotfiles?dir=base_hosts/autofirma" -- \
 
 The guest logs `aldur` in. A dialog asks for the certificate password.
 Firefox then opens on a start page with links to the usual sedes. The
-serial console stays on the terminal. `Ctrl-b c` switches to the QEMU
-monitor.
+serial console stays on the terminal. The QEMU monitor is on a unix
+socket; the launcher prints the `nc -U` command for it.
 
 ## Sessions
 

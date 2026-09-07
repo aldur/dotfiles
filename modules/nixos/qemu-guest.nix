@@ -81,7 +81,7 @@ in
     };
 
     services.getty.helpLine = ''
-      Type 'Ctrl-b c' from `bash` to switch to the QEMU console.
+      The QEMU monitor is on a unix socket on the host. `qemu-vm` prints its path.
     '';
   };
 }
