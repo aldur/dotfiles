@@ -67,6 +67,11 @@ jobs:
       - uses: ./.github/actions/setup-nix
         with:
           trust-runner-user: true
+      - name: Allow user namespaces for sandbox checks
+        # Ubuntu 24.04's AppArmor restriction blocks UID mapping for the
+        # Nix-store bwrap used by agent-sandbox. Relax it on these ephemeral
+        # Linux test runners so the check can exercise nested sandboxes.
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: nix-cache
         with:
