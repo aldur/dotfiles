@@ -355,6 +355,8 @@ in
 
         git = {
           autoFetch = false;
+          # We use gpg signing, so this enables rewords below HEAD, etc
+          overrideGpg = true;
         };
         customCommands = [
           {
