@@ -1,15 +1,10 @@
 # NOTE: SSH keys are configured per user.
 { config, ... }:
 {
-  services.openssh = {
-    enable = true;
-    allowSFTP = false;
-    authorizedKeysInHomedir = false;
-    settings = {
-      PasswordAuthentication = false;
-      KbdInteractiveAuthentication = false;
-      AllowUsers = [ config.mainUser ];
-      LogLevel = "VERBOSE";
-    };
+  imports = [ ./ssh-policy.nix ];
+
+  services.openssh.settings = {
+    AllowUsers = [ config.mainUser ];
+    LogLevel = "VERBOSE";
   };
 }

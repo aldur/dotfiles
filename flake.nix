@@ -287,6 +287,7 @@
 
       nixosModules = {
         default = ./modules/nixos/configuration.nix;
+        ssh = ./modules/nixos/ssh-policy.nix;
         audit = ./modules/nixos/audit.nix;
         docker = ./modules/nixos/docker.nix;
         pragmatism = ./modules/nixos/pragmatism.nix;
