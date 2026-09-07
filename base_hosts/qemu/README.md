@@ -62,7 +62,17 @@ QEMU only holds a unix socket to it, so it has no in-process SLiRP.
 The guest has the address `192.168.127.2`. It cannot reach the host: the
 launcher turns off the loopback mapping and the guest-facing API of gvproxy
 (see `overlays/overrides/gvproxy-guest-isolation.patch`). On macOS, both
-QEMU and gvproxy run under `sandbox-exec`; `--no-sandbox` turns that off.
+QEMU and gvproxy run under `sandbox-exec` with deny-by-default profiles
+that list only what each process was seen to need: its own closure, the
+kernel and initrd, the disk and store images, the sockets and files of
+the run directory, and the files of `--file`. QEMU has no host network,
+reads nothing under the home directory, and cannot spawn processes.
+gvproxy dials no address of the host, reaches no unix socket but the
+resolver, and binds only the `-p` forwards. `--gui` adds what the Cocoa
+display needs; the GPU stays denied, so it renders in software.
+`--no-sandbox` turns all of it off. On Linux hosts there is no equivalent,
+so there the guest can reach host services bound to a non-loopback
+address.
 
 ## SSH Keys
 

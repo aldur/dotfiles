@@ -78,6 +78,13 @@ let
     forceAccel = true;
   };
   serialDevice = qemu-common.qemuSerialDevice;
+  # The bare binary, for the sandbox: qemuBinary carries the machine flags.
+  qemuExe = builtins.head (nixpkgs.lib.splitString " " qemuBinary);
+  # The store paths each sandboxed process may read: its own closure.
+  qemuClosure = pkgs.closureInfo { rootPaths = [ pkgs.qemu ]; };
+  gvproxyClosure = pkgs.closureInfo { rootPaths = [ pkgs.gvproxy ]; };
+  # The two files QEMU boots. `toplevel/kernel` is a symlink to the first.
+  kernelImage = "${qemuNixos.config.boot.kernelPackages.kernel}/${qemuNixos.config.system.boot.loader.kernelFile}";
   isLinuxHost = pkgs.stdenv.hostPlatform.isLinux;
 
   # Paths from the NixOS configuration for direct kernel boot
@@ -184,6 +191,8 @@ pkgs.writeArgcApplication {
     DISK_SIZE="''${argc_disk_size:-${toString defaultDiskSize}}"
     NIX_DISK_IMAGE="$VM_DIR/nixos.qcow2"
     STORE_IMAGE="''${argc_store_image:-${nixStoreImage}/store.img}"
+    # Canonical, like the disk image: the sandbox matches canonical paths.
+    STORE_IMAGE=$(readlink -f "$STORE_IMAGE")
 
     mkdir -p "$VM_DIR"
 
@@ -231,7 +240,7 @@ pkgs.writeArgcApplication {
         fi
 
         FORWARDS+=("    127.0.0.1:$host_port: $GUEST_IP:$guest_port")
-        BIND_RULES+=("(allow network-inbound (local ip \"localhost:$host_port\"))")
+        BIND_RULES+=("(allow network-bind network-inbound (local ip \"localhost:$host_port\"))")
 
         if [[ "''${argc_verbose:-0}" -eq 1 ]]; then
           echo "Forwarding: localhost:$host_port -> guest:$guest_port"
@@ -249,7 +258,9 @@ pkgs.writeArgcApplication {
     # The run directory: the store image symlink, the sockets, the gvproxy
     # config and log, and the sandbox profiles. Exported, so the
     # temporary disk of `--ephemeral` lands here too.
-    TMPDIR=$(mktemp -d nix-vm.XXXXXXXXXX --tmpdir)
+    # readlink -f: the sandbox profiles below match canonical paths, and
+    # macOS keeps the user temp dir under /var, a symlink to /private/var.
+    TMPDIR=$(readlink -f "$(mktemp -d nix-vm.XXXXXXXXXX --tmpdir)")
     export TMPDIR
     ln -s "$STORE_IMAGE" "$TMPDIR/store.img"
 
@@ -275,33 +286,133 @@ pkgs.writeArgcApplication {
     } > "$GVPROXY_CONFIG"
 
     # macOS: confine both processes with the Seatbelt sandbox. The
-    # profiles allow by default and deny the two things a guest can
-    # reach for: the host network and host files. gvproxy binds only the
-    # `--port` forwards and cannot dial the host loopback. QEMU has no
-    # host network at all, only the unix sockets in the run directory.
-    # A later rule wins over an earlier one.
+    # profiles deny by default and allow exactly what each process was
+    # seen to need: its closure, the run directory files it uses, and
+    # the files it was given. QEMU has no host network at all, only
+    # the two unix sockets, and cannot fork or exec: the monitor's
+    # `migrate exec:` lands on the sandbox. gvproxy binds only the
+    # `--port` forwards, dials no address of the host, and reaches no
+    # unix socket but the resolver. A later rule wins over an earlier
+    # one. Seatbelt matches canonical paths, hence the readlink -f.
+    #
+    # The allowlists come from the denials the unified log reports:
+    #   log stream --predicate 'sender == "Sandbox"'
+    # Every rule answers a denial that broke something. What stays
+    # denied is what the processes work without: logging and
+    # diagnostics services, OS version and CPU feature sysctls (gvproxy
+    # only; QEMU asserts on those), the working directory, and for the
+    # display DiskArbitration, directory services, the Dock, and the
+    # GPU, which leaves Cocoa on software rendering.
     QEMU_WRAP=()
     GVPROXY_WRAP=()
     SANDBOX=${if isLinuxHost then "0" else "1"}
     [[ "''${argc_no_sandbox:-0}" -eq 1 ]] && SANDBOX=0
     if [[ "$SANDBOX" -eq 1 ]]; then
+      # The terminal of the serial console, if there is one.
+      TTY_DEV=$(tty 2>/dev/null || true)
+      TTY_RULE=""
+      [[ "$TTY_DEV" == /dev/* ]] && TTY_RULE="(literal \"$TTY_DEV\")"
+      # The run directory, escaped for a regex.
+      TMPDIR_RE=$(printf '%s' "$TMPDIR" | sed 's/[.[\*^$]/\\&/g')
+      # One (subpath ...) per store path of a closure.
+      store_paths() {
+        while read -r path; do printf '(subpath "%s") ' "$path"; done < "$1/store-paths"
+      }
+      # One (literal ...) per ancestor directory of a path: QEMU stats
+      # its way down to the files it opens.
+      ancestors() {
+        local path=$1
+        while [[ "$path" != / ]]; do
+          path=$(dirname "$path")
+          printf '(literal "%s") ' "$path"
+        done
+      }
+      FILE_READ_RULES=()
+      for file_spec in "''${argc_file[@]:-}"; do
+        [[ -n "$file_spec" ]] || continue
+        FILE_READ_RULES+=("(allow file-read* (literal \"$(readlink -f "''${file_spec#*=}")\"))")
+      done
       {
         echo "(version 1)"
-        echo "(allow default)"
-        echo "(deny network*)"
-        echo "(allow network* (subpath \"$TMPDIR\"))"
-        echo "(deny file-write*)"
-        echo "(allow file-write* (subpath \"$TMPDIR\") (literal \"$NIX_DISK_IMAGE\"))"
-        echo "(allow file-write* (literal \"/dev/tty\") (regex #\"^/dev/ttys[0-9]+$\"))"
+        echo "(deny default)"
+        echo "(allow process-exec (literal \"${qemuExe}\"))"
+        echo "(allow file-read* file-map-executable $(store_paths ${qemuClosure}))"
+        # dyld reads the root directory; libSystem reads two sysctls at
+        # init. QEMU asserts unless the CPU feature sysctls answer, and
+        # sizes its coroutine stacks from the page size.
+        echo "(allow file-read* (literal \"/\"))"
+        echo "(allow sysctl-read (sysctl-name \"kern.bootargs\") (sysctl-name \"security.mac.lockdown_mode_state\") (sysctl-name-prefix \"hw.optional.\") (sysctl-name \"hw.pagesize_compat\") (sysctl-name \"hw.cachelinesize\") (sysctl-name \"machdep.cpu.brand_string\"))"
+        echo "(allow file-read* (literal \"${toplevel}/kernel\") (literal \"${kernelImage}\") (literal \"${initrd}\"))"
+        echo "(allow file-read* (literal \"$TMPDIR/store.img\") (literal \"$STORE_IMAGE\"))"
+        echo "(allow file-read-metadata $(ancestors "$TMPDIR/store.img") $(ancestors "$STORE_IMAGE") $(ancestors "$NIX_DISK_IMAGE") $(ancestors "${qemuExe}") $(ancestors "${kernelImage}") $(ancestors "${initrd}"))"
+        echo "(allow file-read* file-write* (literal \"$NIX_DISK_IMAGE\"))"
+        printf '%s\n' "''${FILE_READ_RULES[@]}"
+        # /dev/null: QEMU opens it read-write to probe file locking.
+        echo "(allow file-read* file-write* (literal \"/dev/null\"))"
+        # Entropy for virtio-rng.
+        echo "(allow file-read* (literal \"/dev/urandom\"))"
+        echo "(allow file-read* file-write* file-ioctl $TTY_RULE)"
+        # The sockets: QEMU dials gvproxy and serves the monitor.
+        echo "(allow file-write* (literal \"$MONITOR_SOCKET\"))"
+        echo "(allow network-outbound (literal \"$NET_SOCKET\"))"
+        echo "(allow network-bind network-inbound (literal \"$MONITOR_SOCKET\"))"
+        if [[ "$EPHEMERAL" -eq 1 ]]; then
+          # The temporary disk of -snapshot.
+          echo "(allow file-read* file-write* (regex #\"^$TMPDIR_RE/vl\\.\"))"
+        fi
+        if [[ "''${argc_gui:-0}" -eq 1 ]]; then
+          # The Cocoa display: the window server, rendering, input, and
+          # the pasteboard for --clipboard.
+          # virtio-gpu backs its memory with a memfd, a file on macOS.
+          echo "(allow file-read* file-write* (regex #\"^$TMPDIR_RE/memfd-\"))"
+          # AppKit loads bundles, nibs and ICU data from the system volume,
+          # and the appearance from the system-wide defaults.
+          echo "(allow file-read-metadata (literal \"/System\") (literal \"/usr\") (literal \"/usr/share\") (literal \"/Library\") (literal \"/Library/Preferences\"))"
+          echo "(allow file-read* (subpath \"/System/Library\") (subpath \"/usr/share/icu\") (literal \"/Library/Preferences/.GlobalPreferences.plist\"))"
+          # The objc runtime dlopens this one library outside the dyld cache.
+          echo "(allow file-read-metadata (literal \"/usr/lib\"))"
+          echo "(allow file-read* file-map-executable (literal \"/usr/lib/libobjc-trampolines.dylib\"))"
+          echo "(allow mach-lookup"
+          echo "  (global-name \"com.apple.windowserver.active\")"
+          echo "  (global-name \"com.apple.windowmanager.server\")"
+          echo "  (global-name \"com.apple.CARenderServer\")"
+          echo "  (global-name \"com.apple.pasteboard.1\")"
+          echo "  (global-name \"com.apple.iohideventsystem\")"
+          echo "  (global-name \"com.apple.hiservices-xpcservice\")"
+          echo "  (global-name \"com.apple.coreservices.launchservicesd\")"
+          # Without the database, LaunchServices retries its registration in a
+          # tight loop.
+          echo "  (global-name \"com.apple.lsd.mapdb\")"
+          echo "  (global-name \"com.apple.lsd.modifydb\"))"
+          echo "(allow iokit-open-user-client (iokit-user-client-class \"IOSurfaceRootUserClient\") (iokit-user-client-class \"IOHIDParamUserClient\"))"
+        fi
       } > "$TMPDIR/qemu.sb"
       {
         echo "(version 1)"
-        echo "(allow default)"
-        echo "(deny network-inbound (local ip \"*:*\"))"
-        printf '%s\n' "''${BIND_RULES[@]}"
+        echo "(deny default)"
+        echo "(allow process-exec (literal \"${pkgs.gvproxy}/bin/gvproxy\"))"
+        echo "(allow file-read* file-map-executable $(store_paths ${gvproxyClosure}))"
+        # dyld reads the root directory; libSystem reads two sysctls at
+        # init; the Go runtime reads two more.
+        echo "(allow file-read* (literal \"/\"))"
+        echo "(allow sysctl-read (sysctl-name \"kern.bootargs\") (sysctl-name \"security.mac.lockdown_mode_state\") (sysctl-name \"hw.ncpu\") (sysctl-name \"hw.pagesize_compat\"))"
+        echo "(allow file-read* (literal \"$GVPROXY_CONFIG\"))"
+        # The log is opened read-write.
+        echo "(allow file-read* file-write* (literal \"$GVPROXY_LOG\"))"
+        echo "(allow file-write* (literal \"$NET_SOCKET\"))"
+        # The resolver: /etc/resolv.conf is a symlink through /var into
+        # /var/run, and Go stats it before choosing how to resolve.
+        echo "(allow file-read-metadata (literal \"/etc\") (literal \"/var\"))"
+        echo "(allow file-read* (literal \"/private/etc/resolv.conf\") (literal \"/private/var/run/resolv.conf\"))"
+        # The DHCP server draws its transaction IDs from here.
+        echo "(allow file-read* (literal \"/dev/urandom\"))"
+        echo "(allow network-bind network-inbound (literal \"$NET_SOCKET\"))"
+        echo "(allow network-outbound (remote ip \"*:*\"))"
+        # DNS goes through the system resolver, a unix socket.
+        echo "(allow network-outbound (literal \"/private/var/run/mDNSResponder\"))"
+        # "localhost" covers every address of the host, not only loopback.
         echo "(deny network-outbound (remote ip \"localhost:*\"))"
-        echo "(deny file-write*)"
-        echo "(allow file-write* (subpath \"$TMPDIR\"))"
+        printf '%s\n' "''${BIND_RULES[@]}"
       } > "$TMPDIR/gvproxy.sb"
       QEMU_WRAP=(/usr/bin/sandbox-exec -f "$TMPDIR/qemu.sb")
       GVPROXY_WRAP=(/usr/bin/sandbox-exec -f "$TMPDIR/gvproxy.sb")
@@ -348,6 +459,8 @@ pkgs.writeArgcApplication {
           echo "Cannot read file: $file_path"
           exit 1
         fi
+        # Canonical: the sandbox matches canonical paths.
+        file_path=$(readlink -f "$file_path")
         FILE_ARGS+=(-fw_cfg "name=opt/qemu-vm/$file_name,file=$file_path")
         echo "  File: $file_path -> /run/qemu-vm-files/$file_name"
       done
