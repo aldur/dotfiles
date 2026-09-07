@@ -75,6 +75,15 @@
           configuration = generator system baguetteModules;
           name = "crostini-baguette-boot";
         };
+
+        checks.ssh-configurations =
+          nixpkgs.legacyPackages.${system}.callPackage ./tests/ssh-configurations.nix
+            {
+              configurations = [
+                (generator system [ crostiniModule ])
+                (generator system baguetteModules)
+              ];
+            };
       })
     // {
       nixosConfigurations = {

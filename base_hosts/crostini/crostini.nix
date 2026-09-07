@@ -23,6 +23,7 @@ in
   };
 
   imports = [
+    ./ssh.nix
     "${inputs.self}/modules/current_system_flake.nix"
     "${inputs.self}/modules/nixos/pragmatism.nix"
     # preservation-{system,user} transitively pull in the upstream
@@ -54,7 +55,7 @@ in
       # Make sure root has no password.
       root.initialHashedPassword = lib.mkForce null;
 
-      # Enable SSH root login through localhost
+      # Root administration from the guest's loopback interface; see ssh.nix.
       root.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
     };
 
@@ -102,18 +103,6 @@ in
 
     # Make it possible to use remote builders under this username
     # nix.settings.trusted-users = [ config.users.users.aldur.name ];
-
-    environment.etc = {
-      "ssh/ssh_host_ed25519_key" = {
-        mode = "0600";
-        source = ./ssh_host_ed25519_key;
-      };
-      "ssh/ssh_host_ed25519_key.pub" = {
-        mode = "0644";
-        source = ./ssh_host_ed25519_key.pub;
-      };
-    };
-    services.openssh.settings.AllowUsers = [ "root" ];
 
     security = {
       # NOTE: There a bug (maybe) in pcscd where, when running in an lxc container,
@@ -202,11 +191,8 @@ in
       enable = true;
     };
 
-    # Host-key + machine-id persistence is intentionally off here: crostini
-    # already installs a checked-in ssh_host_ed25519_key via
-    # environment.etc, and bind-mounting /persist/etc/ssh/... on top of
-    # that /nix/store-backed symlink doesn't work. Revisit as its own
-    # change, coordinated with removing the environment.etc entries.
+    # The guest root filesystem retains machine-id. SSH stores its identity
+    # directly under /persist (see ssh.nix), independent of tmpfs /home.
     aldur.preservation-system.enable = false;
     aldur.preservation-user = {
       enable = cfg.impermanence.enable;

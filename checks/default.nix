@@ -62,6 +62,8 @@ in
 
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+  crostini-ssh = pkgs.callPackage ../base_hosts/crostini/tests/ssh.nix { };
+
   agent-sandbox = pkgs.callPackage ../modules/home/agent-sandbox/tests { };
   agent-sandbox-modules = pkgs.callPackage ../modules/home/agent-sandbox/tests/modules.nix {
     inherit self inputs system;

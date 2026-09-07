@@ -24,14 +24,49 @@ there for what it covers, and what it cannot.
 nix build .#checks.x86_64-linux.baguette-boot -L
 ```
 
-## SSH keys
+## SSH as `root`
 
-### Guest
+SSH is for root administration **from inside the guest**. `ssh.nix` forces port
+22 to bind to `127.0.0.1` and, when IPv6 is enabled, `::1`. Upstream Crostini
+currently disables IPv6. The allowlist is just `root`. Only public-key
+authentication is accepted, using the root-managed authorized keys configured
+in `crostini.nix`.
 
-The keys you'll find in this folder are only used within the container/VM,
-which is not exposed to the network but just to the host. Having them
-hard-coded avoids needing to re-verify the guest fingerprint for every new
-container instantiation.
+## SSH validation
+
+Run these from the **dotfiles repository root**. The explicit input
+override makes the platform check use this checkout:
+
+```bash
+nix build .#checks.x86_64-linux.crostini-ssh -L
+nix build ./base_hosts/crostini#checks.x86_64-linux.ssh-configurations \
+  --override-input aldur-dotfiles . --no-write-lock-file -L
+```
+
+The first check boots two independent VMs using the production SSH policy,
+with firewalls disabled, two external interfaces each, and IPv4/IPv6.
+It checks successful root login on loopback, rejection of `aldur` even with
+an authorized key, and refused TCP connections to every external address
+from the guest and its peer. Ping provides a routing control. It also
+checks distinct generated identities, rejection of a legacy store key as
+host identity, mode `0600`, and persistence through service restart and
+reboot with a separate `/persist` disk and tmpfs `/home`.
+
+The second check evaluates the complete LXC and Baguette configurations
+and parses their rendered configuration with OpenSSH, including variants
+without tmpfs `/home` and with IPv6 enabled. Both checks are available for
+`aarch64-linux` as well. The VM check is included in the root flake checks.
+
+These tests cover the guest policy, not ChromeOS's proprietary host
+integration. On a deployed Chromebook, also verify `ss -ltn 'sport = :22'`
+and `sshd -T` through the guest console. Root SSH to guest loopback must
+succeed with an authorized key; `aldur` must be denied. For each guest
+non-loopback IPv4/IPv6 address, test port 22 from the guest, ChromeOS, and
+an available sibling guest or LAN peer with a working route: it must be
+closed. Repeat after reboot and any ChromeOS forwarding changes, and
+compare fingerprints across two independently initialized instances.
+No live Chromebook is exercised by the automated checks.
 
 [0]: https://aldur.blog/articles/2025/06/19/nixos-in-crostini
 [1]: https://github.com/aldur/nixos-crostini/tree/main
+[2]: https://www.chromium.org/chromium-os/developer-library/reference/security/port-forwarding/
