@@ -26,6 +26,11 @@ runs:
         # An empty string stops the diagnostic reports of the installer.
         diagnostic-endpoint: ""
         trust-runner-user: ${{ inputs.trust-runner-user }}
+        # The post step of the action writes a build timeline chart to the
+        # job summary. The chart is long and always expanded. The action has
+        # no option to collapse it, so this input removes the full summary.
+        # A failed build shows its log in the job log (see log-lines).
+        summarize: false
         # The CI does not stream the build logs (no `-L` flags), because
         # full logs hide a failure in megabytes of unwanted data. When a
         # build fails, nix shows the last lines of the log of that build.
