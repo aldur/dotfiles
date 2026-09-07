@@ -9,16 +9,16 @@
 # state. Wrapped by ./pi-rust.nix, which is what ends up on PATH.
 rustPlatform.buildRustPackage {
   pname = "pi-agent-rust";
-  version = "0.3.0-unstable-2026-08-31";
+  version = "0.4.0-unstable-2026-09-07";
 
   src = fetchFromGitHub {
     owner = "Dicklesworthstone";
     repo = "pi_agent_rust";
-    rev = "85b067d336c06b2d6d71d66aea6ccc4b476648ce";
-    hash = "sha256-eRmz3vA5kbW2L2WWaCan/42HtQ034+PUUdU7PRsDpF0=";
+    rev = "6f9407dbbca3608c6d42af272400a8a8cb082e31";
+    hash = "sha256-2xmtq/nhHTyqyB3oLdA5f/M+7g7nKm2KkbJ69sbQ2g8=";
   };
 
-  cargoHash = "sha256-6nQt5nwC4v2FFecWtMZkv7p/29DAbpWMxRYArjgUow4=";
+  cargoHash = "sha256-V8N4humjIi1G18XweJ+AHUwRVGQd7ldLyNRVvspBLWc=";
 
   # The affordance the pi wrapper gets from PI_SKIP_VERSION_CHECK: no start-up
   # release probe (api.github.com here) for a binary Nix manages. There is no
