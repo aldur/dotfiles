@@ -234,6 +234,10 @@
       };
 
       lib = {
+        # Render an authorized_keys file without changing key order, options,
+        # or comments. Keep the trailing newline, including for an empty list.
+        authorizedKeysText = keys: builtins.concatStringsSep "\n" keys + "\n";
+
         programs = {
           git = import ./modules/shared/programs/git.nix;
           tmux = import ./modules/shared/programs/tmux.nix;
