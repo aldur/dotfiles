@@ -351,22 +351,22 @@ let
   # variant, with queries matching their versions. The variants check
   # opens :help and parses it to prove vimdoc still resolves.
   neovim-unwrapped-runtime =
-    prev.runCommand prev.neovim-unwrapped.name
+    prev.runCommand final.neovim-unwrapped.name
       {
-        inherit (prev.neovim-unwrapped) meta version;
+        inherit (final.neovim-unwrapped) meta version;
         # nixCats builds the wrapper's lua env out of this passthru.
         passthru = {
-          inherit (prev.neovim-unwrapped) lua;
+          inherit (final.neovim-unwrapped) lua;
         };
       }
       ''
-        cp -a ${prev.neovim-unwrapped} $out
+        cp -a ${final.neovim-unwrapped} $out
         chmod -R u+w $out
         rm -rf $out/share/locale $out/lib/nvim/parser
         # nvim embeds its own prefix (the default VIMRUNTIME); left alone
         # it chains the copy to the original and everything it references.
         find $out -type f -exec sed -i \
-          -e "s|${prev.neovim-unwrapped}|$out|g" \
+          -e "s|${final.neovim-unwrapped}|$out|g" \
           -e "s|${prev.tree-sitter}|${final.tree-sitter-runtime}|g" {} +
       '';
 
@@ -378,13 +378,13 @@ let
   # against the ~180M `pkgs.neovim` wrapper (second nvim, full
   # tree-sitter, xdg-utils→perl).
   neovim-bare =
-    prev.runCommand "${prev.neovim-unwrapped.name}-bare"
+    prev.runCommand "${final.neovim-unwrapped.name}-bare"
       {
         nativeBuildInputs = [ prev.makeWrapper ];
-        inherit (prev.neovim-unwrapped) meta;
+        inherit (final.neovim-unwrapped) meta;
       }
       ''
-        install -Dm444 -t $out/rtp/parser ${prev.neovim-unwrapped}/lib/nvim/parser/*.so
+        install -Dm444 -t $out/rtp/parser ${final.neovim-unwrapped}/lib/nvim/parser/*.so
         makeWrapper ${final.neovim-unwrapped-runtime}/bin/nvim $out/bin/nvim \
           --add-flags "--cmd 'set rtp^=$out/rtp'"
       '';
@@ -676,7 +676,7 @@ else
     gitMinimal-runtime = prev.gitMinimal;
     tesseract-lite = prev.tesseract;
     neovim-bare = prev.neovim;
-    neovim-unwrapped-runtime = prev.neovim-unwrapped;
+    neovim-unwrapped-runtime = final.neovim-unwrapped;
     nodejs-slim-runtime = prev.nodejs-slim;
     tree-sitter-runtime = prev.tree-sitter;
   }

@@ -59,8 +59,23 @@ let
       v = pkgs.${name};
     in
     if lib.isDerivation v then builtins.unsafeDiscardStringContext v.drvPath else builtins.typeOf v;
+
+  # The overlays must keep these packages on the cached upstream
+  # derivation. If a package moves off it, the macOS runner builds the
+  # package from source and runs its test suite (see
+  # overlays/darwin/fish.nix). Add a package to the list when the macOS
+  # job starts to build it.
+  stock = import inputs.nixpkgs-darwin {
+    inherit system;
+    inherit (config.nixpkgs) config;
+  };
+  cached = [ "neovim-unwrapped" ];
+  drifted = lib.filter (name: pkgsDarwin.${name}.drvPath != stock.${name}.drvPath) cached;
 in
 
+assert lib.assertMsg (
+  drifted == [ ]
+) "darwin overlays change cached packages: ${lib.concatStringsSep " " drifted}";
 writeText "darwin-overlays" (
   builtins.toJSON (
     lib.genAttrs introduced (n: {
