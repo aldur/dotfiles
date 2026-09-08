@@ -10,18 +10,11 @@
     nixos-crostini = {
       url = "github:aldur/nixos-crostini";
       inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
-      inputs.nixos-generators.follows = "nixos-generators";
-    };
-
-    nixos-generators = {
-      url = "github:nix-community/nixos-generators";
-      inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
     };
   };
   outputs =
     {
       self,
-      nixos-generators,
       aldur-dotfiles,
       nixos-crostini,
       ...
@@ -57,11 +50,10 @@
       ]
       (system: {
         packages = rec {
-          crostini-lxc = nixos-generators.nixosGenerate {
-            inherit system specialArgs;
-            modules = modules ++ [ crostiniModule ];
-            format = "lxc";
-          };
+          # The crostini module imports `lxc-container.nix`. That module sets
+          # `system.build.image` to the LXC tarball.
+          # See: https://nixos.org/manual/nixos/stable/#sec-image-nixos-rebuild-build-image
+          crostini-lxc = (generator system [ crostiniModule ]).config.system.build.image;
           default = crostini-lxc;
 
           baguette-tarball = self.nixosConfigurations.baguette-nixos.config.system.build.tarball;
