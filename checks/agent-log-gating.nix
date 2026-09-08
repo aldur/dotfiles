@@ -68,12 +68,21 @@ let
       };
     }
     {
+      name = "llm alone, which is not an agent";
+      wanted = false;
+      module =
+        { config, ... }:
+        {
+          home-manager.users.${config.mainUser}.programs.llm.enable = true;
+        };
+    }
+    {
       name = "pi, via the home-manager option";
       wanted = true;
       module =
         { config, ... }:
         {
-          home-manager.users.${config.mainUser}.programs.llm.enable = true;
+          home-manager.users.${config.mainUser}.programs.pi.enable = true;
         };
     }
   ];

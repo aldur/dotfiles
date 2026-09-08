@@ -48,7 +48,7 @@ let
     ++ lib.optionals (
       osConfig.programs.aldur.claude-code.enable
       || osConfig.programs.aldur.codex.enable
-      || config.programs.llm.enable
+      || config.programs.pi.enable
     ) [ agent-log ];
 
   aldurs-tools = pkgs.callPackage ../../packages/aldurs-tools { tools = customTools; };
