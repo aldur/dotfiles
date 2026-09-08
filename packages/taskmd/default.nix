@@ -117,9 +117,13 @@ buildGoModule (finalAttrs: {
   # it builds itself, so there is nothing to run here.
   excludedPackages = [ "internal/e2e" ];
 
-  # Asserts the failure mode of a build *without* embedded assets, which is
-  # exactly what `tags` above turns off.
-  checkFlags = [ "-skip=^TestExport_WithoutEmbeddedAssets$" ];
+  # TestExport_WithoutEmbeddedAssets asserts the failure mode of a build
+  # *without* embedded assets, which is exactly what `tags` above turns off.
+  # TestWatcher_Debounces writes a file 5 times, 10 ms apart, and expects the
+  # 100 ms debounce to merge the writes. On a loaded CI runner, the scheduler
+  # can hold the test for more than 100 ms between two writes, and the timer
+  # fires one more time. The test measures the wall clock, not the code.
+  checkFlags = [ "-skip=^TestExport_WithoutEmbeddedAssets$|^TestWatcher_Debounces$" ];
 
   nativeBuildInputs = [ installShellFiles ];
 
