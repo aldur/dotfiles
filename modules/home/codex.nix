@@ -66,6 +66,19 @@ let
       exec ${lib.getExe pkgsUnstable.codex} "$@"
     '';
   };
+
+  # `codex-yolo` runs codex with its native sandbox and approvals off, in
+  # the agent sandbox when it is enabled. The outer wrapper supplies the
+  # filesystem allowlist and filters session sockets for the entire agent
+  # process.
+  codex-yolo = pkgs.writeArgcApplication {
+    name = "codex-yolo";
+    text = ''
+      # @describe Run codex in the sandbox, with no approvals and no native sandbox
+      # @arg args~ Arguments for codex
+      exec ${lib.optionalString sandbox "${lib.getExe config.programs.agent-sandbox.package} --profile codex -- "}codex --dangerously-bypass-approvals-and-sandbox "$@"
+    '';
+  };
 in
 {
   # Keep config.toml writable: Codex stores runtime state such as project trust
@@ -89,15 +102,10 @@ in
         fi
       '';
 
-      packages = [ codex ];
-      # The flag turns off Codex's native sandbox and approvals.
-      # The outer wrapper supplies the filesystem allowlist
-      # and filters session sockets for the entire agent process.
-      shellAliases.codex-yolo =
-        let
-          sandboxPrefix = lib.optionalString sandbox "${lib.getExe config.programs.agent-sandbox.package} --profile codex -- ";
-        in
-        "${sandboxPrefix}codex --dangerously-bypass-approvals-and-sandbox";
+      packages = [
+        codex
+        codex-yolo
+      ];
     };
   };
 }
