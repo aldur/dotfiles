@@ -78,11 +78,6 @@ jobs:
       # for the same reason.
       - name: Reclaim disk space
         run: .github/scripts/reclaim-disk.sh
-      # A runner with no free memory or disk stops with no Nix error in
-      # the log. The sampler writes the free memory and disk space to a
-      # file. The last step shows the file, also after a failure.
-      - name: Sample memory and disk
-        run: nohup .github/scripts/sample-resources.sh /tmp/resources.log > /dev/null 2>&1 &
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: nix-cache
         with:
@@ -100,10 +95,15 @@ jobs:
               || echo "::warning::nix cache seed failed; building cold"
           fi
       - *fetch-signing-keys
-      - run: .github/scripts/build-flake-checks.sh ${{ matrix.system }}
-      - name: Show the memory and disk samples
-        if: always()
-        run: tail -n 80 /tmp/resources.log
+      # A runner with no free memory stops with no Nix error in the log,
+      # and the steps after it do not run. The sampler writes the free
+      # memory and disk space into the log of this step each 15 seconds,
+      # with the processes that use the most memory.
+      - run: |
+          .github/scripts/sample-resources.sh &
+          sampler=$!
+          trap 'kill "$sampler"' EXIT
+          .github/scripts/build-flake-checks.sh ${{ matrix.system }}
       # `always()`: keep the completed paths, also after a failure.
       # Do not do this step if the cache had a hit.
       - name: Export locally-built paths to the cache
