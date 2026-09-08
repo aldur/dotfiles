@@ -21,7 +21,7 @@
   services.linux-builder.enable = false;
 
   # Coding agents; see modules/home/claude-code.nix and modules/home/codex.nix.
-  # `claude-yolo` runs unsandboxed here (the bubblewrap wrapper is Linux-only).
+  # The -yolo scripts run on the host here (the bubblewrap wrapper is Linux-only).
   programs.aldur = {
     claude-code.enable = true;
     codex.enable = true;

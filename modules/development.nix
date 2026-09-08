@@ -35,12 +35,12 @@ in
   options.programs.aldur = {
     claude-code = {
       enable = mkEnableOption "claude-code";
-      sandbox = sandboxOptions "claude-yolo" "CLAUDE_NO_SANDBOX";
+      sandbox = sandboxOptions "claude-yolo";
     };
 
     codex = {
       enable = mkEnableOption "codex";
-      sandbox = sandboxOptions "codex-yolo" "CODEX_NO_SANDBOX";
+      sandbox = sandboxOptions "codex-yolo";
     };
 
     # Interactive-workstation comforts: atuin, clipshare, difftastic, spare

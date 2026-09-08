@@ -1,7 +1,6 @@
 import os
 import errno
 import fcntl
-import hashlib
 from pathlib import Path
 import pty
 import select
@@ -109,10 +108,8 @@ for agent in ["claude", "codex"]:
         assert Path("/home/tester/Custom GPG/secret.key").read_text() == "custom-key-fixture\n"
         assert Path("/home/tester/Shared code/result").read_text() == "edited\n"
         assert Path("/home/tester/Extra output/result").read_text() == "edited\n"
-        key = hashlib.sha256(b"/home/tester/Work").hexdigest()
-        state = Path(f"/home/tester/.{agent}/agent-sandbox/projects/{key}")
-        assert (state / "sessions/probe-session").read_text() == "session\n"
-        assert not Path(f"/home/tester/.{agent}/sessions/probe-session").exists()
+        # The agent state is the host state.
+        assert Path(f"/home/tester/.{agent}/sessions/probe-session").read_text() == "session\n"
         if Path("/persist").exists():
             assert Path("/persist/home/tester/Work/result").read_text() == "edited\n"
             assert Path("/persist/system-state").read_text() == "system\n"
@@ -153,30 +150,8 @@ for agent in ["claude", "codex"]:
     for option in ["--profile", "--workspace", "--ro", "--rw", "--env", "--git-write"]:
         assert option in help_result.stdout + help_result.stderr
 
-    # An explicit bypass warns on stderr, preserves argv and exit status,
-    # and skips workspace validation and namespace/proxy setup.
-    bypass_env = dict(os.environ, **{f"{agent.upper()}_NO_SANDBOX": "1"})
-    result = run([
-        *launch, "--workspace", "/", "--", sys.executable, "-c",
-        "import sys; assert sys.argv[1:] == ['two words', '--literal']; sys.exit(23)",
-        "two words", "--literal",
-    ], env=bypass_env, capture_output=True, text=True)
-    assert result.returncode == 23
-    assert result.stdout == ""
-    assert f"WARNING: {agent.upper()}_NO_SANDBOX=1" in result.stderr
-    assert "running without the sandbox" in result.stderr
-    assert not list(Path("/tmp").glob("*-dbus-proxy.*"))
-    print(f"passed: {agent} workspace selection, invalid grants and bypass warning", flush=True)
-
-# The generic bypass applies both to plain commands and named profiles.
-for profile_args in [[], ["--profile", "codex"], ["--profile", "claude"]]:
-    result = run([
-        wrapper, *profile_args, "--workspace", "/", "--", sys.executable,
-        "-c", "import sys; sys.exit(23)",
-    ], env=dict(os.environ, AGENT_NO_SANDBOX="1"), capture_output=True, text=True)
-    assert result.returncode == 23
-    assert "agent-sandbox: WARNING: AGENT_NO_SANDBOX=1" in result.stderr
-print("passed: generic command, required command and generic bypass", flush=True)
+    print(f"passed: {agent} workspace selection and invalid grants", flush=True)
+print("passed: generic command and required command", flush=True)
 
 # The sandbox preserves successful and failed command status and cleans up.
 for code in [0, 23]:

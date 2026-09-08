@@ -189,99 +189,65 @@ while not Path('release').exists():
     assert not list(empty.iterdir())
     print("passed: repository metadata, aliases, worktrees, submodules, opt-in Git writes and reservation lifecycle", flush=True)
 
-    # Entire application homes persist per project. No state flows back to the
-    # host defaults, and a different project starts without A's state.
-    # Credentials are the exception: one host file is shared by every project.
+    # Application homes are the host homes, shared by every project. The
+    # agent installation stays read-only, and an explicit grant cannot spell
+    # the state another way.
     other = base / "other"
     repository(other)
     for kind in ("codex", "claude"):
         host = Path.home() / f".{kind}"
         auth_name = "auth.json" if kind == "codex" else ".credentials.json"
-        config_name = "config.toml" if kind == "codex" else "settings.json"
-        before = {name: (host / name).read_bytes() for name in (auth_name, config_name)}
-        refreshed = b'{"token":"project refresh"}'
         sandbox(repo, f'''
-import errno, json, os, sqlite3
+import sqlite3
 root = Path.home() / '.{kind}'
 (root / 'sessions').mkdir(exist_ok=True)
 (root / 'sessions/thread').write_text('A session')
-(root / 'memory').write_text('A memory')
-for name, value in [({config_name!r}, 'project settings'),
-                    ('session_index.jsonl', '{{"id":"A"}}\\n')]:
-    temporary = root / 'replacement'
-    temporary.write_text(value)
-    temporary.replace(root / name)
-# Claude Code renames a staging file over its credentials and falls back to
-# an in-place write when the target is a mount point. Codex writes in place.
 temporary = root / 'replacement'
-temporary.write_text('{{"token":"project refresh"}}')
-try:
-    temporary.replace(root / {auth_name!r})
-except OSError as error:
-    assert error.errno == errno.EBUSY, error
-    (root / {auth_name!r}).write_text(temporary.read_text())
-else:
-    raise AssertionError('credentials must be a shared mount point')
+temporary.write_text('{{"token":"refresh"}}')
+temporary.replace(root / {auth_name!r})
 with sqlite3.connect(root / 'fixture.sqlite') as db:
     db.execute('CREATE TABLE IF NOT EXISTS fixture(value TEXT)')
     db.execute("INSERT INTO fixture VALUES ('A')")
 denied(lambda: (root / 'bin/tool').write_text('changed'))
-assert not (root / 'agent-sandbox/projects').exists()
-if '{kind}' == 'codex':
-    assert os.environ['CODEX_SQLITE_HOME'] == str(root)
-else:
-    assert json.loads((root / '.claude.json').read_text())['fixture']
-    replacement = root / 'replacement'
-    replacement.write_text('{{"fixture":"A"}}')
-    replacement.replace(root / '.claude.json')
 ''', '--profile', kind)
-        # Launching in a subdirectory uses the same project home.
-        sandbox(subdir, f'''
-import json, sqlite3
+        assert (host / 'sessions/thread').read_text() == 'A session'
+        assert (host / auth_name).read_text() == '{"token":"refresh"}'
+        sandbox(other, f'''
+import sqlite3
 root = Path.home() / '.{kind}'
-assert (root / 'memory').read_text() == 'A memory'
 assert (root / 'sessions/thread').read_text() == 'A session'
-assert (root / {config_name!r}).read_text() == 'project settings'
-assert json.loads((root / {auth_name!r}).read_text())['token'] == 'project refresh'
 with sqlite3.connect(root / 'fixture.sqlite') as db:
     assert db.execute('SELECT value FROM fixture').fetchone()[0] == 'A'
 ''', '--profile', kind)
-        sandbox(other, f'''
-root = Path.home() / '.{kind}'
-assert not (root / 'memory').exists()
-assert not (root / 'sessions/thread').exists()
-assert not (root / 'fixture.sqlite').exists()
-assert 'project settings' not in (root / {config_name!r}).read_text()
-assert (root / {auth_name!r}).read_bytes() == {refreshed!r}
-''', '--profile', kind)
-        assert (host / config_name).read_bytes() == before[config_name]
-        assert (host / auth_name).read_bytes() == refreshed
-        assert not (host / 'memory').exists()
-        os.link(host / auth_name, repo / 'credential-alias')
-        sandbox(repo, "denied(lambda: Path('credential-alias').write_text('changed'))", '--profile', kind)
-        (repo / 'credential-alias').unlink()
-        sandbox(worktree, f"assert not (Path.home() / '.{kind}/memory').exists()", '--profile', kind)
-        assert json.loads((Path.home() / '.claude.json').read_text())['fixture'] is True
+        (host / 'fixture.sqlite').unlink()
         result = sandbox(repo, 'pass', '--profile', kind, '--rw', str(host), check=False)
         assert result.returncode != 0 and 'must use --profile' in result.stderr
 
-    # A first Claude login inside the sandbox reaches the host file as well.
-    # Codex misreads a placeholder as a login, so it needs the host login first.
-    credentials = Path.home() / '.claude/.credentials.json'
-    credentials.unlink()
+    # ~/.claude.json is a file mount. A rename over it fails with EBUSY, so a
+    # writer must fall back to an in-place write, as Claude Code does. A
+    # missing file is created before the first launch, so a first run inside
+    # the sandbox reaches the host too.
+    config = Path.home() / '.claude.json'
+    original = config.read_bytes()
     sandbox(repo, '''
-credentials = Path.home() / '.claude/.credentials.json'
-assert credentials.read_text() == '{}\\n'
-credentials.write_text('{"token":"first login"}')
+import errno, json
+config = Path.home() / '.claude.json'
+assert json.loads(config.read_text())['fixture']
+temporary = Path.home() / '.claude.json.tmp'
+temporary.write_text('{"fixture":"sandbox"}')
+try:
+    temporary.replace(config)
+except OSError as error:
+    assert error.errno == errno.EBUSY, error
+    config.write_text(temporary.read_text())
+else:
+    raise AssertionError('configuration must be a shared mount point')
 ''', '--profile', 'claude')
-    assert credentials.read_text() == '{"token":"first login"}'
-    assert credentials.stat().st_mode & 0o777 == 0o600
-    auth = Path.home() / '.codex/auth.json'
-    saved = auth.read_bytes()
-    auth.unlink()
-    result = sandbox(repo, 'pass', '--profile', 'codex', check=False)
-    assert result.returncode != 0 and 'log in to codex outside the sandbox first' in result.stderr
-    auth.write_bytes(saved)
+    assert json.loads(config.read_text())['fixture'] == 'sandbox'
+    config.unlink()
+    sandbox(repo, "assert (Path.home() / '.claude.json').read_text() == '{}\\n'", '--profile', 'claude')
+    assert config.stat().st_mode & 0o777 == 0o600
+    config.write_bytes(original)
 
     if Path('/persist/home/tester/.codex').exists():
         result = sandbox(repo, 'pass', '--profile', 'codex', '--rw', '/persist/home/tester/.codex', check=False)
@@ -334,4 +300,4 @@ while not Path('release').exists():
             first.kill()
             first.wait()
     assert not list(Path('/tmp').glob('agent-sandbox-private-*'))
-    print('passed: project state, atomic rewrites, SQLite, same-project concurrency and unchanged host defaults', flush=True)
+    print('passed: shared state, atomic rewrites, SQLite and concurrency', flush=True)

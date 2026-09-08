@@ -59,8 +59,8 @@ let
   ];
 
   # Each agent has a `<agent>-yolo` script with a fixed launch line. The
-  # flag turns off the agent's own sandbox and approvals; the profile
-  # prefix wraps the process in the agent sandbox.
+  # flag turns off the agent's own sandbox and approvals; the `sandbox`
+  # array wraps the process in the agent sandbox when it is enabled.
   agents = {
     codex = {
       enabled = case: case.codex;
@@ -118,11 +118,13 @@ let
             let
               script = lib.getExe (findPackage "${name}-yolo" home);
               prefix = lib.getExe home.programs.agent-sandbox.package;
-              launch = ''exec ${lib.optionalString case.sandbox "${prefix} --profile ${name} -- "}${agent.launch} "$@"'';
+              launch = ''exec "''${sandbox[@]}" ${agent.launch} "$@"'';
+              wrap = "sandbox=(${prefix} --profile ${name} --)";
             in
             ''
               grep -Fxq ${lib.escapeShellArg launch} ${script}
-              ${lib.optionalString (!case.sandbox) "! grep -Fq ' --profile ${name} ' ${script}"}
+              ${lib.optionalString (!case.sandbox) "! "}grep -Fq ${lib.escapeShellArg wrap} ${script}
+              grep -Fq -- '--no-sandbox' ${script}
             ''
           )
         ) agents
@@ -138,6 +140,7 @@ runCommand "agent-sandbox-modules" { } ''
   cat > $out <<EOF
   One shared command is installed with no agents, either agent, or both agents.
   The -yolo script of each enabled agent supplies its profile, command and
-  flags. Disabling sandbox wrapping retains direct agent commands.
+  flags, and accepts --no-sandbox. Disabling sandbox wrapping retains direct
+  agent commands.
   EOF
 ''

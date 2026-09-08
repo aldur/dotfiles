@@ -84,11 +84,7 @@ let
 
   needsPathPrefix =
     if pkgs.stdenv.hostPlatform.isDarwin then true else osConfig.programs.nix-ld.enable;
-  sandboxed = sandbox && pkgs.stdenv.hostPlatform.isLinux;
-  agentSandbox = lib.getExe config.programs.agent-sandbox.package;
-
-  # `claude-yolo` runs claude without permission prompts, in the sandbox
-  # when it is enabled, and with nonessential traffic off. The env below:
+  # `claude-yolo` runs claude with nonessential traffic off. The env below:
   # IS_SANDBOX lets `--dangerously-skip-permissions` run as root.
   # CLAUBBIT skips the trust, MCP, and CLAUDE.md dialogs.
   # CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC also turns off telemetry,
@@ -100,31 +96,16 @@ let
   # the last refresh is older than a week. `claude -p /model` does the
   # startup fetch and exits with no inference call, in about a second.
   # A failed refresh never blocks the launch.
-  # Wrapper flags come first; everything after them goes to claude.
-  claude-yolo = pkgs.writeArgcApplication {
-    name = "claude-yolo";
+  claude-yolo = import ./yolo-script.nix { inherit pkgs lib config; } {
+    agent = "claude";
+    describe = "Run claude in the sandbox, with no permission prompts and no nonessential traffic";
+    inherit sandbox;
+    flags = {
+      refresh = "Refresh the model list before the launch";
+      online = "Keep the sandbox, but let nonessential traffic through (Remote Control works)";
+    };
     runtimeInputs = [ pkgs.coreutils ];
     text = ''
-      # @describe Run claude in the sandbox, with no permission prompts and no nonessential traffic
-      # @flag --refresh Refresh the model list before the launch
-      # @flag --online Keep the sandbox, but let nonessential traffic through (Remote Control works)
-      # @arg args~ Arguments for claude
-      declare argc_refresh argc_online
-      argc_args=()
-      # Only the wrapper flags at the front are for argc. The scan inserts
-      # the `--` itself, so claude arguments need no separator.
-      wrapper_args=()
-      while [ $# -gt 0 ]; do
-        case "$1" in
-          --refresh | --online | -h | --help) wrapper_args+=("$1") ;;
-          --) shift; break ;;
-          *) break ;;
-        esac
-        shift
-      done
-      eval "$(argc --argc-eval "$0" "''${wrapper_args[@]}" -- "$@")"
-      set -- "''${argc_args[@]}"
-
       ${lib.optionalString needsPathPrefix ''export PATH="$HOME/.local/bin:$PATH"''}
       stamp="$HOME/.claude/yolo-refresh"
       max_age=$((7 * 24 * 3600))
@@ -146,8 +127,7 @@ let
       if [ "''${argc_online:-0}" -eq 0 ] && refresh_due; then
         echo "claude-yolo: refreshing the model list" >&2
         if env -u CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC -u DISABLE_TELEMETRY \
-          DISABLE_AUTOUPDATER=1 timeout 15 \
-          ${lib.optionalString sandboxed "${agentSandbox} --profile claude --env DISABLE_AUTOUPDATER -- "}claude \
+          DISABLE_AUTOUPDATER=1 timeout 15 "''${sandbox[@]}" claude \
           -p /model --strict-mcp-config --settings '{"disableAllHooks":true}' >/dev/null 2>&1; then
           mv "$stamp.next" "$stamp"
         else
@@ -163,7 +143,7 @@ let
       else
         export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
       fi
-      exec ${lib.optionalString sandboxed "${agentSandbox} --profile claude -- "}claude --dangerously-skip-permissions "$@"
+      exec "''${sandbox[@]}" claude --dangerously-skip-permissions "$@"
     '';
   };
 

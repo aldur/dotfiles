@@ -4,39 +4,25 @@ import argparse
 import ctypes
 from contextlib import contextmanager
 import fcntl
-import hashlib
 import json
 import os
 from pathlib import Path
-import shutil
 import signal
 import stat
 import subprocess
 import sys
-import tempfile
-
-import tomlkit
-
 
 
 DIRECTORIES = (".git",)
 FILES = (".lazygit.yml",)
 INSTRUCTION_FILES = ("AGENTS.md", "CLAUDE.md", "CLAUDE.local.md")
-# Only trusted defaults are imported. Runtime state never flows back to them.
-DEFAULT_FILES = {
-    "codex": ("config.toml", "AGENTS.md"),
-    "claude": ("settings.json", "CLAUDE.md"),
+# The sandbox shares the host state of the agent, in both directions:
+# sessions, settings, hooks, MCP servers and credentials. The host runs
+# what a sandboxed agent writes here.
+AGENT_STATE = {
+    "codex": (".codex",),
+    "claude": (".claude", ".claude.json"),
 }
-# One writable host file per agent, shared by every project and the host.
-# Both agents rotate their OAuth refresh token, so a copy expires the others.
-# Codex writes in place. Claude Code renames a staging file over the mount
-# point, gets EBUSY, and then writes in place. The value seeds a missing
-# host file; None requires a login on the host first.
-SHARED_FILES = {
-    "codex": {"auth.json": None},
-    "claude": {".credentials.json": b"{}\n"},
-}
-SHARED_DIRECTORIES = ("skills", "plugins", "packages", "bin", "commands", "agents", "rules", "output-styles")
 
 
 def fail(message):
@@ -152,7 +138,6 @@ class Policy:
         self.home = home
         self.git_write = git_write
         self.fds = []
-        self.environment = []
         self.shared_sources = set()
         self.direnv_roots = {
             (home / ".local/share/direnv").resolve(),
@@ -172,78 +157,22 @@ class Policy:
         self.fds.append(fd)
         return ["--ro-bind-fd" if readonly else "--bind-fd", str(fd), str(destination)]
 
-    def agent_state(self, kind, workspace):
-        if not kind:
-            return []
-        root = self.home / f".{kind}"
-        source = root.resolve(strict=True)
-        if source in (self.home, Path("/")) or not source.is_dir():
-            fail(f"initialize {kind} outside the sandbox first: {root}")
-        # Subdirectories share a project's state; distinct worktrees do not.
-        project = workspace.resolve(strict=True)
-        for parent in (project, *project.parents):
-            if (parent / ".git").exists():
-                project = parent
-                break
-        key = hashlib.sha256(os.fsencode(project)).hexdigest()
-        # Reuse metadata alias protection for the shared defaults as well.
-        for name in DEFAULT_FILES[kind]:
-            if (source / name).is_file():
-                self.shared_sources.add((source / name).resolve(strict=True))
-        if kind == "claude" and (self.home / ".claude.json").is_file():
-            self.shared_sources.add((self.home / ".claude.json").resolve(strict=True))
-        projects = directory(source / "agent-sandbox/projects")
-        state = projects / key
-        with self.reservations.locked():
-            if not state.exists() and not state.is_symlink():
-                with tempfile.TemporaryDirectory(prefix=".seed-", dir=projects) as staging:
-                    fresh = Path(staging) / "state"
-                    fresh.mkdir(mode=0o700)
-                    for name in DEFAULT_FILES[kind]:
-                        original = source / name
-                        if original.is_file():
-                            shutil.copyfile(original, fresh / name)
-                            (fresh / name).chmod(0o600)
-                    if kind == "codex":
-                        config = fresh / "config.toml"
-                        document = tomlkit.parse(config.read_text()) if config.exists() else tomlkit.document()
-                        document["sqlite_home"] = str(root)
-                        config.write_text(tomlkit.dumps(document))
-                    else:
-                        original = self.home / ".claude.json"
-                        if original.is_file():
-                            shutil.copyfile(original, fresh / ".claude.json")
-                            (fresh / ".claude.json").chmod(0o600)
-                    fresh.rename(state)
-        directory(state)
-        mounts = self.bind(state, root, readonly=False)
-        for name, seed in SHARED_FILES[kind].items():
-            shared = source / name
-            if seed is None:
-                if not shared.is_file():
-                    fail(f"log in to {kind} outside the sandbox first: {shared}")
-            else:
-                # A first login inside the sandbox must reach the host file too.
-                fd = os.open(shared, os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW, 0o600)
-                if os.fstat(fd).st_size == 0:
-                    os.write(fd, seed)
+    def agent_state(self, kind):
+        """Mount the host state of the selected agent, writable."""
+        mounts = []
+        for name in AGENT_STATE.get(kind, ()):
+            path = self.home / name
+            if name == ".claude.json" and not path.exists():
+                # Claude creates this file on the first run. A mount needs it.
+                fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+                os.write(fd, b"{}\n")
                 os.close(fd)
-            self.shared_sources.add(shared)
-            mounts += self.bind(shared, root / name, readonly=False)
-        for name in SHARED_DIRECTORIES:
-            original = source / name
-            if original.is_dir():
-                shared = original.resolve(strict=True)
-                self.shared_sources.add(shared)
-                mounts += self.bind(shared, root / name)
-        if kind == "codex":
-            self.environment += ["--setenv", "CODEX_HOME", str(root),
-                                 "--setenv", "CODEX_SQLITE_HOME", str(root)]
-        else:
-            self.environment += ["--setenv", "CLAUDE_CONFIG_DIR", str(root)]
-            # Claude's sibling configuration follows its project home, including
-            # atomic replacements. The supervisor never parses project contents.
-            mounts += ["--symlink", str(root / ".claude.json"), str(self.home / ".claude.json")]
+            if not path.exists():
+                fail(f"initialize {kind} outside the sandbox first: {path}")
+            source = path.resolve(strict=True)
+            if source in (self.home, Path("/")):
+                fail(f"refusing broad agent state: {path}")
+            mounts += self.bind(source, path, readonly=False)
         return mounts
 
     def metadata(self, writable, readonly):
@@ -411,7 +340,6 @@ def main():
     parent = os.getppid()
     parser = argparse.ArgumentParser()
     parser.add_argument("--home", required=True, type=Path)
-    parser.add_argument("--workspace", required=True, type=Path)
     parser.add_argument("--state-kind", choices=("", "codex", "claude"), required=True)
     parser.add_argument("--git-write", choices=("0", "1"), required=True)
     parser.add_argument("--writable", nargs=2, action="append", default=[])
@@ -447,7 +375,7 @@ def main():
             writable_mounts += policy.bind(source, destination, readonly=False)
             info = os.fstat(policy.fds[-1])
             pinned.append((source, info.st_dev, info.st_ino))
-        state = policy.agent_state(options.state_kind, options.workspace)
+        state = policy.agent_state(options.state_kind)
         protections = policy.metadata(writable, readonly)
         for source, device, inode in pinned:
             if identity(source)[:2] != [device, inode]:
@@ -456,7 +384,7 @@ def main():
         mounts[index:index + 1] = writable_mounts
         index = mounts.index("--sandbox-state")
         mounts[index:index + 1] = state
-        process = subprocess.Popen(mounts + protections + policy.environment + child, pass_fds=(3, *policy.fds))
+        process = subprocess.Popen(mounts + protections + child, pass_fds=(3, *policy.fds))
         result = process.wait()
         return result if result >= 0 else 128 - result
     finally:

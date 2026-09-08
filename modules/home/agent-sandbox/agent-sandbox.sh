@@ -36,14 +36,6 @@ extra_read_write_paths+=("${argc_rw[@]}")
 extra_environment_allowlist+=("${argc_env[@]}")
 set -- "${argc_cmd[@]}"
 
-if [ "${AGENT_NO_SANDBOX:-0}" = 1 ]; then
-  bypass_var=AGENT_NO_SANDBOX
-fi
-if [ "${!bypass_var:-0}" = 1 ]; then
-  printf '%s: WARNING: %s=1; running without the sandbox.\n' "$sandbox_name" "$bypass_var" >&2
-  exec "$@"
-fi
-
 # Bubblewrap preserves unrelated inherited descriptors. Close them in an
 # already-parsed subshell before exec, including Bash's script descriptor.
 # Only interactive/piped stdio crosses the boundary.
@@ -257,7 +249,7 @@ done
 (
   close_extra_fds
   exec "$sandbox_python" -I "$sandbox_launcher" \
-    --home "$home_dir" --workspace "$workspace" --state-kind "$agent_state_kind" --git-write "$argc_git_write" \
+    --home "$home_dir" --state-kind "$agent_state_kind" --git-write "$argc_git_write" \
     "${policy_args[@]}" -- bwrap \
     "${filesystem_args[@]}" \
     "${system_mounts[@]}" \

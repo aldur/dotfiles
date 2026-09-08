@@ -18,7 +18,6 @@ let
       '';
 
   defaultProfile = {
-    bypassVar = "AGENT_NO_SANDBOX";
     runtimeAllowlist = [ ];
     extraDbusTalk = [ ];
     readOnlyPaths = [ ];
@@ -36,7 +35,6 @@ let
       cfg = defaultProfile // profile;
     in
     ''
-      bypass_var=${lib.escapeShellArg cfg.bypassVar}
       allow_nix_daemon=${if cfg.allowNixDaemon then "1" else "0"}
       agent_read_only_paths=(${lib.escapeShellArgs cfg.agentReadOnlyPaths})
       agent_read_write_paths=(${lib.escapeShellArgs cfg.agentReadWritePaths})
@@ -83,7 +81,7 @@ let
     sandbox_name=agent-sandbox
     sandbox_shell=${lib.escapeShellArg "${pkgs.bash}/bin/bash"}
     sandbox_env=${lib.escapeShellArg "${pkgs.coreutils}/bin/env"}
-    sandbox_python=${lib.escapeShellArg "${pkgs.python3.withPackages (ps: [ ps.tomlkit ])}/bin/python3"}
+    sandbox_python=${lib.escapeShellArg "${pkgs.python3}/bin/python3"}
     sandbox_launcher=${./launch.py}
     seccomp_filter=${lib.escapeShellArg "${seccompFilter}"}
 

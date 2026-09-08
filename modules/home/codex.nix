@@ -67,16 +67,15 @@ let
     '';
   };
 
-  # `codex-yolo` runs codex with its native sandbox and approvals off, in
-  # the agent sandbox when it is enabled. The outer wrapper supplies the
-  # filesystem allowlist and filters session sockets for the entire agent
-  # process.
-  codex-yolo = pkgs.writeArgcApplication {
-    name = "codex-yolo";
+  # `codex-yolo` turns the native sandbox and approvals of codex off. The
+  # agent sandbox supplies the filesystem allowlist and filters session
+  # sockets for the entire agent process.
+  codex-yolo = import ./yolo-script.nix { inherit pkgs lib config; } {
+    agent = "codex";
+    describe = "Run codex in the sandbox, with no approvals and no native sandbox";
+    inherit sandbox;
     text = ''
-      # @describe Run codex in the sandbox, with no approvals and no native sandbox
-      # @arg args~ Arguments for codex
-      exec ${lib.optionalString sandbox "${lib.getExe config.programs.agent-sandbox.package} --profile codex -- "}codex --dangerously-bypass-approvals-and-sandbox "$@"
+      exec "''${sandbox[@]}" codex --dangerously-bypass-approvals-and-sandbox "$@"
     '';
   };
 in

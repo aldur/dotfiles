@@ -18,20 +18,19 @@ let
     profiles =
       lib.optionalAttrs agents.codex.enable {
         codex = profile agents.codex.sandbox // {
-          bypassVar = "CODEX_NO_SANDBOX";
           stateKind = "codex";
           agentReadOnlyPaths = [ "~/.codex/packages" ];
         };
       }
       // lib.optionalAttrs agents.claude-code.enable {
         claude = profile agents.claude-code.sandbox // {
-          bypassVar = "CLAUDE_NO_SANDBOX";
           stateKind = "claude";
           agentReadOnlyPaths = [ "~/.local/share/claude/versions" ];
           extraEnvironmentAllowlist = agents.claude-code.sandbox.extraEnvironmentAllowlist ++ [
             "IS_SANDBOX"
             "CLAUBBIT"
             "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC"
+            "DISABLE_AUTOUPDATER"
           ];
         };
       };

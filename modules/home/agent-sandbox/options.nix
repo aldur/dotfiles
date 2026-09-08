@@ -3,7 +3,7 @@
 let
   inherit (lib) mkOption types;
 in
-alias: bypassVar: {
+alias: {
   enable = mkOption {
     type = types.bool;
     default = pkgs.stdenv.hostPlatform.isLinux;
@@ -11,13 +11,10 @@ alias: bypassVar: {
       On Linux, wrap `${alias}` in bubblewrap with an empty root and a
       private home, /tmp and runtime directory. Bind system tools and
       selected configuration read-only, and the launch directory and
-      project-scoped agent state read/write. Git metadata is protected.
+      the agent state read/write. Git metadata is protected.
       Other host paths, including /persist, are absent unless explicitly
       granted. Network access is unchanged; writable workspaces and agent
       state remain persistent.
-
-      Set ${bypassVar}=1 in the environment to bypass the wrapper for a
-      single invocation without a rebuild. Bypassing prints a warning.
     '';
   };
   filesystem = {

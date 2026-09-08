@@ -3,7 +3,6 @@ let
   mkWrapper = import ../package.nix { inherit pkgs lib; };
   wrapper = mkWrapper {
     profiles = lib.genAttrs [ "claude" "codex" ] (name: {
-      bypassVar = "${lib.toUpper name}_NO_SANDBOX";
       runtimeAllowlist = [ "allowed" ];
       extraDbusTalk = [ "org.example.Allowed" ];
       readOnlyPaths = [ "~/Reference notes" ];
@@ -70,6 +69,9 @@ let
     fi
     mkdir -p "$HOME/.$TEST_AGENT/sessions"
     echo session > "$HOME/.$TEST_AGENT/sessions/probe-session"
+    if [ "$TEST_AGENT" = claude ]; then
+      grep -q '"fixture":true' "$HOME/.claude.json"
+    fi
     "$HOME/.$TEST_AGENT/bin/tool"
     if (echo changed > "$HOME/.$TEST_AGENT/bin/tool") 2>/dev/null; then
       echo 'agent installation must stay read-only' >&2

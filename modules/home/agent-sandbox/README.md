@@ -28,12 +28,16 @@ mounts, so a `--ro` path inside a writable directory stays read-only.
 ## Goal
 
 An agent that works on project A must not change the files the host runs
-later, such as Git hooks, shell configuration and agent settings. It must
-not change project B. Network access is not restricted.
+later, such as Git hooks and shell configuration. It must not change
+project B. Network access is not restricted.
+
+The agent state is shared with the host. A sandboxed agent can change the
+hooks, MCP servers and instructions that the host runs later. The sandbox
+protects against mistakes and against access to the rest of the host, not
+against an agent that targets its own configuration.
 
 The sandbox trusts the kernel, `bubblewrap`, the launcher and the other host
-processes. Each extra grant, `--git-write` and each bypass variable makes
-the protection weaker.
+processes. Each extra grant and `--git-write` makes the protection weaker.
 
 ## What the command sees
 
@@ -77,38 +81,17 @@ these changes before you use them on the host.
 
 ## Agent state
 
-Each project gets its own agent home on the host, at
-`~/.<agent>/agent-sandbox/projects/<hash>`. The hash comes from the
-repository root, so all subdirectories of a repository share one home. A
-worktree gets a separate home. Outside a repository, the hash comes from
-the workspace path.
+The sandbox mounts the host state of the selected agent writable: `~/.codex`
+for Codex, `~/.claude` and `~/.claude.json` for Claude. Sessions, settings,
+memory and credentials are the same inside and outside the sandbox, in both
+directions. A session that starts in the sandbox continues on the host with
+`--resume`, and the other way round. The agent installation under that
+state stays read-only.
 
-On the first launch the launcher copies the host defaults into the home:
-`settings.json`, `CLAUDE.md` and `~/.claude.json` for Claude, `config.toml`
-and `AGENTS.md` for Codex. The host directories `skills`, `plugins`,
-`packages`, `bin`, `commands`, `agents`, `rules` and `output-styles` are
-mounted read-only when they exist.
-
-Sessions, databases and settings changes stay in the project home. The
-launcher never copies them back to the host. A later change to a host
-default does not reach an existing project home.
-
-Credentials are the exception. The launcher mounts the host file
-(`~/.claude/.credentials.json` or `~/.codex/auth.json`) writable into each
-project home. Each token refresh gives a new refresh token and makes the old
-one invalid. With one copy per project, a refresh in one project would log
-out the host and the other projects. With one shared file, a login or a
-refresh anywhere is valid everywhere.
-
-- Codex needs a login on the host before the first launch. The launcher
-  stops when `auth.json` is missing.
-- Claude accepts a first login inside the sandbox. When the host file is
-  missing, the launcher creates it with placeholder content.
-- Log out on the host. Inside the sandbox the agent cannot delete the file.
-
-The launcher sets `CLAUDE_CONFIG_DIR`, or `CODEX_HOME` and
-`CODEX_SQLITE_HOME`, to the project home. For Codex it also writes
-`sqlite_home` into the project copy of `config.toml`.
+`~/.claude.json` is a file mount. A rename over a mount point fails with
+`EBUSY`; Claude Code 2.1 writes the file in place, so `claude mcp add` and
+the startup writes reach the host. When the file is missing, the launcher
+creates it before the first launch.
 
 ## Direnv
 
@@ -125,9 +108,6 @@ Nix store. The other options are `allowNixDaemon`,
 `extraEnvironmentAllowlist`, `extraRuntimeDirAllowlist` and `extraDbusTalk`.
 See [options.nix](options.nix).
 
-`AGENT_NO_SANDBOX=1`, `CODEX_NO_SANDBOX=1` or `CLAUDE_NO_SANDBOX=1` runs the
-command without the sandbox and prints a warning.
-
 Code: mount defaults in [package.nix](package.nix), argument parsing and the
 `bwrap` command line in [agent-sandbox.sh](agent-sandbox.sh), agent state
 and Git metadata protection in [launch.py](launch.py).
@@ -141,6 +121,6 @@ nix build --no-link path:.#checks.x86_64-linux.agent-sandbox path:.#checks.x86_6
 The first check builds a fake host in `bubblewrap`, with and without a
 `/persist` path, and runs the sandbox inside it. It covers the mounts, the
 environment, open files, seccomp, the bus proxy, Git metadata protection,
-agent state, shared credentials and direnv. The second check verifies the
+shared agent state and direnv. The second check verifies the
 `-yolo` aliases. [cli-smoke.py](tests/cli-smoke.py) runs the installed
 agents offline in the sandbox with dummy credentials.
