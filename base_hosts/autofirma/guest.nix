@@ -255,12 +255,21 @@ in
         # (150 MiB). libcanberra without GStreamer is a small build.
         package =
           let
-            libcanberra-gtk3 = pkgs.libcanberra-gtk3.override {
-              gst_all_1 = pkgs.gst_all_1 // {
-                gstreamer = null;
-                gst-plugins-base = null;
-              };
-            };
+            libcanberra-gtk3 =
+              (pkgs.libcanberra-gtk3.override {
+                gst_all_1 = pkgs.gst_all_1 // {
+                  gstreamer = null;
+                  gst-plugins-base = null;
+                };
+              }).overrideAttrs
+                {
+                  # nixpkgs sets enableParallelBuilding, and that also makes
+                  # the install parallel. The libtool relink of the GTK
+                  # module then races the install of libcanberra-gtk3.so
+                  # and fails with "cannot find -lcanberra-gtk3". The
+                  # cache hides the race for the stock package.
+                  enableParallelInstalling = false;
+                };
           in
           (pkgs.wrapFirefox.override { inherit libcanberra-gtk3; })
             (
