@@ -15,14 +15,17 @@ set -euo pipefail
 : "${GH_TOKEN:?token with API read access required}"
 : "${SIGNING_KEYS:?destination path required}"
 
+# The lock file holds the URL without the `file+` prefix of flake.nix.
+url=$(jq -r '.nodes["gh-signing-keys"].locked.url' flake.lock)
+locked=$(jq -r '.nodes["gh-signing-keys"].locked.narHash' flake.lock)
+
 curl -sS --fail --retry 3 \
     -H "Authorization: Bearer $GH_TOKEN" \
     -H 'Accept: application/vnd.github+json' \
     -H 'X-GitHub-Api-Version: 2022-11-28' \
-    https://api.github.com/users/aldur/ssh_signing_keys \
+    "$url" \
     -o "$SIGNING_KEYS"
 
-locked=$(jq -r '.nodes["gh-signing-keys"].locked.narHash' flake.lock)
 got=$(nix hash path --type sha256 --sri "$SIGNING_KEYS")
 
 if [ "$got" != "$locked" ]; then
