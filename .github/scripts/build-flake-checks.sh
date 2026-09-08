@@ -26,12 +26,16 @@ drvs=$(nix eval --json ".#checks.$system" "${override[@]}" \
   --apply 'checks: builtins.mapAttrs (_: check: check.drvPath) checks')
 available=$(nix config show system-features | jq -R 'split(" ")')
 
+# Build the derivation paths, not the flake attributes. A `nix build` on the
+# attributes evaluates the flake a second time, and the client keeps that
+# memory (about 5 GiB for these checks) for the full build. A large build,
+# for example a Rust package, then has less memory on the 16 GiB runner.
 targets=()
-while IFS=$'\t' read -r name missing; do
+while IFS=$'\t' read -r name drv missing; do
   if [ -n "$missing" ]; then
     echo "::notice::Skip checks.$system.$name: the runner has no system feature: $missing"
   else
-    targets+=(".#checks.$system.$name")
+    targets+=("$drv^*")
   fi
 done < <(jq -r '.[]' <<< "$drvs" | xargs nix derivation show \
   | jq -r --argjson drvs "$drvs" --argjson available "$available" '
@@ -39,6 +43,6 @@ done < <(jq -r '.[]' <<< "$drvs" | xargs nix derivation show \
   | $drvs | to_entries[]
   | ($shown[.value | split("/") | last].env.requiredSystemFeatures // "") as $required
   | (($required | split(" ") | map(select(. != ""))) - $available) as $missing
-  | "\(.key)\t\($missing | join(" "))"')
+  | "\(.key)\t\(.value)\t\($missing | join(" "))"')
 
-nix build "${override[@]}" "${targets[@]}"
+nix build "${targets[@]}"
