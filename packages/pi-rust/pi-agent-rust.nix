@@ -35,10 +35,18 @@ rustPlatform.buildRustPackage {
       --replace-fail 'self.check_for_updates.unwrap_or(true)' 'self.check_for_updates.unwrap_or(false)'
   '';
 
-  # The vendored fsqlite crates enable `feature(core_intrinsics)` on x86_64,
-  # which needs a nightly rustc. Upstream pins one in rust-toolchain.toml.
-  # RUSTC_BOOTSTRAP lets the stable rustc from nixpkgs accept the gate.
-  env.RUSTC_BOOTSTRAP = 1;
+  env = {
+    # The vendored fsqlite crates enable `feature(core_intrinsics)` on x86_64,
+    # which needs a nightly rustc. Upstream pins one in rust-toolchain.toml.
+    # RUSTC_BOOTSTRAP lets the stable rustc from nixpkgs accept the gate.
+    RUSTC_BOOTSTRAP = 1;
+
+    # The upstream release profile uses fat LTO with one codegen unit. The
+    # final rustc then needs more than 7 GiB, and a second rustc needs 3 GiB
+    # at the same time. Thin LTO makes it easier on CI runners.
+    CARGO_PROFILE_RELEASE_LTO = "thin";
+    CARGO_PROFILE_RELEASE_CODEGEN_UNITS = "16";
+  };
 
   # Thousands of tests (proptest, conformance, live-tool integration) that
   # upstream already gates its releases on; far too slow for a pin bump.
