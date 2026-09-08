@@ -1,6 +1,12 @@
-_: {
-  # Install terminfo entries for all terminal emulators in nixpkgs
-  environment.enableAllTerminfo = true;
+{ pkgs, ... }:
+{
+  # The terminfo of the terminals in use. Ghostty ships its own entry.
+  # iTerm and tmux use entries that ncurses ships. nixpkgs builds ghostty
+  # from source for Linux only; the binary release is the darwin package
+  # (see modules/darwin/home.nix).
+  environment.systemPackages = [
+    (if pkgs.stdenv.hostPlatform.isDarwin then pkgs.ghostty-bin else pkgs.ghostty).terminfo
+  ];
 
   environment.shellAliases = {
     gst = "git status";
