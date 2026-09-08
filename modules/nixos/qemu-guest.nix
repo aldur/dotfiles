@@ -4,7 +4,6 @@
 # inside.
 {
   config,
-  inputs,
   lib,
   modulesPath,
   ...
@@ -45,7 +44,7 @@ in
       };
     };
 
-    users.users.${config.mainUser}.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
+    users.users.${config.mainUser}.openssh.authorizedKeys.keys = config.identity.authorizedKeys;
 
     services.getty.autologinUser = config.mainUser;
     security.sudo-rs.wheelNeedsPassword = false;

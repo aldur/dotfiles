@@ -16,7 +16,7 @@ let
   # Keys anyone verifying signatures should trust, straight from the
   # `gh-signing-keys` flake input (see there for the refresh command).
   allowedSigners = pkgs.writeText "allowed_signers" (
-    lib.concatMapStringsSep "\n" (k: ''aldur@users.noreply.github.com namespaces="git" ${k.key}'') (
+    lib.concatMapStringsSep "\n" (k: ''${osConfig.identity.email} namespaces="git" ${k.key}'') (
       builtins.fromJSON (builtins.readFile inputs.gh-signing-keys.outPath)
     )
   );
@@ -413,8 +413,8 @@ in
       settings = lib.recursiveUpdate (import ../shared/programs/git.nix) (
         {
           user = {
-            name = "aldur";
-            email = "aldur@users.noreply.github.com";
+            name = osConfig.identity.githubUser;
+            inherit (osConfig.identity) email;
           };
 
           commit.verbose = true;

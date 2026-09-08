@@ -1,11 +1,16 @@
-{ inputs, pkgs, ... }:
+{
+  config,
+  inputs,
+  pkgs,
+  ...
+}:
 {
   imports = [
     ./apple-container.nix
     "${inputs.self}/modules/nixos/pragmatism.nix"
   ];
 
-  users.users.aldur.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
+  users.users.aldur.openssh.authorizedKeys.keys = config.identity.authorizedKeys;
 
   # `aldur` gets git via home-manager, but root has none — put it in the system
   # profile so root can drive a flake clone (`nixos-rebuild --flake …`).
@@ -33,6 +38,7 @@
       git.settings.gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | grep -i sign)'";
       better-nix-search.enable = true;
       llm.enable = true;
+      pi.enable = true;
     };
 
     # A llama-server on the macOS host is reachable at the gateway of Apple

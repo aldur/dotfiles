@@ -7,7 +7,7 @@
 }:
 let
   authorizedKeys = pkgs.writeText "macos-${config.mainUser}-authorized_keys" (
-    inputs.self.lib.authorizedKeysText inputs.self.utils.github-keys
+    inputs.self.lib.authorizedKeysText config.identity.authorizedKeys
   );
 in
 {

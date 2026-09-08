@@ -56,7 +56,7 @@ in
       root.initialHashedPassword = lib.mkForce null;
 
       # Root administration from the guest's loopback interface; see ssh.nix.
-      root.openssh.authorizedKeys.keys = inputs.self.utils.github-keys;
+      root.openssh.authorizedKeys.keys = config.identity.authorizedKeys;
     };
 
     # No /run/opengl-driver: mesa and its LLVM take 800 MiB. The sommelier

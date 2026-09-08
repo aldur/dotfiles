@@ -227,7 +227,7 @@
         };
       };
 
-      utils.github-keys = import ./utils/github-keys.nix { };
+      utils.github-keys = import ./utils/github-keys.nix;
 
       overlays = {
         mlx = import ./overlays/mlx.nix { nixpkgs = nixpkgs-darwin; };
