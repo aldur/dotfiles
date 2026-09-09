@@ -139,7 +139,7 @@
             mlx = pkgs.python3.pkgs.mlx;
           }
           // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-            inherit (pkgs) faraday;
+            inherit (pkgs) faraday usrbin;
           };
         in
         {

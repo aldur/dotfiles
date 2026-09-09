@@ -28,6 +28,7 @@ in
 
   aldurs-dotfiles-version = prev.callPackage ../packages/aldurs-dotfiles-version { inherit self; };
   faraday = prev.callPackage ../packages/faraday { };
+  usrbin = prev.callPackage ../packages/usrbin { };
   fps = prev.callPackage ../packages/fps { };
   lstrip = prev.callPackage ../packages/lstrip { };
   trim = prev.callPackage ../packages/trim { };

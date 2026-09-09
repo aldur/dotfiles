@@ -44,7 +44,10 @@ let
     ]
     # The Linux counterpart of the darwin `faraday` shell alias
     # (sandbox-exec based, see modules/darwin/home.nix).
-    ++ lib.optionals stdenv.hostPlatform.isLinux [ faraday ]
+    ++ lib.optionals stdenv.hostPlatform.isLinux [
+      faraday
+      usrbin
+    ]
     ++ lib.optionals (
       osConfig.programs.aldur.claude-code.enable
       || osConfig.programs.aldur.codex.enable

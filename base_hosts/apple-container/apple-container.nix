@@ -47,22 +47,12 @@ let
   # *appends* a fallback PATH (any inherited PATH still wins, so only the
   # empty-PATH case changes) before handing off to the real shell.
   #
-  # The fallback points at the coreutils/gnugrep *store paths*, not /bin: post-
-  # boot envfs owns /bin, and envfs resolves each lookup from the *calling
-  # process's* /proc/<pid>/environ — it consults its fallback-path dir (sh/env
-  # only) solely when that environ carries no PATH at all, and skips /bin and
-  # /usr/bin PATH entries to dodge recursion. So the moment a wrapper exports
-  # PATH=/bin:/usr/bin, nothing resolves through /bin anymore (verified live);
-  # store paths resolve in every mount/boot state. Wired through
-  # `environment.binsh` below (not just the image symlink) because envfs serves
-  # /bin/sh from a fallback-path built from that option — it's the only knob
-  # governing /bin/sh.
+  # The fallback points at the coreutils/gnugrep *store paths*, not /bin, so
+  # it resolves in every mount/boot state. Wired through `environment.binsh`
+  # below (not just the image symlink) because the NixOS activation links
+  # /bin/sh to that option on every switch.
   #
-  # Testing trap: `env -i /bin/sh -c …` does NOT reproduce the empty-PATH case —
-  # /proc/<pid>/environ is frozen at exec, so envfs still sees `env`'s inherited
-  # full PATH and serves whatever `sh` that PATH reaches (the plain sw/bin one),
-  # bypassing this wrapper. Faithful reproduction, mirroring how vminitd (empty
-  # environ) execs the init:
+  # Reproduce the empty-PATH case the way vminitd execs the init:
   #   env -i "$(readlink -f /run/current-system/sw/bin/bash)" \
   #     -c 'exec /bin/sh -c "id -un"'
   binSh = pkgs.writeShellScript "container-bin-sh" ''
@@ -353,7 +343,7 @@ in
     # See `binSh` above: /bin/sh gains a store-path PATH fallback so Apple's
     # empty-PATH `/sbin.machine/init` can resolve id/grep/cut and `--root`
     # sessions open. Must set the option, not just the image symlink: under
-    # `container machine` envfs serves /bin/sh from a fallback-path derived from
+    # `container machine` the activation relinks /bin/sh from
     # `environment.binsh`.
     environment.binsh = lib.mkForce "${binSh}";
 

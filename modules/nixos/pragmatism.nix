@@ -22,12 +22,13 @@ in
 
     envfs.enable = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      default = false;
       description = ''
         Mount envfs over /usr/bin and /bin. A hardcoded shebang such as
         `#!/usr/bin/python3` then runs the tool on the PATH of the caller.
         The mount is a root FUSE daemon. Without it, NixOS provides only
-        /bin/sh and /usr/bin/env.
+        /bin/sh and /usr/bin/env, and `usrbin` gives one command the
+        same view.
       '';
     };
   };
