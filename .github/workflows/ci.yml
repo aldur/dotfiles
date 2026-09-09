@@ -58,8 +58,18 @@ jobs:
         include:
           - runner: ubuntu-24.04
             system: x86_64-linux
+            shard: rest
+          # The VM tests get their own runner. They share 17 of the 889 paths
+          # that a cold runner builds, so the split costs almost no extra
+          # build. It also keeps the neovim and Rust builds away from the
+          # test driver, which they starved.
+          - runner: ubuntu-24.04
+            system: x86_64-linux
+            shard: vm
+          # The arm64 runners have no KVM, so they have no VM test to build.
           - runner: ubuntu-24.04-arm
             system: aarch64-linux
+            shard: rest
     runs-on: ${{ matrix.runner }}
     steps:
       - *checkout
@@ -103,7 +113,7 @@ jobs:
           .github/scripts/sample-resources.sh &
           sampler=$!
           trap 'kill "$sampler"' EXIT
-          .github/scripts/build-flake-checks.sh ${{ matrix.system }}
+          .github/scripts/build-flake-checks.sh ${{ matrix.system }} ${{ matrix.shard }}
       # `always()`: keep the completed paths, also after a failure.
       # Do not do this step if the cache had a hit.
       - name: Export locally-built paths to the cache
