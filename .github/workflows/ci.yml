@@ -82,9 +82,9 @@ jobs:
         id: nix-cache
         with:
           path: /tmp/nix-cache
-          key: &nix-cache-key nix-store-${{ matrix.system }}-${{ hashFiles('flake.lock') }}-${{ github.sha }}
+          key: &nix-cache-key nix-store-${{ matrix.system }}-${{ matrix.shard }}-${{ hashFiles('flake.lock') }}-${{ github.sha }}
           restore-keys: |
-            nix-store-${{ matrix.system }}-${{ hashFiles('flake.lock') }}-
+            nix-store-${{ matrix.system }}-${{ matrix.shard }}-${{ hashFiles('flake.lock') }}-
       # `--quiet` on the copies: without it, nix writes one log line for
       # each copied path, and that is thousands of lines for each run.
       - name: Seed the store from the cache
@@ -178,12 +178,12 @@ jobs:
       # are the same on both architectures. Keep them between runs. The job
       # index in the key gives each job its own entry: with one shared key,
       # the parallel jobs race to save it.
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         if: contains(matrix.target, 'autofirma')
         id: autofirma-certs
         with:
           path: /tmp/autofirma-certs
-          key: autofirma-certs-${{ strategy.job-index }}-${{ hashFiles('base_hosts/autofirma/flake.lock') }}
+          key: &autofirma-certs-key autofirma-certs-${{ strategy.job-index }}-${{ hashFiles('base_hosts/autofirma/flake.lock') }}
           restore-keys: |
             autofirma-certs-
       - name: Seed the store with the cached certificates
@@ -213,6 +213,13 @@ jobs:
             | jq -r '.[]' \
             | while read -r path; do if [ -e "$path" ]; then echo "$path"; fi; done \
             | xargs -r nix copy --quiet --to file:///tmp/autofirma-certs
+      # Upload what the step above exported also in case of failure.
+      - name: Save the certificates cache
+        if: always() && contains(matrix.target, 'autofirma') && steps.autofirma-certs.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: /tmp/autofirma-certs
+          key: *autofirma-certs-key
 
   nix-darwin-ci:
     runs-on: macos-26  # arm, beta
