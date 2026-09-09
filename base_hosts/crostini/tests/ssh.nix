@@ -53,6 +53,8 @@ let
 in
 pkgs.testers.runNixOSTest {
   name = "crostini-ssh";
+
+  globalTimeout = 1200;
   nodes = {
     first = { ... }: {
       imports = [ guest ];
