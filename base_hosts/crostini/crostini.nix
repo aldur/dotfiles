@@ -24,6 +24,7 @@ in
 
   imports = [
     ./ssh.nix
+    ./pcscd.nix
     "${inputs.self}/modules/current_system_flake.nix"
     "${inputs.self}/modules/nixos/pragmatism.nix"
     # preservation-{system,user} transitively pull in the upstream
