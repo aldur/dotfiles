@@ -41,6 +41,8 @@ in
     # Crostini guests run the ChromeOS kernel, not the one this
     # configuration builds; see the option's description.
     hardening.foreignKernel = true;
+    # The kernel has built in modules and the image does not add any.
+    boot.kernel.sysctl."kernel.modules_disabled" = 1;
     users.users = {
       # We rely on the UID in a few places, so better making sure about it.
       ${username} = {
