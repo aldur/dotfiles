@@ -78,11 +78,11 @@ jobs:
       # for the same reason.
       - name: Reclaim disk space
         run: .github/scripts/reclaim-disk.sh
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: nix-cache
         with:
           path: /tmp/nix-cache
-          key: nix-store-${{ matrix.system }}-${{ hashFiles('flake.lock') }}-${{ github.sha }}
+          key: &nix-cache-key nix-store-${{ matrix.system }}-${{ hashFiles('flake.lock') }}-${{ github.sha }}
           restore-keys: |
             nix-store-${{ matrix.system }}-${{ hashFiles('flake.lock') }}-
       # `--quiet` on the copies: without it, nix writes one log line for
@@ -119,6 +119,13 @@ jobs:
             | tee /tmp/nix-cache/roots \
             | xargs -r nix copy --quiet --to 'file:///tmp/nix-cache?compression=zstd'
           du -sh /tmp/nix-cache || true
+      # Upload what the step above exported also in case of failure.
+      - name: Save the cache
+        if: always() && steps.nix-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: /tmp/nix-cache
+          key: *nix-cache-key
 
   # One job for each (runner, target) pair. Each image build uses tens of
   # gigabytes of temporary space: a full-system tarball, a 16 GiB disk image,
