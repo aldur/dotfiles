@@ -36,6 +36,7 @@ in
 
   config = {
     crostini.impermanence.enable = lib.mkDefault true;
+    pragmatism.envfs.enable = false;
 
     # Crostini guests run the ChromeOS kernel, not the one this
     # configuration builds; see the option's description.

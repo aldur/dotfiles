@@ -87,7 +87,7 @@ let
   bootVariant = configuration.extendModules {
     modules = [
       (
-        { lib, ... }:
+        { config, lib, ... }:
         {
           boot.kernel.enable = lib.mkForce true;
           boot.initrd.enable = lib.mkForce true;
@@ -99,11 +99,11 @@ let
           # The image loads no modules of its own: the ChromeOS kernel has
           # them built in. The initrd loads the ones the guest needs from
           # the NixOS kernel: virtio-gpu for the GBM device of sommelier,
-          # fuse for envfs.
+          # fuse when the guest mounts envfs.
           boot.initrd.kernelModules = [
             "virtio_gpu"
-            "fuse"
-          ];
+          ]
+          ++ lib.optional config.services.envfs.enable "fuse";
           boot.initrd.postMountCommands = ''
             set -- $targetRoot
             ${injectProbe}
