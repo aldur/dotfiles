@@ -3,10 +3,11 @@
 # does, and runs a probe inside it. flake.nix exports this function as
 # `lib.mkBaguetteTest`.
 #
-# The image has no kernel: Baguette boots the ChromeOS kernel. The test
-# boots the image with the kernel and the initrd of the same configuration,
-# with `boot.kernel` and `boot.initrd` turned back on. The disk is the image
-# CI ships, unchanged.
+# The image has no kernel: Baguette boots the ChromeOS kernel. By default
+# the test boots the image with the kernel and the initrd of the same
+# configuration, with `boot.kernel` and `boot.initrd` turned back on. With
+# `kernel`, it boots that image instead, with no initrd and the root on the
+# command line, as ChromeOS does. The disk is the image CI ships, unchanged.
 #
 # ChromeOS mounts a `cros-vm-tools` disk with maitred, vshd, garcon, and
 # sommelier. Those binaries are not public. The test mounts a disk with that
@@ -35,6 +36,11 @@
   extraProbe ? "",
   # Regular expressions, each matched against one `PROBE` line.
   extraChecks ? [ ],
+  # A kernel image to boot instead of the one of the configuration, for
+  # example the termina kernel of ChromeOS. The initrd stays the one of the
+  # configuration: it mounts the root and drops the probe, and tolerates a
+  # kernel without its modules.
+  kernel ? null,
   # Seconds. The guest powers itself off when the probe ends.
   timeout ? 900,
 }:
@@ -43,46 +49,7 @@ let
   # packages of the configuration also build the test itself.
   pkgs = configuration.pkgs;
 
-  # The image, and the probe unit that the initrd drops into it.
   shipped = configuration.config.system.build;
-
-  # After the root mount, the initrd drops the probe units into the image.
-  # systemd also reads /usr/lib/systemd/system on NixOS. The probe script
-  # itself comes from the tools disk. `$1` is the mounted root.
-  #
-  # A timer starts the probe. A service wanted by multi-user.target could
-  # not wait for that target: a cycle. The timer is outside the boot
-  # transaction, so the probe runs after every unit of the boot has ended,
-  # and sees which ones failed.
-  injectProbe = ''
-    units=$1/usr/lib/systemd/system
-    mkdir -p $units/timers.target.wants
-    cat > $units/baguette-probe.timer <<'EOF'
-    [Unit]
-    Description=Start the Baguette boot probe after the boot
-
-    [Timer]
-    OnBootSec=1s
-    EOF
-    cat > $units/baguette-probe.service <<'EOF'
-    [Unit]
-    Description=Baguette boot probe
-    Requires=opt-google-cros\x2dcontainers.mount
-    After=opt-google-cros\x2dcontainers.mount multi-user.target
-    SuccessAction=poweroff-force
-    FailureAction=poweroff-force
-
-    [Service]
-    Type=oneshot
-    ExecStart=/opt/google/cros-containers/probe/probe.sh
-    # The second serial port of the test. The console of ttyS0 carries
-    # the boot messages.
-    TTYPath=/dev/ttyS1
-    StandardOutput=tty
-    StandardError=tty
-    EOF
-    ln -sf ../baguette-probe.timer $units/timers.target.wants/
-  '';
 
   bootVariant = configuration.extendModules {
     modules = [
@@ -104,15 +71,13 @@ let
             "virtio_gpu"
           ]
           ++ lib.optional config.services.envfs.enable "fuse";
-          boot.initrd.postMountCommands = ''
-            set -- $targetRoot
-            ${injectProbe}
-          '';
         }
         # preservation asserts a systemd initrd. This variant only lends
         # its kernel and initrd; the image keeps its own preservation. The
         # shipped configuration tells whether the option exists at all.
-        // lib.optionalAttrs (configuration.config ? preservation) { preservation.enable = lib.mkForce false; }
+        // lib.optionalAttrs (configuration.config ? preservation) {
+          preservation.enable = lib.mkForce false;
+        }
       )
     ];
   };
@@ -192,10 +157,23 @@ let
     # Stand-ins for the ChromeOS daemons. Without them, the units of the
     # image fail and restart in a loop, and that flood stalls the serial
     # ports of the test.
-    for daemon in vshd maitred garcon port_listener; do
+    for daemon in vshd garcon port_listener; do
       printf '#!/bin/sh\nexec /run/current-system/sw/bin/sleep infinity\n' > root/bin/$daemon
     done
     printf '#!/bin/sh\nexit 0\n' > root/bin/guest_service_failure_notifier
+
+    # The stand-in of maitred starts the probe. Its unit is part of the
+    # boot, so it waits for the end of the boot transaction first, and the
+    # probe sees which units failed. The second serial port of the test
+    # takes the output; the console of ttyS0 carries the boot messages.
+    # The guest powers off when the probe ends, whatever its result.
+    cat > root/bin/maitred <<'EOF'
+    #!/bin/sh
+    PATH=/run/current-system/sw/bin
+    systemctl is-system-running --wait > /dev/null
+    /opt/google/cros-containers/probe/probe.sh > /dev/ttyS1 2>&1
+    systemctl poweroff --force
+    EOF
 
     # The store paths of the tools that the image lacks. The dynamic linker
     # searches LD_LIBRARY_PATH before the RUNPATH of nixpkgs, so the copies
@@ -280,10 +258,21 @@ pkgs.runCommand name
       --serial type=file,path=console.log,hardware=serial,num=1,console=true \
       --serial type=file,path=probe.log,hardware=serial,num=2 \
       --gpu backend=virglrenderer,context-types=cross-domain \
-      --initrd ${bootVariant.config.system.build.initialRamdisk}/initrd \
+      ${
+        if kernel != null then
+          # No initrd: the kernel mounts the root itself, as on ChromeOS.
+          ''--params "root=/dev/vdb rootfstype=btrfs rw" \''
+        else
+          "--initrd ${bootVariant.config.system.build.initialRamdisk}/initrd \\"
+      }
       --params "init=${shipped.toplevel}/init console=ttyS0 loglevel=4 systemd.getty_auto=no" \
       --block path=tools.img --block path=root.img \
-      ${bootVariant.config.system.build.kernel}/${bootVariant.config.system.boot.loader.kernelFile} \
+      ${
+        if kernel != null then
+          kernel
+        else
+          "${bootVariant.config.system.build.kernel}/${bootVariant.config.system.boot.loader.kernelFile}"
+      } \
       > crosvm.log 2>&1 || {
       echo "crosvm exit $?"
       tail -n 20 crosvm.log

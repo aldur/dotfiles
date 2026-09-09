@@ -75,6 +75,15 @@
           inherit (aldur-dotfiles.lib) mkBaguetteTest;
         };
 
+        # The same boot, with the kernel that Baguette boots on ChromeOS.
+        checks.baguette-boot-termina =
+          nixpkgs.legacyPackages.${system}.callPackage ./tests/baguette-boot.nix
+            {
+              configuration = generator system baguetteModules;
+              inherit (aldur-dotfiles.lib) mkBaguetteTest;
+              terminaKernel = aldur-dotfiles.packages.${system}.termina-kernel;
+            };
+
         checks.ssh-configurations =
           nixpkgs.legacyPackages.${system}.callPackage ./tests/ssh-configurations.nix
             {

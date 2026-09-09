@@ -41,8 +41,6 @@ in
     # Crostini guests run the ChromeOS kernel, not the one this
     # configuration builds; see the option's description.
     hardening.foreignKernel = true;
-    # The kernel has built in modules and the image does not add any.
-    boot.kernel.sysctl."kernel.modules_disabled" = 1;
     users.users = {
       # We rely on the UID in a few places, so better making sure about it.
       ${username} = {
@@ -177,7 +175,38 @@ in
         home.sessionVariables.SSH_AUTH_SOCK = "\${XDG_RUNTIME_DIR:-/run/user/$UID}/yubikey-agent/yubikey-agent.sock";
       };
 
-    boot.initrd.systemd.enable = cfg.impermanence.enable;
+    boot = {
+      # The kernel has built in modules and the image does not add any.
+      kernel.sysctl."kernel.modules_disabled" = 1;
+
+      initrd.systemd.enable = cfg.impermanence.enable;
+
+      specialFileSystems."/dev/shm".options = [ "noexec" ];
+    };
+
+    # The daemon serves only these two. `*` is the upstream default.
+    nix.settings.allowed-users = [
+      "root"
+      username
+    ];
+
+    fileSystems."/var/tmp" = {
+      device = "/var/tmp";
+      fsType = "none";
+      options = [
+        "bind"
+        "nosuid"
+        "nodev"
+        "noexec"
+      ];
+    };
+
+    # New files are private by default. pam_umask applies the UMASK of
+    # login.defs, 077 on NixOS, to every PAM session, the user manager
+    # included. The shell line covers the sessions that skip PAM, such as
+    # the ones vshd opens. fish gets the line through babelfish.
+    security.pam.enableUMask = true;
+    environment.shellInit = "umask 077";
 
     # Impermanence: tmpfs home with preservation
     fileSystems."/home" = lib.mkIf cfg.impermanence.enable {
@@ -187,11 +216,20 @@ in
         "defaults"
         "size=4G"
         "mode=755"
+        # Every setuid file lives in /run/wrappers, and no device node in a
+        # home. The boot check plants both as root and watches the refusal.
+        "nosuid"
+        "nodev"
       ];
     };
 
     preservation = lib.mkIf cfg.impermanence.enable {
       enable = true;
+      # The binds from /persist are the rest of the home. Same flags.
+      preserveAt."/persist".users.${username}.commonMountOptions = [
+        "nosuid"
+        "nodev"
+      ];
     };
 
     # The guest root filesystem retains machine-id. SSH stores its identity

@@ -168,6 +168,16 @@ jobs:
           - runner: ubuntu-24.04-arm
             target: ./base_hosts/crostini#baguette-image
 
+          # Boot the x86_64 Crostini Baguette image in crosvm and probe it.
+          # The check needs KVM, which only the x86_64 runners have.
+          - runner: ubuntu-24.04
+            target: ./base_hosts/crostini#checks.x86_64-linux.baguette-boot
+
+          # The same boot with the termina kernel of ChromeOS, built from
+          # the ChromeOS kernel tree (utils/termina-kernel.nix).
+          - runner: ubuntu-24.04
+            target: ./base_hosts/crostini#checks.x86_64-linux.baguette-boot-termina
+
           # Build the Apple `container` OCI image as a test. The image
           # serves `container run` and `container machine`. The target is
           # aarch64.

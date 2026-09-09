@@ -28,7 +28,13 @@ gh attestation verify baguette_rootfs.img.zst --repo aldur/dotfiles \
 
 `nix flake check` boots the image of the same system in crosvm and probes
 it, with `lib.mkBaguetteTest` of the dotfiles. See `utils/baguette-test.nix`
-there for what it covers, and what it cannot.
+there for what it covers, and what it cannot. `tests/baguette-boot.nix` adds
+the probes of this guest: the kernel refuses a module, `nosuid` and `nodev`
+hold on the home and on the `/persist` binds, and sudo, the agent sandbox
+and a daemon build still work. `baguette-boot-termina` is the same check
+with the kernel that Baguette boots on ChromeOS, built from the ChromeOS
+kernel tree by `utils/termina-kernel.nix` of the dotfiles. CI runs both on
+x86_64 runners.
 
 ```bash
 nix build .#checks.x86_64-linux.baguette-boot -L
