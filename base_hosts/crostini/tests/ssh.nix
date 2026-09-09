@@ -18,19 +18,21 @@ let
       settings.AllowUsers = [ "aldur" ];
     };
     networking.firewall.enable = false;
-    virtualisation.vlans = [
-      1
-      2
-    ];
-    virtualisation.emptyDiskImages = [ 128 ];
-    virtualisation.fileSystems."/persist" = {
-      device = "/dev/vdb";
-      fsType = "ext4";
-      autoFormat = true;
-    };
-    virtualisation.fileSystems."/home" = {
-      device = "tmpfs";
-      fsType = "tmpfs";
+    virtualisation = {
+      vlans = [
+        1
+        2
+      ];
+      emptyDiskImages = [ 128 ];
+      fileSystems."/persist" = {
+        device = "/dev/vdb";
+        fsType = "ext4";
+        autoFormat = true;
+      };
+      fileSystems."/home" = {
+        device = "tmpfs";
+        fsType = "tmpfs";
+      };
     };
     users.users = {
       root.openssh.authorizedKeys.keys = [ snakeOilEd25519PublicKey ];
@@ -89,8 +91,10 @@ pkgs.testers.runNixOSTest {
     import shlex
 
     KEY = "/persist/ssh/ssh_host_ed25519_key"
+    # -n: the test driver runs each command from a shell whose stdin is
+    # /dev/hvc0. An ssh client without -n stalls.
     SSH = (
-        "ssh -F /dev/null -i /root/client-key -o BatchMode=yes "
+        "ssh -n -F /dev/null -i /root/client-key -o BatchMode=yes "
         "-o IdentitiesOnly=yes -o IdentityAgent=none -o ConnectTimeout=3 "
         "-o StrictHostKeyChecking=yes -o UserKnownHostsFile=/root/known_hosts "
     )
