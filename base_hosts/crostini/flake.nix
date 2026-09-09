@@ -70,9 +70,9 @@
 
         # Boots the Baguette image of this system in crosvm and probes it.
         # See utils/baguette-test.nix of the dotfiles.
-        checks.baguette-boot = aldur-dotfiles.lib.mkBaguetteTest {
+        checks.baguette-boot = nixpkgs.legacyPackages.${system}.callPackage ./tests/baguette-boot.nix {
           configuration = generator system baguetteModules;
-          name = "crostini-baguette-boot";
+          inherit (aldur-dotfiles.lib) mkBaguetteTest;
         };
 
         checks.ssh-configurations =
