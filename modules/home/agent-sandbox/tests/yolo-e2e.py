@@ -1,6 +1,7 @@
 """Run module-generated yolo launchers on a disposable, offline host.
 
 The wrappers mode substitutes a recording client to check launch semantics.
+The launchers mode skips native-client selection, avoiding client builds.
 The cli mode drives the flake-pinned clients over a PTY, including Ctrl-G.
 Neither mode reads the caller's home, credentials, configuration or PATH.
 """
@@ -170,6 +171,24 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
         stamp.write_text(stale)
         _, records = invoke(launcher, ['resume'])
         assert len(records) == 2 and stamp.read_text().startswith('fixture-1 '), records
+    for case in config['cases'][3:]:
+        for timestamp in ('', 'not-a-number', '1+2', '+1', '-1', '0x10', '1 2',
+                          '9' * 100, '0000000000', '0000000008', '9999999999',
+                          str(int(time.time()) + 86400),
+                          str(int(time.time()) - 7 * 24 * 3600)):
+            stamp.write_text(f'fixture-1 {timestamp}\n')
+            result, records = invoke(case['launchers']['claude'], ['resume'])
+            assert len(records) == 2, (case, timestamp, result.stderr, records)
+            assert records[0]['argv'][0:2] == ['-p', '/model'], records
+            assert records[1]['argv'] == [FLAGS['claude'], 'resume'], records
+            version, refreshed = stamp.read_text().split()
+            assert version == 'fixture-1' and abs(int(refreshed) - time.time()) < 30, timestamp
+        for age in (0, 7 * 24 * 3600 - 60):
+            stamp.write_text(f'fixture-1 {int(time.time()) - age}\n')
+            previous_stamp = stamp.read_text()
+            _, records = invoke(case['launchers']['claude'], ['resume'])
+            assert len(records) == 1 and stamp.read_text() == previous_stamp, records
+    print('passed: Claude rejects malformed, oversized and future timestamps in both sandbox modes', flush=True)
     previous_stamp = stamp.read_text()
     (WORK / 'fail-refresh').touch()
     result, records = invoke(launcher, ['--refresh', 'resume'])
@@ -177,6 +196,9 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
     assert not stamp.with_name('yolo-refresh.next').exists()
     assert stamp.read_text() == previous_stamp, 'failed refresh replaced the cache stamp'
     print('passed: Claude online mode, model refresh, cached startup and failed-refresh fallback', flush=True)
+
+    if not config['native']:
+        return
 
     # The real Codex launcher must prefer either standalone layout to Nix.
     link(BIN / 'codex', config['native']['codex'])
@@ -328,7 +350,7 @@ def main():
     manifest, mode, *inside = sys.argv[1:]
     config = json.loads(Path(manifest).read_text())
     if inside:
-        (wrappers if mode == 'wrappers' else cli)(config)
+        (cli if mode == 'cli' else wrappers)(config)
         return
     with tempfile.TemporaryDirectory(prefix='agent-yolo-e2e-') as directory:
         fixture = Path(directory)

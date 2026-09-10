@@ -123,7 +123,12 @@ let
         now=$(date +%s)
         if [ "''${argc_refresh:-0}" -eq 0 ] && [ -r "$stamp" ]; then
           read -r last_version last_at < "$stamp" || true
-          [ "$last_version" = "$version" ] && [ $((now - ''${last_at:-0})) -lt "$max_age" ] && return 1
+          # The sandbox can write this stamp. Bound decimal input before Bash
+          # arithmetic (which otherwise interprets expressions), avoiding overflow.
+          if [[ "$last_version" = "$version" && "$last_at" =~ ^[0-9]{1,10}$ ]]; then
+            last_at=$((10#$last_at))
+            (( last_at <= now && now - last_at < max_age )) && return 1
+          fi
         fi
         echo "$version $now" > "$stamp.next"
       }

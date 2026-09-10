@@ -109,34 +109,36 @@ let
 
   # Execute the actual module-generated launchers. The probe agent records
   # their observable contract; the separate CLI check uses the pinned clients.
-  manifest = pkgs.writeText "agent-yolo-cases.json" (
-    builtins.toJSON {
-      cases = lib.zipListsWith (case: home: {
-        inherit (case) sandbox;
-        launchers = lib.mapAttrs (name: _: lib.getExe (findPackage "${name}-yolo" home)) (
-          lib.filterAttrs (_: agent: agent.enabled case) agents
-        );
-      }) cases homes;
-      native = {
-        codex = lib.getExe (findPackage "codex" (builtins.elemAt homes 3));
-        claude = lib.getExe (builtins.elemAt homes 3).programs.claude-code.package;
-      };
-      bash = "${pkgs.bash}/bin/bash";
-      python = "${testPython}/bin/python3";
-      bwrap = lib.getExe pkgs.bubblewrap;
-      dbus = "${pkgs.dbus}/bin/dbus-run-session";
-      dbusConfig = "${pkgs.dbus}/share/dbus-1/session.conf";
-      certificates = "${pkgs.cacert}/etc/ssl/certs";
-      path = lib.makeBinPath [
-        pkgs.bash
-        pkgs.coreutils
-        pkgs.git
-        pkgs.dbus
-      ];
-    }
-  );
+  manifest =
+    mode:
+    pkgs.writeText "agent-yolo-${mode}-cases.json" (
+      builtins.toJSON {
+        cases = lib.zipListsWith (case: home: {
+          inherit (case) sandbox;
+          launchers = lib.mapAttrs (name: _: lib.getExe (findPackage "${name}-yolo" home)) (
+            lib.filterAttrs (_: agent: agent.enabled case) agents
+          );
+        }) cases homes;
+        native = lib.optionalAttrs (mode != "launchers") {
+          codex = lib.getExe (findPackage "codex" (builtins.elemAt homes 3));
+          claude = lib.getExe (builtins.elemAt homes 3).programs.claude-code.package;
+        };
+        bash = "${pkgs.bash}/bin/bash";
+        python = "${testPython}/bin/python3";
+        bwrap = lib.getExe pkgs.bubblewrap;
+        dbus = "${pkgs.dbus}/bin/dbus-run-session";
+        dbusConfig = "${pkgs.dbus}/share/dbus-1/session.conf";
+        certificates = "${pkgs.cacert}/etc/ssl/certs";
+        path = lib.makeBinPath [
+          pkgs.bash
+          pkgs.coreutils
+          pkgs.git
+          pkgs.dbus
+        ];
+      }
+    );
   runTests = mode: ''
-    ${testPython}/bin/python3 ${./yolo-e2e.py} ${manifest} ${mode}
+    ${testPython}/bin/python3 ${./yolo-e2e.py} ${manifest mode} ${mode}
     touch "$out"
   '';
 
@@ -145,6 +147,8 @@ assert lib.assertMsg (lib.all lib.id (
   lib.zipListsWith check cases homes
 )) "agent-sandbox package or -yolo script integration failed";
 runCommand "agent-sandbox-modules" {
-  passthru.transportManifest = manifest;
+  passthru.transportManifest = manifest "wrappers";
+  # Recording-client tests need neither native client nor its build toolchain.
+  passthru.tests.launchers = runCommand "agent-yolo-launchers" { } (runTests "launchers");
   passthru.tests.cli = runCommand "agent-yolo-cli" { } (runTests "cli");
 } (runTests "wrappers")
