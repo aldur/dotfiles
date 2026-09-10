@@ -70,8 +70,24 @@ in
     # the NixOS manual. The man pages stay.
     documentation.doc.enable = false;
     documentation.nixos.enable = false;
-    # Enable Wayland compatibility for Chrome and Electron apps.
-    environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
+    environment = {
+      # Git must also be available to root for flake rebuilds.
+      systemPackages = [ pkgs.git ];
+
+      # Enable Wayland compatibility for Chrome and Electron apps.
+      sessionVariables.NIXOS_OZONE_WL = "1";
+      shellInit = "umask 077";
+    };
+
+    # Prune system generations on switch, keeping the current one and one
+    # rollback, then reclaim store paths no longer reachable from any GC root.
+    system.activationScripts.pruneSystemGenerations = ''
+      if [ "''${NIXOS_ACTION:-}" = switch ]; then
+        ${config.nix.package}/bin/nix-env --profile /nix/var/nix/profiles/system --delete-generations +2 &&
+          ${config.nix.package}/bin/nix-store --gc
+      fi
+    '';
 
     programs = {
       aldur = {
@@ -206,7 +222,6 @@ in
     # included. The shell line covers the sessions that skip PAM, such as
     # the ones vshd opens. fish gets the line through babelfish.
     security.pam.enableUMask = true;
-    environment.shellInit = "umask 077";
 
     # Impermanence: tmpfs home with preservation
     fileSystems."/home" = lib.mkIf cfg.impermanence.enable {
