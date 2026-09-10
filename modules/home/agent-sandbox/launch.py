@@ -14,7 +14,6 @@ import sys
 
 
 DIRECTORIES = (".git",)
-FILES = (".lazygit.yml",)
 INSTRUCTION_FILES = ("AGENTS.md", "CLAUDE.md", "CLAUDE.local.md")
 # The sandbox shares the host state of the agent, in both directions:
 # sessions, settings, hooks, MCP servers and credentials. The host runs
@@ -176,7 +175,7 @@ class Policy:
         return mounts
 
     def metadata(self, writable, readonly):
-        names = tuple(name for name in DIRECTORIES + FILES if name != ".git" or not self.git_write)
+        names = tuple(name for name in DIRECTORIES if name != ".git" or not self.git_write)
         protected = {}
         git_dirs = set()
         hardlinks = {}

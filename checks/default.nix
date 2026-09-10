@@ -60,6 +60,9 @@ in
     inherit (packages) lazyvim-light;
   };
 
+  # The build runs config-loading and hot-reload regression tests.
+  lazygit-config = pkgs.lazygit;
+
   # Fails if the repo's own lua is not stylua-formatted.
   lua-format = pkgs.callPackage ./lua-format.nix { };
 

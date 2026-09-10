@@ -1,0 +1,11 @@
+--- a/pkg/config/app_config.go
++++ b/pkg/config/app_config.go
+@@ -546,5 +546,7 @@
+ func (c *AppConfig) ReloadUserConfigForRepo(repoConfigFiles []*ConfigFile) error {
+-	configFiles := append(c.globalUserConfigFiles, repoConfigFiles...)
++	// Repository config can execute commands. Trust only user configuration
++	// and explicitly selected files (LG_CONFIG_FILE / --use-config-file).
++	configFiles := c.globalUserConfigFiles
+ 	userConfig, err := loadUserConfigWithDefaults(configFiles, true)
+ 	if err != nil {
+ 		return err

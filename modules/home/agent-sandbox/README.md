@@ -73,7 +73,7 @@ processes. Each extra grant and `--git-write` makes the protection weaker.
 ## Protected Git metadata
 
 The agent must not add Git hooks or change Git configuration. The launcher
-mounts `.git` and `.lazygit.yml` read-only:
+mounts `.git` read-only:
 
 - at the root of each writable grant and in each nested repository,
 - in worktrees and submodules, through the `gitdir:` pointer,
@@ -84,6 +84,14 @@ placeholder, so the agent cannot create it. The placeholder is removed when
 the last sandbox that uses it exits.
 
 `--git-write` disables this protection for one launch. `--rw .git` does not.
+
+The shared Lazygit package ignores automatically discovered repository and
+parent-directory configuration (`.lazygit.yml` and `.git/lazygit.yml`). User
+configuration and explicitly selected config files still load and hot-reload.
+This applies to terminal and LazyVim launches, without patching LazyVim.
+The sandbox therefore treats `.lazygit.yml` as an ordinary project file and
+never creates a placeholder for it. Unpatched Lazygit binaries do not have
+this protection. See [the patch](../../../overlays/overrides/lazygit-user-config-only.patch).
 
 The agent can edit all other files, including `CLAUDE.md`, `AGENTS.md`,
 `.mcp.json` and the `.claude` or `.codex` directory of the project. Review

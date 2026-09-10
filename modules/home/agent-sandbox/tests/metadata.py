@@ -58,8 +58,10 @@ import subprocess
 for name in ('.git',):
     denied(lambda: (Path(name) / 'marker').write_text('changed'))
     denied(lambda: Path(name).rename(name + '-moved'))
-denied(lambda: Path('.lazygit.yml').write_text('changed'))
-denied(lambda: Path('.lazygit.yml').unlink())
+# Lazygit ignores local config; the sandbox must not reserve its filename.
+assert not Path('.lazygit.yml').exists()
+Path('.lazygit.yml').write_text('ordinary project file')
+Path('.lazygit.yml').unlink()
 for name in ('.agents', '.codex', '.claude'):
     (Path(name) / 'fixture').write_text('project configuration')
 Path('.mcp.json').write_text('{}')
@@ -146,11 +148,11 @@ denied(lambda: Path({str(repo / '.git/config')!r}).write_text('changed'))
     result = sandbox(empty, "raise AssertionError('must not run')", check=False)
     assert result.returncode != 0 and "crosses a symlink" in result.stderr
     (empty / ".git").unlink()
-    (base / "reference-lazygit.yml").write_text("{}")
-    os.link(base / "reference-lazygit.yml", empty / ".lazygit.yml")
+    (base / "reference-git-pointer").write_text(f"gitdir: {repo / '.git'}\n")
+    os.link(base / "reference-git-pointer", empty / ".git")
     result = sandbox(empty, "raise AssertionError('must not run')", check=False)
     assert result.returncode != 0 and "hard links" in result.stderr
-    (empty / ".lazygit.yml").unlink()
+    (empty / ".git").unlink()
 
     # Missing paths are reserved only while an owner is alive. Parallel launches
     # do not remove each other's placeholders or share private config files.
@@ -164,8 +166,9 @@ while not Path('release').exists():
     first = subprocess.Popen([wrapper, "--workspace", str(empty), "--", sys.executable, "-c", hold], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     try:
         assert first.stdout.readline().strip() == "ready"
-        sandbox(empty, "denied(lambda: Path('.lazygit.yml').write_text('changed'))")
-        assert (empty / ".lazygit.yml").exists()
+        sandbox(empty, "assert not Path('.lazygit.yml').exists(); denied(lambda: (Path('.git') / 'config').write_text('changed'))")
+        assert (empty / ".git").is_dir()
+        assert not (empty / ".lazygit.yml").exists()
         (empty / "release").touch()
         stdout, stderr = first.communicate(timeout=5)
         assert first.returncode == 0, stdout + stderr
@@ -266,7 +269,7 @@ else:
             (preserved / 'release-0').touch()
             processes[0].communicate(timeout=5)
             assert processes[0].returncode == 0
-            assert (preserved / '.lazygit.yml').exists(), 'reservation lost through a bind alias'
+            assert not (preserved / '.lazygit.yml').exists(), 'sandbox created a Lazygit placeholder'
             (preserved / 'release-1').touch()
             processes[1].communicate(timeout=5)
             assert processes[1].returncode == 0
