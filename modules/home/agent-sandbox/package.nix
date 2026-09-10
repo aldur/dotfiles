@@ -108,6 +108,8 @@ let
   '';
 in
 assert !(profiles ? default);
+assert lib.assertMsg (lib.versionAtLeast pkgs.bubblewrap.version "0.12.0")
+  "agent-sandbox requires Bubblewrap >= 0.12.0 (CVE-2026-87766)";
 pkgs.writeArgcApplication {
   name = "agent-sandbox";
   # Paths containing ~/ are literal data; expand_path handles them at launch.
