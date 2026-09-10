@@ -250,7 +250,7 @@ done
   close_extra_fds
   exec "$sandbox_python" -I "$sandbox_launcher" \
     --home "$home_dir" --state-kind "$agent_state_kind" --git-write "$argc_git_write" \
-    "${policy_args[@]}" -- bwrap \
+    "${policy_args[@]}" -- "$sandbox_bwrap" \
     "${filesystem_args[@]}" \
     "${system_mounts[@]}" \
     --sandbox-writable \

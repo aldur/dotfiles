@@ -383,7 +383,10 @@ def main():
         mounts[index:index + 1] = writable_mounts
         index = mounts.index("--sandbox-state")
         mounts[index:index + 1] = state
-        process = subprocess.Popen(mounts + protections + child, pass_fds=(3, *policy.fds))
+        # --clearenv only clears the command's environment, not Bubblewrap's
+        # initial environment exposed by its PID-1 supervisor through /proc.
+        # The command's allowed variables are already supplied via --setenv.
+        process = subprocess.Popen(mounts + protections + child, env={}, pass_fds=(3, *policy.fds))
         result = process.wait()
         return result if result >= 0 else 128 - result
     finally:

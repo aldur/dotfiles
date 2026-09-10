@@ -70,6 +70,7 @@ run([
     "assert not Path('/home/tester/Reference notes/marker').exists(); "
     "assert 'PROFILE_VALUE' not in os.environ; "
     "assert 'HOST_SECRET' not in os.environ; "
+    "assert Path('/proc/1/environ').read_bytes() == b''; "
     "Path('generic-result').write_text('edited')",
     "two words", "--literal",
 ], check=True)

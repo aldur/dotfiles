@@ -10,6 +10,11 @@ def run(*args, **kwargs):
     return subprocess.run(args, check=True, timeout=15, **kwargs)
 
 
+# Bubblewrap itself starts empty, independently of the command's allowlist.
+# Checking os.environ alone would miss its supervisor's initial environment.
+assert Path("/proc/1/comm").read_text().strip() == "bwrap"
+assert Path("/proc/1/environ").read_bytes() == b"", "supervisor inherited an environment"
+
 for name in (
     "HOST_SECRET", "DISPLAY", "WAYLAND_DISPLAY", "XAUTHORITY", "GPG_TTY",
     "SSH_AUTH_SOCK", "SSH_AGENT_PID", "TMUX", "TMUX_PANE",

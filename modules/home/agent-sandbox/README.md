@@ -59,6 +59,8 @@ processes. Each extra grant and `--git-write` makes the protection weaker.
 - **Environment.** Only `PATH`, `EDITOR`, `VISUAL`, terminal, locale, TLS and
   `nix-ld` variables pass, plus the `--env` names and the profile allowlist.
   `HOME`, `TMPDIR`, `XDG_*`, `SHELL` and `GNUPGHOME` point into the sandbox.
+  Bubblewrap itself starts with an empty environment, so its PID-1 supervisor
+  does not expose inherited host variables through `/proc/1/environ`.
 - **Services.** The Nix daemon socket, for builds (`allowNixDaemon`). A
   session bus proxy that reaches only the listed bus names
   (`extraDbusTalk`). Selected sockets from the runtime directory

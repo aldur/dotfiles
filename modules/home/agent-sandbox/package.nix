@@ -84,6 +84,7 @@ let
     sandbox_shell=${lib.escapeShellArg "${pkgs.bash}/bin/bash"}
     sandbox_env=${lib.escapeShellArg "${pkgs.coreutils}/bin/env"}
     sandbox_python=${lib.escapeShellArg "${pkgs.python3}/bin/python3"}
+    sandbox_bwrap=${lib.escapeShellArg "${pkgs.bubblewrap}/bin/bwrap"}
     sandbox_launcher=${./launch.py}
     seccomp_filter=${lib.escapeShellArg "${seccompFilter}"}
 
