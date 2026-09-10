@@ -12,7 +12,6 @@
     settings = {
       AllowUsers = lib.mkForce [ "root" ];
       AllowTcpForwarding = false;
-      AllowAgentForwarding = false;
       X11Forwarding = false;
       PermitRootLogin = lib.mkForce "prohibit-password";
       AuthenticationMethods = "publickey";
