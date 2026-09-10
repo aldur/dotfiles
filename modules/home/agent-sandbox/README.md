@@ -113,6 +113,15 @@ state stays read-only.
 the startup writes reach the host. When the file is missing, the launcher
 creates it before the first launch.
 
+Host-side Claude settings, workspace-trust and refresh-stamp updates use
+[checked file descriptors](../claude-state.py). Symlinks below the host home,
+multiply-linked files, special files, wrong owners and group/other-writable
+state are rejected. Unsafe state stops the operation without following it.
+These writes preserve bind-mounted inodes and are not crash-atomic. JSON is
+transformed before writing, and refresh stamps are written only after a
+successful fetch. No `settings.json.tmp` or `yolo-refresh.next` is created.
+This does not make shared hooks or other executable configuration trusted.
+
 ## Direnv
 
 Direnv approvals and caches live in the sandbox home. The launcher refuses

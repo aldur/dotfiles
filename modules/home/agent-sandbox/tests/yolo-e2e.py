@@ -380,6 +380,7 @@ def main():
                    '--tmpfs', '/', '--ro-bind', '/nix/store', '/nix/store',
                    '--dev', '/dev', '--proc', '/proc', '--tmpfs', '/tmp',
                    '--bind', str(home), str(HOME), '--ro-bind', str(passwd), '/etc/passwd',
+                   '--bind', str(home / '.claude.json'), str(HOME / '.claude.json'),
                    '--ro-bind', config['certificates'], '/etc/static/ssl/certs',
                    '--symlink', '/etc/static/ssl/certs/ca-bundle.crt', '/etc/ssl/certs/ca-certificates.crt',
                    '--symlink', config['bash'], '/bin/bash', '--symlink', config['bash'], '/bin/sh',

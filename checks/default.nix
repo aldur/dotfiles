@@ -62,6 +62,7 @@ in
 
   # The build runs config-loading and hot-reload regression tests.
   lazygit-config = pkgs.lazygit;
+  claude-state = pkgs.callPackage ../modules/home/tests/claude-state.nix { };
 
   # Fails if the repo's own lua is not stylua-formatted.
   lua-format = pkgs.callPackage ./lua-format.nix { };

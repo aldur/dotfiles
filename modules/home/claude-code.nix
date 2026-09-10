@@ -38,54 +38,39 @@ let
     | if $merged == {} then del(.hooks) else .hooks = $merged end
   '';
 
+  claudeState = "${pkgs.python3}/bin/python3 -I ${./claude-state.py} --home \"$HOME\"";
+
   # Helper: merge a Nix-generated JSON file into an existing file at activation.
   # Existing keys are preserved; Nix-managed keys take precedence on conflict.
-  # We use `cat f.tmp > f` instead of `mv f.tmp f` so that this plays nicely
-  # with persistance.
+  # Checked descriptor-based writes preserve persistence bind mounts.
   #
-  # Branch on DRY_RUN instead of prefixing with the deprecated $DRY_RUN_CMD:
-  # the redirections would still run under `home-manager switch -n` and
-  # truncate the live target with the echoed command text.
+  # A dry run must never invoke the writing helper.
   mergeJsonActivation = name: target: source: ''
     if [[ -v DRY_RUN ]]; then
-      echo "Would merge ${name} from ${source} into ${target}"
-    elif [ -s "${target}" ]; then
-      ${lib.getExe pkgs.jq} \
+      echo "Would merge ${name} from ${source} into $HOME/${target}"
+    else
+      ${claudeState} update ${lib.escapeShellArg target} ${lib.getExe pkgs.jq} \
         --argjson managed ${lib.escapeShellArg (builtins.toJSON nixManagedHookMarkers)} \
         -s ${lib.escapeShellArg hooksAwareMerge} \
-        "${target}" ${source} > "${target}.tmp"
-      cat "${target}.tmp" > "${target}"
-      rm -f "${target}.tmp"
-      chmod 600 "${target}"
-    else
-      # Write through, no replace: with impermanence, the target is a
-      # bind mount, empty on the first boot. A replace fails on it.
-      mkdir -p "$(dirname "${target}")"
-      cat ${source} > "${target}"
-      chmod 600 "${target}"
+        - ${source}
     fi
   '';
 
   claude-statusline = pkgs.callPackage ../../packages/claude-statusline { };
 
   # Pre-accept the workspace trust dialog so trust-gated features
-  # (e.g. statusLine) render under `claude-yolo`. Uses cat-to-overwrite so the
+  # (e.g. statusLine) render under `claude-yolo`. Uses checked writes so the
   # underlying inode is preserved (impermanence bind-mounts ~/.claude.json).
   claude-trust-cwd = pkgs.writeShellScript "claude-trust-cwd" ''
     set -euo pipefail
-    config="$HOME/.claude.json"
-    [ -s "$config" ] || exit 0
-    tmp=$(mktemp)
-    trap 'rm -f "$tmp"' EXIT
     workspace=''${1:-$PWD}
     case "$workspace" in
       '~') workspace=$HOME ;;
       '~/'*) workspace="$HOME/''${workspace:2}" ;;
     esac
     workspace=$(realpath -ms -- "$workspace")
-    ${lib.getExe pkgs.jq} --arg cwd "$workspace" \
-      '.projects[$cwd].hasTrustDialogAccepted = true' "$config" > "$tmp"
-    cat "$tmp" > "$config"
+    ${claudeState} --skip-empty update .claude.json ${lib.getExe pkgs.jq} --arg cwd "$workspace" \
+      '.projects[$cwd].hasTrustDialogAccepted = true'
   '';
 
   needsPathPrefix =
@@ -101,7 +86,7 @@ let
   # short run without the variable when the claude version changed or
   # the last refresh is older than a week. `claude -p /model` does the
   # startup fetch and exits with no inference call, in about a second.
-  # A failed refresh never blocks the launch.
+  # A failed model fetch never blocks the launch; unsafe state fails closed.
   claude-yolo = import ./yolo-script.nix { inherit pkgs lib config; } {
     agent = "claude";
     describe = "Run claude in the sandbox, with no permission prompts and no nonessential traffic";
@@ -113,16 +98,17 @@ let
     runtimeInputs = [ pkgs.coreutils ];
     text = ''
       ${lib.optionalString needsPathPrefix ''export PATH="$HOME/.local/bin:$PATH"''}
-      stamp="$HOME/.claude/yolo-refresh"
+      refresh_stamp=""
       max_age=$((7 * 24 * 3600))
 
       refresh_due() {
-        local version now last_version="" last_at=""
+        local version now stamp_data last_version="" last_at=""
         version=$(claude --version 2>/dev/null | cut -d' ' -f1) || return 1
         [ -n "$version" ] || return 1
         now=$(date +%s)
-        if [ "''${argc_refresh:-0}" -eq 0 ] && [ -r "$stamp" ]; then
-          read -r last_version last_at < "$stamp" || true
+        if [ "''${argc_refresh:-0}" -eq 0 ]; then
+          stamp_data=$(${claudeState} read .claude/yolo-refresh) || exit 1
+          read -r last_version last_at <<< "$stamp_data" || true
           # The sandbox can write this stamp. Bound decimal input before Bash
           # arithmetic (which otherwise interprets expressions), avoiding overflow.
           if [[ "$last_version" = "$version" && "$last_at" =~ ^[0-9]{1,10}$ ]]; then
@@ -130,7 +116,7 @@ let
             (( last_at <= now && now - last_at < max_age )) && return 1
           fi
         fi
-        echo "$version $now" > "$stamp.next"
+        refresh_stamp="$version $now"
       }
 
       # The refresh skips project hooks and MCP servers: it only needs the
@@ -140,9 +126,8 @@ let
         if env -u CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC -u DISABLE_TELEMETRY \
           DISABLE_AUTOUPDATER=1 timeout 15 "''${sandbox[@]}" claude \
           -p /model --strict-mcp-config --settings '{"disableAllHooks":true}' >/dev/null 2>&1; then
-          mv "$stamp.next" "$stamp"
+          printf '%s\n' "$refresh_stamp" | ${claudeState} write .claude/yolo-refresh
         else
-          rm -f "$stamp.next"
           echo "claude-yolo: model list refresh failed, using the cached list" >&2
         fi
       fi
@@ -247,9 +232,8 @@ in
       # so MCP servers must be configured via ~/.claude.json directly.
       activation.claudeSettings = lib.mkIf enabled (
         lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          $DRY_RUN_CMD mkdir -p "$HOME/.claude"
-          ${mergeJsonActivation "settings" "$HOME/.claude/settings.json" claudeSettings}
-          ${mergeJsonActivation "mcp" "$HOME/.claude.json" claudeMcpConfig}
+          ${mergeJsonActivation "settings" ".claude/settings.json" claudeSettings}
+          ${mergeJsonActivation "mcp" ".claude.json" claudeMcpConfig}
         ''
       );
 
