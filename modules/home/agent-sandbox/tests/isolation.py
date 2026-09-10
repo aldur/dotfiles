@@ -20,6 +20,8 @@ for name in (
 assert os.environ["EXPLICIT_VALUE"] == "two words; $(false)\nsecond line"
 assert os.environ["PROFILE_VALUE"] == "profile value"
 assert os.environ["TERM"] == "xterm-256color"
+assert os.environ["EDITOR"] == "nvim"
+assert os.environ["VISUAL"] == "nvim -f"
 assert os.environ["TMPDIR"] == "/tmp"
 
 for name in (

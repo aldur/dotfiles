@@ -48,9 +48,9 @@ processes. Each extra grant and `--git-write` makes the protection weaker.
   hosts, DNS, TLS, Nix), and the Git, fish and direnv configuration.
 - **Writable.** The workspace, the `--rw` grants and the agent state. These
   are the real host directories. Changes stay after the sandbox exits.
-- **Environment.** Only `PATH`, terminal, locale, TLS and `nix-ld` variables
-  pass, plus the `--env` names and the profile allowlist. `HOME`, `TMPDIR`,
-  `XDG_*`, `SHELL` and `GNUPGHOME` point into the sandbox.
+- **Environment.** Only `PATH`, `EDITOR`, `VISUAL`, terminal, locale, TLS and
+  `nix-ld` variables pass, plus the `--env` names and the profile allowlist.
+  `HOME`, `TMPDIR`, `XDG_*`, `SHELL` and `GNUPGHOME` point into the sandbox.
 - **Services.** The Nix daemon socket, for builds (`allowNixDaemon`). A
   session bus proxy that reaches only the listed bus names
   (`extraDbusTalk`). Selected sockets from the runtime directory
@@ -115,12 +115,62 @@ and Git metadata protection in [launch.py](launch.py).
 ## Tests
 
 ```sh
-nix build --no-link path:.#checks.x86_64-linux.agent-sandbox path:.#checks.x86_64-linux.agent-sandbox-modules
+nix build --no-link -L \
+  path:.#checks.x86_64-linux.agent-sandbox \
+  path:.#checks.x86_64-linux.agent-sandbox-transport \
+  path:.#checks.x86_64-linux.agent-sandbox-modules \
+  path:.#checks.x86_64-linux.agent-yolo-cli
 ```
 
-The first check builds a fake host in `bubblewrap`, with and without a
-`/persist` path, and runs the sandbox inside it. It covers the mounts, the
-environment, open files, seccomp, the bus proxy, Git metadata protection,
-shared agent state and direnv. The second check verifies the
-`-yolo` aliases. [cli-smoke.py](tests/cli-smoke.py) runs the installed
-agents offline in the sandbox with dummy credentials.
+All four checks run in CI on Linux (replace `x86_64-linux` with
+`aarch64-linux` on ARM). Each uses a disposable synthetic host.
+
+- `agent-sandbox` covers mounts, environment, open files, seccomp, the bus
+  proxy, Git metadata protection, shared agent state and direnv, with and
+  without `/persist`.
+- `agent-sandbox-transport` runs the pinned Codex and Claude clients through
+  the actual module-generated YOLO launchers and requires completed model
+  turns with the expected text. A local HTTPS server returns fixed Responses
+  and Messages event streams. It covers plain CA files and NixOS
+  `/etc/static` symlinks, checks a control outside the agent
+  sandbox, and requires rejection of an untrusted CA and a wrong hostname.
+  Certificate failures must produce a TLS rejection alert (Codex) or an explicit
+  certificate error (Claude), with no HTTP request reaching the server. A timeout
+  cannot pass the test. It uses a generated CA, a temporary home and a private
+  network namespace, so it needs no account or public network access.
+- `agent-sandbox-modules` evaluates the agent enable/disable combinations
+  and executes the generated `codex-yolo` and `claude-yolo` scripts against
+  a recording client. It checks argument boundaries, editor variables,
+  exit status, actual sandbox selection, `--no-sandbox`, Claude trust and
+  refresh modes, and both Codex standalone installation layouts.
+- `agent-yolo-cli` runs the flake-pinned Codex and Claude clients through
+  those same generated launchers in real PTYs. It types a draft, opens an
+  external editor with Ctrl-G, verifies the draft reaches the editor and
+  the edited text returns to the composer, then exits and checks terminal
+  restoration. It covers `EDITOR` fallback and `VISUAL` precedence.
+
+The wrapper and CLI checks use [yolo-e2e.py](tests/yolo-e2e.py), dummy
+configuration and credentials, a cleared host environment and a network
+namespace with no external access. They make no model calls. PTY failures
+include the rendered terminal screen and every interaction has a deadline.
+These checks cover local launch and editing behavior; authenticated model
+responses and remote services need separate online testing.
+
+[cli-smoke.py](tests/cli-smoke.py) remains an optional check of locally
+installed native clients' version, help, authentication status and Codex
+app-server startup. It does not replace the required launcher/PTY checks.
+
+After updating the standalone clients, run the transport check against them:
+
+```sh
+nix build path:.#checks.x86_64-linux.agent-sandbox-transport.runner -o /tmp/agent-transport-runner
+/tmp/agent-transport-runner/bin/agent-sandbox-transport-test \
+  --codex ~/.local/bin/codex --claude ~/.local/bin/claude
+```
+
+Use `--agent codex` or `--agent claude` to select one client. Omitted binary
+overrides use the flake-pinned installation.
+
+The transport fixture tests HTTPS Responses and Messages requests. It does
+not certify live account authentication, WebSocket transport, or third-party
+MCP services.

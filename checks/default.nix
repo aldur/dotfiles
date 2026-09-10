@@ -19,6 +19,9 @@
 
 let
   inherit (pkgs.stdenv.hostPlatform) system;
+  agentSandboxModules = pkgs.callPackage ../modules/home/agent-sandbox/tests/modules.nix {
+    inherit self inputs system;
+  };
 in
 
 {
@@ -67,9 +70,11 @@ in
   crostini-piv = pkgs.callPackage ../base_hosts/crostini/tests/piv.nix { };
 
   agent-sandbox = pkgs.callPackage ../modules/home/agent-sandbox/tests { };
-  agent-sandbox-modules = pkgs.callPackage ../modules/home/agent-sandbox/tests/modules.nix {
-    inherit self inputs system;
+  agent-sandbox-transport = pkgs.callPackage ../modules/home/agent-sandbox/tests/transport.nix {
+    manifest = agentSandboxModules.transportManifest;
   };
+  agent-sandbox-modules = agentSandboxModules;
+  agent-yolo-cli = agentSandboxModules.tests.cli;
 
   # Budgets and forbidden-path guards for every derivation the flake
   # exports, discovered rather than enumerated so nothing is forgotten

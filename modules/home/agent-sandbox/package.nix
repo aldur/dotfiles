@@ -62,6 +62,8 @@ let
     "/etc/protocols"
     "/etc/localtime"
     "/etc/ssl/certs"
+    # NixOS certificate entries point here before reaching /nix/store.
+    "/etc/static/ssl/certs"
     "/etc/nix/nix.conf"
     "/etc/nix/registry.json"
     "/etc/direnv"

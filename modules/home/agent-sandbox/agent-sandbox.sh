@@ -193,11 +193,11 @@ filesystem_args=(
   --symlink "$sandbox_env" /usr/bin/env
 )
 
-# Inherit only the tools, terminal and locale settings needed for ordinary
+# Inherit only the tools, editor, terminal and locale settings needed for ordinary
 # command execution. Secrets, desktop endpoints and language/shell injection
 # settings require an explicit --env NAME or a profile grant.
 environment_allowlist=(
-  PATH TERM COLORTERM TERMINFO TERMINFO_DIRS LANG LANGUAGE
+  PATH EDITOR VISUAL TERM COLORTERM TERMINFO TERMINFO_DIRS LANG LANGUAGE
   LC_ALL LC_ADDRESS LC_COLLATE LC_CTYPE LC_IDENTIFICATION LC_MEASUREMENT
   LC_MESSAGES LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE LC_TIME TZ
   LOCALE_ARCHIVE NIX_LD NIX_LD_LIBRARY_PATH NIX_SSL_CERT_FILE

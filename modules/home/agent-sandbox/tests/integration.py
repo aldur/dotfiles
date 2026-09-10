@@ -32,6 +32,7 @@ os.environ.update(
     NODE_OPTIONS="--trace-warnings", OPENAI_API_KEY="fixture-openai",
     ANTHROPIC_API_KEY="fixture-anthropic", PROFILE_VALUE="profile value",
     EXPLICIT_VALUE="two words; $(false)\nsecond line", TERM="xterm-256color",
+    EDITOR="nvim", VISUAL="nvim -f",
 )
 
 runtime = Path(os.environ["XDG_RUNTIME_DIR"])
@@ -73,6 +74,16 @@ run([
     "two words", "--literal",
 ], check=True)
 assert Path('/home/tester/Work/generic-result').read_text() == 'edited'
+
+# NixOS CA bundles use an intermediate /etc/static path. TLS clients must
+# be able to load both conventional names without exposing the rest of it.
+run([
+    wrapper, "--", sys.executable, "-c",
+    "from pathlib import Path; import ssl; "
+    "assert not Path('/etc/static/unrelated-secret').exists(); "
+    "assert all(ssl.create_default_context(cafile='/etc/ssl/certs/' + name).get_ca_certs() "
+    "for name in ('ca-bundle.crt', 'ca-certificates.crt'))",
+], check=True)
 
 for args in [[], ["--"], ["--profile", "codex"], ["--profile", "missing", "--", "true"]]:
     result = run([wrapper, *args], capture_output=True)

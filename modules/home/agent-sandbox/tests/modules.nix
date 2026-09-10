@@ -1,11 +1,13 @@
 {
   lib,
+  pkgs,
   runCommand,
   self,
   inputs,
   system,
 }:
 let
+  testPython = pkgs.python3.withPackages (ps: [ ps.pyte ]);
   evaluate =
     extra:
     let
@@ -64,11 +66,9 @@ let
   agents = {
     codex = {
       enabled = case: case.codex;
-      launch = "codex --dangerously-bypass-approvals-and-sandbox";
     };
     claude = {
       enabled = case: case.claude;
-      launch = "claude --dangerously-skip-permissions";
     };
   };
 
@@ -107,40 +107,44 @@ let
       && !(home.home.shellAliases ? "${name}-yolo")
     ) (lib.attrNames agents);
 
-  # Build-time: the sandbox prefix is only visible in the built script.
-  scriptChecks = lib.concatStrings (
-    lib.zipListsWith (
-      case: home:
-      lib.concatStrings (
-        lib.mapAttrsToList (
-          name: agent:
-          lib.optionalString (agent.enabled case) (
-            let
-              script = lib.getExe (findPackage "${name}-yolo" home);
-              prefix = lib.getExe home.programs.agent-sandbox.package;
-              launch = ''exec "''${sandbox[@]}" ${agent.launch} "$@"'';
-              wrap = "sandbox=(${prefix} --profile ${name} --)";
-            in
-            ''
-              grep -Fxq ${lib.escapeShellArg launch} ${script}
-              ${lib.optionalString (!case.sandbox) "! "}grep -Fq ${lib.escapeShellArg wrap} ${script}
-              grep -Fq -- '--no-sandbox' ${script}
-            ''
-          )
-        ) agents
-      )
-    ) cases homes
+  # Execute the actual module-generated launchers. The probe agent records
+  # their observable contract; the separate CLI check uses the pinned clients.
+  manifest = pkgs.writeText "agent-yolo-cases.json" (
+    builtins.toJSON {
+      cases = lib.zipListsWith (case: home: {
+        inherit (case) sandbox;
+        launchers = lib.mapAttrs (name: _: lib.getExe (findPackage "${name}-yolo" home)) (
+          lib.filterAttrs (_: agent: agent.enabled case) agents
+        );
+      }) cases homes;
+      native = {
+        codex = lib.getExe (findPackage "codex" (builtins.elemAt homes 3));
+        claude = lib.getExe (builtins.elemAt homes 3).programs.claude-code.package;
+      };
+      bash = "${pkgs.bash}/bin/bash";
+      python = "${testPython}/bin/python3";
+      bwrap = lib.getExe pkgs.bubblewrap;
+      dbus = "${pkgs.dbus}/bin/dbus-run-session";
+      dbusConfig = "${pkgs.dbus}/share/dbus-1/session.conf";
+      certificates = "${pkgs.cacert}/etc/ssl/certs";
+      path = lib.makeBinPath [
+        pkgs.bash
+        pkgs.coreutils
+        pkgs.git
+        pkgs.dbus
+      ];
+    }
   );
+  runTests = mode: ''
+    ${testPython}/bin/python3 ${./yolo-e2e.py} ${manifest} ${mode}
+    touch "$out"
+  '';
+
 in
 assert lib.assertMsg (lib.all lib.id (
   lib.zipListsWith check cases homes
 )) "agent-sandbox package or -yolo script integration failed";
-runCommand "agent-sandbox-modules" { } ''
-  ${scriptChecks}
-  cat > $out <<EOF
-  One shared command is installed with no agents, either agent, or both agents.
-  The -yolo script of each enabled agent supplies its profile, command and
-  flags, and accepts --no-sandbox. Disabling sandbox wrapping retains direct
-  agent commands.
-  EOF
-''
+runCommand "agent-sandbox-modules" {
+  passthru.transportManifest = manifest;
+  passthru.tests.cli = runCommand "agent-yolo-cli" { } (runTests "cli");
+} (runTests "wrappers")

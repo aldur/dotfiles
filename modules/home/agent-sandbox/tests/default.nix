@@ -175,6 +175,10 @@ pkgs.runCommand "agent-sandbox-test"
         --ro-bind "$fixture/home/Unrelated/secret" /nix/var/nix/unrelated-secret
         --ro-bind "$fixture/passwd" /etc/passwd
         --ro-bind "$fixture/home/Unrelated/secret" /etc/unrelated-secret
+        --ro-bind "$fixture/home/Unrelated/secret" /etc/static/unrelated-secret
+        --ro-bind ${pkgs.cacert}/etc/ssl/certs /etc/static/ssl/certs
+        --symlink /etc/static/ssl/certs/ca-bundle.crt /etc/ssl/certs/ca-bundle.crt
+        --symlink /etc/static/ssl/certs/ca-bundle.crt /etc/ssl/certs/ca-certificates.crt
         --ro-bind "$fixture/home/Unrelated" /var/lib/unrelated
         --dev /dev
         --ro-bind "$fixture/home/Unrelated/secret" /dev/host-device
