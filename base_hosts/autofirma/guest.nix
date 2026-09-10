@@ -11,15 +11,18 @@ let
 
   upstream = inputs.autofirma-nix.packages.${system}.autofirma;
 
-  # You'll need to change this if Maven in nixpkgs changes.
-  mavenHashes = {
+  mavenStdenv = import ./locked-maven.nix {
+    inherit lib pkgs;
+    upstreamInputs = inputs.autofirma-nix.inputs;
+  };
+  mavenDependencies = {
+    stdenv = mavenStdenv;
     jmulticard = upstream.clienteafirma.dependencies.jmulticard.override {
-      maven-dependencies-hash = "sha256-xqzFxC+AT5NEEnTxKbNckwTBllMo0Glluuz5GtJLfgg=";
+      stdenv = mavenStdenv;
     };
     clienteafirma-external = upstream.clienteafirma.dependencies.clienteafirma-external.override {
-      maven-dependencies-hash = "sha256-JxbIpnHG0PEzEw3xEbZhxEoDOBGrVvawoFXpajgLmOw=";
+      stdenv = mavenStdenv;
     };
-    maven-dependencies-hash = "sha256-5nnqmv8v4QlTlyuckb4x/rWJoSu5b3SyeIiOlxSOvXU=";
   };
 
   # A size trim, like the "Size" section below. buildFHSEnv puts the full
@@ -73,7 +76,7 @@ let
   };
 
   autofirma = upstream.override (
-    mavenHashes
+    mavenDependencies
     // {
       inherit jre;
       buildFHSEnv = buildFHSEnvSmallLocales;

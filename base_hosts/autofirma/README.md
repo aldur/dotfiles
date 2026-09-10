@@ -143,14 +143,38 @@ have no standalone build. Windows reach the host through a virtio-gpu
 cross-domain context; the crosvm of nixpkgs does not serve that context, so
 the test asserts that sommelier runs, not that a window appears.
 
+## Maven dependencies
+
+`maven-lock.json` pins each downloaded JAR and POM by its versioned Maven
+Central URL and SHA-256 hash. The repository metadata needed to resolve
+plugins and transitive version ranges is stored in the lock as well.
+`locked-maven.nix` replaces the three upstream dependency fetchers with
+these repositories; AutoFirma and its supporting libraries compile offline.
+New releases or changes to Central's metadata cannot change a build's
+dependency selection.
+
+Refresh the lock deliberately when changing Maven or the upstream source
+revisions. Build the three dependency repositories with the unmodified
+`autofirma-nix` fetchers and the intended nixpkgs/Maven version, then run:
+
+```bash
+python3 update-maven-lock.py --upstream /path/to/autofirma-nix \
+  --maven-version 3.9.12 \
+  /nix/store/...-jmulticard-dependencies \
+  /nix/store/...-clienteafirma-external-dependencies \
+  /nix/store/...-autofirma-dependencies
+```
+
+Review the artifact/version changes and rebuild `.#autofirma-vm`. The
+generator excludes Maven's SHA-1 sidecars because Nix verifies SHA-256,
+and rejects snapshots and inconsistent metadata between repositories.
+
 ## Notes
 
 - There is no shared folder. The nixpkgs QEMU on macOS has no 9p. Use
   `--file` for files into the guest, or SSH with `cat` (see above).
 - The QEMU guest closure is 4.2 GiB. See the "Size" sections of `guest.nix`
   and `desktop.nix`. Firefox, XFCE, and the LLVM of mesa stay large.
-- The Maven dependency hashes in `guest.nix` differ from the upstream ones.
-  The comment there says how to refresh them.
 
 [0]: https://firmaelectronica.gob.es/Home/Descargas.html
 [1]: https://github.com/nix-community/autofirma-nix
