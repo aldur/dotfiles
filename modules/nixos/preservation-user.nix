@@ -14,7 +14,8 @@ let
     paths.base
     ++ lib.optionals cfg.persistLazyvim paths.lazyvim
     ++ lib.optionals cfg.persistLlm paths.llm
-    ++ lib.optionals cfg.persistClaudeCode paths.claudeDirectories;
+    ++ lib.optionals cfg.persistClaudeCode paths.claudeDirectories
+    ++ lib.optionals cfg.persistCodex paths.codexDirectories;
 
   # Each entry is either "rel/path[/]" or { directory = "rel/path"; ... }.
   toRelPath = entry: lib.removeSuffix "/" (entry.directory or entry);
@@ -48,6 +49,12 @@ in
       description = "Persist Claude Code state (.claude, .claude.json).";
     };
 
+    persistCodex = lib.mkOption {
+      type = lib.types.bool;
+      default = config.programs.aldur.codex.enable or false;
+      description = "Persist Codex state and credentials (.codex).";
+    };
+
     persistLazyvim = lib.mkOption {
       type = lib.types.bool;
       default = config.programs.aldur.lazyvim.enable or false;
@@ -71,7 +78,8 @@ in
         paths.base
         ++ lib.optionals cfg.persistLazyvim paths.lazyvim
         ++ lib.optionals cfg.persistLlm paths.llm
-        ++ lib.optionals cfg.persistClaudeCode paths.claudeDirectories;
+        ++ lib.optionals cfg.persistClaudeCode paths.claudeDirectories
+        ++ lib.optionals cfg.persistCodex paths.codexDirectories;
       files = lib.optionals cfg.persistClaudeCode paths.claudeFiles;
     };
 

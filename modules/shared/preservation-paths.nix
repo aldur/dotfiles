@@ -27,6 +27,13 @@
 
   claudeFiles = [ ".claude.json" ];
 
+  codexDirectories = [
+    {
+      directory = ".codex";
+      mode = "0700";
+    }
+  ];
+
   # tmpfiles entries for parent directories under /home/<user> are
   # derived from the persisted-paths list in preservation-user.nix.
   # No need to enumerate them here.

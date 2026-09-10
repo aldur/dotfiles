@@ -56,9 +56,10 @@ mkBaguetteSmokeTest {
     echo "PROBE sysctl $(systemctl is-active systemd-sysctl.service) modules_disabled=$(sysctl -n kernel.modules_disabled 2>/dev/null || echo absent)"
     echo "PROBE lockdown $(cat /sys/kernel/security/lockdown 2>/dev/null || echo absent)"
     echo "PROBE insmod $(insmod $probe/module 2>&1 || true)"
-    for target in / /home /nix/store /home/$user/Work /home/$user/.claude /dev/shm /var/tmp; do
+    for target in / /home /nix/store /home/$user/Work /home/$user/.claude /home/$user/.codex /dev/shm /var/tmp; do
       echo "PROBE mount $target $(findmnt -n -o OPTIONS $target)"
     done
+    echo "PROBE codex-mode $(stat -c %a /home/$user/.codex)"
 
     # nosuid and nodev on the root, the home tmpfs and a bind from
     # /persist. Root plants a setuid copy of id and a device node in each.
@@ -175,6 +176,8 @@ mkBaguetteSmokeTest {
       "mount /home .*nosuid.*nodev"
       "mount /home/${mainUser}/Work .*nosuid.*nodev"
       "mount /home/${mainUser}/.claude .*nosuid.*nodev"
+      "mount /home/${mainUser}/.codex .*nosuid.*nodev"
+      "codex-mode 700$"
       "mount /dev/shm .*noexec"
       "mount /var/tmp .*noexec"
       "setuid /home/${mainUser} uid=1000$"
