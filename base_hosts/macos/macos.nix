@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
   nixpkgs.hostPlatform = "aarch64-darwin";
 
@@ -38,7 +38,7 @@
     casks = [ ];
   };
 
-  home-manager.users.aldur = _: {
+  home-manager.users.${config.mainUser} = _: {
     # SSH agent backed by a YubiKey (launchd agent listening on
     # /tmp/yubikey-agent.sock). Shells pick up SSH_AUTH_SOCK from it unless
     # an agent is forwarded in over SSH.

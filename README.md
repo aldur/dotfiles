@@ -59,6 +59,20 @@ See [the README](base_hosts/qemu/README.md) for more information.
 nix run "github:aldur/dotfiles#qemu-vm"
 ```
 
+### `macos-vm`
+
+Create and run a persistent macOS VM on Apple Silicon using Tart and Apple's
+Virtualization framework:
+
+```bash
+nix run "github:aldur/dotfiles#macos-vm"
+```
+
+The first run boots a prepared macOS image headlessly, installs Nix, and applies
+this repository's nix-darwin and Home Manager configuration unattended.
+See [the macOS VM README](packages/macos-vm/README.md) for resource options,
+SSH access, and the end-to-end test.
+
 ### Everything else
 
 Use `nix flake show github:aldur/dotfiles` for a full list. Some of my

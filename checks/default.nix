@@ -60,6 +60,9 @@ in
   lua-format = pkgs.callPackage ./lua-format.nix { };
 
 }
+// pkgs.lib.optionalAttrs (pkgs.stdenv.hostPlatform.system == "aarch64-darwin") {
+  macos-vm = import ../packages/macos-vm/tests { inherit pkgs; };
+}
 // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
   agent-sandbox = pkgs.callPackage ../modules/home/agent-sandbox/tests { };
   agent-sandbox-modules = pkgs.callPackage ../modules/home/agent-sandbox/tests/modules.nix {

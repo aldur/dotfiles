@@ -6,6 +6,11 @@
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    macos-vm = {
+      url = "path:./packages/macos-vm";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-darwin.follows = "nixpkgs-darwin";
+    };
 
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -89,6 +94,8 @@
           pkgsArgs = {
             inherit system;
             overlays = import ./overlays { inherit self; };
+            # The macOS VM backend is distributed under the FSL.
+            config.allowUnfreePredicate = pkg: nixpkgs.lib.getName pkg == "tart";
           };
 
           pkgsBase = if nixpkgs.lib.hasSuffix "-darwin" system then nixpkgs-darwin else nixpkgs;
@@ -137,6 +144,9 @@
           // pkgs.lib.optionalAttrs (pkgs.stdenv.hostPlatform.isDarwin && pkgs.stdenv.hostPlatform.isAarch64) {
             inherit (pkgs) llm-mlx;
             mlx = pkgs.python3.pkgs.mlx;
+            macos-vm = pkgs.callPackage ./packages/macos-vm/macos-vm.nix {
+              inherit inputs;
+            };
           }
           // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
             inherit (pkgs) faraday;
@@ -197,6 +207,18 @@
           };
         }
         // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
+          apps.macos-vm-e2e = {
+            type = "app";
+            program = "${pkgs.writeShellApplication {
+              name = "macos-vm-e2e";
+              runtimeInputs = [ pkgs.python3 ];
+              text = ''
+                exec python3 ${./packages/macos-vm/tests/e2e.py} \
+                  --launcher ${packages.macos-vm}/bin/macos-vm \
+                  --dir "$HOME/.local/share/macos-vm-e2e" "$@"
+              '';
+            }}/bin/macos-vm-e2e";
+          };
           # Boots a live guest through the qemu-vm launcher and probes its
           # sandbox. Not a check: it needs the hypervisor, sandbox-exec and
           # the network. See packages/qemu-vm/sandbox-check.

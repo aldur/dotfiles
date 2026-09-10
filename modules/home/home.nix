@@ -90,6 +90,7 @@ in
     ./nix_search.nix
     ./secrets.nix
     ./qemu-vm.nix
+    ./macos-vm.nix
   ];
 
   home = {
