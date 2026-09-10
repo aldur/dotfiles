@@ -139,7 +139,7 @@
             mlx = pkgs.python3.pkgs.mlx;
           }
           // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-            inherit (pkgs) faraday usrbin termina-kernel;
+            inherit (pkgs) faraday usrbin;
           };
         in
         {
@@ -285,12 +285,6 @@
         # base_hosts/autofirma). See utils/qemu-guest.nix.
         mkQemuGuest = import ./utils/qemu-guest.nix {
           inherit self nixpkgs flake-utils;
-        };
-
-        # A boot test for a ChromeOS Baguette image, for any flake that
-        # builds one. See utils/baguette-test.nix.
-        mkBaguetteTest = import ./utils/baguette-test.nix {
-          inherit (nixpkgs) lib;
         };
 
         # An app that writes the SBOM of the runtime closure of a NixOS

@@ -173,8 +173,8 @@ jobs:
           - runner: ubuntu-24.04
             target: ./base_hosts/crostini#checks.x86_64-linux.baguette-boot
 
-          # The same boot with the termina kernel of ChromeOS, built from
-          # the ChromeOS kernel tree (utils/termina-kernel.nix).
+          # The configuration probes with the Termina kernel supplied by
+          # nixos-crostini, which also owns the generic boot coverage.
           - runner: ubuntu-24.04
             target: ./base_hosts/crostini#checks.x86_64-linux.baguette-boot-termina
 

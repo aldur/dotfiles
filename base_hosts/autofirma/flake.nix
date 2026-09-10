@@ -79,6 +79,7 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
           testCert = import ./tests/test-cert.nix { inherit pkgs; };
+          baguetteConfiguration = mkBaguette system;
         in
         {
           checks = {
@@ -92,10 +93,11 @@
             };
 
             # Boots the Baguette image in crosvm and probes it. The generic
-            # part of the probe is in utils/baguette-test.nix of the
-            # dotfiles. The steps below are the ones of this guest.
-            baguette-boot = aldur-dotfiles.lib.mkBaguetteTest {
-              configuration = mkBaguette system;
+            # part lives in nixos-crostini. The steps below are the ones
+            # of this guest.
+            baguette-boot = inputs.nixos-crostini.lib.mkBaguetteSmokeTest {
+              configuration = baguetteConfiguration;
+              user = baguetteConfiguration.config.mainUser;
               name = "autofirma-baguette-boot";
               # AutoFirma only reads ~/.mozilla/firefox/profiles.ini, and
               # Firefox 154 creates new profiles under ~/.config/mozilla.
@@ -105,6 +107,7 @@
                 "password" = "${testCert}/password";
               };
               extraProbe = ''
+                echo "PROBE home-fs $(findmnt -n -o FSTYPE /home)"
                 echo "PROBE pfx $(stat -c %a /etc/Autofirma/autofirma.pfx)"
                 echo "PROBE ca $(stat -c %s /etc/Autofirma/Autofirma_ROOT.cer)"
                 echo "PROBE launcher $(ls /run/current-system/sw/share/applications/ | tr '\n' ' ')"
@@ -134,6 +137,8 @@
                 head -n 5 /tmp/autofirma.log
               '';
               extraChecks = [
+                "home-fs tmpfs$"
+                "home ${baguetteConfiguration.config.mainUser} 700$"
                 # The keystore of the WebSocket must be readable by the user.
                 "pfx 644"
                 "ca [1-9]"

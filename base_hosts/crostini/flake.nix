@@ -69,10 +69,11 @@
         };
 
         # Boots the Baguette image of this system in crosvm and probes it.
-        # See utils/baguette-test.nix of the dotfiles.
+        # The reusable harness and kernel live in nixos-crostini; this
+        # flake adds the probes of the dotfiles configuration.
         checks.baguette-boot = nixpkgs.legacyPackages.${system}.callPackage ./tests/baguette-boot.nix {
           configuration = generator system baguetteModules;
-          inherit (aldur-dotfiles.lib) mkBaguetteTest;
+          inherit (nixos-crostini.lib) mkBaguetteSmokeTest;
         };
 
         # The same boot, with the kernel that Baguette boots on ChromeOS.
@@ -80,8 +81,8 @@
           nixpkgs.legacyPackages.${system}.callPackage ./tests/baguette-boot.nix
             {
               configuration = generator system baguetteModules;
-              inherit (aldur-dotfiles.lib) mkBaguetteTest;
-              terminaKernel = aldur-dotfiles.packages.${system}.termina-kernel;
+              inherit (nixos-crostini.lib) mkBaguetteSmokeTest;
+              terminaKernel = nixos-crostini.packages.${system}.termina-kernel;
             };
 
         checks.ssh-configurations =

@@ -1,5 +1,5 @@
 # The boot check of the Baguette image, with the probes of this guest on
-# top of utils/baguette-test.nix of the dotfiles.
+# top of nixos-crostini.lib.mkBaguetteSmokeTest.
 {
   lib,
   pkgs,
@@ -7,11 +7,10 @@
   writeText,
   xz,
   zstd,
-  mkBaguetteTest,
+  mkBaguetteSmokeTest,
   configuration,
-  # The termina kernel of ChromeOS (utils/termina-kernel.nix of the
-  # dotfiles). With it, the check boots the kernel that Baguette boots. It
-  # has no module support, so the module probe expects a different refusal.
+  # The termina kernel from nixos-crostini. It has no module support, so
+  # the module probe expects a different refusal.
   terminaKernel ? null,
 }:
 let
@@ -41,17 +40,19 @@ let
         esac
       '';
 in
-mkBaguetteTest {
+mkBaguetteSmokeTest {
   inherit configuration;
+  user = mainUser;
   name = "crostini-baguette-boot" + lib.optionalString termina "-termina";
   kernel = if termina then "${terminaKernel}/kernel" else null;
+  kernelRelease = if termina then "${terminaKernel}/release" else null;
   probeFiles = {
     inherit module;
     ssh-key = keys.snakeOilEd25519PrivateKey;
     authorized-keys = writeText "authorized_keys" "${keys.snakeOilEd25519PublicKey}\n";
   };
   extraProbe = ''
-    echo "PROBE kernel $(uname -r)"
+    echo "PROBE home-fs $(findmnt -n -o FSTYPE /home)"
     echo "PROBE sysctl $(systemctl is-active systemd-sysctl.service) modules_disabled=$(sysctl -n kernel.modules_disabled 2>/dev/null || echo absent)"
     echo "PROBE lockdown $(cat /sys/kernel/security/lockdown 2>/dev/null || echo absent)"
     echo "PROBE insmod $(insmod $probe/module 2>&1 || true)"
@@ -153,7 +154,6 @@ mkBaguetteTest {
     (
       if termina then
         [
-          "kernel ${lib.escapeRegex (lib.versions.majorMinor terminaKernel.version)}\\."
           # The termina kernel has no module support. systemd-sysctl must
           # stay active with the sysctl absent.
           "sysctl active modules_disabled=absent"
@@ -164,11 +164,13 @@ mkBaguetteTest {
           # EPERM with no lockdown and the sysctl at 1 comes from
           # modules_disabled alone.
           "sysctl active modules_disabled=1"
-          "lockdown \\(absent\\|\\[none\\]\\)"
+          "lockdown (absent|\\[none\\])"
           "insmod .*Operation not permitted"
         ]
     )
     ++ [
+      "home-fs tmpfs$"
+      "home ${mainUser} 700$"
       "mount / .*nosuid.*nodev"
       "mount /home .*nosuid.*nodev"
       "mount /home/${mainUser}/Work .*nosuid.*nodev"

@@ -127,8 +127,8 @@ the certificate import, and the AutoFirma launch on the trimmed JRE.
 nix build .#checks.x86_64-linux.baguette-boot -L
 ```
 
-The generic half lives in `utils/baguette-test.nix` of the dotfiles, as
-`lib.mkBaguetteTest`. Any flake that builds a Baguette image can call it
+The generic half lives in `tests/baguette-smoke.nix` of `nixos-crostini`, as
+`lib.mkBaguetteSmokeTest`. Any flake that builds a Baguette image can call it
 with its `nixosSystem`, and add its own probe lines and checks. This flake
 passes the AutoFirma ones.
 
