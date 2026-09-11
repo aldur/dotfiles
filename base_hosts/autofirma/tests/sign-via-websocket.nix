@@ -12,6 +12,7 @@
   guestModule,
   baseModule,
   autofirma-nix,
+  production,
   # Print what the guest does instead of an assertion. For debugging.
   diagnose ? false,
 }:
@@ -32,20 +33,20 @@ pkgs.testers.runNixOSTest {
     imports = [
       baseModule
       guestModule
-      # The guest side of `qemu-vm --file`; the launcher's VM module
-      # (autofirma.nix) brings it through nixosModules.qemu-guest.
-      "${specialArgs.inputs.self}/modules/nixos/qemu-vm-files.nix"
       (import ./test-server.nix {
         autoscriptDir = "${autofirma-nix.inputs.autofirma-src}/afirma-ui-miniapplet-deploy/src/main/webapp/js";
         testJs = ./websocket-sign.js;
       })
     ];
 
+    # Restore production defaults that the NixOS test driver changes.
+    services.logrotate.enable = lib.mkForce production.config.services.logrotate.enable;
+    systemd.settings.Manager = lib.mkForce production.config.systemd.settings.Manager;
+    systemd.user.extraConfig = lib.mkForce production.config.systemd.user.extraConfig;
+    nix.nixPath = lib.mkForce production.config.nix.nixPath;
+
     # Clicks the button on the page. The test driver has no mouse.
     environment.systemPackages = [ pkgs.xdotool ];
-
-    # The session opens the test page instead of the start page.
-    programs.firefox.policies.Homepage.URL = lib.mkForce "https://sede.test/";
 
     virtualisation = {
       memorySize = 4096;
@@ -83,12 +84,13 @@ pkgs.testers.runNixOSTest {
           f"cat /proc/$(pgrep -u {USER} -f xfce4-session | head -n1)/environ | tr '\\0' '\\n'"
       )
       session = dict(
-          line.split("=", 1) for line in environ.splitlines() if line.startswith(("DISPLAY=", "XAUTHORITY=", "DBUS_SESSION_BUS_ADDRESS=", "XDG_RUNTIME_DIR="))
+          line.split("=", 1) for line in environ.splitlines() if line.startswith(("DISPLAY=", "XAUTHORITY=", "DBUS_SESSION_BUS_ADDRESS=", "XDG_RUNTIME_DIR=", "MOZ_LEGACY_HOME="))
       )
       assert "DISPLAY" in session, environ
+      assert session.get("MOZ_LEGACY_HOME") == "1", environ
 
       def as_user(cmd):
-          env = f"HOME=/home/{USER} MOZ_LEGACY_HOME=1 " + " ".join(f"{k}={shlex.quote(v)}" for k, v in session.items())
+          env = f"HOME=/home/{USER} " + " ".join(f"{k}={shlex.quote(v)}" for k, v in session.items())
           return f"runuser -u {USER} -- env {env} sh -c {shlex.quote(cmd)}"
 
       # The session starts Firefox through autofirma-vm-firefox. That
@@ -97,9 +99,16 @@ pkgs.testers.runNixOSTest {
       machine.succeed(f"test -r /run/qemu-vm-files/cert.p12 && stat -c %U /run/qemu-vm-files/cert.p12 | grep -x {USER}")
       machine.wait_until_succeeds(as_user("certutil -L -d sql:$(dirname ~/.mozilla/firefox/*/cert9.db) | grep -i ficticio"))
 
-      # Firefox opens the test page as its start page. The button on the
-      # page opens afirma://. AutoFirma starts, and the page connects to
-      # its WebSocket.
+      # Trust the local HTTPS fixture in this profile only. Preserve the
+      # shipped system PKI, Java truststore, Firefox policies and packages.
+      machine.succeed(as_user("pkill -TERM -x firefox"))
+      machine.wait_until_fails(f"pgrep -u {USER} -x firefox")
+      machine.succeed(as_user(
+          "certutil -A -n sede.test -t 'C,,' -d sql:$(dirname ~/.mozilla/firefox/*/cert9.db)"
+          " -i /etc/autofirma-test/ca.crt"
+      ))
+      machine.succeed(as_user("autofirma-vm-firefox --new-tab https://sede.test/ >/tmp/firefox-test.log 2>&1 &"))
+      # The page opens afirma:// and connects to AutoFirma's WebSocket.
       machine.wait_until_succeeds(as_user("xdotool search --name 'AutoFirma test page'"))
       machine.sleep(5)
       machine.succeed(as_user(

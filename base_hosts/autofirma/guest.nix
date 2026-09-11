@@ -166,7 +166,7 @@ let
               --text "The certificate import failed." --button OK:0
         fi
       fi
-      exec firefox
+      exec firefox "$@"
     '';
   };
 

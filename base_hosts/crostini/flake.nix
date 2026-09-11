@@ -68,22 +68,21 @@
           configuration = self.nixosConfigurations.baguette-nixos;
         };
 
-        # Boots the Baguette image of this system in crosvm and probes it.
-        # The reusable harness and kernel live in nixos-crostini; this
-        # flake adds the probes of the dotfiles configuration.
+        # Simulates guest boot with the representative Termina kernel.
+        # Real ChromeOS registration is checked separately on the device.
         checks.baguette-boot = nixpkgs.legacyPackages.${system}.callPackage ./tests/baguette-boot.nix {
           configuration = generator system baguetteModules;
-          inherit (nixos-crostini.lib) mkBaguetteSmokeTest;
+          inherit (aldur-dotfiles.lib) mkBaguetteSmokeTest;
+          crostini = nixos-crostini;
         };
 
-        # The same boot, with the kernel that Baguette boots on ChromeOS.
-        checks.baguette-boot-termina =
-          nixpkgs.legacyPackages.${system}.callPackage ./tests/baguette-boot.nix
-            {
-              configuration = generator system baguetteModules;
-              inherit (nixos-crostini.lib) mkBaguetteSmokeTest;
-              terminaKernel = nixos-crostini.packages.${system}.termina-kernel;
-            };
+        # Compatibility alias: all smoke boots now use the Termina kernel.
+        checks.baguette-boot-termina = self.checks.${system}.baguette-boot;
+
+        checks.baguette-verifier = import ./tests/verify-boot.nix {
+          pkgs = nixpkgs.legacyPackages.${system};
+          crostini = nixos-crostini;
+        };
 
         checks.ssh-configurations =
           nixpkgs.legacyPackages.${system}.callPackage ./tests/ssh-configurations.nix

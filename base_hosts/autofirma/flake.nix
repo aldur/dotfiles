@@ -82,71 +82,41 @@
           baguetteConfiguration = mkBaguette system;
         in
         {
-          checks = {
+          checks = rec {
             # Boots the QEMU guest, imports a test certificate into Firefox,
             # and signs a document through the afirma:// WebSocket flow.
             sign-via-websocket = pkgs.callPackage ./tests/sign-via-websocket.nix {
-              guestModule = ./desktop.nix;
+              guestModule = ./autofirma.nix;
               baseModule = aldur-dotfiles.nixosModules.default;
               inherit specialArgs;
               inherit (inputs) autofirma-nix;
+              production = guest.nixosConfigurations."autofirma-vm-${lib.removeSuffix "-linux" system}";
             };
 
-            # Boots the Baguette image in crosvm and probes it. The generic
-            # part lives in nixos-crostini. The steps below are the ones
-            # of this guest.
-            baguette-boot = inputs.nixos-crostini.lib.mkBaguetteSmokeTest {
+            qemu-configuration = import ./tests/qemu-configuration.nix {
+              inherit pkgs lib;
+              production = guest.nixosConfigurations."autofirma-vm-${lib.removeSuffix "-linux" system}".config;
+              tested = sign-via-websocket.nodes.machine;
+            };
+
+            baguette-boot = import ./tests/baguette.nix {
+              inherit pkgs lib testCert;
               configuration = baguetteConfiguration;
-              user = baguetteConfiguration.config.mainUser;
-              name = "autofirma-baguette-boot";
-              # AutoFirma only reads ~/.mozilla/firefox/profiles.ini, and
-              # Firefox 154 creates new profiles under ~/.config/mozilla.
-              userEnv.MOZ_LEGACY_HOME = "1";
-              probeFiles = {
-                "ciudadano.p12" = "${testCert}/ciudadano.p12";
-                "password" = "${testCert}/password";
+              crostini = inputs.nixos-crostini;
+              inherit (aldur-dotfiles.lib) mkBaguetteSmokeTest;
+            };
+
+            baguette-no-linger = aldur-dotfiles.lib.mkBaguetteSmokeTest {
+              configuration = baguetteConfiguration.extendModules {
+                modules = [
+                  {
+                    users.users.${baguetteConfiguration.config.mainUser}.linger = lib.mkForce false;
+                  }
+                ];
               };
-              extraProbe = ''
-                echo "PROBE home-fs $(findmnt -n -o FSTYPE /home)"
-                echo "PROBE pfx $(stat -c %a /etc/Autofirma/autofirma.pfx)"
-                echo "PROBE ca $(stat -c %s /etc/Autofirma/Autofirma_ROOT.cer)"
-                echo "PROBE launcher $(ls /run/current-system/sw/share/applications/ | tr '\n' ' ')"
-
-                # Firefox starts with the policies of the guest and renders
-                # the start page.
-                as_user timeout 180 firefox --headless \
-                  --screenshot /home/$user/start.png \
-                  file:///etc/autofirma-vm/index.html > /tmp/firefox.log 2>&1
-                echo "PROBE firefox $(stat -c %s /home/$user/start.png 2>/dev/null || echo none)"
-
-                # The certificate import of the session wrapper. Firefox
-                # made the database above. On an existing database,
-                # `certutil -N` asks for the old password on /dev/tty and
-                # waits forever.
-                profile=$(grep -oP '^Path=\K.*' /home/$user/.mozilla/firefox/profiles.ini | head -n1)
-                dir=/home/$user/.mozilla/firefox/$profile
-                [ -f "$dir/cert9.db" ] || as_user certutil -N -d "sql:$dir" --empty-password > /dev/null 2>&1
-                as_user import-certificate $probe/ciudadano.p12 $probe/password > /tmp/import.log 2>&1
-                echo "PROBE import $(as_user certutil -L -d "sql:$dir" 2>/dev/null | grep -c -i ficticio)"
-
-                # AutoFirma starts in its FHS sandbox on the trimmed JRE.
-                # Without a display, AWT stops it. The class names show
-                # that the JRE ran the jar.
-                as_user timeout 60 autofirma > /tmp/autofirma.log 2>&1
-                echo "PROBE autofirma exit $? $(grep -c 'es.gob.afirma\|java.awt' /tmp/autofirma.log)"
-                head -n 5 /tmp/autofirma.log
-              '';
-              extraChecks = [
-                "home-fs tmpfs$"
-                "home ${baguetteConfiguration.config.mainUser} 700$"
-                # The keystore of the WebSocket must be readable by the user.
-                "pfx 644"
-                "ca [1-9]"
-                "launcher .*autofirma-vm-firefox.desktop"
-                "firefox [1-9]"
-                "import [1-9]"
-                "autofirma exit [0-9]* [1-9]"
-              ];
+              crostini = inputs.nixos-crostini;
+              name = "autofirma-baguette-no-linger";
+              expectUserManager = false;
             };
           };
         }

@@ -27,13 +27,20 @@ gh attestation verify baguette_rootfs.img.zst --repo aldur/dotfiles \
 `nix run .#sbom-baguette -- ./sbom` writes the same SBOM for a local build.
 
 `nix flake check` boots the image of the same system in crosvm with
-`nixos-crostini.lib.mkBaguetteSmokeTest`. The generic boot tests and the
-Termina kernel package live in `nixos-crostini`. `tests/baguette-boot.nix`
-adds the probes of this guest: the kernel refuses a module, `nosuid` and `nodev`
-hold on the home and on the `/persist` binds, and sudo, the agent sandbox
-and a daemon build still work. `baguette-boot-termina` is the same check
-with `nixos-crostini.packages.<system>.termina-kernel`, the kernel that
-Baguette boots on ChromeOS. CI runs both on x86_64 runners.
+`aldur-dotfiles.lib.mkBaguetteSmokeTest`. The shared harness is in
+`tests/smoke.nix`; the representative Termina kernel comes from
+nixos-crostini. It boots the distributed image through `/sbin/init` without
+an initrd, observes the user manager before user commands, and never enables
+lingering or changes device permissions. `tests/baguette-boot.nix` adds
+filesystem, SSH, activation and daemon-build probes. The SSH fixture replaces
+authorized keys, and the activation probe switches to the current generation.
+`baguette-boot-termina` is a compatibility alias for `baguette-boot`.
+
+The tools disk, graphics stack and host daemons are fixtures. These smoke
+checks do not establish real ChromeOS registration or suspend/resume behavior;
+use the [device procedure](tests/device-boot.md) for those. The separate
+`baguette-verifier` check needs no KVM and rejects truncated logs, failed
+probes, wrong kernels, missing resize, VM failures and timeouts.
 
 ```bash
 nix build .#checks.x86_64-linux.baguette-boot -L

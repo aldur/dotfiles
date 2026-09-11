@@ -152,12 +152,20 @@ jobs:
           - runner: ubuntu-24.04-arm
             target: ./base_hosts/qemu#vm-nogui
 
-          # Build the AutoFirma VM launcher as a test. The signing test is a
-          # `checks` output of that flake. Run it locally.
+          # Build both launchers; execute runtime checks on a KVM runner.
           - runner: ubuntu-24.04
             target: ./base_hosts/autofirma#autofirma-vm
           - runner: ubuntu-24.04-arm
             target: ./base_hosts/autofirma#autofirma-vm
+
+          - runner: ubuntu-24.04
+            target: ./base_hosts/autofirma#checks.x86_64-linux.sign-via-websocket
+          - runner: ubuntu-24.04
+            target: ./base_hosts/autofirma#checks.x86_64-linux.qemu-configuration
+          - runner: ubuntu-24.04
+            target: ./base_hosts/autofirma#checks.x86_64-linux.baguette-boot
+          - runner: ubuntu-24.04
+            target: ./base_hosts/autofirma#checks.x86_64-linux.baguette-no-linger
 
           # Build the system closure of the AutoFirma Baguette image as a
           # test. autofirma-baguette.yml builds the image itself on demand.
@@ -173,10 +181,8 @@ jobs:
           - runner: ubuntu-24.04
             target: ./base_hosts/crostini#checks.x86_64-linux.baguette-boot
 
-          # The configuration probes with the Termina kernel supplied by
-          # nixos-crostini, which also owns the generic boot coverage.
           - runner: ubuntu-24.04
-            target: ./base_hosts/crostini#checks.x86_64-linux.baguette-boot-termina
+            target: ./base_hosts/crostini#checks.x86_64-linux.baguette-verifier
 
           # Build the Apple `container` OCI image as a test. The image
           # serves `container run` and `container machine`. The target is

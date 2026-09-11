@@ -11,4 +11,5 @@ pkgs.runCommand "autofirma-test-cert" { nativeBuildInputs = [ pkgs.openssl ]; } 
   openssl pkcs12 -export -out $out/ciudadano.p12 -inkey key.pem -in cert.pem \
     -name "ciudadano ficticio" -passout pass:ficticio
   printf '%s' ficticio > $out/password
+  cp cert.pem $out/cert.pem
 ''

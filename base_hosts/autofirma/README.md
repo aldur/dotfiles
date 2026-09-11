@@ -64,8 +64,8 @@ restart Firefox.
 
 The workflow `baguette-image.yml` builds the arm64 image on demand
 (`workflow_dispatch`, image `autofirma`) and keeps it as the artifact
-`autofirma-baguette-arm64` for a few days. The push pipeline only builds the
-system closure as a test. The workflow attests the image: download the
+`autofirma-baguette-arm64` for a few days. The push pipeline builds the ARM
+system closure and runs the x86 runtime checks on KVM. The workflow attests the image: download the
 artifact, verify it, then create the VM in `crosh`:
 
 ```bash
@@ -117,31 +117,43 @@ If the test fails, build it with `diagnose = true` (an argument of the
 file). It then prints the processes, the Firefox console, and the screen
 text. It does not assert.
 
-`nix flake check` also runs a Baguette boot test. It boots the image in
-crosvm, as ChromeOS does, and probes it: the stage-2 init without initrd,
-the btrfs root and its resize, userborn, the tmpfs home, sommelier, the
-AutoFirma CA, the launcher entries, a Firefox screenshot of the start page,
-the certificate import, and the AutoFirma launch on the trimmed JRE.
+The Baguette smoke check boots the distributed compressed root image through
+`/sbin/init`, without an initrd, using the representative Termina kernel
+from nixos-crostini. It observes user-manager startup before any user
+command and never enables lingering or changes render-node permissions.
+It requires garcon and all four sommelier instances, runs the production
+Firefox wrapper with its user-manager environment, and signs using the
+imported Firefox key. The signature must verify against the test signer;
+tampered content must fail verification. CLI signing here complements the
+QEMU WebSocket scenario; it does not test ChromeOS protocol dispatch.
 
 ```bash
 nix build .#checks.x86_64-linux.baguette-boot -L
+nix build .#checks.x86_64-linux.baguette-no-linger -L
+nix build .#checks.x86_64-linux.qemu-configuration -L
 ```
 
-The generic half lives in `tests/baguette-smoke.nix` of `nixos-crostini`, as
-`lib.mkBaguetteSmokeTest`. Any flake that builds a Baguette image can call it
-with its `nixosSystem`, and add its own probe lines and checks. This flake
-passes the AutoFirma ones.
+`baguette-no-linger` boots a deliberately changed image and requires that
+its user manager remains inactive. This negative control catches a harness
+that silently starts the session itself. `qemu-configuration` checks that
+the signing test retains production storage, application packages/policies,
+user configuration, environment and service timeouts. The QEMU scenario
+imports `autofirma.nix`, including the shared QEMU guest module. Its local
+HTTPS server and the NixOS test driver remain explicit instrumentation.
 
-The image has no kernel, so the test boots it with the kernel and initrd of
-the same configuration. ChromeOS also mounts a `cros-vm-tools` disk with
-maitred, vshd, garcon, and sommelier. Those binaries are not public, and
-only sommelier has a source build (in nixpkgs). The test mounts a disk with
-that label carrying sommelier and stand-ins for the other daemons. So it
-covers the guest side of the integration. The host side does not exist
-outside ChromeOS: maitred and garcon talk to concierge and cicerone, which
-have no standalone build. Windows reach the host through a virtio-gpu
-cross-domain context; the crosvm of nixpkgs does not serve that context, so
-the test asserts that sommelier runs, not that a window appears.
+The shared smoke harness is `aldur-dotfiles.lib.mkBaguetteSmokeTest` in
+`../crostini/tests/smoke.nix`. It uses a fixture ext4 tools disk with
+nixpkgs sommelier/Xwayland/Mesa, a headless Weston compositor, and stand-ins
+for the host integration daemons. Test certificate files stand in for the
+ChromeOS share at its configured guest path. These fixtures do not validate
+ChromeOS registration, host file sharing, password dialogs or suspend/resume.
+The kernel is representative, not the exact Chromebook build. VM failures,
+timeouts, failed probes and shutdown errors fail the check.
+
+CI executes both AutoFirma runtime scenarios and the negative control on
+x86 KVM runners. ARM image builds and configuration evaluation do not prove
+ARM boot behavior. Follow the [normal-crosh device test](../crostini/tests/device-boot.md)
+for actual ChromeOS startup and lifecycle validation.
 
 ## Maven dependencies
 

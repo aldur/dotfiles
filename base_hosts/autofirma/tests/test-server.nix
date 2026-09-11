@@ -76,7 +76,9 @@ in
 {
   networking.hosts."127.0.0.1" = [ host ];
 
-  security.pki.certificateFiles = [ "${certs}/ca.crt" ];
+  # Import this fixture only into the test browser's NSS database. Adding
+  # it to system PKI also changes AutoFirma's Java truststore and package.
+  environment.etc."autofirma-test/ca.crt".source = "${certs}/ca.crt";
 
   services.caddy = {
     enable = true;
