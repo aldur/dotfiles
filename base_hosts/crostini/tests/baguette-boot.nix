@@ -141,8 +141,12 @@ mkBaguetteSmokeTest {
     else
       echo "PROBE sshd tcpforward refused"
     fi
+    # The effective values of the daemon, defaults included. The image
+    # sets no AllowAgentForwarding, so the default of OpenSSH applies.
+    # The case of the keys in the output changes between versions.
+    sshd -T > /tmp/sshd-T.out 2>&1 || cat /tmp/sshd-T.out
     for directive in AllowTcpForwarding AllowAgentForwarding X11Forwarding; do
-      echo "PROBE sshd $directive $(grep -i "^$directive " /etc/ssh/sshd_config | awk '{print $2}')"
+      echo "PROBE sshd $directive $(awk -v key=$directive 'tolower($1) == tolower(key) { print $2 }' /tmp/sshd-T.out)"
     done
 
     # What the activation writes must keep its modes, and the guest must
@@ -204,7 +208,7 @@ mkBaguetteSmokeTest {
       "nix users allowed-users = root ${mainUser}$"
       "sshd tcpforward refused$"
       "sshd AllowTcpForwarding no$"
-      "sshd AllowAgentForwarding no$"
+      "sshd AllowAgentForwarding yes$"
       "sshd X11Forwarding no$"
       "sudo ok"
       "sandbox ok"
