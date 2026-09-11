@@ -30,7 +30,7 @@
 
       crostiniModule = nixos-crostini.nixosModules.crostini;
       baguetteModules = [
-        nixos-crostini.nixosModules.baguette
+        aldur-dotfiles.nixosModules.baguette-guest
         ./baguette.nix
       ];
 

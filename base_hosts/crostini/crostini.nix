@@ -45,9 +45,9 @@ in
       # We rely on the UID in a few places, so better making sure about it.
       ${username} = {
         inherit uid;
-        # Start user@1000.service at boot (independent of PAM login).
-        # This allows us to order it after home-manager.
-        linger = cfg.impermanence.enable;
+        # LXC needs this for ordering the user manager after home-manager.
+        # The shared Baguette module always enables it for guest registration.
+        linger = lib.mkDefault cfg.impermanence.enable;
 
         # Make sure user has no password.
         initialHashedPassword = lib.mkForce null;

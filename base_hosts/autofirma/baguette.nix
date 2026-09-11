@@ -14,11 +14,7 @@ let
 in
 {
   imports = [
-    inputs.nixos-crostini.nixosModules.baguette
-    # The `mainUser` option and the user account, without the rest of the
-    # base module.
-    "${inputs.self}/modules/users.nix"
-    "${inputs.self}/modules/nixos/users.nix"
+    inputs.self.nixosModules.baguette-guest
     ./guest.nix
   ];
 
@@ -61,8 +57,6 @@ in
   hardware.graphics.enable = false;
 
   users.users.${user} = {
-    # `vmc start` maps the ChromeOS user onto this UID.
-    uid = 1000;
     # bash is in the closure. fish is not.
     shell = lib.mkForce pkgs.bashInteractive;
   };

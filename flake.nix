@@ -302,6 +302,7 @@
         apparmor = ./modules/nixos/apparmor.nix;
         default-editor = ./modules/nixos/default_editor.nix;
         qemu-guest = ./modules/nixos/qemu-guest.nix;
+        baguette-guest = ./base_hosts/crostini/baguette-guest.nix;
         cli = ./modules/cli.nix;
         development = ./modules/development.nix;
         environment = ./modules/environment.nix;
