@@ -56,8 +56,21 @@ if sys.argv[1:] == ['--version']:
     print('fixture-1')
     raise SystemExit(0)
 record = {'argv': sys.argv[1:], 'env': dict(os.environ), 'cwd': os.getcwd(),
-          'host_visible': Path.home().joinpath('host-only').exists()}
-with Path('calls.jsonl').open('a') as stream:
+          'host_visible': Path.home().joinpath('host-only').exists(),
+          'codex_state': Path.home().joinpath('.codex/auth.json').exists()}
+if 'probe-grants' in sys.argv:
+    record['grants'] = {}
+    for name in ('Reference notes', 'Extra reference', 'Shared code', 'Extra output', 'Other workspace/.git'):
+        marker = Path.home() / name / 'marker'
+        readable = marker.read_text().startswith('fixture')
+        try:
+            with marker.open('a') as stream:
+                stream.write('written')
+            writable = True
+        except OSError:
+            writable = False
+        record['grants'][name] = [readable, writable]
+with Path('/home/tester/Work/calls.jsonl').open('a') as stream:
     stream.write(json.dumps(record) + '\\n')
 if '-p' in sys.argv:
     raise SystemExit(1 if Path('fail-refresh').exists() else 0)
@@ -67,7 +80,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
     for kind in FLAGS:
         link(BIN / kind, probe)
     env = dict(os.environ, EDITOR='fixture-editor --wait', VISUAL='fixture-visual -f',
-               HOST_SECRET='synthetic-host-secret')
+               HOST_SECRET='synthetic-host-secret', EXTRA_ENV='extra-fixture')
     payload = ['resume', 'two words', '', 'line one\nline two', '$(literal)', '--no-sandbox', '--help']
     calls = WORK / 'calls.jsonl'
     stamp = HOME / '.claude/yolo-refresh'
@@ -106,6 +119,40 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
             assert records[-1]['argv'] == [FLAGS[kind], '--help'], records
             _, records = invoke(launcher, ['--help'])
             assert not records, records
+            for option in ('--workspace', '--ro', '--rw', '--env', '--profile'):
+                result, records = invoke(launcher, [option], code=1)
+                assert 'requires a value' in result.stderr and not records, result
+            _, records = invoke(launcher, ['--', '--ro', 'agent argument'])
+            assert records[-1]['argv'] == [FLAGS[kind], '--ro', 'agent argument'], records
+            result, records = invoke(launcher, ['--ro', str(HOME / 'Reference notes'), '--no-sandbox'], code=1)
+            assert 'sandbox options require' in result.stderr and not records, result
+            grant_args = ['--workspace', str(HOME / 'Other workspace'),
+                          '--rw', str(WORK),
+                          '--ro', str(HOME / 'Reference notes'), '--ro=' + str(HOME / 'Extra reference'),
+                          '--rw', str(HOME / 'Shared code'), '--rw=' + str(HOME / 'Extra output'),
+                          '--env', 'HOST_SECRET', '--env=EXTRA_ENV', '--profile=' + kind]
+            if case['sandbox']:
+                for git_write in (False, True):
+                    workspace_args = (['--workspace=~/Other workspace'] if git_write else
+                                      ['--workspace', '../Other workspace'])
+                    _, records = invoke(launcher, workspace_args + grant_args[2:] + (['--git-write'] if git_write else []) + ['--', 'probe-grants'])
+                    record = records[-1]
+                    assert record['argv'] == [FLAGS[kind], 'probe-grants'], record
+                    assert record['cwd'] == str(HOME / 'Other workspace'), record
+                    assert record['env']['HOST_SECRET'] == env['HOST_SECRET'], record
+                    assert record['env']['EXTRA_ENV'] == env['EXTRA_ENV'], record
+                    assert record['grants'] == {
+                        'Reference notes': [True, False], 'Extra reference': [True, False],
+                        'Shared code': [True, True], 'Extra output': [True, True],
+                        'Other workspace/.git': [True, git_write]}, record
+                    if kind == 'claude':
+                        trust = json.loads((HOME / '.claude.json').read_text())
+                        assert trust['projects'][str(HOME / 'Other workspace')]['hasTrustDialogAccepted'], trust
+                _, records = invoke(launcher, ['--profile', 'default', 'resume'])
+                assert not records[-1]['codex_state'], records
+            else:
+                result, records = invoke(launcher, grant_args, code=1)
+                assert 'sandbox options require' in result.stderr and not records, result
             invoke(launcher, ['exit-23'], code=23)
             print(f'passed: {kind}-yolo arguments, environment, exit status, sandbox={case["sandbox"]}', flush=True)
 
@@ -288,6 +335,9 @@ def main():
         home = fixture / 'home'
         for name in ('Work', '.local/bin', '.claude', '.codex'):
             (home / name).mkdir(parents=True, exist_ok=True)
+        for name in ('Reference notes', 'Extra reference', 'Shared code', 'Extra output', 'Other workspace/.git'):
+            (home / name).mkdir(parents=True, exist_ok=True)
+            (home / name / 'marker').write_text('fixture')
         (home / 'host-only').write_text('synthetic private host file')
         (home / '.codex/config.toml').write_text(
             'model = "gpt-5"\ncheck_for_update_on_startup = false\n'

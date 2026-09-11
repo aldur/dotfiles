@@ -82,6 +82,13 @@ in
           --bash <(${final.argc}/bin/argc --argc-completions bash ${name} < ${scriptFile}) \
           --zsh <(${final.argc}/bin/argc --argc-completions zsh ${name} < ${scriptFile}) \
           --fish <(${final.argc}/bin/argc --argc-completions fish ${name} < ${scriptFile})
+
+        # Completions run in the caller's shell, outside shellApp's PATH.
+        substituteInPlace \
+          $out/share/bash-completion/completions/${name}.bash \
+          $out/share/zsh/site-functions/_${name} \
+          $out/share/fish/vendor_completions.d/${name}.fish \
+          --replace-fail 'argc --argc-compgen' '${final.argc}/bin/argc --argc-compgen'
       '';
     };
 }

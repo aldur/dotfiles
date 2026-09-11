@@ -24,6 +24,14 @@ let
   allFlags = flags // {
     no-sandbox = "Run on the host, outside the agent sandbox";
   };
+  options = {
+    profile = "<NAME> Mount profile (default: ${agent})";
+    workspace = "<DIR> Writable workspace (default: launch directory)";
+    "ro*" = "<PATH> Additional existing read-only file or directory";
+    "rw*" = "<PATH> Additional existing writable file or directory";
+    "env*" = "<NAME> Additional inherited environment variable (repeatable)";
+  };
+  optionNames = map (name: lib.removeSuffix "*" name) (lib.attrNames options);
   names = lib.attrNames allFlags;
   variables = map (name: "argc_" + lib.replaceStrings [ "-" ] [ "_" ] name) names;
 in
@@ -33,15 +41,39 @@ pkgs.writeArgcApplication {
   text = ''
     # @describe ${describe}
     ${lib.concatMapStringsSep "\n" (name: "# @flag --${name} ${allFlags.${name}}") names}
+    # @flag --git-write Allow Git metadata writes for this launch (including hooks/config)
+    ${lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (name: description: "# @option --${name} ${description}") options
+    )}
     # @arg args~ Arguments for ${agent}
     declare ${lib.concatStringsSep " " variables}
     argc_args=()
-    # Only the wrapper flags at the front are for argc. The scan inserts
+    # Only the wrapper options at the front are for argc. The scan inserts
     # the `--` itself, so agent arguments need no separator.
     wrapper_args=()
+    sandbox_args=()
     while [ $# -gt 0 ]; do
       case "$1" in
-        ${lib.concatMapStringsSep " | " (name: "--${name}") names} | -h | --help) wrapper_args+=("$1") ;;
+        --git-write)
+          sandbox_args+=("$1")
+          wrapper_args+=("$1")
+          ;;
+        ${lib.concatMapStringsSep " | " (name: "--${name}") optionNames})
+          if [ $# -lt 2 ]; then
+            echo "${agent}-yolo: $1 requires a value" >&2
+            exit 1
+          fi
+          sandbox_args+=("$1" "$2")
+          wrapper_args+=("$1" "$2")
+          shift
+          ;;
+        ${lib.concatMapStringsSep " | " (name: "--${name}=*") optionNames})
+          sandbox_args+=("$1")
+          wrapper_args+=("$1")
+          ;;
+        ${
+          lib.concatMapStringsSep " | " (name: "--${name}") names
+        } | -h | --help) wrapper_args+=("$1") ;;
         --) shift; break ;;
         *) break ;;
       esac
@@ -51,6 +83,12 @@ pkgs.writeArgcApplication {
     set -- "''${argc_args[@]}"
 
     sandbox=()
+    if [ "''${#sandbox_args[@]}" -gt 0 ] && ${
+      if sandboxed then ''[ "''${argc_no_sandbox:-0}" -eq 1 ]'' else "true"
+    }; then
+      echo "${agent}-yolo: sandbox options require the agent sandbox to be enabled" >&2
+      exit 1
+    fi
     if [ "''${argc_no_sandbox:-0}" -eq 1 ]; then
       echo "${agent}-yolo: ${
         if sandboxed then
@@ -60,7 +98,11 @@ pkgs.writeArgcApplication {
       }" >&2
     ${lib.optionalString sandboxed ''
       else
-        sandbox=(${lib.getExe config.programs.agent-sandbox.package} --profile ${agent} --)
+        sandbox=(${lib.getExe config.programs.agent-sandbox.package} "''${sandbox_args[@]}")
+        if [ -z "''${argc_profile+x}" ]; then
+          sandbox+=(--profile ${agent})
+        fi
+        sandbox+=(--)
     ''}fi
     ${text}
   '';

@@ -167,6 +167,30 @@ pkgs.runCommand "agent-sandbox-test"
     test -s ${wrapper}/share/zsh/site-functions/_agent-sandbox
     test -s ${wrapper}/share/fish/vendor_completions.d/agent-sandbox.fish
 
+    # Completion runs outside the script's runtime PATH: argc need not be installed.
+    ${pkgs.python3}/bin/python3 - <<'PY'
+    import os, subprocess
+    env = dict(os.environ, PATH='${
+      lib.makeBinPath [
+        wrapper
+        pkgs.coreutils
+      ]
+    }')
+    fish = subprocess.run([
+        '${pkgs.fish}/bin/fish', '--no-config', '-c',
+        'source ${wrapper}/share/fish/vendor_completions.d/agent-sandbox.fish; '
+        'complete -C "agent-sandbox --work"',
+    ], env=env, capture_output=True, text=True, check=True)
+    assert '--workspace' in fish.stdout and not fish.stderr, (fish.stdout, fish.stderr)
+    bash = subprocess.run([
+        '${pkgs.bash}/bin/bash', '--noprofile', '--norc', '-c',
+        'source ${wrapper}/share/bash-completion/completions/agent-sandbox.bash; '
+        'COMP_LINE="agent-sandbox --work"; COMP_POINT=''${#COMP_LINE}; COMP_WORDBREAKS=" "; '
+        '_argc_completer; printf "%s\\n" "''${COMPREPLY[@]}"',
+    ], env=env, capture_output=True, text=True, check=True)
+    assert '--workspace' in bash.stdout and not bash.stderr, (bash.stdout, bash.stderr)
+    PY
+
     for persistence in present absent; do
       args=(
         --unshare-pid

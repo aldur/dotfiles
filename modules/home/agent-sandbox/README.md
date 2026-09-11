@@ -9,7 +9,15 @@ the matching `--profile`.
 agent-sandbox --profile claude -- claude
 agent-sandbox --profile codex -- codex
 agent-sandbox --workspace ~/Work/project --ro ~/Documents/reference --rw ~/Work/library -- bash
+codex-yolo --ro ~/dotfiles --workspace .
+claude-yolo --ro ~/dotfiles --workspace . -- --resume
 ```
+
+The `*-yolo` launchers accept the same sandbox options before the agent
+arguments, with the matching agent profile selected by default. Use `--`
+to end wrapper options explicitly; otherwise the first unrecognized argument
+starts the agent arguments. Sandbox options cannot be used with `--no-sandbox`
+or when the agent sandbox is disabled.
 
 | Option | Effect |
 | --- | --- |

@@ -68,7 +68,7 @@ let
 
   claude-statusline = pkgs.callPackage ../../packages/claude-statusline { };
 
-  # Pre-accept the workspace trust dialog for $PWD so trust-gated features
+  # Pre-accept the workspace trust dialog so trust-gated features
   # (e.g. statusLine) render under `claude-yolo`. Uses cat-to-overwrite so the
   # underlying inode is preserved (impermanence bind-mounts ~/.claude.json).
   claude-trust-cwd = pkgs.writeShellScript "claude-trust-cwd" ''
@@ -77,7 +77,13 @@ let
     [ -s "$config" ] || exit 0
     tmp=$(mktemp)
     trap 'rm -f "$tmp"' EXIT
-    ${lib.getExe pkgs.jq} --arg cwd "$PWD" \
+    workspace=''${1:-$PWD}
+    case "$workspace" in
+      '~') workspace=$HOME ;;
+      '~/'*) workspace="$HOME/''${workspace:2}" ;;
+    esac
+    workspace=$(realpath -ms -- "$workspace")
+    ${lib.getExe pkgs.jq} --arg cwd "$workspace" \
       '.projects[$cwd].hasTrustDialogAccepted = true' "$config" > "$tmp"
     cat "$tmp" > "$config"
   '';
@@ -136,7 +142,7 @@ let
         fi
       fi
 
-      ${claude-trust-cwd}
+      ${claude-trust-cwd} "''${argc_workspace:-$PWD}"
       export IS_SANDBOX=1 CLAUBBIT=1
       if [ "''${argc_online:-0}" -eq 1 ]; then
         unset CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC DISABLE_TELEMETRY
