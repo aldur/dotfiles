@@ -69,6 +69,10 @@ in
   crostini-pcscd = pkgs.callPackage ../base_hosts/crostini/tests/pcscd.nix { };
   crostini-piv = pkgs.callPackage ../base_hosts/crostini/tests/piv.nix { };
 
+  codex-settings = pkgs.callPackage ../modules/home/tests/codex-settings.nix {
+    inherit self inputs system;
+  };
+
   agent-sandbox = pkgs.callPackage ../modules/home/agent-sandbox/tests { };
   agent-sandbox-transport = pkgs.callPackage ../modules/home/agent-sandbox/tests/transport.nix {
     manifest = agentSandboxModules.transportManifest;

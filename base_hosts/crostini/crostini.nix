@@ -146,6 +146,9 @@ in
       { config, lib, ... }: # home-manager's config, not the OS one
       {
         programs = {
+          # Codex's sparkle effect corrupts rendering in ChromeOS Terminal + tmux.
+          codex.writableSettings.tui.whimsy = false;
+
           # The local models of llm cost 550 MiB with their plugins.
           llm.enable = false;
           better-nix-search.enable = true;

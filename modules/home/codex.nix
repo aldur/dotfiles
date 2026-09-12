@@ -39,7 +39,7 @@ let
       status_line_use_colors = true;
     };
   };
-  codexSettingsFile = tomlFormat.generate "codex-config" codexSettings;
+  codexSettingsFile = tomlFormat.generate "codex-config" config.programs.codex.writableSettings;
 
   # Prefer Codex's standalone release after `codex update`. The standalone
   # installer keeps its current release under ~/.codex; checking it directly
@@ -80,6 +80,12 @@ let
   };
 in
 {
+  options.programs.codex.writableSettings = lib.mkOption {
+    type = tomlFormat.type;
+    default = { };
+    description = "Codex settings merged into the writable config.toml during activation.";
+  };
+
   # Keep config.toml writable: Codex stores runtime state such as project trust
   # in the same file. The activation below recursively merges these declarative
   # defaults into that state, with the Nix-managed values winning conflicts.
@@ -87,6 +93,7 @@ in
     programs.codex = {
       enable = true;
       package = null;
+      writableSettings = codexSettings;
     };
 
     home = {
