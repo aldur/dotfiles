@@ -11,7 +11,8 @@ let
       ../ssh.nix
       ../../../modules/nixos/ssh-policy.nix
     ];
-    # Deliberately reproduce the defaults that used to widen the boundary.
+    # Verify that the module enforces loopback and root-only access even
+    # when callers request broader access.
     services.openssh = {
       openFirewall = true;
       listenAddresses = [ { addr = "0.0.0.0"; } ];
@@ -42,8 +43,8 @@ let
         openssh.authorizedKeys.keys = [ snakeOilEd25519PublicKey ];
       };
     };
-    # Model an upgrade with a store-backed legacy host key still present.
-    # The production module must neither use it nor copy it to /persist.
+    # Supply a store-backed key in /etc/ssh. The guest must generate
+    # an independent host identity in /persist.
     environment.etc."ssh/ssh_host_ed25519_key" = {
       source = snakeOilEd25519PrivateKey;
       mode = "0600";

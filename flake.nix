@@ -287,10 +287,6 @@
           inherit self nixpkgs flake-utils;
         };
 
-        mkBaguetteSmokeTest = import ./base_hosts/crostini/tests/smoke.nix {
-          inherit (nixpkgs) lib;
-        };
-
         # An app that writes the SBOM of the runtime closure of a NixOS
         # configuration. CI attests it to the image it publishes. See
         # utils/sbom.nix.

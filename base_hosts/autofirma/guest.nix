@@ -332,9 +332,8 @@ in
         nss-tools
       ];
 
-      # Firefox 154 creates new profiles under ~/.config/mozilla. On Linux,
-      # AutoFirma only reads ~/.mozilla/firefox/profiles.ini. Keep the legacy
-      # location, or AutoFirma finds no certificates.
+      # AutoFirma discovers certificates through ~/.mozilla/firefox/profiles.ini.
+      # Keep Firefox profiles in that directory.
       sessionVariables.MOZ_LEGACY_HOME = "1";
     };
 

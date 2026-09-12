@@ -45,9 +45,11 @@ in
       # We rely on the UID in a few places, so better making sure about it.
       ${username} = {
         inherit uid;
-        # LXC needs this for ordering the user manager after home-manager.
-        # The shared Baguette module always enables it for guest registration.
-        linger = lib.mkDefault cfg.impermanence.enable;
+        # LXC accounts without crostini.enable use lingering for home-manager's
+        # boot ordering. nixos-crostini manages it for selected accounts.
+        linger = lib.mkIf (config.boot.isContainer && !config.users.users.${username}.crostini.enable) (
+          lib.mkDefault cfg.impermanence.enable
+        );
 
         # Make sure user has no password.
         initialHashedPassword = lib.mkForce null;

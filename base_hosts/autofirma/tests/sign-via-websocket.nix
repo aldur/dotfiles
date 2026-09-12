@@ -13,8 +13,6 @@
   baseModule,
   autofirma-nix,
   production,
-  # Print what the guest does instead of an assertion. For debugging.
-  diagnose ? false,
 }:
 let
   openssl = lib.getExe pkgs.openssl;
@@ -23,7 +21,6 @@ let
 in
 pkgs.testers.runNixOSTest {
   name = "autofirma-vm-sign-via-websocket";
-  enableOCR = diagnose;
 
   node.specialArgs = specialArgs;
   # The dotfiles base module sets nixpkgs.config and overlays.
@@ -47,6 +44,7 @@ pkgs.testers.runNixOSTest {
 
     # Clicks the button on the page. The test driver has no mouse.
     environment.systemPackages = [ pkgs.xdotool ];
+    environment.etc."autofirma-test/signer.pem".source = "${testCert}/cert.pem";
 
     virtualisation = {
       memorySize = 4096;
@@ -57,13 +55,6 @@ pkgs.testers.runNixOSTest {
         "-fw_cfg name=opt/qemu-vm/cert.password,file=${testCert}/password"
       ];
     };
-  }
-  // lib.optionalAttrs diagnose {
-    # Sends the page console output to the Firefox stdout.
-    programs.firefox.autoConfig = lib.mkAfter ''
-      pref("devtools.console.stdout.content", true);
-      pref("browser.dom.window.dump.enabled", true);
-    '';
   };
 
   testScript =
@@ -115,27 +106,10 @@ pkgs.testers.runNixOSTest {
           "id=$(xdotool search --name 'AutoFirma test page' | head -n1);"
           " xdotool windowactivate --sync $id; xdotool mousemove --window $id 400 400 click 1"
       ))
-      ${
-        if diagnose then
-          ''
-            for i in range(8):
-                machine.sleep(20)
-                print(f"===== round {i}")
-                print(machine.execute("ps -u " + USER + " -o pid,etimes,cmd | grep -iv 'contentproc\\|grep' | cut -c1-180; echo == FFLOG; tail -n 20 /tmp/firefox.log; echo == CADDY; journalctl -u caddy --no-pager -o cat | tail -n 15; echo == RESULT; ls -la /var/lib/autofirma-test; cat /var/lib/autofirma-test/result.txt; echo == AFIRMA; ls -la /home/" + USER + "/.afirma /etc/Autofirma; cat /home/" + USER + "/.afirma/*.log 2>/dev/null | tail -n 40")[1])
-                print("== SCREEN\n" + machine.get_screen_text())
-                if i == 2:
-                    print("== launching afirma:// from the command line")
-                    machine.execute(as_user("firefox 'afirma://sign?op=sign&algorithm=SHA256withRSA&format=AUTO' >>/tmp/firefox.log 2>&1 &"))
-                if machine.execute("test -s /var/lib/autofirma-test/result.txt")[0] == 0:
-                    break
-          ''
-        else
-          ''
-            machine.wait_for_file("/var/lib/autofirma-test/result.txt", timeout=300)
-          ''
-      }
-      machine.sleep(5)
-      machine.screenshot("desktop")
+      try:
+          machine.wait_for_file("/var/lib/autofirma-test/result.txt", timeout=300)
+      finally:
+          machine.screenshot("desktop")
       output = machine.succeed("cat /var/lib/autofirma-test/result.txt")
       print(output[:200])
       assert output.startswith("Signature Successful: "), output
@@ -146,15 +120,14 @@ pkgs.testers.runNixOSTest {
       machine.succeed(f"echo {shlex.quote(signature)} | base64 -d > /tmp/signature.der")
       machine.succeed("printf '%s' 'Signed from the AutoFirma VM test page.' > /tmp/content.txt")
       machine.succeed(
-          "${openssl} cms -verify -noverify -inform DER -in /tmp/signature.der"
+          "${openssl} cms -verify -noverify -nointern -certfile /etc/autofirma-test/signer.pem"
+          " -inform DER -in /tmp/signature.der"
           " -content /tmp/content.txt -binary -out /dev/null"
       )
       machine.fail(
-          "printf '%s' 'tampered' > /tmp/other.txt; ${openssl} cms -verify -noverify -inform DER"
+          "printf '%s' 'tampered' > /tmp/other.txt; ${openssl} cms -verify -noverify -nointern"
+          " -certfile /etc/autofirma-test/signer.pem -inform DER"
           " -in /tmp/signature.der -content /tmp/other.txt -binary -out /dev/null"
-      )
-      machine.succeed(
-          "${openssl} pkcs7 -inform DER -in /tmp/signature.der -print_certs -noout | grep 'CIUDADANO FICTICIO'"
       )
 
       # The root CA must exist only in the guest. That is the purpose of

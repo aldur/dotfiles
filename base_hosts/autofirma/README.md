@@ -113,9 +113,8 @@ returns a signature over the WebSocket. The test needs KVM.
 nix build .#checks.x86_64-linux.sign-via-websocket -L
 ```
 
-If the test fails, build it with `diagnose = true` (an argument of the
-file). It then prints the processes, the Firefox console, and the screen
-text. It does not assert.
+The test captures a desktop screenshot when waiting for the signing result,
+including when that wait fails. Signing errors and timeouts fail the check.
 
 The Baguette smoke check boots the distributed compressed root image through
 `/sbin/init`, without an initrd, using the representative Termina kernel
@@ -129,20 +128,16 @@ QEMU WebSocket scenario; it does not test ChromeOS protocol dispatch.
 
 ```bash
 nix build .#checks.x86_64-linux.baguette-boot -L
-nix build .#checks.x86_64-linux.baguette-no-linger -L
 nix build .#checks.x86_64-linux.qemu-configuration -L
 ```
 
-`baguette-no-linger` boots a deliberately changed image and requires that
-its user manager remains inactive. This negative control catches a harness
-that silently starts the session itself. `qemu-configuration` checks that
+`qemu-configuration` checks that
 the signing test retains production storage, application packages/policies,
 user configuration, environment and service timeouts. The QEMU scenario
 imports `autofirma.nix`, including the shared QEMU guest module. Its local
 HTTPS server and the NixOS test driver remain explicit instrumentation.
 
-The shared smoke harness is `aldur-dotfiles.lib.mkBaguetteSmokeTest` in
-`../crostini/tests/smoke.nix`. It uses a fixture ext4 tools disk with
+The nixos-crostini smoke harness uses a fixture ext4 tools disk with
 nixpkgs sommelier/Xwayland/Mesa, a headless Weston compositor, and stand-ins
 for the host integration daemons. Test certificate files stand in for the
 ChromeOS share at its configured guest path. These fixtures do not validate
@@ -150,7 +145,7 @@ ChromeOS registration, host file sharing, password dialogs or suspend/resume.
 The kernel is representative, not the exact Chromebook build. VM failures,
 timeouts, failed probes and shutdown errors fail the check.
 
-CI executes both AutoFirma runtime scenarios and the negative control on
+CI executes both AutoFirma runtime scenarios and configuration checks on
 x86 KVM runners. ARM image builds and configuration evaluation do not prove
 ARM boot behavior. Follow the [normal-crosh device test](../crostini/tests/device-boot.md)
 for actual ChromeOS startup and lifecycle validation.

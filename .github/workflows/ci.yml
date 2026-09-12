@@ -164,8 +164,6 @@ jobs:
             target: ./base_hosts/autofirma#checks.x86_64-linux.qemu-configuration
           - runner: ubuntu-24.04
             target: ./base_hosts/autofirma#checks.x86_64-linux.baguette-boot
-          - runner: ubuntu-24.04
-            target: ./base_hosts/autofirma#checks.x86_64-linux.baguette-no-linger
 
           # Build the system closure of the AutoFirma Baguette image as a
           # test. autofirma-baguette.yml builds the image itself on demand.

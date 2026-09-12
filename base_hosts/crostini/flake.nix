@@ -72,17 +72,10 @@
         # Real ChromeOS registration is checked separately on the device.
         checks.baguette-boot = nixpkgs.legacyPackages.${system}.callPackage ./tests/baguette-boot.nix {
           configuration = generator system baguetteModules;
-          inherit (aldur-dotfiles.lib) mkBaguetteSmokeTest;
           crostini = nixos-crostini;
         };
 
-        # Compatibility alias: all smoke boots now use the Termina kernel.
-        checks.baguette-boot-termina = self.checks.${system}.baguette-boot;
-
-        checks.baguette-verifier = import ./tests/verify-boot.nix {
-          pkgs = nixpkgs.legacyPackages.${system};
-          crostini = nixos-crostini;
-        };
+        checks.baguette-verifier = nixos-crostini.checks.${system}.boot-verifier;
 
         checks.ssh-configurations =
           nixpkgs.legacyPackages.${system}.callPackage ./tests/ssh-configurations.nix

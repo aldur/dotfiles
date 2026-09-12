@@ -27,14 +27,14 @@ gh attestation verify baguette_rootfs.img.zst --repo aldur/dotfiles \
 `nix run .#sbom-baguette -- ./sbom` writes the same SBOM for a local build.
 
 `nix flake check` boots the image of the same system in crosvm with
-`aldur-dotfiles.lib.mkBaguetteSmokeTest`. The shared harness is in
-`tests/smoke.nix`; the representative Termina kernel comes from
-nixos-crostini. It boots the distributed image through `/sbin/init` without
+nixos-crostini's smoke harness. The shared guest module selects
+`users.users.${config.mainUser}.crostini.enable = true`, letting upstream own boot-time lingering
+and display-service ordering. Home persistence does not control registration.
+The harness boots the distributed image through `/sbin/init` without
 an initrd, observes the user manager before user commands, and never enables
 lingering or changes device permissions. `tests/baguette-boot.nix` adds
 filesystem, SSH, activation and daemon-build probes. The SSH fixture replaces
 authorized keys, and the activation probe switches to the current generation.
-`baguette-boot-termina` is a compatibility alias for `baguette-boot`.
 
 The tools disk, graphics stack and host daemons are fixtures. These smoke
 checks do not establish real ChromeOS registration or suspend/resume behavior;
@@ -49,7 +49,7 @@ nix build .#checks.x86_64-linux.baguette-boot -L
 To test changes in both local repositories, run from the dotfiles root:
 
 ```bash
-nix build ./base_hosts/crostini#checks.x86_64-linux.baguette-boot-termina \
+nix build ./base_hosts/crostini#checks.x86_64-linux.baguette-boot \
   --override-input aldur-dotfiles . \
   --override-input nixos-crostini "path:$HOME/nixos-crostini" \
   --no-write-lock-file -L
@@ -79,7 +79,7 @@ with firewalls disabled, two external interfaces each, and IPv4/IPv6.
 It checks successful root login on loopback, rejection of `aldur` even with
 an authorized key, and refused TCP connections to every external address
 from the guest and its peer. Ping provides a routing control. It also
-checks distinct generated identities, rejection of a legacy store key as
+checks distinct generated identities, rejection of a store-backed fixture key as
 host identity, mode `0600`, and persistence through service restart and
 reboot with a separate `/persist` disk and tmpfs `/home`.
 

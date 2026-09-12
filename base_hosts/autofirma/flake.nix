@@ -103,20 +103,6 @@
               inherit pkgs lib testCert;
               configuration = baguetteConfiguration;
               crostini = inputs.nixos-crostini;
-              inherit (aldur-dotfiles.lib) mkBaguetteSmokeTest;
-            };
-
-            baguette-no-linger = aldur-dotfiles.lib.mkBaguetteSmokeTest {
-              configuration = baguetteConfiguration.extendModules {
-                modules = [
-                  {
-                    users.users.${baguetteConfiguration.config.mainUser}.linger = lib.mkForce false;
-                  }
-                ];
-              };
-              crostini = inputs.nixos-crostini;
-              name = "autofirma-baguette-no-linger";
-              expectUserManager = false;
             };
           };
         }

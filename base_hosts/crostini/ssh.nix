@@ -17,8 +17,7 @@
       AuthenticationMethods = "publickey";
     };
 
-    # Generated on first boot, never at image-build time. A new path also
-    # rotates existing guests away from the formerly committed /etc key.
+    # Each guest generates its host key on first boot and retains it in /persist.
     generateHostKeys = true;
     hostKeys = lib.mkForce [
       {

@@ -8,10 +8,5 @@
     ../../modules/nixos/users.nix
   ];
 
-  users.users.${config.mainUser} = {
-    uid = 1000;
-    # garcon must register the guest before ChromeOS can open a shell.
-    # Start it and sommelier at boot, independent of login or /home storage.
-    linger = true;
-  };
+  users.users.${config.mainUser}.crostini.enable = true;
 }
