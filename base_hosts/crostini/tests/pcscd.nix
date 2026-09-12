@@ -35,9 +35,12 @@ pkgs.testers.runNixOSTest {
         "DevicePolicy=closed",
         "DeviceAllow=char-usb_device rw",
         "RestrictAddressFamilies=AF_NETLINK AF_UNIX",
-        "IPAddressDeny=0.0.0.0/0 ::/0",
     ]:
         assert want in show, show
+
+    # systemd may return the IPv4 and IPv6 deny rules in either order.
+    properties = dict(line.split("=", 1) for line in show.splitlines())
+    assert set(properties["IPAddressDeny"].split()) == {"0.0.0.0/0", "::/0"}, show
 
     # Hotplug: the second reader reaches pcscd over netlink.
     machine.send_monitor_command("device_add usb-ccid,bus=xhci.0,id=reader1")
