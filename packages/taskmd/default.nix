@@ -12,13 +12,13 @@
 }:
 
 let
-  version = "0.5.1";
+  version = "0.6.2";
 
   src = fetchFromGitHub {
     owner = "driangle";
     repo = "taskmd";
     tag = "v${version}";
-    hash = "sha256-s9dT7cYcLzk5aLuaIgP/O+XEbihSue6sRdznT4o24bs=";
+    hash = "sha256-6Lf3YuK4lL2j8UwB6KrFvqfSe30dHMb+KIr5a0ZA2u8=";
   };
 
   # Vendoring cannot run in workspace mode, so drop the workspace and wire the
@@ -100,7 +100,7 @@ buildGoModule (finalAttrs: {
   # modules on a whole pnpm build.
   overrideModAttrs = _: { postPatch = leaveWorkspace; };
 
-  vendorHash = "sha256-PHMkr0740nlnK7c4CWDkYjvCPE//Zd3Wr64yJpc1JxY=";
+  vendorHash = "sha256-Fbkc39A8qy8LuG+tgZwL/2IVJUo8cbL0A3TBY0S6/50=";
 
   # Without this the web UI is served from an empty filesystem: `taskmd web
   # start` comes up, but every page is blank.
