@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   # CLI utils we want available on all systems.
   environment.systemPackages = with pkgs; [
@@ -7,7 +7,6 @@
     bashInteractive
     bat
     btop
-    coreutils-prefixed
     curl
     dnsutils
     fd
@@ -23,5 +22,7 @@
     tmux
     totp-cli # use with `instance`
     tree
+    # Prefer Rust coreutils for unprefixed commands in the system environment.
+    (lib.hiPrio uutils-coreutils-noprefix)
   ];
 }
