@@ -59,6 +59,12 @@
           baguette-tarball = self.nixosConfigurations.baguette-nixos.config.system.build.tarball;
           baguette-image = self.nixosConfigurations.baguette-nixos.config.system.build.btrfsImage;
           baguette-zimage = self.nixosConfigurations.baguette-nixos.config.system.build.btrfsImageCompressed;
+          baguette-benchmark = nixos-crostini.lib.mkBaguetteBenchmark {
+            configuration = generator system baguetteModules;
+            extraSystemUnits = [
+              "home-manager-${self.nixosConfigurations.baguette-nixos.config.mainUser}.service"
+            ];
+          };
         };
 
         # The SBOM of the system in baguette-zimage. CI attests it to the

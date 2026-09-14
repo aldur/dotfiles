@@ -263,14 +263,19 @@ in
     };
 
     systemd = {
+      # nixos-crostini adds an instance drop-in for the tools mount. Its
+      # filename shadows preservation's user@ template drop-in, so merge
+      # home activation ordering into that same instance. Keep this ordering
+      # with a persistent home too: the first session needs current settings.
+      services."user@${toString uid}" = {
+        overrideStrategy = "asDropin";
+        after = [ "home-manager-${username}.service" ];
+        wants = [ "home-manager-${username}.service" ];
+        serviceConfig.TimeoutStartSec = "90";
+      };
       user.services = {
         # This ensures that `sommelier` sets `DISPLAY`, used by `pinentry`.
-        yubikey-agent.after = [
-          "sommelier@0.service"
-          "sommelier@1.service"
-          "sommelier-x@0.service"
-          "sommelier-x@1.service"
-        ];
+        yubikey-agent.after = config.systemd.user.services.garcon.requires;
         # Don't start a yubikey-agent instance for root.
         yubikey-agent.unitConfig.ConditionUser = "!root";
       };

@@ -46,10 +46,18 @@ crostini.lib.mkBaguetteSmokeTest {
   name = "crostini-baguette-smoke";
   probeFiles = {
     inherit module;
+    id = "${pkgs.coreutils}/bin/id";
     ssh-key = keys.snakeOilEd25519PrivateKey;
     authorized-keys = writeText "authorized_keys" "${keys.snakeOilEd25519PublicKey}\n";
   };
   extraProbe = ''
+    # An instance drop-in must not hide Home Manager's ordering.
+    home_ready=$(systemctl show -p ActiveEnterTimestampMonotonic --value home-manager-$user.service)
+    manager_started=$(systemctl show -p InactiveExitTimestampMonotonic --value user@$(id -u "$user").service)
+    test "$home_ready" -gt 0
+    test "$manager_started" -ge "$home_ready"
+    echo "PROBE home-before-session ok"
+
     # Capture output only after checking the command's status. An echo with
     # command substitution would discard that status.
     expect_success() {
@@ -92,12 +100,15 @@ crostini.lib.mkBaguetteSmokeTest {
     # device nodes. There the same files work.
     in_session mkdir -p "/home/$user/Work/probe"
     for dir in /home/$user /home/$user/Work /var/tmp /run/wrappers/bin; do
-      # id is the coreutils multicall binary. The copy needs the program name.
-      cp -L /run/current-system/sw/bin/id "$dir/probe-id"
+      # Use the GNU fixture: the selected system coreutils may be uutils,
+      # which does not accept the multicall flag below.
+      cp "$probe/id" "$dir/probe-id"
       chown root:root "$dir/probe-id"
       chmod 4755 "$dir/probe-id"
       if [ "$dir" = /var/tmp ]; then
-        expect_failure in_session "$dir/probe-id" --coreutils-prog=id -u
+        # Failed systemd ExecStart reports to the journal, not --pipe.
+        # A shell makes the exec denial reach the probe's stderr too.
+        expect_failure in_session sh -c 'exec "$@"' sh "$dir/probe-id" --coreutils-prog=id -u
       else
         expect_success in_session "$dir/probe-id" --coreutils-prog=id -u
       fi
@@ -118,7 +129,7 @@ crostini.lib.mkBaguetteSmokeTest {
     # exec probe below.
     for dir in /dev/shm /var/tmp; do
       in_session sh -c "printf '#!/bin/sh\necho ran\n' > $dir/probe.sh && chmod +x $dir/probe.sh"
-      expect_failure in_session "$dir/probe.sh"
+      expect_failure in_session sh -c 'exec "$@"' sh "$dir/probe.sh"
       echo "PROBE noexec $dir $probe_output"
     done
 
@@ -185,6 +196,12 @@ crostini.lib.mkBaguetteSmokeTest {
     expect_success grep '^allowed-users' /etc/nix/nix.conf
     echo "PROBE nix users $(printf '%s\n' "$probe_output" | tr -s ' ')"
 
+    # Activation restores declarative authorized_keys. Reinstall the
+    # fixture before testing forwarding, and prove authentication first.
+    rm -f "$keys"
+    install -m 0444 -o root -g root "$probe/authorized-keys" "$keys"
+    ssh_root true
+
     # A root session over the loopback needs no tunnel and no agent. The
     # daemon sets up a remote forward when the session opens, so it
     # refuses this one there; ExitOnForwardFailure turns that into a
@@ -216,6 +233,7 @@ crostini.lib.mkBaguetteSmokeTest {
     echo "PROBE after-rebuild sudo ok"
   '';
   extraChecks = [
+    "home-before-session ok$"
     # The representative Termina kernel has no module support.
     "sysctl active modules_disabled=absent"
     "insmod .*Function not implemented"
