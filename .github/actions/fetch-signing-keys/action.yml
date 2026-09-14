@@ -1,0 +1,24 @@
+name: Fetch the signing keys
+description: >-
+  Fetch the keys behind the `gh-signing-keys` flake input of the dotfiles
+  into a file, and check the file against the lock. Point the input at the
+  file with `--override-input`. See fetch-signing-keys.sh for the reason.
+  The action form lets other repositories reuse the script; their lock
+  carries the same node through the `aldur-dotfiles` input.
+
+inputs:
+  token:
+    description: A GitHub token with API read access.
+    required: true
+  path:
+    description: Where to write the keys.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        SIGNING_KEYS: ${{ inputs.path }}
+      run: "$GITHUB_ACTION_PATH/fetch-signing-keys.sh"

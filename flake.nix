@@ -213,10 +213,6 @@
           path = ./base_hosts/qemu;
           description = "A QEMU VM";
         };
-        autofirma-vm = {
-          path = ./base_hosts/autofirma;
-          description = "A QEMU VM with a desktop, Firefox and AutoFirma";
-        };
         lxc-nixos = {
           path = ./base_hosts/crostini;
           description = "An lxc-nixos container to run in ChromeOS Crostini";
@@ -281,8 +277,8 @@
           inputs = hostInputs // inputs;
         };
 
-        # The outputs of a `qemu-vm` guest flake (base_hosts/qemu,
-        # base_hosts/autofirma). See utils/qemu-guest.nix.
+        # The outputs of a `qemu-vm` guest flake (base_hosts/qemu, or a flake
+        # that consumes this one). See utils/qemu-guest.nix.
         mkQemuGuest = import ./utils/qemu-guest.nix {
           inherit self nixpkgs flake-utils;
         };

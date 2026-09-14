@@ -15,7 +15,9 @@ set -euo pipefail
 : "${GH_TOKEN:?token with API read access required}"
 : "${SIGNING_KEYS:?destination path required}"
 
-# The lock file holds the URL without the `file+` prefix of flake.nix.
+# The lock file holds the URL without the `file+` prefix of flake.nix. In a
+# flake that consumes the dotfiles, the node comes in through the
+# `aldur-dotfiles` input and keeps its name.
 url=$(jq -r '.nodes["gh-signing-keys"].locked.url' flake.lock)
 locked=$(jq -r '.nodes["gh-signing-keys"].locked.narHash' flake.lock)
 

@@ -1,0 +1,12 @@
+name: Reclaim disk space
+description: >-
+  Make tens of gigabytes free on an Ubuntu runner of GitHub. Remove the
+  toolchains and the docker caches that come with the runner. This
+  repository does not use them. The action form lets other repositories
+  reuse the script.
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: "$GITHUB_ACTION_PATH/reclaim-disk.sh"

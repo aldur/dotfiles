@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 env:
-  # `.github/scripts/fetch-signing-keys.sh` writes the verified keys to this
+  # `.github/actions/fetch-signing-keys` writes the verified keys to this
   # path. The jobs that use the keys point the `gh-signing-keys` input to it.
   SIGNING_KEYS: /tmp/ssh_signing_keys.json
 
@@ -38,9 +38,10 @@ jobs:
         with:
           send-statistics: false
       - &fetch-signing-keys
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: .github/scripts/fetch-signing-keys.sh
+        uses: ./.github/actions/fetch-signing-keys
+        with:
+          token: ${{ github.token }}
+          path: ${{ env.SIGNING_KEYS }}
       # The override stops an unauthenticated eval-time fetch of
       # api.github.com, which hits the shared rate limit.
       - run: |
@@ -86,8 +87,7 @@ jobs:
       # The checks put more than 17 GiB into the store. A cold build uses
       # more space for its work files. The image builds reclaim disk space
       # for the same reason.
-      - name: Reclaim disk space
-        run: .github/scripts/reclaim-disk.sh
+      - uses: ./.github/actions/reclaim-disk
       - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: nix-cache
         with:
@@ -152,24 +152,6 @@ jobs:
           - runner: ubuntu-24.04-arm
             target: ./base_hosts/qemu#vm-nogui
 
-          # Build both launchers; execute runtime checks on a KVM runner.
-          - runner: ubuntu-24.04
-            target: ./base_hosts/autofirma#autofirma-vm
-          - runner: ubuntu-24.04-arm
-            target: ./base_hosts/autofirma#autofirma-vm
-
-          - runner: ubuntu-24.04
-            target: ./base_hosts/autofirma#checks.x86_64-linux.sign-via-websocket
-          - runner: ubuntu-24.04
-            target: ./base_hosts/autofirma#checks.x86_64-linux.qemu-configuration
-          - runner: ubuntu-24.04
-            target: ./base_hosts/autofirma#checks.x86_64-linux.baguette-boot
-
-          # Build the system closure of the AutoFirma Baguette image as a
-          # test. autofirma-baguette.yml builds the image itself on demand.
-          - runner: ubuntu-24.04-arm
-            target: ./base_hosts/autofirma#nixosConfigurations.autofirma-baguette.config.system.build.toplevel
-
           # Build the Crostini Baguette image as a test (only aarch64).
           - runner: ubuntu-24.04-arm
             target: ./base_hosts/crostini#baguette-image
@@ -192,30 +174,7 @@ jobs:
       - *checkout
       - *setup-nix
 
-      - name: Reclaim disk space
-        run: .github/scripts/reclaim-disk.sh
-
-      # The AutoFirma truststore fetches its certificates from the web sites
-      # of the Spanish certificate providers. A provider site is at times
-      # unreachable from a runner. The certificates are fixed-output paths,
-      # so nix accepts them from a cache without a signature, and the paths
-      # are the same on both architectures. Keep them between runs. The job
-      # index in the key gives each job its own entry: with one shared key,
-      # the parallel jobs race to save it.
-      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        if: contains(matrix.target, 'autofirma')
-        id: autofirma-certs
-        with:
-          path: /tmp/autofirma-certs
-          key: &autofirma-certs-key autofirma-certs-${{ strategy.job-index }}-${{ hashFiles('base_hosts/autofirma/flake.lock') }}
-          restore-keys: |
-            autofirma-certs-
-      - name: Seed the store with the cached certificates
-        if: contains(matrix.target, 'autofirma')
-        run: |
-          if [ -f /tmp/autofirma-certs/nix-cache-info ]; then
-            nix copy --quiet --all --from file:///tmp/autofirma-certs
-          fi
+      - uses: ./.github/actions/reclaim-disk
 
       - *fetch-signing-keys
 
@@ -223,27 +182,6 @@ jobs:
           nix build --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             ${{ matrix.target }}
-
-      # `always()`: keep the certificates that did download, also after a
-      # failure. Do not do this step if the cache had a hit. The Baguette
-      # configuration uses the same truststore as the VM.
-      - name: Export the certificates to the cache
-        if: always() && contains(matrix.target, 'autofirma') && steps.autofirma-certs.outputs.cache-hit != 'true'
-        run: |
-          nix eval --json --override-input aldur-dotfiles . \
-            --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
-            "./base_hosts/autofirma#nixosConfigurations.autofirma-vm-$(uname -m).config.programs.autofirma.package.clienteafirma.truststore.govTrustedCerts" \
-            --apply 'map (cert: cert.outPath)' \
-            | jq -r '.[]' \
-            | while read -r path; do if [ -e "$path" ]; then echo "$path"; fi; done \
-            | xargs -r nix copy --quiet --to file:///tmp/autofirma-certs
-      # Upload what the step above exported also in case of failure.
-      - name: Save the certificates cache
-        if: always() && contains(matrix.target, 'autofirma') && steps.autofirma-certs.outputs.cache-hit != 'true'
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: /tmp/autofirma-certs
-          key: *autofirma-certs-key
 
   nix-darwin-ci:
     runs-on: macos-26  # arm, beta

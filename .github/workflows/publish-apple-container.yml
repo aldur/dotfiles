@@ -50,15 +50,16 @@ jobs:
         uses: ./.github/actions/setup-nix
 
       - if: matrix.app.reclaim-disk
-        run: .github/scripts/reclaim-disk.sh
+        uses: ./.github/actions/reclaim-disk
 
       - &ghcr-login
         run: echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - env:
-          GH_TOKEN: ${{ github.token }}
-        run: .github/scripts/fetch-signing-keys.sh
+      - uses: ./.github/actions/fetch-signing-keys
+        with:
+          token: ${{ github.token }}
+          path: ${{ env.SIGNING_KEYS }}
 
       # The app writes the digest of the pushed manifest to the file. The
       # attest job below uses it as the subject.

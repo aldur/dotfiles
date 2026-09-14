@@ -1,14 +1,8 @@
-# Builds a ChromeOS Baguette image and keeps it as a workflow artifact.
+# Builds the ChromeOS Baguette image of base_hosts/crostini and keeps it as
+# a workflow artifact.
 on:
   workflow_dispatch:
     inputs:
-      image:
-        description: The flake under base_hosts that builds the image
-        type: choice
-        options:
-          - autofirma
-          - crostini
-        default: autofirma
       retention-days:
         description: Days to keep the artifact
         type: number
@@ -31,24 +25,23 @@ jobs:
           persist-credentials: false
       - uses: ./.github/actions/setup-nix
 
-      - name: Reclaim disk space
-        run: .github/scripts/reclaim-disk.sh
-
-      - env:
-          GH_TOKEN: ${{ github.token }}
-        run: .github/scripts/fetch-signing-keys.sh
+      - uses: ./.github/actions/reclaim-disk
+      - uses: ./.github/actions/fetch-signing-keys
+        with:
+          token: ${{ github.token }}
+          path: ${{ env.SIGNING_KEYS }}
 
       - run: |
           nix build --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
-            "./base_hosts/${{ inputs.image }}#baguette-zimage"
+            "./base_hosts/crostini#baguette-zimage"
 
       # The SBOM of the system in the image. The build above made the
       # system, so this only walks its closure. See utils/sbom.nix.
       - run: |
           nix run --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
-            "./base_hosts/${{ inputs.image }}#sbom-baguette" -- /tmp/subject
+            "./base_hosts/crostini#sbom-baguette" -- /tmp/subject
 
       # The attest job below attests the image by its checksum. The subject
       # name is the file name in the checksums file, so run the command in
@@ -57,7 +50,7 @@ jobs:
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ${{ inputs.image }}-baguette-arm64
+          name: crostini-baguette-arm64
           path: result/*.zst
           if-no-files-found: error
           # The artifact is always a zip. The image is zstd-compressed, so
@@ -66,7 +59,7 @@ jobs:
           retention-days: ${{ inputs.retention-days }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ${{ inputs.image }}-baguette-arm64-subject
+          name: crostini-baguette-arm64-subject
           path: |
             /tmp/subject/checksums.txt
             /tmp/subject/sbom.spdx.json
@@ -85,7 +78,7 @@ jobs:
       - *checkout
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: ${{ inputs.image }}-baguette-arm64-subject
+          name: crostini-baguette-arm64-subject
           path: subject
       - uses: ./.github/actions/attest
         with:

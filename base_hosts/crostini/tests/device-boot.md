@@ -10,7 +10,7 @@ First collect the current failure without opening a guest shell:
 
 ```text
 vmc list
-vmc logs autofirma
+vmc logs <vm>
 vmc start --help
 ```
 
@@ -22,9 +22,9 @@ the startup procedure can be adapted. In particular, `--user` belongs to
 Once the corrected ARM artifact is in Downloads, create a separate VM:
 
 ```text
-vmc create --vm-type BAGUETTE --size 10G --source /home/chronos/user/MyFiles/Downloads/baguette_rootfs.img.zst autofirma-boot-test
-vmc start --vm-type BAGUETTE --no-shell autofirma-boot-test
-vmc logs autofirma-boot-test
+vmc create --vm-type BAGUETTE --size 10G --source /home/chronos/user/MyFiles/Downloads/baguette_rootfs.img.zst nixos-boot-test
+vmc start --vm-type BAGUETTE --no-shell nixos-boot-test
+vmc logs nixos-boot-test
 ```
 
 Use that fresh name only if it does not already exist. Record whether start
@@ -38,7 +38,7 @@ registration handshake; it does not replace maitred or garcon.
 After recording startup, connect:
 
 ```text
-vsh autofirma-boot-test penguin
+vsh nixos-boot-test penguin
 ```
 
 Run these **inside the guest**, not at the `crosh>` prompt:
@@ -61,13 +61,10 @@ directory and `MOZ_LEGACY_HOME` entries are relevant. These observations
 after login supplement the saved pre-login log, rather than proving startup
 on their own. If `vsh` fails, preserve that error and the host logs.
 
-Share Downloads through the Files app, put a synthetic test certificate at
-`cert.p12`, and launch **Firefox (AutoFirma)** from ChromeOS. Verify import
-and an actual signature. Exercise both `cert.password` and the interactive
-password dialog in separate fresh sessions. Test clean stop/start, then
-host sleep/wake, collecting `vmc logs` and service restart counts each time.
-Stop/start discards this AutoFirma guest's tmpfs home, so save test outputs
-to the shared folder first. No personal signing certificate is needed.
+Then exercise the applications of the image, as its own README describes.
+Test clean stop/start, then host sleep/wake, collecting `vmc logs` and
+service restart counts each time. A guest with a tmpfs home loses its files
+at stop/start, so save test outputs to the shared folder first.
 
 For the original regression, repeat the no-shell startup procedure with
 the original affected image under a different fresh VM name on the same

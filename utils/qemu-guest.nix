@@ -1,5 +1,5 @@
-# The flake outputs of one `qemu-vm` guest (see base_hosts/qemu and
-# base_hosts/autofirma). They are a launcher package for each host system
+# The flake outputs of one `qemu-vm` guest (see base_hosts/qemu, or a flake
+# that consumes this one). They are a launcher package for each host system
 # and a nixosConfiguration for each guest architecture. The
 # nixosConfiguration lets the guest rebuild its image from inside.
 # flake.nix exports this function as `lib.mkQemuGuest`.
