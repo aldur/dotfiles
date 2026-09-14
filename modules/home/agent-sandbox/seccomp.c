@@ -4,12 +4,14 @@
  * a small denylist, not a general syscall allowlist.
  */
 #include <errno.h>
+#include <linux/ioprio.h>
 #include <seccomp.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <sys/resource.h>
 #include <unistd.h>
 
 static void check(int result) {
@@ -36,11 +38,27 @@ int main(void) {
 
     /* ioctl's request is an unsigned int in the kernel. Ignore upper bits,
      * while leaving normal terminal operations (size, modes, input) alone.
+     * TIOCSPGRP would let a background sandbox take over the host terminal.
      */
     check(seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), SCMP_SYS(ioctl), 1,
                           SCMP_A1_64(SCMP_CMP_MASKED_EQ, UINT32_MAX, TIOCSTI)));
     check(seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), SCMP_SYS(ioctl), 1,
                           SCMP_A1_64(SCMP_CMP_MASKED_EQ, UINT32_MAX, TIOCLINUX)));
+    check(seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), SCMP_SYS(ioctl), 1,
+                          SCMP_A1_64(SCMP_CMP_MASKED_EQ, UINT32_MAX, TIOCSPGRP)));
+
+    /* Without bwrap's --new-session, the initial process group can contain
+     * callers outside the PID namespace. These special zero forms operate on
+     * the inherited kernel process-group object rather than a visible PID.
+     */
+    check(seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), SCMP_SYS(kill), 1,
+                          SCMP_A0(SCMP_CMP_EQ, 0)));
+    check(seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), SCMP_SYS(setpriority), 2,
+                          SCMP_A0(SCMP_CMP_EQ, PRIO_PGRP),
+                          SCMP_A1(SCMP_CMP_EQ, 0)));
+    check(seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), SCMP_SYS(ioprio_set), 2,
+                          SCMP_A0(SCMP_CMP_EQ, IOPRIO_WHO_PGRP),
+                          SCMP_A1(SCMP_CMP_EQ, 0)));
 
     /* Do not inherit access to the host user's kernel keyrings, or expose
      * kernel instrumentation interfaces that normal agent work does not need.

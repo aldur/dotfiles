@@ -232,7 +232,7 @@ environment_args+=(
 )
 
 isolation_args=(
-  --die-with-parent --new-session
+  --die-with-parent
   --unshare-user --unshare-pid --unshare-ipc --unshare-uts --cap-drop ALL
   --seccomp 3
 )

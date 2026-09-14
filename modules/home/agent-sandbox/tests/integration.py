@@ -184,14 +184,35 @@ result = run([
 assert result.returncode == 0, result.stderr
 
 # Exercise a real PTY, including raw input and window-size ioctls. The child
-# retains interactive stdio while losing the caller's controlling terminal.
+# retains the caller's controlling terminal, while dangerous operations on it
+# and the inherited process group remain blocked.
 master, slave = pty.openpty()
 fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 35, 100, 0, 0))
 terminal_program = '''
-import os, termios, tty
+import errno, fcntl, os, struct, termios, tty
 assert all(os.isatty(fd) for fd in (0, 1, 2))
 assert os.get_terminal_size(0).columns == 100
-assert int(open('/proc/self/stat').read().split(') ', 1)[1].split()[4]) == 0
+assert int(open('/proc/self/stat').read().split(') ', 1)[1].split()[4]) != 0
+for request, argument in (
+    (termios.TIOCSTI, b'x'),
+    (termios.TIOCSPGRP, struct.pack('i', os.getpgrp())),
+):
+    try:
+        fcntl.ioctl(0, request, argument)
+    except OSError as error:
+        assert error.errno == errno.EPERM, error
+    else:
+        raise AssertionError(f'terminal ioctl {request:#x} was allowed')
+for operation in (
+    lambda: os.kill(0, 0),
+    lambda: os.setpriority(os.PRIO_PGRP, 0, 0),
+):
+    try:
+        operation()
+    except OSError as error:
+        assert error.errno == errno.EPERM, error
+    else:
+        raise AssertionError('inherited process-group operation was allowed')
 saved = termios.tcgetattr(0)
 try:
     tty.setraw(0)
@@ -241,8 +262,8 @@ finally:
 assert not list(Path("/tmp").glob("*-dbus-proxy.*"))
 print("passed: exit status, shell environment and interactive terminal", flush=True)
 
-# Ctrl-C in a canonical terminal must also end a command in the new session,
-# and its proxy. Do not leave a detached command waiting after the user exits.
+# Ctrl-C in a canonical terminal must end the command and its proxy. Do not
+# leave a command waiting after the user exits.
 master, slave = pty.openpty()
 proc = subprocess.Popen(
     [wrapper, "--", "@python@", "-c", "import time; print('interrupt-ready', flush=True); time.sleep(60)"],

@@ -64,9 +64,11 @@ processes. Each extra grant and `--git-write` makes the protection weaker.
   (`extraDbusTalk`). Selected sockets from the runtime directory
   (`extraRuntimeDirAllowlist`).
 - **Isolation.** Own user, PID, IPC and UTS namespaces. No capabilities. A
-  seccomp filter. A new session, so the command cannot type into the parent
-  terminal. Open files of the parent shell are closed. The sandbox stops
-  when the launcher stops. Terminal output is not filtered.
+  seccomp filter denies terminal input injection, foreground-terminal
+  reassignment and operations on the inherited process group. The command
+  keeps the controlling terminal, so it receives `SIGWINCH` on resize. Open
+  files of the parent shell are closed. The sandbox stops when the launcher
+  stops. Terminal output is not filtered.
 
 ## Protected Git metadata
 

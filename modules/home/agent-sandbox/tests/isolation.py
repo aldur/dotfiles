@@ -57,7 +57,9 @@ status = dict(line.split(":", 1) for line in Path("/proc/self/status").read_text
 assert status["NoNewPrivs"].strip() == "1"
 assert status["Seccomp"].strip() == "2"
 assert int(status["CapEff"], 16) == 0
-assert int(Path("/proc/self/stat").read_text().split(") ", 1)[1].split()[4]) == 0, "host controlling TTY retained"
+# This fixture has no terminal. The PTY integration test below verifies the
+# intentionally retained controlling terminal.
+assert int(Path("/proc/self/stat").read_text().split(") ", 1)[1].split()[4]) == 0
 run("@seccompProbe@")
 # A grandchild must inherit the filter too.
 run("@bash@", "-c", 'exec "$1"', "probe", "@seccompProbe@")
