@@ -109,6 +109,13 @@ pkgs.testers.runNixOSTest {
           "certutil -A -n sede.test -t 'C,,' -d sql:$(dirname ~/.mozilla/firefox/*/cert9.db)"
           " -i /etc/autofirma-test/ca.crt"
       ))
+      # Send the console messages of the page to the Firefox stdout. The
+      # log then shows the AutoScript connection attempts. AutoFirma
+      # inherits the same stdout from Firefox.
+      machine.succeed(as_user(
+          "echo 'user_pref(\"devtools.console.stdout.content\", true);'"
+          " >> $(dirname ~/.mozilla/firefox/*/cert9.db)/user.js"
+      ))
       machine.succeed(as_user("autofirma-vm-firefox --new-tab https://sede.test/ >/tmp/firefox-test.log 2>&1 &"))
       # The page sets its title to "ready" when its button exists, and to
       # "signing" when the button gets the click. Click until the page
@@ -133,6 +140,7 @@ pkgs.testers.runNixOSTest {
           machine.wait_for_file("/var/lib/autofirma-test/result.txt", timeout=300)
       finally:
           machine.screenshot("desktop")
+          print(machine.succeed("cat /tmp/firefox-test.log"))
       output = machine.succeed("cat /var/lib/autofirma-test/result.txt")
       print(output[:200])
       assert output.startswith("Signature Successful: "), output

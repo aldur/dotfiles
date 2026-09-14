@@ -286,11 +286,17 @@ in
             { };
         autoConfig = ''
           pref("network.protocol-handler.expose.afirma", true);
-          // Do not show the "Allow this site to open afirma links?" prompt.
-          // AutoScript polls AutoFirma for a short time after the click. An
-          // open prompt fails the signature. AutoFirma is the only external
-          // handler in this guest.
-          pref("security.external_protocol_requires_permission", false);
+          // The autofirma-nix module sets network.protocol-handler.external.afirma.
+          // Since Firefox 155, that setting skips the "Allow this site to
+          // open afirma links?" prompt only when the navigation has
+          // transient user activation (bug 299116). AutoScript opens
+          // afirma:// from a hidden iframe that it creates in script.
+          // Firefox 155 shows the prompt for that navigation, also after a
+          // click. AutoScript polls AutoFirma for 33 seconds and then stops.
+          // An open prompt fails the signature. This pref restores the
+          // launch without a prompt. AutoFirma is the only external handler
+          // in this guest.
+          pref("network.protocol-handler.prompt-without-user-activation", false);
         '';
         policies = {
           # Send afirma:// to the desktop entry. Do not show the application
