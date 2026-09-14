@@ -5,6 +5,7 @@
   base = [
     "Documents/"
     "Work/"
+    ".cache/nix"
     ".local/state/nix"
     ".local/state/lazygit"
     ".local/share/atuin"
