@@ -59,6 +59,9 @@ pkgs.testers.runNixOSTest {
 
   testScript =
     { nodes, ... }:
+    let
+      firefox = "${nodes.machine.config.programs.firefox.finalPackage}/bin/firefox";
+    in
     ''
       import shlex
 
@@ -85,27 +88,47 @@ pkgs.testers.runNixOSTest {
           return f"runuser -u {USER} -- env {env} sh -c {shlex.quote(cmd)}"
 
       # The session starts Firefox through autofirma-vm-firefox. That
-      # wrapper imports the certificate from the fw_cfg files first.
+      # wrapper imports the certificate from the fw_cfg files first, then
+      # execs Firefox. Match the main process by its command line: the
+      # wrapper gives it the store path as argv[0]. Its process name is the
+      # wrapped binary, cut to 15 characters, so `-x firefox` never matches.
       machine.wait_for_unit("qemu-vm-files.service")
       machine.succeed(f"test -r /run/qemu-vm-files/cert.p12 && stat -c %U /run/qemu-vm-files/cert.p12 | grep -x {USER}")
       machine.wait_until_succeeds(as_user("certutil -L -d sql:$(dirname ~/.mozilla/firefox/*/cert9.db) | grep -i ficticio"))
 
+      def firefox_main(tool):
+          return f"{tool} -u {USER} -f {shlex.quote('^${firefox}( |$)')}"
+
+      machine.wait_until_succeeds(firefox_main("pgrep"))
+
       # Trust the local HTTPS fixture in this profile only. Preserve the
       # shipped system PKI, Java truststore, Firefox policies and packages.
-      machine.succeed(as_user("pkill -TERM -x firefox"))
-      machine.wait_until_fails(f"pgrep -u {USER} -x firefox")
+      machine.succeed(firefox_main("pkill -TERM"))
+      machine.wait_until_fails(firefox_main("pgrep"))
       machine.succeed(as_user(
           "certutil -A -n sede.test -t 'C,,' -d sql:$(dirname ~/.mozilla/firefox/*/cert9.db)"
           " -i /etc/autofirma-test/ca.crt"
       ))
       machine.succeed(as_user("autofirma-vm-firefox --new-tab https://sede.test/ >/tmp/firefox-test.log 2>&1 &"))
-      # The page opens afirma:// and connects to AutoFirma's WebSocket.
-      machine.wait_until_succeeds(as_user("xdotool search --name 'AutoFirma test page'"))
-      machine.sleep(5)
-      machine.succeed(as_user(
-          "id=$(xdotool search --name 'AutoFirma test page' | head -n1);"
-          " xdotool windowactivate --sync $id; xdotool mousemove --window $id 400 400 click 1"
-      ))
+      # The page sets its title to "ready" when its button exists, and to
+      # "signing" when the button gets the click. Click until the page
+      # confirms. Then it opens afirma:// and connects to AutoFirma's
+      # WebSocket.
+      def window(state):
+          return as_user(f"xdotool search --name 'AutoFirma test page: {state}'")
+
+      machine.wait_until_succeeds(window("ready"))
+
+      def clicked(_last):
+          if machine.execute(window("signing"))[0] == 0:
+              return True
+          machine.succeed(as_user(
+              "id=$(xdotool search --name 'AutoFirma test page' | head -n1);"
+              " xdotool windowactivate --sync $id; xdotool mousemove --window $id 400 400 click 1"
+          ))
+          return False
+
+      retry(clicked)
       try:
           machine.wait_for_file("/var/lib/autofirma-test/result.txt", timeout=300)
       finally:

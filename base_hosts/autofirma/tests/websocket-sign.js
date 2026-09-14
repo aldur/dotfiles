@@ -12,6 +12,9 @@
 // A click on a full-page button starts the signature. Firefox opens an
 // external protocol from an iframe (the AutoScript method) only after a
 // user gesture. A real sede also puts the signature behind a button.
+//
+// The title tells the test where the page is. The test reads it from the
+// window name.
 (function () {
   function report(message) {
     console.log(message);
@@ -50,8 +53,10 @@
     button.addEventListener("click", function () {
       button.disabled = true;
       button.textContent = "Firmando…";
+      document.title = "AutoFirma test page: signing";
       sign();
     });
     document.body.appendChild(button);
+    document.title = "AutoFirma test page: ready";
   });
 })();

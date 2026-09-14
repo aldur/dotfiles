@@ -45,7 +45,7 @@ pkgs.testers.runNixOSTest {
     # Hotplug: the second reader reaches pcscd over netlink.
     machine.send_monitor_command("device_add usb-ccid,bus=xhci.0,id=reader1")
     machine.wait_until_succeeds(
-        "opensc-tool --list-readers | grep -c Gemalto | grep -qx 2", timeout=30
+        "opensc-tool --list-readers | grep -c Gemalto | grep -qx 2"
     )
 
     failed = machine.succeed("systemctl list-units --state=failed --no-legend --plain")
