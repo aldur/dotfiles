@@ -33,6 +33,23 @@ run_home() {
     XDG_RUNTIME_DIR="/run/user/$home_uid" DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$home_uid/bus" \
     /bin/sh -c 'cd "$HOME" && exec "$@"' home-test "$@"
 }
+# Activation can return while a service is still starting or restarting.
+wait_home_unit() {
+  local unit=$1 state deadline=$((SECONDS + 60))
+  while true; do
+    state=$(run_home /usr/bin/systemctl --user show "$unit" --property=ActiveState --value)
+    case "$state" in
+    active) return 0 ;;
+    failed) break ;;
+    esac
+    ((SECONDS < deadline)) || break
+    sleep 1
+  done
+  echo "$unit did not become active (last state: $state)." >&2
+  run_home /usr/bin/systemctl --user --no-pager --full status "$unit" >&2 || true
+  return 1
+}
+
 report() {
   result=$?
   trap - EXIT
@@ -46,6 +63,7 @@ report() {
   sudo journalctl -k --no-pager -n 200 >"$logs/kernel-journal.txt" 2>&1 || true
   if ((result != 0)); then
     tail -n 60 "$logs"/*.log 2>/dev/null || true
+    tail -n 100 "$logs/user-journal.txt" 2>/dev/null || true
   fi
   exit "$result"
 }
@@ -77,10 +95,24 @@ if id "$home_user" &>/dev/null; then
   home_user=''
   exit 1
 fi
+# Runner images put runner-specific XDG paths in /etc/environment, which PAM
+# and systemd's environment generator also apply to newly created users.
+# Remove them before starting this disposable account's user manager.
+# https://github.com/actions/runner-images/issues/14649
+sudo sed -i -E '/^[[:space:]]*(XDG_CONFIG_HOME|XDG_RUNTIME_DIR)=/d' /etc/environment
 sudo useradd --create-home --home-dir "$home_dir" --shell /bin/bash "$home_user"
 home_uid=$(id -u "$home_user")
 sudo loginctl enable-linger "$home_user"
 sudo systemctl start "user@$home_uid.service"
+# Check the service manager's environment, not just run_home's clean shell.
+run_home /usr/bin/systemd-run --user --wait --pipe --collect \
+  --setenv="EXPECTED_HOME=$home_dir" /bin/sh -eu >"$logs/manager-environment.log" 2>&1 <<'SH'
+test "$HOME" = "$EXPECTED_HOME"
+test "${XDG_CONFIG_HOME:-$HOME/.config}" = "$HOME/.config"
+test "$XDG_RUNTIME_DIR" = "/run/user/$(id -u)"
+printf 'User service paths: HOME=%s, XDG_CONFIG_HOME=%s, XDG_RUNTIME_DIR=%s\n' \
+  "$HOME" "${XDG_CONFIG_HOME:-$HOME/.config}" "$XDG_RUNTIME_DIR"
+SH
 run_home mkdir -p "$home_dir/.local/state/nix/profiles" "$home_dir/.config/fish" "$home_dir/workspace"
 run_home /bin/bash -euo pipefail <<'SH'
 printf '# existing fish config\n' > "$HOME/.config/fish/config.fish"
@@ -119,9 +151,19 @@ tmux -L home-ci show-options -gv prefix | grep -Fx C-a
 tmux -L home-ci kill-server
 lazyvim --headless '+qa!'
 SH
-run_home /usr/bin/systemctl --user is-active atuin-daemon.service >"$logs/services.log" 2>&1
-run_home /usr/bin/systemctl --user is-active gpg-agent.socket >>"$logs/services.log" 2>&1
-run_home gpg-connect-agent /bye >>"$logs/services.log" 2>&1
+{
+  wait_home_unit atuin-daemon.service
+  wait_home_unit gpg-agent.socket
+  run_home gpg-connect-agent /bye
+  # Exercise the daemon through its client, with a bound on an unresponsive socket.
+  run_home /usr/bin/timeout 30s /bin/bash -euo pipefail <<'SH'
+export ATUIN_SESSION
+ATUIN_SESSION=$(atuin uuid)
+entry=$(atuin history start -- 'home-manager-ci')
+test -n "$entry"
+atuin history end --exit 0 "$entry"
+SH
+} >"$logs/services.log" 2>&1
 
 # Ubuntu's scoped userns allowance for this exact Nix-store bwrap. Keep the
 # global AppArmor policy active, unlike the separate nested-sandbox check job.
@@ -181,5 +223,5 @@ SH
 run_home "$activation" >"$logs/rollback.log" 2>&1
 [[ $(run_home readlink -f "$home_dir/.local/state/nix/profiles/home-manager") == "$generation" ]]
 run_home git config --global --get user.email | grep -Fx "$expected_git_email"
-run_home /usr/bin/systemctl --user is-active atuin-daemon.service
+wait_home_unit atuin-daemon.service
 printf 'Ubuntu %s: activation, customization, services, sandbox and rollback passed.\n' "$system"
