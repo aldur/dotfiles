@@ -18,7 +18,11 @@ in
 
   home = {
     packages = packages.cli ++ packages.terminfo;
-    sessionPath = [ "$HOME/.local/bin" ];
+    sessionPath = [
+      "$HOME/.local/bin"
+      # Fish does not source the multi-user installer's /etc/profile.d script.
+      "/nix/var/nix/profiles/default/bin"
+    ];
   };
   programs.aldur.lazyvim.enable = lib.mkDefault true;
   services.gpg-agent.pinentry.package = lib.mkDefault pkgs.pinentry-curses;

@@ -168,15 +168,7 @@ SH
 # Ubuntu's scoped userns allowance for this exact Nix-store bwrap. Keep the
 # global AppArmor policy active, unlike the separate nested-sandbox check job.
 restriction_before=$(cat /proc/sys/kernel/apparmor_restrict_unprivileged_userns)
-cat >"$work/bwrap.apparmor" <<POLICY
-abi <abi/4.0>,
-include <tunables/global>
-profile dotfiles-home-ci-bwrap "$bwrap" flags=(unconfined) {
-  userns,
-}
-POLICY
-sudo install -m 644 "$work/bwrap.apparmor" /etc/apparmor.d/dotfiles-home-ci-bwrap
-sudo apparmor_parser -r /etc/apparmor.d/dotfiles-home-ci-bwrap
+bash base_hosts/home-manager/install-bwrap-policy.sh "$bwrap"
 [[ $(cat /proc/sys/kernel/apparmor_restrict_unprivileged_userns) == "$restriction_before" ]]
 
 # Exercise lib.mkHome customization and a second generation, including agents.

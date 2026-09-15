@@ -165,6 +165,33 @@ jobs:
           path: ${{ runner.temp }}/home-manager-ci/logs
           if-no-files-found: warn
 
+  # Start from an Ubuntu cloud image with no Nix. This also tests installation,
+  # a non-aldur account, the default login shell, and services after reboot.
+  home-manager-ubuntu-vm:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - *checkout
+      # Host Nix is used only to verify the signing-key input. The guest starts
+      # without Nix and installs it through the same bootstrap as users.
+      - *setup-nix
+      - uses: ./.github/actions/reclaim-disk
+      - *fetch-signing-keys
+      - name: Install VM tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system-x86 qemu-utils genisoimage acl
+          sudo setfacl -m "u:$(id -un):rw" /dev/kvm
+      - name: Install and test from a fresh Ubuntu VM
+        run: bash .github/scripts/test-home-ubuntu-vm.sh
+      - name: Upload bootstrap and reboot logs
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: home-manager-ubuntu-bootstrap
+          path: ${{ runner.temp }}/dotfiles-ubuntu-bootstrap/logs
+          if-no-files-found: warn
+
   # One job for each (runner, target) pair. Each image build uses tens of
   # gigabytes of temporary space: a full-system tarball, a 16 GiB disk image,
   # and a copy into the store. A new runner for each build prevents a full
