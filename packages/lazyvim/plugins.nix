@@ -176,7 +176,15 @@ with pkgs.vimPlugins;
                 pname = name;
                 version = "201901191939";
                 src = pkgs.fetchurl {
-                  url = "https://ftp.nluug.nl/pub/vim/runtime/spell/${name}";
+                  # ftp.nluug.nl is the primary vim mirror. A CI runner
+                  # could not connect to it (2026-09-15), so fetchurl falls
+                  # back on the other mirrors. All serve the same bytes.
+                  urls = map (mirror: "${mirror}/${name}") [
+                    "https://ftp.nluug.nl/pub/vim/runtime/spell"
+                    "https://vim.mirror.garr.it/pub/vim/runtime/spell"
+                    "https://mirror.math.princeton.edu/pub/vim/runtime/spell"
+                    "https://ftp.cc.uoc.gr/mirrors/vim/runtime/spell"
+                  ];
                   sha256 = spellHash;
                 };
                 phases = [ "installPhase" ];
