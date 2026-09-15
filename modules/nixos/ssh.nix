@@ -4,7 +4,7 @@
   imports = [ ./ssh-policy.nix ];
 
   services.openssh.settings = {
-    AllowUsers = [ config.mainUser ];
+    AllowUsers = config.interactiveUsers;
     LogLevel = "VERBOSE";
   };
 }

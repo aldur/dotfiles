@@ -10,12 +10,10 @@ let
 in
 {
   age.ageBin = ageBin;
-  home-manager.users.${config.mainUser} =
-    { ... }:
-    {
-      imports = [ inputs.agenix.homeManagerModules.default ];
-      systemd.user.services.agenix.Service.Environment = "PATH=${
-        lib.makeBinPath [ pkgs.age-plugin-yubikey ]
-      }";
-    };
+  home-manager.users = lib.genAttrs config.interactiveUsers (_: {
+    imports = [ inputs.agenix.homeManagerModules.default ];
+    systemd.user.services.agenix.Service.Environment = "PATH=${
+      lib.makeBinPath [ pkgs.age-plugin-yubikey ]
+    }";
+  });
 }

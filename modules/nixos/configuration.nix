@@ -39,7 +39,9 @@
   # Doesn't play nicely with flakes.
   programs.command-not-found.enable = false;
 
-  home-manager.users.${config.mainUser} = ./home.nix;
+  home-manager.users = lib.genAttrs config.interactiveUsers (_: {
+    imports = [ ./home.nix ];
+  });
 
   # Use home-manager.extraSpecialArgs to pass arguments to home.nix
   home-manager.extraSpecialArgs = {

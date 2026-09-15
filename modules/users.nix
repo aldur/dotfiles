@@ -18,6 +18,24 @@ in
     '';
   };
 
+  options.extraUsers = lib.mkOption {
+    type = lib.types.listOf lib.types.str;
+    default = [ ];
+    description = ''
+      Further interactive users that get the same shell, Home Manager
+      configuration, and SSH allowance as `mainUser`. The host declares
+      the accounts (uid, keys, groups); the identity and privileges of
+      `mainUser` stay with `mainUser`.
+    '';
+  };
+
+  options.interactiveUsers = lib.mkOption {
+    type = lib.types.listOf lib.types.str;
+    readOnly = true;
+    default = [ config.mainUser ] ++ config.extraUsers;
+    description = "`mainUser` followed by `extraUsers`.";
+  };
+
   options.identity = {
     githubUser = lib.mkOption {
       type = lib.types.str;
@@ -49,7 +67,7 @@ in
     };
   };
 
-  config.users.users.${config.mainUser} = {
+  config.users.users = lib.genAttrs config.interactiveUsers (_: {
     shell = pkgs.fish;
-  };
+  });
 }

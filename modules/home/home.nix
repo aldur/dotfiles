@@ -98,7 +98,9 @@ in
   home = {
     inherit stateVersion;
 
-    username = osConfig.mainUser;
+    # home-manager sets the name from the `home-manager.users.<name>`
+    # attribute; `mainUser` is the fallback outside that wiring.
+    username = lib.mkDefault osConfig.mainUser;
     packages =
       # The workstation option controls the custom tools.
       lib.optionals workstation (customTools ++ [ aldurs-tools ]) ++ [

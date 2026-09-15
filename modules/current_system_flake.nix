@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   pkgs,
   config,
   ...
@@ -31,5 +32,7 @@ in
   environment.etc.${flakeName}.source = self;
 
   # Script to copy the flake to ~/flake and make it writable.
-  home-manager.users.${config.mainUser}.home.packages = [ editCurrentFlake ];
+  home-manager.users = lib.genAttrs config.interactiveUsers (_: {
+    home.packages = [ editCurrentFlake ];
+  });
 }
