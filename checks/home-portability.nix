@@ -51,7 +51,6 @@ let
         programs.aldur = {
           workstation.enable = false;
           codex.enable = true;
-          lazyvim.enable = true;
         };
         home-manager.users.alice.programs.aldur.lazyvim.enable = true;
         home-manager.users.bob = {
@@ -95,8 +94,6 @@ let
   darwinSystem = nixos.config // {
     programs = nixos.config.programs // {
       aldur = nixos.config.programs.aldur // {
-        lazyvim.enable = false;
-        editorPackage = null;
         codex = nixos.config.programs.aldur.codex // {
           enable = false;
         };

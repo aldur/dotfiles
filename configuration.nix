@@ -14,7 +14,6 @@ in
     ./modules/aws.nix
     ./modules/dict.nix
     ./modules/fish.nix
-    ./modules/lazyvim.nix
     ./modules/nix.nix
     ./modules/nixpkgs.nix
 

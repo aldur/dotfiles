@@ -71,12 +71,9 @@ let
   # `jailed-lazyvim` alternative ships the same binary via `home.packages`.
   lazyvim-bin =
     let
-      fromModule = cfg: lib.attrByPath [ "out" "packages" "lazyvim" ] null cfg;
       package =
-        if config.programs.aldur.editorPackage != null then
-          config.programs.aldur.editorPackage
-        else if config.programs.aldur.lazyvim.enable then
-          fromModule config.programs.aldur.lazyvim
+        if config.programs.aldur.lazyvim.enable then
+          lib.attrByPath [ "out" "packages" "lazyvim" ] null config.programs.aldur.lazyvim
         else
           lib.findFirst (p: lib.getName p == "lazyvim") null config.home.packages;
     in
@@ -538,17 +535,7 @@ in
     lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
       sandbox = "faraday --mask ~/Documents --mask ~/Desktop --mask ~/Developer --mask ~/Movies --mask ~/Music --mask ~/Pictures";
     }
-  //
-    # `lv` shortcut whenever a `lazyvim` command is on PATH: either the nixCats
-    # module (`aldur.lazyvim.enable`) or a sandboxed `jailed-lazyvim` wrapper
-    # added to `home.packages`, which ships the same `lazyvim` binary.
-    lib.optionalAttrs
-      (
-        config.programs.aldur.editorPackage != null
-        || config.programs.aldur.lazyvim.enable
-        || lib.any (p: lib.getName p == "lazyvim") config.home.packages
-      )
-      {
-        lv = "lazyvim";
-      };
+  // lib.optionalAttrs (lazyvim-bin != null) {
+    lv = "lazyvim";
+  };
 }

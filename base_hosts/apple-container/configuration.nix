@@ -25,14 +25,13 @@
   };
 
   programs.aldur = {
-    lazyvim.enable = true;
-    lazyvim.packageNames = [ "lazyvim" ];
     claude-code.enable = true;
     codex.enable = true;
   };
 
   home-manager.users.${config.mainUser} = _: {
     programs = {
+      aldur.lazyvim.enable = true;
       git.settings.gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | grep -i sign)'";
       better-nix-search.enable = true;
       llm.enable = true;

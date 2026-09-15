@@ -93,8 +93,6 @@ in
 
     programs = {
       aldur = {
-        lazyvim.enable = true;
-        lazyvim.packageNames = [ "lazyvim" ];
         claude-code.enable = true;
         codex.enable = true;
         # 120 MiB.
@@ -148,6 +146,8 @@ in
       { config, lib, ... }: # home-manager's config, not the OS one
       {
         programs = {
+          aldur.lazyvim.enable = true;
+
           # Codex's sparkle effect corrupts rendering in ChromeOS Terminal + tmux.
           codex.writableSettings.tui.whimsy = false;
 

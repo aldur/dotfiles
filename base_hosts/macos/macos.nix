@@ -44,10 +44,7 @@
     # an agent is forwarded in over SSH.
     services.yubikey-agent.enable = true;
 
-    programs.aldur = {
-      lazyvim.enable = true;
-      lazyvim.packageNames = [ "lazyvim" ];
-    };
+    programs.aldur.lazyvim.enable = true;
 
     home.packages = with pkgs; [
       git-crypt

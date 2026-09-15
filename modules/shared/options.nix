@@ -60,16 +60,6 @@ in
     };
   };
   options.programs.aldur = {
-    editorPackage = mkOption {
-      type = types.nullOr types.package;
-      default =
-        if config.programs.aldur.lazyvim.enable or false then
-          lib.attrByPath [ "out" "packages" "lazyvim" ] null config.programs.aldur.lazyvim
-        else
-          null;
-      defaultText = lib.literalExpression "the enabled LazyVim module's package, or null";
-      description = "LazyVim package shared with the home configuration, including a system-installed editor.";
-    };
     claude-code = {
       enable = mkEnableOption "claude-code";
       sandbox = sandboxOptions "claude-yolo";

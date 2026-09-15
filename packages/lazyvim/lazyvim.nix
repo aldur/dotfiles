@@ -114,6 +114,5 @@ in
   "${defaultPackageName}-light" = nixCatsBuilder "${defaultPackageName}-light";
   "${defaultPackageName}-nightly" = nixCatsBuilder "${defaultPackageName}-nightly";
 
-  defaultModule = utils.mkNixosModules moduleArgs;
   defaultHomeModule = utils.mkHomeModules moduleArgs;
 }
