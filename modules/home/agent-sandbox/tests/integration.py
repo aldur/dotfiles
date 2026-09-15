@@ -184,15 +184,18 @@ result = run([
 ], env=dict(os.environ, BASH_ENV=str(startup), ENV=str(startup)), capture_output=True)
 assert result.returncode == 0, result.stderr
 
-# Exercise a real PTY, including raw input and window-size ioctls. The child
-# retains the caller's controlling terminal, while dangerous operations on it
-# and the inherited process group remain blocked.
+# Exercise a real PTY, including raw input, window-size ioctls and a resize
+# after start. The child retains the caller's controlling terminal, so it
+# receives SIGWINCH, while dangerous operations on it and the inherited
+# process group remain blocked.
 master, slave = pty.openpty()
 fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 35, 100, 0, 0))
 terminal_program = '''
-import errno, fcntl, os, struct, termios, tty
+import errno, fcntl, os, signal, struct, termios, time, tty
 assert all(os.isatty(fd) for fd in (0, 1, 2))
 assert os.get_terminal_size(0).columns == 100
+resized = []
+signal.signal(signal.SIGWINCH, lambda *_: resized.append(os.get_terminal_size(0).columns))
 assert int(open('/proc/self/stat').read().split(') ', 1)[1].split()[4]) != 0
 for request, argument in (
     (termios.TIOCSTI, b'x'),
@@ -219,6 +222,10 @@ try:
     tty.setraw(0)
     print('terminal-ready', flush=True)
     assert os.read(0, 1) == b'q'
+    deadline = time.monotonic() + 5
+    while not resized and time.monotonic() < deadline:
+        time.sleep(0.05)
+    assert resized == [120], resized
 finally:
     termios.tcsetattr(0, termios.TCSANOW, saved)
 print('terminal-passed', flush=True)
@@ -249,6 +256,9 @@ try:
                 break
             output += chunk
             if b"terminal-ready" in output and not sent:
+                # Resize first. The keystroke marks the point where the child
+                # expects the new width.
+                fcntl.ioctl(master, termios.TIOCSWINSZ, struct.pack("HHHH", 40, 120, 0, 0))
                 os.write(master, b"q")
                 sent = True
         elif proc.poll() is not None:
