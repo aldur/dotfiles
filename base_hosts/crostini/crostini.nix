@@ -154,6 +154,9 @@ in
           # The local models of llm cost 550 MiB with their plugins.
           llm.enable = false;
           better-nix-search.enable = true;
+          # The merge strips old hook entries by marker before it adds the
+          # Nix entries. Without the marker, each activation adds a copy.
+          claude-code.nixManagedHookMarkers = [ "notify-send" ];
           claude-code.writableSettings.hooks = {
             Stop = [
               {
