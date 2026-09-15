@@ -40,6 +40,7 @@ let
 in
 # Changing home persistence must not disable ChromeOS registration.
 assert persistentHome.config.users.users.${persistentHome.config.mainUser}.linger == true;
+assert configuration.config.systemd.package.outPath == pkgs.systemd.outPath;
 crostini.lib.mkBaguetteSmokeTest {
   inherit configuration;
   user = mainUser;
@@ -51,6 +52,22 @@ crostini.lib.mkBaguetteSmokeTest {
     authorized-keys = writeText "authorized_keys" "${keys.snakeOilEd25519PublicKey}\n";
   };
   extraProbe = ''
+    # The early console workaround must preserve ChromeOS's boot arguments
+    # and remain effective when the manager re-executes stock systemd.
+    check_cmdline() {
+      expected="SYSTEMD_PROC_CMDLINE=$(cat /proc/cmdline) systemd.tty.term.console=dumb"
+      tr '\0' '\n' < /proc/1/environ | grep -Fx -- "$expected"
+      if in_session env | grep -q '^SYSTEMD_PROC_CMDLINE='; then
+        echo "FAIL: command-line override leaked into the user session" >&2
+        exit 1
+      fi
+    }
+    check_cmdline
+    systemctl daemon-reexec
+    systemctl show --property=Version --value
+    check_cmdline
+    echo "PROBE systemd-cmdline preserved-after-reexec"
+
     # An instance drop-in must not hide Home Manager's ordering.
     home_ready=$(systemctl show -p ActiveEnterTimestampMonotonic --value home-manager-$user.service)
     manager_started=$(systemctl show -p InactiveExitTimestampMonotonic --value user@$(id -u "$user").service)
@@ -233,6 +250,7 @@ crostini.lib.mkBaguetteSmokeTest {
     echo "PROBE after-rebuild sudo ok"
   '';
   extraChecks = [
+    "systemd-cmdline preserved-after-reexec$"
     "home-before-session ok$"
     # The representative Termina kernel has no module support.
     "sysctl active modules_disabled=absent"
