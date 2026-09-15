@@ -20,6 +20,10 @@ prev.lib.optionalAttrs prev.stdenv.hostPlatform.isLinux {
       };
       passthru = (old.passthru or { }) // {
         updatePin.exempt = "Temporary security override; override-until-upgrade forces review when nixpkgs changes version.";
+        # The nixpkgs package. A dependent that is cached with it, and only
+        # runs bwrap from PATH, builds against it and re-points its wrapper
+        # to this package instead (see the codex repack in ../slim.nix).
+        unpatched = prev.bubblewrap;
       };
     });
   };
