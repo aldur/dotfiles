@@ -28,6 +28,10 @@ let
       flatten-pdf
       fps
       gpg-encrypt
+      (lazygit-popup.override {
+        lazygit = config.programs.lazygit.package;
+        inherit (config.programs.lazygit) settings;
+      })
       (lazyvim-popup.override {
         lazyvim-bin = if lazyvim-bin != null then lazyvim-bin else "lazyvim";
       })

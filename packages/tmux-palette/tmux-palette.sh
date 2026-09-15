@@ -24,7 +24,7 @@ fi
 entries=(
     $'Toggle timestamped pane logging\tif-shell -F \'#{pane_pipe}\' \'pipe-pane ; display-message "Pane logging stopped"\' "pipe-pane -o \\"exec cat | ts \'[%Y-%m-%d %H:%M:%S]\' >> '"$palette_dir"$'/tmux-#S-#I-#P.log\\" ; display-message -d 5000 \'Logging to '"$palette_dir"$'/tmux-#S-#I-#P.log\'"'
     $'Capture pane → nvim\tcapture-pane -JS - \\; save-buffer '"$palette_dir"$'/capture.txt \\; delete-buffer \\; display-popup -E -w 90% -h 90% \'lazyvim-popup capture '"$palette_dir"$'/capture.txt\''
-    $'Lazygit (popup)\tdisplay-popup -E -w 90% -h 90% -d \'#{pane_current_path}\' lazygit'
+    $'Lazygit (popup)\tdisplay-popup -E -w 90% -h 90% lazygit-popup'
     $'Toggle synchronize-panes\tset-window-option synchronize-panes'
     $'Toggle silence monitoring (10s)\tif-shell -F \'#{E:monitor-silence}\' \'setw monitor-silence 0 ; display-message "Silence monitoring off"\' \'setw monitor-silence 10 ; display-message "Silence monitoring on (10s)"\''
     $'Kill other panes\tkill-pane -a'

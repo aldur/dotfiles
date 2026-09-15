@@ -76,15 +76,16 @@
     # Fuzzy command palette for seldom-used tmux actions
     bind-key / display-popup -E -w 60% -h 50% tmux-palette
 
-    # Lazygit in a big popup at the current pane's path
-    bind-key g display-popup -E -w 90% -h 90% -d "#{pane_current_path}" lazygit
-
     # Lazyvim in a big popup. `lazyvim-popup` attaches to a detached, per-window
     # tmux session that owns the nvim process, so the popup is persistent: `q`
     # (normal mode) backgrounds it and the next summon reattaches with state
     # intact, while quitting nvim (:qa) starts fresh. The session sets
     # NVIM_POPUP=1 so the nvim config knows to map `q` accordingly.
     bind-key e display-popup -E -w 90% -h 90% lazyvim-popup
+
+    # Lazygit in a big popup, persistent the same way: `q` backgrounds it,
+    # `Q` quits. The wrapper opens at the current pane's path.
+    bind-key g display-popup -E -w 90% -h 90% lazygit-popup
 
     # y to yank in copy mode, remaining in copy mode
     bind -T copy-mode-vi y send-keys -X copy-selection

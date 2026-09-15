@@ -60,6 +60,9 @@ in
     inherit (packages) lazyvim-light;
   };
 
+  # The lazygit counterpart: `q` backgrounds the per-window session, `Q` ends it.
+  lazygit-popup = pkgs.callPackage ./lazygit-popup.nix { };
+
   # The build runs config-loading and hot-reload regression tests.
   lazygit-config = pkgs.lazygit;
   claude-state = pkgs.callPackage ../modules/home/tests/claude-state.nix { };
