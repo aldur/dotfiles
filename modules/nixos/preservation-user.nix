@@ -57,7 +57,7 @@ in
 
     persistLazyvim = lib.mkOption {
       type = lib.types.bool;
-      default = config.programs.aldur.lazyvim.enable or false;
+      default = config.home-manager.users.${cfg.username}.programs.aldur.lazyvim.enable or false;
       description = "Persist LazyVim state.";
     };
 

@@ -10,17 +10,15 @@
     "${inputs.self}/modules/nixos/pragmatism.nix"
   ];
 
-  users.users.aldur.openssh.authorizedKeys.keys = config.identity.authorizedKeys;
+  users.users.${config.mainUser}.openssh.authorizedKeys.keys = config.identity.authorizedKeys;
 
-  # `aldur` gets git via home-manager, but root has none — put it in the system
+  # The primary user gets git via home-manager, but root has none — put it in the system
   # profile so root can drive a flake clone (`nixos-rebuild --flake …`).
   environment.systemPackages = [ pkgs.git ];
 
   virtualisation.appleContainer = {
-    # Literal, not `config.users.users.aldur.name`: the module declares
-    # `users.users.''${username}`, and attribute *names* may not depend on the
-    # option's own merged value — that reference infinitely recurses.
-    username = "aldur";
+    # mainUser is independent of users.users, which this module populates.
+    username = config.mainUser;
     imageName = "aldur-nixos";
     homeManagerMarker = ".config/fish/config.fish";
     hostName = "nixos-apple-container"; # Default container name
@@ -33,7 +31,7 @@
     codex.enable = true;
   };
 
-  home-manager.users.aldur = _: {
+  home-manager.users.${config.mainUser} = _: {
     programs = {
       git.settings.gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | grep -i sign)'";
       better-nix-search.enable = true;

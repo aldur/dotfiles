@@ -32,6 +32,7 @@ let
     specialArgs = { inherit inputs; };
     modules = [
       self.nixosModules.default
+      self.nixosModules.preservation-user
       {
         mainUser = "alice";
         extraUsers = [ "bob" ];
@@ -52,6 +53,7 @@ let
           codex.enable = true;
           lazyvim.enable = true;
         };
+        home-manager.users.alice.programs.aldur.lazyvim.enable = true;
         home-manager.users.bob = {
           programs.aldur.codex.enable = false;
           programs.aldur.claude-code.enable = true;
@@ -62,6 +64,9 @@ let
   };
   alice = nixos.config.home-manager.users.alice;
   bob = nixos.config.home-manager.users.bob;
+  aliceEditor = alice.programs.aldur.lazyvim.out.packages.lazyvim;
+  qemu = nixos.extendModules { modules = [ ../base_hosts/qemu/qemu.nix ]; };
+  apple = nixos.extendModules { modules = [ ../base_hosts/apple-container/configuration.nix ]; };
 
   # Evaluate the actual Darwin home module and bridge with a small system
   # fixture. This uses the Darwin overlays but needs neither a Mac builder nor
@@ -227,7 +232,50 @@ assert require "NixOS settings and per-user overrides" (
   && alice.programs.aldur.codex.enable
   && !bob.programs.aldur.codex.enable
   && !alice.programs.atuin.enable
-  && alice.programs.aldur.editorPackage != null
+  && alice.programs.aldur.lazyvim.enable
+);
+assert require "no system LazyVim module" (!(nixos.options.programs.aldur ? lazyvim));
+assert require "no editor bridge" (!(nixos.options.programs.aldur ? editorPackage));
+assert require "no system LazyVim package" (
+  !(lib.any (p: p.outPath == aliceEditor.outPath) nixos.config.environment.systemPackages)
+);
+assert require "bare system editor" (
+  lib.any (p: p.outPath == nixos.pkgs.neovim-bare.outPath) nixos.config.environment.systemPackages
+);
+assert require "Alice has LazyVim" (
+  lib.any (p: p.outPath == aliceEditor.outPath) alice.home.packages
+  && alice.home.shellAliases.lv == "lazyvim"
+);
+assert require "Bob has no LazyVim" (
+  !bob.programs.aldur.lazyvim.enable
+  && !(lib.any (p: p.outPath == aliceEditor.outPath) bob.home.packages)
+  && !(bob.home.shellAliases ? lv)
+);
+assert require "Alice persists LazyVim" nixos.config.aldur.preservation-user.persistLazyvim;
+assert require "Bob does not persist LazyVim" (
+  !(nixos.extendModules {
+    modules = [ { aldur.preservation-user.username = "bob"; } ];
+  }).config.aldur.preservation-user.persistLazyvim
+);
+assert require "host settings follow mainUser" (
+  lib.all
+    (
+      host:
+      let
+        c = host.config;
+      in
+      !(c.home-manager.users ? aldur)
+      && !(c.users.users ? aldur)
+      && c.home-manager.users.alice.programs.better-nix-search.enable
+      && c.home-manager.users.alice.programs.aldur.lazyvim.enable
+      && c.users.users.alice.openssh.authorizedKeys.keys == c.identity.authorizedKeys
+    )
+    [
+      qemu
+      apple
+    ]
+  && qemu.config.services.getty.autologinUser == "alice"
+  && apple.config.virtualisation.appleContainer.username == "alice"
 );
 assert require "Darwin settings" (
   darwin.config.home.homeDirectory == "/Users/alice"
@@ -243,6 +291,8 @@ pkgs.writeText "home-portability" (
       alice.home.activationPackage.drvPath
       bob.home.activationPackage.drvPath
       darwin.activationPackage.drvPath
+      qemu.config.home-manager.users.alice.home.activationPackage.drvPath
+      apple.config.home-manager.users.alice.home.activationPackage.drvPath
     ]
   )
 )

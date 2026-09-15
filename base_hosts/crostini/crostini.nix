@@ -6,7 +6,7 @@
   ...
 }:
 let
-  username = "aldur";
+  username = config.mainUser;
   uid = 1000;
   cfg = config.crostini;
 in
@@ -121,7 +121,7 @@ in
     services.yubikey-agent.enable = true;
 
     # Make it possible to use remote builders under this username
-    # nix.settings.trusted-users = [ config.users.users.aldur.name ];
+    # nix.settings.trusted-users = [ config.mainUser ];
 
     security = {
       # NOTE: There a bug (maybe) in pcscd where, when running in an lxc container,
@@ -130,7 +130,7 @@ in
       # When a new smart card is connected (i.e., the security key is re-attached
       # to the container), it will fail to detect it and the SSH agent won't
       # work. The fix is easy: you just need to restart pcscd. But it requires
-      # sudo privileges and the `aldur` user has no password.
+      # sudo privileges and the primary user has no password.
       sudo-rs.extraRules = [
         {
           users = [ username ];
