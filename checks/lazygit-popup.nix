@@ -72,6 +72,13 @@ runCommand "lazygit-popup-check"
     # $TMUX names below.
     tmux -S "$sock" new-session -d -s outer -x 120 -y 40 -c "$repo" sleep 600
 
+    # The pane process starts after new-session returns. Until it has
+    # changed into the repo, #{pane_current_path} reports the directory of
+    # the tmux server, and the popup would start lazygit there. A real
+    # window has run for a long time before a summon, so only this check
+    # can hit that.
+    ${waitFor "the outer pane to enter the repo" ''[ "$(tmux -S "$sock" display-message -t '$0' -p '#{pane_current_path}')" = "$repo" ]''}
+
     # What a real popup inherits: socket, a pid the script never reads,
     # and the originating session's id.
     export TMUX="$sock,0,0"
