@@ -112,7 +112,7 @@
             inherit (pkgs)
               beancount-language-server # from aldur/beancount-language-server
               nomicfoundation-solidity-language-server
-              claude-skills # consumed by modules/home/claude-code.nix
+              claude-skills # consumed by modules/home/claude
               shrink-pdf
               solidity-docset
               remarks
@@ -134,10 +134,12 @@
           // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
             inherit (pkgs) uvc-util c920-defaults;
           }
-          // pkgs.lib.optionalAttrs (pkgs.stdenv.hostPlatform.isDarwin && pkgs.stdenv.hostPlatform.isAarch64) {
-            inherit (pkgs) llm-mlx;
-            mlx = pkgs.python3.pkgs.mlx;
-          }
+          //
+            pkgs.lib.optionalAttrs (pkgs.stdenv.hostPlatform.isDarwin && pkgs.stdenv.hostPlatform.isAarch64)
+              {
+                inherit (pkgs) llm-mlx;
+                mlx = pkgs.python3.pkgs.mlx;
+              }
           // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
             inherit (pkgs) faraday usrbin;
           };
@@ -156,7 +158,16 @@
               inherit self packages overlayPackages;
               inherit (pkgs.stdenv) hostPlatform;
             };
-          };
+          }
+          // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux (
+            let
+              home = self.lib.mkHome { inherit system; };
+            in
+            {
+              homeConfiguration = home;
+              home = home.activationPackage;
+            }
+          );
 
           checks = import ./checks {
             inherit
@@ -168,33 +179,42 @@
               ;
           };
 
-          apps.validate-claude-settings = {
-            type = "app";
-            program =
-              let
-                script = pkgs.writeShellApplication {
-                  name = "validate-claude-settings";
-                  runtimeInputs = [
-                    pkgs.curl
-                    pkgs.check-jsonschema
-                  ];
-                  text = ''
-                    settings="''${1:-$HOME/.claude/settings.json}"
-                    if [ ! -f "$settings" ]; then
-                      echo "error: $settings does not exist" >&2
-                      exit 1
-                    fi
-                    schema=$(mktemp)
-                    trap 'rm -f "$schema"' EXIT
-                    curl -sSL --fail \
-                      "https://json.schemastore.org/claude-code-settings.json" \
-                      -o "$schema"
-                    check-jsonschema --schemafile "$schema" "$settings"
-                  '';
-                };
-              in
-              "${script}/bin/validate-claude-settings";
-          };
+          apps =
+            pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+              home = {
+                type = "app";
+                program = "${self.legacyPackages.${system}.home}/activate";
+              };
+            }
+            // {
+              validate-claude-settings = {
+                type = "app";
+                program =
+                  let
+                    script = pkgs.writeShellApplication {
+                      name = "validate-claude-settings";
+                      runtimeInputs = [
+                        pkgs.curl
+                        pkgs.check-jsonschema
+                      ];
+                      text = ''
+                        settings="''${1:-$HOME/.claude/settings.json}"
+                        if [ ! -f "$settings" ]; then
+                          echo "error: $settings does not exist" >&2
+                          exit 1
+                        fi
+                        schema=$(mktemp)
+                        trap 'rm -f "$schema"' EXIT
+                        curl -sSL --fail \
+                          "https://json.schemastore.org/claude-code-settings.json" \
+                          -o "$schema"
+                        check-jsonschema --schemafile "$schema" "$settings"
+                      '';
+                    };
+                  in
+                  "${script}/bin/validate-claude-settings";
+              };
+            };
         }
         // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
           # Boots a live guest through the qemu-vm launcher and probes its
@@ -238,7 +258,16 @@
         darwin = self.legacyPackages.aarch64-darwin.discoveredPins;
       };
 
+      homeConfigurations = {
+        aldur = self.legacyPackages.x86_64-linux.homeConfiguration;
+        aldur-aarch64 = self.legacyPackages.aarch64-linux.homeConfiguration;
+      };
+
+      homeModules.default = ./modules/home/home.nix;
+
       lib = {
+        mkHome = import ./utils/mk-home.nix { inherit inputs; };
+
         # Render an authorized_keys file without changing key order, options,
         # or comments. Keep the trailing newline, including for an empty list.
         authorizedKeysText = keys: builtins.concatStringsSep "\n" keys + "\n";
@@ -299,9 +328,13 @@
         default-editor = ./modules/nixos/default_editor.nix;
         qemu-guest = ./modules/nixos/qemu-guest.nix;
         baguette-guest = ./base_hosts/crostini/baguette-guest.nix;
-        cli = ./modules/cli.nix;
-        development = ./modules/development.nix;
-        environment = ./modules/environment.nix;
+        cli = { pkgs, lib, ... }: {
+          environment.systemPackages = (import ./modules/shared/environment.nix { inherit pkgs lib; }).cli;
+        };
+        environment = { pkgs, lib, ... }: {
+          environment.systemPackages =
+            (import ./modules/shared/environment.nix { inherit pkgs lib; }).terminfo;
+        };
 
         # Meta-modules: each export pulls in the upstream preservation
         # module alongside our config layer. Consumers just import the

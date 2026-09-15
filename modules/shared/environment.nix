@@ -1,8 +1,9 @@
-{ lib, pkgs, ... }:
 {
-  # CLI utils we want available on all systems.
-  environment.systemPackages = with pkgs; [
-    age
+  pkgs,
+  lib,
+}:
+{
+  cli = with pkgs; [
     aldurs-dotfiles-version
     bashInteractive
     bat
@@ -17,12 +18,12 @@
     less
     pv
     python3
-    rig
     ripgrep
     tmux
-    totp-cli # use with `instance`
-    tree
     # Prefer Rust coreutils for unprefixed commands in the system environment.
     (lib.hiPrio uutils-coreutils-noprefix)
+  ];
+  terminfo = [
+    (if pkgs.stdenv.hostPlatform.isDarwin then pkgs.ghostty-bin else pkgs.ghostty).terminfo
   ];
 }

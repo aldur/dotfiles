@@ -114,7 +114,7 @@ the startup writes reach the host. When the file is missing, the launcher
 creates it before the first launch.
 
 Host-side Claude settings, workspace-trust and refresh-stamp updates use
-[checked file descriptors](../claude-state.py). Symlinks below the host home,
+[checked file descriptors](../claude/claude-state.py). Symlinks below the host home,
 multiply-linked files, special files, wrong owners and group/other-writable
 state are rejected. Unsafe state stops the operation without following it.
 These writes preserve bind-mounted inodes and are not crash-atomic. JSON is

@@ -1,18 +1,22 @@
 # Shared configuration between NixOS and nix-darwin
-{ ... }:
-
+{
+  pkgs,
+  lib,
+  ...
+}:
+let
+  packages = import ./modules/shared/environment.nix {
+    inherit pkgs lib;
+  };
+in
 {
   imports = [
     ./modules/aws.nix
-    ./modules/cli.nix
-    ./modules/development.nix
     ./modules/dict.nix
-    ./modules/environment.nix
     ./modules/fish.nix
     ./modules/lazyvim.nix
     ./modules/nix.nix
     ./modules/nixpkgs.nix
-    ./modules/users.nix
 
     {
       home-manager = {
@@ -36,4 +40,6 @@
       }
     )
   ];
+
+  environment.systemPackages = packages.cli ++ packages.terminfo;
 }

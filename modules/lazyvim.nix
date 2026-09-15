@@ -1,9 +1,7 @@
 {
   inputs,
-  lib,
   pkgs,
   pkgsUnstable,
-  config,
   ...
 }:
 let
@@ -13,8 +11,4 @@ in
   imports = [
     lazyvim.defaultModule
   ];
-
-  home-manager.users = lib.genAttrs config.interactiveUsers (_: {
-    imports = [ lazyvim.defaultHomeModule ];
-  });
 }

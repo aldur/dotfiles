@@ -35,7 +35,7 @@ let
     else
       "\${XDG_DATA_HOME:-$HOME/.local/share}/pnpm";
 
-  # Same spirit as the codex wrapper (modules/home/codex.nix): the Nix build
+  # Same spirit as the codex wrapper (modules/home/codex): the Nix build
   # is a bootstrap, and once a self-managed release exists it takes over.
   wrapper = writeShellApplication {
     name = "pi";

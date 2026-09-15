@@ -3,7 +3,7 @@
   fetchFromGitHub,
 }:
 
-# Anthropic's first-party skills, pointed at by modules/home/claude-code.nix.
+# Anthropic's first-party skills, pointed at by modules/home/claude.
 stdenvNoCC.mkDerivation {
   pname = "claude-skills";
   version = "0-unstable-2026-09-10";

@@ -1,23 +1,30 @@
 {
   pkgs,
-  pkgsUnstable,
+  inputs,
   lib,
   config,
-  osConfig,
   ...
 }:
 let
-  enabled = osConfig.programs.aldur.claude-code.enable;
-  sandboxCfg = osConfig.programs.aldur.claude-code.sandbox;
+  enabled = config.programs.aldur.claude-code.enable;
+  sandboxCfg = config.programs.aldur.claude-code.sandbox;
   sandbox = sandboxCfg.enable;
   jsonFormat = pkgs.formats.json { };
   cfg = config.programs.claude-code;
+
+  # Keep this package's license allowance local to the module that installs it.
+  claudePkgs = import inputs.nixpkgs-unstable {
+    inherit (pkgs.stdenv.hostPlatform) system;
+    config.allowUnfreePredicate = pkg: lib.getName pkg == "claude-code";
+  };
 
   inherit (cfg) nixManagedHookMarkers;
 
   # jq filter: deep-merge objects, but for `.hooks.<event>` arrays strip any
   # existing entries whose hook command contains a Nix-managed marker, then
-  # concatenate. No-op for files without `.hooks`.
+  # concatenate. Existing entries equal to a Nix entry are also dropped, so
+  # the merge stays idempotent for hooks without a marker. No-op for files
+  # without `.hooks`.
   hooksAwareMerge = ''
     def is_managed:
       (.hooks // []) | any(
@@ -30,7 +37,7 @@ let
       | with_entries(select(.value | length > 0));
     def merge_hooks($a; $b):
       (($a | keys) + ($b | keys) | unique) as $ks
-      | reduce $ks[] as $k ({}; .[$k] = (($a[$k] // []) + ($b[$k] // [])));
+      | reduce $ks[] as $k ({}; .[$k] = ((($a[$k] // []) - ($b[$k] // [])) + ($b[$k] // [])));
     .[0] as $e | .[1] as $n
     | ($e * $n)
     | (strip_managed($e.hooks)) as $eh
@@ -56,7 +63,7 @@ let
     fi
   '';
 
-  claude-statusline = pkgs.callPackage ../../packages/claude-statusline { };
+  claude-statusline = pkgs.callPackage ../../../packages/claude-statusline { };
 
   # Pre-accept the workspace trust dialog so trust-gated features
   # (e.g. statusLine) render under `claude-yolo`. Uses checked writes so the
@@ -73,8 +80,7 @@ let
       '.projects[$cwd].hasTrustDialogAccepted = true'
   '';
 
-  needsPathPrefix =
-    if pkgs.stdenv.hostPlatform.isDarwin then true else osConfig.programs.nix-ld.enable;
+  needsPathPrefix = config.programs.aldur.claude-code.preferLocalInstallation;
   # `claude-yolo` runs claude with nonessential traffic off. The env below:
   # IS_SANDBOX lets `--dangerously-skip-permissions` run as root.
   # CLAUBBIT skips the trust, MCP, and CLAUDE.md dialogs.
@@ -87,7 +93,7 @@ let
   # the last refresh is older than a week. `claude -p /model` does the
   # startup fetch and exits with no inference call, in about a second.
   # A failed model fetch never blocks the launch; unsafe state fails closed.
-  claude-yolo = import ./yolo-script.nix { inherit pkgs lib config; } {
+  claude-yolo = import ../yolo-script.nix { inherit pkgs lib config; } {
     agent = "claude";
     describe = "Run claude in the sandbox, with no permission prompts and no nonessential traffic";
     inherit sandbox;
@@ -191,8 +197,8 @@ in
 
   config = {
     programs.claude-code = lib.optionalAttrs enabled {
-      inherit (osConfig.programs.aldur.claude-code) enable;
-      package = pkgsUnstable.claude-code;
+      inherit (config.programs.aldur.claude-code) enable;
+      package = claudePkgs.claude-code;
 
       writableSettings = {
         "$schema" = "https://json.schemastore.org/claude-code-settings.json";

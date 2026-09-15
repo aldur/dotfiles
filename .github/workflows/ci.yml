@@ -137,6 +137,34 @@ jobs:
           path: /tmp/nix-cache
           key: *nix-cache-key
 
+  # Exercise the actual standalone activation on Ubuntu, with a fresh account
+  # and a real systemd user manager. NixOS VM checks do not cover this path.
+  home-manager-ubuntu:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            system: x86_64-linux
+          - runner: ubuntu-24.04-arm
+            system: aarch64-linux
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    steps:
+      - *checkout
+      - *setup-nix
+      - uses: ./.github/actions/reclaim-disk
+      - *fetch-signing-keys
+      - name: Build and activate Home Manager on Ubuntu
+        run: .github/scripts/test-home-ubuntu.sh "${{ matrix.system }}"
+      - name: Upload activation and service logs
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: home-manager-ubuntu-${{ matrix.system }}
+          path: ${{ runner.temp }}/home-manager-ci/logs
+          if-no-files-found: warn
+
   # One job for each (runner, target) pair. Each image build uses tens of
   # gigabytes of temporary space: a full-system tarball, a 16 GiB disk image,
   # and a copy into the store. A new runner for each build prevents a full

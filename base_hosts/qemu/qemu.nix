@@ -4,7 +4,7 @@
 }:
 {
   imports = [
-    inputs.self.nixosModules.qemu-guest
+    "${inputs.self}/modules/nixos/qemu-guest.nix"
     "${inputs.self}/modules/nixos/pragmatism.nix"
   ];
 

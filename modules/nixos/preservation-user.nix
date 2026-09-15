@@ -38,7 +38,7 @@ in
     username = lib.mkOption {
       type = lib.types.str;
       # `or "aldur"` so the exported module still evaluates standalone, where
-      # modules/users.nix (which declares mainUser) isn't imported.
+      # modules/shared/options.nix (which declares mainUser) isn't imported.
       default = config.mainUser or "aldur";
       description = "User whose home directory is preserved into /persist.";
     };

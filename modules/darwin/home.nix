@@ -10,7 +10,10 @@ let
   mergeContainerConfig = ./merge-container-config.py;
 in
 {
-  imports = [ ../home/home.nix ];
+  imports = [
+    ../home/home.nix
+    ../home/system-settings.nix
+  ];
 
   home = {
     homeDirectory = "/Users/${config.home.username}";

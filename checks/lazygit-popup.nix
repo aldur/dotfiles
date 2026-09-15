@@ -10,7 +10,6 @@
 #    summon reattaches to that session instead of creating another;
 #  * `Q` still quits lazygit, which ends the session.
 {
-  lib,
   runCommand,
   tmux,
   git,

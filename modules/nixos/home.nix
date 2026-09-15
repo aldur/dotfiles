@@ -3,6 +3,7 @@
 {
   imports = [
     ../home/home.nix
+    ../home/system-settings.nix
   ];
 
   home.homeDirectory = "/home/${config.home.username}";

@@ -603,7 +603,7 @@ let
         # esbuild, babel) next to the two packages cli.js actually requires;
         # the server bundles the rest. Trim and prune verified end-to-end:
         # navigate + snapshot over stdio with --headless --isolated, the
-        # flags claude-code.nix passes. (Without --isolated the MCP puts
+        # flags home/claude passes. (Without --isolated the MCP puts
         # its profile *inside* PLAYWRIGHT_BROWSERS_PATH — read-only here —
         # so persistent mode has never worked from the store farm.)
         node ${./prune-node-modules.js} $out/lib/node_modules/playwright-mcp-internal

@@ -4,7 +4,7 @@
 {
   imports = [
     inputs.nixos-crostini.nixosModules.baguette
-    ../../modules/users.nix
+    ../../modules/fish.nix
     ../../modules/nixos/users.nix
   ];
 

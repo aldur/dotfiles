@@ -20,7 +20,7 @@
   # 4. Set `services.linux-builder.enable` to true.
   services.linux-builder.enable = false;
 
-  # Coding agents; see modules/home/claude-code.nix and modules/home/codex.nix.
+  # Coding agents; see modules/home/claude and modules/home/codex.
   # The -yolo scripts run on the host here (the bubblewrap wrapper is Linux-only).
   programs.aldur = {
     claude-code.enable = true;

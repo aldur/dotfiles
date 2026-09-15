@@ -1,10 +1,9 @@
 {
   pkgs,
   inputs,
-  stateVersion,
+  pkgsUnstable,
   lib,
   config,
-  osConfig,
   ...
 }:
 let
@@ -16,7 +15,7 @@ let
   # Keys anyone verifying signatures should trust, straight from the
   # `gh-signing-keys` flake input (see there for the refresh command).
   allowedSigners = pkgs.writeText "allowed_signers" (
-    lib.concatMapStringsSep "\n" (k: ''${osConfig.identity.email} namespaces="git" ${k.key}'') (
+    lib.concatMapStringsSep "\n" (k: ''${config.identity.email} namespaces="git" ${k.key}'') (
       builtins.fromJSON (builtins.readFile inputs.gh-signing-keys.outPath)
     )
   );
@@ -53,18 +52,18 @@ let
       usrbin
     ]
     ++ lib.optionals (
-      osConfig.programs.aldur.claude-code.enable
-      || osConfig.programs.aldur.codex.enable
+      config.programs.aldur.claude-code.enable
+      || config.programs.aldur.codex.enable
       || config.programs.pi.enable
     ) [ agent-log ];
 
   aldurs-tools = pkgs.callPackage ../../packages/aldurs-tools { tools = customTools; };
 
-  withDifftastic = osConfig.programs.aldur.development.difftastic.enable or true;
+  withDifftastic = config.programs.aldur.development.difftastic.enable;
 
-  # Workstation comforts (see modules/development.nix); a headless or agent
+  # Workstation comforts (see modules/shared/options.nix); a headless or agent
   # guest turns the knob off and sheds them here too.
-  workstation = osConfig.programs.aldur.workstation.enable or true;
+  workstation = config.programs.aldur.workstation.enable;
 
   # Absolute path to the `lazyvim` binary, or null when no variant of it is
   # part of this configuration. The nixCats modules expose their built package
@@ -74,8 +73,8 @@ let
     let
       fromModule = cfg: lib.attrByPath [ "out" "packages" "lazyvim" ] null cfg;
       package =
-        if osConfig.programs.aldur.lazyvim.enable then
-          fromModule osConfig.programs.aldur.lazyvim
+        if config.programs.aldur.editorPackage != null then
+          config.programs.aldur.editorPackage
         else if config.programs.aldur.lazyvim.enable then
           fromModule config.programs.aldur.lazyvim
         else
@@ -85,10 +84,12 @@ let
 in
 {
   imports = [
+    ../shared/options.nix
+    (import ../../packages/lazyvim/lazyvim.nix { inherit inputs pkgs pkgsUnstable; }).defaultHomeModule
     inputs.clipshare.homeManagerModules.default
     ./agent-sandbox
-    ./claude-code.nix
-    ./codex.nix
+    ./claude
+    ./codex
     ./dash.nix
     ./w3m.nix
     ./direnv.nix
@@ -100,14 +101,23 @@ in
   ];
 
   home = {
-    inherit stateVersion;
-
-    # home-manager sets the name from the `home-manager.users.<name>`
-    # attribute; `mainUser` is the fallback outside that wiring.
-    username = lib.mkDefault osConfig.mainUser;
     packages =
       # The workstation option controls the custom tools.
-      lib.optionals workstation (customTools ++ [ aldurs-tools ]) ++ [
+      lib.optionals workstation (
+        customTools
+        ++ [
+          aldurs-tools
+          pkgs.ripgrep-all
+          pkgs.universal-ctags
+          pkgs.watch
+        ]
+      )
+      ++ lib.optional withDifftastic pkgs.difftastic
+      ++ [
+        pkgs.age
+        pkgs.rig
+        pkgs.tree
+        pkgs.totp-cli
         pkgs.moreutils
         # Standalone output (no reference back to git itself): keeps
         # `git help <cmd>` working next to the manual-less gitMinimal-runtime.
@@ -422,8 +432,8 @@ in
       settings = lib.recursiveUpdate (import ../shared/programs/git.nix) (
         {
           user = {
-            name = osConfig.identity.githubUser;
-            inherit (osConfig.identity) email;
+            name = config.identity.githubUser;
+            inherit (config.identity) email;
           };
 
           commit.verbose = true;
@@ -509,30 +519,36 @@ in
   # NOTE: Pinentry configured by each respective module
   services.gpg-agent.enable = true;
 
-  home.shellAliases =
-    lib.optionalAttrs withDifftastic {
-      gd = "git -c diff.external=difft diff";
-      gdl = "git -c diff.external=difft log -p --ext-diff";
-      gds = "git -c diff.external=difft show --ext-diff";
+  home.shellAliases = {
+    gst = "git status";
+    gp = "git push";
+    gc = "git commit";
+    ta = "tmux new-session -A -s main";
+    tls = "tmux ls";
+  }
+  // lib.optionalAttrs withDifftastic {
+    gd = "git -c diff.external=difft diff";
+    gdl = "git -c diff.external=difft log -p --ext-diff";
+    gds = "git -c diff.external=difft show --ext-diff";
+  }
+  //
+    # Linux mirror of the darwin `sandbox` alias (see
+    # modules/darwin/home.nix): no network, personal directories hidden.
+    # `faraday --mask` skips directories that don't exist on this machine.
+    lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+      sandbox = "faraday --mask ~/Documents --mask ~/Desktop --mask ~/Developer --mask ~/Movies --mask ~/Music --mask ~/Pictures";
     }
-    //
-      # Linux mirror of the darwin `sandbox` alias (see
-      # modules/darwin/home.nix): no network, personal directories hidden.
-      # `faraday --mask` skips directories that don't exist on this machine.
-      lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-        sandbox = "faraday --mask ~/Documents --mask ~/Desktop --mask ~/Developer --mask ~/Movies --mask ~/Music --mask ~/Pictures";
-      }
-    //
-      # `lv` shortcut whenever a `lazyvim` command is on PATH: either the nixCats
-      # module (`aldur.lazyvim.enable`) or a sandboxed `jailed-lazyvim` wrapper
-      # added to `home.packages`, which ships the same `lazyvim` binary.
-      lib.optionalAttrs
-        (
-          osConfig.programs.aldur.lazyvim.enable
-          || config.programs.aldur.lazyvim.enable
-          || lib.any (p: lib.getName p == "lazyvim") config.home.packages
-        )
-        {
-          lv = "lazyvim";
-        };
+  //
+    # `lv` shortcut whenever a `lazyvim` command is on PATH: either the nixCats
+    # module (`aldur.lazyvim.enable`) or a sandboxed `jailed-lazyvim` wrapper
+    # added to `home.packages`, which ships the same `lazyvim` binary.
+    lib.optionalAttrs
+      (
+        config.programs.aldur.editorPackage != null
+        || config.programs.aldur.lazyvim.enable
+        || lib.any (p: lib.getName p == "lazyvim") config.home.packages
+      )
+      {
+        lv = "lazyvim";
+      };
 }

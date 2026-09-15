@@ -1,13 +1,12 @@
 # Install one command for all agents and for arbitrary development tools.
 {
   config,
-  osConfig,
   pkgs,
   lib,
   ...
 }:
 let
-  agents = osConfig.programs.aldur;
+  agents = config.programs.aldur;
   profile = cfg: {
     runtimeAllowlist = cfg.extraRuntimeDirAllowlist;
     inherit (cfg) extraDbusTalk allowNixDaemon extraEnvironmentAllowlist;

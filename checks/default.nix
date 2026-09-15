@@ -65,18 +65,20 @@ in
 
   # The build runs config-loading and hot-reload regression tests.
   lazygit-config = pkgs.lazygit;
-  claude-state = pkgs.callPackage ../modules/home/tests/claude-state.nix { };
+  claude-state = pkgs.callPackage ../modules/home/claude/tests/claude-state.nix { };
 
   # Fails if the repo's own lua is not stylua-formatted.
   lua-format = pkgs.callPackage ./lua-format.nix { };
 
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+  home-portability = import ./home-portability.nix { inherit self inputs pkgs; };
+
   crostini-ssh = pkgs.callPackage ../base_hosts/crostini/tests/ssh.nix { };
   crostini-pcscd = pkgs.callPackage ../base_hosts/crostini/tests/pcscd.nix { };
   crostini-piv = pkgs.callPackage ../base_hosts/crostini/tests/piv.nix { };
 
-  codex-settings = pkgs.callPackage ../modules/home/tests/codex-settings.nix {
+  codex-settings = pkgs.callPackage ../modules/home/codex/tests/codex-settings.nix {
     inherit self inputs system;
   };
 

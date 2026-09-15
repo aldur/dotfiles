@@ -3,12 +3,11 @@
   pkgsUnstable,
   lib,
   config,
-  osConfig,
   ...
 }:
 let
-  enabled = osConfig.programs.aldur.codex.enable;
-  sandboxCfg = osConfig.programs.aldur.codex.sandbox;
+  enabled = config.programs.aldur.codex.enable;
+  sandboxCfg = config.programs.aldur.codex.sandbox;
   sandbox = sandboxCfg.enable && pkgs.stdenv.hostPlatform.isLinux;
   tomlFormat = pkgs.formats.toml { };
   tomlPython = pkgs.python3.withPackages (ps: [ ps.tomlkit ]);
@@ -70,7 +69,7 @@ let
   # `codex-yolo` turns the native sandbox and approvals of codex off. The
   # agent sandbox supplies the filesystem allowlist and filters session
   # sockets for the entire agent process.
-  codex-yolo = import ./yolo-script.nix { inherit pkgs lib config; } {
+  codex-yolo = import ../yolo-script.nix { inherit pkgs lib config; } {
     agent = "codex";
     describe = "Run codex in the sandbox, with no approvals and no native sandbox";
     inherit sandbox;
