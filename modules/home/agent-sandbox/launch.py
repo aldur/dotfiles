@@ -175,6 +175,9 @@ class Policy:
         return mounts
 
     def metadata(self, writable, readonly):
+        # Snapshot caller grants: automatically discovered files must not become
+        # authority for further instruction-file symlinks.
+        admitted_roots = tuple(root for root, _ in (*writable, *readonly))
         names = tuple(name for name in DIRECTORIES if name != ".git" or not self.git_write)
         protected = {}
         git_dirs = set()
@@ -272,10 +275,12 @@ class Policy:
                     # instruction files inside a grant need no special mounts.
                     for name in INSTRUCTION_FILES:
                         path = parent / name
-                        if path.is_file() and not any(
-                            within(path.resolve(), root) for root, _ in writable
-                        ):
-                            readonly.append((path.resolve(strict=True), path))
+                        if path.is_file():
+                            target = path.resolve(strict=True)
+                            if target != path and not any(within(target, root) for root in admitted_roots):
+                                fail(f"parent instruction symlink target is outside admitted roots: {path}")
+                            if not any(within(target, root) for root, _ in writable):
+                                readonly.append((target, path))
                     if self.git_write:
                         if (parent / ".git").is_file():
                             git_pointer(parent / ".git")

@@ -141,6 +141,54 @@ denied(lambda: Path({str(repo / '.git/config')!r}).write_text('changed'))
     sandbox(subdir, f"Path({str(repo / 'AGENTS.md')!r}).write_text('explicit grant edit')", "--rw", str(repo / "AGENTS.md"))
     assert (repo / "AGENTS.md").read_text() == "explicit grant edit"
 
+    # Parent instructions cannot introduce new grants through symlinks. These
+    # fixtures exercise rejection only; no outside file is read by the child.
+    instruction_repo = base / "instruction-repo"
+    repository(instruction_repo)
+    child = instruction_repo / "src"
+    child.mkdir()
+    allowed = base / "allowed-instructions"
+    allowed.mkdir()
+    (allowed / "guide.md").write_text("allowed instructions")
+    # A lexical prefix is not containment in an admitted directory.
+    outside = base / "allowed-instructions-other"
+    outside.mkdir()
+    (outside / "guide.md").write_text("unrelated fixture")
+    for name in ("AGENTS.md", "CLAUDE.md", "CLAUDE.local.md"):
+        instruction = instruction_repo / name
+        for git_options in ((), ("--git-write",)):
+            instruction.symlink_to(outside / "guide.md")
+            result = sandbox(child, "raise AssertionError('must not run')",
+                             "--ro", str(allowed), *git_options, check=False)
+            assert result.returncode != 0 and "outside admitted roots" in result.stderr, result.stderr
+            instruction.unlink()
+        # Resolving a chain inside a granted directory must still check the
+        # final target, not just the first symlink's parent.
+        (allowed / "indirect.md").symlink_to(outside / "guide.md")
+        instruction.symlink_to(allowed / "indirect.md")
+        result = sandbox(child, "raise AssertionError('must not run')", "--ro", str(allowed), check=False)
+        assert result.returncode != 0 and "outside admitted roots" in result.stderr, result.stderr
+        instruction.unlink()
+        (allowed / "indirect.md").unlink()
+        # Explicit read-only file and directory grants permit readable aliases.
+        instruction.symlink_to(allowed / "guide.md")
+        for grant in (allowed, allowed / "guide.md"):
+            sandbox(child, f"assert Path({str(instruction)!r}).read_text() == 'allowed instructions'; "
+                    f"denied(lambda: Path({str(instruction)!r}).write_text('changed'))",
+                    "--ro", str(grant))
+        # A directly granted writable spelling keeps its existing semantics.
+        sandbox(child, f"Path({str(instruction)!r}).write_text('allowed instructions')",
+                "--rw", str(instruction))
+        instruction.unlink()
+    # An instruction added by discovery is not an original caller grant.
+    (instruction_repo / "AGENTS.md").write_text("parent instructions")
+    (instruction_repo / "CLAUDE.md").symlink_to("AGENTS.md")
+    result = sandbox(child, "raise AssertionError('must not run')", check=False)
+    assert result.returncode != 0 and "outside admitted roots" in result.stderr, result.stderr
+    (instruction_repo / "CLAUDE.md").unlink()
+    (instruction_repo / "AGENTS.md").unlink()
+    print("passed: parent instruction symlinks require existing grants", flush=True)
+
     # Symlinked metadata fails closed instead of protecting only its target.
     empty = base / "empty"
     empty.mkdir()
