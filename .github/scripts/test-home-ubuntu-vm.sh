@@ -12,7 +12,10 @@ vm_pid=''
 agent_pid=''
 ssh_args=(-F /dev/null -i "$work/ssh_key" -p "$port" -o IdentitiesOnly=yes
   -o StrictHostKeyChecking=accept-new -o "UserKnownHostsFile=$work/known_hosts"
-  -o ConnectTimeout=5 -o BatchMode=yes)
+  -o ConnectTimeout=5 -o BatchMode=yes
+  # A probe can authenticate just before reboot and lose its connection while
+  # running. ConnectTimeout only covers the handshake, not that stalled session.
+  -o ServerAliveInterval=5 -o ServerAliveCountMax=3)
 # Arguments intentionally contain commands for the remote shell.
 # shellcheck disable=SC2029
 remote() { ssh "${ssh_args[@]}" ubuntu@127.0.0.1 "$@"; }
@@ -104,17 +107,19 @@ agent_pid=$SSH_AGENT_PID
 ssh-add "$work/ssh_key" 2>/dev/null
 ssh_args+=(-A)
 before=$(remote 'cat /proc/sys/kernel/random/boot_id')
+printf 'Boot ID before reboot: %s\n' "$before" >"$work/logs/reboot.log"
 remote 'sudo reboot' || true
 deadline=$((SECONDS + 300))
 while true; do
-  after=$(remote 'cat /proc/sys/kernel/random/boot_id' 2>/dev/null || true)
+  after=$(remote 'cat /proc/sys/kernel/random/boot_id' 2>>"$work/logs/reboot.log" || true)
   [[ -z $after || $after == "$before" ]] || break
   ((SECONDS < deadline)) || {
-    echo 'Guest did not reboot.' >&2
+    echo 'Timed out waiting for SSH to report a new boot ID; see reboot.log and serial.log.' >&2
     exit 1
   }
   sleep 2
 done
+printf 'Boot ID after reboot: %s\n' "$after" >>"$work/logs/reboot.log"
 echo 'Reconnected after reboot. Checking the real login environment...'
 # SSH invokes the configured login shell; no manually supplied PATH/XDG variables.
 # shellcheck disable=SC2016
