@@ -270,6 +270,8 @@ in
       # with a persistent home too: the first session needs current settings.
       services."user@${toString uid}" = {
         overrideStrategy = "asDropin";
+        # Repeat the template's policy on our instance drop-in, also in LXC.
+        restartIfChanged = false;
         after = [ "home-manager-${username}.service" ];
         wants = [ "home-manager-${username}.service" ];
         serviceConfig.TimeoutStartSec = "90";

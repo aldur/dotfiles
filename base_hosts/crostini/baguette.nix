@@ -7,6 +7,18 @@
   virtualisation.buildMemorySize = 1024 * 8;
   virtualisation.diskImageSize = 1024 * 16;
 
+  # This guest has no swap. Parallel Rust builds exhausted RAM and killed
+  # the rebuild client in garcon's cgroup. Leave room for the live session;
+  # an oversized daemon build may fail at the cap instead of exhausting RAM.
+  nix.settings = {
+    max-jobs = 1;
+    cores = 2;
+  };
+  systemd.services.nix-daemon.serviceConfig = {
+    MemoryHigh = "60%";
+    MemoryMax = "70%";
+  };
+
   # ChromeOS's log console cannot answer systemd's early terminal query.
   # ManagerEnvironment is read too late. Preserve the host's command line
   # and supply a default through systemd's debugging override before exec.

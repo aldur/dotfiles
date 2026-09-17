@@ -83,6 +83,13 @@
 
         checks.baguette-verifier = nixos-crostini.checks.${system}.boot-verifier;
 
+        checks.rebuild-resources =
+          nixpkgs.legacyPackages.${system}.callPackage ./tests/rebuild-resources.nix
+            {
+              baguette = generator system baguetteModules;
+              lxc = generator system [ crostiniModule ];
+            };
+
         checks.ssh-configurations =
           nixpkgs.legacyPackages.${system}.callPackage ./tests/ssh-configurations.nix
             {
