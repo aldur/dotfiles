@@ -51,3 +51,5 @@ home = dotfiles.lib.mkHome (host // {
   ];
 });
 ```
+
+Then rebuild with `nix run "path:$HOME/.config/home-manager"`.
