@@ -1,0 +1,38 @@
+--- a/src/shell.rs
++++ b/src/shell.rs
+@@ -37,27 +37,15 @@
+     get_process_status_field(pid, "Name")
+ }
+ 
+-fn get_all_parents_pid(pid: u32) -> ResultDyn<Vec<u32>> {
+-    let mut res = Vec::<u32>::new();
+-    let mut pid = pid;
++pub fn select_shell_from_pid(mut pid: u32) -> ResultDyn<String> {
+     loop {
+-        match get_parent_pid(pid) {
+-            Ok(parent_id) if parent_id != 0 => {
+-                res.push(parent_id);
+-                pid = parent_id;
+-            }
+-            Ok(_) => return Ok(res),
+-            Err(e) => return Err(e),
++        pid = get_parent_pid(pid)?;
++        if pid == 0 {
++            return Err("no shell found".into());
++        }
++        let name = get_process_name(pid)?;
++        if KNOWN_SHELLS.contains(&name.as_str()) {
++            return Ok(name);
+         }
+     }
+ }
+-
+-pub fn select_shell_from_pid(pid: u32) -> ResultDyn<String> {
+-    let parents = get_all_parents_pid(pid)?;
+-    let parents_names: Result<Vec<_>, _> =
+-        parents.iter().map(|&pid| get_process_name(pid)).collect();
+-    let shell = parents_names?
+-        .into_iter()
+-        .find(|x| KNOWN_SHELLS.contains(&x.as_str()));
+-    shell.ok_or("no shell found".into())
+-}
