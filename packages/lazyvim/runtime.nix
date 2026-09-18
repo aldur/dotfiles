@@ -36,12 +36,6 @@
   rust = [ rust-analyzer-unwrapped ];
   go = [ gopls ];
   typescript = [ vtsls ];
-  solidity = [
-    (pkgs.callPackage
-      ../nomicfoundation-solidity-language-server/nomicfoundation-solidity-language-server.nix
-      { }
-    )
-  ];
   nix = [
     nil
     nixfmt

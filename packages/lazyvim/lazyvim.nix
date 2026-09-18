@@ -49,7 +49,6 @@ let
     nix = true;
     python = true;
     rust = true;
-    solidity = true;
     toml = true;
     typescript = true;
   };

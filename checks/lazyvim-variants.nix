@@ -211,10 +211,9 @@ let
 
   # One file per runtime that overlays/slim.nix rewires: jsonls runs
   # through vscode-langservers' binary wrappers around the stripped node,
-  # vtsls and basedpyright are npm bundles re-pointed at it, and the
-  # solidity server rides the same path. Attaching exercises the whole
-  # chain — lspconfig wiring, the wrapper PATH, and the node those servers
-  # exec — where mere presence in the closure would not. For the two
+  # vtsls and basedpyright are npm bundles re-pointed at it. Attaching
+  # exercises the whole chain — lspconfig wiring, the wrapper PATH, and the
+  # node those servers exec — where mere presence in the closure would not. For the two
   # servers whose packages are pruned hardest, attach is not enough: the
   # file carries a type error and the server must *diagnose* it, proving
   # vtsls still spawns tsserver from the kept typescript package and
@@ -237,12 +236,6 @@ let
       text = ''x: int = "wrong"'';
       server = "basedpyright";
       diag = true;
-    }
-    {
-      ext = "sol";
-      text = "pragma solidity ^0.8.0;\ncontract C {}";
-      server = "solidity_ls_nomicfoundation";
-      diag = false;
     }
     # marksman runs on the repacked, ICU-free dotnet runtime.
     {
