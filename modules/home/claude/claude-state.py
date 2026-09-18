@@ -13,12 +13,20 @@ import subprocess
 import sys
 
 
-def validate(fd, directory=False):
+def validate(fd, directory=False, *, path="state file"):
     info = os.fstat(fd)
     kind = stat.S_ISDIR if directory else stat.S_ISREG
-    if (not kind(info.st_mode) or info.st_uid != os.getuid()
-            or info.st_mode & 0o022 or (not directory and info.st_nlink != 1)):
-        raise ValueError("unsafe state: require owned, non-shared regular files and directories")
+    if not kind(info.st_mode):
+        raise ValueError(f"unsafe state: {path}: expected a {'directory' if directory else 'regular file'}")
+    if info.st_uid != os.getuid():
+        raise ValueError(f"unsafe state: {path}: owned by UID {info.st_uid}, expected {os.getuid()}")
+    if not directory and info.st_nlink != 1:
+        raise ValueError(f"unsafe state: {path}: expected one hard link, found {info.st_nlink}")
+    if info.st_mode & 0o022:
+        raise ValueError(
+            f"unsafe state: {path}: group/other-writable mode {stat.S_IMODE(info.st_mode):04o}; "
+            "review existing state and remove group/other write access before retrying"
+        )
 
 
 @contextmanager
@@ -30,7 +38,8 @@ def state_file(home, target, *, write=False, create=False):
             return fd
 
         parent = opened(home, os.O_RDONLY | os.O_DIRECTORY)
-        validate(parent, directory=True)
+        path = os.fspath(home)
+        validate(parent, directory=True, path=path)
         parts = target.split("/")
         for part in parts[:-1]:
             if part in ("", ".", ".."):
@@ -41,7 +50,8 @@ def state_file(home, target, *, write=False, create=False):
                 except FileExistsError:
                     pass
             parent = opened(part, os.O_RDONLY | os.O_DIRECTORY, parent)
-            validate(parent, directory=True)
+            path = os.path.join(path, part)
+            validate(parent, directory=True, path=path)
         if parts[-1] in ("", ".", ".."):
             raise ValueError("invalid state filename")
         flags = (os.O_RDWR if write else os.O_RDONLY) | os.O_NONBLOCK
@@ -51,7 +61,7 @@ def state_file(home, target, *, write=False, create=False):
             if not create:
                 raise
             fd = opened(parts[-1], flags | os.O_CREAT | os.O_EXCL, parent)
-        validate(fd)
+        validate(fd, path=os.path.join(path, parts[-1]))
         yield fd
 
 

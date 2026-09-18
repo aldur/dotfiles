@@ -36,6 +36,18 @@ class StateTests(unittest.TestCase):
         self.assertEqual(result.returncode == 0, success, result.stderr)
         return result
 
+    def test_permission_error_identifies_path_without_mutating_it(self):
+        for path in (self.home, self.parent, self.target):
+            with self.subTest(path=path):
+                original_mode = stat.S_IMODE(path.stat().st_mode)
+                shared_mode = original_mode | 0o020
+                path.chmod(shared_mode)
+                result = self.invoke("update", ".claude/settings.json", jq, '.', success=False)
+                self.assertIn(str(path), result.stderr.decode())
+                self.assertIn(f"{shared_mode:04o}", result.stderr.decode())
+                self.assertEqual(stat.S_IMODE(path.stat().st_mode), shared_mode)
+                path.chmod(original_mode)
+
     def test_update_preserves_inode_and_sets_permissions(self):
         inode = self.target.stat().st_ino
         managed = self.root / "managed.json"
