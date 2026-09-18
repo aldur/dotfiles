@@ -230,7 +230,11 @@ in
     home = {
       # NOTE: `home.file` instead of `skills` to enable cross-platform evaluation used in checks.
       file = lib.mkIf enabled {
-        "${cfg.configDir}/skills".source = "${pkgs.claude-skills}/skills";
+        "${cfg.configDir}/skills" = {
+          source = "${pkgs.claude-skills}/skills";
+          # Claude also writes server-synced skills into skills/synced/.
+          recursive = true;
+        };
       };
 
       # Write settings and MCP config as writable files (not read-only symlinks).
