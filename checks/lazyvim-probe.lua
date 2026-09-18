@@ -580,6 +580,38 @@ report(function()
 		check("pages() opens no picker", #require("snacks").picker.get() == 0)
 	end
 
+	-- All wiki fixtures are synthetic; never copy private note text or identifiers here.
+	-- Test root discovery in fresh processes, before any Markdown buffer opens.
+	do
+		local base = dir .. "/wiki-startup"
+		local wiki = base .. "/notebook"
+		vim.fn.mkdir(wiki .. "/section-c/deep", "p")
+		vim.fn.mkdir(base .. "/other-notebook", "p")
+		vim.fn.mkdir(base .. "/ordinary-project", "p")
+		vim.fn.writefile({ "# Notebook" }, wiki .. "/index.md")
+		vim.fn.writefile({ "# Section C" }, wiki .. "/section-c/index.md")
+		local function startup(cwd, override, expected)
+			local result = vim.system({
+				vim.env.PROBE_LAZYVIM,
+				"-n",
+				"--headless",
+				"+lua local root = vim.g.wiki_root or ''; if root ~= (vim.env.WIKI_EXPECT_ROOT or '') then print('Unexpected wiki root: ' .. root); vim.cmd('cquit 1') end",
+				"+qa!",
+			}, {
+				cwd = cwd,
+				env = { WIKI_ROOT = override, WIKI_EXPECT_ROOT = expected },
+				text = true,
+			}):wait(10000)
+			check("wiki startup in " .. cwd .. " with override " .. override, result.code == 0, result.stderr)
+		end
+		startup(wiki, "", wiki)
+		startup(wiki .. "/section-c/deep", "", wiki)
+		startup(wiki, base .. "/other-notebook", base .. "/other-notebook")
+		startup(wiki, base .. "/missing", "")
+		local default = vim.fn.expand("~/Documents/Notes")
+		startup(base .. "/ordinary-project", "", vim.fn.isdirectory(default) == 1 and default or "")
+	end
+
 	-- Visual-mode link insertion must consume the selection and make it the link
 	-- text. `wiki#link#add` does that itself when it gets the "visual" mode, and
 	-- it is the only thing that can: the mapping leaves visual mode before the
@@ -607,7 +639,7 @@ report(function()
 
 		-- The `xnoremap` that calls this leaves visual mode first, so by now the
 		-- selection is only the `'<` and `'>` marks.
-		vim.cmd("normal! ggv$")
+		vim.cmd("normal! gg0v$")
 		vim.cmd([[execute "normal! \<Esc>"]])
 
 		local ok, lerr = pcall(require("wiki.snacks").links, "visual")
@@ -631,6 +663,393 @@ report(function()
 		local line = vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] or ""
 		check("visual link takes its text from the selection", line:match("^%[keep this text%]%(") ~= nil, line)
 		check("visual link does not read a stale register", not line:find("STALE", 1, true), line)
+	end
+
+	-- Wiki titles become readable labels with lowercase, hyphenated filenames.
+	do
+		local wiki = dir .. "/wiki-names"
+		vim.fn.mkdir(wiki .. "/section-a", "p")
+		vim.fn.writefile({ "# Wiki" }, wiki .. "/index.md")
+		vim.fn.writefile({ "# Section A" }, wiki .. "/section-a/index.md")
+		vim.fn.writefile({ "# Legacy" }, wiki .. "/Legacy Name.md")
+		vim.g.wiki_root = wiki
+		vim.cmd.edit(wiki .. "/section-a/index.md")
+		vim.api.nvim_buf_set_lines(0, 0, -1, false, { "Sample widget" })
+		vim.cmd("normal! gg0v$")
+		vim.cmd([[execute "normal! \<Esc>"]])
+		vim.fn["wiki#link#transform_visual"]()
+		local line = vim.api.nvim_get_current_line()
+		check("title selection becomes a slug link", line == "[Sample widget](sample-widget.md)", line)
+		vim.api.nvim_win_set_cursor(0, { 1, 2 })
+		vim.cmd("WikiLinkFollow")
+		check("title link opens a sibling page", vim.api.nvim_buf_get_name(0) == wiki .. "/section-a/sample-widget.md")
+		vim.cmd.write()
+		check("title page can be saved", vim.fn.filereadable(wiki .. "/section-a/sample-widget.md") == 1)
+
+		for title, filename in pairs({
+			["Alpha/Beta #1?"] = "alpha-beta-1.md",
+			["Example: punctuation?"] = "example-punctuation.md",
+			["A [bracket] & back\\slash"] = "a-bracket-back-slash.md",
+			["Café — crème"] = "café-crème.md",
+			["CON"] = "con.md",
+		}) do
+			vim.cmd.edit(wiki .. "/section-a/index.md")
+			vim.api.nvim_buf_set_lines(0, 0, -1, false, { title })
+			vim.cmd("normal! gg0v$")
+			vim.cmd([[execute "normal! \<Esc>"]])
+			vim.fn["wiki#link#transform_visual"]()
+			line = vim.api.nvim_get_current_line()
+			check(
+				"punctuation produces a safe title filename",
+				line:find("](" .. filename .. ")", 1, true) ~= nil,
+				line
+			)
+			vim.api.nvim_win_set_cursor(0, { 1, 2 })
+			vim.cmd("WikiLinkFollow")
+			check(
+				"punctuation link opens the right sibling",
+				vim.api.nvim_buf_get_name(0) == wiki .. "/section-a/" .. filename,
+				vim.api.nvim_buf_get_name(0)
+			)
+			vim.cmd.write()
+		end
+		check("slash in a selected title creates no directory", vim.fn.isdirectory(wiki .. "/section-a/Alpha") == 0)
+		vim.cmd.edit(wiki .. "/section-a/index.md")
+		vim.api.nvim_buf_set_lines(0, 0, -1, false, { "?!#" })
+		vim.cmd("normal! gg0v$")
+		vim.cmd([[execute "normal! \<Esc>"]])
+		vim.fn["wiki#link#transform_visual"]()
+		check("punctuation-only title leaves text unchanged", vim.api.nvim_get_current_line() == "?!#")
+		local names = require("wiki.snacks")
+		check("explicit anchors stay anchors", names.normalize_url("sample-widget#Details") == "sample-widget#Details")
+		check("TOC anchors stay unchanged", names.normalize_url("#Alpha/Beta") == "#Alpha/Beta")
+		check("punctuation-only picker names are rejected", names.page_name("section-a/???.md", wiki) == nil)
+		check(
+			"picker title punctuation is literal",
+			names.page_name("section-a/Sample #2: Why?", wiki) == "section-a/sample-2-why.md"
+		)
+
+		-- Drive the picker callbacks with raw query text; wiki.vim does the real
+		-- insertion/opening. Both Enter on no match and Ctrl-X must normalize it.
+		local picker = require("snacks").picker
+		local original_pick = picker.pick
+		local config
+		picker.pick = function(opts)
+			config = opts
+		end
+		for _, action in ipairs({ "confirm", "force_create" }) do
+			for _, kind in ipairs({ "links", "pages" }) do
+				local title = "Another Item " .. action .. " " .. kind
+				local filename = "another-item-" .. action .. "-" .. kind .. ".md"
+				vim.cmd.edit(wiki .. "/section-a/index.md")
+				vim.api.nvim_buf_set_lines(0, 0, -1, false, { "" })
+				vim.cmd.write()
+				require("wiki.snacks")[kind]()
+				config.actions[action]({
+					close = function() end,
+					input = {
+						get = function()
+							return "section-a/" .. title
+						end,
+					},
+				})
+				vim.wait(1000, function()
+					return vim.api.nvim_get_current_line() == "[" .. title .. "](" .. filename .. ")"
+						or vim.api.nvim_buf_get_name(0) == wiki .. "/section-a/" .. filename
+				end)
+				if kind == "links" then
+					line = vim.api.nvim_get_current_line()
+					check(
+						action .. " inserts a readable slug link",
+						line == "[" .. title .. "](" .. filename .. ")",
+						line
+					)
+				else
+					check(
+						action .. " opens a slug page",
+						vim.api.nvim_buf_get_name(0) == wiki .. "/section-a/" .. filename
+					)
+				end
+			end
+		end
+		vim.cmd.edit(wiki .. "/section-a/index.md")
+		vim.api.nvim_buf_set_lines(0, 0, -1, false, { "A [readable] label" })
+		vim.cmd("normal! gg0v$")
+		vim.cmd([[execute "normal! \<Esc>"]])
+		require("wiki.snacks").links("visual")
+		config.actions.force_create({
+			close = function() end,
+			input = {
+				get = function()
+					return "section-a/New Item #2?.md"
+				end,
+			},
+		})
+		vim.wait(1000, function()
+			return vim.api.nvim_get_current_line():find("new-item-2.md", 1, true) ~= nil
+		end)
+		line = vim.api.nvim_get_current_line()
+		check("new picker links preserve selected text", line == "[A &#91;readable&#93; label](new-item-2.md)", line)
+		vim.api.nvim_win_set_cursor(0, { 1, 2 })
+		vim.cmd("WikiLinkFollow")
+		check(
+			"picker punctuation link can be followed",
+			vim.api.nvim_buf_get_name(0) == wiki .. "/section-a/new-item-2.md"
+		)
+		vim.cmd.write()
+		require("wiki.snacks").pages()
+		config.actions.confirm({ close = function() end }, { text = "Legacy Name.md" })
+		check("existing picker filenames stay unchanged", vim.api.nvim_buf_get_name(0) == wiki .. "/Legacy Name.md")
+
+		vim.fn.mkdir(wiki .. "/Mixed Folder/Nested Folder", "p")
+		local names = require("wiki.snacks")
+		check(
+			"directory components stay literal",
+			names.page_name("Mixed Folder/Nested Folder/New Item", wiki) == "Mixed Folder/Nested Folder/new-item.md"
+		)
+		-- The current directory must not affect a picker query rooted at the wiki.
+		vim.fn.writefile({ "# Local" }, wiki .. "/section-a/Local Title.md")
+		vim.cmd.edit(wiki .. "/section-a/index.md")
+		check("picker names use the wiki root", names.page_name("Local Title", wiki) == "local-title.md")
+		require("wiki.snacks").pages()
+		config.actions.force_create({
+			close = function() end,
+			input = {
+				get = function()
+					return "Mixed Folder/Nested Folder/New Item"
+				end,
+			},
+		})
+		vim.wait(1000, function()
+			return vim.api.nvim_buf_get_name(0) == wiki .. "/Mixed Folder/Nested Folder/new-item.md"
+		end)
+		check(
+			"picker preserves existing directory paths",
+			vim.api.nvim_buf_get_name(0) == wiki .. "/Mixed Folder/Nested Folder/new-item.md"
+		)
+		vim.cmd.write()
+		check("no normalized parallel directory", vim.fn.isdirectory(wiki .. "/mixed-folder") == 0)
+
+		-- A name that resolves to an existing page opens or links it directly.
+		local target = wiki .. "/section-a/sample-widget.md"
+		local contents = vim.fn.readfile(target)
+		local original_select = vim.fn["wiki#ui#select"]
+		vim.fn["wiki#ui#select"] = function()
+			error("Existing pages must not open a rename/reuse dialog")
+		end
+		for _, action in ipairs({ "confirm", "force_create" }) do
+			for _, kind in ipairs({ "pages", "links" }) do
+				vim.cmd.edit(wiki .. "/section-a/index.md")
+				vim.api.nvim_buf_set_lines(0, 0, -1, false, { "" })
+				require("wiki.snacks")[kind]()
+				config.actions[action]({
+					close = function() end,
+					input = {
+						get = function()
+							return "section-a/Sample widget"
+						end,
+					},
+				})
+				vim.wait(1000, function()
+					return vim.api.nvim_buf_get_name(0) == target
+						or vim.api.nvim_get_current_line() == "[Sample widget](sample-widget.md)"
+				end)
+				if kind == "pages" then
+					check(action .. " opens the existing page", vim.api.nvim_buf_get_name(0) == target)
+				else
+					check(
+						action .. " links the existing page",
+						vim.api.nvim_get_current_line() == "[Sample widget](sample-widget.md)"
+					)
+				end
+				check("reuse preserves existing contents", vim.deep_equal(vim.fn.readfile(target), contents))
+			end
+		end
+		vim.fn["wiki#ui#select"] = original_select
+
+		-- Regression cases from the workflow audit. These exercise insertion and
+		-- following, not just filename helpers.
+		vim.fn.mkdir(wiki .. "/section-b", "p")
+		vim.fn.writefile({ "# Bracket [title]" }, wiki .. "/section-b/bracket.md")
+		vim.fn.writefile({ "# Hash title" }, wiki .. "/Sample #2.md")
+		vim.cmd.edit(wiki .. "/section-a/index.md")
+		vim.api.nvim_buf_set_lines(0, 0, -1, false, { "" })
+		require("wiki.snacks").links()
+		config.actions.confirm({ close = function() end }, { file = wiki .. "/section-b/bracket.md" })
+		check(
+			"existing labels and cross-folder links are portable",
+			vim.api.nvim_get_current_line() == "[Bracket &#91;title&#93;](../section-b/bracket.md)",
+			vim.api.nvim_get_current_line()
+		)
+		vim.api.nvim_win_set_cursor(0, { 1, 2 })
+		vim.cmd("WikiLinkFollow")
+		check("portable link opens its target", vim.api.nvim_buf_get_name(0) == wiki .. "/section-b/bracket.md")
+		require("wiki.snacks").pages()
+		config.actions.confirm({ close = function() end }, { text = "Sample #2.md" })
+		check("legacy hash filenames open literally", vim.api.nvim_buf_get_name(0) == wiki .. "/Sample #2.md")
+		vim.cmd.edit(wiki .. "/section-a/index.md")
+		vim.api.nvim_buf_set_lines(0, 0, -1, false, { "" })
+		require("wiki.snacks").links()
+		config.actions.confirm({ close = function() end }, { file = wiki .. "/Sample #2.md" })
+		check(
+			"literal filenames are URL encoded",
+			vim.api.nvim_get_current_line() == "[Hash title](../Sample%20%232.md)",
+			vim.api.nvim_get_current_line()
+		)
+		vim.api.nvim_win_set_cursor(0, { 1, 2 })
+		vim.cmd("WikiLinkFollow")
+		check("encoded hash link opens literally", vim.api.nvim_buf_get_name(0) == wiki .. "/Sample #2.md")
+
+		vim.cmd.edit(wiki .. "/section-a/index.md")
+		for _, selection in ipairs({ "gg0vj$", "ggV" }) do
+			local original = { "First selected line", "Second selected line", "Keep me" }
+			vim.api.nvim_buf_set_lines(0, 0, -1, false, original)
+			vim.cmd("normal! " .. selection)
+			vim.cmd([[execute "normal! \<Esc>"]])
+			config = nil
+			require("wiki.snacks").links("visual")
+			check("unsupported selection opens no picker", config == nil)
+			check(
+				"unsupported selection preserves every line",
+				vim.deep_equal(vim.api.nvim_buf_get_lines(0, 0, -1, false), original)
+			)
+		end
+		check(
+			"technical language names stay distinct",
+			names.slug("C") == "c" and names.slug("C++") == "c-plus-plus" and names.slug("C#") == "c-sharp"
+		)
+		-- Title conversion does not suggest other pages with the same prefix.
+		check("title conversion uses its own filename", names.title_link("Sample") == "[Sample](sample.md)")
+		check(
+			"title conversion reuses existing pages directly",
+			names.title_link("Sample widget") == "[Sample widget](sample-widget.md)"
+		)
+		picker.pick = original_pick
+	end
+
+	-- The link picker searches file contents without displaying duplicate rows
+	-- or inserting the matched text in place of the selected page's link.
+	do
+		local wiki = dir .. "/wiki-content"
+		vim.fn.mkdir(wiki .. "/section-c", "p")
+		vim.fn.writefile({ "# Wiki" }, wiki .. "/index.md")
+		vim.fn.writefile({ "# Unrelated", "m a r m a l a d e" }, wiki .. "/unrelated.md")
+		local target = wiki .. "/section-c/fixture-id.md"
+		vim.fn.writefile({
+			"---",
+			'title: "Quasinebulous metadata"',
+			"---",
+			"# Fixture note",
+			"Zebrafalcon discovery in the body.",
+			"Zebrafalcon appears twice but this is still one result.",
+			"Synthetic marmalade token.",
+		}, target)
+		vim.g.wiki_root = wiki
+		for _, query in ipairs({
+			"marmalade",
+			"synthetic marmalade",
+			"Zebrafalcon",
+			"Quasinebulous",
+			"fixture-id",
+			"Unsavedquokka",
+		}) do
+			vim.cmd.edit(wiki .. "/index.md")
+			local visual = query == "Unsavedquokka"
+			if visual then
+				local target_buf = vim.fn.bufadd(target)
+				vim.fn.bufload(target_buf)
+				vim.api.nvim_buf_set_lines(target_buf, -1, -1, false, { "Unsavedquokka observation" })
+			end
+			vim.api.nvim_buf_set_lines(0, 0, -1, false, { visual and "My chosen label" or "" })
+			local source_buf = vim.api.nvim_get_current_buf()
+			if visual then
+				vim.cmd("normal! gg0v$")
+				vim.cmd([[execute "normal! \<Esc>"]])
+			end
+			require("wiki.snacks").links(visual and "visual" or nil)
+			local picker = require("snacks").picker.get()[1]
+			check("content link picker opens", picker ~= nil)
+			if picker then
+				picker.input:set(query)
+				picker:find()
+				vim.wait(3000, function()
+					return not picker:is_active() and picker.matcher.pattern == query and picker.list:count() == 1
+				end, 10)
+				check(query .. " returns one note", picker.list:count() == 1, picker.list:count())
+				if query == "marmalade" then
+					for _, expected in ipairs({ 2, 1 }) do
+						vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<a-z>", true, false, true), "xt", false)
+						vim.wait(3000, function()
+							return not picker:is_active() and picker.list:count() == expected
+						end, 10)
+						check(
+							"Alt-z changes matches for the same query",
+							picker.list:count() == expected,
+							picker.list:count()
+						)
+						check("Alt-z preserves the query", picker.input:get() == query)
+						local mode = expected == 2 and "fuzzy" or "literal"
+						check("picker title shows matching mode", picker.title:find("[" .. mode .. "]", 1, true) ~= nil)
+					end
+				end
+				local item = picker:current()
+				check(query .. " matches the correct file", item and item.file == target, item and item.file)
+				picker:action("confirm")
+				vim.wait(1000, function()
+					return #require("snacks").picker.get() == 0
+				end)
+				local line = vim.api.nvim_buf_get_lines(source_buf, 0, 1, false)[1]
+				local label = visual and "My chosen label" or "Fixture note"
+				check(query .. " inserts the page link", line == "[" .. label .. "](section-c/fixture-id.md)", line)
+			end
+		end
+	end
+
+	-- Help must render above the picker, not merely receive keyboard focus.
+	do
+		local wiki = dir .. "/wiki-help"
+		vim.fn.mkdir(wiki, "p")
+		vim.fn.writefile({ "# Fixture", "A blue widget." }, wiki .. "/index.md")
+		vim.g.wiki_root = wiki
+		vim.cmd.edit(wiki .. "/index.md")
+		for _, layout in ipairs({ "default", "vertical" }) do
+			require("wiki.snacks").links()
+			local picker = assert(require("snacks").picker.get()[1])
+			check("new link picker starts literal", not picker.matcher.opts.fuzzy)
+			assert(
+				vim.wait(6000, function()
+					return picker.input.win:valid()
+				end, 20),
+				"wiki help test picker did not open"
+			)
+			picker:set_layout(layout)
+			picker.input:set("widget")
+			vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<a-s>", true, false, true), "xt", false)
+			local help = vim.api.nvim_get_current_win()
+			check("Alt-s focuses wiki help", help ~= picker.input.win.win)
+			local zindex = vim.api.nvim_win_get_config(help).zindex or 0
+			for _, windows in ipairs({ picker.layout.wins, picker.layout.box_wins }) do
+				for _, win in pairs(windows) do
+					if win:valid() then
+						local below = vim.api.nvim_win_get_config(win.win).zindex or 0
+						check(
+							"wiki help is above every picker window in " .. layout,
+							zindex > below,
+							("help=%d picker=%d"):format(zindex, below)
+						)
+					end
+				end
+			end
+			local key = layout == "default" and "q" or "<Esc>"
+			vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, false, true), "xt", false)
+			check("wiki help closes", not vim.api.nvim_win_is_valid(help))
+			check("closing help preserves the picker", not picker.closed and picker.input.win:valid())
+			check("closing help restores focus", vim.api.nvim_get_current_win() == picker.input.win.win)
+			check("closing help preserves the query", picker.input:get() == "widget")
+			picker:action("toggle_fuzzy")
+			picker:close()
+			vim.wait(100)
+		end
 	end
 
 	-- Anything that threw along the way. A server whose `root_dir` shells out to a

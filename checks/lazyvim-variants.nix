@@ -157,7 +157,7 @@ let
     ''
       echo "PROBE-START ${bin}"
       rm -rf "$TMPDIR/probe-${name}" && mkdir -p "$TMPDIR/probe-${name}"
-      PROBE_DIR="$TMPDIR/probe-${name}" PROBE_SPEC=${lib.escapeShellArg (builtins.toJSON spec)} \
+      PROBE_DIR="$TMPDIR/probe-${name}" PROBE_SPEC=${lib.escapeShellArg (builtins.toJSON spec)} PROBE_LAZYVIM=${bin} \
         ${bin} -n --headless "+luafile ${probe}" > "$TMPDIR/probe-${name}.log" 2>&1 || true
       cat "$TMPDIR/probe-${name}.log"
       grep -aq PROBE-OK "$TMPDIR/probe-${name}.log" \
