@@ -55,6 +55,8 @@ let
     # models.
     playwright-mcp = if stdenv.hostPlatform.isAarch64 then 1000 else 805;
     watermark-pdf = 330;
+    comma = 205;
+    nix-direnv = 180;
     nomicfoundation-solidity-language-server = 270;
     nodejs-slim-runtime = 200;
     marksman = 180;

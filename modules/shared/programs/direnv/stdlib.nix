@@ -17,7 +17,7 @@
     local previous=$PWD envrc index
     envrc=$(find_up .envrc) || return 0
     cd "''${envrc%/*}" || return
-    if index=$(${pkgs.git}/bin/git -c core.fsmonitor=false rev-parse --git-path index 2>/dev/null); then
+    if index=$(${pkgs.gitMinimal-runtime}/bin/git -c core.fsmonitor=false rev-parse --git-path index 2>/dev/null); then
       watch_file "$index"
       local -a inputs=()
       local -a patterns=(
@@ -26,7 +26,7 @@
         ':(top,glob)**/flake.lock'
         ':(top,glob)**/.envrc*'
       )
-      mapfile -d "" -t inputs < <(${pkgs.git}/bin/git -c core.fsmonitor=false ls-files \
+      mapfile -d "" -t inputs < <(${pkgs.gitMinimal-runtime}/bin/git -c core.fsmonitor=false ls-files \
         --cached --recurse-submodules -z -- "''${patterns[@]}") || return
       # Process substitution must not hide a failed Git command.
       wait "$!" || return

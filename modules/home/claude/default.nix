@@ -63,7 +63,9 @@ let
     fi
   '';
 
-  claude-statusline = pkgs.callPackage ../../../packages/claude-statusline { };
+  claude-statusline = pkgs.callPackage ../../../packages/claude-statusline {
+    git = pkgs.gitMinimal-runtime;
+  };
 
   # Pre-accept the workspace trust dialog so trust-gated features
   # (e.g. statusLine) render under `claude-yolo`. Uses checked writes so the
