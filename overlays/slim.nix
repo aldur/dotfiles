@@ -108,7 +108,60 @@ let
       grep -rq ${final.nodejs-slim-runtime} $out
       ! grep -rq ${prev.nodejs-slim} $out
     '';
+  # The generic BLAS/LAPACK outputs each copy OpenBLAS twice to change its
+  # SONAME. NumPy retains all four copies (including LAPACK through its build
+  # metadata), although OpenBLAS already provides every required ABI. Build
+  # NumPy against the same providers directly, keeping their integer width
+  # and CPU dispatch. This saves ~133 MiB without removing numerical code,
+  # headers, or configuration metadata. Keep the interface fields NumPy's
+  # expression expects from the generic wrappers.
+  numpyForLlm = prev.python3.pkgs.numpy.override {
+    blas = prev.blas.provider // {
+      inherit (prev.blas) isILP64 implementation provider;
+    };
+    lapack = prev.lapack.provider // {
+      inherit (prev.lapack) isILP64 implementation provider;
+    };
+  };
+
+  # Repoint only llm's runtime Python modules at the rebuilt NumPy (same
+  # version/ABI). Overriding the whole Python package set also rebuilds its
+  # test-only dependencies, including SciPy and the networking stack.
+  # `paths` is the environment's already resolved module closure. Using its
+  # dependency metadata avoids replaceDependencies' import-from-derivation,
+  # so ARM/Darwin evaluation still works from a Linux host. The direct
+  # replacement helper checks equal-length names and rewrites NARs, including
+  # symlinks and binary wrappers. Include transitive modules: Python wrappers
+  # embed their entire PYTHONPATH, not just immediate dependencies.
+  moduleKey = pkg: builtins.unsafeDiscardStringContext pkg.outPath;
+  llmRuntimeModules = prev.lib.mapAttrs (
+    path: pkg:
+    let
+      repoint = dep: llmRuntimeModules.${moduleKey dep} or dep;
+      replacements = prev.lib.filter (r: r.oldDependency.outPath != r.newDependency.outPath) (
+        map (dep: {
+          oldDependency = dep;
+          newDependency = repoint dep;
+        }) (prev.lib.filter (dep: dep.outPath != path) (pkg.requiredPythonModules or [ ]))
+      );
+    in
+    if path == prev.python3.pkgs.numpy.outPath then
+      numpyForLlm
+    else if replacements == [ ] then
+      pkg
+    else
+      prev.python3.pkgs.toPythonModule (
+        (prev.replaceDirectDependencies { drv = pkg; inherit replacements; }).overrideAttrs (_: {
+          inherit (pkg) meta;
+          propagatedBuildInputs = map repoint (pkg.propagatedBuildInputs or [ ]);
+        })
+      )
+  ) (prev.lib.listToAttrs (map (pkg: prev.lib.nameValuePair (moduleKey pkg) pkg) prev.llmWithPlugins.paths));
+
   slimmed = {
+  llmWithPlugins = prev.llmWithPlugins.override {
+    extraLibs = builtins.attrValues llmRuntimeModules;
+  };
 
   # The vanilla package (overlays/packages.nix), re-called with the
   # python set whose pymupdf rides the lite OCR chain above.

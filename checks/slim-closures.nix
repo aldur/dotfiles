@@ -41,8 +41,8 @@ let
     lazyvim-light = 250;
     lazyvim-nightly = 1390;
     remarks = 700;
-    llm = 650; # the flake alias of llmWithPlugins
-    llmWithPlugins = 650;
+    llm = 510; # the flake alias of llmWithPlugins
+    llmWithPlugins = 510;
     pi = 455;
     pi-coding-agent = 415;
     # A node interpreter and one stdlib-only script; it is nodejs-slim-runtime
@@ -70,6 +70,8 @@ let
 
   # Name fragments that must never (re)appear in a closure.
   forbidden = {
+    llm = [ "-blas-[0-9]" "-lapack-[0-9]" ];
+    llmWithPlugins = [ "-blas-[0-9]" "-lapack-[0-9]" ];
     remarks = [ "-all$" ]; # the full-language tessdata, 1G
     shrink-pdf = [
       "gtk+3"

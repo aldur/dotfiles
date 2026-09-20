@@ -48,6 +48,8 @@ in
   agent-log = pkgs.agent-log.tests.integration;
   telegram = pkgs.telegram.tests.integration;
 
+  llm-runtime = pkgs.callPackage ./llm-runtime.nix { };
+
   # The editor's light/full split stays split: both start headless, the heavy
   # language tooling stays in full and out of light.
   lazyvim-variants = pkgs.callPackage ./lazyvim-variants.nix {
