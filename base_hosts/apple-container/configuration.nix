@@ -1,9 +1,31 @@
 {
   config,
   inputs,
+  lib,
   pkgs,
   ...
 }:
+let
+  # Fish embeds its HTML manual's path in its binaries. Repack the cached
+  # shell without that reference; `help` falls back to the online manual.
+  # Keep the package name for equal-length rewrites of its own prefix.
+  fishWithoutDocs =
+    pkgs.runCommand pkgs.fish.name
+      {
+        nativeBuildInputs = [ pkgs.removeReferencesTo ];
+        inherit (pkgs.fish) meta;
+        passthru.shellPath = pkgs.fish.shellPath;
+      }
+      ''
+        cp -a ${pkgs.fish} $out
+        chmod -R u+w $out
+        find $out -type f -exec sed -i "s|${pkgs.fish}|$out|g" {} +
+        find $out -type f -exec remove-references-to -t ${pkgs.fish.doc} {} +
+        ! grep -rF ${pkgs.fish} $out
+        ! grep -rF ${pkgs.fish.doc} $out
+        test -z "$(find $out -type l -lname '${pkgs.fish}*')"
+      '';
+in
 {
   imports = [
     ./apple-container.nix
@@ -19,7 +41,11 @@
   # Omit package manuals from this image to keep disk footprint small.
   documentation.doc.enable = false;
 
+  programs.fish.package = fishWithoutDocs;
+  users.defaultUserShell = lib.mkForce fishWithoutDocs;
+
   virtualisation.appleContainer = {
+    shell = fishWithoutDocs;
     # mainUser is independent of users.users, which this module populates.
     username = config.mainUser;
     imageName = "aldur-nixos";
@@ -34,6 +60,7 @@
 
   home-manager.users.${config.mainUser} = _: {
     programs = {
+      fish.package = fishWithoutDocs;
       aldur.lazyvim.enable = true;
       git.settings.gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | grep -i sign)'";
       better-nix-search.enable = true;
