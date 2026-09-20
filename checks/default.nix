@@ -75,6 +75,7 @@ in
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
   slim-runtime = pkgs.callPackage ./slim-runtime.nix { };
+  runtime-libraries = pkgs.callPackage ./runtime-libraries.nix { };
   home-portability = import ./home-portability.nix { inherit self inputs pkgs; };
 
   crostini-ssh = pkgs.callPackage ../base_hosts/crostini/tests/ssh.nix { };

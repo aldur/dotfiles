@@ -2,6 +2,8 @@
 # rebuilding the world).
 final: prev:
 let
+  runtimeLibraries = import ./runtime-libraries.nix { pkgs = prev; };
+
   # node-gyp is a build tool, but packages ship it anyway and its residue
   # retains build inputs at runtime: config.gypi records store paths (the
   # npm-deps fixed-output derivation among them), and its own python
@@ -159,6 +161,36 @@ let
   ) (prev.lib.listToAttrs (map (pkg: prev.lib.nameValuePair (moduleKey pkg) pkg) prev.llmWithPlugins.paths));
 
   slimmed = {
+  # Both tools otherwise retain nixpkgs' older default Nix alongside the
+  # latest version installed by modules/nix.nix. Keep comma's patched build
+  # and rewrite its embedded executable paths; nix-direnv is just a script.
+  # nix-index-database calls comma.override to supply its index package.
+  comma = prev.lib.makeOverridable (
+    { nix ? prev.nixVersions.latest, ... }@args:
+    let
+      cached = prev.comma.override (builtins.removeAttrs args [ "nix" ]);
+    in
+    if prev.nix.outPath == nix.outPath then
+      cached
+    else
+      (prev.replaceDirectDependencies {
+        drv = cached;
+        replacements = [
+          {
+            oldDependency = prev.nix;
+            newDependency = nix;
+          }
+        ];
+      }).overrideAttrs (_: {
+        inherit (cached) meta version;
+        disallowedReferences = [ cached prev.nix ];
+      })
+  ) { };
+  nix-direnv = prev.nix-direnv.override { nix = prev.nixVersions.latest; };
+
+  inherit (runtimeLibraries) watermark-pdf;
+  split-pdf = prev.split-pdf.override { qpdf = runtimeLibraries.qpdf; };
+
   llmWithPlugins = prev.llmWithPlugins.override {
     extraLibs = builtins.attrValues llmRuntimeModules;
   };
@@ -588,7 +620,7 @@ let
       sed -i \
         -e "s|${prev.ripgrep-all}|$out|g" \
         -e "s|${prev.pandoc}|${final.pandoc-runtime}|g" \
-        -e "s|${prev.lib.getBin prev.ffmpeg}|${prev.lib.getBin prev.ffmpeg-headless}|g" "$f"
+        -e "s|${prev.lib.getBin prev.ffmpeg}|${runtimeLibraries.ffmpeg}|g" "$f"
     done
     # A leftover reference would silently keep the full ffmpeg closure.
     ! grep -r ${prev.lib.getBin prev.ffmpeg} $out
