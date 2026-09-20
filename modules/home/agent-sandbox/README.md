@@ -58,6 +58,9 @@ processes. Each extra grant and `--git-write` makes the protection weaker.
   are the real host directories. Changes stay after the sandbox exits.
 - **Environment.** Only `PATH`, `EDITOR`, `VISUAL`, terminal, locale, TLS and
   `nix-ld` variables pass, plus the `--env` names and the profile allowlist.
+  `TMUX_PANE` preserves tmux detection, including Codex's recovery from missed
+  resize notifications. The `TMUX` socket address is excluded and the host
+  tmux socket remains inaccessible.
   `HOME`, `TMPDIR`, `XDG_*`, `SHELL` and `GNUPGHOME` point into the sandbox.
   Bubblewrap itself starts with an empty environment, so its PID-1 supervisor
   does not expose inherited host variables through `/proc/1/environ`.

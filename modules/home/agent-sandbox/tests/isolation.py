@@ -17,7 +17,7 @@ assert Path("/proc/1/environ").read_bytes() == b"", "supervisor inherited an env
 
 for name in (
     "HOST_SECRET", "DISPLAY", "WAYLAND_DISPLAY", "XAUTHORITY", "GPG_TTY",
-    "SSH_AUTH_SOCK", "SSH_AGENT_PID", "TMUX", "TMUX_PANE",
+    "SSH_AUTH_SOCK", "SSH_AGENT_PID", "TMUX",
     "DBUS_SYSTEM_BUS_ADDRESS", "PULSE_SERVER", "BASH_ENV", "ENV",
     "PYTHONPATH", "NODE_OPTIONS", "OPENAI_API_KEY", "ANTHROPIC_API_KEY",
 ):
@@ -25,6 +25,8 @@ for name in (
 assert os.environ["EXPLICIT_VALUE"] == "two words; $(false)\nsecond line"
 assert os.environ["PROFILE_VALUE"] == "profile value"
 assert os.environ["TERM"] == "xterm-256color"
+assert os.environ["TMUX_PANE"] == "%1"
+assert os.environ["TMUX_TMPDIR"] == "/dev/null"
 assert os.environ["EDITOR"] == "nvim"
 assert os.environ["VISUAL"] == "nvim -f"
 assert os.environ["TMPDIR"] == "/tmp"

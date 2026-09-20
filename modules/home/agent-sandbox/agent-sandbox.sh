@@ -196,8 +196,10 @@ filesystem_args=(
 # Inherit only the tools, editor, terminal and locale settings needed for ordinary
 # command execution. Secrets, desktop endpoints and language/shell injection
 # settings require an explicit --env NAME or a profile grant.
+# Keep the inert pane ID so Codex enables its tmux resize recovery monitor.
+# TMUX (the socket address) stays excluded; the host socket is not mounted.
 environment_allowlist=(
-  PATH EDITOR VISUAL TERM COLORTERM TERMINFO TERMINFO_DIRS LANG LANGUAGE
+  PATH EDITOR VISUAL TERM COLORTERM TERMINFO TERMINFO_DIRS TMUX_PANE LANG LANGUAGE
   LC_ALL LC_ADDRESS LC_COLLATE LC_CTYPE LC_IDENTIFICATION LC_MEASUREMENT
   LC_MESSAGES LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE LC_TIME TZ
   LOCALE_ARCHIVE NIX_LD NIX_LD_LIBRARY_PATH NIX_SSL_CERT_FILE
