@@ -37,9 +37,9 @@ let
   # MiB, ~10% above measured on x86_64-linux (2026-08). Only packages
   # that outgrow the default belong here; stale names fail the eval.
   budgets = {
-    lazyvim = 1230;
+    lazyvim = 1050;
     lazyvim-light = 250;
-    lazyvim-nightly = 1250;
+    lazyvim-nightly = 1070;
     remarks = 700;
     llm = 510; # the flake alias of llmWithPlugins
     llmWithPlugins = 510;
