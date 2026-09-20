@@ -5,42 +5,7 @@
   pinnedPlugins,
 }:
 let
-  ts = pkgs.vimPlugins.nvim-treesitter;
-
-  # nixpkgs ships a grammar as two plugins: the parser, and the queries.
-  # We need both.
-  grammarPlugins =
-    g:
-    [ (pkgs.neovimUtils.grammarToPlugin g) ]
-    ++ (g.dependencies or [ ])
-    ++ pkgs.lib.optionals (g ? associatedQuery) (
-      [ g.associatedQuery ] ++ (g.associatedQuery.dependencies or [ ])
-    );
-  grammar = name: grammarPlugins ts.builtGrammars.${name};
-
-  # Minimal set of grammars for the -light version.
-  curatedGrammars = [
-    "bash"
-    "c"
-    "diff"
-    "fish"
-    "json"
-    "lua"
-    "luadoc"
-    "luap"
-    "markdown"
-    "markdown_inline"
-    "nix"
-    "printf"
-    "python"
-    "query"
-    "regex"
-    "toml"
-    "vim"
-    "vimdoc"
-    "xml"
-    "yaml"
-  ];
+  grammars = pkgs.callPackage ./grammars.nix { inherit pinnedPlugins; };
 in
 with pkgs.vimPlugins;
 {
@@ -135,17 +100,7 @@ with pkgs.vimPlugins;
       name = "tinymd.nvim";
     }
 
-    {
-      # The plugin ships only the queries, so pair it with the parser.
-      plugin = pkgs.symlinkJoin {
-        name = "clarity.nvim_treesitter";
-        paths = [
-          pinnedPlugins.clarity-nvim
-          (pkgs.neovimUtils.grammarToPlugin pinnedPlugins.tree-sitter-clarity)
-        ];
-      };
-      name = "clarity.nvim";
-    }
+    grammars.clarity
 
     {
       plugin =
@@ -222,28 +177,13 @@ with pkgs.vimPlugins;
       name = "spells";
     }
   ]
-  ++ pkgs.lib.unique (pkgs.lib.concatMap grammar curatedGrammars);
+  ++ grammars.general;
 
   # Categories
   # NOTE: add new ones to `allCategories` in `./lazyvim.nix`.
-  # The complete grammar set minus languages this editor will never open;
-  # together they were a quarter of the set's weight.
-  treesitterAll =
-    let
-      denylist = map (n: "tree-sitter-" + n) [
-        "systemverilog" # 21M
-        "gnuplot" # 11M
-        "razor" # 11M
-        "fortran" # 6M
-        "fsharp" # 6M
-        "slang" # 5M
-      ];
-    in
-    pkgs.lib.unique (
-      pkgs.lib.concatMap grammarPlugins (
-        builtins.filter (g: !builtins.elem (pkgs.lib.getName g) denylist) ts.allGrammars
-      )
-    );
+
+  inherit (grammars) treesitterAll beancount;
+
   markdown = [
     (markdown-preview-nvim.overrideAttrs (old: {
       runtimeDeps = [ pkgs.nodejs-slim-runtime ];
@@ -268,5 +208,4 @@ with pkgs.vimPlugins;
     rustaceanvim
     crates-nvim
   ];
-  beancount = grammar "beancount";
 }

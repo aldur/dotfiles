@@ -30,9 +30,8 @@ let
   # say (packages/lazyvim/plugins.nix), and a copy of it would only drift into
   # asserting a set nothing ships. What this check owns is the *shape*: each
   # variant clears a floor, the light set is contained in the full one, and
-  # the languages below prove themselves by actually highlighting. Size — the
-  # reason `treesitterAll` denies a handful of grammars — is checks/
-  # slim-closures.nix's budget to keep.
+  # the languages below prove themselves by actually highlighting. The size
+  # of the curated parser set is checks/slim-closures.nix's budget to keep.
   #
   # Written to `sample.<ext>` and opened: filetype detection runs off the
   # extension and the treesitter language off the filetype (sh → bash,
@@ -350,7 +349,7 @@ runCommand "lazyvim-variants"
           name = "full";
           bin = lib.getExe' lazyvim "lazyvim";
           spec = {
-            min_grammars = 300;
+            min_grammars = 60;
             absent_grammars = [ ];
             samples = curatedSamples ++ extraSamples;
             formats = generalFormats ++ [ nixFormat ];
