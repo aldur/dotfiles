@@ -16,6 +16,9 @@
   # profile so root can drive a flake clone (`nixos-rebuild --flake …`).
   environment.systemPackages = [ pkgs.gitMinimal-runtime ];
 
+  # Omit package manuals from this image to keep disk footprint small.
+  documentation.doc.enable = false;
+
   virtualisation.appleContainer = {
     # mainUser is independent of users.users, which this module populates.
     username = config.mainUser;
