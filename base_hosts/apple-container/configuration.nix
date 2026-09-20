@@ -14,7 +14,7 @@
 
   # The primary user gets git via home-manager, but root has none — put it in the system
   # profile so root can drive a flake clone (`nixos-rebuild --flake …`).
-  environment.systemPackages = [ pkgs.git ];
+  environment.systemPackages = [ pkgs.gitMinimal-runtime ];
 
   virtualisation.appleContainer = {
     # mainUser is independent of users.users, which this module populates.
