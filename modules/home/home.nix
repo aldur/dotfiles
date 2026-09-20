@@ -353,6 +353,18 @@ in
 
     };
 
+    bat = {
+      enable = true;
+      # CLI flags override these defaults, e.g. bat --style=full --paging=auto file.py
+      # or bat --style=numbers file.py. Use --no-config to ignore the config entirely.
+      config = {
+        style = "plain";
+        paging = "never";
+        wrap = "never";
+        tabs = "0";
+      };
+    };
+
     # `z` directory-jump command (zoxide's default fish integration).
     zoxide.enable = true;
 
