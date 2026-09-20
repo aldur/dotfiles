@@ -60,6 +60,8 @@ done < <(jq -r '.[]' <<< "$drvs" | xargs nix derivation show \
   | jq -r --argjson drvs "$drvs" --argjson available "$available" --arg shard "$shard" '
   .derivations as $shown
   | $drvs | to_entries[]
+  # The dedicated llm matrix builds this check on every supported platform.
+  | select($shard == "all" or .key != "llm-runtime")
   | ($shown[.value | split("/") | last].env.requiredSystemFeatures // "") as $required
   | ($required | split(" ") | any(. == "kvm")) as $isVM
   | select($shard == "all" or ($shard == "vm") == $isVM)

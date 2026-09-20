@@ -34,7 +34,6 @@
       aldur.lazyvim.enable = true;
       git.settings.gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | grep -i sign)'";
       better-nix-search.enable = true;
-      llm.enable = true;
       pi.enable = true;
     };
 

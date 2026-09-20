@@ -259,17 +259,26 @@ jobs:
             ./base_hosts/macos#darwinConfigurations.macOS.system
 
       # Also build the flake checks (lazyvim included) for darwin.
-      - run: .github/scripts/build-flake-checks.sh aarch64-darwin
+      - run: .github/scripts/build-flake-checks.sh aarch64-darwin rest
 
-  nix-darwin-ci-llm:
-    runs-on: macos-26  # arm, beta
+  # Build and test llm on every platform exported by packages.<system>.llm.
+  llm:
+    name: llm (${{ matrix.system }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            system: x86_64-linux
+          - runner: ubuntu-24.04-arm
+            system: aarch64-linux
+          - runner: macos-26
+            system: aarch64-darwin
+    runs-on: ${{ matrix.runner }}
     steps:
       - *checkout
       - *setup-nix
-
-      # The flake-check job runs the flake check one time (see
-      # nix-darwin-ci). It is not necessary to run it again on this macOS
-      # runner.
-
-      # Build `llm` with `mlx`. This build frequently fails on Darwin.
-      - run: nix build .#llm
+      - name: Build and test the on-demand llm package
+        run: |
+          nix build .#packages.${{ matrix.system }}.llm \
+            .#checks.${{ matrix.system }}.llm-runtime

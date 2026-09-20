@@ -205,6 +205,17 @@ assert require "standalone defaults" (
   && hasPackage "ripgrep" standalone.config
   && hasPackage "dashp" standalone.config
 );
+assert require "llm defaults" (
+  lib.all (home: !home.programs.llm.enable) [
+    standalone.config
+    custom.config
+    alice
+    bob
+    darwin.config
+    qemu.config.home-manager.users.alice
+    apple.config.home-manager.users.alice
+  ]
+);
 assert require "standalone customization and agent packages" (
   custom.config.home.username == "alice"
   && custom.config.home.homeDirectory == "/srv/alice"
