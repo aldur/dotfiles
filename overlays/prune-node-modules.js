@@ -3,7 +3,7 @@
 // whole workspace lockfile — webpack, typescript, react — next to the
 // handful of packages the shipped server actually requires.
 //
-// Usage: node prune-node-modules.js <app-dir>
+// Usage: node prune-node-modules.js <app-dir> [--include-optional]
 const fs = require("fs");
 const path = require("path");
 
@@ -11,10 +11,15 @@ const app = process.argv[2];
 const nm = path.join(app, "node_modules");
 
 const keep = new Set();
-const stack = Object.keys(
-  JSON.parse(fs.readFileSync(path.join(app, "package.json"), "utf8"))
-    .dependencies || {},
+const manifest = JSON.parse(
+  fs.readFileSync(path.join(app, "package.json"), "utf8"),
 );
+const stack = [
+  ...Object.keys(manifest.dependencies || {}),
+  ...(process.argv.includes("--include-optional")
+    ? Object.keys(manifest.optionalDependencies || {})
+    : []),
+];
 while (stack.length > 0) {
   const name = stack.pop();
   if (keep.has(name)) continue;

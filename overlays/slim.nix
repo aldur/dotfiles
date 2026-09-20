@@ -174,7 +174,27 @@ let
   # (overlays/packages.nix builds it with the stable toolchain). The
   # residue hook re-points them at the runtime node, and drops npm and
   # corepack from the closure.
-  pi-coding-agent = final.withoutNpmBuildResidue prev.pi-coding-agent;
+  # The install also keeps undeclared workspace packages and source maps.
+  # Preserve runtime dependencies, TypeScript extension sources, and types.
+  pi-coding-agent =
+    let
+      runtime = final.withoutNpmBuildResidue prev.pi-coding-agent;
+    in
+    prev.runCommand runtime.name
+      {
+        nativeBuildInputs = [ prev.nodejs-slim ];
+        inherit (runtime) meta version;
+        passthru = runtime.passthru or { };
+      }
+      ''
+        cp -a ${runtime} $out
+        chmod -R u+w $out
+        node ${./prune-node-modules.js} $out/lib/node_modules/pi-monorepo --include-optional
+        find $out -type f \( -name '*.js.map' -o -name '*.mjs.map' -o -name '*.cjs.map' -o -name '*.ts.map' -o -name '*.mts.map' \) -delete
+        find $out -xtype l -delete
+        find $out -type f -exec sed -i "s|${runtime}|$out|g" {} +
+        ! grep -r ${runtime} $out
+      '';
 
   # The pi wrapper (packages/pi/pi.nix), re-called with the runtime node
   # and the repacks: the runtime has `node`, which is all pnpm and pi run.
@@ -450,11 +470,16 @@ let
     install -Dm755 ${prev.harper}/bin/harper-ls $out/bin/harper-ls
   '';
 
-  # NOTE: pandoc's stock binary carries 59M of dynamic symbol tables
-  # (--export-dynamic roots all ~450k Haskell symbols) and a relink with
-  # -optl-Wl,--no-export-dynamic more than halves it, 209M → 95M — but
-  # that means compiling pandoc-cli on every nixpkgs bump, so the cached
-  # binary ships as-is. Revisit if a substituter ever fronts these hosts.
+  # GHC exports every Haskell symbol by default. Besides the symbol tables,
+  # this keeps otherwise unreachable code alive. Only the CLI is rebuilt;
+  # its Haskell libraries still come from the binary cache.
+  # Keep this separate from the build-tool Pandoc: overriding that also
+  # rebuilds unrelated packages that use it to generate documentation.
+  pandoc-runtime = prev.pandoc.overrideAttrs (old: {
+    configureFlags = (old.configureFlags or [ ]) ++ [
+      "--ghc-option=-optl-Wl,--no-export-dynamic"
+    ];
+  });
 
   # marksman is the only dotnet consumer in the editor closure, and dotnet
   # only touches ICU through libSystem.Globalization.Native — 39M of
@@ -562,10 +587,12 @@ let
       [ "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" = 7f454c46 ] && continue
       sed -i \
         -e "s|${prev.ripgrep-all}|$out|g" \
+        -e "s|${prev.pandoc}|${final.pandoc-runtime}|g" \
         -e "s|${prev.lib.getBin prev.ffmpeg}|${prev.lib.getBin prev.ffmpeg-headless}|g" "$f"
     done
     # A leftover reference would silently keep the full ffmpeg closure.
     ! grep -r ${prev.lib.getBin prev.ffmpeg} $out
+    ! grep -r ${prev.pandoc} $out
   '';
 
   # The MCP server only ever drives chromium (its wrapper hard-sets
@@ -753,5 +780,6 @@ else
     neovim-bare = prev.neovim;
     neovim-unwrapped-runtime = final.neovim-unwrapped;
     nodejs-slim-runtime = prev.nodejs-slim;
+    pandoc-runtime = prev.pandoc;
     tree-sitter-runtime = prev.tree-sitter;
   }

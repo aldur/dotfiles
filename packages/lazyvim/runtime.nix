@@ -48,7 +48,7 @@
   markdown = [
     markdownlint-cli2
     marksman
-    pandoc
+    pandoc-runtime
     (pkgs.callPackage ../pandoc_md2html_assets/md2html.nix { })
   ];
   json = [ vscode-langservers-extracted ];

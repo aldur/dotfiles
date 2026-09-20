@@ -37,18 +37,19 @@ let
   # MiB, ~10% above measured on x86_64-linux (2026-08). Only packages
   # that outgrow the default belong here; stale names fail the eval.
   budgets = {
-    lazyvim = 1370;
+    lazyvim = 1230;
     lazyvim-light = 250;
-    lazyvim-nightly = 1390;
+    lazyvim-nightly = 1250;
     remarks = 700;
     llm = 510; # the flake alias of llmWithPlugins
     llmWithPlugins = 510;
-    pi = 455;
-    pi-coding-agent = 415;
+    pi = 385;
+    pi-coding-agent = 365;
+    pandoc-runtime = 190;
     # A node interpreter and one stdlib-only script; it is nodejs-slim-runtime
     # plus a wrapper, so it inherits that entry's budget.
     llama-wiretap = 200;
-    ripgrep-all = 650;
+    ripgrep-all = 530;
     # Not uniform drift: ARM chromium is ~40% bigger than x86's (CI
     # measured 1040 there against ~730 here), beyond what archFactor
     # models.

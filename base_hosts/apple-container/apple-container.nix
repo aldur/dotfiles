@@ -265,8 +265,13 @@ let
         export TMPDIR="$PWD/tmp"
         mkdir -p "$TMPDIR" oci
         ${stream} > "$TMPDIR/image.tar"
-        regctl image import "ocidir://$PWD/oci:latest" "$TMPDIR/image.tar"
+        regctl image import "ocidir://$TMPDIR/imported:latest" "$TMPDIR/image.tar"
         rm -f "$TMPDIR/image.tar"
+        regctl image mod "ocidir://$TMPDIR/imported:latest" \
+          --to-oci --layer-compress zstd --replace
+        # Copy only the referenced blobs; image mod leaves the old gzip
+        # layers behind in its working layout.
+        regctl image copy "ocidir://$TMPDIR/imported:latest" "ocidir://$PWD/oci:latest"
         jq '.manifests[0].annotations["org.opencontainers.image.ref.name"] = "${name}:latest"' \
           oci/index.json > oci/index.json.new
         mv oci/index.json.new oci/index.json
