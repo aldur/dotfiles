@@ -1,66 +1,83 @@
 {
   lib,
-  stdenv,
-  clang_20,
-  buildNpmPackage,
+  stdenvNoCC,
   fetchFromGitHub,
-  pkg-config,
-  libsecret,
-  withoutNpmBuildResidue,
+  fetchPnpmDeps,
+  pnpm,
+  pnpmConfigHook,
+  nodejs-slim,
+  nodejs-slim-runtime,
+  makeWrapper,
+  python3,
+  runCommand,
 }:
 
-withoutNpmBuildResidue (
-  buildNpmPackage (finalAttrs: {
-    pname = "nomicfoundation-solidity-language-server";
-    version = "0.8.29";
+stdenvNoCC.mkDerivation (finalAttrs: {
+  pname = "nomicfoundation-solidity-language-server";
+  version = "0.9.1";
 
-    src = fetchFromGitHub {
-      owner = "NomicFoundation";
-      repo = "hardhat-vscode";
-      tag = "v${finalAttrs.version}";
-      hash = "sha256-lRujS/Ps56U9q201Fj952huNH+vJZYI/KPjjv/ZjNOk=";
-    };
+  src = fetchFromGitHub {
+    owner = "NomicFoundation";
+    repo = "hardhat-vscode";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-GUN0iTTlSFkZwerrXNGTjDmpmkELNqRndZn5D8/IaRY=";
+  };
 
-    postPatch = ''
-      # NOTE: The tests are somehow run at install time through `npm rebuild`
-      # but they ship an old version of hardhat requiring a deprecated node version
-      # and makes the build fail.
-      rm -rf test/*
-    '';
+  # Upstream switched to pnpm in 0.9; nix-update refreshes this lockfile cache.
+  pnpmDeps = fetchPnpmDeps {
+    inherit (finalAttrs) pname version src;
+    inherit pnpm;
+    fetcherVersion = 4;
+    hash = "sha256-bi7uPlfLZRb8xXsgzexPbIeuennXQ4I7CgSct+X3ImY=";
+  };
 
-    npmWorkspace = "server";
+  nativeBuildInputs = [
+    nodejs-slim
+    pnpm
+    pnpmConfigHook
+    makeWrapper
+  ];
 
-    npmDepsHash = "sha256-FXp9ii4irSSg+nrHVl8Pcbrr5kuVGU23QSAZHwNDYnk=";
+  env = {
+    SOLIDITY_GA_SECRET = "dummy-secret";
+    SOLIDITY_GOOGLE_TRACKING_ID = "dummy-tracking-id";
+    SOLIDITY_SENTRY_DSN = "https://public@sentry.example.com/1";
+  };
 
-    nativeBuildInputs = [
-      pkg-config
-    ]
-    # https://github.com/NixOS/nixpkgs/pull/451937/files
-    ++ lib.optionals stdenv.hostPlatform.isDarwin [ clang_20 ];
+  buildPhase = ''
+    runHook preBuild
+    pnpm --filter @nomicfoundation/solidity-language-server run bundle
+    runHook postBuild
+  '';
 
-    buildInputs = [ libsecret ];
+  # Deploy only the bundle and its production dependencies, preserving pnpm's
+  # links to the native analyzer and dynamically imported Slang packages.
+  installPhase = ''
+    runHook preInstall
+    pnpm --filter @nomicfoundation/solidity-language-server deploy \
+      --offline --prod --config.inject-workspace-packages=true "$out/lib/solidity-language-server"
+    makeWrapper ${lib.getExe nodejs-slim-runtime} "$out/bin/nomicfoundation-solidity-language-server" \
+      --add-flags "$out/lib/solidity-language-server/out/index.js"
+    runHook postInstall
+  '';
 
-    env = {
-      SOLIDITY_GA_SECRET = "dummy-secret";
-      SOLIDITY_GOOGLE_TRACKING_ID = "dummy-tracking-id";
-      SOLIDITY_SENTRY_DSN = "https://public@sentry.example.com/1";
-    };
-
-    # The server entry point is a self-contained esbuild bundle; node_modules
-    # is 154M of monorepo dev tooling (eslint, mocha, changesets, ...) the
-    # bundle never loads. Only the requires esbuild left external survive:
-    # the native solidity-analyzer and the dynamically imported slang, both
-    # under the @nomicfoundation scope. (The other externals — bufferutil,
-    # utf-8-validate, fsevents — are optional and not even installed.)
-    postInstall = ''
-      find "$out/lib/node_modules/solidity-language-server-monorepo/node_modules" \
-        -mindepth 1 -maxdepth 1 ! -name '@nomicfoundation' -exec rm -rf {} +
-    '';
-
-    # Taken from: https://github.com/NixOS/nixpkgs/pull/378937/files
-    dontCheckForBrokenSymlinks = true;
-
-    # Follows upstream release tags: nix-update's default, so no extra flags.
-    passthru.updatePin = { };
-  })
-)
+  passthru = {
+    # Exercise the deployed package; bundling alone misses broken pnpm links.
+    tests.smoke =
+      runCommand "solidity-language-server-smoke"
+        {
+          nativeBuildInputs = [
+            python3
+            nodejs-slim-runtime
+          ];
+        }
+        ''
+          export HOME=$TMPDIR/home
+          mkdir -p "$HOME"
+          python3 ${./smoke.py} ${finalAttrs.finalPackage}
+          touch "$out"
+        '';
+    # Follows upstream release tags; update-pins also runs the smoke test.
+    updatePin = { };
+  };
+})

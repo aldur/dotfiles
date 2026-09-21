@@ -44,6 +44,7 @@ in
   gpg-encrypt = pkgs.gpg-encrypt.tests.integration;
   taskmd = pkgs.taskmd.tests.version;
   taskmd-ui = pkgs.taskmd-ui.tests.smoke;
+  solidity-language-server = pkgs.nomicfoundation-solidity-language-server.tests.smoke;
   llama-wiretap = pkgs.llama-wiretap.tests.integration;
   agent-log = pkgs.agent-log.tests.integration;
   telegram = pkgs.telegram.tests.integration;
