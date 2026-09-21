@@ -29,6 +29,7 @@ in
     ];
   };
   programs.aldur.lazyvim.enable = lib.mkDefault true;
+  programs.better-nix-search.enable = lib.mkDefault true;
   services.gpg-agent.pinentry.package = lib.mkDefault pkgs.pinentry-curses;
   systemd.user.startServices = "sd-switch";
 }
