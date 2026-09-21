@@ -1,5 +1,6 @@
 # User-level integration for Ubuntu and other non-NixOS Linux hosts.
 {
+  config,
   pkgs,
   lib,
   ...
@@ -18,6 +19,9 @@ in
 
   home = {
     packages = packages.cli ++ packages.terminfo;
+    # genericLinux exposes the profile's terminfo to systemd services only.
+    # SSH shells need the same search path through Home Manager's shell setup.
+    sessionVariables.TERMINFO_DIRS = lib.mkDefault config.systemd.user.sessionVariables.TERMINFO_DIRS;
     sessionPath = [
       "$HOME/.local/bin"
       # Fish does not source the multi-user installer's /etc/profile.d script.
