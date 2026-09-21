@@ -9,13 +9,13 @@
 # state. Wrapped by ./pi-rust.nix, which is what ends up on PATH.
 rustPlatform.buildRustPackage {
   pname = "pi-agent-rust";
-  version = "0.5.1-unstable-2026-09-14";
+  version = "0.5.1-unstable-2026-09-21";
 
   src = fetchFromGitHub {
     owner = "Dicklesworthstone";
     repo = "pi_agent_rust";
-    rev = "fd152f7a7677f944ac2114bd1355723a056d0fab";
-    hash = "sha256-0FWWbLBrc9yfm7SOacOKxYNlk2KUItsm3Fm5pDWPDgI=";
+    rev = "28eadbb153ea09d80e080ab15aa55e19e8ef4bd6";
+    hash = "sha256-USQgPXGFBG/DZs1NTwR/xQevuskqVfQTnPnHpQQgcS4=";
   };
 
   cargoHash = "sha256-ufZHsj5E0TdLvUgHzYjiDJeto2cXpmVFTq5KwUjq5PQ=";
