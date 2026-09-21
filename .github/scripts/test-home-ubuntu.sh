@@ -189,7 +189,8 @@ nix eval "${nix_args[@]}" --raw "$repo#lib.mkHome" \
 # shellcheck source=/dev/null
 source "$work/custom.env"
 custom=$(nix build --option pure-eval true --no-link --print-out-paths "$custom_drv^*")
-run_home "$custom/activate" >"$logs/custom-activation.log" 2>&1
+# Keep coverage of Ubuntu's user-private-group umask even if runner defaults change.
+run_home /bin/bash -ec 'umask 0002; exec "$1"' home-test "$custom/activate" >"$logs/custom-activation.log" 2>&1
 [[ $(run_home readlink -f "$home_dir/.local/state/nix/profiles/home-manager") == "$custom" ]]
 echo 'Checking the customized environment and sandbox...'
 run_home env EXPECTED_GIT_EMAIL="$custom_git_email" /bin/bash -euo pipefail >"$logs/sandbox.log" 2>&1 <<'SH'

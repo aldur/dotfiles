@@ -243,7 +243,9 @@ in
       # The native claude binary from ~/.local/bin bypasses the Nix wrapper,
       # so MCP servers must be configured via ~/.claude.json directly.
       activation.claudeSettings = lib.mkIf enabled (
-        lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        # Create .claude with checked 0700 permissions before linkGeneration
+        # creates the skills parents using the host's potentially permissive umask.
+        lib.hm.dag.entryBetween [ "linkGeneration" ] [ "writeBoundary" ] ''
           ${mergeJsonActivation "settings" ".claude/settings.json" claudeSettings}
           ${mergeJsonActivation "mcp" ".claude.json" claudeMcpConfig}
         ''
