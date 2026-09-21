@@ -12,13 +12,13 @@
 }:
 
 let
-  version = "0.6.2";
+  version = "0.7.0";
 
   src = fetchFromGitHub {
     owner = "driangle";
     repo = "taskmd";
     tag = "v${version}";
-    hash = "sha256-6Lf3YuK4lL2j8UwB6KrFvqfSe30dHMb+KIr5a0ZA2u8=";
+    hash = "sha256-kDMNZ2/R7fOce0zdTT65SRCEdkg/rE8PSjQTOImWl90=";
   };
 
   # Vendoring cannot run in workspace mode, so drop the workspace and wire the
