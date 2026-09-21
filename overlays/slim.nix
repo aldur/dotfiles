@@ -657,13 +657,19 @@ let
             done
             # Unlike full Chromium, nixpkgs' shell has no wrapper. Carry
             # over its font and certificate defaults for portable homes.
-            shell=$(find $out -type f -name chrome-headless-shell)
+            # ARM's Playwright bundle uses headless_shell; x86's Chrome
+            # for Testing bundle uses chrome-headless-shell.
+            shell=$(find $out -type f \( -name chrome-headless-shell -o -name headless_shell \))
+            test -x "$shell"
+            # The two distributions also package their strings differently.
+            # Guard the resources each executable needs after pruning.
+            case "''${shell##*/}" in
+              headless_shell) test -s "$(dirname "$shell")/headless_lib_strings.pak" ;;
+              chrome-headless-shell) test -s "$(dirname "$shell")/locales/en-US.pak" ;;
+            esac
             wrapProgram "$shell" \
               --set-default SSL_CERT_FILE /etc/ssl/certs/ca-bundle.crt \
               --set-default FONTCONFIG_FILE ${fontconfig}
-            # Chromium aborts without its locale .pak; a missing en-US
-            # means the bundle layout shifted under the trim.
-            [ -n "$(find $out -name en-US.pak)" ]
             # A leftover would chain a copy back to the full bundle.
             ! grep -r ${browsers-headless} $out
           '';
@@ -721,7 +727,8 @@ let
         ${prev.lib.optionalString prev.stdenv.hostPlatform.isLinux ''
           # MCP's chromium channel selects full Chrome even with --headless.
           # Default to the shell explicitly, while allowing a CLI/env override.
-          shell=$(find ${browsers-trimmed} -type f -name chrome-headless-shell)
+          shell=$(find ${browsers-trimmed} -type f \( -name chrome-headless-shell -o -name headless_shell \))
+          test -x "$shell"
           sed -i "2i export PLAYWRIGHT_MCP_EXECUTABLE_PATH=\''${PLAYWRIGHT_MCP_EXECUTABLE_PATH-'$shell'}" \
             $out/bin/playwright-mcp
         ''}

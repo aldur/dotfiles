@@ -4,6 +4,7 @@ import http.server
 import json
 import os
 from pathlib import Path
+import platform
 import re
 import selectors
 import subprocess
@@ -18,7 +19,11 @@ farm = Path(re.search(r"PLAYWRIGHT_BROWSERS_PATH='([^']+)'", wrapper)[1])
 assert len(list(farm.glob("chromium_headless_shell-*"))) == 1
 assert not any(farm.glob("chromium-*")), "full Chromium returned"
 assert not any(farm.glob("firefox-*")) and not any(farm.glob("webkit-*"))
-assert {p.name for p in farm.glob("**/locales/*.pak")} == {"en-US.pak"}
+if platform.machine() == "aarch64":
+    assert len(list(farm.glob("**/headless_lib_strings.pak"))) == 1
+    assert not list(farm.glob("**/locales/*.pak"))
+else:
+    assert {p.name for p in farm.glob("**/locales/*.pak")} == {"en-US.pak"}
 
 output = Path("output").resolve()
 output.mkdir()
