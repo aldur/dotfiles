@@ -82,6 +82,9 @@
         checks.entrypoint-fails-closed = import ./entrypoint-test.nix {
           nixos = entrypointTest targetSystem;
         };
+        checks.container-size = import "${aldur-dotfiles}/checks/container-image" {
+          nixos = cfg targetSystem;
+        };
 
         # Build + load in one step: the image is the script's dependency, so
         # `nix run` realizes it (offloading to the Linux builder on Darwin)

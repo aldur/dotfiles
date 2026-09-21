@@ -6,25 +6,7 @@
   ...
 }:
 let
-  # Fish embeds its HTML manual's path in its binaries. Repack the cached
-  # shell without that reference; `help` falls back to the online manual.
-  # Keep the package name for equal-length rewrites of its own prefix.
-  fishWithoutDocs =
-    pkgs.runCommand pkgs.fish.name
-      {
-        nativeBuildInputs = [ pkgs.removeReferencesTo ];
-        inherit (pkgs.fish) meta;
-        passthru.shellPath = pkgs.fish.shellPath;
-      }
-      ''
-        cp -a ${pkgs.fish} $out
-        chmod -R u+w $out
-        find $out -type f -exec sed -i "s|${pkgs.fish}|$out|g" {} +
-        find $out -type f -exec remove-references-to -t ${pkgs.fish.doc} {} +
-        ! grep -rF ${pkgs.fish} $out
-        ! grep -rF ${pkgs.fish.doc} $out
-        test -z "$(find $out -type l -lname '${pkgs.fish}*')"
-      '';
+  fishWithoutDocs = pkgs.callPackage ./fish-without-docs.nix { };
 in
 {
   imports = [

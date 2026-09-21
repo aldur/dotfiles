@@ -220,10 +220,12 @@ jobs:
             target: ./base_hosts/crostini#checks.x86_64-linux.baguette-verifier
 
           # Build the Apple `container` OCI image as a test. The image
-          # serves `container run` and `container machine`. The target is
-          # aarch64.
+          # serves `container run` and `container machine`. The test builds
+          # the image and checks its closure and size on each architecture.
+          - runner: ubuntu-24.04
+            target: ./base_hosts/apple-container#checks.x86_64-linux.container-size
           - runner: ubuntu-24.04-arm
-            target: ./base_hosts/apple-container#container-image
+            target: ./base_hosts/apple-container#checks.aarch64-linux.container-size
     runs-on: ${{ matrix.runner }}
     steps:
       - *checkout
