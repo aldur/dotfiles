@@ -50,10 +50,9 @@ let
     # plus a wrapper, so it inherits that entry's budget.
     llama-wiretap = 200;
     ripgrep-all = 315;
-    # Not uniform drift: ARM chromium is ~40% bigger than x86's (CI
-    # measured 1040 there against ~730 here), beyond what archFactor
-    # models.
-    playwright-mcp = if stdenv.hostPlatform.isAarch64 then 1000 else 805;
+    # Headless shell: 509 MiB on x86. Retain the ARM ceiling until its
+    # native CI measurement; playwright-runtime also guards the farm layout.
+    playwright-mcp = if stdenv.hostPlatform.isAarch64 then 1000 else 570;
     watermark-pdf = 330;
     comma = 205;
     nix-direnv = 180;
@@ -92,6 +91,7 @@ let
     playwright-mcp = [
       "firefox"
       "webkit"
+      "-playwright-chromium$"
       # The full nodejs join, re-pointed to nodejs-slim-runtime.
       "-npm$"
       "corepack"

@@ -620,33 +620,29 @@ let
     done
   '';
 
-  # The MCP server only ever drives chromium (its wrapper hard-sets
-  # PLAYWRIGHT_BROWSERS_PATH), yet it retains firefox, webkit and the
-  # chromium headless shell — ~670M of browsers no code path launches —
-  # through two references to the full browser farm: its own wrapper, and
-  # the bin/playwright wrapper inside the playwright-test package it
-  # symlinks its node modules from. Headless launches fall back to the
-  # full chromium binary when the shell is absent (verified end-to-end:
-  # MCP navigate over stdio with --headless). Farm and trimmed farm share
-  # the "playwright-browsers" name — equal length, safe to swap in the
-  # text wrapper.
+  # Linux MCP runs headless, so ship the cached Chromium headless shell.
+  # Both the MCP wrapper and its playwright-test dependency reference the
+  # browser farm; repoint both so the other browsers leave the closure.
   playwright-mcp =
     let
-      inherit (prev.playwright-driver.passthru) browsers browsers-chromium;
-      # An automation browser reads one locale and plays no DRM, yet the
-      # chromium bundle ships ~170 UI locales (49M) and Widevine (18M).
-      # Real copies, not farm links — a link would keep the full bundle
-      # in the closure — with each bundle's text wrapper re-pointed at
-      # its copy. Same "playwright-browsers" name → equal length, so the
-      # repacks' seds below stay byte-exact. Linux-only: pruning inside
-      # the darwin .app would invalidate its code signature.
+      inherit (prev.playwright-driver.passthru) browsers browsers-chromium selectBrowsers;
+      browsers-headless = selectBrowsers {
+        withChromium = false;
+        withFirefox = false;
+        withWebkit = false;
+        withChromiumHeadlessShell = true;
+      };
+      fontconfig = prev.makeFontsConf { fontDirectories = [ ]; };
+      # Copy the bundles so locale pruning releases the originals. Keep
+      # the farm name for byte-exact reference swaps below. Darwin keeps
+      # the signed Chromium bundle intact.
       browsers-trimmed =
         if !prev.stdenv.hostPlatform.isLinux then
           browsers-chromium
         else
-          prev.runCommand "playwright-browsers" { } ''
+          prev.runCommand "playwright-browsers" { nativeBuildInputs = [ prev.makeWrapper ]; } ''
             mkdir $out
-            for entry in ${browsers-chromium}/*; do
+            for entry in ${browsers-headless}/*; do
               name=''${entry##*/}
               target=$(readlink -f "$entry")
               cp -a "$target" "$out/$name"
@@ -656,15 +652,20 @@ let
                 sed -i "s|$target|$out/$name|g" "$f"
               done
             done
-            find $out -type d -name WidevineCdm -prune -exec rm -rf {} +
             find $out -type d -name locales | while IFS= read -r d; do
               find "$d" -name '*.pak' ! -name 'en-US.pak' -delete
             done
+            # Unlike full Chromium, nixpkgs' shell has no wrapper. Carry
+            # over its font and certificate defaults for portable homes.
+            shell=$(find $out -type f -name chrome-headless-shell)
+            wrapProgram "$shell" \
+              --set-default SSL_CERT_FILE /etc/ssl/certs/ca-bundle.crt \
+              --set-default FONTCONFIG_FILE ${fontconfig}
             # Chromium aborts without its locale .pak; a missing en-US
             # means the bundle layout shifted under the trim.
             [ -n "$(find $out -name en-US.pak)" ]
             # A leftover would chain a copy back to the full bundle.
-            ! grep -r ${browsers-chromium} $out
+            ! grep -r ${browsers-headless} $out
           '';
       playwright-test-chromium =
         prev.runCommand prev.playwright-test.name { inherit (prev.playwright-test) meta; }
@@ -717,6 +718,13 @@ let
         find $out -type f -exec sed -i \
           -e "s|${prev.playwright-mcp}|$out|g" \
           -e "s|${browsers}|${browsers-trimmed}|g" {} +
+        ${prev.lib.optionalString prev.stdenv.hostPlatform.isLinux ''
+          # MCP's chromium channel selects full Chrome even with --headless.
+          # Default to the shell explicitly, while allowing a CLI/env override.
+          shell=$(find ${browsers-trimmed} -type f -name chrome-headless-shell)
+          sed -i "2i export PLAYWRIGHT_MCP_EXECUTABLE_PATH=\''${PLAYWRIGHT_MCP_EXECUTABLE_PATH-'$shell'}" \
+            $out/bin/playwright-mcp
+        ''}
         # The shebangs point at the full nodejs join, though at runtime
         # they only exec node — the join would keep npm, corepack and a
         # second (unscrubbed) nodejs-slim in the closure.
