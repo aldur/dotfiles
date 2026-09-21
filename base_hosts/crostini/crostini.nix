@@ -75,7 +75,7 @@ in
 
     environment = {
       # Git must also be available to root for flake rebuilds.
-      systemPackages = [ pkgs.git ];
+      systemPackages = [ config.programs.git.package ];
 
       # Enable Wayland compatibility for Chrome and Electron apps.
       sessionVariables.NIXOS_OZONE_WL = "1";

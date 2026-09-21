@@ -2,6 +2,8 @@
 # container does not import this file.
 { lib, pkgs, ... }:
 {
+  programs.git.package = pkgs.gitMinimal-runtime;
+
   virtualisation.buildMemorySize = 1024 * 8;
   virtualisation.diskImageSize = 1024 * 16;
 

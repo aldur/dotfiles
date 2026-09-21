@@ -4,7 +4,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-closure_file, watermark, split = sys.argv[1:]
+closure_file, watermark, split, rga = sys.argv[1:]
 closure = [Path(p) for p in Path(closure_file).read_text().splitlines()]
 
 
@@ -20,7 +20,7 @@ def run(*args):
 
 # Duplicate originals would both negate the saving and let an accidental
 # import of the original make these runtime tests pass.
-for pattern in ("*-libimagequant-*", "*-libvpx-*", "*-qpdf-*-lib"):
+for pattern in ("*-libimagequant-*", "*-qpdf-*-lib"):
     package = one(pattern)
     assert not list(package.rglob("*.a")), package
 for pattern in ("*-python*-pillow-*", "*-python*-reportlab-*"):
@@ -58,14 +58,8 @@ for number in (1, 2):
     assert len(reader.pages) == 1
     assert f"Page {number}" in reader.pages[0].extract_text()
 
-ffmpeg = str(one("*-ffmpeg-headless-*-bin") / "bin/ffmpeg")
-for codec in ("libvpx", "libvpx-vp9"):
-    output = f"{codec}.webm"
-    run(ffmpeg, "-v", "error", "-i", "quantized.png", "-frames:v", "1",
-        "-pix_fmt", "yuv420p", "-c:v", codec, output)
-    decoded = run(ffmpeg, "-v", "error", "-c:v", codec, "-i", output,
-                  "-frames:v", "1", "-pix_fmt", "rgb24", "-f", "rawvideo", "-")
-    assert len(decoded) == 16 * 16 * 3
-    assert decoded[0] > 240 and max(decoded[1:3]) < 15, decoded[:3]
+assert not any("-ffmpeg" in p.name for p in closure), closure
+found = run(rga, "Page [12]", "watermarked.pdf")
+assert b"Page 1" in found and b"Page 2" in found, found
 
-print("Pillow quantization, ReportLab, PDF watermark/split, and VP8/VP9 passed")
+print("Pillow quantization, ReportLab, PDF watermark/split, and rga PDF search passed")

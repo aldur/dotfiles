@@ -41,6 +41,10 @@ in
 # Changing home persistence must not disable ChromeOS registration.
 assert persistentHome.config.users.users.${persistentHome.config.mainUser}.linger == true;
 assert configuration.config.systemd.package.outPath == pkgs.systemd.outPath;
+assert
+  configuration.config.programs.git.package.outPath == configuration.pkgs.gitMinimal-runtime.outPath;
+assert !(pkgs.lib.any (p: p.outPath == configuration.pkgs.git.outPath)
+  configuration.config.environment.systemPackages);
 crostini.lib.mkBaguetteSmokeTest {
   inherit configuration;
   user = mainUser;

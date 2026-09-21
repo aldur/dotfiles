@@ -49,7 +49,7 @@ let
     # A node interpreter and one stdlib-only script; it is nodejs-slim-runtime
     # plus a wrapper, so it inherits that entry's budget.
     llama-wiretap = 200;
-    ripgrep-all = 530;
+    ripgrep-all = 315;
     # Not uniform drift: ARM chromium is ~40% bigger than x86's (CI
     # measured 1040 there against ~730 here), beyond what archFactor
     # models.
@@ -85,6 +85,7 @@ let
       "-x11"
     ];
     ripgrep-all = [
+      "-ffmpeg"
       "gtk+3"
       "-sdl2"
     ];

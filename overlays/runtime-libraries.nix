@@ -1,6 +1,6 @@
 # Private runtime copies: changing the libraries in the package set would
 # rebuild their consumers. Instead, repack the cached binaries along the
-# three dependency chains that use them in the CLI environment.
+# dependency chains that use them in the CLI environment.
 { pkgs }:
 let
   inherit (pkgs) lib;
@@ -39,13 +39,6 @@ let
     }
   ];
   qpdfLib = withoutStaticArchives (lib.getLib pkgs.qpdf);
-  vpx = withoutStaticArchives (lib.getLib pkgs.libvpx);
-  ffmpegLib = repoint (lib.getLib pkgs.ffmpeg-headless) [
-    {
-      oldDependency = lib.getLib pkgs.libvpx;
-      newDependency = vpx;
-    }
-  ];
 in
 {
   # Python wrappers embed the complete module path, so replace both the
@@ -64,12 +57,6 @@ in
     {
       oldDependency = lib.getLib pkgs.qpdf;
       newDependency = qpdfLib;
-    }
-  ];
-  ffmpeg = repoint (lib.getBin pkgs.ffmpeg-headless) [
-    {
-      oldDependency = lib.getLib pkgs.ffmpeg-headless;
-      newDependency = ffmpegLib;
     }
   ];
 }

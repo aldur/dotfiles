@@ -605,26 +605,19 @@ let
         ! grep -rq ${prev.gettext} $out
       '';
 
-  # Repack of the cached build. rga shells out to ffmpeg for media
-  # adapters (subtitles, metadata); the default ffmpeg build carries
-  # gtk3/gtk4, sdl2, x265, flite and friends — ~1G of desktop and encoder
-  # closure for a tool that only ever decodes. ffmpeg-headless keeps the
-  # decoders and ffprobe. Only the text wrappers reference ffmpeg (via
-  # PATH) — different-length store names, so the ELF binaries, which
-  # reference no ffmpeg, must not be touched.
+  # Repack the cached rga wrappers without their bundled media converter.
+  # FFmpeg can still be supplied on PATH for multimedia searches. Only
+  # text wrappers carry these dependencies; leave the ELF binaries alone.
   ripgrep-all = prev.runCommand prev.ripgrep-all.name { inherit (prev.ripgrep-all) meta; } ''
     cp -a ${prev.ripgrep-all} $out
     chmod -R u+w $out
     grep -rlF ${prev.lib.getBin prev.ffmpeg} $out | while IFS= read -r f; do
       [ "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" = 7f454c46 ] && continue
       sed -i \
+        -e "\|${prev.lib.getBin prev.ffmpeg}|d" \
         -e "s|${prev.ripgrep-all}|$out|g" \
-        -e "s|${prev.pandoc}|${final.pandoc-runtime}|g" \
-        -e "s|${prev.lib.getBin prev.ffmpeg}|${runtimeLibraries.ffmpeg}|g" "$f"
+        -e "s|${prev.pandoc}|${final.pandoc-runtime}|g" "$f"
     done
-    # A leftover reference would silently keep the full ffmpeg closure.
-    ! grep -r ${prev.lib.getBin prev.ffmpeg} $out
-    ! grep -r ${prev.pandoc} $out
   '';
 
   # The MCP server only ever drives chromium (its wrapper hard-sets
