@@ -45,6 +45,7 @@ let
     llmWithPlugins = 510;
     pi = 385;
     pi-coding-agent = 365;
+    pi-rust = 170;
     pandoc-runtime = 190;
     # A node interpreter and one stdlib-only script; it is nodejs-slim-runtime
     # plus a wrapper, so it inherits that entry's budget.
@@ -72,8 +73,14 @@ let
 
   # Name fragments that must never (re)appear in a closure.
   forbidden = {
-    llm = [ "-blas-[0-9]" "-lapack-[0-9]" ];
-    llmWithPlugins = [ "-blas-[0-9]" "-lapack-[0-9]" ];
+    llm = [
+      "-blas-[0-9]"
+      "-lapack-[0-9]"
+    ];
+    llmWithPlugins = [
+      "-blas-[0-9]"
+      "-lapack-[0-9]"
+    ];
     remarks = [ "-all$" ]; # the full-language tessdata, 1G
     shrink-pdf = [
       "gtk+3"
