@@ -1,3 +1,5 @@
+name: Publish Apple container
+
 on:
   workflow_dispatch:
   push:
@@ -67,15 +69,20 @@ jobs:
           mkdir -p /tmp/subject
           nix run --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
-            ./base_hosts/apple-container#${{ matrix.app.name }} \
-            -- ghcr.io/${{ github.repository_owner }} "$TAG_PREFIX-${{ matrix.arch.suffix }}" /tmp/subject/digest
+            "./base_hosts/apple-container#$NIX_APP" \
+            -- "ghcr.io/$GITHUB_REPOSITORY_OWNER" "$TAG_PREFIX-$ARCH_SUFFIX" /tmp/subject/digest
+        env:
+          NIX_APP: ${{ matrix.app.name }}
+          ARCH_SUFFIX: ${{ matrix.arch.suffix }}
 
       # The SBOM of the system in the image. The system is already built,
       # so this only walks its closure. See utils/sbom.nix.
       - run: |
           nix run --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
-            ./base_hosts/apple-container#${{ matrix.app.sbom }} -- /tmp/subject
+            "./base_hosts/apple-container#$SBOM_APP" -- /tmp/subject
+        env:
+          SBOM_APP: ${{ matrix.app.sbom }}
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -109,8 +116,10 @@ jobs:
       - run: |
           mkdir -p /tmp/subject
           nix run --override-input aldur-dotfiles . \
-            ./base_hosts/apple-container#${{ matrix.app.name }} \
-            -- ghcr.io/${{ github.repository_owner }} "$TAG_PREFIX" /tmp/subject/digest
+            "./base_hosts/apple-container#$NIX_APP" \
+            -- "ghcr.io/$GITHUB_REPOSITORY_OWNER" "$TAG_PREFIX" /tmp/subject/digest
+        env:
+          NIX_APP: ${{ matrix.app.name }}
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:

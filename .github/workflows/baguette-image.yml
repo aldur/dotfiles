@@ -1,5 +1,7 @@
 # Builds the ChromeOS Baguette image of base_hosts/crostini and keeps it as
 # a workflow artifact.
+name: Build Baguette image
+
 on:
   workflow_dispatch:
     inputs:
@@ -7,6 +9,10 @@ on:
         description: Days to keep the artifact
         type: number
         default: 7
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -17,6 +23,7 @@ env:
 
 jobs:
   build:
+    name: build
     runs-on: ubuntu-24.04-arm
     steps:
       - &checkout
@@ -68,6 +75,7 @@ jobs:
 
   # A separate job without Nix: see .github/actions/attest.
   attest:
+    name: attest
     needs: build
     runs-on: ubuntu-24.04
     permissions:

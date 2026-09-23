@@ -9,12 +9,18 @@ on:
     - cron: "0 6 * * 1" # Mondays 06:00 UTC
   workflow_dispatch: # allow manual runs from the Actions tab
 
+concurrency:
+  # All runs update the same automated branches, including manual runs.
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 permissions: {}
 
 jobs:
   # The two matrices below come from the same list. They cannot become
   # different.
   discover:
+    name: discover
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -35,11 +41,12 @@ jobs:
         run: |
           legs=$(nix eval --json .#updatePins)
           {
-            echo "legs=$legs"
+            echo "legs=$(jq -c 'map({package, runner})' <<< "$legs")"
             echo "packages=$(jq -c 'map(.package)' <<< "$legs")"
           } >> "$GITHUB_OUTPUT"
 
   build:
+    name: build (${{ matrix.package }})
     needs: discover
     runs-on: ${{ matrix.runner }}
     permissions:
@@ -52,15 +59,12 @@ jobs:
       - *checkout
       - *setup-nix
 
-      - name: Bump ${{ matrix.package }} with nix-update
-        # utils/update-pin-legs.nix builds the full command, flags included.
-        # The local `update-pins` app runs the same string.
-        run: ${{ matrix.bump }}
-
-      # `verify` is always set. If a pin gives no value,
-      # utils/update-pin-legs.nix builds the top-level package of that pin.
-      - name: Verify it builds
-        run: ${{ matrix.verify }}
+      - name: Bump and verify ${{ matrix.package }}
+        # Read the commands from the checked-out flake through the same app
+        # used locally. Only the package name crosses the job boundary.
+        run: nix run .#update-pins -- "$PACKAGE"
+        env:
+          PACKAGE: ${{ matrix.package }}
 
       - name: Capture changes
         id: diff
@@ -84,12 +88,13 @@ jobs:
   # block the pull requests of the other packages. If a leg made no patch,
   # the artifact is missing, and the job skips that leg.
   pull-request:
+    name: pull-request (${{ matrix.package }})
     needs: [discover, build]
     if: ${{ !cancelled() && needs.discover.result == 'success' }}
     runs-on: ubuntu-24.04
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write # necessary to push the automated update branch
+      pull-requests: write # necessary to create and update the pull request
     strategy:
       fail-fast: false
       matrix:
@@ -110,8 +115,10 @@ jobs:
           git apply update.patch
           rm update.patch
 
-      - name: Open pull request
+      - name: Open pull request # zizmor: ignore[superfluous-actions]
         if: steps.patch.outcome == 'success'
+        # This also commits changes, updates existing branches/PRs, and
+        # deletes obsolete branches; `gh pr create` alone does not replace it.
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           branch: automated/update-${{ matrix.package }}

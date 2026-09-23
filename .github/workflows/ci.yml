@@ -1,3 +1,5 @@
+name: CI
+
 on:
   pull_request:
   workflow_dispatch:
@@ -26,6 +28,7 @@ env:
 # are in .github/actions/attest for the same reason.
 jobs:
   flake-check:
+    name: flake-check
     runs-on: ubuntu-24.04
     steps:
       - &checkout
@@ -52,6 +55,7 @@ jobs:
   # architecture. The flake-check job above only evaluates the checks
   # (`--no-build`).
   flake-checks-build:
+    name: flake-checks-build (${{ matrix.runner }}, ${{ matrix.system }}, ${{ matrix.shard }})
     strategy:
       # If one architecture fails, continue with the other to fill the cache.
       fail-fast: false
@@ -113,7 +117,10 @@ jobs:
           .github/scripts/sample-resources.sh &
           sampler=$!
           trap 'kill "$sampler"' EXIT
-          .github/scripts/build-flake-checks.sh ${{ matrix.system }} ${{ matrix.shard }}
+          .github/scripts/build-flake-checks.sh "$NIX_SYSTEM" "$CHECK_SHARD"
+        env:
+          NIX_SYSTEM: ${{ matrix.system }}
+          CHECK_SHARD: ${{ matrix.shard }}
       # `always()`: keep the completed paths, also after a failure.
       # Do not do this step if the cache had a hit.
       - name: Export locally-built paths to the cache
@@ -140,6 +147,7 @@ jobs:
   # Exercise the actual standalone activation on Ubuntu, with a fresh account
   # and a real systemd user manager. NixOS VM checks do not cover this path.
   home-manager-ubuntu:
+    name: home-manager-ubuntu (${{ matrix.runner }}, ${{ matrix.system }})
     strategy:
       fail-fast: false
       matrix:
@@ -156,7 +164,9 @@ jobs:
       - uses: ./.github/actions/reclaim-disk
       - *fetch-signing-keys
       - name: Build and activate Home Manager on Ubuntu
-        run: .github/scripts/test-home-ubuntu.sh "${{ matrix.system }}"
+        run: .github/scripts/test-home-ubuntu.sh "$NIX_SYSTEM"
+        env:
+          NIX_SYSTEM: ${{ matrix.system }}
       - name: Upload activation and service logs
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -168,6 +178,7 @@ jobs:
   # Start from an Ubuntu cloud image with no Nix. This also tests installation,
   # a non-aldur account, the default login shell, and services after reboot.
   home-manager-ubuntu-vm:
+    name: home-manager-ubuntu-vm
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     steps:
@@ -197,6 +208,7 @@ jobs:
   # and a copy into the store. A new runner for each build prevents a full
   # disk.
   nixos-ci:
+    name: nixos-ci (${{ matrix.runner }}, ${{ matrix.target }})
     strategy:
       fail-fast: false  # The targets are independent.
       matrix:
@@ -238,9 +250,12 @@ jobs:
       - run: |
           nix build --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
-            ${{ matrix.target }}
+            "$NIX_TARGET"
+        env:
+          NIX_TARGET: ${{ matrix.target }}
 
   nix-darwin-ci:
+    name: nix-darwin-ci
     runs-on: macos-26  # arm, beta
     steps:
       - *checkout
@@ -282,5 +297,7 @@ jobs:
       - *setup-nix
       - name: Build and test the on-demand llm package
         run: |
-          nix build .#packages.${{ matrix.system }}.llm \
-            .#checks.${{ matrix.system }}.llm-runtime
+          nix build ".#packages.$NIX_SYSTEM.llm" \
+            ".#checks.$NIX_SYSTEM.llm-runtime"
+        env:
+          NIX_SYSTEM: ${{ matrix.system }}
