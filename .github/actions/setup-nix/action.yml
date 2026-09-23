@@ -16,7 +16,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: DeterminateSystems/determinate-nix-action@021c8a1bd3570eb21f5c20a054812b0c4d9ca614 # v3.22.3
+    - uses: DeterminateSystems/determinate-nix-action@8d87e8d5e5b8a8309d4281094560f127d9a265f1 # v3.22.5
       env:
         # This variable stops the telemetry of all Determinate tools.
         # modules/nix.nix sets the same variable on the real machines.
