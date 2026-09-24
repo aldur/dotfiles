@@ -186,14 +186,6 @@ let
     ${toplevel}/activate >"$logdir/system-activation.log" 2>&1 \
       || fail "system activation failed" "$logdir/system-activation.log"
 
-    # vminitd names the UTS namespace after the container ID (the OCI spec
-    # default) and no systemd runs to apply a hostname, so set the configured
-    # one ourselves. Tolerated if the runtime withholds CAP_SYS_ADMIN.
-    ${lib.optionalString (cfg.hostName != "") ''
-      { echo ${lib.escapeShellArg cfg.hostName} > /proc/sys/kernel/hostname; } 2>/dev/null \
-        || true
-    ''}
-
     ${lib.optionalString hasHomeManager ''
       ${runuser} -u ${username} -- ${coreutils}/bin/mkdir -p /home/${username}/.local/state/nix/profiles
       {
@@ -324,20 +316,6 @@ in
         typically a home-manager-linked shell config, so the first machine
         session doesn't open before home-manager finishes. Sessions eat the
         wrapper's 60s timeout if it never appears.
-      '';
-    };
-
-    hostName = lib.mkOption {
-      type = lib.types.str;
-      default = cfg.imageName;
-      defaultText = lib.literalExpression "config.virtualisation.appleContainer.imageName";
-      description = ''
-        Hostname applied under the `container run`, whose UTS namespace the
-        runtime otherwise names after the container id.
-
-        Use --name with `container machine`.
-
-        Set to `""` to leave the container-id name untouched.
       '';
     };
   };

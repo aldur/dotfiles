@@ -32,7 +32,6 @@ in
     username = config.mainUser;
     imageName = "aldur-nixos";
     homeManagerMarker = ".config/fish/config.fish";
-    hostName = "nixos-apple-container"; # Default container name
   };
 
   programs.aldur = {

@@ -19,6 +19,7 @@ On [Apple container][1]:
 ```bash
 container run -it --rm ghcr.io/aldur/aldur-nixos:latest
 # add --ssh to enable agent forwarding
+# add --name to set the hostname
 ```
 
 With Docker/Podman [^apple-container]:

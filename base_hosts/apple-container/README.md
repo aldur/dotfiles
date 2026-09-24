@@ -13,6 +13,7 @@ on Apple silicon:
 CI publishes attested images to GHCR, so there's no need to build locally:
 
 ```bash
+# Add --name aldur-nixos to set the hostname
 container run -it --rm ghcr.io/aldur/aldur-nixos:latest
 
 container machine create ghcr.io/aldur/aldur-nixos:latest --name dev --home-mount none
@@ -94,11 +95,7 @@ env -u SSH_AUTH_SOCK container machine run -n dev
 - **DNS:** `container machine`'s bootstrap writes `/etc/resolv.conf` /
   `/etc/hosts` before the guest boots, so the image ships placeholder files (so
   `/etc` is a writable target) and disables the guest's DHCP/resolvconf.
-- **Hostname:** under `container run` the entrypoint applies the
-  `virtualisation.appleContainer.hostName` option. Under `container machine`,
-  Apple's `/sbin.machine/init` writes `/etc/hostname` from the machine's
-  `--name` on every boot, just before starting systemd — so `container machine
-  create … --name wasp` yields hostname `wasp`.
+- **Hostname:** use `--name` to set the hostname.
 - **No ICMP:** `ping` from inside shows 100% loss while TCP/UDP (DNS, HTTPS)
   work — Apple's vmnet NAT doesn't forward ICMP echo
   ([apple/container#345][1]); under `container run` there's additionally no
