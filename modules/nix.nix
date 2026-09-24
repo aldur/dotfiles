@@ -17,6 +17,10 @@ in
   config = lib.mkMerge [
     {
       nix = {
+        channel.enable = false;
+        # Keep legacy <nixpkgs> lookups on the pinned registry on both platforms.
+        nixPath = [ "nixpkgs=flake:nixpkgs" ];
+
         settings = {
           experimental-features = "nix-command flakes";
         };
