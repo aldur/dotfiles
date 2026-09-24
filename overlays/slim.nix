@@ -750,26 +750,13 @@ let
   # strip is data-only — the .dep-v0 section stays so cargo-auditable
   # tooling can still read the dependency record. Linux-only: GNU strip
   # cannot edit Mach-O, and on darwin it would invalidate the signature.
-  #
-  # codex takes bubblewrap as a build input, for the PATH of its wrapper
-  # only. With the patched bubblewrap of overrides/bubblewrap.nix, codex
-  # is no longer the cached derivation: each cold CI runner then compiles
-  # codex from source, a Rust build that starves the 4-core runners. Build
-  # against the nixpkgs bubblewrap, which keeps the cache hit, and point
-  # the wrapper at the patched one here.
   codex =
     if !prev.stdenv.hostPlatform.isLinux then
       prev.codex
     else
       let
-        stockBubblewrap = prev.bubblewrap.unpatched or prev.bubblewrap;
-        cached = prev.codex.override { bubblewrap = stockBubblewrap; };
-        repointBubblewrap = stockBubblewrap.outPath != prev.bubblewrap.outPath;
+        cached = prev.codex;
       in
-      assert prev.lib.assertMsg (
-        !repointBubblewrap
-        || builtins.stringLength stockBubblewrap.name == builtins.stringLength prev.bubblewrap.name
-      ) "codex: the bubblewrap names differ in length; the wrapper swap is not byte-exact";
       prev.runCommand cached.name
         {
           nativeBuildInputs = [ prev.binutils ];
@@ -781,18 +768,12 @@ let
           find $out/bin -type f -exec strip --keep-section=.dep-v0 {} +
           # bin/codex is a binary wrapper pinning the original's prefix and
           # PATH; same names → equal lengths, safe inside the ELF.
-          find $out -type f -exec sed -i \
-            -e "s|${cached}|$out|g" \
-            ${prev.lib.optionalString repointBubblewrap ''-e "s|${stockBubblewrap}|${prev.bubblewrap}|g"''} {} +
+          find $out -type f -exec sed -i "s|${cached}|$out|g" {} +
           # A leftover would silently chain the copy to the original; a
           # no-op strip would silently keep the symbol tables. The layout
           # shifts across versions (0.133 ships one binary, 0.144 three),
           # so sweep every ELF rather than naming one.
           ! grep -r ${cached} $out
-          ${prev.lib.optionalString repointBubblewrap ''
-            ! grep -r ${stockBubblewrap} $out
-            grep -rq ${prev.bubblewrap} $out
-          ''}
           find $out/bin -type f | while IFS= read -r f; do
             [ "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" = 7f454c46 ] || continue
             if readelf -SW "$f" | grep -qe '\.symtab'; then
