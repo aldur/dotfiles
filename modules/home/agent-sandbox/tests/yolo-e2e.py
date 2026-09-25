@@ -21,6 +21,7 @@ import subprocess
 import sys
 import tempfile
 import termios
+from threading import Event, Thread
 import time
 
 
@@ -51,8 +52,14 @@ def run(command, **kwargs):
 
 def wrappers(config):
     probe = WORK / 'probe'
-    executable(probe, '''import json, os, sys
+    executable(probe, '''import json, os, sys, tomllib
 from pathlib import Path
+profile_config = None
+profile_name = None
+if sys.argv[1:2] == ['--profile']:
+    profile_name = sys.argv[2]
+    profile_config = tomllib.loads((Path.home() / '.codex' / (profile_name + '.config.toml')).read_text())
+    del sys.argv[1:3]
 if sys.argv[1:] == ['--version']:
     print('fixture-1')
     raise SystemExit(0)
@@ -60,6 +67,7 @@ if sys.argv[1:] == ['--help']:
     print('fixture client' if Path('/home/tester/Work/legacy-client').exists() else '--no-daemon')
     raise SystemExit(0)
 record = {'argv': sys.argv[1:], 'env': dict(os.environ), 'cwd': os.getcwd(),
+          'profile_config': profile_config, 'profile_name': profile_name,
           'host_visible': Path.home().joinpath('host-only').exists(),
           'codex_state': Path.home().joinpath('.codex/auth.json').exists()}
 if 'probe-grants' in sys.argv:
@@ -147,6 +155,9 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                     assert record['cwd'] == str(HOME / 'Other workspace'), record
                     assert record['env']['HOST_SECRET'] == env['HOST_SECRET'], record
                     assert record['env']['EXTRA_ENV'] == env['EXTRA_ENV'], record
+                    if kind == 'codex':
+                        trust = record['profile_config']
+                        assert trust['projects'][str(HOME / 'Other workspace')]['trust_level'] == 'trusted', trust
                     assert record['grants'] == {
                         'Reference notes': [True, False], 'Extra reference': [True, False],
                         'Shared code': [True, True], 'Extra output': [True, True],
@@ -173,6 +184,80 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
             assert records[-1]['argv'] == expected, records
     legacy.unlink()
     print('passed: sandboxed Codex disables daemon for new, resume and fork; older clients remain compatible', flush=True)
+
+    # Supply trust only in the launch profile, preserving shared user settings.
+    target = WORK / 'quoted "workspace"'
+    target.mkdir()
+    config_path = HOME / '.codex/config.toml'
+    original = '# keep this comment\nmodel = "gpt-5"\n'
+    config_path.write_text(original)
+    inode = config_path.stat().st_ino
+    profile_names = set()
+    for args in (['-C', target.name], ['--cd=' + str(target)], ['resume', '--cd', str(target)]):
+        _, records = invoke(launcher, args)
+        trust = records[-1]['profile_config']
+        assert trust == {'projects': {str(target): {'trust_level': 'trusted'}}}, trust
+        profile_names.add(records[-1]['profile_name'])
+        assert config_path.read_text() == original
+        assert config_path.stat().st_ino == inode
+    assert len(profile_names) == 1, profile_names
+    generated = HOME / '.codex' / (next(iter(profile_names)) + '.config.toml')
+    generated.write_text('model_reasoning_effort = "low"\n' + generated.read_text())
+    _, records = invoke(launcher, ['-C', str(target)])
+    assert records[-1]['profile_config']['model_reasoning_effort'] == 'low', records
+    custom = HOME / '.codex/custom.config.toml'
+    custom.write_text('model_reasoning_effort = "high"\n')
+    for args in (['-p', 'custom'], ['--profile=custom'], ['-pcustom']):
+        _, records = invoke(launcher, ['--', *args, '-C', str(target)])
+        trust = records[-1]['profile_config']
+        assert trust['model_reasoning_effort'] == 'high', trust
+        assert trust['projects'][str(target)]['trust_level'] == 'trusted', trust
+        assert records[-1]['profile_name'] not in profile_names
+    assert config_path.read_text() == original
+    assert custom.read_text() == 'model_reasoning_effort = "high"\n'
+    print('passed: Codex trust profiles follow -C/--cd, preserve selected profiles and leave user config untouched', flush=True)
+
+    # Model another client atomically updating shared settings during launches.
+    stopped = Event()
+    def update_settings():
+        count = 0
+        while not stopped.is_set():
+            temporary = config_path.with_suffix('.next')
+            temporary.write_text(f'# concurrent update {count}\nmodel = "gpt-5"\n')
+            temporary.replace(config_path)
+            count += 1
+            stopped.wait(0.01)
+    writer = Thread(target=update_settings)
+    writer.start()
+    processes = []
+    try:
+        for _ in range(4):
+            processes.append(subprocess.Popen([launcher, '-C', str(target), 'concurrent'],
+                                              env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True))
+        for proc in processes:
+            stdout, stderr = proc.communicate(timeout=25)
+            assert proc.returncode == 0, stderr
+            record = json.loads(stdout)
+            assert record['profile_name'] in profile_names, record
+            assert record['profile_config']['projects'][str(target)]['trust_level'] == 'trusted', record
+    finally:
+        stopped.set()
+        writer.join()
+        for proc in processes:
+            if proc.poll() is None:
+                proc.kill()
+                proc.wait()
+    assert config_path.read_text().startswith('# concurrent update ')
+    assert '[projects' not in config_path.read_text()
+    # A readable but non-writable main config must also work.
+    original = config_path.read_bytes()
+    config_path.chmod(0o400)
+    try:
+        invoke(launcher, ['-C', str(target)])
+        assert config_path.read_bytes() == original
+    finally:
+        config_path.chmod(0o600)
+    print('passed: concurrent Codex launches preserve external config updates and accept a read-only user config', flush=True)
 
     launcher = config['cases'][3]['launchers']['claude']
     _, records = invoke(launcher, ['--online', 'resume'],
@@ -358,6 +443,8 @@ result.with_suffix('.tmp').replace(result)
                 terminal.until(lambda: terminal.proc.poll() is not None, f'{kind} did not exit', timeout=10)
                 assert terminal.proc.returncode == 0, terminal.text()
                 assert termios.tcgetattr(terminal.slave) == terminal.saved, f'{kind} left terminal settings changed'
+                if kind == 'codex':
+                    assert 'trust_level' not in (HOME / '.codex/config.toml').read_text()
                 print(f'passed: real {kind}-yolo {variable} editor round trip and terminal cleanup', flush=True)
             finally:
                 terminal.close()
@@ -379,8 +466,7 @@ def main():
             (home / name / 'marker').write_text('fixture')
         (home / 'host-only').write_text('synthetic private host file')
         (home / '.codex/config.toml').write_text(
-            'model = "gpt-5"\ncheck_for_update_on_startup = false\n'
-            '[projects."/home/tester/Work"]\ntrust_level = "trusted"\n')
+            'model = "gpt-5"\ncheck_for_update_on_startup = false\n')
         (home / '.codex/auth.json').write_text('{"OPENAI_API_KEY":"sk-fixture-no-network"}')
         (home / '.claude/settings.json').write_text(json.dumps({
             'theme': 'dark', 'skipDangerousModePermissionPrompt': True,
