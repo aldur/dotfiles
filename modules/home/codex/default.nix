@@ -26,6 +26,7 @@ let
     };
 
     tui = {
+      alternate_screen = "never";
       status_line = [
         "current-dir"
         "git-branch"
