@@ -66,8 +66,9 @@ local path = "documents/Assets/statement-2024-07.pdf"
 --- Fire the chord via `entry` (keys that enter insert mode), fuzzy-filter
 --- the picker down to the statement, confirm, and assert the path landed at
 --- `want_line` with typing resuming right after it (`want_after_x`).
-local function scenario(name, entry, want_line, want_after_x, next_step)
-	feed(entry .. "<C-x><C-f>")
+local function scenario(name, entry, want_line, want_after_x, next_step, opts)
+	opts = opts or {}
+	feed(entry .. (opts.chord or "<C-x><C-f>"))
 	local picker
 	poll(name .. ": picker opens", function()
 		picker = Snacks.picker.get()[1]
@@ -78,12 +79,12 @@ local function scenario(name, entry, want_line, want_after_x, next_step)
 		end, function()
 			-- Sparse on purpose: subsequence, not substring, so this is the
 			-- fuzzy matching the mapping exists for.
-			picker.input:set("stmnt2024")
+			picker.input:set(opts.query or "stmnt2024")
 			-- :items() is the *filtered* list (:count() stays the finder's
 			-- total), so this is what the matcher actually kept.
 			poll(name .. ": fuzzy match narrows to one", function()
 				local matched = picker:items()
-				return not picker:is_active() and #matched == 1 and matched[1].file == path
+				return not picker:is_active() and #matched == 1 and matched[1].file == (opts.target or path)
 			end, function()
 				picker:action("confirm")
 				-- Mode is polled with the line: the keymap resumes insert via
@@ -112,6 +113,78 @@ local function scenario(name, entry, want_line, want_after_x, next_step)
 				end)
 			end)
 		end)
+	end)
+end
+
+-- The wiki chord searches note bodies and replaces only the destination.
+local function wiki_scenarios()
+	feed("<Esc>")
+	local root = dir .. "/wiki"
+	vim.fn.mkdir(root .. "/notes", "p")
+	vim.fn.mkdir(root .. "/references", "p")
+	vim.fn.writefile({ "# Wiki" }, root .. "/index.md")
+	local target = root .. "/references/Legacy #2 (draft).md"
+	vim.fn.writefile({ "# Unrelated title", "Zebrafalcon discovery." }, target)
+	vim.fn.writefile({ "# Source" }, root .. "/notes/source.md")
+	vim.g.wiki_root = root
+	vim.cmd.edit(root .. "/notes/source.md")
+	local source = vim.api.nvim_get_current_buf()
+	local target_buf = vim.fn.bufadd(target)
+	vim.fn.bufload(target_buf)
+	vim.api.nvim_buf_set_lines(target_buf, -1, -1, false, { "Unsavedquokka observation." })
+	local url = "../references/Legacy%20%232%20%28draft%29.md"
+	local opts = { chord = "<C-x><C-l>", query = "zbrflcn", target = target }
+	local cases = {
+		{ text = "[Custom label](custom-label.md)", query = "zbrflcn" },
+		{ text = "[Custom label]()", query = "Unsavedquokka" },
+		{ text = "[Custom label](old.md) and [Other](keep.md)", query = "Legacy" },
+		{ text = "é [Custom label](old.md)", query = "zbrflcn" },
+		{ text = "path: ", query = "zbrflcn" },
+	}
+	local function cancel()
+		feed("<Esc>")
+		vim.api.nvim_buf_set_lines(source, 0, -1, false, { "[Keep](old.md)" })
+		vim.api.nvim_win_set_cursor(0, { 1, 7 })
+		feed("i<C-x><C-l>")
+		poll("cancel: picker opens", function()
+			return Snacks.picker.get()[1] ~= nil
+		end, function()
+			Snacks.picker.get()[1]:close()
+			vim.defer_fn(function()
+				check(
+					"cancel preserves destination and label",
+					vim.api.nvim_buf_get_lines(source, 0, 1, false)[1] == "[Keep](old.md)"
+				)
+				finish()
+			end, 600)
+		end)
+	end
+	local function run_case(i)
+		local case = cases[i]
+		if not case then
+			return cancel()
+		end
+		feed("<Esc>")
+		vim.api.nvim_buf_set_lines(source, 0, -1, false, { case.text })
+		local opening = case.text:find("](", 1, true)
+		vim.api.nvim_win_set_cursor(0, { 1, opening and opening + 1 or 0 })
+		local want = opening and case.text:gsub("%b()", function()
+			return "(" .. url .. ")"
+		end, 1) or case.text .. url
+		local want_x = opening and case.text:gsub("%b()", function()
+			return "(" .. url .. "X)"
+		end, 1) or want .. "X"
+		opts.query = case.query
+		scenario("wiki case " .. i, opening and "i" or "A", want, want_x, function()
+			run_case(i + 1)
+		end, opts)
+	end
+	vim.api.nvim_buf_set_lines(source, 0, -1, false, { "Custom label" })
+	feed("gg0gl$")
+	poll("gl creates the initial Markdown link", function()
+		return line() == cases[1].text
+	end, function()
+		run_case(1)
 	end)
 end
 
@@ -145,6 +218,6 @@ end, function()
 		-- cursor never resting past the last byte.
 		feed("<Esc>")
 		vim.api.nvim_buf_set_lines(0, 0, -1, false, { "document: " })
-		scenario("end-of-line", "A", "document: " .. path, "document: " .. path .. "X", finish)
+		scenario("end-of-line", "A", "document: " .. path, "document: " .. path .. "X", wiki_scenarios)
 	end)
 end)

@@ -26,8 +26,8 @@ local function escape_label(text)
 end
 
 -- Make a relative Markdown URL without changing the actual filename.
-function M.link_path(path)
-	path = vim.fn["wiki#paths#relative"](path, vim.fn.expand("%:p:h"))
+function M.link_path(path, directory)
+	path = vim.fn["wiki#paths#relative"](path, directory or vim.fn.expand("%:p:h"))
 	return (
 		path:gsub(".", function(char)
 			if char:byte() < 128 and not char:match("[%w/_.~-]") then
@@ -248,16 +248,16 @@ local function search_help(picker)
 		text = {
 			"Searches paths, body text, and YAML frontmatter.",
 			"Saved files use unsaved buffer edits when available.",
-			"Alt-z toggles fuzzy; each picker starts literal.",
+			"Alt-z toggles literal/fuzzy matching.",
 			"Fuzzy allows gaps: wgt matches widget.",
 			"",
-			"widget       Literal substring, not scattered letters.",
+			"Literal mode requires substrings, not scattered letters.",
 			"blue widget  Both terms required, anywhere in the file.",
 			"widget       Lowercase ignores case.",
 			"Widget       Uppercase makes that term case-sensitive.",
 			"",
-			"One result per file. Enter inserts its page link.",
-			"The label uses selected text, otherwise the page title.",
+			"One result per file. Enter selects its page.",
+			"Ctrl-x Ctrl-l fills the target, preserving your label.",
 			get_force_create_key() .. " creates a page from the query; Enter also does this",
 			"when there are no matches. Existing pages are reused.",
 		},
@@ -275,7 +275,7 @@ local function search_help(picker)
 	})
 end
 
----@param mode? "visual" | "insert"
+---@param mode? "visual" | "insert" | "target"
 function M.links(mode)
 	-- Keep the selection intact until a page is chosen; cancelling must not cut it.
 	local link_mode = mode == "visual" and "visual" or ""
@@ -293,10 +293,34 @@ function M.links(mode)
 	if not root then
 		return
 	end
+	local insert_target
+	if mode == "target" then
+		-- wiki.vim also recognizes empty destinations, but omits their URL
+		-- positions. matchstrpos gives byte offsets for both empty and full URLs.
+		local link = vim.fn["wiki#link#get"]()
+		local start_col, end_col
+		if link.type == "md" and link.pos_start[1] == link.pos_end[1] then
+			local definition = vim.g["wiki#link#definitions#md"]
+			local match = vim.fn.matchstrpos(link.content, definition.rx_url)
+			if match[2] >= 0 then
+				start_col = link.pos_start[2] - 1 + match[2]
+				end_col = link.pos_start[2] - 1 + match[3]
+			end
+		end
+		local directory = vim.fn.expand("%:p:h")
+		local insert = require("util.insert").capture(start_col, end_col)
+		insert_target = function(path)
+			insert(M.link_path(path, directory))
+		end
+	end
 	local items = wiki_files(root)
 
 	local function create_link(picker)
 		create_page(picker, root, function(path, input)
+			if insert_target then
+				insert_target(path)
+				return
+			end
 			local options = { text = selection or escape_label(page_title(input)) }
 			vim.fn["wiki#link#add"](path, link_mode, options)
 		end)
@@ -319,11 +343,11 @@ function M.links(mode)
 	end
 
 	require("snacks").picker.pick({
-		prompt = "Add wiki link> ",
-		title = "Wiki links: paths + contents [literal]",
+		prompt = insert_target and "Wiki link target> " or "Add wiki link> ",
+		title = "Wiki links: paths + contents [" .. (insert_target and "fuzzy" or "literal") .. "]",
 		cwd = root,
 		format = "file",
-		matcher = { fuzzy = false },
+		matcher = { fuzzy = insert_target ~= nil },
 		items = items,
 		actions = {
 			toggle_fuzzy = toggle_fuzzy,
@@ -331,6 +355,10 @@ function M.links(mode)
 			confirm = function(picker, item)
 				if item then
 					picker:close()
+					if insert_target then
+						insert_target(item.file)
+						return
+					end
 					vim.fn["wiki#link#add"](
 						item.file,
 						link_mode,
