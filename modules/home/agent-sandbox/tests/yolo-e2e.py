@@ -56,6 +56,9 @@ from pathlib import Path
 if sys.argv[1:] == ['--version']:
     print('fixture-1')
     raise SystemExit(0)
+if sys.argv[1:] == ['--help']:
+    print('fixture client' if Path('/home/tester/Work/legacy-client').exists() else '--no-daemon')
+    raise SystemExit(0)
 record = {'argv': sys.argv[1:], 'env': dict(os.environ), 'cwd': os.getcwd(),
           'host_visible': Path.home().joinpath('host-only').exists(),
           'codex_state': Path.home().joinpath('.codex/auth.json').exists()}
@@ -101,9 +104,10 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                 result, records = invoke(launcher, (['--no-sandbox'] if bypass else []) + payload)
                 assert len(records) == 1, records
                 record = records[0]
-                assert record['argv'] == [FLAGS[kind], *payload], record
-                assert record['cwd'] == str(WORK), record
                 sandboxed = case['sandbox'] and not bypass
+                prefix = [FLAGS[kind]] + (['--no-daemon'] if kind == 'codex' and sandboxed else [])
+                assert record['argv'] == [*prefix, *payload], record
+                assert record['cwd'] == str(WORK), record
                 assert record['host_visible'] == (not sandboxed), record
                 actual = record['env']
                 for name in ('EDITOR', 'VISUAL'):
@@ -116,15 +120,16 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                     trust = json.loads((HOME / '.claude.json').read_text())
                     assert trust['projects'][str(WORK)]['hasTrustDialogAccepted'] is True, trust
                 assert ('outside the sandbox' in result.stderr) == (bypass and case['sandbox']), result.stderr
+            prefix = [FLAGS[kind]] + (['--no-daemon'] if kind == 'codex' and case['sandbox'] else [])
             _, records = invoke(launcher, ['--', '--help'])
-            assert records[-1]['argv'] == [FLAGS[kind], '--help'], records
+            assert records[-1]['argv'] == [*prefix, '--help'], records
             _, records = invoke(launcher, ['--help'])
             assert not records, records
             for option in ('--workspace', '--ro', '--rw', '--env', '--profile'):
                 result, records = invoke(launcher, [option], code=1)
                 assert 'requires a value' in result.stderr and not records, result
             _, records = invoke(launcher, ['--', '--ro', 'agent argument'])
-            assert records[-1]['argv'] == [FLAGS[kind], '--ro', 'agent argument'], records
+            assert records[-1]['argv'] == [*prefix, '--ro', 'agent argument'], records
             result, records = invoke(launcher, ['--ro', str(HOME / 'Reference notes'), '--no-sandbox'], code=1)
             assert 'sandbox options require' in result.stderr and not records, result
             grant_args = ['--workspace', str(HOME / 'Other workspace'),
@@ -138,7 +143,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                                       ['--workspace', '../Other workspace'])
                     _, records = invoke(launcher, workspace_args + grant_args[2:] + (['--git-write'] if git_write else []) + ['--', 'probe-grants'])
                     record = records[-1]
-                    assert record['argv'] == [FLAGS[kind], 'probe-grants'], record
+                    assert record['argv'] == [*prefix, 'probe-grants'], record
                     assert record['cwd'] == str(HOME / 'Other workspace'), record
                     assert record['env']['HOST_SECRET'] == env['HOST_SECRET'], record
                     assert record['env']['EXTRA_ENV'] == env['EXTRA_ENV'], record
@@ -156,6 +161,18 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                 assert 'sandbox options require' in result.stderr and not records, result
             invoke(launcher, ['exit-23'], code=23)
             print(f'passed: {kind}-yolo arguments, environment, exit status, sandbox={case["sandbox"]}', flush=True)
+
+    launcher = config['cases'][3]['launchers']['codex']
+    legacy = WORK / 'legacy-client'
+    for older_client in (False, True):
+        if older_client:
+            legacy.touch()
+        for args in ([], ['resume', '--last'], ['fork', '--last']):
+            _, records = invoke(launcher, args)
+            expected = [FLAGS['codex']] + ([] if older_client else ['--no-daemon']) + args
+            assert records[-1]['argv'] == expected, records
+    legacy.unlink()
+    print('passed: sandboxed Codex disables daemon for new, resume and fork; older clients remain compatible', flush=True)
 
     launcher = config['cases'][3]['launchers']['claude']
     _, records = invoke(launcher, ['--online', 'resume'],
@@ -206,7 +223,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
         standalone = HOME / '.codex/packages/standalone/current' / relative
         link(standalone, probe)
         _, records = invoke(config['cases'][3]['launchers']['codex'], ['standalone'])
-        assert records[-1]['argv'] == [FLAGS['codex'], 'standalone'], records
+        assert records[-1]['argv'] == [FLAGS['codex'], '--no-daemon', 'standalone'], records
         standalone.unlink()
     print('passed: Codex standalone selection through codex-yolo', flush=True)
 

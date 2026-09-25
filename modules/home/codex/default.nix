@@ -74,7 +74,17 @@ let
     describe = "Run codex in the sandbox, with no approvals and no native sandbox";
     inherit sandbox;
     text = ''
-      exec "''${sandbox[@]}" codex --dangerously-bypass-approvals-and-sandbox "$@"
+      # Keep execution inside this sandbox instead of the shared host daemon.
+      # Its auto-install also needs writes to the read-only ~/.codex/packages.
+      # Older (including Nix-pinned) clients do not have this option.
+      daemon_args=()
+      if [ "''${#sandbox[@]}" -gt 0 ]; then
+        codex_help=$(codex --help)
+        if [[ "$codex_help" == *--no-daemon* ]]; then
+          daemon_args+=(--no-daemon)
+        fi
+      fi
+      exec "''${sandbox[@]}" codex --dangerously-bypass-approvals-and-sandbox "''${daemon_args[@]}" "$@"
     '';
   };
 in
