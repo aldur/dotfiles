@@ -8,13 +8,13 @@
 # nix-update can bump in CI.
 stdenvNoCC.mkDerivation {
   pname = "pi-llama";
-  version = "0-unstable-2026-09-18";
+  version = "0-unstable-2026-09-23";
 
   src = fetchFromGitHub {
     owner = "huggingface";
     repo = "pi-llama";
-    rev = "3330c5be6d092bd239a6026d687a21e9124b0576";
-    hash = "sha256-YsO5nzYdDOPrKL8VpIEnElB/VRhwK5RIhKUv1AXc3zM=";
+    rev = "e03e07be02abdf0f7ac52032e2050e19e2bdd5c7";
+    hash = "sha256-Q63awf1R2Un2Is0UfxFFTKH0FKeayP5+5/MhpzVNJn0=";
   };
 
   # A chat template that reads reasoning_effort accepts graded thinking
