@@ -14,13 +14,13 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "nomicfoundation-solidity-language-server";
-  version = "0.9.1";
+  version = "0.9.2";
 
   src = fetchFromGitHub {
     owner = "NomicFoundation";
     repo = "hardhat-vscode";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-GUN0iTTlSFkZwerrXNGTjDmpmkELNqRndZn5D8/IaRY=";
+    hash = "sha256-rQekxas/5NUPv5P0/gLwaDpaIctLGP2Nd8aku3rjybU=";
   };
 
   # Upstream switched to pnpm in 0.9; nix-update refreshes this lockfile cache.
