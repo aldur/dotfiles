@@ -10,6 +10,7 @@ let
     config = {
       MD033 = false; # Allow inline HTML
       MD034 = false; # Allow bare URLs
+      MD053 = false; # Keep reference definitions; autofix would delete unused ones.
     };
   };
 
