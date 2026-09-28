@@ -1,13 +1,9 @@
 local function template(context)
-	local author = "Adriano Di Luzio"
-
 	vim.fn.append(0, "---")
-	vim.fn.append(1, "author: " .. author)
-	vim.fn.append(2, "date: " .. context.date .. " " .. context.time)
-	vim.fn.append(3, "tags:")
-	vim.fn.append(4, "---")
-	vim.fn.append(5, "")
-	vim.fn.append(6, "# " .. context.name)
+	vim.fn.append(1, "date: " .. context.date .. " " .. context.time)
+	vim.fn.append(2, "---")
+	vim.fn.append(3, "")
+	vim.fn.append(4, "# " .. context.name)
 end
 
 local function match(_)
