@@ -69,7 +69,12 @@ if sys.argv[1:] == ['--help']:
 record = {'argv': sys.argv[1:], 'env': dict(os.environ), 'cwd': os.getcwd(),
           'profile_config': profile_config, 'profile_name': profile_name,
           'host_visible': Path.home().joinpath('host-only').exists(),
+          'kvm_visible': Path('/dev/kvm').is_char_device(),
           'codex_state': Path.home().joinpath('.codex/auth.json').exists()}
+if 'probe-kvm' in sys.argv:
+    fd = os.open('/dev/kvm', os.O_RDWR)
+    os.write(fd, b'fixture')
+    os.close(fd)
 if 'probe-grants' in sys.argv:
     record['grants'] = {}
     for name in ('Reference notes', 'Extra reference', 'Shared code', 'Extra output', 'Other workspace/.git'):
@@ -93,7 +98,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
         link(BIN / kind, probe)
     env = dict(os.environ, EDITOR='fixture-editor --wait', VISUAL='fixture-visual -f',
                HOST_SECRET='synthetic-host-secret', EXTRA_ENV='extra-fixture')
-    payload = ['resume', 'two words', '', 'line one\nline two', '$(literal)', '--no-sandbox', '--help']
+    payload = ['resume', 'two words', '', 'line one\nline two', '$(literal)', '--no-sandbox', '--kvm', '--help']
     calls = WORK / 'calls.jsonl'
     stamp = HOME / '.claude/yolo-refresh'
 
@@ -117,6 +122,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                 assert record['argv'] == [*prefix, *payload], record
                 assert record['cwd'] == str(WORK), record
                 assert record['host_visible'] == (not sandboxed), record
+                assert record['kvm_visible'] == (not sandboxed), record
                 actual = record['env']
                 for name in ('EDITOR', 'VISUAL'):
                     assert actual.get(name) == env[name], (name, record)
@@ -131,13 +137,18 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
             prefix = [FLAGS[kind]] + (['--no-daemon'] if kind == 'codex' and case['sandbox'] else [])
             _, records = invoke(launcher, ['--', '--help'])
             assert records[-1]['argv'] == [*prefix, '--help'], records
-            _, records = invoke(launcher, ['--help'])
+            result, records = invoke(launcher, ['--help'])
             assert not records, records
+            assert '--kvm' in result.stdout + result.stderr, result
             for option in ('--workspace', '--ro', '--rw', '--env', '--profile'):
                 result, records = invoke(launcher, [option], code=1)
                 assert 'requires a value' in result.stderr and not records, result
             _, records = invoke(launcher, ['--', '--ro', 'agent argument'])
             assert records[-1]['argv'] == [*prefix, '--ro', 'agent argument'], records
+            _, records = invoke(launcher, ['--', '--kvm'])
+            assert records[-1]['argv'] == [*prefix, '--kvm'], records
+            result, records = invoke(launcher, ['--kvm', '--no-sandbox'], code=1)
+            assert 'sandbox options require' in result.stderr and not records, result
             result, records = invoke(launcher, ['--ro', str(HOME / 'Reference notes'), '--no-sandbox'], code=1)
             assert 'sandbox options require' in result.stderr and not records, result
             grant_args = ['--workspace', str(HOME / 'Other workspace'),
@@ -146,6 +157,9 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                           '--rw', str(HOME / 'Shared code'), '--rw=' + str(HOME / 'Extra output'),
                           '--env', 'HOST_SECRET', '--env=EXTRA_ENV', '--profile=' + kind]
             if case['sandbox']:
+                _, records = invoke(launcher, ['--kvm', 'probe-kvm'])
+                assert records[-1]['argv'] == [*prefix, 'probe-kvm'], records
+                assert records[-1]['kvm_visible'] and not records[-1]['host_visible'], records
                 for git_write in (False, True):
                     workspace_args = (['--workspace=~/Other workspace'] if git_write else
                                       ['--workspace', '../Other workspace'])
@@ -168,6 +182,8 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                 _, records = invoke(launcher, ['--profile', 'default', 'resume'])
                 assert not records[-1]['codex_state'], records
             else:
+                result, records = invoke(launcher, ['--kvm'], code=1)
+                assert 'sandbox options require' in result.stderr and not records, result
                 result, records = invoke(launcher, grant_args, code=1)
                 assert 'sandbox options require' in result.stderr and not records, result
             invoke(launcher, ['exit-23'], code=23)
@@ -479,9 +495,11 @@ def main():
         passwd = fixture / 'passwd'
         passwd.write_text(f'tester:x:{os.getuid()}:{os.getgid()}::/home/tester:{config["bash"]}\n')
         runtime = f'/run/user/{os.getuid()}'
+        # /dev/null stands in for KVM so device opens work on hosts without it.
         command = [config['bwrap'], '--unshare-pid', '--unshare-net', '--die-with-parent',
                    '--tmpfs', '/', '--ro-bind', '/nix/store', '/nix/store',
                    '--dev', '/dev', '--proc', '/proc', '--tmpfs', '/tmp',
+                   '--dev-bind', '/dev/null', '/dev/kvm',
                    '--bind', str(home), str(HOME), '--ro-bind', str(passwd), '/etc/passwd',
                    '--bind', str(home / '.claude.json'), str(HOME / '.claude.json'),
                    '--ro-bind', config['certificates'], '/etc/static/ssl/certs',

@@ -11,6 +11,8 @@ agent-sandbox --profile codex -- codex
 agent-sandbox --workspace ~/Work/project --ro ~/Documents/reference --rw ~/Work/library -- bash
 codex-yolo --ro ~/dotfiles --workspace .
 claude-yolo --ro ~/dotfiles --workspace . -- --resume
+codex-yolo --kvm
+claude-yolo --kvm
 ```
 
 The `*-yolo` launchers accept the same sandbox options before the agent
@@ -27,6 +29,12 @@ or when the agent sandbox is disabled.
 | `--rw PATH` | Also mount this file or directory, writable. Repeatable. |
 | `--env NAME` | Also pass this environment variable. Repeatable. |
 | `--git-write` | Let the command write Git metadata for this launch. Prints a warning. |
+| `--kvm` | Forward `/dev/kvm` for hardware-accelerated VMs, including NixOS test drivers. |
+
+KVM is hidden by default. `--kvm` requires a host `/dev/kvm` device that the
+current user can read and write; it does not change host permissions. It
+forwards only this device, so other host devices remain hidden. For example,
+use `codex-yolo --kvm` or `agent-sandbox --kvm -- nix run .#test.driverInteractive`.
 
 Each path must exist. The launcher refuses large grants such as `/`, `/home`,
 your home directory, `/persist`, `/tmp`, `/nix` and `/etc`. It checks the

@@ -8,6 +8,7 @@ set -euo pipefail
 # @option --rw* <PATH> Additional existing writable file or directory
 # @option --env* <NAME> Additional inherited environment variable (repeatable)
 # @flag --git-write Allow Git metadata writes for this launch (including hooks/config)
+# @flag --kvm Forward /dev/kvm for hardware-accelerated virtual machines
 # @arg cmd~ Command to run inside the sandbox (required)
 
 # @sandbox-configuration@
@@ -20,6 +21,7 @@ argc_ro=()
 argc_rw=()
 argc_env=()
 argc_git_write=0
+argc_kvm=0
 argc_cmd=()
 eval "$(argc --argc-eval "$0" "$@")"
 
@@ -35,6 +37,14 @@ extra_read_only_paths+=("${argc_ro[@]}")
 extra_read_write_paths+=("${argc_rw[@]}")
 extra_environment_allowlist+=("${argc_env[@]}")
 set -- "${argc_cmd[@]}"
+
+# Device mounts need --dev-bind; ordinary grants are mounted with nodev.
+device_mounts=()
+if [ "$argc_kvm" = 1 ]; then
+  [ -c /dev/kvm ] || die "--kvm requires a host /dev/kvm character device"
+  [ -r /dev/kvm ] && [ -w /dev/kvm ] || die "--kvm requires read and write access to /dev/kvm"
+  device_mounts+=(--dev-bind /dev/kvm /dev/kvm)
+fi
 
 # Bubblewrap preserves unrelated inherited descriptors. Close them in an
 # already-parsed subshell before exec, including Bash's script descriptor.
@@ -254,6 +264,7 @@ done
     --home "$home_dir" --state-kind "$agent_state_kind" --git-write "$argc_git_write" \
     "${policy_args[@]}" -- "$sandbox_bwrap" \
     "${filesystem_args[@]}" \
+    "${device_mounts[@]}" \
     "${system_mounts[@]}" \
     --sandbox-writable \
     --sandbox-state \

@@ -60,6 +60,26 @@ for path in [
 wrapper = sys.argv[1]
 run(["@seccompProbe@", "baseline"], check=True)
 
+# Exercise device forwarding without requiring KVM on the build host.
+kvm = Path("/dev/kvm")
+assert not kvm.exists()
+for regular_file in (False, True):
+    if regular_file:
+        kvm.touch()
+    result = run([wrapper, "--kvm", "--", "true"], capture_output=True, text=True)
+    assert result.returncode != 0 and "--kvm requires a host /dev/kvm character device" in result.stderr, result
+kvm.unlink()
+kvm.symlink_to("/dev/null")
+run([
+    wrapper, "--kvm", "--", sys.executable, "-c",
+    "from pathlib import Path; import os; "
+    "assert Path('/dev/kvm').is_char_device(); "
+    "assert os.stat('/dev/kvm').st_rdev == os.stat('/dev/null').st_rdev; "
+    "assert not Path('/dev/host-device').exists(); "
+    "fd = os.open('/dev/kvm', os.O_RDWR); os.write(fd, b'fixture'); os.close(fd)",
+], check=True)
+print("passed: opt-in device forwarding and unavailable KVM errors", flush=True)
+
 # A generic command does not inherit either agent's state or extra grants.
 run([
     wrapper, "--", sys.executable, "-c",
@@ -68,6 +88,7 @@ run([
     "assert not Path('/home/tester/.codex/auth').exists(); "
     "assert not Path('/home/tester/.claude/auth').exists(); "
     "assert not Path('/home/tester/Reference notes/marker').exists(); "
+    "assert not Path('/dev/kvm').exists(); "
     "assert 'PROFILE_VALUE' not in os.environ; "
     "assert 'HOST_SECRET' not in os.environ; "
     "assert Path('/proc/1/environ').read_bytes() == b''; "
@@ -159,7 +180,7 @@ for agent in ["claude", "codex"]:
         git_config.unlink()
 
     help_result = run([wrapper, "--help"], capture_output=True, text=True, check=True)
-    for option in ["--profile", "--workspace", "--ro", "--rw", "--env", "--git-write"]:
+    for option in ["--profile", "--workspace", "--ro", "--rw", "--env", "--git-write", "--kvm"]:
         assert option in help_result.stdout + help_result.stderr
 
     print(f"passed: {agent} workspace selection and invalid grants", flush=True)
