@@ -1,6 +1,8 @@
 {
   stdenvNoCC,
   agent-log,
+  python3,
+  fzf,
 }:
 
 # The pickers need a terminal. This test examines all the other functions.
@@ -9,12 +11,17 @@
 stdenvNoCC.mkDerivation {
   name = "agent-log-test";
 
-  nativeBuildInputs = [ agent-log ];
+  nativeBuildInputs = [
+    agent-log
+    python3
+    fzf
+  ];
 
   buildCommand = ''
     set -euo pipefail
     work=$(mktemp -d)
     cd "$work"
+    export XDG_CACHE_HOME="$work/cache"
 
     cat > claude.jsonl <<'EOF'
 {"type":"user","timestamp":"2026-08-10T10:00:00.000Z","cwd":"/tmp/project","message":{"role":"user","content":"CLAUDEUSERMARK"}}
@@ -79,27 +86,17 @@ EOF
     echo "  ✓ turns"
 
     echo "=== picker plumbing the keybinds depend on ==="
-    # Each sequence is a separate read of the rows. Thus the two sequences
-    # must be different, and one must be the opposite of the other.
+    # Every listing opens at the newest turn. Positional --turn remains
+    # chronological so scripts can still address the first user message.
     newest=$(agent-log _turns codex.jsonl new)
-    oldest=$(agent-log _turns codex.jsonl old)
-    test "$newest" != "$oldest"
-    test "$(printf '%s\n' "$oldest" | tac)" = "$newest"
-
-    # ctrl-o must change the sequence in the two directions. A command that
-    # always uses the same sequence is not an option.
-    from_new=$(FZF_PROMPT="turn newest-first> " agent-log _order codex.jsonl)
-    from_old=$(FZF_PROMPT="turn oldest-first> " agent-log _order codex.jsonl)
-    printf '%s' "$from_new" | grep "codex.jsonl' old" > /dev/null
-    printf '%s' "$from_new" | grep "change-prompt(turn oldest-first> )" > /dev/null
-    printf '%s' "$from_old" | grep "codex.jsonl' new" > /dev/null
-    printf '%s' "$from_old" | grep "change-prompt(turn newest-first> )" > /dev/null
+    test "$(printf '%s\n' "$newest" | head -1 | cut -f1)" = 7
+    test "$(agent-log --list codex.jsonl | head -1 | cut -f1)" = 7
 
     # fzf gives an action string to `$SHELL -c`, and the name of a project
     # directory can contain shell syntax. Thus each emitted action must
     # single-quote the path.
     cp codex.jsonl 'evil$(touch pwned).jsonl'
-    FZF_PROMPT="turn newest-first> " agent-log _order 'evil$(touch pwned).jsonl' \
+    FZF_PROMPT="turn newest-first> " agent-log _tools 'evil$(touch pwned).jsonl' \
         | grep -F "'evil\$(touch pwned).jsonl'" > /dev/null
     FZF_PROMPT="turn newest-first> " agent-log _page_action 'evil$(touch pwned).jsonl' \
         | grep -F "'evil\$(touch pwned).jsonl'" > /dev/null
@@ -109,8 +106,6 @@ EOF
     # sequence gives its position.
     test "$(FZF_PROMPT="turn newest-first> " agent-log _jump earliest)" = last
     test "$(FZF_PROMPT="turn newest-first> " agent-log _jump latest)"   = first
-    test "$(FZF_PROMPT="turn oldest-first> " agent-log _jump earliest)" = first
-    test "$(FZF_PROMPT="turn oldest-first> " agent-log _jump latest)"   = last
 
     # A footer that does not agree with the program is incorrect. Thus --help
     # must contain each key of a footer. The text for alt-i must also agree
@@ -129,25 +124,15 @@ EOF
     agent-log _footer turn | absent "path"
     state() { sed 's/.*change-prompt(\([^)]*\)).*/\1/'; }
 
-    # A person reads a conversation from the oldest turn to the newest turn.
-    # Thus the picker opens in that sequence, and the options start from it.
-    test "$(agent-log _prompt)" = "turn oldest-first> "
-    test "$(FZF_PROMPT="$(agent-log _prompt)" agent-log _order codex.jsonl | state)" \
-       = "turn newest-first> "
-    test "$(FZF_PROMPT="$(agent-log _prompt)" agent-log _jump earliest)" = first
-    test "$(FZF_PROMPT="$(agent-log _prompt)" agent-log _jump latest)" = last
+    test "$(agent-log _prompt)" = "turn newest-first> "
+    test "$(FZF_PROMPT="$(agent-log _prompt)" agent-log _jump earliest)" = last
+    test "$(FZF_PROMPT="$(agent-log _prompt)" agent-log _jump latest)" = first
 
-    # ctrl-t removes the tool blocks. The two options are both in the prompt,
-    # because a key command can read only the prompt. Thus each option must
-    # keep the other one.
+    # ctrl-t removes tool blocks and preserves newest-first ordering.
     test "$(FZF_PROMPT="turn newest-first> " agent-log _tools codex.jsonl | state)" \
        = "turn newest-first · dialogue> "
     test "$(FZF_PROMPT="turn newest-first · dialogue> " agent-log _tools codex.jsonl | state)" \
        = "turn newest-first> "
-    test "$(FZF_PROMPT="turn oldest-first · dialogue> " agent-log _order codex.jsonl | state)" \
-       = "turn newest-first · dialogue> "
-    test "$(FZF_PROMPT="turn oldest-first · dialogue> " agent-log _tools codex.jsonl | state)" \
-       = "turn oldest-first> "
     # The reload it emits must actually carry the flag.
     FZF_PROMPT="turn newest-first> " agent-log _tools codex.jsonl | grep -- "--no-tools" > /dev/null
 
@@ -344,6 +329,8 @@ ANSI
         echo "journal.jsonl should not parse as a conversation"; exit 1
     fi
     echo "  ✓ rejection"
+
+    python3 ${./tests.py} "$(command -v agent-log)"
 
     mkdir -p $out
     echo "claude, pi and codex transcripts all read" > $out/result

@@ -19,6 +19,14 @@ pub enum Agent {
 }
 
 impl Agent {
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Claude => "claude",
+            Self::Pi => "pi",
+            Self::Codex => "codex",
+        }
+    }
+
     pub fn parse(name: &str) -> Option<Agent> {
         match name {
             "claude" => Some(Agent::Claude),

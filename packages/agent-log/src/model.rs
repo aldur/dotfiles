@@ -124,8 +124,10 @@ pub fn sanitize(text: &str) -> String {
 /// Cut the text at a character boundary. Do not divide a multi-byte
 /// character.
 pub fn truncate(text: &str, max: usize) -> String {
-    if text.chars().count() <= max {
-        return text.to_string();
-    }
-    text.chars().take(max).collect()
+    let end = text
+        .char_indices()
+        .nth(max)
+        .map(|(i, _)| i)
+        .unwrap_or(text.len());
+    text[..end].to_string()
 }

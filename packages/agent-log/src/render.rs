@@ -6,46 +6,23 @@ use crate::adapters::{self, Agent};
 use crate::scan;
 use crate::style;
 
-/// The header and the turn together, from one parse of the file. The preview
-/// shows again at each movement of the cursor. Thus two parses of a large file
-/// for four lines of header were too expensive.
+/// Read metadata and only decode the selected record's content.
 pub fn header_and_turn(path: &Path, key: &str) -> String {
-    let Some((records, mtime)) = scan::parse_file(path) else {
-        return format!("agent-log: cannot read {}\n", path.display());
-    };
-    let Some(agent) = adapters::detect(&records) else {
-        return format!("agent-log: {}: unrecognised format\n", path.display());
-    };
-    format!(
-        "{}{}",
-        header_from(agent, path, &records, mtime),
-        turn_from(agent, &records, key)
-    )
+    format!("{}{}", header(path), turn(path, key))
 }
 
 /// One turn. The key is the value that the adapter gives.
 pub fn turn(path: &Path, key: &str) -> String {
-    let Some((records, _)) = scan::parse_file(path) else {
-        return format!("agent-log: cannot read {}\n", path.display());
-    };
-    let Some(agent) = adapters::detect(&records) else {
-        return format!("agent-log: {}: unrecognised format\n", path.display());
-    };
-
-    turn_from(agent, &records, key)
-}
-
-fn turn_from(agent: Agent, records: &[serde_json::Value], key: &str) -> String {
     let Ok(index) = key.parse::<usize>() else {
         return format!("agent-log: bad turn key {key}\n");
     };
-    let Some(record) = index.checked_sub(1).and_then(|i| records.get(i)) else {
+    let Some((agent, record)) = scan::turn_record(path, index) else {
         return format!("agent-log: no turn {key}\n");
     };
     let (role, body) = match agent {
-        Agent::Claude => adapters::claude::render(record, false),
-        Agent::Pi => adapters::pi::render(record, false),
-        Agent::Codex => adapters::codex::render(record),
+        Agent::Claude => adapters::claude::render(&record, false),
+        Agent::Pi => adapters::pi::render(&record, false),
+        Agent::Codex => adapters::codex::render(&record),
     };
     format!(
         "{}\n\n{}\n",
@@ -59,17 +36,13 @@ fn turn_from(agent: Agent, records: &[serde_json::Value], key: &str) -> String {
 /// The header above a turn. It identifies the conversation. Thus a person can
 /// find the source of a copied part.
 pub fn header(path: &Path) -> String {
-    let Some((records, mtime)) = scan::parse_file(path) else {
+    let Some(session) = scan::summarize_file(path, &[]) else {
         return String::new();
     };
-    let Some(agent) = adapters::detect(&records) else {
-        return String::new();
-    };
-    header_from(agent, path, &records, mtime)
+    header_from(&session)
 }
 
-fn header_from(agent: Agent, path: &Path, records: &[serde_json::Value], mtime: i64) -> String {
-    let session = adapters::summarize(agent, &path.to_string_lossy(), records, mtime);
+fn header_from(session: &crate::model::Session) -> String {
     let label = |name: &str| style::dim(name);
     let mut out = format!("{} {}\n", label("session:"), session.id);
     if !session.title.is_empty() {
@@ -107,13 +80,17 @@ pub fn full(path: &Path, no_tools: bool) -> String {
     // header as the turn view. No colour shows that the output goes to a file,
     // a pager or glow. All of them need markdown.
     let mut out = if style::enabled() {
-        header_from(agent, path, &records, mtime)
+        header_from(&session)
     } else {
         let mut md = format!("# {}\n\n", session.title);
         md.push_str(&format!(
             "_{} · {} · {}_\n",
             session.agent,
-            if session.model.is_empty() { "?" } else { &session.model },
+            if session.model.is_empty() {
+                "?"
+            } else {
+                &session.model
+            },
             scan::format_when(session.last_activity)
         ));
         if !session.cwd.is_empty() {
