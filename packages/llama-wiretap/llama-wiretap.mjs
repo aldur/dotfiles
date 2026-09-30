@@ -1,6 +1,6 @@
 // Logging reverse proxy for OpenAI-compatible inference endpoints.
 //
-// Sits between a coding agent (pi, pi-rust) and llama-server and appends JSONL
+// Sits between a coding agent (such as pi) and llama-server and appends JSONL
 // records carrying the verbatim request body, the response, and — for chat
 // completions against a llama.cpp upstream — the prompt as the model actually
 // receives it, rendered through the GGUF chat template.

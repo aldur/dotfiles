@@ -62,11 +62,6 @@ in
   };
   pi = prev.callPackage ../packages/pi/pi.nix { plugins = final.piPlugins; };
 
-  # Rust port of pi, wrapped with the same affordances (plugin bundling, no
-  # phone-home); the binary is `pi-rust` so both can sit on PATH. No plugins:
-  # pi-llama's job is done by the built-in `llamacpp` provider.
-  pi-rust = unstable.callPackage ../packages/pi-rust/pi-rust.nix { };
-
   # AppArmor unix socket rules on a kernel newer than 6.16 need parser 5.
   # Stable ships 4, which downgrades those rules with a warning.
   apparmor-parser = import ../utils/override-until-upgrade.nix {
