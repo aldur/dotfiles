@@ -94,10 +94,7 @@ impl<'a, 'q> Matches<'a, 'q> {
         let Ok(record) = sonic_rs::from_str::<Value>(line) else {
             return;
         };
-        // One record at a time, using exactly the same content extraction as
-        // the original full-text summary, including tool arguments/reasoning.
-        let summary = adapters::summarize(agent, "", &[record], 0);
-        self.text(&summary.corpus);
+        self.text(&adapters::text(agent, &record));
     }
 
     pub fn finish(mut self, session: &Session) -> bool {

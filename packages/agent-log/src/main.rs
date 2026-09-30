@@ -10,6 +10,7 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
 mod adapters;
+mod context;
 mod metadata;
 mod model;
 mod render;
@@ -46,58 +47,35 @@ Typing in either picker searches the whole conversation — prompts, replies,
 thinking and tool traffic — by exact substring, case-insensitive; a space
 separates AND terms.
 
-In the session picker:
-  enter    open the conversation in the turn picker
-  alt-i    print the session id and exit (feeds `claude --resume <id>`)
-  alt-a    read the whole conversation in a pager
-  alt-v    open it in nvim
-  ctrl-a   widen to every project
-  alt-p    toggle the preview
-
-In the turn picker (rows are timestamped; typing searches the whole text of
-every turn, not just the visible snippet):
-  enter      print the selected turn(s)
-  tab        mark/unmark and move down (multi-select)
-  shift-tab  mark/unmark and move up (extend a range)
-  alt-enter  print the focused turn rendered via glow/bat
-  alt-a      whole conversation in a pager
-  alt-v      open it in nvim
-  ctrl-t     toggle tool calls and results (dialogue only), which alt-a follows
-  alt-g      jump to the earliest turn; alt-G to the latest
-  alt-p      toggle the preview
-
 Results and marked turns are always newest first, including while searching.
 --turn numbers still count from the beginning; --full reads chronologically.
 No caches or indexes: every request reads the original transcripts.
 ";
 
-/// The keys that each picker shows in its footer. These are constants,
-/// because a footer that does not agree with the key commands is incorrect.
-/// The tests examine these values.
-const SESSION_FOOTER: &str = "enter open   alt-i id only   alt-a whole convo   \
-alt-v nvim   ctrl-a all projects   alt-p preview";
-const TURN_FOOTER: &str = "enter print   tab/shift-tab mark +/-   alt-enter pretty   \
-alt-a whole convo   alt-v nvim   ctrl-t tools   alt-g/G earliest/latest   alt-p preview";
+const COMMON_HELP: &str = "pgup/pgdn         scroll preview by a page
+shift-up/down     scroll preview by a line (also alt-up/down)
+mouse wheel       scroll the pane under the pointer
+alt-p             show/hide preview
+alt-e             toggle context, thinking and tool details
+esc               close picker · f1 hide help";
+const SESSION_HELP: &str = "enter             open conversation
+alt-i             print session id and exit
+alt-a             whole conversation in pager
+alt-v             open in nvim
+ctrl-a            search all projects";
+const TURN_HELP: &str = "enter             print selected turns
+tab / shift-tab   mark/unmark turns
+alt-enter         print focused turn via glow/bat
+alt-a / alt-v     whole conversation in pager / nvim
+ctrl-t            toggle tools and dialogue
+alt-g / alt-G     earliest / latest turn";
+const EXPANDED_LABEL: &str = "Details expanded";
 
-/// Make each word that is not the name of a key less bright. Thus the names
-/// of the keys are easy to find.
-fn footer(text: &str) -> String {
-    let mut out = String::from("--footer=");
-    for (index, word) in text.split_whitespace().enumerate() {
-        if index > 0 {
-            out.push(' ');
-        }
-        let is_key =
-            word.contains('-') && !word.contains("convo") || word == "enter" || word == "tab";
-        if is_key {
-            out.push_str(word);
-        } else {
-            out.push_str(&style::dim(word));
-        }
-    }
-    out
+fn usage() -> String {
+    format!("{USAGE}\nSession picker:\n{SESSION_HELP}\n\nTurn picker:\n{TURN_HELP}\n\nBoth pickers:\n{COMMON_HELP}\n")
 }
 
+#[derive(Default)]
 struct Options {
     all: bool,
     agent: Option<Agent>,
@@ -127,14 +105,8 @@ fn emit(text: &str) {
 }
 
 fn emit_rows(rows: &[String]) {
-    emit(&rows_text(rows));
-}
-
-fn rows_text(rows: &[String]) -> String {
-    if rows.is_empty() {
-        String::new()
-    } else {
-        format!("{}\n", rows.join("\n"))
+    if !rows.is_empty() {
+        emit(&format!("{}\n", rows.join("\n")));
     }
 }
 
@@ -144,19 +116,7 @@ fn fail(message: &str) -> ! {
 }
 
 fn parse_args(args: &[String]) -> Options {
-    let mut opts = Options {
-        all: false,
-        agent: None,
-        newest: false,
-        full: false,
-        list: false,
-        pretty: false,
-        no_tools: false,
-        turn: None,
-        color: None,
-        query: String::new(),
-        target: None,
-    };
+    let mut opts = Options::default();
     let mut index = 0;
     while index < args.len() {
         let arg = args[index].as_str();
@@ -168,7 +128,7 @@ fn parse_args(args: &[String]) -> Options {
         };
         match arg {
             "-h" | "--help" => {
-                emit(USAGE);
+                emit(&usage());
                 std::process::exit(0);
             }
             "--all" => opts.all = true,
@@ -237,16 +197,12 @@ fn collect_sessions(opts: &Options, cwd: &Path) -> Vec<model::Session> {
         scan::find_jsonl_filtered(&root, candidates.as_deref(), &mut paths);
     }
     let here = cwd.to_string_lossy();
-    let mut sessions = scan::summarize_all(
+    scan::summarize_all(
         &paths,
         opts.agent,
         &scan::search_terms(&opts.query),
         (!opts.all).then_some(here.as_ref()),
-    );
-    for session in &mut sessions {
-        session.when = scan::format_when(session.last_activity);
-    }
-    sessions
+    )
 }
 
 /// Compact session rows. Full text is searched on demand by `_sessions`;
@@ -268,8 +224,8 @@ fn session_rows(sessions: &[model::Session], show_project: bool) -> Vec<String> 
             // text no longer travels through the reserved third column.
             format!(
                 "{}  {} {}{}\t{}\t{}\t{}",
-                style::cyan(&s.when),
-                style::tool(&format!("{:<6}", s.agent)),
+                style::dim(&scan::format_when(s.last_activity)),
+                style::dim(&format!("{:<6}", s.agent)),
                 project,
                 model::truncate(&s.title, 110),
                 s.path,
@@ -281,37 +237,21 @@ fn session_rows(sessions: &[model::Session], show_project: bool) -> Vec<String> 
 }
 
 fn turn_rows(path: &Path, no_tools: bool) -> Vec<(String, String)> {
-    turn_rows_from(
-        scan::turns(path, no_tools)
-            .unwrap_or_else(|| fail(&format!("cannot read transcript {}", path.display()))),
-    )
-}
-
-fn turn_rows_from(turns: Vec<model::Turn>) -> Vec<(String, String)> {
-    turns
+    scan::turns(path, no_tools)
+        .unwrap_or_else(|| fail(&format!("cannot read transcript {}", path.display())))
         .into_iter()
         .map(|t| {
-            let colour: fn(&str) -> String = match t.kind.as_str() {
-                k if k.contains("user") => style::user,
-                k if k.contains("thinking") => style::thinking,
-                k if k.contains("tool_result") || k.contains("tool result") => style::result,
-                k if k.contains("tool") => style::tool,
-                _ => style::assistant,
-            };
-            // Show the start of the text bright and the remainder dim. fzf
-            // searches only the visible fields, thus the full text must stay
-            // in the row.
-            let shown = model::truncate(&t.text, 200);
-            let rest = t.text[shown.len()..].to_string();
+            // Keep all text searchable. The UI clips rows instead of hiding
+            // body fields with --with-nth (which would also hide matches).
             (
                 t.key.clone(),
                 format!(
                     "{}\t{}\t{}\t{}\t{}",
                     t.key,
-                    colour(&format!("{:<14}", model::truncate(&t.kind, 14))),
+                    style::dim(&format!("{:<14}", model::truncate(&t.kind, 14))),
                     style::dim(&format!("{:>8}", t.time)),
-                    shown,
-                    style::dim(&rest)
+                    t.text,
+                    ""
                 ),
             )
         })
@@ -341,26 +281,15 @@ fn pretty(text: &str, enabled: bool) {
     emit(text);
 }
 
-/// Show markdown in a pager. Use the first program that is available.
-///
-/// These programs are not build dependencies. A dependency adds tens of
-/// megabytes to the closure, and most machines already have such a program.
+/// Page the same rendered text as the preview, without reformatting it.
 fn page(text: &str) {
     if let Ok(pager) = std::env::var("PAGER") {
-        if !pager.trim().is_empty() && pipe_through("sh", &["-c", &format!("{pager}")], text) {
+        if !pager.trim().is_empty() && pipe_through("sh", &["-c", &pager], text) {
             return;
         }
     }
-    for (program, args) in [
-        (
-            "bat",
-            vec!["--language=markdown", "--style=plain", "--paging=always"],
-        ),
-        ("less", vec!["-R"]),
-    ] {
-        if pipe_through(program, &args, text) {
-            return;
-        }
+    if pipe_through("less", &["-R"], text) {
+        return;
     }
     emit(text);
 }
@@ -424,8 +353,70 @@ fn pipe_through(program: &str, args: &[&str], text: &str) -> bool {
     true
 }
 
-fn run_fzf(rows: &[String], args: &[String]) -> Option<String> {
+enum Picker {
+    Sessions,
+    Turns,
+}
+
+fn run_fzf(
+    exe: &str,
+    rows: &[String],
+    picker: Picker,
+    preview: &str,
+    args: &[String],
+) -> Option<String> {
+    let (help, footer, hidden) = match picker {
+        Picker::Sessions => (
+            SESSION_HELP,
+            "enter open · alt-p preview · f1 help",
+            ",hidden",
+        ),
+        Picker::Turns => (TURN_HELP, "enter print · alt-e details · f1 help", ""),
+    };
     let mut child = Command::new("fzf")
+        .args([
+            "--style=minimal",
+            "--reverse",
+            "--ansi",
+            "--delimiter=\t",
+            "--no-sort",
+            "--exact",
+            "-i",
+            "--no-wrap",
+            "--no-hscroll",
+            "--info=inline-right",
+            "--no-separator",
+            "--padding=1,2",
+            "--gap=0",
+            "--tabstop=2",
+            "--pointer=›",
+            "--marker=●",
+            "--color=fg+:-1,bg+:-1,prompt:-1,header:dim,footer:dim",
+            "--ghost=Search full text · newest first",
+            "--header-first",
+            "--footer-border=none",
+            "--bind=start:hide-header+first",
+            "--bind=f1:toggle-header",
+            "--bind=alt-p:toggle-preview",
+            // Paging the list changes the focused row and restarts its
+            // preview. These bindings scroll the existing preview instead.
+            "--bind=pgup:preview-page-up,pgdn:preview-page-down",
+            "--bind=shift-up:preview-up,shift-down:preview-down",
+            "--bind=alt-up:preview-up,alt-down:preview-down",
+            "--bind=preview-scroll-up:preview-up,preview-scroll-down:preview-down",
+            "--preview-label=",
+            "--wrap-sign=",
+        ])
+        .arg(format!("--header={help}\n{COMMON_HELP}"))
+        .arg(format!("--footer={footer}"))
+        .arg(format!("--preview={preview}"))
+        .arg(format!(
+            "--preview-window=right,55%,wrap,border-left{hidden},<60(down,50%,border-top{hidden})"
+        ))
+        .arg(format!(
+            "--bind=alt-e:transform({} _details)",
+            shell_quote(exe)
+        ))
         .args(args)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -434,7 +425,9 @@ fn run_fzf(rows: &[String], args: &[String]) -> Option<String> {
     {
         let stdin = child.stdin.as_mut().expect("piped");
         for row in rows {
-            let _ = writeln!(stdin, "{row}");
+            if writeln!(stdin, "{row}").is_err() {
+                break;
+            }
         }
     }
     let output = child.wait_with_output().ok()?;
@@ -447,51 +440,19 @@ fn run_fzf(rows: &[String], args: &[String]) -> Option<String> {
     (!picked.is_empty()).then_some(picked)
 }
 
-/// The state of the turn picker.
-///
-/// A key command reads the prompt to preserve the dialogue-only setting.
-struct Picker {
-    no_tools: bool,
+fn dialogue_only() -> bool {
+    std::env::var("FZF_PROMPT").is_ok_and(|p| p == turn_prompt(true))
 }
 
-impl Picker {
-    fn default_view() -> Picker {
-        Picker { no_tools: false }
-    }
-
-    fn current() -> Picker {
-        let prompt = std::env::var("FZF_PROMPT").unwrap_or_default();
-        Picker {
-            no_tools: prompt.contains("dialogue"),
-        }
-    }
-
-    fn prompt(&self) -> String {
-        format!(
-            "turn newest-first{}> ",
-            if self.no_tools { " · dialogue" } else { "" }
-        )
-    }
-
-    /// Filtering tool blocks changes the rows, so reread the selected view.
-    fn reload(&self, exe: &str, path: &str) -> String {
-        format!(
-            "reload({} _turns {}{})+change-prompt({})+first",
-            shell_quote(exe),
-            shell_quote(path),
-            if self.no_tools { " --no-tools" } else { "" },
-            self.prompt()
-        )
-    }
+fn details_expanded() -> bool {
+    std::env::var("FZF_PREVIEW_LABEL").is_ok_and(|label| label == EXPANDED_LABEL)
 }
 
-/// The earliest turn and the latest turn are the two ends of the
-/// conversation. The current sequence gives their position in the list.
-fn jump_action(which: &str) -> &'static str {
-    if which == "latest" {
-        "first"
+fn turn_prompt(no_tools: bool) -> &'static str {
+    if no_tools {
+        "dialogue> "
     } else {
-        "last"
+        "turns> "
     }
 }
 
@@ -521,14 +482,7 @@ fn main() {
             let want_pretty = argv.iter().any(|a| a == "--pretty");
             // glow and bat add their own colours.
             style::set(!want_pretty && style::resolve(colour_choice(&argv)));
-            let body = render::header_and_turn(&path, key);
-            pretty(&body, want_pretty);
-            return;
-        }
-        Some("_page") => {
-            style::set(style::resolve(colour_choice(&argv)));
-            let path = PathBuf::from(argv.get(1).unwrap_or_else(|| fail("_page needs a path")));
-            page(&render::full(&path, argv.iter().any(|a| a == "--no-tools")));
+            pretty(&render::header_and_turn(&path, key), want_pretty);
             return;
         }
         Some("_view") => {
@@ -538,52 +492,52 @@ fn main() {
             view_in_nvim(&render::full(&path, false));
             return;
         }
-        Some("_full") => {
-            let path = PathBuf::from(argv.get(1).unwrap_or_else(|| fail("_full needs a path")));
-            let no_tools = argv.iter().any(|a| a == "--no-tools");
+        Some(command @ ("_preview" | "_page")) => {
+            let paged = command == "_page";
+            let path = PathBuf::from(
+                argv.get(1)
+                    .unwrap_or_else(|| fail(&format!("{command} needs a path"))),
+            );
+            let key = argv
+                .iter()
+                .position(|a| a == "--turn")
+                .and_then(|i| argv.get(i + 1));
             style::set(style::resolve(colour_choice(&argv)));
-            emit(&render::full(&path, no_tools));
+            let body = render::readable(
+                &path,
+                key.map(String::as_str),
+                paged || details_expanded() || argv.iter().any(|a| a == "--expanded"),
+                dialogue_only() || argv.iter().any(|a| a == "--no-tools"),
+            );
+            if paged {
+                page(&body);
+            } else {
+                emit(&body);
+            }
             return;
         }
-        Some("_footer") => {
-            emit(&match argv.get(1).map(String::as_str) {
-                Some("turn") => format!("{TURN_FOOTER}\n"),
-                _ => format!("{SESSION_FOOTER}\n"),
-            });
-            return;
-        }
-        Some("_prompt") => {
-            emit(&format!("{}\n", Picker::default_view().prompt()));
+        Some("_details") => {
+            // fzf holds the UI state; no state files or transcript copies.
+            let label = if details_expanded() {
+                ""
+            } else {
+                EXPANDED_LABEL
+            };
+            emit(&format!(
+                "change-preview-label({label})+refresh-preview+show-preview"
+            ));
             return;
         }
         Some("_tools") => {
             let path = argv.get(1).unwrap_or_else(|| fail("_tools needs a path"));
-            let mut next = Picker::current();
-            next.no_tools = !next.no_tools;
-            emit(&next.reload(&exe, path));
-            return;
-        }
-        // alt-a must obey the current view. Only a transform can read the
-        // prompt. Thus this subcommand writes the execute action.
-        Some("_page_action") => {
-            let path = argv
-                .get(1)
-                .unwrap_or_else(|| fail("_page_action needs a path"));
-            let flag = if Picker::current().no_tools {
-                " --no-tools"
-            } else {
-                ""
-            };
+            let no_tools = !dialogue_only();
             emit(&format!(
-                "execute({} _page {}{flag})",
+                "reload({} _turns {}{})+change-prompt({})+first",
                 shell_quote(&exe),
-                shell_quote(path)
+                shell_quote(path),
+                if no_tools { " --no-tools" } else { "" },
+                turn_prompt(no_tools)
             ));
-            return;
-        }
-        Some("_jump") => {
-            let which = argv.get(1).map(String::as_str).unwrap_or("earliest");
-            emit(jump_action(which));
             return;
         }
         Some("_sessions") => {
@@ -642,29 +596,20 @@ fn main() {
                         .unwrap_or_default()
                 );
                 let picked = run_fzf(
+                    &exe,
                     &rows,
+                    Picker::Sessions,
+                    &format!("{} _preview {{2}} --color=always", shell_quote(&exe)),
                     &[
                         if opts.all {
                             "--prompt=all> ".into()
                         } else {
                             "--prompt=conversation> ".into()
                         },
-                        "--reverse".into(),
-                        "--height=60%".into(),
-                        "--ansi".into(),
-                        "--delimiter=\t".into(),
                         "--with-nth=1".into(),
-                        "--header=Newest first · search prompts, replies, thinking and tools"
-                            .into(),
                         format!("--query={}", opts.query),
-                        "--no-sort".into(),
                         "--disabled".into(),
                         format!("--bind=change:reload({reload})"),
-                        "--exact".into(),
-                        "-i".into(),
-                        format!("--preview={} _full {{2}} --color=always", shell_quote(&exe)),
-                        "--preview-window=right,60%,wrap".into(),
-                        "--bind=alt-p:toggle-preview".into(),
                         format!("--bind=alt-a:execute({} _page {{2}})", shell_quote(&exe)),
                         format!("--bind=alt-v:execute({} _view {{2}})", shell_quote(&exe)),
                         format!("--bind=ctrl-a:change-prompt(all> )+reload({reload} --all)"),
@@ -672,8 +617,6 @@ fn main() {
                         // key on the first line. Thus this program can write
                         // the id and stop.
                         "--expect=alt-i".into(),
-                        "--wrap-sign=".into(),
-                        footer(SESSION_FOOTER),
                     ],
                 );
                 match picked {
@@ -712,7 +655,7 @@ fn main() {
         std::process::exit(1);
     }
 
-    let keys: Vec<String> = if let Some(n) = opts.turn {
+    let mut keys: Vec<String> = if let Some(n) = opts.turn {
         let total = rows.len() as i64;
         let index = if n < 0 { total + n } else { n - 1 };
         if index < 0 || index >= total {
@@ -720,43 +663,35 @@ fn main() {
         }
         vec![rows[index as usize].0.clone()]
     } else if opts.list {
-        emit(&format!(
-            "{}\n",
-            rows.iter()
+        emit_rows(
+            &rows
+                .iter()
                 .rev()
                 .map(|(_, row)| row.clone())
-                .collect::<Vec<_>>()
-                .join("\n")
-        ));
+                .collect::<Vec<_>>(),
+        );
         return;
     } else {
-        let view = Picker::default_view();
         let display: Vec<String> = rows.iter().rev().map(|(_, row)| row.clone()).collect();
         let path = target.to_string_lossy().to_string();
         let picked = run_fzf(
+            &exe,
             &display,
+            Picker::Turns,
+            &format!(
+                "{} _preview {} --turn {{1}} --color=always",
+                shell_quote(&exe),
+                shell_quote(&path)
+            ),
             &[
-                format!("--prompt={}", view.prompt()),
-                "--reverse".into(),
-                "--ansi".into(),
-                "--delimiter=\t".into(),
-                "--with-nth=1,2,3,4,5".into(),
-                "--exact".into(),
-                "--no-sort".into(),
-                "-i".into(),
+                format!("--prompt={}", turn_prompt(opts.no_tools)),
+                // Hide the internal record key, not the searchable body.
+                "--with-nth=2,3,4,5".into(),
                 "--multi".into(),
-                format!(
-                    "--preview={} _show {{1}} {} --color=always",
-                    shell_quote(&exe),
-                    shell_quote(&path)
-                ),
-                "--preview-window=right,60%,wrap".into(),
-                "--bind=alt-p:toggle-preview".into(),
-                "--bind=start:first".into(),
                 // Select a row above the cursor. This is the opposite of tab.
                 "--bind=shift-tab:toggle+up".into(),
                 format!(
-                    "--bind=alt-a:transform({} _page_action {})",
+                    "--bind=alt-a:execute({} _page {})",
                     shell_quote(&exe),
                     shell_quote(&path)
                 ),
@@ -775,13 +710,7 @@ fn main() {
                     shell_quote(&exe),
                     shell_quote(&path)
                 ),
-                format!(
-                    "--bind=alt-g:transform({} _jump earliest)",
-                    shell_quote(&exe)
-                ),
-                format!("--bind=alt-G:transform({} _jump latest)", shell_quote(&exe)),
-                "--wrap-sign=".into(),
-                footer(TURN_FOOTER),
+                "--bind=alt-g:last,alt-G:first".into(),
             ],
         );
         match picked {
@@ -794,11 +723,10 @@ fn main() {
     };
 
     // Selection order never overrides newest-first ordering.
-    let mut ordered: Vec<&(String, String)> =
-        rows.iter().filter(|(key, _)| keys.contains(key)).collect();
-    ordered.sort_by_key(|(key, _)| std::cmp::Reverse(key.parse::<i64>().unwrap_or(0)));
+    keys.sort_by_key(|key| std::cmp::Reverse(key.parse::<usize>().unwrap_or(0)));
+    keys.dedup();
     let mut body = String::new();
-    for (index, (key, _)) in ordered.iter().enumerate() {
+    for (index, key) in keys.iter().enumerate() {
         if index == 0 {
             body.push_str(&render::header(&target));
         } else {

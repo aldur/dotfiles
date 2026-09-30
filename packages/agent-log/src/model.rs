@@ -5,7 +5,26 @@
 //! The rest of the program uses only the two structures below. Thus an adapter
 //! is the only code that knows the format of a file.
 
-/// One turn: a single user message, assistant reply, tool call or tool result.
+/// A rendered section. A label marks collapsible technical details.
+pub struct Block {
+    pub label: Option<String>,
+    pub text: String,
+}
+
+impl Block {
+    pub fn text(text: String) -> Self {
+        Self { label: None, text }
+    }
+
+    pub fn detail(label: impl Into<String>, text: String) -> Self {
+        Self {
+            label: Some(label.into()),
+            text,
+        }
+    }
+}
+
+/// One user message, assistant reply, tool call or tool result.
 pub struct Turn {
     /// The address of the turn in its file: the number of its line. Only the
     /// adapter reads it.
@@ -33,14 +52,10 @@ pub struct Session {
     /// The time of the last activity, in seconds from the epoch. The picker
     /// sorts on it. If the format records no time, use the file time.
     pub last_activity: i64,
-    /// Rendered `YYYY-MM-DD HH:MM` of `last_activity`.
-    pub when: String,
     pub model: String,
     /// The recorded title. If the format records no title, use the first
     /// message of the user.
     pub title: String,
-    /// The text of all the turns, on one line. The search uses it.
-    pub corpus: String,
 }
 
 /// Put a multi-line text on one line and remove the control sequences.

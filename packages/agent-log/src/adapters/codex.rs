@@ -1,10 +1,8 @@
 //! The reader for Codex. Its files are in
 //! `~/.codex/sessions/<year>/<month>/<day>/rollout-<time>-<uuid>.jsonl`.
 //!
-//! WARNING: nobody examined this reader against a Codex session. The machine
-//! had no such file. This code uses the published format only. Thus each field
-//! is optional, the code ignores an unknown type, and no operation can stop
-//! the program. If a Codex list is incorrect, examine this file first.
+//! Optional fields and unknown record types are tolerated so logs from
+//! different Codex versions can be read together.
 //!
 //! Expected envelope:
 //!   {"timestamp":…, "type":"session_meta",   "payload":{"id":…,"cwd":…,"instructions":…}}
@@ -16,28 +14,56 @@
 
 use serde_json::Value;
 
-use crate::model::{flatten, Session, Turn};
+use crate::model::{flatten, Block, Session, Turn};
 
-use super::{clock, parse_timestamp};
+use super::{clock, content_text, message_blocks, parse_timestamp};
 
-/// A content block has the type `input_text`, `output_text` or `text`. Use
-/// the text of each of them, and ignore the other types.
-fn content_text(content: &Value) -> String {
+/// A display title, not a filter on the transcript. Codex injects setup as
+/// user-role text, sometimes in the same content array as the real request.
+/// Inspect blocks separately so setup cannot swallow the following request.
+pub fn user_title(content: &Value) -> String {
     match content {
-        Value::String(text) => text.clone(),
+        Value::String(text) => flatten(request_text(text)),
         Value::Array(parts) => parts
             .iter()
-            .map(|part| part.get("text").and_then(Value::as_str).unwrap_or(""))
-            .filter(|t| !t.is_empty())
+            .filter_map(|part| part.get("text").and_then(Value::as_str))
+            .map(request_text)
+            .map(flatten)
+            .filter(|part| !part.is_empty())
             .collect::<Vec<_>>()
             .join(" "),
         _ => String::new(),
     }
 }
 
+fn request_text(mut text: &str) -> &str {
+    loop {
+        text = text.trim();
+        match crate::context::prefix(text) {
+            Some(block) if crate::context::is_setup(block.tag) => text = block.rest,
+            _ => {
+                if text.starts_with("# Context from my IDE setup:") {
+                    return text
+                        .split_once("## My request for Codex:")
+                        .map_or(text, |(_, request)| request.trim());
+                }
+                return text;
+            }
+        }
+    }
+}
+
+pub fn session_title(first_user: String) -> String {
+    if first_user.is_empty() {
+        "(no user request yet)".to_owned()
+    } else {
+        first_user
+    }
+}
+
 /// The type and the text of one payload. The result is None if the payload
 /// has no text.
-fn payload_parts(payload: &Value) -> Option<(String, String)> {
+pub(super) fn payload_parts(payload: &Value) -> Option<(String, String)> {
     match payload.get("type").and_then(Value::as_str)? {
         "message" => {
             let role = payload.get("role").and_then(Value::as_str).unwrap_or("?");
@@ -87,7 +113,6 @@ pub fn summarize(path: &str, records: &[Value], mtime: i64) -> Session {
     let mut cwd = String::new();
     let mut model = String::new();
     let mut first_user = String::new();
-    let mut corpus = String::new();
     let mut id = String::new();
 
     for record in records {
@@ -115,12 +140,11 @@ pub fn summarize(path: &str, records: &[Value], mtime: i64) -> Session {
         if let Some(name) = payload.get("model").and_then(Value::as_str) {
             model = name.to_string();
         }
-        if let Some((kind, text)) = payload_parts(payload) {
-            if first_user.is_empty() && kind == "user" {
-                first_user = flatten(&text);
-            }
-            corpus.push_str(&text);
-            corpus.push(' ');
+        if first_user.is_empty()
+            && payload.get("type").and_then(Value::as_str) == Some("message")
+            && payload.get("role").and_then(Value::as_str) == Some("user")
+        {
+            first_user = user_title(&payload["content"]);
         }
     }
 
@@ -129,11 +153,13 @@ pub fn summarize(path: &str, records: &[Value], mtime: i64) -> Session {
         id,
         agent: "codex",
         cwd,
-        last_activity: if last_activity > 0 { last_activity } else { mtime },
-        when: String::new(),
+        last_activity: if last_activity > 0 {
+            last_activity
+        } else {
+            mtime
+        },
         model,
-        title: first_user,
-        corpus: flatten(&corpus),
+        title: session_title(first_user),
     }
 }
 
@@ -156,17 +182,33 @@ pub fn turns(records: &[Value], no_tools: bool) -> Vec<Turn> {
         turns.push(Turn {
             key: (index + 1).to_string(),
             kind,
-            time: clock(record.get("timestamp").and_then(Value::as_str).unwrap_or("")),
+            time: clock(
+                record
+                    .get("timestamp")
+                    .and_then(Value::as_str)
+                    .unwrap_or(""),
+            ),
             text,
         });
     }
     turns
 }
 
-/// One turn as the type and the body. Refer to claude::render.
-pub fn render(record: &Value) -> (String, String) {
+pub fn blocks(record: &Value) -> (String, Vec<Block>) {
     let Some(payload) = record.get("payload") else {
-        return (String::new(), String::new());
+        return (String::new(), Vec::new());
     };
-    payload_parts(payload).unwrap_or_default()
+    if payload.get("type").and_then(Value::as_str) == Some("message") {
+        return (
+            payload
+                .get("role")
+                .and_then(Value::as_str)
+                .unwrap_or("?")
+                .into(),
+            message_blocks(&payload["content"], false),
+        );
+    }
+    payload_parts(payload)
+        .map(|(kind, text)| (kind, vec![Block::text(text)]))
+        .unwrap_or_default()
 }

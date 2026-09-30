@@ -234,10 +234,8 @@ impl Summary {
                 agent: agent.name(),
                 cwd: String::new(),
                 last_activity: 0,
-                when: String::new(),
                 model: String::new(),
                 title: String::new(),
-                corpus: String::new(),
             },
             first_user: String::new(),
             agent,
@@ -333,8 +331,7 @@ impl Summary {
                     {
                         if let Some(content) = payload.content {
                             let content: Value = serde_json::from_str(content.as_raw_str()).ok()?;
-                            let record = serde_json::json!({"payload":{"type":"message", "role":"user", "content":content}});
-                            *first_user = flatten(&adapters::codex::render(&record).1);
+                            *first_user = adapters::codex::user_title(&content);
                         }
                     }
                 }
@@ -345,7 +342,11 @@ impl Summary {
 
     fn finish(mut self, mtime: i64) -> Session {
         self.result.title = if self.result.title.is_empty() {
-            self.first_user
+            if self.agent == Agent::Codex {
+                adapters::codex::session_title(self.first_user)
+            } else {
+                self.first_user
+            }
         } else {
             flatten(&self.result.title)
         };
@@ -359,9 +360,10 @@ impl Summary {
 fn fallback(path: &Path, mtime: i64, query: &crate::search::Query<'_>) -> Option<Session> {
     let (records, _) = crate::scan::parse_file(path)?;
     let agent = adapters::detect(&records)?;
-    let mut session = adapters::summarize(agent, &path.to_string_lossy(), &records, mtime);
+    let session = adapters::summarize(agent, &path.to_string_lossy(), &records, mtime);
     let mut matches = crate::search::Matches::new(query);
-    matches.text(&session.corpus);
-    session.corpus.clear();
+    for record in &records {
+        matches.text(&adapters::text(agent, record));
+    }
     matches.finish(&session).then_some(session)
 }

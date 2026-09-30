@@ -3,6 +3,7 @@
 use std::path::Path;
 
 use crate::adapters::{self, Agent};
+use crate::context;
 use crate::scan;
 use crate::style;
 
@@ -13,28 +14,80 @@ pub fn header_and_turn(path: &Path, key: &str) -> String {
 
 /// One turn. The key is the value that the adapter gives.
 pub fn turn(path: &Path, key: &str) -> String {
+    selected_turn(path, key, None, false)
+}
+
+/// One presentation for preview and pager. Exports keep the original context.
+pub fn readable(path: &Path, key: Option<&str>, expanded: bool, no_tools: bool) -> String {
+    match key {
+        Some(key) => selected_turn(path, key, Some(expanded), no_tools),
+        None => conversation(path, no_tools, Some(expanded)),
+    }
+}
+
+fn selected_turn(path: &Path, key: &str, expanded: Option<bool>, no_tools: bool) -> String {
     let Ok(index) = key.parse::<usize>() else {
         return format!("agent-log: bad turn key {key}\n");
     };
     let Some((agent, record)) = scan::turn_record(path, index) else {
         return format!("agent-log: no turn {key}\n");
     };
-    let (role, body) = match agent {
-        Agent::Claude => adapters::claude::render(&record, false),
-        Agent::Pi => adapters::pi::render(&record, false),
-        Agent::Codex => adapters::codex::render(&record),
-    };
+    render_record(agent, &record, no_tools, expanded)
+}
+
+fn render_record(
+    agent: Agent,
+    record: &serde_json::Value,
+    no_tools: bool,
+    expanded: Option<bool>,
+) -> String {
+    let (role, blocks) = adapters::blocks(agent, record, no_tools);
+    let time = adapters::clock(
+        record
+            .get("timestamp")
+            .and_then(serde_json::Value::as_str)
+            .unwrap_or(""),
+    );
+    let technical =
+        role.starts_with("tool") || matches!(role.as_str(), "thinking" | "system" | "developer");
+    if let Some(expanded) = expanded.filter(|_| technical) {
+        let text = blocks
+            .into_iter()
+            .map(|block| crate::model::sanitize(&block.text))
+            .collect::<Vec<_>>()
+            .join("\n\n");
+        let text = if expanded && role.starts_with("tool") {
+            serde_json::from_str::<serde_json::Value>(&text)
+                .ok()
+                .filter(|value| value.is_object() || value.is_array())
+                .map(|value| serde_json::to_string_pretty(&value).unwrap_or_default())
+                .unwrap_or(text)
+        } else {
+            text
+        };
+        return format!("{}\n", context::detail(&role, &text, expanded));
+    }
+    let body = blocks
+        .into_iter()
+        .map(|block| {
+            let text = crate::model::sanitize(&block.text);
+            match (expanded, block.label) {
+                (Some(expanded), Some(label)) => context::detail(&label, &text, expanded),
+                (Some(expanded), None) => context::render(&text, expanded),
+                (None, Some(label)) => format!("{}\n{text}", style::heading(&label, "")),
+                (None, None) => text,
+            }
+        })
+        .collect::<Vec<_>>()
+        .join("\n\n");
     format!(
         "{}\n\n{}\n",
-        style::turn_heading(&role, ""),
-        crate::model::sanitize(&body)
+        style::turn_heading(&role, &time),
+        body.trim_end()
     )
 }
 
-/// The rule between the parts of the output. A blank line always comes after
-/// it. Two different forms of the rule looked like a defect.
-/// The header above a turn. It identifies the conversation. Thus a person can
-/// find the source of a copied part.
+/// Session metadata accompanies copied/exported turns, not every preview.
 pub fn header(path: &Path) -> String {
     let Some(session) = scan::summarize_file(path, &[]) else {
         return String::new();
@@ -68,6 +121,10 @@ fn header_from(session: &crate::model::Session) -> String {
 
 /// The full conversation, in sequence.
 pub fn full(path: &Path, no_tools: bool) -> String {
+    conversation(path, no_tools, None)
+}
+
+fn conversation(path: &Path, no_tools: bool, expanded: Option<bool>) -> String {
     let Some((records, mtime)) = scan::parse_file(path) else {
         return format!("agent-log: cannot read {}\n", path.display());
     };
@@ -99,51 +156,22 @@ pub fn full(path: &Path, no_tools: bool) -> String {
         md
     };
 
-    // Show the limits of a format together with its data.
-    let caveat = match agent {
-        // Without this text, a person can conclude that pi sent no system
-        // prompt.
-        Agent::Pi => Some(
-            "A pi session records turns only — no system prompt, tool schemas or \
-             rendered string.",
-        ),
-        Agent::Codex => Some(
-            "The Codex reader is built from the published rollout format and has \
-             not been checked against a real session.",
-        ),
-        _ => None,
-    };
-    if let Some(text) = caveat {
-        if style::enabled() {
-            out.push_str(&format!("{}\n", style::dim(text)));
-        } else {
-            out.push_str(&format!("\n> {text}\n"));
-        }
-    }
-
     // Put exactly one blank line between the header and the first turn.
     while !out.ends_with("\n\n") {
         out.push('\n');
     }
 
     for turn in adapters::turns(agent, &records, no_tools) {
-        // `turn.text` is the single line for the search. It contains no line
-        // breaks. Thus the conversation view uses the adapter again.
-        let body = turn
+        if let Some(record) = turn
             .key
             .parse::<usize>()
             .ok()
             .and_then(|index| index.checked_sub(1))
             .and_then(|i| records.get(i))
-            .map(|record| match agent {
-                Agent::Claude => adapters::claude::render(record, no_tools).1,
-                Agent::Pi => adapters::pi::render(record, no_tools).1,
-                Agent::Codex => adapters::codex::render(record).1,
-            })
-            .unwrap_or_else(|| turn.text.clone());
-        let body = crate::model::sanitize(&body);
-        let heading = style::turn_heading(&turn.kind, &turn.time);
-        out.push_str(&format!("{heading}\n\n{body}\n\n"));
+        {
+            out.push_str(&render_record(agent, record, no_tools, expanded));
+            out.push('\n');
+        }
     }
     out
 }

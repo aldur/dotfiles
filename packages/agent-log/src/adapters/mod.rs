@@ -5,11 +5,153 @@
 
 use serde_json::Value;
 
-use crate::model::{Session, Turn};
+use crate::model::{Block, Session, Turn};
 
 pub mod claude;
 pub mod codex;
 pub mod pi;
+
+fn content_text(content: &Value) -> String {
+    match content {
+        Value::String(text) => text.clone(),
+        Value::Array(parts) => parts
+            .iter()
+            .filter_map(|part| part.get("text").and_then(Value::as_str))
+            .collect::<Vec<_>>()
+            .join(" "),
+        _ => String::new(),
+    }
+}
+
+fn is_tool_block(block: &Value) -> bool {
+    matches!(
+        block.get("type").and_then(Value::as_str),
+        Some("tool_use" | "tool_result" | "toolCall" | "toolResult")
+    )
+}
+
+fn is_empty_thinking(block: &Value) -> bool {
+    block.get("type").and_then(Value::as_str) == Some("thinking")
+        && block
+            .get("thinking")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .is_empty()
+}
+
+fn block_text(block: &Value) -> String {
+    match block.get("type").and_then(Value::as_str) {
+        Some("text") => block
+            .get("text")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .into(),
+        Some("thinking") => block
+            .get("thinking")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .into(),
+        Some("tool_use" | "toolCall") => {
+            let name = block.get("name").and_then(Value::as_str).unwrap_or("?");
+            let args = block
+                .get("input")
+                .or_else(|| block.get("arguments"))
+                .map(Value::to_string)
+                .unwrap_or_default();
+            format!("{name} {args}")
+        }
+        Some("tool_result" | "toolResult") => content_text(&block["content"]),
+        _ => String::new(),
+    }
+}
+
+fn message_text(message: &Value, no_tools: bool) -> String {
+    match message.get("content") {
+        Some(Value::String(text)) => text.clone(),
+        Some(Value::Array(blocks)) => blocks
+            .iter()
+            .filter(|b| !(no_tools && is_tool_block(b)))
+            .map(block_text)
+            .filter(|s| !s.is_empty())
+            .collect::<Vec<_>>()
+            .join(" "),
+        _ => String::new(),
+    }
+}
+
+fn message_blocks(content: &Value, no_tools: bool) -> Vec<Block> {
+    match content {
+        Value::String(text) => vec![Block::text(text.clone())],
+        Value::Array(blocks) => blocks
+            .iter()
+            .filter(|b| !(is_empty_thinking(b) || no_tools && is_tool_block(b)))
+            .map(|block| match block.get("type").and_then(Value::as_str) {
+                Some("thinking") => Block::detail("thinking", block_text(block)),
+                Some("tool_use" | "toolCall") => Block::detail(
+                    format!(
+                        "tool: {}",
+                        block.get("name").and_then(Value::as_str).unwrap_or("?")
+                    ),
+                    block
+                        .get("input")
+                        .or_else(|| block.get("arguments"))
+                        .map(|value| serde_json::to_string_pretty(value).unwrap_or_default())
+                        .unwrap_or_default(),
+                ),
+                Some("tool_result" | "toolResult") => {
+                    Block::detail("tool result", block_text(block))
+                }
+                _ => Block::text(
+                    block
+                        .get("text")
+                        .and_then(Value::as_str)
+                        .unwrap_or("")
+                        .into(),
+                ),
+            })
+            .filter(|block| !block.text.is_empty())
+            .collect(),
+        _ => Vec::new(),
+    }
+}
+
+pub fn blocks(agent: Agent, record: &Value, no_tools: bool) -> (String, Vec<Block>) {
+    match agent {
+        Agent::Claude => (
+            record
+                .get("type")
+                .and_then(Value::as_str)
+                .unwrap_or("?")
+                .into(),
+            message_blocks(&record["message"]["content"], no_tools),
+        ),
+        Agent::Pi => (
+            record["message"]
+                .get("role")
+                .and_then(Value::as_str)
+                .unwrap_or("?")
+                .into(),
+            message_blocks(&record["message"]["content"], no_tools),
+        ),
+        Agent::Codex => codex::blocks(record),
+    }
+}
+
+/// Search text for one record, independent of display formatting or folding.
+pub fn text(agent: Agent, record: &Value) -> String {
+    let kind = record.get("type").and_then(Value::as_str).unwrap_or("");
+    let text = match agent {
+        Agent::Claude if matches!(kind, "user" | "assistant") => {
+            message_text(&record["message"], false)
+        }
+        Agent::Pi if kind == "message" => message_text(&record["message"], false),
+        Agent::Codex => codex::payload_parts(&record["payload"])
+            .map(|(_, text)| text)
+            .unwrap_or_default(),
+        _ => String::new(),
+    };
+    crate::model::flatten(&text)
+}
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Agent {

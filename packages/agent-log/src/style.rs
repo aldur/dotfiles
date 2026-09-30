@@ -1,14 +1,4 @@
-//! The colour setting. The program makes the decision one time.
-//!
-//! Four conditions need three different answers. Thus this is a setting and
-//! not a test of the output at each place that writes text:
-//!
-//!   * output to a terminal: use colour.
-//!   * output to a pipe or a file: use no colour. If not, the file gets
-//!     escape sequences.
-//!   * `--pretty`: use no colour, because glow or bat adds its own.
-//!   * an fzf preview: use colour, because fzf shows escape sequences. The
-//!     output is a pipe, thus the preview command asks for colour.
+//! Terminal styling. NO_COLOR takes precedence over explicit colour options.
 
 use std::io::IsTerminal;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -57,9 +47,6 @@ pub fn assistant(text: &str) -> String {
 }
 pub fn thinking(text: &str) -> String {
     paint("2;3", text)
-}
-pub fn cyan(text: &str) -> String {
-    paint("36", text)
 }
 pub fn tool(text: &str) -> String {
     paint("35", text)
