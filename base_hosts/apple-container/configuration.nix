@@ -7,6 +7,13 @@
 }:
 let
   fishWithoutDocs = pkgs.callPackage ./fish-without-docs.nix { };
+  piWithDefaultUrl =
+    url:
+    pkgs.writeShellScript "pi-with-default-url" ''
+      # Use the default only if LLAMA_BASE_URL is unset or empty.
+      export LLAMA_BASE_URL="''${LLAMA_BASE_URL:-${url}}"
+      exec pi "$@"
+    '';
 in
 {
   imports = [
@@ -48,16 +55,13 @@ in
       pi.enable = true;
     };
 
-    # A llama-server on the macOS host is reachable at the gateway of Apple
-    # `container`'s default subnet. The bundled pi-llama plugin reads
-    # LLAMA_BASE_URL (an OpenAI-style base, /v1 included).
+    # Use the macOS host server by default. Set LLAMA_BASE_URL to override it.
+    # Include /v1 in the URL.
     home.shellAliases = {
-      pi = "env LLAMA_BASE_URL=http://192.168.64.1:8080/v1 pi";
-      # Same, but jailed on the network side only: nothing reachable except
-      # the llama-server hole, while all of $HOME stays writable (the rest of
-      # the filesystem is still read-only). Inside the sandbox the server
-      # appears at 127.0.0.1 — the relay door — not the gateway.
-      faraday-pi = "faraday --allow 192.168.64.1:8080 --writable-home -- env LLAMA_BASE_URL=http://127.0.0.1:8080/v1 pi";
+      pi = "${piWithDefaultUrl "http://192.168.64.1:8080/v1"}";
+      # Only the host server is reachable. Inside the sandbox, use its local
+      # relay address. A URL override does not change the allowed server.
+      faraday-pi = "faraday --allow 192.168.64.1:8080 --writable-home -- ${piWithDefaultUrl "http://127.0.0.1:8080/v1"}";
     };
   };
 }

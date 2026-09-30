@@ -1,6 +1,9 @@
 {
+  lib,
   stdenvNoCC,
   fetchFromGitHub,
+  nodejs,
+  pi-coding-agent,
 }:
 
 # Hugging Face's llama.cpp provider for pi. Wrapped in a derivation (rather
@@ -17,10 +20,9 @@ stdenvNoCC.mkDerivation {
     hash = "sha256-Q63awf1R2Un2Is0UfxFFTKH0FKeayP5+5/MhpzVNJn0=";
   };
 
-  # A chat template that reads reasoning_effort accepts graded thinking
-  # levels (for example Qwen 3.8), but the plugin only sniffs the boolean
-  # enable_thinking and caps the UI at off/medium. Sniff reasoning_effort
-  # too and register Pi's generic "chat-template" format for it.
+  # Only use Qwen's effort levels when the template lists them. Read local
+  # model settings before the first prompt. Limit model-list requests to one
+  # second, and cancel old requests when the user changes models.
   # Drop once merged upstream: https://github.com/huggingface/pi-llama
   patches = [
     ./pi-llama-reasoning-effort.patch
@@ -36,6 +38,14 @@ stdenvNoCC.mkDerivation {
     substituteInPlace index.ts \
       --replace-fail "Math.min(DEFAULT_MAX_TOKENS, contextWindow)" "contextWindow" \
       --replace-fail "Math.min(DEFAULT_MAX_TOKENS, nCtx)" "nCtx"
+  '';
+
+  doCheck = true;
+  checkPhase = ''
+    runHook preCheck
+    ${lib.getExe nodejs} --no-warnings ${./pi-llama-check.mjs} "$PWD/index.ts" \
+      "$(dirname "$(find ${pi-coding-agent}/lib -path '*/dist/core/model-registry.js')")/../.."
+    runHook postCheck
   '';
 
   installPhase = ''

@@ -53,9 +53,9 @@ in
   pi-coding-agent = unstable.pi-coding-agent.override { inherit (prev) buildNpmPackage; };
 
   piPlugins = {
-    pi-llama = prev.callPackage ../packages/pi/plugins/pi-llama.nix { };
-    # final.callPackage: the build-time check must see the same
+    # final.callPackage: the build-time checks must see the same
     # pi-coding-agent (above) that the wrapper runs.
+    pi-llama = final.callPackage ../packages/pi/plugins/pi-llama.nix { };
     pi-no-docs = final.callPackage ../packages/pi/plugins/pi-no-docs { };
     pi-statusline = prev.callPackage ../packages/pi/plugins/pi-statusline { };
     pi-system-prompt = prev.callPackage ../packages/pi/plugins/pi-system-prompt { };

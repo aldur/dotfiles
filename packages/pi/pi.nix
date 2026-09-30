@@ -80,6 +80,30 @@ let
         }:$PATH"
       }
 
+      run_pi() {
+        local pi_bin="$1"
+        shift
+        ${lib.optionalString (plugins ? pi-llama) ''
+          # Add local server settings after Pi's own help.
+          if [[ $# -eq 1 && ( "$1" == --help || "$1" == -h ) ]]; then
+            "$pi_bin" "''${flags[@]}" "$@"
+            printf '%s\n' ${lib.escapeShellArg ''
+
+              llama.cpp provider:
+                LLAMA_BASE_URL  Server API URL, including /v1.
+                                Default: http://localhost:8080/v1
+                                Apple Container default: http://192.168.64.1:8080/v1
+                                faraday-pi default: http://127.0.0.1:8080/v1
+
+                Set LLAMA_BASE_URL to override the default:
+                  LLAMA_BASE_URL=http://my-server:8080/v1 pi
+            ''}
+            exit 0
+          fi
+        ''}
+        exec "$pi_bin" "''${flags[@]}" "$@"
+      }
+
       # Prefer a pi that has updated itself. Checking the install path directly
       # (rather than PATH) makes the updated copy win even when pnpm's global
       # bin directory is not on PATH. pnpm 11 links binaries into
@@ -87,7 +111,7 @@ let
       for user_pi in "$pnpm_home/bin/pi" "$pnpm_home/pi"; do
         if [ -x "$user_pi" ]; then
           use_pnpm
-          exec "$user_pi" "''${flags[@]}" "$@"
+          run_pi "$user_pi" "$@"
         fi
       done
 
@@ -100,7 +124,7 @@ let
           --ignore-scripts --config.minimumReleaseAge=0 ${npmPackage}
       fi
 
-      exec ${lib.getExe pi-coding-agent} "''${flags[@]}" "$@"
+      run_pi ${lib.getExe pi-coding-agent} "$@"
     '';
   };
 in

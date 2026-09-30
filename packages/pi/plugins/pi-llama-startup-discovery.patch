@@ -1,15 +1,220 @@
 diff --git a/index.ts b/index.ts
-index 1dc807b..e7abc46 100644
+index 2be7242..3dd9459 100644
 --- a/index.ts
 +++ b/index.ts
-@@ -642,4 +642,15 @@ export default async function (pi: ExtensionAPI) {
+@@ -21,6 +21,8 @@ const DEFAULT_CONTEXT_WINDOW = 8192;
+ // maxTokens (see model-registry.ts parseModels).
+ const DEFAULT_MAX_TOKENS = 16384;
+ const PROPS_TIMEOUT_MS = 120_000;
++// Give up quickly if the local server does not answer.
++const MODELS_TIMEOUT_MS = 1_000;
+ 
+ const ModelsResponseSchema = Type.Object({
+ 	models: Type.Optional(
+@@ -234,11 +236,12 @@ export default async function (pi: ExtensionAPI) {
+ 	const baseUrl = (process.env.LLAMA_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
+ 	const apiKey = process.env.LLAMA_API_KEY ?? "no-key";
+ 
+-	async function refreshProvider(): Promise<void> {
++	async function refreshProvider(quiet = false): Promise<void> {
++		const warn = (message: string) => { if (!quiet) console.warn(message); };
+ 		try {
+-			const response = await fetch(`${baseUrl}/models`);
++			const response = await fetch(`${baseUrl}/models`, { signal: AbortSignal.timeout(MODELS_TIMEOUT_MS) });
+ 			if (!response.ok) {
+-				console.warn(`[llama-cpp] ${baseUrl}/models returned ${response.status}`);
++				warn(`[llama-cpp] ${baseUrl}/models returned ${response.status}`);
+ 				return;
+ 			}
+ 
+@@ -247,7 +250,7 @@ export default async function (pi: ExtensionAPI) {
+ 				const errors = [...validateModelsResponse.Errors(payload)]
+ 					.map((e) => `${"path" in e ? e.path : ""} ${e.message}`)
+ 					.join("; ");
+-				console.warn(`[llama-cpp] invalid /models response: ${errors}`);
++				warn(`[llama-cpp] invalid /models response: ${errors}`);
+ 				return;
+ 			}
+ 
+@@ -303,7 +306,7 @@ export default async function (pi: ExtensionAPI) {
+ 			});
+ 
+ 			if (currentModels.length === 0) {
+-				console.warn(`[llama-cpp] no models returned from ${baseUrl}/models`);
++				warn(`[llama-cpp] no models returned from ${baseUrl}/models`);
+ 				return;
+ 			}
+ 
+@@ -319,12 +322,13 @@ export default async function (pi: ExtensionAPI) {
+ 				models: currentModels,
+ 			});
+ 		} catch (error) {
+-			console.warn(`[llama-cpp] failed to reach ${baseUrl}/models: ${(error as Error).message}`);
++			warn(`[llama-cpp] failed to reach ${baseUrl}/models: ${(error as Error).message}`);
+ 		}
+ 	}
+ 
+ 	const discoveredMetadata = new Set<string>();
+-	const pendingMetadata = new Set<string>();
++	const pendingMetadata = new Map<string, number>();
++	let selectionVersion = 0;
+ 	let currentlyLoadedModel: string | null = null;
+ 	let statusTimeout: ReturnType<typeof setTimeout> | undefined;
+ 	let sseAbortController: AbortController | null = null;
+@@ -349,8 +353,9 @@ export default async function (pi: ExtensionAPI) {
+ 			sseAbortController = null;
+ 		}
+ 
+-		sseAbortController = new AbortController();
+-		const signal = sseAbortController.signal;
++		const controller = new AbortController();
++		sseAbortController = controller;
++		const signal = controller.signal;
+ 
+ 		try {
+ 			const response = await fetch(`${baseUrl.replace(/\/v1$/, "")}/models/sse`, { signal });
+@@ -372,7 +377,7 @@ export default async function (pi: ExtensionAPI) {
+ 
+ 			while (!signal.aborted) {
+ 				const { done, value } = await reader.read();
+-				if (done) {
++				if (done || signal.aborted) {
+ 					break;
+ 				}
+ 
+@@ -455,14 +460,13 @@ export default async function (pi: ExtensionAPI) {
+ 			// stale ctx (session was replaced while streaming).
+ 			const msg = (error as Error).message;
+ 			if (
+-				isStaleContextError(error) ||
+-				(signal.aborted && (error instanceof DOMException || msg === "terminated"))
++				isStaleContextError(error) || signal.aborted
+ 			) {
+ 				return;
+ 			}
+ 			notify(ctx, `[llama-cpp] SSE error: ${msg}`, "warning");
+ 		} finally {
+-			sseAbortController = null;
++			if (sseAbortController === controller) sseAbortController = null;
+ 		}
+ 	}
+ 
+@@ -473,6 +477,17 @@ export default async function (pi: ExtensionAPI) {
+ 		timeoutMs = PROPS_TIMEOUT_MS,
+ 		selectedModel?: MutableModelMetadata,
+ 	): Promise<void> {
++		const version = selectionVersion;
++		const isCurrentSelection = () => {
++			if (version !== selectionVersion) return false;
++			try {
++				return ctx?.model?.provider === PROVIDER_ID && ctx.model.id === modelId;
++			} catch (error) {
++				if (isStaleContextError(error)) return false;
++				throw error;
++			}
++		};
++		if (!isCurrentSelection()) return;
+ 		const model = currentModels.find((m) => m.id === modelId);
+ 		if (!model) {
+ 			return;
+@@ -499,19 +514,20 @@ export default async function (pi: ExtensionAPI) {
+ 				return;
+ 			}
+ 		}
+-		if (pendingMetadata.has(modelId)) {
++		if (pendingMetadata.get(modelId) === version) {
+ 			return;
+ 		}
+ 
+-		pendingMetadata.add(modelId);
++		pendingMetadata.set(modelId, version);
+ 		// Cancel any pending clear timeout from a previous model load.
+ 		clearFooterStatusTimeout();
+ 		// Abort any in-flight /props request from a previous model.
+ 		if (propsAbortController) {
+ 			propsAbortController.abort();
+ 		}
+-		propsAbortController = new AbortController();
+-		const timer = setTimeout(() => propsAbortController.abort(), timeoutMs);
++		const controller = new AbortController();
++		propsAbortController = controller;
++		const timer = setTimeout(() => controller.abort(), timeoutMs);
+ 		const shouldAutoload = autoload && !isLoaded;
+ 		const propsUrl = `${baseUrl.replace(/\/v1$/, "")}/props?model=${encodeURIComponent(modelId)}&autoload=${shouldAutoload}`;
+ 		const clearFooterStatusLater = () => {
+@@ -546,7 +562,8 @@ export default async function (pi: ExtensionAPI) {
+ 				void connectToLoadingProgress(modelId, ctx, loader);
+ 			}
+ 
+-			const response = await fetch(propsUrl, { signal: propsAbortController.signal });
++			const response = await fetch(propsUrl, { signal: controller.signal });
++			if (controller.signal.aborted || !isCurrentSelection()) return;
+ 			if (!response.ok) {
+ 				// 500 during autoload is expected when the server cancels a load to start
+ 				// another model. Suppress the notification for that case.
+@@ -556,6 +573,9 @@ export default async function (pi: ExtensionAPI) {
+ 				return;
+ 			}
+ 			const data: unknown = await response.json();
++			// The user may switch models while the response is loading.
++			// Ignore this result if it belongs to an older selection.
++			if (controller.signal.aborted || !isCurrentSelection()) return;
+ 			if (!validatePropsResponse.Check(data)) {
+ 				const errors = [...validatePropsResponse.Errors(data)]
+ 					.map((e) => `${"path" in e ? e.path : ""} ${e.message}`)
+@@ -622,37 +642,52 @@ export default async function (pi: ExtensionAPI) {
+ 			const err = error as Error;
+ 			// Suppress notification for aborted requests (model was switched) and for a
+ 			// stale ctx (session was replaced while awaiting) — both are expected.
+-			if (err.name !== "AbortError" && !isStaleContextError(err)) {
++			if (!controller.signal.aborted && isCurrentSelection() && err.name !== "AbortError" && !isStaleContextError(err)) {
+ 				notify(ctx, `[llama-cpp] /props for ${modelId} failed: ${err.message}`, "error");
+ 			}
+ 		} finally {
+ 			clearTimeout(timer);
+-			pendingMetadata.delete(modelId);
+-			propsAbortController = null;
+-			// Stop SSE connection when done
+-			if (sseAbortController) {
+-				sseAbortController.abort();
+-				sseAbortController = null;
++			if (pendingMetadata.get(modelId) === version) pendingMetadata.delete(modelId);
++			// Do not let an old request stop a newer one.
++			if (propsAbortController === controller) {
++				propsAbortController = null;
++				sseAbortController?.abort();
+ 			}
+ 		}
+ 	}
+ 
+-	await refreshProvider();
++	// Pi chooses the model after extensions load. Try the local server now,
++	// but stop after one second. Keep failures quiet for hosted sessions.
++	await refreshProvider(true);
+ 
+-	pi.on("input", async (event) => {
++	pi.on("input", async (event, ctx) => {
+ 		const trimmed = event.text.trim().toLowerCase();
+ 		if (trimmed === "/model") {
+-			await refreshProvider();
++			await refreshProvider(ctx.model?.provider !== PROVIDER_ID);
+ 		}
+ 	});
+ 
+ 	pi.on("model_select", (event, ctx) => {
++		selectionVersion++;
++		propsAbortController?.abort();
++		sseAbortController?.abort();
++		clearFooterStatusTimeout();
++		ctx.ui.setWidget(PROVIDER_ID, undefined);
+ 		if (event.model.provider !== PROVIDER_ID) {
+ 			return;
+ 		}
  		void discoverModelMetadata(event.model.id, ctx, true, PROPS_TIMEOUT_MS, event.model);
  	});
  
-+	// A model restored at startup emits no model_select. Discovery then waits
-+	// for the first request, and thinking stays off until that point. Discover
-+	// the active model when the session starts, and await it so a first turn
-+	// cannot skip discovery through the pendingMetadata early return.
++	// Restored sessions do not emit model_select. Read the local model
++	// settings before the first prompt.
 +	pi.on("session_start", async (_event, ctx) => {
 +		const model = ctx.model;
 +		if (model?.provider === PROVIDER_ID) {
@@ -18,3 +223,13 @@ index 1dc807b..e7abc46 100644
 +	});
 +
  	// Discover /props for already-active models because re-selecting them does not emit model_select.
+ 	pi.on("before_agent_start", async (_event, ctx) => {
+ 		try {
+@@ -668,6 +703,7 @@ export default async function (pi: ExtensionAPI) {
+ 	});
+ 
+ 	pi.on("session_shutdown", () => {
++		selectionVersion++;
+ 		clearFooterStatusTimeout();
+ 		// Stop in-flight /props and SSE so they don't resume against a stale ctx.
+ 		propsAbortController?.abort();
