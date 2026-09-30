@@ -9,6 +9,7 @@ set -euo pipefail
 # @option --env* <NAME> Additional inherited environment variable (repeatable)
 # @flag --git-write Allow Git metadata writes for this launch (including hooks/config)
 # @flag --kvm Forward /dev/kvm for hardware-accelerated virtual machines
+# @flag --docker Allow access to the current user's rootless Docker daemon
 # @arg cmd~ Command to run inside the sandbox (required)
 
 # @sandbox-configuration@
@@ -22,6 +23,7 @@ argc_rw=()
 argc_env=()
 argc_git_write=0
 argc_kvm=0
+argc_docker=0
 argc_cmd=()
 eval "$(argc --argc-eval "$0" "$@")"
 
@@ -166,6 +168,30 @@ if [ "$allow_nix_daemon" = 1 ] && [ -S /nix/var/nix/daemon-socket/socket ]; then
   nix_environment=(--setenv NIX_REMOTE daemon)
 fi
 
+docker_environment=()
+docker_args=()
+if [ "$allow_docker" = 1 ] || [ "$argc_docker" = 1 ]; then
+  [ -z "${DOCKER_CONTEXT:-}" ] || die "Docker contexts are not supported; unset DOCKER_CONTEXT and set DOCKER_HOST to a local Unix socket"
+  if [ -n "${DOCKER_HOST:-}" ]; then
+    case "$DOCKER_HOST" in
+      unix:///*) docker_socket=${DOCKER_HOST#unix://} ;;
+      *) die "Docker access requires a local Unix socket: set DOCKER_HOST=unix:///path/to/docker.sock" ;;
+    esac
+  else
+    docker_socket=$host_runtime/docker.sock
+  fi
+  [ -S "$docker_socket" ] || die "Docker socket not found: $docker_socket; start Docker or set DOCKER_HOST"
+  [ -w "$docker_socket" ] || die "Docker socket is not writable: $docker_socket"
+  docker_socket=$(realpath -e -- "$docker_socket")
+  # The Python launcher checks the daemon before mounting the socket.
+  docker_args=(--docker-socket "$docker_socket")
+  service_mounts+=(--sandbox-docker)
+  docker_environment=(
+    --setenv DOCKER_HOST "unix://$runtime/docker.sock"
+    --unsetenv DOCKER_CONTEXT
+  )
+fi
+
 # The proxy runs outside the sandbox and exports only the filtered socket.
 bus_addr=${DBUS_SESSION_BUS_ADDRESS:-unix:path=$host_runtime/bus}
 proxy_dir=$(mktemp -d "/tmp/$sandbox_name-dbus-proxy.XXXXXX")
@@ -241,6 +267,7 @@ environment_args+=(
   --setenv GNUPGHOME "$home_dir/.gnupg"
   --setenv GIT_DISCOVERY_ACROSS_FILESYSTEM 1
   "${nix_environment[@]}"
+  "${docker_environment[@]}"
 )
 
 isolation_args=(
@@ -262,6 +289,7 @@ done
   close_extra_fds
   exec "$sandbox_python" -I "$sandbox_launcher" \
     --home "$home_dir" --state-kind "$agent_state_kind" --git-write "$argc_git_write" \
+    "${docker_args[@]}" \
     "${policy_args[@]}" -- "$sandbox_bwrap" \
     "${filesystem_args[@]}" \
     "${device_mounts[@]}" \

@@ -13,6 +13,8 @@ codex-yolo --ro ~/dotfiles --workspace .
 claude-yolo --ro ~/dotfiles --workspace . -- --resume
 codex-yolo --kvm
 claude-yolo --kvm
+codex-yolo --docker
+claude-yolo --docker
 ```
 
 The `*-yolo` launchers accept the same sandbox options before the agent
@@ -30,11 +32,33 @@ or when the agent sandbox is disabled.
 | `--env NAME` | Also pass this environment variable. Repeatable. |
 | `--git-write` | Let the command write Git metadata for this launch. Prints a warning. |
 | `--kvm` | Forward `/dev/kvm` for hardware-accelerated VMs, including NixOS test drivers. |
+| `--docker` | Expose the current user's rootless Docker socket and set `DOCKER_HOST`. |
 
 KVM is hidden by default. `--kvm` requires a host `/dev/kvm` device that the
 current user can read and write; it does not change host permissions. It
 forwards only this device, so other host devices remain hidden. For example,
 use `codex-yolo --kvm` or `agent-sandbox --kvm -- nix run .#test.driverInteractive`.
+
+Docker access is off by default, including rootless Docker. Use `--docker`
+for one launch, or enable it in an agent's configuration:
+
+```nix
+programs.aldur.codex.sandbox.allowDocker = true;
+programs.aldur.claude-code.sandbox.allowDocker = true;
+```
+
+The launcher uses `DOCKER_HOST` when set. Otherwise, it uses
+`$XDG_RUNTIME_DIR/docker.sock`. There is no fallback to system Docker.
+The socket must exist, belong to the current non-root user, and be writable.
+The launcher checks that the connected daemon has the same user ID and
+reports rootless mode. Rootful Docker is rejected, regardless of the socket's
+name. Only local Unix sockets are supported. If `DOCKER_CONTEXT` is set,
+unset it and select the socket with `DOCKER_HOST`. Docker contexts and
+registry credentials from `~/.docker` are not copied into the sandbox.
+
+Inside the sandbox, `DOCKER_HOST` points to the forwarded socket. Rootless
+Docker runs outside the sandbox and can access host files with the host
+user's permissions. The workspace limits do not apply to Docker.
 
 Each path must exist. The launcher refuses large grants such as `/`, `/home`,
 your home directory, `/persist`, `/tmp`, `/nix` and `/etc`. It checks the
@@ -76,6 +100,7 @@ processes. Each extra grant and `--git-write` makes the protection weaker.
   session bus proxy that reaches only the listed bus names
   (`extraDbusTalk`). Selected sockets from the runtime directory
   (`extraRuntimeDirAllowlist`).
+  The Docker socket when enabled (`allowDocker` or `--docker`).
 - **Isolation.** Own user, PID, IPC and UTS namespaces. No capabilities. A
   seccomp filter denies terminal input injection, foreground-terminal
   reassignment and operations on the inherited process group. The command
@@ -144,7 +169,7 @@ See the [direnv policy](../../shared/programs/direnv/README.md).
 Set permanent grants per agent with
 `programs.aldur.<agent>.sandbox.filesystem.readOnlyPaths` and
 `readWritePaths`. Use strings, not Nix paths, or the contents go into the
-Nix store. The other options are `allowNixDaemon`,
+Nix store. The other options are `allowNixDaemon`, `allowDocker`,
 `extraEnvironmentAllowlist`, `extraRuntimeDirAllowlist` and `extraDbusTalk`.
 See [options.nix](options.nix).
 

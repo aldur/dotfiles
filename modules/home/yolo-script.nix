@@ -43,6 +43,7 @@ pkgs.writeArgcApplication {
     ${lib.concatMapStringsSep "\n" (name: "# @flag --${name} ${allFlags.${name}}") names}
     # @flag --git-write Allow Git metadata writes for this launch (including hooks/config)
     # @flag --kvm Forward /dev/kvm for hardware-accelerated virtual machines
+    # @flag --docker Allow access to the current user's rootless Docker daemon
     ${lib.concatStringsSep "\n" (
       lib.mapAttrsToList (name: description: "# @option --${name} ${description}") options
     )}
@@ -55,7 +56,7 @@ pkgs.writeArgcApplication {
     sandbox_args=()
     while [ $# -gt 0 ]; do
       case "$1" in
-        --git-write | --kvm)
+        --git-write | --kvm | --docker)
           sandbox_args+=("$1")
           wrapper_args+=("$1")
           ;;

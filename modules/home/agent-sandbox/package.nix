@@ -26,6 +26,7 @@ let
     agentReadWritePaths = [ ];
     stateKind = "";
     allowNixDaemon = true;
+    allowDocker = false;
     extraEnvironmentAllowlist = [ ];
   };
 
@@ -36,6 +37,7 @@ let
     in
     ''
       allow_nix_daemon=${if cfg.allowNixDaemon then "1" else "0"}
+      allow_docker=${if cfg.allowDocker then "1" else "0"}
       agent_read_only_paths=(${lib.escapeShellArgs cfg.agentReadOnlyPaths})
       agent_read_write_paths=(${lib.escapeShellArgs cfg.agentReadWritePaths})
       agent_state_kind=${lib.escapeShellArg cfg.stateKind}

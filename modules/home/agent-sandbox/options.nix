@@ -59,6 +59,20 @@ alias: {
       it to omit this socket. Do not use a trusted Nix user for confinement.
     '';
   };
+  allowDocker = mkOption {
+    type = types.bool;
+    default = false;
+    description = ''
+      Expose a rootless Docker socket and set DOCKER_HOST inside the sandbox.
+      Use DOCKER_HOST when set, otherwise $XDG_RUNTIME_DIR/docker.sock.
+      Only local Unix sockets are supported. The socket and daemon must
+      belong to the current non-root user, and the daemon must report
+      rootless mode. Missing sockets and rootful daemons stop the launch.
+      Rootless Docker can access host files with the host user's permissions,
+      beyond the workspace.
+      The wrapper also accepts --docker to enable this for one launch.
+    '';
+  };
   extraEnvironmentAllowlist = mkOption {
     type = types.listOf types.str;
     default = [ ];

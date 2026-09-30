@@ -8,6 +8,7 @@ Neither mode reads the caller's home, credentials, configuration or PATH.
 
 import errno
 import fcntl
+from http.server import BaseHTTPRequestHandler
 import json
 import os
 from pathlib import Path
@@ -16,6 +17,7 @@ import pyte
 import re
 import select
 import signal
+from socketserver import UnixStreamServer
 import struct
 import subprocess
 import sys
@@ -51,8 +53,22 @@ def run(command, **kwargs):
 
 
 def wrappers(config):
+    class DockerHandler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            assert self.path == '/info'
+            body = b'{"SecurityOptions":["name=rootless"]}'
+            self.send_response(200)
+            self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, *_):
+            pass
+
+    docker = UnixStreamServer(str(Path(os.environ['XDG_RUNTIME_DIR']) / 'docker.sock'), DockerHandler)
+    Thread(target=docker.serve_forever, daemon=True).start()
     probe = WORK / 'probe'
-    executable(probe, '''import json, os, sys, tomllib
+    executable(probe, '''import json, os, socket, sys, tomllib
 from pathlib import Path
 profile_config = None
 profile_name = None
@@ -70,11 +86,16 @@ record = {'argv': sys.argv[1:], 'env': dict(os.environ), 'cwd': os.getcwd(),
           'profile_config': profile_config, 'profile_name': profile_name,
           'host_visible': Path.home().joinpath('host-only').exists(),
           'kvm_visible': Path('/dev/kvm').is_char_device(),
+          'docker_visible': Path(os.environ['XDG_RUNTIME_DIR']).joinpath('docker.sock').is_socket(),
           'codex_state': Path.home().joinpath('.codex/auth.json').exists()}
 if 'probe-kvm' in sys.argv:
     fd = os.open('/dev/kvm', os.O_RDWR)
     os.write(fd, b'fixture')
     os.close(fd)
+if 'probe-docker' in sys.argv:
+    with socket.socket(socket.AF_UNIX) as client:
+        client.settimeout(3)
+        client.connect(os.environ['DOCKER_HOST'].removeprefix('unix://'))
 if 'probe-grants' in sys.argv:
     record['grants'] = {}
     for name in ('Reference notes', 'Extra reference', 'Shared code', 'Extra output', 'Other workspace/.git'):
@@ -98,7 +119,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
         link(BIN / kind, probe)
     env = dict(os.environ, EDITOR='fixture-editor --wait', VISUAL='fixture-visual -f',
                HOST_SECRET='synthetic-host-secret', EXTRA_ENV='extra-fixture')
-    payload = ['resume', 'two words', '', 'line one\nline two', '$(literal)', '--no-sandbox', '--kvm', '--help']
+    payload = ['resume', 'two words', '', 'line one\nline two', '$(literal)', '--no-sandbox', '--kvm', '--docker', '--help']
     calls = WORK / 'calls.jsonl'
     stamp = HOME / '.claude/yolo-refresh'
 
@@ -123,7 +144,10 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                 assert record['cwd'] == str(WORK), record
                 assert record['host_visible'] == (not sandboxed), record
                 assert record['kvm_visible'] == (not sandboxed), record
+                assert record['docker_visible'] == (not sandboxed or case['docker']), record
                 actual = record['env']
+                if sandboxed:
+                    assert ('DOCKER_HOST' in actual) == case['docker'], record
                 for name in ('EDITOR', 'VISUAL'):
                     assert actual.get(name) == env[name], (name, record)
                 assert ('HOST_SECRET' in actual) == (not sandboxed), record
@@ -140,6 +164,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
             result, records = invoke(launcher, ['--help'])
             assert not records, records
             assert '--kvm' in result.stdout + result.stderr, result
+            assert '--docker' in result.stdout + result.stderr, result
             for option in ('--workspace', '--ro', '--rw', '--env', '--profile'):
                 result, records = invoke(launcher, [option], code=1)
                 assert 'requires a value' in result.stderr and not records, result
@@ -147,6 +172,10 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
             assert records[-1]['argv'] == [*prefix, '--ro', 'agent argument'], records
             _, records = invoke(launcher, ['--', '--kvm'])
             assert records[-1]['argv'] == [*prefix, '--kvm'], records
+            _, records = invoke(launcher, ['--', '--docker'])
+            assert records[-1]['argv'] == [*prefix, '--docker'], records
+            result, records = invoke(launcher, ['--docker', '--no-sandbox'], code=1)
+            assert 'sandbox options require' in result.stderr and not records, result
             result, records = invoke(launcher, ['--kvm', '--no-sandbox'], code=1)
             assert 'sandbox options require' in result.stderr and not records, result
             result, records = invoke(launcher, ['--ro', str(HOME / 'Reference notes'), '--no-sandbox'], code=1)
@@ -157,6 +186,9 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                           '--rw', str(HOME / 'Shared code'), '--rw=' + str(HOME / 'Extra output'),
                           '--env', 'HOST_SECRET', '--env=EXTRA_ENV', '--profile=' + kind]
             if case['sandbox']:
+                _, records = invoke(launcher, ['--docker', 'probe-docker'])
+                assert records[-1]['argv'] == [*prefix, 'probe-docker'], records
+                assert records[-1]['docker_visible'] and not records[-1]['host_visible'], records
                 _, records = invoke(launcher, ['--kvm', 'probe-kvm'])
                 assert records[-1]['argv'] == [*prefix, 'probe-kvm'], records
                 assert records[-1]['kvm_visible'] and not records[-1]['host_visible'], records
@@ -182,6 +214,8 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                 _, records = invoke(launcher, ['--profile', 'default', 'resume'])
                 assert not records[-1]['codex_state'], records
             else:
+                result, records = invoke(launcher, ['--docker'], code=1)
+                assert 'sandbox options require' in result.stderr and not records, result
                 result, records = invoke(launcher, ['--kvm'], code=1)
                 assert 'sandbox options require' in result.stderr and not records, result
                 result, records = invoke(launcher, grant_args, code=1)
@@ -315,6 +349,8 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
     assert stamp.read_text() == previous_stamp, 'failed refresh replaced the cache stamp'
     print('passed: Claude online mode, model refresh, cached startup and failed-refresh fallback', flush=True)
 
+    docker.shutdown()
+    docker.server_close()
     if not config['native']:
         return
 

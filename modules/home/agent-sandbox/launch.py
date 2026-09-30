@@ -4,11 +4,14 @@ import argparse
 import ctypes
 from contextlib import contextmanager
 import fcntl
+import http.client
 import json
 import os
 from pathlib import Path
 import signal
+import socket
 import stat
+import struct
 import subprocess
 import sys
 
@@ -155,6 +158,40 @@ class Policy:
             fail(f"mount source changed to a symlink: {source}")
         self.fds.append(fd)
         return ["--ro-bind-fd" if readonly else "--bind-fd", str(fd), str(destination)]
+
+    def rootless_docker(self, source):
+        uid = os.getuid()
+        mounts = self.bind(source, Path(f"/run/user/{uid}/docker.sock"), readonly=False)
+        fd = self.fds[-1]
+        info = os.fstat(fd)
+        if uid == 0 or info.st_uid != uid or not stat.S_ISSOCK(info.st_mode):
+            fail("Docker requires a socket owned by the current non-root user")
+
+        # Check the same socket that we mount, even if its path is replaced.
+        with socket.socket(socket.AF_UNIX) as client:
+            client.settimeout(2)
+            client.connect(f"/proc/self/fd/{fd}")
+            credentials = client.getsockopt(socket.SOL_SOCKET, socket.SO_PEERCRED, struct.calcsize("3i"))
+            _, peer_uid, _ = struct.unpack("3i", credentials)
+            if peer_uid != uid:
+                fail("Docker daemon must run as the current non-root user")
+            connection = http.client.HTTPConnection("localhost", timeout=2)
+            connection.sock = client
+            try:
+                connection.request("GET", "/info")
+                response = connection.getresponse()
+                if response.status != 200:
+                    fail("cannot verify Docker rootless mode: /info request failed")
+                body = response.read(1_048_577)
+                if len(body) > 1_048_576:
+                    fail("cannot verify Docker rootless mode: /info response too large")
+                details = json.loads(body)
+                security = details.get("SecurityOptions") if isinstance(details, dict) else None
+                if not isinstance(security, list) or "name=rootless" not in security:
+                    fail("Docker daemon is not rootless; rootful Docker is not allowed")
+            finally:
+                connection.close()
+        return mounts
 
     def agent_state(self, kind):
         """Mount the host state of the selected agent, writable."""
@@ -346,6 +383,7 @@ def main():
     parser.add_argument("--home", required=True, type=Path)
     parser.add_argument("--state-kind", choices=("", "codex", "claude"), required=True)
     parser.add_argument("--git-write", choices=("0", "1"), required=True)
+    parser.add_argument("--docker-socket", type=Path)
     parser.add_argument("--writable", nargs=2, action="append", default=[])
     parser.add_argument("--readonly", nargs=2, action="append", default=[])
     options, command = parser.parse_known_args()
@@ -380,6 +418,9 @@ def main():
             info = os.fstat(policy.fds[-1])
             pinned.append((source, info.st_dev, info.st_ino))
         state = policy.agent_state(options.state_kind)
+        if options.docker_socket is not None:
+            index = mounts.index("--sandbox-docker")
+            mounts[index:index + 1] = policy.rootless_docker(options.docker_socket)
         protections = policy.metadata(writable, readonly)
         for source, device, inode in pinned:
             if identity(source)[:2] != [device, inode]:
@@ -408,6 +449,6 @@ def main():
 if __name__ == "__main__":
     try:
         sys.exit(main())
-    except (OSError, ValueError, RuntimeError) as error:
+    except (OSError, ValueError, RuntimeError, http.client.HTTPException) as error:
         print(f"agent-sandbox: {error}", file=sys.stderr)
         sys.exit(1)

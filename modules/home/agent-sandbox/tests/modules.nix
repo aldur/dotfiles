@@ -58,6 +58,12 @@ let
       claude = true;
       sandbox = false;
     }
+    {
+      codex = true;
+      claude = true;
+      sandbox = true;
+      docker = true;
+    }
   ];
 
   # Each agent has a `<agent>-yolo` script with a fixed launch line. The
@@ -79,10 +85,12 @@ let
         codex = {
           enable = case.codex;
           sandbox.enable = case.sandbox;
+          sandbox.allowDocker = case.docker or false;
         };
         claude-code = {
           enable = case.claude;
           sandbox.enable = case.sandbox;
+          sandbox.allowDocker = case.docker or false;
         };
       };
     }
@@ -115,6 +123,7 @@ let
       builtins.toJSON {
         cases = lib.zipListsWith (case: home: {
           inherit (case) sandbox;
+          docker = case.docker or false;
           launchers = lib.mapAttrs (name: _: lib.getExe (findPackage "${name}-yolo" home)) (
             lib.filterAttrs (_: agent: agent.enabled case) agents
           );

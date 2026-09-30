@@ -2,16 +2,20 @@
 let
   mkWrapper = import ../package.nix { inherit pkgs lib; };
   wrapper = mkWrapper {
-    profiles = lib.genAttrs [ "claude" "codex" ] (name: {
-      runtimeAllowlist = [ "allowed" ];
-      extraDbusTalk = [ "org.example.Allowed" ];
-      readOnlyPaths = [ "~/Reference notes" ];
-      readWritePaths = [ "~/Shared code" ];
-      stateKind = name;
-      agentReadOnlyPaths = [ "~/.${name}/bin" ];
-      extraEnvironmentAllowlist = [ "PROFILE_VALUE" ];
-      allowNixDaemon = name == "codex";
-    });
+    profiles =
+      lib.genAttrs [ "claude" "codex" ] (name: {
+        runtimeAllowlist = [ "allowed" ];
+        extraDbusTalk = [ "org.example.Allowed" ];
+        readOnlyPaths = [ "~/Reference notes" ];
+        readWritePaths = [ "~/Shared code" ];
+        stateKind = name;
+        agentReadOnlyPaths = [ "~/.${name}/bin" ];
+        extraEnvironmentAllowlist = [ "PROFILE_VALUE" ];
+        allowNixDaemon = name == "codex";
+      })
+      // {
+        docker.allowDocker = true;
+      };
   };
 
   seccompProbe = pkgs.runCommandCC "agent-seccomp-probe" { } ''
@@ -106,6 +110,7 @@ let
     metadataTests = pkgs.replaceVars ./metadata.py {
       git = "${pkgs.git}/bin/git";
     };
+    dockerTests = "${./docker.py}";
     direnvTests = pkgs.replaceVars ./direnv.py {
       direnv = lib.getExe pkgs.direnv;
       git = lib.getExe pkgs.git;

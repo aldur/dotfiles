@@ -9,7 +9,12 @@ let
   agents = config.programs.aldur;
   profile = cfg: {
     runtimeAllowlist = cfg.extraRuntimeDirAllowlist;
-    inherit (cfg) extraDbusTalk allowNixDaemon extraEnvironmentAllowlist;
+    inherit (cfg)
+      extraDbusTalk
+      allowNixDaemon
+      allowDocker
+      extraEnvironmentAllowlist
+      ;
     inherit (cfg.filesystem) readOnlyPaths readWritePaths;
   };
 

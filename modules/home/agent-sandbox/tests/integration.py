@@ -180,7 +180,7 @@ for agent in ["claude", "codex"]:
         git_config.unlink()
 
     help_result = run([wrapper, "--help"], capture_output=True, text=True, check=True)
-    for option in ["--profile", "--workspace", "--ro", "--rw", "--env", "--git-write", "--kvm"]:
+    for option in ["--profile", "--workspace", "--ro", "--rw", "--env", "--git-write", "--kvm", "--docker"]:
         assert option in help_result.stdout + help_result.stderr
 
     print(f"passed: {agent} workspace selection and invalid grants", flush=True)
@@ -381,3 +381,4 @@ print("passed: inherited descriptors closed", flush=True)
 # kernels enough time for the group, including concurrent-wrapper checks.
 subprocess.run([sys.executable, "@metadataTests@", wrapper], check=True, timeout=120)
 subprocess.run([sys.executable, "@direnvTests@", wrapper], check=True, timeout=120)
+subprocess.run([sys.executable, "@dockerTests@", wrapper], check=True, timeout=60)
