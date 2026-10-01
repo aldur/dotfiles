@@ -18,14 +18,15 @@
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
-// The block is one "Pi documentation (...)" header line and its "- "
-// bullet lines. The match stops at the first line that is not a bullet,
-// so upstream can reword the bullets without breaking it.
+// Pi 0.87 wraps the header and bullets in a <docs> section. Remove the
+// tags too, and retain the plain-text matcher for older self-managed pi.
+// Both stop after the docs bullets, preserving the following sections.
+const PI_DOCS_SECTION = /\n\n<docs>\nPi documentation \([^\n]*(?:\n- [^\n]*)*\n<\/docs>/;
 const PI_DOCS_BLOCK = /\n\nPi documentation \([^\n]*(?:\n- [^\n]*)*/;
 
 /** Return the prompt without the docs block, or null when no match. */
 export function stripDocsBlock(prompt: string): string | null {
-  const stripped = prompt.replace(PI_DOCS_BLOCK, "");
+  const stripped = prompt.replace(PI_DOCS_SECTION, "").replace(PI_DOCS_BLOCK, "");
   return stripped === prompt ? null : stripped;
 }
 
