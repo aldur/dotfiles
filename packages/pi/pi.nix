@@ -6,6 +6,7 @@
   nodejs,
   pnpm,
   pi-coding-agent,
+  selfUpdates ? true,
   # Plugin derivations to bundle, keyed by name (see ./plugins). Each is
   # auto-loaded on every run through `pi -e <plugin>/index.ts` (a
   # position-independent repeatable flag; a plugin with a different entry
@@ -63,22 +64,19 @@ let
       # release to install through that same check, hence the exception above.
       export PI_SKIP_VERSION_CHECK="''${PI_SKIP_VERSION_CHECK-$skip_version_check}"
 
-      pnpm_home="''${PNPM_HOME:-${defaultPnpmHome}}"
-
-      # node and pnpm are put on PATH only for the self-managed copy — it runs
-      # through a `#!/usr/bin/env node` shim and shells out to pnpm to update
-      # itself, and pnpm refuses to install globally unless its global bin
-      # directory is on PATH. The Nix build has its interpreter baked in, so
-      # the fallback below keeps a clean environment.
-      use_pnpm() {
-        export PNPM_HOME="$pnpm_home"
-        export PATH="$pnpm_home/bin:$pnpm_home:${
-          lib.makeBinPath [
-            nodejs
-            pnpm
-          ]
-        }:$PATH"
-      }
+      ${lib.optionalString selfUpdates ''
+        pnpm_home="''${PNPM_HOME:-${defaultPnpmHome}}"
+        # Add node and pnpm to PATH for the Pi installation in the user directory.
+        use_pnpm() {
+          export PNPM_HOME="$pnpm_home"
+          export PATH="$pnpm_home/bin:$pnpm_home:${
+            lib.makeBinPath [
+              nodejs
+              pnpm
+            ]
+          }:$PATH"
+        }
+      ''}
 
       run_pi() {
         local pi_bin="$1"
@@ -104,25 +102,24 @@ let
         exec "$pi_bin" "''${flags[@]}" "$@"
       }
 
-      # Prefer a pi that has updated itself. Checking the install path directly
-      # (rather than PATH) makes the updated copy win even when pnpm's global
-      # bin directory is not on PATH. pnpm 11 links binaries into
-      # $PNPM_HOME/bin, earlier versions into $PNPM_HOME itself.
-      for user_pi in "$pnpm_home/bin/pi" "$pnpm_home/pi"; do
-        if [ -x "$user_pi" ]; then
-          use_pnpm
-          run_pi "$user_pi" "$@"
-        fi
-      done
+      ${lib.optionalString selfUpdates ''
+        # If the user directory contains a Pi installation, use it.
+        # pnpm 11 puts the commands in $PNPM_HOME/bin. Versions before pnpm 11 use $PNPM_HOME.
+        for user_pi in "$pnpm_home/bin/pi" "$pnpm_home/pi"; do
+          if [ -x "$user_pi" ]; then
+            use_pnpm
+            run_pi "$user_pi" "$@"
+          fi
+        done
 
-      # No self-managed copy yet: `pi update` on the store binary can only
-      # report that it cannot update itself, so run the install it would have
-      # run. From here on the loop above takes over and pi updates itself.
-      if [ "''${1-}" = update ]; then
-        use_pnpm
-        exec pnpm install -g \
-          --ignore-scripts --config.minimumReleaseAge=0 ${npmPackage}
-      fi
+        # The Nix store copy cannot update itself. Install Pi in the user directory.
+        # The loop above selects this installation when Pi starts again.
+        if [ "''${1-}" = update ]; then
+          use_pnpm
+          exec pnpm install -g \
+            --ignore-scripts --config.minimumReleaseAge=0 ${npmPackage}
+        fi
+      ''}
 
       run_pi ${lib.getExe pi-coding-agent} "$@"
     '';
