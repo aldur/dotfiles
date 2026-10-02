@@ -5,8 +5,11 @@
   lib,
   config,
   ...
-}:
+}@args:
 let
+  # Set the profile in extraSpecialArgs before Nix selects the modules.
+  profile = args.profile or "workstation";
+  full = profile != "minimal";
   gpgKeys = pkgs.fetchurl {
     url = "https://github.com/aldur.gpg";
     sha256 = "sha256-x1H++Oqax/ZacnsTgurRFWI9I+/E7wb5pj8PXf7fhmw=";
@@ -59,11 +62,7 @@ let
 
   aldurs-tools = pkgs.callPackage ../../packages/aldurs-tools { tools = customTools; };
 
-  withDifftastic = config.programs.aldur.development.difftastic.enable;
-
-  # Workstation comforts (see modules/shared/options.nix); a headless or agent
-  # guest turns the knob off and sheds them here too.
-  workstation = config.programs.aldur.workstation.enable;
+  workstation = config.programs.aldur.profile == "workstation";
 
   # Absolute path to the `lazyvim` binary, or null when no variant of it is
   # part of this configuration. The nixCats modules expose their built package
@@ -72,16 +71,27 @@ let
   lazyvim-bin =
     let
       package =
-        if config.programs.aldur.lazyvim.enable then
+        if config.programs.aldur.lazyvim.enable or false then
           lib.attrByPath [ "out" "packages" "lazyvim" ] null config.programs.aldur.lazyvim
         else
-          lib.findFirst (p: lib.getName p == "lazyvim") null config.home.packages;
+          lib.findFirst (
+            p: lib.getName p == "lazyvim" || lib.hasSuffix "-lazyvim-light" p.name
+          ) null config.home.packages;
     in
-    if package == null then null else lib.getExe' package "lazyvim";
+    if package == null then
+      null
+    else if lib.hasSuffix "-lazyvim-light" package.name then
+      lib.getExe package
+    else
+      lib.getExe' package "lazyvim";
 in
 {
   imports = [
     ../shared/options.nix
+    ./direnv.nix
+    ./llm.nix
+  ]
+  ++ lib.optionals full [
     (import ../../packages/lazyvim/lazyvim.nix { inherit inputs pkgs pkgsUnstable; }).defaultHomeModule
     inputs.clipshare.homeManagerModules.default
     ./agent-sandbox
@@ -89,17 +99,16 @@ in
     ./codex
     ./dash.nix
     ./w3m.nix
-    ./direnv.nix
     ./manpager.nix
-    ./llm.nix
     ./nix_search.nix
     ./secrets.nix
     ./qemu-vm.nix
   ];
+  _module.args.lazyvim-bin = lazyvim-bin;
 
   home = {
     packages =
-      # The workstation option controls the custom tools.
+      # The workstation profile includes the custom tools.
       lib.optionals workstation (
         customTools
         ++ [
@@ -109,24 +118,22 @@ in
           pkgs.watch
         ]
       )
-      ++ lib.optional withDifftastic pkgs.difftastic
       ++ [
         pkgs.age
         pkgs.rig
         pkgs.tree
         pkgs.totp-cli
         pkgs.moreutils
-        # Standalone output (no reference back to git itself): keeps
-        # `git help <cmd>` working next to the manual-less gitMinimal-runtime.
-        pkgs.git.doc
-      ];
+      ]
+      # Install the Git manuals only in the full profile.
+      ++ lib.optional full pkgs.git.doc;
 
-    file."Documents/Notes/.marksman.toml".text = "";
+    file."Documents/Notes/.marksman.toml" = lib.mkIf full { text = ""; };
 
     # Keep a stable SSH_AUTH_SOCK across reconnects: each new sshd session
     # rewrites this symlink to the current forwarded socket, so existing
     # shells/tmux panes silently pick up the fresh socket without `fixssh`.
-    file.".ssh/rc" = {
+    file.".ssh/rc" = lib.mkIf full {
       executable = true;
       text = ''
         #!/bin/sh
@@ -138,8 +145,6 @@ in
   };
 
   programs = {
-    clipshare.enable = workstation;
-
     fish = {
       enable = true;
 
@@ -368,11 +373,9 @@ in
     # `z` directory-jump command (zoxide's default fish integration).
     zoxide.enable = true;
 
-    pet = {
-      enable = true;
-    };
+    pet.enable = full;
 
-    nh.enable = true;
+    nh.enable = full;
 
     lazygit = {
       enable = true;
@@ -425,7 +428,7 @@ in
     };
 
     difftastic = {
-      enable = withDifftastic;
+      enable = workstation;
       git.enable = false;
     };
 
@@ -445,6 +448,8 @@ in
             inherit (config.identity) email;
           };
 
+        }
+        // lib.optionalAttrs full {
           commit.verbose = true;
           commit.gpgsign = true;
           tag.gpgsign = true;
@@ -458,7 +463,7 @@ in
             ssh.defaultKeyCommand = lib.mkDefault "sh -c 'echo key::$(ssh-add -L | tail -n 1)'";
           };
         }
-        // lib.optionalAttrs withDifftastic {
+        // lib.optionalAttrs workstation {
           # difftastic as difftool only (not diff.external, which breaks fugitive)
           diff.tool = "difftastic";
           difftool.difftastic.cmd = ''difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"'';
@@ -468,7 +473,7 @@ in
     };
 
     # Let Home Manager install and manage itself.
-    home-manager.enable = true;
+    home-manager.enable = full;
 
     atuin = {
       enable = workstation;
@@ -497,7 +502,7 @@ in
     };
 
     gpg = {
-      enable = true;
+      enable = full;
       scdaemonSettings = {
         # https://blog.apdu.fr/posts/2024/12/gnupg-and-pcsc-conflicts-episode-3/
         pcsc-shared = true;
@@ -505,14 +510,15 @@ in
         # https://support.yubico.com/s/article/Resolving-GPGs-CCID-conflicts
         disable-ccid = true;
       };
-      publicKeys = [
+      publicKeys = lib.optionals full [
         {
           source = "${gpgKeys}";
           trust = "ultimate";
         }
       ];
     };
-  };
+  }
+  // lib.optionalAttrs full { clipshare.enable = workstation; };
 
   # atuin's daemon (as of 18.10) bind()s its unix socket without unlink()-ing
   # a stale one first, so launchd's KeepAlive crash-loops with EADDRINUSE
@@ -526,7 +532,7 @@ in
   };
 
   # NOTE: Pinentry configured by each respective module
-  services.gpg-agent.enable = true;
+  services.gpg-agent.enable = full;
 
   home.shellAliases = {
     gst = "git status";
@@ -535,7 +541,7 @@ in
     ta = "tmux new-session -A -s main";
     tls = "tmux ls";
   }
-  // lib.optionalAttrs withDifftastic {
+  // lib.optionalAttrs workstation {
     gd = "git -c diff.external=difft diff";
     gdl = "git -c diff.external=difft log -p --ext-diff";
     gds = "git -c diff.external=difft show --ext-diff";
@@ -544,7 +550,7 @@ in
     # Linux mirror of the darwin `sandbox` alias (see
     # modules/darwin/home.nix): no network, personal directories hidden.
     # `faraday --mask` skips directories that don't exist on this machine.
-    lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+    lib.optionalAttrs (full && pkgs.stdenv.hostPlatform.isLinux) {
       sandbox = "faraday --mask ~/Documents --mask ~/Desktop --mask ~/Developer --mask ~/Movies --mask ~/Music --mask ~/Pictures";
     }
   // lib.optionalAttrs (lazyvim-bin != null) {

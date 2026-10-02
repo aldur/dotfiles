@@ -5,11 +5,12 @@
   username ? null,
   homeDirectory ? null,
   stateVersion ? "26.05",
+  profile ? "workstation",
   modules ? [ ],
 }:
 inputs.home-manager.lib.homeManagerConfiguration {
   pkgs = inputs.nixpkgs.legacyPackages.${system};
-  extraSpecialArgs = { inherit inputs; };
+  extraSpecialArgs = { inherit inputs profile; };
   modules = [
     ../modules/home/home.nix
     ../base_hosts/home-manager/linux.nix

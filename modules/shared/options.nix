@@ -4,7 +4,7 @@
   lib,
   pkgs,
   ...
-}:
+}@args:
 let
   cfg = config.identity;
   inherit (lib) mkEnableOption mkOption types;
@@ -78,20 +78,15 @@ in
       sandbox = sandboxOptions "codex-yolo";
     };
 
-    # Interactive-workstation comforts: atuin, clipshare, difftastic, spare
-    # dev CLIs, the custom tools of modules/home/home.nix. A headless or
-    # agent guest sets this to false and keeps only the essentials.
-    workstation.enable = mkOption {
-      type = types.bool;
-      default = true;
-      description = "Install interactive-workstation comforts.";
-    };
-
-    development.difftastic.enable = mkOption {
-      type = types.bool;
-      default = config.programs.aldur.workstation.enable;
-      defaultText = lib.literalExpression "config.programs.aldur.workstation.enable";
-      description = "Install difftastic (and keep the `gd` git aliases working).";
+    profile = mkOption {
+      type = types.enum [
+        "workstation"
+        "headless"
+        "minimal"
+      ];
+      default = args.profile or "workstation";
+      readOnly = true;
+      description = "Home profile. Select it through specialArgs or extraSpecialArgs.";
     };
   };
 }

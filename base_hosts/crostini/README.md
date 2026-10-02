@@ -8,7 +8,7 @@ Crostini][1].
 
 `crostini.nix` includes what both guests share, size cuts included: no mesa
 (the sommelier of ChromeOS brings its own libraries; programs render in
-software), no `doc` outputs, no llm models, no difftastic, a GTK pinentry.
+software), no `doc` outputs, no llm models, a GTK pinentry.
 `baguette.nix` has the disk size of the image. The image has no kernel:
 Baguette boots the ChromeOS kernel.
 

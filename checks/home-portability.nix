@@ -11,6 +11,7 @@ let
   standalone = self.legacyPackages.${system}.homeConfiguration;
   custom = self.lib.mkHome {
     inherit system;
+    profile = "headless";
     username = "alice";
     homeDirectory = "/srv/alice";
     modules = [
@@ -18,7 +19,6 @@ let
         identity.githubUser = "alice";
         identity.authorizedKeys = [ "standalone-key" ];
         programs.aldur = {
-          workstation.enable = false;
           lazyvim.enable = false;
           claude-code.enable = true;
           codex.enable = true;
@@ -29,7 +29,10 @@ let
   };
   nixos = inputs.nixpkgs.lib.nixosSystem {
     inherit system;
-    specialArgs = { inherit inputs; };
+    specialArgs = {
+      inherit inputs;
+      profile = "headless";
+    };
     modules = [
       self.nixosModules.default
       self.nixosModules.preservation-user
@@ -49,7 +52,6 @@ let
           ];
         };
         programs.aldur = {
-          workstation.enable = false;
           codex.enable = true;
         };
         home-manager.users.alice.programs.aldur.lazyvim.enable = true;
@@ -107,6 +109,7 @@ let
     pkgs = darwinPkgs;
     extraSpecialArgs = {
       inherit inputs;
+      profile = "headless";
       stateVersion = "25.05";
       pkgsUnstable = darwinUnstable;
       osConfig = darwinSystem;
@@ -200,6 +203,9 @@ assert require "standalone defaults" (
   && standalone.config.programs.git.settings.user.name == "aldur"
   && standalone.config.programs.git.settings.user.email == "aldur@users.noreply.github.com"
   && standalone.config.targets.genericLinux.enable
+  && standalone.config.programs.aldur.profile == "workstation"
+  && standalone.config.programs.difftastic.enable
+  && standalone.config.home.shellAliases ? gd
   && standalone.config.programs.aldur.lazyvim.enable
   && standalone.config.home.shellAliases.gst == "git status"
   && hasPackage "ripgrep" standalone.config
@@ -221,7 +227,10 @@ assert require "standalone customization and agent packages" (
   && custom.config.home.homeDirectory == "/srv/alice"
   && custom.config.programs.git.settings.user.email == "alice@users.noreply.github.com"
   && custom.config.home.sessionVariables.EDITOR == "nvim"
+  && custom.config.programs.aldur.profile == "headless"
   && !custom.config.programs.atuin.enable
+  && !custom.config.programs.difftastic.enable
+  && !(custom.config.home.shellAliases ? gd)
   && hasPackage "codex" custom.config
   && custom.config.programs.claude-code.enable
 );
@@ -239,6 +248,7 @@ assert require "NixOS settings and per-user overrides" (
   && alice.programs.git.settings.user.email == "alice@example.org"
   && alice.programs.aldur.codex.enable
   && !bob.programs.aldur.codex.enable
+  && alice.programs.aldur.profile == "headless"
   && !alice.programs.atuin.enable
   && alice.programs.aldur.lazyvim.enable
 );

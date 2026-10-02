@@ -45,6 +45,7 @@
 
   # Use home-manager.extraSpecialArgs to pass arguments to home.nix
   home-manager.extraSpecialArgs = {
+    profile = config.programs.aldur.profile;
     inherit (config.system) stateVersion;
     inherit inputs pkgsUnstable;
   };

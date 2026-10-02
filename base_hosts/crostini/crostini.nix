@@ -95,8 +95,6 @@ in
       aldur = {
         claude-code.enable = true;
         codex.enable = true;
-        # 120 MiB.
-        development.difftastic.enable = false;
         # The hooks defined below in home-manager invoke notify-send when
         # Claude finishes or needs input; that requires the session bus
         # path through the sandbox to org.freedesktop.Notifications.

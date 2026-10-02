@@ -6,10 +6,10 @@
 let
   home = self.lib.mkHome {
     system = pkgs.stdenv.hostPlatform.system;
+    profile = "headless";
     modules = [
       {
         programs.aldur = {
-          workstation.enable = false;
           lazyvim.enable = false;
           claude-code.enable = true;
         };
