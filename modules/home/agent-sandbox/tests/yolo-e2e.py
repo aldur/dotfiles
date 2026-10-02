@@ -324,6 +324,8 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
         _, records = invoke(launcher, ['resume'])
         assert len(records) == 2 and stamp.read_text().startswith('fixture-1 '), records
     for case in config['cases'][3:]:
+        print(f'testing Claude refresh timestamps: sandbox={case["sandbox"]}, docker={case["docker"]}',
+              flush=True)
         for timestamp in ('', 'not-a-number', '1+2', '+1', '-1', '0x10', '1 2',
                           '9' * 100, '0000000000', '0000000008', '9999999999',
                           str(int(time.time()) + 86400),
@@ -549,7 +551,12 @@ def main():
                    '--setenv', 'LANG', 'C.UTF-8',
                    '--', config['dbus'], f'--config-file={config["dbusConfig"]}', '--',
                    config['python'], '/test.py', manifest, mode, 'inside']
-        subprocess.run(command, check=True, timeout=240)
+        # Recording-client modes run hundreds of individually bounded launches,
+        # including a refresh and a normal launch for each stale timestamp.
+        # Allow the full matrix to finish on CI while keeping each call's
+        # 25-second deadline and the shorter interactive-client suite budget.
+        timeout = 240 if mode == 'cli' else 600
+        subprocess.run(command, check=True, timeout=timeout)
 
 
 if __name__ == '__main__':
