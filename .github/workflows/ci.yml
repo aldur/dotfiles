@@ -84,10 +84,9 @@ jobs:
         with:
           trust-runner-user: true
       - name: Allow user namespaces for sandbox checks
-        # Ubuntu 24.04's AppArmor restriction blocks UID mapping for the
-        # Nix-store bwrap used by agent-sandbox. Relax it on these ephemeral
-        # Linux test runners so the check can exercise nested sandboxes.
-        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+        # Ubuntu restricts user namespaces for the Nix-store bwrap.
+        # Allow nested sandbox checks on these temporary test runners.
+        run: &allow-user-namespaces sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
       # The checks put more than 17 GiB into the store. A cold build uses
       # more space for its work files. The image builds reclaim disk space
       # for the same reason.
@@ -246,6 +245,10 @@ jobs:
     steps:
       - *checkout
       - *setup-nix
+
+      - name: Allow user namespaces for Pi image checks
+        if: startsWith(matrix.target, './base_hosts/pi-container#')
+        run: *allow-user-namespaces
 
       - uses: ./.github/actions/reclaim-disk
 
