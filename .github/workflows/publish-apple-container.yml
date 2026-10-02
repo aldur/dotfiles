@@ -34,7 +34,7 @@ jobs:
     strategy:
       matrix:
         arch:
-          - { runner: ubuntu-24.04-arm, suffix: arm64 }
+          - { runner: ubuntu-26.04-arm, suffix: arm64 }
           - { runner: ubuntu-24.04, suffix: amd64 }
         # `image` is the `virtualisation.appleContainer.imageName` of the
         # configuration that `name` pushes. The attestation names its subject

@@ -72,7 +72,7 @@ jobs:
             system: x86_64-linux
             shard: vm
           # The arm64 runners have no KVM, so they have no VM test to build.
-          - runner: ubuntu-24.04-arm
+          - runner: ubuntu-26.04-arm
             system: aarch64-linux
             shard: rest
     runs-on: ${{ matrix.runner }}
@@ -154,7 +154,7 @@ jobs:
         include:
           - runner: ubuntu-24.04
             system: x86_64-linux
-          - runner: ubuntu-24.04-arm
+          - runner: ubuntu-26.04-arm
             system: aarch64-linux
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
@@ -216,11 +216,11 @@ jobs:
           # Build the QEMU VM configuration as a test.
           - runner: ubuntu-24.04
             target: ./base_hosts/qemu#vm-nogui
-          - runner: ubuntu-24.04-arm
+          - runner: ubuntu-26.04-arm
             target: ./base_hosts/qemu#vm-nogui
 
           # Build the Crostini Baguette image as a test (only aarch64).
-          - runner: ubuntu-24.04-arm
+          - runner: ubuntu-26.04-arm
             target: ./base_hosts/crostini#baguette-image
 
           # Boot the x86_64 Crostini Baguette image in crosvm and probe it.
@@ -236,7 +236,7 @@ jobs:
           # the image and checks its closure and size on each architecture.
           - runner: ubuntu-24.04
             target: ./base_hosts/apple-container#checks.x86_64-linux.container-size
-          - runner: ubuntu-24.04-arm
+          - runner: ubuntu-26.04-arm
             target: ./base_hosts/apple-container#checks.aarch64-linux.container-size
     runs-on: ${{ matrix.runner }}
     steps:
@@ -287,7 +287,7 @@ jobs:
         include:
           - runner: ubuntu-24.04
             system: x86_64-linux
-          - runner: ubuntu-24.04-arm
+          - runner: ubuntu-26.04-arm
             system: aarch64-linux
           - runner: macos-26
             system: aarch64-darwin
