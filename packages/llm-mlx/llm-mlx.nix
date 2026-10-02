@@ -25,7 +25,7 @@ buildPythonPackage rec {
 
   patches = [
     (fetchurl {
-      url = "https://github.com/simonw/llm-mlx/pull/20.patch";
+      url = "https://github.com/simonw/llm-mlx/compare/b477833b807143241220f6561742833070d907cc...1019a75da8440acb51c5ccb7b0424a7c1020b137.patch";
       hash = "sha256-J3+Y55MQpNaIuFOvcZL9huWQ/n8W2zEmo/9IkMClAUU=";
     })
   ];
