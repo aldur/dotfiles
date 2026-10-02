@@ -12,6 +12,13 @@
     let
       specialArgs = aldur-dotfiles.lib.mkSpecialArgs inputs;
       inherit (aldur-dotfiles.inputs) nixpkgs flake-utils home-manager;
+      linuxSystem =
+        system:
+        {
+          aarch64-darwin = "aarch64-linux";
+          x86_64-darwin = "x86_64-linux";
+        }
+        .${system} or system;
 
       # One image serves both: `container run` uses the OCI entrypoint, while
       # `container machine` execs /sbin/init. Same closure, two entry doors.
@@ -65,12 +72,7 @@
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        targetSystem =
-          {
-            aarch64-darwin = "aarch64-linux";
-            x86_64-darwin = "x86_64-linux";
-          }
-          .${system} or system;
+        targetSystem = linuxSystem system;
       in
       {
         packages = rec {
@@ -201,6 +203,11 @@
       }
     )
     // {
+      # Other hosts use these functions to get the configuration.
+      lib = {
+        inherit linuxSystem;
+        mkConfiguration = cfg;
+      };
       # The generic part — anyone can import this into their own
       # nixosConfiguration (no dependency on aldur's dotfiles) and build
       # `config.system.build.containerImage`. See the

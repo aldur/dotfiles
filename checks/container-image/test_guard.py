@@ -71,6 +71,16 @@ class ImageGuardTests(unittest.TestCase):
         self.inject(self.package("git-9.99.0-doc", files=["share/doc/git/index.html"]))
         self.assertEqual(self.check()[1], [])
 
+    def test_tiny_image_exclusions_apply_to_transitive_dependencies(self):
+        self.policy["forbiddenNames"] = [r"^pnpm-\d", r"-(doc|man)$"]
+        excluded = self.package("pnpm-11.0.0")
+        helper = self.inject(excluded)
+        self.inject(self.package("fish-4.0.0-doc"))
+        self.inject(self.package("tree-sitter-nix-0.3.0"))
+        errors = self.check()[1]
+        self.assertEqual(len(errors), 2)
+        self.assertTrue(any(f"{self.root} -> {helper} -> {excluded}" in e for e in errors))
+
     def test_another_nix_build_is_rejected_even_at_the_same_version(self):
         for name in ("nix-2.34.8", "nix-expr-2.34.8", "nix-2.35.2"):
             with self.subTest(name=name):

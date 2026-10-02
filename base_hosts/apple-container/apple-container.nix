@@ -237,37 +237,28 @@ let
     fi
   '';
 
-  # Apple `container image load` wants an OCI archive; regctl converts the
-  # docker-archive in the Nix sandbox and the index `ref.name` is set so the
-  # image loads under its name directly.
   mkOciArchive =
     {
       name,
       stream,
+      compressionLevel ? 3,
     }:
     pkgs.runCommand "${name}-oci.tar"
       {
         nativeBuildInputs = [
-          pkgs.regclient
+          pkgs.skopeo
           pkgs.jq
           pkgs.gnutar
         ];
       }
       ''
-        export TMPDIR="$PWD/tmp"
-        mkdir -p "$TMPDIR" oci
-        ${stream} > "$TMPDIR/image.tar"
-        regctl image import "ocidir://$TMPDIR/imported:latest" "$TMPDIR/image.tar"
-        rm -f "$TMPDIR/image.tar"
-        regctl image mod "ocidir://$TMPDIR/imported:latest" \
-          --to-oci --layer-compress zstd --replace
-        # Copy only the referenced blobs; image mod leaves the old gzip
-        # layers behind in its working layout.
-        regctl image copy "ocidir://$TMPDIR/imported:latest" "ocidir://$PWD/oci:latest"
+        ${stream} > image.tar
+        skopeo --insecure-policy copy --format oci --dest-compress-format zstd \
+          --dest-compress-level ${toString compressionLevel} docker-archive:image.tar oci:oci:latest
         jq '.manifests[0].annotations["org.opencontainers.image.ref.name"] = "${name}:latest"' \
           oci/index.json > oci/index.json.new
         mv oci/index.json.new oci/index.json
-        tar -cf "$out" -C oci .
+        tar --sort=name --mtime=@1 --owner=0 --group=0 --numeric-owner -cf "$out" -C oci .
       '';
 in
 {
@@ -321,6 +312,7 @@ in
   };
 
   config = {
+    _module.args.mkOciArchive = mkOciArchive;
     boot.isContainer = true;
 
     # See `binSh` above: /bin/sh gains a store-path PATH fallback so Apple's

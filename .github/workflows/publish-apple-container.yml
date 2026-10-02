@@ -19,11 +19,11 @@ permissions:
 # cannot overwrite the `latest` tags that `container run` users pull.
 env:
   TAG_PREFIX: ${{ github.ref_name == 'master' && 'latest' || github.ref_name }}
-  # See the same variable in ci.yml. Only the `push` jobs use the keys: they
-  # build the image and its SBOM, and the build evaluates the system
-  # configuration that reads the keys. The `manifest` job below only
-  # connects tags that were pushed before, and does not use the keys.
+  # See the same variable in ci.yml. The push jobs use these keys when
+  # they evaluate the system configuration. The manifest jobs only connect
+  # the image tags and do not use these keys.
   SIGNING_KEYS: /tmp/ssh_signing_keys.json
+  PI_IMAGE: ghcr.io/${{ github.repository_owner }}/aldur-pi
 
 jobs:
   push:
@@ -33,7 +33,7 @@ jobs:
       packages: write # necessary to push the image to ghcr.io
     strategy:
       matrix:
-        arch:
+        arch: &architectures
           - { runner: ubuntu-26.04-arm, suffix: arm64 }
           - { runner: ubuntu-24.04, suffix: amd64 }
         # `image` is the `virtualisation.appleContainer.imageName` of the
@@ -58,7 +58,8 @@ jobs:
         run: echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: ./.github/actions/fetch-signing-keys
+      - &fetch-signing-keys
+        uses: ./.github/actions/fetch-signing-keys
         with:
           token: ${{ github.token }}
           path: ${{ env.SIGNING_KEYS }}
@@ -128,9 +129,50 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  # Attest the provenance and the SBOM of each pushed image, and the
-  # provenance of each index. A separate job without Nix: see
-  # .github/actions/attest.
+  push-pi:
+    name: Pi (${{ matrix.arch.suffix }})
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        arch: *architectures
+    runs-on: ${{ matrix.arch.runner }}
+    steps:
+      - *checkout
+      - *setup-nix
+      - *ghcr-login
+      - *fetch-signing-keys
+      - uses: ./.github/actions/reclaim-disk
+      - run: |
+          nix build --out-link pi-image --override-input aldur-dotfiles . \
+            --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
+            ./base_hosts/pi-container#container-image
+          nix shell --inputs-from . nixpkgs#skopeo --command \
+            skopeo --insecure-policy copy oci-archive:pi-image "docker://$PI_IMAGE:$TAG_PREFIX-$ARCH_SUFFIX"
+        env:
+          ARCH_SUFFIX: ${{ matrix.arch.suffix }}
+
+  manifest-pi:
+    needs: push-pi
+    name: Pi manifest
+    permissions:
+      contents: read
+      packages: write
+    runs-on: ubuntu-24.04
+    steps:
+      - *checkout
+      - *setup-nix
+      - *ghcr-login
+      - run: |
+          nix shell --inputs-from . nixpkgs#regclient --command \
+            regctl index create "$PI_IMAGE:$TAG_PREFIX" \
+              --ref "$PI_IMAGE:$TAG_PREFIX-amd64" \
+              --ref "$PI_IMAGE:$TAG_PREFIX-arm64"
+
+  # Attest the provenance and the SBOM of each NixOS image.
+  # Attest the provenance of each NixOS index in a job without Nix.
+  # See .github/actions/attest.
   attest:
     needs: [push, manifest]
     name: attest ${{ matrix.image }} (${{ matrix.subject }})

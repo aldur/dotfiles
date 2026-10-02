@@ -103,6 +103,8 @@ def check_closure(config, metadata, policy):
             else {str(p.relative_to(path)) for p in Path(path).rglob("*")}
         )
         reasons = []
+        if any(re.search(pattern, name) for pattern in policy.get("forbiddenNames", [])):
+            reasons.append("package is outside the image's runtime policy")
         if path in policy["forbiddenPaths"]:
             reasons.append("original, untrimmed package returned")
         # Keep Git's documentation outputs; reject its full runtime even
