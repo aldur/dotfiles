@@ -9,7 +9,10 @@ set -euo pipefail
 }
 # shellcheck source=/dev/null
 source /etc/os-release
-[[ $ID == ubuntu && $VERSION_ID == 24.04 ]]
+[[ $ID == ubuntu && ($VERSION_ID == 24.04 || $VERSION_ID == 26.04) ]] || {
+  echo "Expected Ubuntu 24.04 or 26.04; found $ID $VERSION_ID." >&2
+  exit 1
+}
 system=${1:?expected Nix system}
 : "${RUNNER_TEMP:?}" "${SIGNING_KEYS:?}"
 work="$RUNNER_TEMP/home-manager-ci"
