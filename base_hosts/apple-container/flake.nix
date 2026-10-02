@@ -150,11 +150,13 @@
                   repo="''${1:-ghcr.io/aldur}"
                   tag="''${2:-latest}"
                   img="$repo/${name}"
+                  readme="''${GITHUB_SERVER_URL:-https://github.com}/''${GITHUB_REPOSITORY:-aldur/dotfiles}/blob/''${GITHUB_REF_NAME:-master}/base_hosts/apple-container/README.md"
                   # The third argument names a file. The script writes the
                   # digest of the new index to it. CI attests that digest.
                   digestfile="''${3:-}"
                   echo "assembling $img:$tag from :$tag-amd64 + :$tag-arm64"
                   ${pkgs.regclient}/bin/regctl index create "$img:$tag" \
+                    --annotation "org.opencontainers.image.description=Run NixOS in Apple container. Load and run: $readme" \
                     --ref "$img:$tag-amd64" \
                     --ref "$img:$tag-arm64"
                   # A HEAD request without a platform returns the digest of

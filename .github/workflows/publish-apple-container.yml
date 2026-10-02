@@ -167,6 +167,7 @@ jobs:
       - run: |
           nix shell --inputs-from . nixpkgs#regclient --command \
             regctl index create "$PI_IMAGE:$TAG_PREFIX" \
+              --annotation "org.opencontainers.image.description=Run Pi offline in Apple container, with inference on macOS through a Unix socket. Load and run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/blob/$GITHUB_REF_NAME/base_hosts/pi-container/README.md" \
               --ref "$PI_IMAGE:$TAG_PREFIX-amd64" \
               --ref "$PI_IMAGE:$TAG_PREFIX-arm64"
 
