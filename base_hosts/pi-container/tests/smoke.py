@@ -91,9 +91,29 @@ class Inference(http.server.BaseHTTPRequestHandler):
         request = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
         assert request["model"] == "local"
         Inference.completion = True
-        if request.get("tools") and not (self.server.root / "workspace/agent.txt").exists():
+        mounts = "check mounts" in json.dumps(request["messages"])
+        marker = "output/verified" if mounts else "workspace/agent.txt"
+        if request.get("tools") and not (self.server.root / marker).exists():
+            name = "write"
+            arguments = {"path": "/workspace/agent.txt", "content": "sandboxed task complete\n"}
+            if mounts:
+                name = "bash"
+                arguments = {"command": r'''
+set -eu
+git -C /workspace/repository status --porcelain
+test "$(cat /reference/marker)" = reference
+test ! -e /unrelated/secret
+if printf changed > /reference/marker; then exit 1; fi
+for metadata in /workspace/repository/.git /output/.git; do
+  test -r "$metadata/config"
+  if printf changed > "$metadata/config"; then exit 1; fi
+  if touch "$metadata/new"; then exit 1; fi
+  if mv "$metadata" "$metadata.moved"; then exit 1; fi
+done
+printf verified > /output/verified
+'''}
             events = [
-                {"choices": [{"index": 0, "delta": {"role": "assistant", "tool_calls": [{"index": 0, "id": "call_write", "type": "function", "function": {"name": "write", "arguments": json.dumps({"path": "/workspace/agent.txt", "content": "sandboxed task complete\n"})}}]}, "finish_reason": None}]},
+                {"choices": [{"index": 0, "delta": {"role": "assistant", "tool_calls": [{"index": 0, "id": "call_tool", "type": "function", "function": {"name": name, "arguments": json.dumps(arguments)}}]}, "finish_reason": None}]},
                 {"choices": [{"index": 0, "delta": {}, "finish_reason": "tool_calls"}]},
             ]
         else:
@@ -150,6 +170,7 @@ subprocess.run(['/workspace/venv/bin/python', '-m', 'pip', '--version'], check=T
 PY
 fish -lic 'functions -q fish_hybrid_key_bindings; and functions -q gw; and functions -q lg; and command -q zoxide; and command -q fzf'
 pi --version
+pi-yolo --version
 git init -q repository
 cd repository
 printf 'hello\n' > file
@@ -187,6 +208,11 @@ for tool in bat btop htop curl dig fd file jq less pv rg tmux age tree totp-cli 
     failed = subprocess.run(missing + ["/bin/bash", "-c", "echo UNSAFE_COMMAND"], text=True, capture_output=True, timeout=10)
     assert failed.returncode != 0 and "inference socket missing" in failed.stderr
     assert "UNSAFE_COMMAND" not in failed.stdout
+    for directory in ("reference", "output/.git", "unrelated"):
+        (root / directory).mkdir(parents=True)
+    (root / "reference/marker").write_text("reference\n")
+    (root / "output/.git/config").write_text("protected\n")
+    (root / "unrelated/secret").write_text("private\n")
     with Server(str(root / "var/host-services/llama.sock"), Inference) as server:
         server.root = root
         thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -195,8 +221,9 @@ for tool in bat btop htop curl dig fd file jq less pv rg tmux age tree totp-cli 
             result = run("/bin/bash", "-c", r'''
 set -eu
 test "$LLAMA_BASE_URL" = http://127.0.0.1:8080/v1
-pi --models 'llama-cpp/*' -p --no-session --no-tools --no-skills --no-extensions 'say hello'
-pi --models 'llama-cpp/*' -p --no-session --no-skills --no-extensions 'create agent.txt'
+pi-yolo --models 'llama-cpp/*' -p --no-session --no-tools --no-skills --no-extensions 'say hello'
+pi-yolo --models 'llama-cpp/*' -p --no-session --no-skills --no-extensions 'create agent.txt'
+pi-yolo --ro /reference --rw /output --models 'llama-cpp/*' -p --no-session --no-skills --no-extensions 'check mounts'
 # Make sure that both Pi sessions use one relay.
 # Make sure that the relay stays available.
 test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
@@ -204,6 +231,9 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
             assert "offline inference works" in result.stdout, (result.stdout, result.stderr)
             assert Inference.completion
             assert (root / "workspace/agent.txt").read_text() == "sandboxed task complete\n"
+            assert (root / "output/verified").read_text() == "verified"
+            assert (root / "reference/marker").read_text() == "reference\n"
+            assert (root / "output/.git/config").read_text() == "protected\n"
         finally:
             server.shutdown()
     print("Finished image: shell, CLI, Git, Python, editor, tmux and offline Pi tool execution passed")

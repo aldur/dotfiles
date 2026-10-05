@@ -85,8 +85,8 @@ let
           daemon_args+=(--no-daemon)
         fi
       fi
-      # Supply workspace trust through a separate profile after --workspace
-      # handling, without rewriting the shared user config.toml.
+      # Supply workspace trust after --workspace handling without rewriting
+      # the shared user config.toml.
       exec "''${sandbox[@]}" ${lib.getExe tomlPython} -I ${./merge-codex-config.py} \
         --yolo codex --dangerously-bypass-approvals-and-sandbox "''${daemon_args[@]}" "$@"
     '';

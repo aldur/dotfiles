@@ -11,6 +11,41 @@
 }:
 let
   base = import "${dotfiles}/modules/shared/environment.nix" { inherit pkgs lib; };
+  agentSandbox =
+    import "${dotfiles}/modules/home/agent-sandbox/package.nix"
+      {
+        inherit lib;
+        pkgs = pkgs // {
+          python3 = runtimePython;
+        };
+      }
+      {
+        enableDbus = false;
+        profiles.pi = {
+          allowNixDaemon = false;
+          readOnlyPaths = [
+            "/bin"
+            "/usr/bin"
+            "~/.config"
+          ];
+          agentReadWritePaths = [ "~/.pi/agent" ];
+          extraEnvironmentAllowlist = [ "LLAMA_BASE_URL" ];
+        };
+      };
+  pi-yolo =
+    import "${dotfiles}/modules/home/yolo-script.nix"
+      {
+        inherit pkgs lib;
+        config.programs.agent-sandbox.package = agentSandbox;
+      }
+      {
+        agent = "pi";
+        describe = "Run Pi in the sandbox with read-only Git metadata";
+        sandbox = true;
+        text = ''
+          exec "''${sandbox[@]}" pi "$@"
+        '';
+      };
 in
 {
   imports = [
@@ -25,6 +60,7 @@ in
       (map (p: if lib.getName p == "python3" then runtimePython else p) base.cli)
       ++ base.terminfo
       ++ (with pkgs; [
+        pi-yolo
         lazyvim-light
         tcopy
         tmux-palette

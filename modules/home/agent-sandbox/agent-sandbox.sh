@@ -193,25 +193,27 @@ if [ "$allow_docker" = 1 ] || [ "$argc_docker" = 1 ]; then
 fi
 
 # The proxy runs outside the sandbox and exports only the filtered socket.
-bus_addr=${DBUS_SESSION_BUS_ADDRESS:-unix:path=$host_runtime/bus}
-proxy_dir=$(mktemp -d "/tmp/$sandbox_name-dbus-proxy.XXXXXX")
-proxy_sock=$proxy_dir/bus
-proxy_args=(--filter --talk=org.freedesktop.DBus)
-for bus in "${dbus_talk[@]}"; do
-  proxy_args+=("--talk=$bus")
-done
-(
-  close_extra_fds
-  exec xdg-dbus-proxy "$bus_addr" "$proxy_sock" "${proxy_args[@]}"
-) &
-proxy_pid=$!
-trap 'kill "$proxy_pid" 2>/dev/null || true; rm -rf -- "$proxy_dir"' EXIT
-for _ in 1 2 3 4 5 6 7 8 9 10; do
-  [ -S "$proxy_sock" ] && break
-  sleep 0.1
-done
-[ -S "$proxy_sock" ] || die "xdg-dbus-proxy did not come up"
-service_mounts+=(--bind "$proxy_sock" "$runtime/bus")
+if [ "$enable_dbus" = 1 ]; then
+  bus_addr=${DBUS_SESSION_BUS_ADDRESS:-unix:path=$host_runtime/bus}
+  proxy_dir=$(mktemp -d "/tmp/$sandbox_name-dbus-proxy.XXXXXX")
+  proxy_sock=$proxy_dir/bus
+  proxy_args=(--filter --talk=org.freedesktop.DBus)
+  for bus in "${dbus_talk[@]}"; do
+    proxy_args+=("--talk=$bus")
+  done
+  (
+    close_extra_fds
+    exec xdg-dbus-proxy "$bus_addr" "$proxy_sock" "${proxy_args[@]}"
+  ) &
+  proxy_pid=$!
+  trap 'kill "$proxy_pid" 2>/dev/null || true; rm -rf -- "$proxy_dir"' EXIT
+  for _ in 1 2 3 4 5 6 7 8 9 10; do
+    [ -S "$proxy_sock" ] && break
+    sleep 0.1
+  done
+  [ -S "$proxy_sock" ] || die "xdg-dbus-proxy did not come up"
+  service_mounts+=(--bind "$proxy_sock" "$runtime/bus")
+fi
 
 # Start empty. No host root, home, /persist, /tmp or /run bind is inherited.
 filesystem_args=(

@@ -5,6 +5,7 @@
 { pkgs, lib }:
 {
   profiles ? { },
+  enableDbus ? true,
 }:
 let
   seccompFilter =
@@ -89,6 +90,7 @@ let
     sandbox_bwrap=${lib.escapeShellArg "${pkgs.bubblewrap}/bin/bwrap"}
     sandbox_launcher=${./launch.py}
     seccomp_filter=${lib.escapeShellArg "${seccompFilter}"}
+    enable_dbus=${if enableDbus then "1" else "0"}
 
     system_read_only_paths=(${lib.escapeShellArgs systemReadOnlyPaths})
     user_read_only_paths=(${lib.escapeShellArgs userReadOnlyPaths})
@@ -120,8 +122,8 @@ pkgs.writeArgcApplication {
   runtimeInputs = [
     pkgs.bubblewrap
     pkgs.coreutils
-    pkgs.xdg-dbus-proxy
-  ];
+  ]
+  ++ lib.optional enableDbus pkgs.xdg-dbus-proxy;
   meta = {
     description = "Run commands with an explicit filesystem and socket allowlist";
     platforms = lib.platforms.linux;

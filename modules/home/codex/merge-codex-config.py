@@ -1,5 +1,6 @@
 import argparse
 import hashlib
+import json
 import os
 import stat
 import sys
@@ -47,7 +48,11 @@ def yolo(command: list[str]) -> None:
     profile, remaining = parser.parse_known_args(command[1:])
     parser = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
     parser.add_argument("-C", "--cd")
+    parser.add_argument("-c", "--config", action="append")
+    parser.add_argument("--enable", action="append")
+    parser.add_argument("--disable", action="append")
     parser.add_argument("-h", "--help", "-V", "--version", action="store_true")
+    parser.add_argument("subcommand", nargs="?")
     args, _ = parser.parse_known_args(remaining)
     if args.help:
         os.execvp(command[0], command)
@@ -55,6 +60,11 @@ def yolo(command: list[str]) -> None:
     workspace = Path(args.cd or os.getcwd()).resolve(strict=True)
     if not workspace.is_dir():
         raise ValueError(f"not a workspace directory: {workspace}")
+    if args.subcommand == "app-server":
+        # App-server rejects --profile. A CLI override supplies the same trust
+        # without creating a profile or changing the shared user settings.
+        trust = f'projects.{json.dumps(str(workspace), ensure_ascii=False)}.trust_level="trusted"'
+        os.execvp(command[0], [command[0], "--config", trust, *command[1:]])
     codex_home = Path(os.environ.get("CODEX_HOME", str(Path.home() / ".codex"))).absolute()
     user_config = codex_home / "config.toml"
     user = tomlkit.loads(user_config.read_text()) if user_config.exists() else {}

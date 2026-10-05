@@ -25,6 +25,7 @@ import tempfile
 import termios
 from threading import Event, Thread
 import time
+import tomllib
 
 
 HOME = Path('/home/tester')
@@ -266,6 +267,26 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
     assert config_path.read_text() == original
     assert custom.read_text() == 'model_reasoning_effort = "high"\n'
     print('passed: Codex trust profiles follow -C/--cd, preserve selected profiles and leave user config untouched', flush=True)
+
+    # App-server accepts config overrides, but rejects the CLI's --profile.
+    # Exercise both sandboxed and unsandboxed launchers, with globals before
+    # the subcommand and a quoted workspace path.
+    profiles = set((HOME / '.codex').glob('*.config.toml'))
+    for case in config['cases'][3:]:
+        for globals_ in ([], ['-c', 'model="app-server"', '--enable', 'fixture']):
+            args = [*globals_, '-C', str(target), 'app-server', '--listen', 'stdio://']
+            _, records = invoke(case['launchers']['codex'], ['--', *args])
+            record = records[-1]
+            assert record['profile_name'] is None, record
+            assert record['argv'][0] == '--config', record
+            assert tomllib.loads(record['argv'][1]) == {
+                'projects': {str(target): {'trust_level': 'trusted'}}}, record
+            prefix = [FLAGS['codex']] + (['--no-daemon'] if case['sandbox'] else [])
+            assert record['argv'][2:] == [*prefix, *args], record
+    assert set((HOME / '.codex').glob('*.config.toml')) == profiles
+    assert config_path.read_text() == original
+    assert config_path.stat().st_ino == inode
+    print('passed: Codex app-server uses a trust override without profiles or shared config writes', flush=True)
 
     # Model another client atomically updating shared settings during launches.
     stopped = Event()

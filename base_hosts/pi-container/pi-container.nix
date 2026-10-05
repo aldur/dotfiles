@@ -8,7 +8,7 @@ pkgs.writeShellApplication {
   ];
   text = ''
     socket=/var/host-services/llama.sock
-    if (( $# == 0 )); then set -- fish --login; fi
+    if (( $# == 0 )); then set -- pi-yolo; fi
     if [ "$(id -u)" = 0 ]; then
       if [ -S "$socket" ] && [ ! -L "$socket" ]; then
         chown -h ${toString uid}:100 "$socket"
