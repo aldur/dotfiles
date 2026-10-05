@@ -27,7 +27,10 @@ let
   inherit (home.config.home) username homeDirectory;
   homePath = lib.removePrefix "/" homeDirectory;
   name = "aldur-pi";
-  entrypoint = pkgs.callPackage ./pi-container.nix { } uid;
+  entrypoint = pkgs.callPackage ./pi-container.nix {
+    homeFiles = home.config.home-files;
+    homeProfile = home.config.home.path;
+  } uid;
   root = pkgs.buildEnv {
     name = "pi-container-root";
     paths = [
@@ -63,7 +66,7 @@ let
     contents = [ root ];
     maxLayers = 2;
     extraCommands = ''
-      mkdir -p etc ${homePath} workspace tmp var/tmp var/host-services usr/bin
+      mkdir -p dev proc sys etc ${homePath} workspace tmp var/tmp var/host-services usr/bin
       cp -a ${home.config.home-files}/. ${homePath}/
       find ${homePath} -type d -exec chmod u+w {} +
       ln -s ${home.config.home.path} ${homePath}/.nix-profile

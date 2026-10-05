@@ -21,6 +21,13 @@ With inference available at `/path/to/llama.sock`, run Pi offline:
 
 ```bash
 env -u SSH_AUTH_SOCK container run -it --rm --network none --no-dns \
+  --read-only \
+  --tmpfs /tmp:mode=1777 \
+  --tmpfs /var/tmp:mode=1777 \
+  --tmpfs /home/aldur:uid=501,gid=100,mode=0700 \
+  --cap-drop ALL \
+  --cap-add CHOWN --cap-add SETUID --cap-add SETGID --cap-add SYS_CHROOT \
+  --cpus 2 --memory 2G \
   --volume /path/to/llama.sock:/var/host-services/llama.sock \
   --volume "$PWD:/workspace" \
   --env LLAMA_SOCKET_PATH=/var/host-services/llama.sock \
@@ -36,14 +43,12 @@ nested repositories and worktrees.
 For extra folders, mount them into the container and grant them to `pi-yolo`:
 
 ```bash
-env -u SSH_AUTH_SOCK container run -it --rm --network none --no-dns \
-  --volume /path/to/llama.sock:/var/host-services/llama.sock \
-  --volume "$PWD:/workspace" \
-  --volume /path/to/reference:/reference:ro \
-  --volume /path/to/output:/output \
-  --env LLAMA_SOCKET_PATH=/var/host-services/llama.sock \
-  ghcr.io/aldur/aldur-pi:latest \
-  pi-yolo --ro /reference --rw /output --models 'llama-cpp/*'
+# Add these volumes before the image name in the command above:
+--volume /path/to/reference:/reference:ro \
+--volume /path/to/output:/output
+
+# Then use this command after the image name:
+pi-yolo --ro /reference --rw /output --models 'llama-cpp/*'
 ```
 
 `--ro` and `--rw` are repeatable; Git metadata in writable grants is protected

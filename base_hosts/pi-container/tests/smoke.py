@@ -1,4 +1,4 @@
-"""Do a test of the OCI filesystem in a user namespace with no external network access."""
+"""Test the offline OCI filesystem with bubblewrap, or runc in a root VM."""
 import hashlib
 import http.server
 import io
@@ -6,11 +6,18 @@ import json
 import os
 import platform
 from pathlib import Path
+import pty
+import re
+import select
+import shutil
+import socket
 import socketserver
 import subprocess
 import sys
 import tarfile
+import tempfile
 import threading
+import time
 
 import zstandard
 
@@ -39,19 +46,22 @@ def unpack(archive_path, root):
         assert config["architecture"] == {"x86_64": "amd64", "aarch64": "arm64"}[platform.machine()]
         for layer, diff in zip(manifest["layers"], config["rootfs"]["diff_ids"], strict=True):
             assert layer["mediaType"] == "application/vnd.oci.image.layer.v1.tar+zstd"
-            with zstandard.ZstdDecompressor().stream_reader(io.BytesIO(blob(layer))) as source:
-                # Make sure that the diff ID and the blob digest are correct.
-                unpacked = source.read()
-            assert "sha256:" + hashlib.sha256(unpacked).hexdigest() == diff
-            with tarfile.open(fileobj=io.BytesIO(unpacked)) as content:
-                for entry in content:
-                    entry.name = entry.name.removeprefix("./").lstrip("/")
-                    assert ".." not in Path(entry.name).parts
-                    if entry.islnk():
-                        entry.linkname = entry.linkname.removeprefix("./").lstrip("/")
-                    if entry.name.rstrip("/").removeprefix("./") in ("home/aldur", "workspace"):
-                        assert (entry.uid, entry.gid) == (501, 100)
-                content.extractall(root, filter="fully_trusted")
+            # Avoid keeping multiple copies of the uncompressed layer in RAM.
+            with tempfile.TemporaryFile() as unpacked:
+                with zstandard.ZstdDecompressor().stream_reader(io.BytesIO(blob(layer))) as source:
+                    shutil.copyfileobj(source, unpacked)
+                unpacked.seek(0)
+                assert "sha256:" + hashlib.file_digest(unpacked, "sha256").hexdigest() == diff
+                unpacked.seek(0)
+                with tarfile.open(fileobj=unpacked) as content:
+                    for entry in content:
+                        entry.name = entry.name.removeprefix("./").lstrip("/")
+                        assert ".." not in Path(entry.name).parts
+                        if entry.islnk():
+                            entry.linkname = entry.linkname.removeprefix("./").lstrip("/")
+                        if entry.name.rstrip("/").removeprefix("./") in ("home/aldur", "workspace"):
+                            assert (entry.uid, entry.gid) == (501, 100)
+                    content.extractall(root, filter="fully_trusted")
         return config["config"]
 
 
@@ -93,7 +103,8 @@ class Inference(http.server.BaseHTTPRequestHandler):
         Inference.completion = True
         mounts = "check mounts" in json.dumps(request["messages"])
         marker = "output/verified" if mounts else "workspace/agent.txt"
-        if request.get("tools") and not (self.server.root / marker).exists():
+        if (request.get("tools") and not (self.server.root / marker).exists()
+                and not any(message.get("role") == "tool" for message in request["messages"])):
             name = "write"
             arguments = {"path": "/workspace/agent.txt", "content": "sandboxed task complete\n"}
             if mounts:
@@ -110,6 +121,13 @@ for metadata in /workspace/repository/.git /output/.git; do
   if touch "$metadata/new"; then exit 1; fi
   if mv "$metadata" "$metadata.moved"; then exit 1; fi
 done
+python3 - <<'PY'
+from pathlib import Path
+status = dict(line.split(':', 1) for line in Path('/proc/self/status').read_text().splitlines())
+assert status['NoNewPrivs'].strip() == '1'
+assert status['Seccomp'].strip() == '2'
+assert all(int(status[name], 16) == 0 for name in ('CapEff', 'CapPrm', 'CapBnd', 'CapAmb'))
+PY
 printf verified > /output/verified
 '''}
             events = [
@@ -127,19 +145,92 @@ printf verified > /output/verified
 
 def main():
     root = Path(sys.argv[2])
+    print("Unpacking OCI image", flush=True)
     config = unpack(sys.argv[1], root)
-    command = ["bwrap", "--unshare-all", "--as-pid-1", "--die-with-parent", "--uid", "501", "--gid", "100",
-               "--bind", str(root), "/", "--ro-bind", str(root / "nix/store"), "/nix/store",
-               "--proc", "/proc", "--dev", "/dev", "--tmpfs", "/tmp", "--chdir", "/workspace", "--clearenv"]
+    print("OCI image unpacked", flush=True)
+    privileged = os.geteuid() == 0
+    home = root.parent / "container-home"
+    home.mkdir(mode=0o700)
+    state = home / ".pi/agent"
+    if privileged:
+        # A real root VM can reproduce tmpfs ownership and the UID switch.
+        subprocess.run(["mount", "-t", "tmpfs", "-o", "uid=501,gid=100,mode=0700", "tmpfs", str(home)], check=True)
+    for directory in ("reference", "output/.git", "unrelated"):
+        (root / directory).mkdir(parents=True)
+    (root / "reference/marker").write_text("reference\n")
+    (root / "output/.git/config").write_text("protected\n")
+    (root / "unrelated/secret").write_text("private\n")
+    if privileged:
+        for path in (root / "output", root / "output/.git", root / "output/.git/config"):
+            os.chown(path, 501, 100)
+
+    capabilities = ["CAP_CHOWN", "CAP_SETUID", "CAP_SETGID", "CAP_SYS_CHROOT"] if privileged else []
+    command = ["bwrap", "--unshare-all", "--uid", "501", "--gid", "100",
+               "--as-pid-1", "--die-with-parent", "--cap-drop", "ALL"]
+    command += ["--ro-bind", str(root), "/", "--bind", str(root / "workspace"), "/workspace",
+                "--ro-bind", str(root / "reference"), "/reference", "--bind", str(root / "output"), "/output",
+                "--bind", str(home), "/home/aldur",
+                "--proc", "/proc", "--dev", "/dev", "--perms", "1777", "--tmpfs", "/tmp",
+                "--perms", "1777", "--tmpfs", "/var/tmp", "--chdir", "/workspace", "--clearenv"]
     for assignment in config["Env"]:
         key, value = assignment.split("=", 1)
         command += ["--setenv", key, value]
     command += ["--", *config["Entrypoint"]]
 
+    bundle = root.parent / "bundle"
+    bundle.mkdir()
+    launches = 0
+
+    def launch(*args, caps=capabilities, missing_socket=False, terminal=False):
+        nonlocal launches
+        if not privileged:
+            result = command.copy()
+            if missing_socket:
+                index = result.index("--")
+                result[index:index] = ["--setenv", "LLAMA_SOCKET_PATH", "/var/host-services/llama.sock"]
+            return result + list(args)
+        mounts = [
+            {"destination": "/proc", "type": "proc", "source": "proc"},
+            {"destination": "/dev", "type": "tmpfs", "source": "tmpfs", "options": ["mode=755"]},
+            {"destination": "/dev/pts", "type": "devpts", "source": "devpts", "options": ["newinstance", "ptmxmode=0666", "mode=0620"]},
+            {"destination": "/sys", "type": "sysfs", "source": "sysfs", "options": ["ro"]},
+            *({"destination": path, "type": "tmpfs", "source": "tmpfs", "options": ["mode=1777"]}
+              for path in ("/tmp", "/var/tmp")),
+        ]
+        for source, destination, mode in (
+            (root / "workspace", "/workspace", "rw"),
+            (root / "reference", "/reference", "ro"),
+            (root / "output", "/output", "rw"),
+            (home, "/home/aldur", "rw"),
+        ):
+            mounts.append({"destination": destination, "type": "bind", "source": str(source), "options": ["bind", mode]})
+        socket = root / "var/host-services/llama.sock"
+        if socket.exists():
+            mounts.append({"destination": "/var/host-services/llama.sock", "type": "bind", "source": str(socket), "options": ["bind", "rw"]})
+        environment = config["Env"] + (["LLAMA_SOCKET_PATH=/var/host-services/llama.sock"] if missing_socket else [])
+        spec = {
+            "ociVersion": "1.0.2",
+            "root": {"path": str(root), "readonly": True},
+            "process": {
+                "terminal": terminal,
+                "consoleSize": {"height": 24, "width": 80},
+                "user": {"uid": 0, "gid": 0}, "cwd": "/workspace",
+                "args": config["Entrypoint"] + list(args), "env": environment,
+                "capabilities": {"bounding": caps, "permitted": caps, "effective": caps},
+            },
+            "mounts": mounts,
+            "linux": {"namespaces": [{"type": name} for name in ("pid", "network", "ipc", "uts", "mount")]},
+        }
+        (bundle / "config.json").write_text(json.dumps(spec))
+        launches += 1
+        console = ["--detach", "--console-socket", str(bundle / "console.sock")] if terminal else []
+        return ["runc", "run", "--bundle", str(bundle), "--no-new-keyring", *console, f"pi-smoke-{launches}"]
+
     def run(*args, success=True):
-        result = subprocess.run(command + list(args), text=True, capture_output=True, timeout=45)
+        print(f"Running {args[0]}", flush=True)
+        result = subprocess.run(launch(*args), stdin=subprocess.DEVNULL, text=True, capture_output=True, timeout=180 if privileged else 45)
         if success:
-            assert result.returncode == 0, (args, result.returncode, result.stdout, result.stderr)
+            assert result.returncode == 0, (args[0], result.returncode, result.stdout, result.stderr)
         else:
             assert result.returncode != 0, args
         return result
@@ -155,7 +246,26 @@ done
 test -z "${LLAMA_SOCKET_PATH-}"
 test "$(ls /sys/class/net 2>/dev/null | wc -l)" -le 1
 python3 - <<'PY'
-import locale, socket, sqlite3, ssl, subprocess, sys, venv
+import errno, locale, socket, sqlite3, ssl, subprocess, sys, venv
+from pathlib import Path
+status = dict(line.split(':', 1) for line in Path('/proc/self/status').read_text().splitlines())
+assert all(int(status[name], 16) == 0 for name in ('CapEff', 'CapPrm', 'CapAmb')), status
+assert int(status['CapBnd'], 16) & ~sum(1 << bit for bit in (0, 6, 7, 18)) == 0, status
+for path in ('/etc/passwd', '/bin/unwanted', '/var/unwanted'):
+    try:
+        Path(path).write_text('unsafe')
+    except OSError as error:
+        assert error.errno == errno.EROFS, (path, error)
+    else:
+        raise AssertionError(f'root filesystem is writable: {path}')
+assert Path.home().stat().st_mode & 0o777 == 0o700
+assert Path.home().stat().st_uid == 501
+state = Path.home() / '.pi/agent'
+assert (state / 'keybindings.json').is_symlink()
+assert __import__('json').loads((state / 'keybindings.json').read_text())['tui.editor.cursorUp'] == ['up', 'ctrl+p']
+(state / 'marker').write_text('preserved')
+Path('/tmp/writable').touch()
+Path('/var/tmp/writable').touch()
 assert sys.stdout.encoding.lower() == 'utf-8'
 assert sqlite3.connect(':memory:').execute('select 42').fetchone() == (42,)
 assert 'é'.encode().decode() == 'é'
@@ -194,27 +304,37 @@ for tool in bat btop htop curl dig fd file jq less pv rg tmux age tree totp-cli 
 '''
     result = run("/bin/bash", "-c", smoke)
     print(result.stdout)
-    # This namespace maps only one UID. It cannot change the UID to 501.
-    # If the entrypoint cannot change the UID, make sure that it stops before the command.
-    as_root = command.copy()
-    as_root[as_root.index("--uid") + 1] = "0"
-    as_root[as_root.index("--gid") + 1] = "0"
-    failed = subprocess.run(as_root + ["/bin/bash", "-c", "echo UNSAFE_COMMAND"], text=True, capture_output=True, timeout=10)
-    assert failed.returncode != 0 and "chroot" in failed.stderr
-    assert "UNSAFE_COMMAND" not in failed.stdout
+    # Existing state is preserved, including user-customized keybindings.
+    (state / "keybindings.json").unlink()
+    custom_keybindings = '{"tui.editor.cursorUp":["up","ctrl+k"]}\n'
+    (state / "keybindings.json").write_text(custom_keybindings)
+    run("pi-yolo", "--version")
+    assert (state / "keybindings.json").read_text() == custom_keybindings
+    assert (state / "marker").read_text() == "preserved"
+    if not privileged:
+        # A single-UID namespace cannot change from root to UID 501.
+        as_root = command.copy()
+        as_root[as_root.index("--uid") + 1] = "0"
+        as_root[as_root.index("--gid") + 1] = "0"
+        failed = subprocess.run(as_root + ["/bin/bash", "-c", "echo UNSAFE_COMMAND"], text=True, capture_output=True, timeout=10)
+        assert failed.returncode != 0 and "chroot" in failed.stderr
+        assert "UNSAFE_COMMAND" not in failed.stdout
     # Make sure that these commands stop when the required socket is not available.
-    missing = command.copy()
-    missing[missing.index("--"):missing.index("--")] = ["--setenv", "LLAMA_SOCKET_PATH", "/var/host-services/llama.sock"]
-    failed = subprocess.run(missing + ["/bin/bash", "-c", "echo UNSAFE_COMMAND"], text=True, capture_output=True, timeout=10)
+    failed = subprocess.run(launch("/bin/bash", "-c", "echo UNSAFE_COMMAND", missing_socket=True), stdin=subprocess.DEVNULL, text=True, capture_output=True, timeout=10)
     assert failed.returncode != 0 and "inference socket missing" in failed.stderr
     assert "UNSAFE_COMMAND" not in failed.stdout
-    for directory in ("reference", "output/.git", "unrelated"):
-        (root / directory).mkdir(parents=True)
-    (root / "reference/marker").write_text("reference\n")
-    (root / "output/.git/config").write_text("protected\n")
-    (root / "unrelated/secret").write_text("private\n")
     with Server(str(root / "var/host-services/llama.sock"), Inference) as server:
         server.root = root
+        index = command.index("--")
+        command[index:index] = ["--bind", server.server_address, "/var/host-services/llama.sock"]
+        if privileged:
+            os.chmod(server.server_address, 0o600)
+            for capability in capabilities:
+                restricted = [cap for cap in capabilities if cap != capability]
+                failed = subprocess.run(launch("/bin/bash", "-c", "echo UNSAFE_COMMAND", caps=restricted), stdin=subprocess.DEVNULL, text=True, capture_output=True, timeout=15)
+                assert failed.returncode != 0, (capability, failed)
+                assert "UNSAFE_COMMAND" not in failed.stdout
+                print(f"Missing {capability}: startup failed closed", flush=True)
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
         try:
@@ -222,7 +342,7 @@ for tool in bat btop htop curl dig fd file jq less pv rg tmux age tree totp-cli 
 set -eu
 test "$LLAMA_BASE_URL" = http://127.0.0.1:8080/v1
 pi-yolo --models 'llama-cpp/*' -p --no-session --no-tools --no-skills --no-extensions 'say hello'
-pi-yolo --models 'llama-cpp/*' -p --no-session --no-skills --no-extensions 'create agent.txt'
+pi-yolo --models 'llama-cpp/*' -p --no-skills --no-extensions 'create agent.txt'
 pi-yolo --ro /reference --rw /output --models 'llama-cpp/*' -p --no-session --no-skills --no-extensions 'check mounts'
 # Make sure that both Pi sessions use one relay.
 # Make sure that the relay stays available.
@@ -231,12 +351,74 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
             assert "offline inference works" in result.stdout, (result.stdout, result.stderr)
             assert Inference.completion
             assert (root / "workspace/agent.txt").read_text() == "sandboxed task complete\n"
+            assert (root / "output/verified").exists(), (result.stdout, result.stderr)
             assert (root / "output/verified").read_text() == "verified"
             assert (root / "reference/marker").read_text() == "reference\n"
             assert (root / "output/.git/config").read_text() == "protected\n"
+            assert list((state / "sessions").rglob("*.jsonl")), "Pi session was not saved"
+            # Exercise the no-command entrypoint and the real interactive Pi UI.
+            print("Starting interactive Pi", flush=True)
+            if privileged:
+                # An OCI terminal is delivered as a PTY descriptor over a socket.
+                with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as console:
+                    console.bind(str(bundle / "console.sock"))
+                    console.listen(1)
+                    console.settimeout(30)
+                    interactive = launch(terminal=True)
+                    process = subprocess.Popen(interactive, stdin=subprocess.DEVNULL)
+                    connection, _ = console.accept()
+                    with connection:
+                        _, rights, _, _ = connection.recvmsg(1, socket.CMSG_SPACE(4))
+                    assert rights[0][:2] == (socket.SOL_SOCKET, socket.SCM_RIGHTS), rights
+                    master = int.from_bytes(rights[0][2], sys.byteorder)
+            else:
+                master, slave = pty.openpty()
+                process = subprocess.Popen(launch(), stdin=slave, stdout=slave, stderr=slave, start_new_session=True)
+                os.close(slave)
+            output = bytearray()
+
+            def wait_for(needle):
+                deadline = time.monotonic() + (120 if privileged else 30)
+                while time.monotonic() < deadline:
+                    if select.select([master], [], [], 0.2)[0]:
+                        try:
+                            output.extend(os.read(master, 65536))
+                        except OSError:
+                            break
+                    plain = re.sub(rb"\x1b\[[0-?]*[ -/]*[@-~]", b"", bytes(output))
+                    if needle in plain:
+                        return
+                    if not privileged and process.poll() is not None:
+                        break
+                raise AssertionError((needle, process.poll(), bytes(output[-4000:])))
+
+            try:
+                wait_for(b"clear/exit")
+                os.write(master, b"interactive smoke\r")
+                wait_for(b"offline inference works")
+                os.write(master, b"\x04")
+                assert process.wait(timeout=30) == 0, bytes(output[-4000:])
+                if privileged:
+                    deadline = time.monotonic() + 30
+                    while time.monotonic() < deadline:
+                        status = json.loads(subprocess.check_output(["runc", "state", interactive[-1]]))
+                        if status["status"] == "stopped":
+                            break
+                        time.sleep(0.1)
+                    else:
+                        raise AssertionError("Interactive Pi did not exit")
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                    process.wait()
+                os.close(master)
+                if privileged:
+                    subprocess.run(["runc", "delete", "--force", interactive[-1]], check=True)
         finally:
             server.shutdown()
-    print("Finished image: shell, CLI, Git, Python, editor, tmux and offline Pi tool execution passed")
+    if privileged:
+        subprocess.run(["umount", str(home)], check=True)
+    print("Finished image: read-only root, Pi state, capabilities, shell, tools and interactive offline Pi passed", flush=True)
 
 
 

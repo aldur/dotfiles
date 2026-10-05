@@ -38,6 +38,10 @@
           inherit image;
           dotfiles = aldur-dotfiles;
         };
+        checks.hardening = import ./tests/hardening.nix {
+          inherit (base) pkgs;
+          inherit image;
+        };
       }
     );
 }

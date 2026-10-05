@@ -1,4 +1,8 @@
-{ pkgs }:
+{
+  pkgs,
+  homeFiles,
+  homeProfile,
+}:
 uid:
 pkgs.writeShellApplication {
   name = "pi-container";
@@ -14,6 +18,14 @@ pkgs.writeShellApplication {
         chown -h ${toString uid}:100 "$socket"
       fi
       exec chroot --userspec=${toString uid}:100 --groups=100 --skip-chdir / "$0" "$@"
+    fi
+
+    # A fresh tmpfs home needs the same configuration as the image. Keep
+    # existing user files; only seed a home without its profile link.
+    if [ ! -e "$HOME/.nix-profile" ]; then
+      cp -a --no-clobber --no-preserve=ownership,mode ${homeFiles}/. "$HOME/"
+      find "$HOME" -type d -exec chmod u+w {} +
+      ln -s ${homeProfile} "$HOME/.nix-profile"
     fi
 
     export PATH="/bin:/run/current-system/sw/bin:$PATH"

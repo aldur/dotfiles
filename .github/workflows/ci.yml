@@ -239,6 +239,8 @@ jobs:
             target: ./base_hosts/apple-container#checks.aarch64-linux.container-size
           - runner: ubuntu-24.04
             target: ./base_hosts/pi-container#checks.x86_64-linux.image
+          - runner: ubuntu-24.04
+            target: ./base_hosts/pi-container#checks.x86_64-linux.hardening
           - runner: ubuntu-26.04-arm
             target: ./base_hosts/pi-container#checks.aarch64-linux.image
     runs-on: ${{ matrix.runner }}
