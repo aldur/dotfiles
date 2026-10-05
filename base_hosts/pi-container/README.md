@@ -28,6 +28,9 @@ env -u SSH_AUTH_SOCK container run -it --rm \
   --tmpfs /home/aldur:uid=501,gid=100,mode=0700 \
   --cap-drop ALL \
   --cap-add CHOWN --cap-add SETUID --cap-add SETGID --cap-add SYS_CHROOT \
+  --masked-path NONE \
+  --masked-path /sys/firmware --masked-path /sys/devices/virtual/powercap \
+  --read-only-path NONE \
   --cpus 2 --memory 2G \
   --volume /path/to/llama.sock:/var/host-services/llama.sock \
   --volume "$PWD:/workspace" \
