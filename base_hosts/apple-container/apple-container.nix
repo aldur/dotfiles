@@ -83,7 +83,7 @@ let
     }:
     "${pkgs.writeShellScriptBin name ''
     ready() {
-      [ -x ${runtimeShell} ] || return 1
+      [ -x ${runtimeShell} ] && [ -r /etc/set-environment ] || return 1
       ${lib.optionalString (
         waitForHomeManager && cfg.homeManagerMarker != null
       ) ''[ -e "$HOME"/${lib.escapeShellArg cfg.homeManagerMarker} ] || return 1''}
@@ -93,17 +93,25 @@ let
       ready && break
       ${coreutils}/bin/sleep 0.1
     done
+    ready || {
+      echo "machine-session: initialization not ready after 60s" >&2
+      exit 1
+    }
     # We run outside any PAM session (Apple execs the session directly), so
     # nothing has applied the NixOS session environment — without this, PATH
     # stays bare FHS and every command is "not found", whatever the shell.
     # /etc/set-environment is bash syntax (it's what /etc/profile sources),
-    # self-guards with __NIXOS_SET_ENVIRONMENT_DONE, and the exec'd shell
-    # inherits the result. USER/LOGNAME first: it builds PATH entries like
+    # sets __NIXOS_SET_ENVIRONMENT_DONE so the real shell inherits the result
+    # without sourcing it again. USER/LOGNAME first: it builds PATH entries like
     # /etc/profiles/per-user/$USER/bin from them, and login(1) would have set
     # them anyway.
     export USER=${user} LOGNAME=${user}
-    [ -z "''${__NIXOS_SET_ENVIRONMENT_DONE:-}" ] && [ -r /etc/set-environment ] \
-      && . /etc/set-environment
+    if [ -z "''${__NIXOS_SET_ENVIRONMENT_DONE:-}" ]; then
+      . /etc/set-environment || {
+        echo "machine-session: could not load session environment" >&2
+        exit 1
+      }
+    fi
     # `nix shell`/`nix develop` spawn $SHELL and fall back to literal "bash"
     # when it's unset — observed dropping the user into bash. We're the login
     # shell, so claim the variable like login(1) would.
@@ -126,7 +134,7 @@ let
   ''}/bin/${name}";
 
   # The interactive user also waits for home-manager (its shell config lives
-  # there); root has no home-manager, so it waits only for the system shell.
+  # there); root waits only for the system shell and session environment.
   machineSessionShell = mkSessionShell {
     name = "machine-session-shell";
     user = username;
@@ -305,8 +313,8 @@ in
       description = ''
         $HOME-relative file the session wrapper additionally waits for —
         typically a home-manager-linked shell config, so the first machine
-        session doesn't open before home-manager finishes. Sessions eat the
-        wrapper's 60s timeout if it never appears.
+        session doesn't open before home-manager finishes. The session fails
+        after 60s if the required files never appear.
       '';
     };
   };
@@ -378,7 +386,7 @@ in
       # activation just like the interactive user's — root's default shell is the
       # activation-dependent /run/current-system/sw/bin/<shell>, which isn't there
       # yet ("…/fish: No such file or directory"). Give root the same boot-wait
-      # wrapper (it has no home-manager, so it waits only for the system shell).
+      # wrapper (it has no home-manager marker to wait for).
       users.root.shell = lib.mkForce "${rootSessionShell}";
     };
 
@@ -428,7 +436,7 @@ in
             done
           done
           cat > etc/passwd <<'EOF'
-          root:x:0:0:root:/root:/bin/sh
+          root:x:0:0:root:/root:${rootSessionShell}
           ${username}:x:${toString uid}:100::/home/${username}:${machineSessionShell}
           EOF
           cat > etc/group <<'EOF'
