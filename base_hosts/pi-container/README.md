@@ -17,7 +17,8 @@ nix build --override-input aldur-dotfiles . ./base_hosts/pi-container#container-
 container image load --input result
 ```
 
-With inference available at `/path/to/llama.sock`, run Pi offline:
+With [sandboxed inference][0] available at
+`~/.local/state/sandboxed-ai/sockets/llama-server.sock`, run Pi offline:
 
 ```bash
 env -u SSH_AUTH_SOCK container run -it --rm \
@@ -28,12 +29,14 @@ env -u SSH_AUTH_SOCK container run -it --rm \
   --tmpfs /home/aldur:uid=501,gid=100,mode=0700 \
   --cap-drop ALL \
   --cap-add CHOWN --cap-add SETUID --cap-add SETGID --cap-add SYS_CHROOT \
-  --cpus 2 --memory 2G \
-  --volume /path/to/llama.sock:/var/host-services/llama.sock \
+  --volume ~/.local/state/sandboxed-ai/sockets/llama-server.sock:/var/host-services/llama.sock \
   --volume "$PWD:/workspace" \
   --env LLAMA_SOCKET_PATH=/var/host-services/llama.sock \
   ghcr.io/aldur/aldur-pi:latest --models 'llama-cpp/*'
+
 ```
+
+Add `--cpus 2` or `--memory 2G` if you want to limit system resources.
 
 For a local build, use `aldur-pi:latest` in the run command. The image
 entrypoint uses socat to relay the socket to `127.0.0.1:8080`. Pi arguments go
@@ -54,3 +57,5 @@ For extra folders, mount them into the container and grant them to `pi-yolo`:
 
 `--ro` and `--rw` are repeatable; Git metadata in writable grants is protected
 too. Use `fish --login` as the command to open a shell.
+
+[0]: https://github.com/aldur/sandboxed-ai

@@ -20,6 +20,7 @@ On [Apple container][1]:
 container run -it --rm ghcr.io/aldur/aldur-nixos:latest
 # add --ssh to enable agent forwarding
 # add --name to set the hostname
+# Use `container image pull ghcr.io/aldur/aldur-nixos:latest` to refresh the image
 ```
 
 With Docker/Podman [^apple-container]:
