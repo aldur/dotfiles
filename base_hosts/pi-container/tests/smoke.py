@@ -22,6 +22,17 @@ import time
 import zstandard
 
 
+# Apple Container's OCI defaults. The documented command clears the /proc
+# entries so nested user/PID namespaces can mount procfs, retaining /sys masks.
+APPLE_MASKED_PATHS = [
+    "/proc/asound", "/proc/acpi", "/proc/kcore", "/proc/keys",
+    "/proc/latency_stats", "/proc/timer_list", "/proc/timer_stats",
+    "/proc/sched_debug", "/proc/scsi",
+    "/sys/firmware", "/sys/devices/virtual/powercap",
+]
+APPLE_READONLY_PATHS = ["/proc/bus", "/proc/fs", "/proc/irq", "/proc/sys", "/proc/sysrq-trigger"]
+
+
 def unpack(archive_path, root):
     root.mkdir(parents=True)
     with tarfile.open(archive_path) as archive:
@@ -184,13 +195,21 @@ def main():
     bundle.mkdir()
     launches = 0
 
-    def launch(*args, caps=capabilities, missing_socket=False, terminal=False):
+    def launch(*args, caps=capabilities, missing_socket=False, terminal=False,
+               masked_proc=False, readonly_proc=False):
         nonlocal launches
         if not privileged:
             result = command.copy()
             if missing_socket:
                 index = result.index("--")
                 result[index:index] = ["--setenv", "LLAMA_SOCKET_PATH", "/var/host-services/llama.sock"]
+            # Reproduce each kind of locked child mount without host root.
+            if masked_proc:
+                index = result.index("--")
+                result[index:index] = ["--ro-bind", "/dev/null", "/proc/keys"]
+            if readonly_proc:
+                index = result.index("--")
+                result[index:index] = ["--ro-bind", "/proc/sys", "/proc/sys"]
             return result + list(args)
         mounts = [
             {"destination": "/proc", "type": "proc", "source": "proc"},
@@ -222,7 +241,11 @@ def main():
                 "capabilities": {"bounding": caps, "permitted": caps, "effective": caps},
             },
             "mounts": mounts,
-            "linux": {"namespaces": [{"type": name} for name in ("pid", "network", "ipc", "uts", "mount")]},
+            "linux": {
+                "namespaces": [{"type": name} for name in ("pid", "network", "ipc", "uts", "mount")],
+                "maskedPaths": APPLE_MASKED_PATHS if masked_proc else [path for path in APPLE_MASKED_PATHS if path.startswith("/sys/")],
+                "readonlyPaths": APPLE_READONLY_PATHS if readonly_proc else [],
+            },
         }
         (bundle / "config.json").write_text(json.dumps(spec))
         launches += 1
@@ -326,6 +349,15 @@ for tool in bat btop htop curl dig fd file jq less pv rg tmux age tree totp-cli 
     assert settings["tuiMode"] == "regular"
     assert settings["quietStartup"] == "header"
     assert (state / "marker").read_text() == "preserved"
+    # Both kinds of procfs submount independently block the nested sandbox:
+    # clearing just one default list is insufficient. Successful launches use
+    # the documented flags, which clear both and retain the /sys masks.
+    for masked, readonly in ((True, False), (False, True), (True, True)):
+        failed = subprocess.run(launch("pi-yolo", "--version", masked_proc=masked, readonly_proc=readonly),
+                                stdin=subprocess.DEVNULL, text=True, capture_output=True,
+                                timeout=180 if privileged else 45)
+        assert failed.returncode != 0, (masked, readonly, failed.stdout, failed.stderr)
+        assert "Can't mount proc on /proc: Operation not permitted" in failed.stderr, failed.stderr
     if not privileged:
         # A single-UID namespace cannot change from root to UID 501.
         as_root = command.copy()
@@ -372,8 +404,8 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
             assert (root / "output/.git/config").read_text() == "protected\n"
             assert list((state / "sessions").rglob("*.jsonl")), "Pi session was not saved"
 
-            def interactive_test(*args):
-                for marker in ("tmux-window-two", "pi-window-exited", "tmux-still-alive", "pi-alternate-screen"):
+            def interactive_test(*args, failure=None):
+                for marker in ("tmux-window-two", "pi-window-exited", "tmux-still-alive", "pi-alternate-screen", "pi-failure-status"):
                     (root / "workspace" / marker).unlink(missing_ok=True)
                 if privileged:
                     (bundle / "console.sock").unlink(missing_ok=True)
@@ -414,6 +446,15 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
                     raise AssertionError((needle, process.poll(), bytes(output[-4000:])))
 
                 try:
+                    if failure:
+                        wait_for(failure)
+                        os.write(master, b"\x01c")
+                        os.write(master, b"tmux display-message -p -t :1 '#{pane_dead}:#{pane_dead_status}' > /workspace/pi-failure-status.tmp; and mv /workspace/pi-failure-status.tmp /workspace/pi-failure-status\r")
+                        wait_for(marker="pi-failure-status")
+                        assert (root / "workspace/pi-failure-status").read_text().strip() == "1:1"
+                        os.write(master, b"tmux kill-session\r")
+                        assert process.wait(timeout=30) == 0, bytes(output[-4000:])
+                        return
                     wait_for(b"clear/exit")
                     os.write(master, b"interactive smoke\r")
                     wait_for(b"offline inference works")
@@ -456,6 +497,7 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
             prompt = "quoted 'argument'; $(touch /workspace/argument-injection)\nsecond line"
             interactive_test("--models", "llama-cpp/*", prompt)
             assert not (root / "workspace/argument-injection").exists()
+            interactive_test("--tui-mode", "invalid", failure=b"Invalid TUI mode")
         finally:
             server.shutdown()
     if privileged:

@@ -48,7 +48,10 @@ pkgs.writeShellApplication {
       # Reuse the session created by the shared tmux configuration. Quote
       # each argument for its shell, including literal quotes and newlines.
       printf -v pi_command "'%s' " "''${@//\'/\'\\\'\'}"
-      exec tmux start-server \; respawn-pane -k "exec $pi_command" \; attach-session
+      # Keep startup errors visible instead of discarding the failed pane.
+      # A normal Pi exit still closes it.
+      exec tmux start-server \; set-option -p remain-on-exit failed \; \
+        respawn-pane -k "exec $pi_command" \; attach-session
     fi
     exec "$@"
   '';
