@@ -29,6 +29,13 @@ This uses upstream [`require_allowed`](https://github.com/direnv/direnv/pull/153
 with checker errors made fatal and parent-relative inputs supported.
 Approvals remain tied to the active `.envrc`.
 
+Approval messages show a bounded preview (up to three paths) and the remaining
+count. Run `direnv status --required` in the affected shell for the full pending
+list, with quoted paths relative to the active `.envrc`. This only reads the
+shell's pending list; it does not execute the environment or approve anything.
+`direnv allow` also summarizes its output. Every pending file still needs approval,
+including files omitted from the preview.
+
 All storage using `direnv_layout_dir` lives under
 `${XDG_DATA_HOME:-~/.local/share}/direnv/layouts/<project-path-hash>`, outside
 worktrees. This includes nix-direnv's cached environments, profiles, GC roots

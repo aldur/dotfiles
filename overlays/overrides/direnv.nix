@@ -19,7 +19,12 @@ final: prev: {
         ./direnv-require-allowed-parent-inputs.patch
         # Apply log_format to errors and to `direnv allow` output.
         ./direnv-log-format-everywhere.patch
+        # Bound approval messages; keep full details available on demand.
+        ./direnv-concise-approvals.patch
       ];
+      postCheck = (old.postCheck or "") + ''
+        ${final.python3}/bin/python3 ${./direnv-concise-approvals_test.py} "$PWD/direnv"
+      '';
     });
   };
 }

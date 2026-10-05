@@ -1,0 +1,94 @@
+--- a/internal/cmd/cmd_allow.go
++++ b/internal/cmd/cmd_allow.go
+@@ -120,8 +120,8 @@
+ 			return fmt.Errorf("failed to write allowed-required file entry: %w", err)
+ 		}
+ 
+-		logStatus(config, "allowing %s", relPath)
+ 	}
+ 
++	logStatus(config, "allowed %s", requiredFilesSummary(paths))
+ 	return nil
+ }
+--- a/internal/cmd/cmd_check_required.go
++++ b/internal/cmd/cmd_check_required.go
+@@ -90,16 +90,44 @@
+ 		}
+ 		fmt.Print(exportStr)
+ 
+-		// Output error message
+-		var fileList string
++		verb := "require"
+ 		if len(missingPaths) == 1 {
+-			fileList = missingPaths[0] + " requires"
+-		} else {
+-			fileList = strings.Join(missingPaths, " and ") + " require"
++			verb = "requires"
+ 		}
+-		fmt.Printf("log_error %s;\n", BashEscape(fileList+" approval. Run 'direnv allow' to approve."))
++		message := fmt.Sprintf("%s %s approval. Run 'direnv status --required' to review; 'direnv allow' to approve.", requiredFilesSummary(missingPaths), verb)
++		fmt.Printf("log_error %s;\n", BashEscape(message))
+ 		fmt.Println("exit 0;")
+ 	}
+ 
+ 	return nil
+ }
++
++// Bound both the number of paths and their combined display length. Quoting
++// prevents filenames containing control characters from disrupting the prompt.
++// This is display-only: DIRENV_REQUIRED always retains the complete list.
++func requiredFilesSummary(paths []string) string {
++	var preview []string
++	length := 0
++	for _, path := range paths {
++		quoted := fmt.Sprintf("%q", path)
++		if len(preview) == 3 || length+len(quoted) > 160 {
++			break
++		}
++		preview = append(preview, quoted)
++		length += len(quoted) + 2
++	}
++	if len(paths) == 1 {
++		if len(preview) == 1 {
++			return preview[0]
++		}
++		return "1 file"
++	}
++	summary := fmt.Sprintf("%d files", len(paths))
++	if len(preview) > 0 {
++		if remaining := len(paths) - len(preview); remaining > 0 {
++			preview = append(preview, fmt.Sprintf("and %d more", remaining))
++		}
++		summary += " (" + strings.Join(preview, ", ") + ")"
++	}
++	return summary
++}
+--- a/internal/cmd/cmd_status.go
++++ b/internal/cmd/cmd_status.go
+@@ -4,14 +4,24 @@
+ 	"encoding/json"
+ 	"fmt"
+ 	"path/filepath"
++	"strings"
+ )
+ 
+ // CmdStatus is `direnv status`
+ var CmdStatus = &Cmd{
+ 	Name: "status",
+ 	Desc: "Prints some debug status information",
+-	Args: []string{"[--json]"},
+-	Action: actionWithConfig(func(_ Env, args []string, config *Config) error {
++	Args: []string{"[--json | --required]"},
++	Action: actionWithConfig(func(env Env, args []string, config *Config) error {
++		if len(args) > 1 && args[1] == "--required" {
++			// Match status semantics: inspect the current shell without evaluating .envrc.
++			if required := env[DIRENV_REQUIRED]; required != "" {
++				for _, path := range strings.Split(required, ":") {
++					fmt.Printf("%q\n", path)
++				}
++			}
++			return nil
++		}
+ 		if len(args) > 1 && (args[1] == "-json" || args[1] == "--json") {
+ 			loadedRC := config.LoadedRC()
+ 			foundRC, err := config.FindRC()
