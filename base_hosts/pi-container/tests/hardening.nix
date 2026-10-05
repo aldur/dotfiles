@@ -22,6 +22,6 @@ pkgs.testers.runNixOSTest {
   testScript = ''
     machine.start()
     machine.wait_for_unit("multi-user.target")
-    machine.succeed("python ${./smoke.py} ${image.image} /var/tmp/pi-root ${./proc-isolation.py} > /dev/ttyS0 2>&1", timeout=900)
+    machine.succeed("python ${./smoke.py} ${image.image} /var/tmp/pi-root ${./proc-isolation.py} > /dev/console 2>&1", timeout=900)
   '';
 }

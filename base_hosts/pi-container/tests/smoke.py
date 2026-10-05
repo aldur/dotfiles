@@ -196,10 +196,14 @@ def main():
     launches = 0
 
     def launch(*args, caps=capabilities, missing_socket=False, terminal=False,
-               masked_proc=True, readonly_proc=True):
+               masked_proc=True, readonly_proc=True, workspace=True, workdir="/workspace"):
         nonlocal launches
         if not privileged:
             result = command.copy()
+            result[result.index("--chdir") + 1] = workdir
+            if not workspace:
+                index = result.index(str(root / "workspace")) - 1
+                del result[index:index + 3]
             if missing_socket:
                 index = result.index("--")
                 result[index:index] = ["--setenv", "LLAMA_SOCKET_PATH", "/var/host-services/llama.sock"]
@@ -225,6 +229,8 @@ def main():
             (root / "output", "/output", "rw"),
             (home, "/home/aldur", "rw"),
         ):
+            if destination == "/workspace" and not workspace:
+                continue
             mounts.append({"destination": destination, "type": "bind", "source": str(source), "options": ["bind", mode]})
         socket = root / "var/host-services/llama.sock"
         if socket.exists():
@@ -236,7 +242,7 @@ def main():
             "process": {
                 "terminal": terminal,
                 "consoleSize": {"height": 24, "width": 80},
-                "user": {"uid": 0, "gid": 0}, "cwd": "/workspace",
+                "user": {"uid": 0, "gid": 0}, "cwd": workdir,
                 "args": config["Entrypoint"] + list(args), "env": environment,
                 "capabilities": {"bounding": caps, "permitted": caps, "effective": caps},
             },
@@ -252,9 +258,9 @@ def main():
         console = ["--detach", "--console-socket", str(bundle / "console.sock")] if terminal else []
         return ["runc", "run", "--bundle", str(bundle), "--no-new-keyring", *console, f"pi-smoke-{launches}"]
 
-    def run(*args, success=True):
+    def run(*args, success=True, **options):
         print(f"Running {args[0]}", flush=True)
-        result = subprocess.run(launch(*args), stdin=subprocess.DEVNULL, text=True, capture_output=True, timeout=180 if privileged else 45)
+        result = subprocess.run(launch(*args, **options), stdin=subprocess.DEVNULL, text=True, capture_output=True, timeout=180 if privileged else 45)
         if success:
             assert result.returncode == 0, (args[0], result.returncode, result.stdout, result.stderr)
         else:
@@ -356,6 +362,24 @@ for tool in bat btop htop curl dig fd file jq less pv rg tmux age tree totp-cli 
                                 timeout=180 if privileged else 45)
         assert result.returncode == 0, (masked, readonly, result.stdout, result.stderr)
     run("python3", "/nix/store/pi-proc-isolation.py")
+    run("/bin/bash", "-c", r'''
+set -eu
+test "$PWD" = "$HOME/workspace"
+printf scratch > scratch
+pi-yolo --version
+python3 - <<'PY'
+from pathlib import Path
+import subprocess
+wrapper = next(Path('/nix/store').glob('*-agent-sandbox/bin/agent-sandbox'))
+subprocess.run([str(wrapper), '--profile', 'pi', '--', 'python3', '-c',
+                "from pathlib import Path; Path('sandbox-scratch').write_text('sandboxed')"], check=True)
+PY
+''', workspace=False)
+    assert (home / "workspace/scratch").read_text() == "scratch"
+    assert (home / "workspace/sandbox-scratch").read_text() == "sandboxed"
+    assert not (root / "workspace/scratch").exists()
+    # Choosing another directory must not trigger the default-workspace fallback.
+    run("/bin/bash", "-c", 'test "$PWD" = /output', workspace=False, workdir="/output")
     if not privileged:
         # A single-UID namespace cannot change from root to UID 501.
         as_root = command.copy()

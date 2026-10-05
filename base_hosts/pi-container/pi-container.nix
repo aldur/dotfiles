@@ -29,6 +29,24 @@ pkgs.writeShellApplication {
       ln -s ${homeProfile} "$HOME/.nix-profile"
     fi
 
+    # An unmounted /workspace belongs to the image and may be read-only.
+    # Use the writable home for scratch work, preserving explicit mounts and
+    # custom working directories. Read mountinfo directly to catch bind mounts
+    # on the same filesystem without adding a mount utility to the image.
+    if [[ "$PWD" == /workspace ]]; then
+      workspace_mounted=0
+      while read -r _ _ _ _ mount_path _; do
+        if [[ "$mount_path" == /workspace ]]; then
+          workspace_mounted=1
+          break
+        fi
+      done < /proc/self/mountinfo
+      if (( ! workspace_mounted )); then
+        mkdir -p "$HOME/workspace"
+        cd "$HOME/workspace"
+      fi
+    fi
+
     # Apply the same managed configuration as Home Manager, including to an
     # existing home. Undeclared settings and keybindings are preserved.
     ${pkgs.lib.getExe piConfigSync}
