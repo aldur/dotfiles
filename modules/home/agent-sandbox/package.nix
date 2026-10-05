@@ -6,6 +6,18 @@
 {
   profiles ? { },
   enableDbus ? true,
+
+  # Apple containers default to locked /proc. They cannot mount fresh procfs in a
+  # user namespace (essentially, what bubblewrap does), so this flag is required
+  # to keep locked `proc` and still use _some_ of the sandbox (e.g., read-only
+  # `git`).
+  #
+  # WARN: this breaks confidentiality, only enable it in containers.
+  #
+  # NOTE: Kernel 7.0 and further enable a different way of mounting procfs, which
+  # might be compatible. Revisit this once the Kata kernel used by default in
+  # Apple containers is bumped.
+  dangerouslyInheritProc ? false,
 }:
 let
   seccompFilter =
@@ -91,6 +103,7 @@ let
     sandbox_launcher=${./launch.py}
     seccomp_filter=${lib.escapeShellArg "${seccompFilter}"}
     enable_dbus=${if enableDbus then "1" else "0"}
+    dangerously_inherit_proc=${if dangerouslyInheritProc then "1" else "0"}
 
     system_read_only_paths=(${lib.escapeShellArgs systemReadOnlyPaths})
     user_read_only_paths=(${lib.escapeShellArgs userReadOnlyPaths})

@@ -35,6 +35,6 @@ pkgs.runCommand "pi-container-image-test"
     python ${dotfiles}/checks/container-image/guard.py image \
       --policy ${policy} --graph "$NIX_ATTRS_JSON_FILE" \
       --report "''${outputs[out]}/size.json" ${image.image}
-    python ${./smoke.py} ${image.image} "$TMPDIR/root"
+    python ${./smoke.py} ${image.image} "$TMPDIR/root" ${./proc-isolation.py}
     touch "''${outputs[out]}/passed"
   ''

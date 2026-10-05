@@ -220,7 +220,6 @@ filesystem_args=(
   --tmpfs /
   --ro-bind /nix/store /nix/store
   --dev /dev
-  --proc /proc
   --tmpfs /tmp
   --tmpfs /var/tmp
   --dir "$home_dir"
@@ -230,6 +229,12 @@ filesystem_args=(
   --symlink "$sandbox_shell" /bin/bash
   --symlink "$sandbox_env" /usr/bin/env
 )
+
+if [ "$dangerously_inherit_proc" -eq 1 ]; then
+  filesystem_args+=(--ro-bind /proc /proc)
+else
+  filesystem_args+=(--proc /proc)
+fi
 
 # Inherit only the tools, editor, terminal and locale settings needed for ordinary
 # command execution. Secrets, desktop endpoints and language/shell injection

@@ -22,8 +22,7 @@ import time
 import zstandard
 
 
-# Apple Container's OCI defaults. The documented command clears the /proc
-# entries so nested user/PID namespaces can mount procfs, retaining /sys masks.
+# Apple Container's OCI defaults, preserved by the inherited procfs sandbox.
 APPLE_MASKED_PATHS = [
     "/proc/asound", "/proc/acpi", "/proc/kcore", "/proc/keys",
     "/proc/latency_stats", "/proc/timer_list", "/proc/timer_stats",
@@ -161,6 +160,7 @@ def main():
     root = Path(sys.argv[2])
     print("Unpacking OCI image", flush=True)
     config = unpack(sys.argv[1], root)
+    shutil.copyfile(sys.argv[3], root / "nix/store/pi-proc-isolation.py")
     print("OCI image unpacked", flush=True)
     privileged = os.geteuid() == 0
     home = root.parent / "container-home"
@@ -196,7 +196,7 @@ def main():
     launches = 0
 
     def launch(*args, caps=capabilities, missing_socket=False, terminal=False,
-               masked_proc=False, readonly_proc=False):
+               masked_proc=True, readonly_proc=True):
         nonlocal launches
         if not privileged:
             result = command.copy()
@@ -349,15 +349,13 @@ for tool in bat btop htop curl dig fd file jq less pv rg tmux age tree totp-cli 
     assert settings["tuiMode"] == "regular"
     assert settings["quietStartup"] == "header"
     assert (state / "marker").read_text() == "preserved"
-    # Both kinds of procfs submount independently block the nested sandbox:
-    # clearing just one default list is insufficient. Successful launches use
-    # the documented flags, which clear both and retain the /sys masks.
-    for masked, readonly in ((True, False), (False, True), (True, True)):
-        failed = subprocess.run(launch("pi-yolo", "--version", masked_proc=masked, readonly_proc=readonly),
+    # Inherited procfs also works when callers clear either set of defaults.
+    for masked, readonly in ((True, False), (False, True), (False, False)):
+        result = subprocess.run(launch("pi-yolo", "--version", masked_proc=masked, readonly_proc=readonly),
                                 stdin=subprocess.DEVNULL, text=True, capture_output=True,
                                 timeout=180 if privileged else 45)
-        assert failed.returncode != 0, (masked, readonly, failed.stdout, failed.stderr)
-        assert "Can't mount proc on /proc: Operation not permitted" in failed.stderr, failed.stderr
+        assert result.returncode == 0, (masked, readonly, result.stdout, result.stderr)
+    run("python3", "/nix/store/pi-proc-isolation.py")
     if not privileged:
         # A single-UID namespace cannot change from root to UID 501.
         as_root = command.copy()

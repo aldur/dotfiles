@@ -21,6 +21,8 @@ let
       }
       {
         enableDbus = false;
+        # NOTE: Fine here, a container has no other running process usually.
+        dangerouslyInheritProc = true;
         profiles.pi = {
           allowNixDaemon = false;
           readOnlyPaths = [
