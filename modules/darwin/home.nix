@@ -8,13 +8,13 @@
 let
   pythonWithTomlkit = pkgs.python3.withPackages (ps: [ ps.tomlkit ]);
   mergeContainerConfig = ./merge-container-config.py;
+  # Temporary workaround for https://github.com/apple/container/issues/2299.
+  # Remove this script and the container-tty fish function once the upstream
+  # fix is merged, released, and included in the installed container version.
   containerWithTerminalWorkaround = pkgs.writeShellScript "container-terminal" ''
     # Apple re-enables OPOST on the host tty, corrupting tmux cursor movement.
-    # Clear ONLCR before machine sessions and restore the exact tty state on exit.
-    # https://github.com/apple/container/issues/2299
-    if [[ ! -t 0 || ! -t 1 ]] \
-      || [[ "$1" != machine && "$1" != m ]] \
-      || [[ "$2" != run ]]; then
+    # Clear ONLCR before interactive sessions and restore the tty state on exit.
+    if ! command -v container >/dev/null 2>&1 || [[ ! -t 0 || ! -t 1 ]]; then
       exec container "$@"
     fi
 
@@ -67,8 +67,8 @@ in
     pinentry.package = pkgs.pinentry_mac;
   };
 
-  programs.fish.functions.container = {
-    description = "Apple container with a terminal workaround for machine sessions";
+  programs.fish.functions.container-tty = {
+    description = "Apple container with a terminal workaround for interactive sessions";
     wraps = "container";
     body = ''
       ${containerWithTerminalWorkaround} $argv
