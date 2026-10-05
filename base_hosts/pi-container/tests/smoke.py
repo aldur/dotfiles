@@ -135,8 +135,11 @@ printf verified > /output/verified
                 {"choices": [{"index": 0, "delta": {}, "finish_reason": "tool_calls"}]},
             ]
         else:
+            answer = "offline inference works"
+            if "second interactive smoke" in json.dumps(request["messages"]):
+                answer += " again"
             events = [
-            {"choices": [{"index": 0, "delta": {"role": "assistant", "content": "offline inference works"}, "finish_reason": None}]},
+            {"choices": [{"index": 0, "delta": {"role": "assistant", "content": answer}, "finish_reason": None}]},
             {"choices": [{"index": 0, "delta": {}, "finish_reason": "stop"}], "usage": {"prompt_tokens": 10, "completion_tokens": 3}},
             ]
         data = "".join("data: " + json.dumps(event) + "\n\n" for event in events) + "data: [DONE]\n\n"
@@ -309,6 +312,7 @@ for tool in bat btop htop curl dig fd file jq less pv rg tmux age tree totp-cli 
     custom_keybindings = '{"tui.editor.cursorUp":["up","ctrl+k"]}\n'
     (state / "keybindings.json").write_text(custom_keybindings)
     run("pi-yolo", "--version")
+    run("--version")
     assert (state / "keybindings.json").read_text() == custom_keybindings
     assert (state / "marker").read_text() == "preserved"
     if not privileged:
@@ -356,64 +360,87 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
             assert (root / "reference/marker").read_text() == "reference\n"
             assert (root / "output/.git/config").read_text() == "protected\n"
             assert list((state / "sessions").rglob("*.jsonl")), "Pi session was not saved"
-            # Exercise the no-command entrypoint and the real interactive Pi UI.
-            print("Starting interactive Pi", flush=True)
-            if privileged:
-                # An OCI terminal is delivered as a PTY descriptor over a socket.
-                with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as console:
-                    console.bind(str(bundle / "console.sock"))
-                    console.listen(1)
-                    console.settimeout(30)
-                    interactive = launch(terminal=True)
-                    process = subprocess.Popen(interactive, stdin=subprocess.DEVNULL)
-                    connection, _ = console.accept()
-                    with connection:
-                        _, rights, _, _ = connection.recvmsg(1, socket.CMSG_SPACE(4))
-                    assert rights[0][:2] == (socket.SOL_SOCKET, socket.SCM_RIGHTS), rights
-                    master = int.from_bytes(rights[0][2], sys.byteorder)
-            else:
-                master, slave = pty.openpty()
-                process = subprocess.Popen(launch(), stdin=slave, stdout=slave, stderr=slave, start_new_session=True)
-                os.close(slave)
-            output = bytearray()
 
-            def wait_for(needle):
-                deadline = time.monotonic() + (120 if privileged else 30)
-                while time.monotonic() < deadline:
-                    if select.select([master], [], [], 0.2)[0]:
-                        try:
-                            output.extend(os.read(master, 65536))
-                        except OSError:
-                            break
-                    plain = re.sub(rb"\x1b\[[0-?]*[ -/]*[@-~]", b"", bytes(output))
-                    if needle in plain:
-                        return
-                    if not privileged and process.poll() is not None:
-                        break
-                raise AssertionError((needle, process.poll(), bytes(output[-4000:])))
-
-            try:
-                wait_for(b"clear/exit")
-                os.write(master, b"interactive smoke\r")
-                wait_for(b"offline inference works")
-                os.write(master, b"\x04")
-                assert process.wait(timeout=30) == 0, bytes(output[-4000:])
+            def interactive_test(*args):
+                for marker in ("tmux-window-two", "pi-window-exited", "tmux-still-alive"):
+                    (root / "workspace" / marker).unlink(missing_ok=True)
                 if privileged:
-                    deadline = time.monotonic() + 30
+                    (bundle / "console.sock").unlink(missing_ok=True)
+                # Exercise the entrypoint and the real interactive Pi UI.
+                print("Starting interactive Pi", flush=True)
+                if privileged:
+                    # An OCI terminal is delivered as a PTY descriptor over a socket.
+                    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as console:
+                        console.bind(str(bundle / "console.sock"))
+                        console.listen(1)
+                        console.settimeout(30)
+                        interactive = launch(*args, terminal=True)
+                        process = subprocess.Popen(interactive, stdin=subprocess.DEVNULL)
+                        connection, _ = console.accept()
+                        with connection:
+                            _, rights, _, _ = connection.recvmsg(1, socket.CMSG_SPACE(4))
+                        assert rights[0][:2] == (socket.SOL_SOCKET, socket.SCM_RIGHTS), rights
+                        master = int.from_bytes(rights[0][2], sys.byteorder)
+                else:
+                    master, slave = pty.openpty()
+                    process = subprocess.Popen(launch(*args), stdin=slave, stdout=slave, stderr=slave, start_new_session=True)
+                    os.close(slave)
+                output = bytearray()
+
+                def wait_for(needle=None, *, marker=None):
+                    deadline = time.monotonic() + (120 if privileged else 30)
                     while time.monotonic() < deadline:
-                        status = json.loads(subprocess.check_output(["runc", "state", interactive[-1]]))
-                        if status["status"] == "stopped":
+                        if select.select([master], [], [], 0.2)[0]:
+                            try:
+                                output.extend(os.read(master, 65536))
+                            except OSError:
+                                pass
+                        plain = re.sub(rb"\x1b\[[0-?]*[ -/]*[@-~]", b"", bytes(output))
+                        if ((root / "workspace" / marker).is_file() if marker else needle in plain):
+                            return
+                        if not privileged and process.poll() is not None:
                             break
-                        time.sleep(0.1)
-                    else:
-                        raise AssertionError("Interactive Pi did not exit")
-            finally:
-                if process.poll() is None:
-                    process.kill()
-                    process.wait()
-                os.close(master)
-                if privileged:
-                    subprocess.run(["runc", "delete", "--force", interactive[-1]], check=True)
+                    raise AssertionError((needle, process.poll(), bytes(output[-4000:])))
+
+                try:
+                    wait_for(b"clear/exit")
+                    os.write(master, b"interactive smoke\r")
+                    wait_for(b"offline inference works")
+                    # The configured Ctrl-A prefix opens a second window. Its
+                    # shell stays outside the agent sandbox and can control tmux.
+                    os.write(master, b"\x01c")
+                    os.write(master, b'''test (tmux list-sessions -F '#{session_name}') = 0; and test (tmux display-message -p '#{session_windows}') = 2; and tmux set-hook window-unlinked 'run-shell "touch /workspace/pi-window-exited"'; and tmux select-window -t :1; and printf shell > /workspace/tmux-window-two\r''')
+                    wait_for(marker="tmux-window-two")
+                    os.write(master, b"second interactive smoke\r")
+                    wait_for(b"offline inference works again")
+                    os.write(master, b"\x04")
+                    wait_for(marker="pi-window-exited")
+                    # Pi exits its window, but the second window and container
+                    # remain usable. Closing the last shell ends the session.
+                    os.write(master, b"printf alive > /workspace/tmux-still-alive; exit\r")
+                    wait_for(marker="tmux-still-alive")
+                    assert process.wait(timeout=30) == 0, bytes(output[-4000:])
+                    if privileged:
+                        deadline = time.monotonic() + 30
+                        while time.monotonic() < deadline:
+                            status = json.loads(subprocess.check_output(["runc", "state", interactive[-1]]))
+                            if status["status"] == "stopped":
+                                break
+                            time.sleep(0.1)
+                        else:
+                            raise AssertionError("Interactive Pi did not exit")
+                finally:
+                    if process.poll() is None:
+                        process.kill()
+                        process.wait()
+                    os.close(master)
+                    if privileged:
+                        subprocess.run(["runc", "delete", "--force", interactive[-1]], check=True)
+
+            interactive_test()
+            prompt = "quoted 'argument'; $(touch /workspace/argument-injection)\nsecond line"
+            interactive_test("--models", "llama-cpp/*", prompt)
+            assert not (root / "workspace/argument-injection").exists()
         finally:
             server.shutdown()
     if privileged:

@@ -20,7 +20,8 @@ container image load --input result
 With inference available at `/path/to/llama.sock`, run Pi offline:
 
 ```bash
-env -u SSH_AUTH_SOCK container run -it --rm --network none --no-dns \
+env -u SSH_AUTH_SOCK container run -it --rm \
+  --network none --no-dns \
   --read-only \
   --tmpfs /tmp:mode=1777 \
   --tmpfs /var/tmp:mode=1777 \
@@ -31,14 +32,14 @@ env -u SSH_AUTH_SOCK container run -it --rm --network none --no-dns \
   --volume /path/to/llama.sock:/var/host-services/llama.sock \
   --volume "$PWD:/workspace" \
   --env LLAMA_SOCKET_PATH=/var/host-services/llama.sock \
-  ghcr.io/aldur/aldur-pi:latest pi-yolo --models 'llama-cpp/*'
+  ghcr.io/aldur/aldur-pi:latest --models 'llama-cpp/*'
 ```
 
-For a local build, use `aldur-pi:latest` in the run command.
-The image entrypoint uses socat to relay the socket to `127.0.0.1:8080`.
-With no command, it starts `pi-yolo`. This uses the shared agent sandbox to
-keep the workspace writable and existing `.git` metadata read-only, including
-nested repositories and worktrees.
+For a local build, use `aldur-pi:latest` in the run command. The image
+entrypoint uses socat to relay the socket to `127.0.0.1:8080`. Pi arguments go
+directly after the image name; `pi-yolo ...` also works. `pi-yolo` uses the
+shared agent sandbox to keep the workspace writable and existing `.git`
+metadata read-only, including nested repositories and worktrees.
 
 For extra folders, mount them into the container and grant them to `pi-yolo`:
 
@@ -48,7 +49,7 @@ For extra folders, mount them into the container and grant them to `pi-yolo`:
 --volume /path/to/output:/output
 
 # Then use this command after the image name:
-pi-yolo --ro /reference --rw /output --models 'llama-cpp/*'
+--ro /reference --rw /output --models 'llama-cpp/*'
 ```
 
 `--ro` and `--rw` are repeatable; Git metadata in writable grants is protected

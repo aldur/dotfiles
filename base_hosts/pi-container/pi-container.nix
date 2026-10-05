@@ -12,7 +12,7 @@ pkgs.writeShellApplication {
   ];
   text = ''
     socket=/var/host-services/llama.sock
-    if (( $# == 0 )); then set -- pi-yolo; fi
+    if (( $# == 0 )) || [[ "$1" == -* ]]; then set -- pi-yolo "$@"; fi
     if [ "$(id -u)" = 0 ]; then
       if [ -S "$socket" ] && [ ! -L "$socket" ]; then
         chown -h ${toString uid}:100 "$socket"
@@ -38,6 +38,12 @@ pkgs.writeShellApplication {
       socat -u /dev/null TCP4:127.0.0.1:8080,retry=50,interval=0.02
       kill -0 "$relay"
       export LLAMA_BASE_URL=http://127.0.0.1:8080/v1
+    fi
+    if [[ "$1" == pi-yolo ]] && [ -t 0 ] && [ -t 1 ]; then
+      # Reuse the session created by the shared tmux configuration. Quote
+      # each argument for its shell, including literal quotes and newlines.
+      printf -v pi_command "'%s' " "''${@//\'/\'\\\'\'}"
+      exec tmux start-server \; respawn-pane -k "exec $pi_command" \; attach-session
     fi
     exec "$@"
   '';
