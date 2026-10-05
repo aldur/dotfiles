@@ -8,6 +8,21 @@
 let
   pythonWithTomlkit = pkgs.python3.withPackages (ps: [ ps.tomlkit ]);
   mergeContainerConfig = ./merge-container-config.py;
+  containerWithTerminalWorkaround = pkgs.writeShellScript "container-terminal" ''
+    # Apple re-enables OPOST on the host tty, corrupting tmux cursor movement.
+    # Clear ONLCR before machine sessions and restore the exact tty state on exit.
+    # https://github.com/apple/container/issues/2299
+    if [[ ! -t 0 || ! -t 1 ]] \
+      || [[ "$1" != machine && "$1" != m ]] \
+      || [[ "$2" != run ]]; then
+      exec container "$@"
+    fi
+
+    saved=$(${pkgs.coreutils}/bin/stty -g) || exit
+    trap '${pkgs.coreutils}/bin/stty "$saved"' EXIT
+    ${pkgs.coreutils}/bin/stty -onlcr || exit
+    command container "$@"
+  '';
 in
 {
   imports = [
@@ -50,6 +65,14 @@ in
 
   services.gpg-agent = {
     pinentry.package = pkgs.pinentry_mac;
+  };
+
+  programs.fish.functions.container = {
+    description = "Apple container with a terminal workaround for machine sessions";
+    wraps = "container";
+    body = ''
+      ${containerWithTerminalWorkaround} $argv
+    '';
   };
 
   # Copy app bundles (rather than symlinking them) into
