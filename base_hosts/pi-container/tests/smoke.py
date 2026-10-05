@@ -112,11 +112,13 @@ class Inference(http.server.BaseHTTPRequestHandler):
         assert request["model"] == "local"
         Inference.completion = True
         mounts = "check mounts" in json.dumps(request["messages"])
+        scratch = "scratch workspace" in json.dumps(request["messages"])
         marker = "output/verified" if mounts else "workspace/agent.txt"
-        if (request.get("tools") and not (self.server.root / marker).exists()
+        marker = self.server.home / "workspace/agent.txt" if scratch else self.server.root / marker
+        if (request.get("tools") and not marker.exists()
                 and not any(message.get("role") == "tool" for message in request["messages"])):
             name = "write"
-            arguments = {"path": "/workspace/agent.txt", "content": "sandboxed task complete\n"}
+            arguments = {"path": "agent.txt" if scratch else "/workspace/agent.txt", "content": "sandboxed task complete\n"}
             if mounts:
                 name = "bash"
                 arguments = {"command": r'''
@@ -394,6 +396,7 @@ PY
     assert "UNSAFE_COMMAND" not in failed.stdout
     with Server(str(root / "var/host-services/llama.sock"), Inference) as server:
         server.root = root
+        server.home = home
         index = command.index("--")
         command[index:index] = ["--bind", server.server_address, "/var/host-services/llama.sock"]
         if privileged:
@@ -407,6 +410,10 @@ PY
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
         try:
+            scratch = run("--models", "llama-cpp/*", "-p", "--no-session", "--no-skills", "--no-extensions",
+                          "create a scratch workspace file", workspace=False)
+            assert "offline inference works" in scratch.stdout, (scratch.stdout, scratch.stderr)
+            assert (home / "workspace/agent.txt").read_text() == "sandboxed task complete\n"
             result = run("/bin/bash", "-c", r'''
 set -eu
 test "$LLAMA_BASE_URL" = http://127.0.0.1:8080/v1
