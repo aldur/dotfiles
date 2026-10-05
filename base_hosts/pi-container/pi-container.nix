@@ -25,7 +25,6 @@ pkgs.writeShellApplication {
     # existing user files; only seed a home without its profile link.
     if [ ! -e "$HOME/.nix-profile" ]; then
       cp -a --no-clobber --no-preserve=ownership,mode ${homeFiles}/. "$HOME/"
-      find "$HOME" -type d -exec chmod u+w {} +
       ln -s ${homeProfile} "$HOME/.nix-profile"
     fi
 

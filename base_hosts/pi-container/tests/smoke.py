@@ -198,7 +198,8 @@ def main():
     launches = 0
 
     def launch(*args, caps=capabilities, missing_socket=False, terminal=False,
-               masked_proc=True, readonly_proc=True, workspace=True, workdir="/workspace"):
+               masked_proc=True, readonly_proc=True, workspace=True, workdir="/workspace",
+               home_source=home, transcript_source=None):
         nonlocal launches
         if not privileged:
             result = command.copy()
@@ -206,6 +207,10 @@ def main():
             if not workspace:
                 index = result.index(str(root / "workspace")) - 1
                 del result[index:index + 3]
+            result[result.index(str(home))] = str(home_source)
+            if transcript_source is not None:
+                index = result.index("--")
+                result[index:index] = ["--bind", str(transcript_source), "/home/aldur/.pi-sessions"]
             if missing_socket:
                 index = result.index("--")
                 result[index:index] = ["--setenv", "LLAMA_SOCKET_PATH", "/var/host-services/llama.sock"]
@@ -229,11 +234,14 @@ def main():
             (root / "workspace", "/workspace", "rw"),
             (root / "reference", "/reference", "ro"),
             (root / "output", "/output", "rw"),
-            (home, "/home/aldur", "rw"),
+            (home_source, "/home/aldur", "rw"),
         ):
             if destination == "/workspace" and not workspace:
                 continue
             mounts.append({"destination": destination, "type": "bind", "source": str(source), "options": ["bind", mode]})
+        if transcript_source is not None:
+            mounts.append({"destination": "/home/aldur/.pi-sessions", "type": "bind",
+                           "source": str(transcript_source), "options": ["bind", "rw"]})
         socket = root / "var/host-services/llama.sock"
         if socket.exists():
             mounts.append({"destination": "/var/host-services/llama.sock", "type": "bind", "source": str(socket), "options": ["bind", "rw"]})
@@ -414,6 +422,38 @@ PY
                           "create a scratch workspace file", workspace=False)
             assert "offline inference works" in scratch.stdout, (scratch.stdout, scratch.stderr)
             assert (home / "workspace/agent.txt").read_text() == "sandboxed task complete\n"
+
+            if privileged:
+                # A writable mount need not permit chmod. Root ownership with
+                # mode 0777 reproduces that distinction for the guest's UID 501.
+                fresh_home = root.parent / "fresh-home"
+                fresh_home.mkdir(mode=0o700)
+                os.chown(fresh_home, 501, 100)
+                transcripts = root.parent / "pi-sessions"
+                transcripts.mkdir()
+                transcripts.chmod(0o777)
+                assert not list(fresh_home.iterdir()), "Regression requires a fresh home"
+                result = subprocess.run(launch("/bin/bash", "-c", r'''
+set -eu
+test "$(id -u)" = 501
+test -w "$HOME/.pi-sessions"
+if chmod u+w "$HOME/.pi-sessions"; then
+  echo 'Transcript mount unexpectedly allows chmod' >&2
+  exit 1
+fi
+touch "$HOME/.config/fresh-home-writable"
+exec pi-yolo --rw "$HOME/.pi-sessions" --session-dir "$HOME/.pi-sessions" \
+  --models 'llama-cpp/*' -p --no-tools --no-skills --no-extensions 'say hello'
+''', home_source=fresh_home, transcript_source=transcripts),
+                    stdin=subprocess.DEVNULL, text=True, capture_output=True, timeout=180)
+                assert result.returncode == 0, (result.stdout, result.stderr)
+                assert "offline inference works" in result.stdout, (result.stdout, result.stderr)
+                saved = list(transcripts.rglob("*.jsonl"))
+                assert saved, "Pi did not save a transcript on the writable mount"
+                assert any("offline inference works" in path.read_text() for path in saved)
+                assert (fresh_home / ".config/fresh-home-writable").exists()
+                print("Fresh home with a writable, chmod-rejecting transcript mount passed", flush=True)
+
             result = run("/bin/bash", "-c", r'''
 set -eu
 test "$LLAMA_BASE_URL" = http://127.0.0.1:8080/v1
