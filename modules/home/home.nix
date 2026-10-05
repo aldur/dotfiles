@@ -90,6 +90,7 @@ in
     ../shared/options.nix
     ./direnv.nix
     ./llm.nix
+    ./pi.nix
   ]
   ++ lib.optionals full [
     (import ../../packages/lazyvim/lazyvim.nix { inherit inputs pkgs pkgsUnstable; }).defaultHomeModule

@@ -264,8 +264,12 @@ for path in ('/etc/passwd', '/bin/unwanted', '/var/unwanted'):
 assert Path.home().stat().st_mode & 0o777 == 0o700
 assert Path.home().stat().st_uid == 501
 state = Path.home() / '.pi/agent'
-assert (state / 'keybindings.json').is_symlink()
+assert not (state / 'keybindings.json').is_symlink()
+assert (state / 'keybindings.json').stat().st_mode & 0o777 == 0o600
 assert __import__('json').loads((state / 'keybindings.json').read_text())['tui.editor.cursorUp'] == ['up', 'ctrl+p']
+assert __import__('json').loads((state / 'settings.json').read_text())['tuiMode'] == 'regular'
+assert not (state / 'settings.json').is_symlink()
+assert (state / 'settings.json').stat().st_mode & 0o777 == 0o600
 (state / 'marker').write_text('preserved')
 Path('/tmp/writable').touch()
 Path('/var/tmp/writable').touch()
@@ -307,13 +311,20 @@ for tool in bat btop htop curl dig fd file jq less pv rg tmux age tree totp-cli 
 '''
     result = run("/bin/bash", "-c", smoke)
     print(result.stdout)
-    # Existing state is preserved, including user-customized keybindings.
-    (state / "keybindings.json").unlink()
-    custom_keybindings = '{"tui.editor.cursorUp":["up","ctrl+k"]}\n'
-    (state / "keybindings.json").write_text(custom_keybindings)
+    # Nix owns declared keys; undeclared preferences survive later starts.
+    custom_keybindings = {"tui.editor.cursorUp": ["ctrl+k"], "app.session.new": ["ctrl+alt+n"]}
+    (state / "keybindings.json").write_text(json.dumps(custom_keybindings))
+    settings = json.loads((state / "settings.json").read_text())
+    settings.update(tuiMode="fullscreen", quietStartup="header")
+    (state / "settings.json").write_text(json.dumps(settings))
     run("pi-yolo", "--version")
     run("--version")
-    assert (state / "keybindings.json").read_text() == custom_keybindings
+    bindings = json.loads((state / "keybindings.json").read_text())
+    assert bindings["tui.editor.cursorUp"] == ["up", "ctrl+p"]
+    assert bindings["app.session.new"] == ["ctrl+alt+n"]
+    settings = json.loads((state / "settings.json").read_text())
+    assert settings["tuiMode"] == "regular"
+    assert settings["quietStartup"] == "header"
     assert (state / "marker").read_text() == "preserved"
     if not privileged:
         # A single-UID namespace cannot change from root to UID 501.
@@ -362,7 +373,7 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
             assert list((state / "sessions").rglob("*.jsonl")), "Pi session was not saved"
 
             def interactive_test(*args):
-                for marker in ("tmux-window-two", "pi-window-exited", "tmux-still-alive"):
+                for marker in ("tmux-window-two", "pi-window-exited", "tmux-still-alive", "pi-alternate-screen"):
                     (root / "workspace" / marker).unlink(missing_ok=True)
                 if privileged:
                     (bundle / "console.sock").unlink(missing_ok=True)
@@ -409,6 +420,10 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
                     # The configured Ctrl-A prefix opens a second window. Its
                     # shell stays outside the agent sandbox and can control tmux.
                     os.write(master, b"\x01c")
+                    os.write(master, b"tmux display-message -p -t :1 '#{alternate_on}' > /workspace/pi-alternate-screen.tmp; and mv /workspace/pi-alternate-screen.tmp /workspace/pi-alternate-screen\r")
+                    wait_for(marker="pi-alternate-screen")
+                    alternate_screen = (root / "workspace/pi-alternate-screen").read_text().strip()
+                    assert alternate_screen == "0", f"Pi alternate-screen state: {alternate_screen!r}"
                     os.write(master, b'''test (tmux list-sessions -F '#{session_name}') = 0; and test (tmux display-message -p '#{session_windows}') = 2; and tmux set-hook window-unlinked 'run-shell "touch /workspace/pi-window-exited"'; and tmux select-window -t :1; and printf shell > /workspace/tmux-window-two\r''')
                     wait_for(marker="tmux-window-two")
                     os.write(master, b"second interactive smoke\r")

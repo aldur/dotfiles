@@ -48,6 +48,7 @@ in
   llama-wiretap = pkgs.llama-wiretap.tests.integration;
   agent-log = pkgs.agent-log.tests.integration;
   telegram = pkgs.telegram.tests.integration;
+  pi-config-sync = pkgs.pi.configSync.tests.integration;
 
   llm-runtime = pkgs.callPackage ./llm-runtime.nix { };
 

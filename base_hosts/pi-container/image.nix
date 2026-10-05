@@ -30,6 +30,7 @@ let
   entrypoint = pkgs.callPackage ./pi-container.nix {
     homeFiles = home.config.home-files;
     homeProfile = home.config.home.path;
+    piConfigSync = home.config.programs.pi.configSync;
   } uid;
   root = pkgs.buildEnv {
     name = "pi-container-root";

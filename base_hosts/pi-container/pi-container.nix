@@ -2,6 +2,7 @@
   pkgs,
   homeFiles,
   homeProfile,
+  piConfigSync,
 }:
 uid:
 pkgs.writeShellApplication {
@@ -27,6 +28,10 @@ pkgs.writeShellApplication {
       find "$HOME" -type d -exec chmod u+w {} +
       ln -s ${homeProfile} "$HOME/.nix-profile"
     fi
+
+    # Apply the same managed configuration as Home Manager, including to an
+    # existing home. Undeclared settings and keybindings are preserved.
+    ${pkgs.lib.getExe piConfigSync}
 
     export PATH="/bin:/run/current-system/sw/bin:$PATH"
     if [[ -n "''${LLAMA_SOCKET_PATH:-}" || -S "$socket" ]]; then

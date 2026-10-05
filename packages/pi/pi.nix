@@ -3,6 +3,7 @@
   stdenv,
   runCommand,
   writeShellApplication,
+  writeShellScriptBin,
   nodejs,
   pnpm,
   pi-coding-agent,
@@ -124,6 +125,15 @@ let
       run_pi ${lib.getExe pi-coding-agent} "$@"
     '';
   };
+  configSync = import ./config-sync {
+    inherit
+      lib
+      runCommand
+      writeShellScriptBin
+      nodejs
+      pi-coding-agent
+      ;
+  };
 in
 
 # Wrapped in a derivation of its own only to keep the versioned name (a
@@ -132,7 +142,7 @@ runCommand "pi-with-plugins-${pi-coding-agent.version}"
   {
     # Plugins stay reachable (e.g. `pi.plugins.pi-llama`) so nix-update can
     # bump their pins in CI without dedicated flake outputs.
-    passthru = { inherit plugins; };
+    passthru = { inherit plugins configSync; };
     meta = pi-coding-agent.meta // {
       mainProgram = "pi";
       description = "pi-coding-agent bundled with plugins";
