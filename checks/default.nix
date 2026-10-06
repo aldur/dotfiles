@@ -25,6 +25,12 @@ let
 in
 
 {
+  override-until-upgrade =
+    assert import ../utils/tests/override-until-upgrade.nix;
+    pkgs.runCommand "override-until-upgrade-test" { } ''
+      touch "$out"
+    '';
+
   # Fails if a package pins a source without saying how to bump it.
   pinned-packages = pkgs.callPackage ./pinned-packages.nix {
     discovered = self.legacyPackages.${system}.discoveredPins;

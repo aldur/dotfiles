@@ -1,7 +1,8 @@
 final: prev: {
   direnv = import ../../utils/override-until-upgrade.nix {
     package = prev.direnv;
-    version = "2.37.1";
+    # No release contains the backport yet. Review the next possible release.
+    version = "2.37.2";
     note = "Review the require_allowed backport and local fixes against the new direnv release (upstream PR #1530).";
     replacement = prev.direnv.overrideAttrs (old: {
       nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ final.go-md2man ];

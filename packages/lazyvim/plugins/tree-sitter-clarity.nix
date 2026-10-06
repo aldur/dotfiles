@@ -15,7 +15,6 @@ in
 # this alongside clarity.nvim.
 overrideUntilUpgrade {
   package = tree-sitter-grammars.tree-sitter-clarity;
-  version = "0.0.5-unstable-2025-11-17";
   note = "Drop packages/lazyvim/plugins/tree-sitter-clarity.nix, and with it the CI bump leg its updatePin creates, if nixpkgs' grammar has caught up with clarity.nvim's queries.";
 
   replacement = tree-sitter-grammars.tree-sitter-clarity.overrideAttrs (prev: {

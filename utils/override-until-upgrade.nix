@@ -1,17 +1,17 @@
 # Guard for temporary package overrides (backports, pins to unreleased
-# commits). Returns `replacement` while nixpkgs still ships `version` of
-# `package`, and aborts evaluation the moment the shipped version
-# changes, so the override gets re-evaluated instead of silently
-# outliving its purpose.
+# commits). Returns `replacement` while nixpkgs ships a version older than
+# `version`, and aborts once it reaches that cutoff. By default the cutoff
+# follows the replacement's version; backports that keep the package version
+# must specify the first upstream release that needs review explicitly.
 {
   package,
-  version,
   replacement,
+  version ? replacement.version,
   note ? "Re-evaluate whether the override is still needed.",
 }:
-if package.version == version then
+if builtins.compareVersions package.version version < 0 then
   replacement
 else
   throw ''
-    ${package.pname or package.name} was overridden while nixpkgs shipped ${version}, but nixpkgs now ships ${package.version}.
+    ${package.pname or package.name} override expires at ${version}, but nixpkgs now ships ${package.version}.
     ${note}''

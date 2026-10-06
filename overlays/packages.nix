@@ -54,7 +54,6 @@ in
   # Node 24, which strips TS types by default.
   pi-coding-agent = import ../utils/override-until-upgrade.nix {
     package = unstable.pi-coding-agent;
-    version = "0.87.1";
     note = "Drop the pi 1.0.0 override once nixpkgs-unstable catches up; keep the stable buildNpmPackage override.";
     replacement =
       (unstable.pi-coding-agent.override { inherit (prev) buildNpmPackage; }).overrideAttrs
@@ -85,16 +84,18 @@ in
               npm run build:offline
               runHook postBuild
             '';
+            # Older recipes lack these runtime workspaces; newer ones
+            # already copy them. Repeating an entry fails on the second rm.
             postInstall =
-              prev.lib.replaceStrings
-                [ "@earendil-works/chord:packages/chord" ]
-                [
-                  ''
-                    @earendil-works/pi-codemode:packages/codemode \
-                                                @earendil-works/pi-mcp:packages/mcp \
-                                                @earendil-works/chord:packages/chord''
-                ]
-                old.postInstall;
+              let
+                missing = prev.lib.filter (ws: !(prev.lib.hasInfix ws old.postInstall)) [
+                  "@earendil-works/pi-codemode:packages/codemode"
+                  "@earendil-works/pi-mcp:packages/mcp"
+                ];
+                anchor = "@earendil-works/chord:packages/chord";
+                extra = prev.lib.concatMapStrings (ws: "${ws} \\\n              ") missing;
+              in
+              prev.lib.replaceStrings [ anchor ] [ (extra + anchor) ] old.postInstall;
 
             passthru = (old.passthru or { }) // {
               updatePin.exempt = "Temporary pi 1.0.0 backport; remove when the nixpkgs version guard fires.";
@@ -117,7 +118,7 @@ in
   # Stable ships 4, which downgrades those rules with a warning.
   apparmor-parser = import ../utils/override-until-upgrade.nix {
     package = prev.apparmor-parser;
-    version = "4.1.7";
+    version = "5.0.0";
     note = "Drop the unstable apparmor-parser once stable ships version 5.";
     replacement = unstable.apparmor-parser;
   };
