@@ -48,8 +48,18 @@ pkgs.testers.runNixOSTest {
     def as_user(command):
         return f"runuser -u {user} -- env HOME=/home/{user} {env} sh -c {shlex.quote(command)}"
 
+    def wait_for_page(visit):
+        try:
+            machine.wait_until_succeeds(
+                as_user(f"xdotool search --name 'Browser persistence {visit}'"), timeout=180
+            )
+        except Exception:
+            print(machine.execute(as_user("xdotool search --onlyvisible --name '.*' getwindowname %@"))[1])
+            machine.screenshot("browser-failure")
+            raise
+
     env = session()
-    machine.wait_until_succeeds(as_user("xdotool search --name 'Browser persistence 1'"))
+    wait_for_page(1)
     machine.succeed("test ! -e /run/wrappers/bin/sudo && test ! -e /run/wrappers/bin/su")
     machine.fail("systemctl is-active sshd.service")
     machine.succeed("systemctl is-active firewall.service systemd-sysctl.service")
@@ -58,14 +68,18 @@ pkgs.testers.runNixOSTest {
         machine.succeed(f"test $(findmnt -n -o FSTYPE -T {directory}) = tmpfs")
     machine.succeed("findmnt -n -o OPTIONS / | grep -w nosuid | grep -w nodev")
 
-    # Flush the profile before a complete VM shutdown, as for a backup.
+    # Quit through Firefox so it saves its profile and session before the VM
+    # shuts down. A signal is not the user-initiated quit used for backups.
     process = shlex.quote(f"^{firefox}( |$)")
-    machine.succeed(as_user(f"pkill -TERM -f {process}"))
-    machine.wait_until_fails(f"pgrep -u {user} -f {process}")
+    machine.succeed(as_user(
+        "xdotool search --onlyvisible --name 'Browser persistence 1' "
+        "windowquit"
+    ))
+    machine.wait_until_fails(f"pgrep -u {user} -f {process}", timeout=180)
     machine.shutdown()
     machine.start()
     env = session()
-    machine.wait_until_succeeds(as_user("xdotool search --name 'Browser persistence 2'"))
+    wait_for_page(2)
     machine.screenshot("browser-after-restart")
   '';
 }
