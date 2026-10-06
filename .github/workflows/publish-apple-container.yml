@@ -35,7 +35,7 @@ jobs:
       matrix:
         arch: &architectures
           - { runner: ubuntu-26.04-arm, suffix: arm64 }
-          - { runner: ubuntu-24.04, suffix: amd64 }
+          - { runner: ubuntu-26.04, suffix: amd64 }
         # `image` is the `virtualisation.appleContainer.imageName` of the
         # configuration that `name` pushes. The attestation names its subject
         # with it.
@@ -105,7 +105,7 @@ jobs:
         app:
           - { name: manifest, image: aldur-nixos }
           - { name: manifest-minimal, image: nixos }
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - *checkout
       - *setup-nix
@@ -159,7 +159,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - *checkout
       - *setup-nix
@@ -188,7 +188,7 @@ jobs:
         # arch suffix of a pushed image, or `index` for its multi-arch index.
         image: [aldur-nixos, nixos]
         subject: [arm64, amd64, index]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - *checkout
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1

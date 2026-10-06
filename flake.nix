@@ -313,6 +313,7 @@
       };
 
       nixosModules = {
+        hardening = ./modules/nixos/hardening.nix;
         default = ./modules/nixos/configuration.nix;
         ssh = ./modules/nixos/ssh-policy.nix;
         audit = ./modules/nixos/audit.nix;

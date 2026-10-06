@@ -29,7 +29,7 @@ env:
 jobs:
   flake-check:
     name: flake-check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - &checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -61,14 +61,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: ubuntu-24.04
+          - runner: ubuntu-26.04
             system: x86_64-linux
             shard: rest
           # The VM tests get their own runner. They share 17 of the 889 paths
           # that a cold runner builds, so the split costs almost no extra
           # build. It also keeps the neovim and Rust builds away from the
           # test driver, which they starved.
-          - runner: ubuntu-24.04
+          - runner: ubuntu-26.04
             system: x86_64-linux
             shard: vm
           # The arm64 runners have no KVM, so they have no VM test to build.
@@ -151,7 +151,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: ubuntu-24.04
+          - runner: ubuntu-26.04
             system: x86_64-linux
           - runner: ubuntu-26.04-arm
             system: aarch64-linux
@@ -178,7 +178,7 @@ jobs:
   # a non-aldur account, the default login shell, and services after reboot.
   home-manager-ubuntu-vm:
     name: home-manager-ubuntu-vm
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 90
     steps:
       - *checkout
@@ -213,7 +213,7 @@ jobs:
       matrix:
         include:
           # Build the QEMU VM configuration as a test.
-          - runner: ubuntu-24.04
+          - runner: ubuntu-26.04
             target: ./base_hosts/qemu#vm-nogui
           - runner: ubuntu-26.04-arm
             target: ./base_hosts/qemu#vm-nogui
@@ -224,22 +224,33 @@ jobs:
 
           # Boot the x86_64 Crostini Baguette image in crosvm and probe it.
           # The check needs KVM, which only the x86_64 runners have.
-          - runner: ubuntu-24.04
+          - runner: ubuntu-26.04
             target: ./base_hosts/crostini#checks.x86_64-linux.baguette-boot
 
-          - runner: ubuntu-24.04
+          - runner: ubuntu-26.04
             target: ./base_hosts/crostini#checks.x86_64-linux.baguette-verifier
+
+          - runner: ubuntu-26.04-arm
+            target: ./base_hosts/browser#baguette-zimage
+          - runner: ubuntu-26.04
+            target: ./base_hosts/browser#checks.x86_64-linux.baguette-boot
+          - runner: ubuntu-26.04
+            target: ./base_hosts/browser#browser-vm
+          - runner: ubuntu-26.04-arm
+            target: ./base_hosts/browser#browser-vm
+          - runner: ubuntu-26.04
+            target: ./base_hosts/browser#checks.x86_64-linux.qemu-boot
 
           # Build the Apple `container` OCI image as a test. The image
           # serves `container run` and `container machine`. The test builds
           # the image and checks its closure and size on each architecture.
-          - runner: ubuntu-24.04
+          - runner: ubuntu-26.04
             target: ./base_hosts/apple-container#checks.x86_64-linux.container-size
           - runner: ubuntu-26.04-arm
             target: ./base_hosts/apple-container#checks.aarch64-linux.container-size
-          - runner: ubuntu-24.04
+          - runner: ubuntu-26.04
             target: ./base_hosts/pi-container#checks.x86_64-linux.image
-          - runner: ubuntu-24.04
+          - runner: ubuntu-26.04
             target: ./base_hosts/pi-container#checks.x86_64-linux.hardening
           - runner: ubuntu-26.04-arm
             target: ./base_hosts/pi-container#checks.aarch64-linux.image
@@ -294,7 +305,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: ubuntu-24.04
+          - runner: ubuntu-26.04
             system: x86_64-linux
           - runner: ubuntu-26.04-arm
             system: aarch64-linux
