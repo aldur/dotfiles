@@ -1,5 +1,5 @@
 # Settings that all guests of `qemu-vm` (packages/qemu-vm) share. They are
-# the disk layout, the serial console, a fixed SSH host key, auto-login,
+# the disk layout, the serial console, an optional fixed SSH host key, auto-login,
 # passwordless sudo, and the GitHub SSH keys. A guest adds what runs
 # inside.
 {
@@ -24,16 +24,18 @@ in
   ];
 
   options.aldur.qemuGuest.sshHostKeyDir = lib.mkOption {
-    type = lib.types.path;
+    type = lib.types.nullOr lib.types.path;
+    default = null;
     description = ''
       Directory that holds `ssh_host_ed25519_key` and its `.pub` file.
       The guest only uses the key with the host, not on the network. A
-      fixed key avoids a new fingerprint check for each new VM.
+      fixed key avoids a new fingerprint check for each new VM. Null uses
+      the normal OpenSSH-generated keys when SSH is enabled.
     '';
   };
 
   config = {
-    environment.etc = {
+    environment.etc = lib.mkIf (config.services.openssh.enable && cfg.sshHostKeyDir != null) {
       "ssh/ssh_host_ed25519_key" = {
         mode = "0600";
         source = "${cfg.sshHostKeyDir}/ssh_host_ed25519_key";
@@ -44,7 +46,8 @@ in
       };
     };
 
-    users.users.${config.mainUser}.openssh.authorizedKeys.keys = config.identity.authorizedKeys;
+    users.users.${config.mainUser}.openssh.authorizedKeys.keys =
+      lib.mkIf config.services.openssh.enable config.identity.authorizedKeys;
 
     services.getty.autologinUser = config.mainUser;
     security.sudo-rs.wheelNeedsPassword = false;

@@ -50,7 +50,7 @@ let
     system:
     nixpkgs.lib.nixosSystem {
       inherit specialArgs system;
-      modules = self.legacyPackages.${system}.qemu-vm.modules ++ [ qemuModule ];
+      modules = perHostSystem.packages.${system}.${name}.modules ++ [ qemuModule ];
     };
 in
 perHostSystem

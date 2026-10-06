@@ -12,6 +12,8 @@
   # The guest must run spice-vdagent (services.spice-vdagentd).
   defaultClipboard ? false,
   qemuModule ? ../../base_hosts/qemu/qemu.nix,
+  # Appliances can reuse the launcher without the development configuration.
+  baseModules ? [ inputs.self.nixosModules.default ],
   ...
 }:
 
@@ -21,10 +23,6 @@ let
 
   # Determine target system based on host
   targetSystem = if pkgs.stdenv.hostPlatform.isAarch64 then "aarch64-linux" else "x86_64-linux";
-
-  baseModules = [
-    inputs.self.nixosModules.default
-  ];
 
   # Build the qemu NixOS configuration with proper VM settings
   qemuNixos = nixpkgs.lib.nixosSystem {
