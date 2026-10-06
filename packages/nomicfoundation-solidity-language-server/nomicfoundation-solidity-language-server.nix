@@ -14,13 +14,13 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "nomicfoundation-solidity-language-server";
-  version = "0.9.2";
+  version = "0.9.3";
 
   src = fetchFromGitHub {
     owner = "NomicFoundation";
     repo = "hardhat-vscode";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-rQekxas/5NUPv5P0/gLwaDpaIctLGP2Nd8aku3rjybU=";
+    hash = "sha256-IHKYIIkP+iyX0NiyEwrlYcQ4IwhIPp2rS9KRdtMixUA=";
   };
 
   # Upstream switched to pnpm in 0.9; nix-update refreshes this lockfile cache.
@@ -28,7 +28,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     inherit (finalAttrs) pname version src;
     inherit pnpm;
     fetcherVersion = 4;
-    hash = "sha256-bi7uPlfLZRb8xXsgzexPbIeuennXQ4I7CgSct+X3ImY=";
+    hash = "sha256-Brl3UG/rZKSskhW3IUU1pj5/G2EDzZUJsuVYapweZ80=";
   };
 
   nativeBuildInputs = [
