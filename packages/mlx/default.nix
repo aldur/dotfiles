@@ -11,10 +11,10 @@
   # Hash of the cp-specific mlx wheel for `wheelPythonVersion`. Defaults to
   # the pin this repo maintains (bumped by nix-update); overridable together
   # with `python`/`wheelPythonVersion` to run a newer CPython than we ship.
-  wheelHash ? "sha256-2uv4TfuFfXDoexuYGJoFfmkemaSiufb2TK3rrZF/iWQ=",
+  wheelHash ? "sha256-ZW3142ub+oYv1jPVXe5NoHLSkt758n8iE0xZTgP/KKc=",
 }:
 let
-  version = "0.32.2";
+  version = "0.32.3";
   format = "wheel";
   platform = "macosx_15_0_arm64";
 
@@ -38,7 +38,7 @@ let
         format
         platform
         ;
-      hash = "sha256-VaNpJQ0iCyzxAhOoeirBsaQgYIxbNbHfTnFHrI4y8SE=";
+      hash = "sha256-/uqZ/k0B+enzPKc9hp+Yghmhcl3hwYhwuqfVzVrvbLM=";
       python = "py3";
       dist = "py3";
     };
