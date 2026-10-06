@@ -1,15 +1,8 @@
 {
   config,
-  inputs,
   lib,
-  pkgs,
   ...
 }:
-let
-  authorizedKeys = pkgs.writeText "macos-${config.mainUser}-authorized_keys" (
-    inputs.self.lib.authorizedKeysText config.identity.authorizedKeys
-  );
-in
 {
   # Restrict `nix` user
   nix.settings = {
@@ -31,6 +24,8 @@ in
     allowSignedApp = true;
   };
 
+  users.users.${config.mainUser}.openssh.authorizedKeys.keys = config.identity.authorizedKeys;
+
   services.openssh = {
     # Keep Remote Login under System Settings' control. Applying this policy
     # leaves it off when it is off, and preserves a later manual toggle.
@@ -43,18 +38,8 @@ in
       PermitRootLogin no
       AllowUsers ${config.mainUser}
 
-      # Read root-managed keys directly; ignore keys in the user's home.
-      AuthorizedKeysFile /etc/ssh/authorized_keys.d/%u
-      AuthorizedKeysCommand none
+      # Use nix-darwin's AuthorizedKeysCommand; ignore keys in the user's home.
+      AuthorizedKeysFile none
     '';
   };
-
-  # Install a root-owned file that the login user can read but cannot change.
-  # Users can traverse the directory; only root can replace its entries.
-  # The openssh activation phase runs before the sshd configuration is linked.
-  system.activationScripts.openssh.text = lib.mkAfter ''
-    /usr/bin/install -d -o root -g wheel -m 0755 /etc/ssh/authorized_keys.d
-    /usr/bin/install -o root -g wheel -m 0644 ${authorizedKeys} \
-      ${lib.escapeShellArg "/etc/ssh/authorized_keys.d/${config.mainUser}"}
-  '';
 }
