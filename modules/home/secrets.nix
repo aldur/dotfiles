@@ -5,57 +5,38 @@
   ...
 }:
 # age-based password store via passage (https://github.com/FiloSottile/passage),
-# with identities and secrets baked into the Nix store.
+# with public identity stubs and encrypted secrets baked into the Nix store.
 let
   cfg = config.programs.aldur.secrets;
 
-  # Concatenate the identities passage reads, but first refuse to bake a
-  # plaintext age secret key into the world-readable nix store. age-plugin-*
-  # identity stubs are public and fine; an age-keygen secret (AGE-SECRET-KEY-1
-  # ...) is a decryption key and must never land here. This turns the option
-  # doc's "do not put secret keys here" from a hope into a build failure.
-  identitiesFile =
-    pkgs.runCommand "age-identities" { inherit (cfg) identities; } ''
-      for f in $identities; do
-        if grep -q 'AGE-SECRET-KEY-1' "$f"; then
-          echo "secrets.nix: refusing to store a plaintext age secret key from identity: $f" >&2
-          echo "  identities must be public key material (e.g. age-plugin-yubikey stubs)." >&2
-          exit 1
-        fi
-        cat "$f"
-        echo
-      done > $out
-    '';
+  # Read and validate before generating store files. Passing the paths to
+  # runCommand would copy them into the store before its guard could run.
+  # A key included in a flake source is already copied before module evaluation.
+  identities = map (path:
+    let
+      text = builtins.readFile path;
+      recipient = lib.findFirst builtins.isList null (builtins.split "(age1[a-z0-9]+)" text);
+    in
+    if lib.hasInfix "AGE-SECRET-KEY-1" text then
+      throw "secrets.nix: identities must contain public identity stubs, never plaintext age secret keys"
+    else if recipient == null then
+      throw "secrets.nix: no 'age1...' recipient found in identity: ${toString path}"
+    else {
+      inherit text;
+      recipient = builtins.head recipient;
+    }
+  ) cfg.identities;
+
+  identitiesFile = pkgs.writeText "age-identities" (lib.concatMapStrings (identity: identity.text + "\n") identities);
 
   recipientsFile =
-    pkgs.runCommand "age-recipients"
-      {
-        inherit (cfg) identities;
-        extras = builtins.toFile "extra-age-recipients" (
-          lib.concatMapStrings (r: r + "\n") cfg.extraRecipients
-        );
-      }
-      ''
-        {
-          for f in $identities; do
-            # Per-file so one identity without a recipient fails loudly
-            # instead of being masked by another file's recipient (the old
-            # `grep | head` swallowed grep's exit status).
-            rec=$(grep -oE 'age1[a-z0-9]+' "$f" | head -1)
-            if [ -z "$rec" ]; then
-              echo "secrets.nix: no 'age1...' recipient found in identity: $f" >&2
-              exit 1
-            fi
-            printf '%s\n' "$rec"
-          done
-          cat "$extras"
-        } > $out
-
-        if ! [ -s "$out" ]; then
-          echo "no recipients derived — check your identity files contain 'age1...' lines" >&2
-          exit 1
-        fi
-      '';
+    let
+      recipients = map (identity: identity.recipient) identities ++ cfg.extraRecipients;
+    in
+    if recipients == [ ] then
+      throw "secrets.nix: no recipients derived — configure public identities or extraRecipients"
+    else
+      pkgs.writeText "age-recipients" (lib.concatMapStrings (recipient: recipient + "\n") recipients);
 
   passageDispatch = pkgs.writeShellApplication {
     name = "passage";
@@ -200,9 +181,10 @@ in
         concatenated into the file passage reads via
         $PASSAGE_IDENTITIES_FILE. Identity stubs from `age-plugin-yubikey`
         are public info and safe in the nix store; do not put plaintext
-        age secret keys here — the build fails if an identity contains an
-        `AGE-SECRET-KEY-1...` line, and if any identity has no `age1...`
-        recipient.
+        age secret keys here. Evaluation rejects plaintext secret keys and
+        identities without an `age1...` recipient before generating store
+        files. Files inside a flake source are copied into the store before
+        this validation, so keep plaintext keys outside your flake entirely.
       '';
       example = lib.literalExpression "[ ./secrets/yubikey-a ./secrets/yubikey-b ]";
     };
