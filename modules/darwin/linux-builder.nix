@@ -1,13 +1,24 @@
-{ inputs, config, lib, ... }:
-# An existing Linux builder is needed to initially bootstrap `nix-rosetta-builder`.
-# If one isn't already available: comment out the `nix-rosetta-builder` module below,
-# uncomment this `linux-builder` module, and run `darwin-rebuild switch`:
-# { nix.linux-builder.enable = true; }
-# Then: uncomment `nix-rosetta-builder`, remove `linux-builder`, and `darwin-rebuild switch`
-# a second time. Subsequently, `nix-rosetta-builder` can rebuild itself.
+{ inputs, config, lib, pkgs, ... }:
+# Hosts opt into either builder. Bootstrap Rosetta with the standard builder
+# first, then disable nix.linux-builder and enable services.linux-builder.
 let
   name = "linux-builder";
   cfg = config.services.${name};
+  standardBuilder = config.nix.linux-builder;
+  vm = standardBuilder.package.nixosConfig.virtualisation;
+
+  growDisk = pkgs.writeShellScript "grow-linux-builder-disk" ''
+    set -euo pipefail
+    image=${lib.escapeShellArg vm.diskImage}
+    if [[ -f "$image" ]]; then
+      # Do not bypass QEMU's image locks: an active VM must stop first.
+      size=$(${lib.getExe' vm.qemu.package "qemu-img"} info --output=json "$image" |
+        ${lib.getExe pkgs.jq} -er '."virtual-size"')
+      if (( size < ${toString (vm.diskSize * 1024 * 1024)} )); then
+        ${lib.getExe' vm.qemu.package "qemu-img"} resize "$image" ${toString vm.diskSize}M
+      fi
+    fi
+  '';
 
   # https://discourse.nixos.org/t/mkif-vs-if-then/28521/4
   mkIfElse = with lib; (p: yes: no: mkMerge [ (mkIf p yes) (mkIf (!p) no) ]);
@@ -16,9 +27,42 @@ in {
 
   options.services.${name} = { enable = lib.mkEnableOption "Linux builder"; };
 
-  config = mkIfElse cfg.enable { nix-rosetta-builder.onDemand = true; } {
-    # This is required because the module defaults to being enabled.
-    # https://github.com/cpick/nix-rosetta-builder/blob/ebb7162a975074fb570a2c3ac02bc543ff2e9df4/module.nix#L31
-    nix-rosetta-builder.enable = false;
-  };
+  config = lib.mkMerge [
+    {
+      nix.linux-builder = {
+        enable = lib.mkDefault false;
+        maxJobs = lib.mkDefault 2;
+        config = { config, lib, ... }: {
+          virtualisation = {
+            cores = lib.mkDefault 4;
+            darwin-builder.memorySize = lib.mkDefault (8 * 1024);
+            darwin-builder.diskSize = lib.mkDefault (64 * 1024);
+            qemu.forceAccel = lib.mkDefault true;
+            fileSystems."/".autoResize = lib.mkDefault true;
+
+            # Replace the default SSH forward so it only listens on this Mac.
+            forwardPorts = lib.mkForce [
+              {
+                from = "host";
+                host.address = "127.0.0.1";
+                host.port = config.virtualisation.darwin-builder.hostPort;
+                guest.port = 22;
+              }
+            ];
+          };
+        };
+      };
+    }
+    (lib.mkIf (standardBuilder.enable && vm.diskImage != null) {
+      # launchd stops the previous VM before starting this job. Grow existing
+      # images here; new images are created at diskSize by the normal launcher.
+      launchd.daemons.linux-builder.script = lib.mkBefore ''
+        ${growDisk} || exit $?
+      '';
+    })
+    (mkIfElse cfg.enable { nix-rosetta-builder.onDemand = true; } {
+      # The upstream Rosetta module defaults to enabled; hosts must opt in.
+      nix-rosetta-builder.enable = false;
+    })
+  ];
 }

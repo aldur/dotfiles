@@ -10,14 +10,13 @@
     determinate-nix.enable = false;
   };
 
-  # To enable the smarter Linux builder:
-  #
-  # 1. Set
-  # nix.linux-builder.enable = true;
-  # 2. Rebuild
-  # 3. Set
-  # nix.linux-builder.enable = false;
-  # 4. Set `services.linux-builder.enable` to true.
+  # Builders default to disabled; enable it here.
+  # The standard builder can bootstrap from the binary cache on a fresh Mac.
+  nix.linux-builder.enable = false;
+
+  # To switch to the Rosetta builder (also supports x86_64-linux), rebuild
+  # once with the standard builder, then set nix.linux-builder.enable = false
+  # and services.linux-builder.enable = true before rebuilding again.
   services.linux-builder.enable = false;
 
   # Coding agents; see modules/home/claude and modules/home/codex.
