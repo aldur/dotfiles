@@ -49,14 +49,7 @@ available=$(nix config show system-features | jq -R 'split(" ")')
 #
 # `kvm` in the required features marks a VM test. A new VM test therefore
 # lands in the `vm` shard on its own.
-targets=()
-while IFS=$'\t' read -r name drv missing; do
-  if [ -n "$missing" ]; then
-    echo "::notice::Skip checks.$system.$name: the runner has no system feature: $missing"
-  else
-    targets+=("$drv^*")
-  fi
-done < <(jq -r '.[]' <<< "$drvs" | xargs nix derivation show \
+rows=$(jq -r '.[]' <<< "$drvs" | xargs nix derivation show \
   | jq -r --argjson drvs "$drvs" --argjson available "$available" --arg shard "$shard" '
   .derivations as $shown
   | $drvs | to_entries[]
@@ -67,6 +60,17 @@ done < <(jq -r '.[]' <<< "$drvs" | xargs nix derivation show \
   | select($shard == "all" or ($shard == "vm") == $isVM)
   | (($required | split(" ") | map(select(. != ""))) - $available) as $missing
   | "\(.key)\t\(.value)\t\($missing | join(" "))"')
+
+targets=()
+if [ -n "$rows" ]; then
+  while IFS=$'\t' read -r name drv missing; do
+    if [ -n "$missing" ]; then
+      echo "::notice::Skip checks.$system.$name: the runner has no system feature: $missing"
+    else
+      targets+=("$drv^*")
+    fi
+  done <<< "$rows"
+fi
 
 # An empty shard is not a failure: an arm64 runner has no KVM, and `nix
 # build` with no target would build the default package.
