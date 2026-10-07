@@ -148,7 +148,7 @@ let
     }:
     let
       extraPassthru = passthru;
-      literals = map (f: "(literal \"${f}\")" ) bootFiles;
+      literals = map (f: "(literal ${builtins.toJSON f})") bootFiles;
       bootReadRule = "(allow file-read* ${lib.concatStringsSep " " literals})";
       bootAncestors = lib.concatMapStringsSep " " (f: "$(ancestors \"${f}\")") bootFiles;
     in
@@ -371,15 +371,30 @@ let
     SANDBOX=${if isLinuxHost then "0" else "1"}
     [[ "''${argc_no_sandbox:-0}" -eq 1 ]] && SANDBOX=0
     if [[ "$SANDBOX" -eq 1 ]]; then
+      # Escape Scheme string delimiters; keep other bytes literal. Seatbelt
+      # does not interpret JSON's \uXXXX escapes as Unicode characters.
+      sb_string() {
+        local value=$1
+        value=''${value//\\/\\\\}
+        value=''${value//\"/\\\"}
+        printf '"%s"' "$value"
+      }
+      sb_literal() {
+        printf '(literal %s)' "$(sb_string "$1")"
+      }
       # The terminal of the serial console, if there is one.
       TTY_DEV=$(tty 2>/dev/null || true)
       TTY_RULE=""
-      [[ "$TTY_DEV" == /dev/* ]] && TTY_RULE="(literal \"$TTY_DEV\")"
+      [[ "$TTY_DEV" == /dev/* ]] && TTY_RULE=$(sb_literal "$TTY_DEV")
       # The run directory, escaped for a regex.
-      TMPDIR_RE=$(printf '%s' "$TMPDIR" | sed 's/[.[\*^$]/\\&/g')
+      TMPDIR_RE=$(printf '%s' "$TMPDIR" | sed 's/[][\\.^$*+?(){}|]/\\&/g')
+      # Pass regex filters ordinary Scheme strings. #"..." regex literals
+      # preserve backslashes instead of decoding the string escaping below.
+      TMPDISK_RE=$(sb_string "^$TMPDIR_RE/vl\\.")
+      MEMFD_RE=$(sb_string "^$TMPDIR_RE/memfd-")
       # One (subpath ...) per store path of a closure.
       store_paths() {
-        while read -r path; do printf '(subpath "%s") ' "$path"; done < "$1/store-paths"
+        while read -r path; do printf '(subpath %s) ' "$(sb_string "$path")"; done < "$1/store-paths"
       }
       # One (literal ...) per ancestor directory of a path: QEMU stats
       # its way down to the files it opens.
@@ -387,12 +402,12 @@ let
         local path=$1
         while [[ "$path" != / ]]; do
           path=$(dirname "$path")
-          printf '(literal "%s") ' "$path"
+          printf '%s ' "$(sb_literal "$path")"
         done
       }
       FILE_READ_RULES=()
       for file_path in "''${FILE_PATHS[@]}"; do
-        FILE_READ_RULES+=("(allow file-read* (literal \"$file_path\"))")
+        FILE_READ_RULES+=("(allow file-read* $(sb_literal "$file_path"))")
       done
       {
         echo "(version 1)"
@@ -405,9 +420,9 @@ let
         echo "(allow file-read* (literal \"/\"))"
         echo "(allow sysctl-read (sysctl-name \"kern.bootargs\") (sysctl-name \"security.mac.lockdown_mode_state\") (sysctl-name-prefix \"hw.optional.\") (sysctl-name \"hw.pagesize_compat\") (sysctl-name \"hw.cachelinesize\") (sysctl-name \"machdep.cpu.brand_string\"))"
         echo '${bootReadRule}'
-        echo "(allow file-read* (literal \"$TMPDIR/store.img\") (literal \"$STORE_IMAGE\"))"
+        echo "(allow file-read* $(sb_literal "$TMPDIR/store.img") $(sb_literal "$STORE_IMAGE"))"
         echo "(allow file-read-metadata $(ancestors "$TMPDIR/store.img") $(ancestors "$STORE_IMAGE") $(ancestors "$NIX_DISK_IMAGE") $(ancestors "${qemuExe}") ${bootAncestors})"
-        echo "(allow file-read* file-write* (literal \"$NIX_DISK_IMAGE\"))"
+        echo "(allow file-read* file-write* $(sb_literal "$NIX_DISK_IMAGE"))"
         printf '%s\n' "''${FILE_READ_RULES[@]}"
         # /dev/null: QEMU opens it read-write to probe file locking.
         echo "(allow file-read* file-write* (literal \"/dev/null\"))"
@@ -415,20 +430,20 @@ let
         echo "(allow file-read* (literal \"/dev/urandom\"))"
         echo "(allow file-read* file-write* file-ioctl $TTY_RULE)"
         # The sockets: QEMU serves the monitor and dials gvproxy.
-        echo "(allow file-write* (literal \"$MONITOR_SOCKET\"))"
-        echo "(allow network-bind network-inbound (literal \"$MONITOR_SOCKET\"))"
+        echo "(allow file-write* $(sb_literal "$MONITOR_SOCKET"))"
+        echo "(allow network-bind network-inbound $(sb_literal "$MONITOR_SOCKET"))"
         if [[ "$NETWORK" -eq 1 ]]; then
-          echo "(allow network-outbound (literal \"$NET_SOCKET\"))"
+          echo "(allow network-outbound $(sb_literal "$NET_SOCKET"))"
         fi
         if [[ "$EPHEMERAL" -eq 1 ]]; then
           # The temporary disk of -snapshot.
-          echo "(allow file-read* file-write* (regex #\"^$TMPDIR_RE/vl\\.\"))"
+          echo "(allow file-read* file-write* (regex $TMPDISK_RE))"
         fi
         if [[ "''${argc_gui:-0}" -eq 1 ]]; then
           # The Cocoa display: the window server, rendering, input, and
           # the pasteboard for --clipboard.
           # virtio-gpu backs its memory with a memfd, a file on macOS.
-          echo "(allow file-read* file-write* (regex #\"^$TMPDIR_RE/memfd-\"))"
+          echo "(allow file-read* file-write* (regex $MEMFD_RE))"
           # AppKit loads bundles, nibs and ICU data from the system volume,
           # and the appearance from the system-wide defaults.
           echo "(allow file-read-metadata (literal \"/System\") (literal \"/usr\") (literal \"/usr/share\") (literal \"/Library\") (literal \"/Library/Preferences\"))"
@@ -469,17 +484,17 @@ let
         echo "(allow sysctl-read (sysctl-name \"kern.bootargs\") (sysctl-name \"security.mac.lockdown_mode_state\") (sysctl-name \"hw.ncpu\") (sysctl-name \"hw.pagesize_compat\"))"
         # denyHostAccess lists the interface addresses through the routing table.
         echo "(allow sysctl-read (sysctl-name-prefix \"net.routetable.\"))"
-        echo "(allow file-read* (literal \"$GVPROXY_CONFIG\"))"
+        echo "(allow file-read* $(sb_literal "$GVPROXY_CONFIG"))"
         # The log is opened read-write.
-        echo "(allow file-read* file-write* (literal \"$GVPROXY_LOG\"))"
-        echo "(allow file-write* (literal \"$NET_SOCKET\"))"
+        echo "(allow file-read* file-write* $(sb_literal "$GVPROXY_LOG"))"
+        echo "(allow file-write* $(sb_literal "$NET_SOCKET"))"
         # The resolver: /etc/resolv.conf is a symlink through /var into
         # /var/run, and Go stats it before choosing how to resolve.
         echo "(allow file-read-metadata (literal \"/etc\") (literal \"/var\"))"
         echo "(allow file-read* (literal \"/private/etc/resolv.conf\") (literal \"/private/var/run/resolv.conf\"))"
         # The DHCP server draws its transaction IDs from here.
         echo "(allow file-read* (literal \"/dev/urandom\"))"
-        echo "(allow network-bind network-inbound (literal \"$NET_SOCKET\"))"
+        echo "(allow network-bind network-inbound $(sb_literal "$NET_SOCKET"))"
         echo "(allow network-outbound (remote ip \"*:*\"))"
         # DNS goes through the system resolver, a unix socket.
         echo "(allow network-outbound (literal \"/private/var/run/mDNSResponder\"))"

@@ -262,7 +262,10 @@ class Env:
         self.launcher = launcher
         self.work = work
         self.vm_dir = os.path.join(work, "vm")
-        self.notes = os.path.join(work, "notes.txt")
+        # Exercise actual file access through the generated Seatbelt profile:
+        # quotes and backslashes need escaping, while a control character
+        # must stay literal (Seatbelt does not decode JSON's Unicode escapes).
+        self.notes = os.path.join(work, 'notes"\\\x01.txt')
         with open(self.notes, "w") as f:
             f.write("notes-via-fwcfg\n")
         self.lan = lan_ip()
