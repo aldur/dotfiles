@@ -19,23 +19,37 @@ if [[ ! -f "$LOCK_FILE" ]]; then
   exit 1
 fi
 
-# Parse owner/repo from flake.lock
-NODE_INFO=$(jq -r --arg input "$INPUT_NAME" '.nodes[$input].locked // empty' "$LOCK_FILE")
+# Input names need not match node names; follows references start at the root.
+node_info() {
+  jq -c --arg input "$INPUT_NAME" '
+    . as $lock |
+    def resolve($ref):
+      if ($ref | type) == "array" then
+        reduce $ref[] as $name ($lock.root; resolve($lock.nodes[.].inputs[$name]))
+      else $ref end;
+    resolve($input | split("/")) as $node |
+    if $node == null then empty else $lock.nodes[$node] + {nodeId: $node} end
+  ' "$LOCK_FILE"
+}
+NODE_INFO=$(node_info)
 
 if [[ -z "$NODE_INFO" ]]; then
   echo "Error: Input '$INPUT_NAME' not found in flake.lock" >&2
   exit 1
 fi
 
-TYPE=$(echo "$NODE_INFO" | jq -r '.type')
+TYPE=$(echo "$NODE_INFO" | jq -r '.locked.type')
 
 if [[ "$TYPE" != "github" ]]; then
   echo "Error: Input '$INPUT_NAME' is not a GitHub source (type: $TYPE)" >&2
   exit 1
 fi
 
-OWNER=$(echo "$NODE_INFO" | jq -r '.owner')
-REPO=$(echo "$NODE_INFO" | jq -r '.repo')
+OWNER=$(echo "$NODE_INFO" | jq -r '.locked.owner')
+REPO=$(echo "$NODE_INFO" | jq -r '.locked.repo')
+REF=$(echo "$NODE_INFO" | jq -r '.original.ref // .original.rev // empty')
+ORIGINAL=$(echo "$NODE_INFO" | jq -c '.original')
+INPUT_DIR=$(echo "$NODE_INFO" | jq -r '.original.dir // .locked.dir // empty')
 
 echo "Found input: github:$OWNER/$REPO" >&2
 
@@ -43,8 +57,12 @@ echo "Found input: github:$OWNER/$REPO" >&2
 # NOTE: This requires GNU coreutils `date`
 UNTIL_DATE=$(date -u -d "$TIME_AGO" +%Y-%m-%dT%H:%M:%SZ)
 
-API_URL="https://api.github.com/repos/$OWNER/$REPO/commits?until=$UNTIL_DATE&per_page=1"
-RESPONSE=$(curl --no-verbose -fsSL "$API_URL")
+API_URL="https://api.github.com/repos/$OWNER/$REPO/commits"
+QUERY=(--data-urlencode "until=$UNTIL_DATE" --data-urlencode "per_page=1")
+if [[ -n "$REF" ]]; then
+  QUERY+=(--data-urlencode "sha=$REF")
+fi
+RESPONSE=$(curl --no-verbose -fsSL --get "${QUERY[@]}" "$API_URL")
 
 COMMIT=$(echo "$RESPONSE" | jq -r '.[0].sha // empty')
 
@@ -65,8 +83,21 @@ echo "Date: $COMMIT_DATE" >&2
 echo "Message: $COMMIT_MSG" >&2
 echo ""
 
-CMD=(nix flake update "$INPUT_NAME" --override-input "$INPUT_NAME" "github:$OWNER/$REPO/$COMMIT")
+OVERRIDE="github:$OWNER/$REPO/$COMMIT"
+if [[ -n "$INPUT_DIR" ]]; then
+  OVERRIDE+="?dir=$(printf '%s' "$INPUT_DIR" | jq -sRr @uri)"
+fi
+CMD=(nix flake update "$INPUT_NAME" --flake "$FLAKE_PATH" --override-input "$INPUT_NAME" "$OVERRIDE")
 echo "Will run: ${CMD[*]}" >&2
 read -rp "Press Enter to continue (Ctrl-C to cancel): " >&2
 
 "${CMD[@]}"
+
+# The override selects the locked revision, but must not replace the declared
+# branch with that fixed revision for future cooldown updates.
+NODE_ID=$(node_info | jq -r '.nodeId')
+temporary=$(mktemp "${LOCK_FILE}.XXXXXX")
+trap 'rm -f -- "$temporary"' EXIT
+jq --arg node "$NODE_ID" --argjson original "$ORIGINAL" \
+  '.nodes[$node].original = $original' "$LOCK_FILE" > "$temporary"
+mv -f -- "$temporary" "$LOCK_FILE"
