@@ -17,7 +17,7 @@ After installing [`nix`][1]:
 
 ```bash
 sudo nix --extra-experimental-features "nix-command flakes" \
-  run nix-darwin/master#darwin-rebuild -- .#macOS switch
+  run nix-darwin/master#darwin-rebuild -- switch --flake .#macOS
 ```
 
 ## Configuration
