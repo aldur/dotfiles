@@ -19,6 +19,9 @@ let
   };
 
   inherit (cfg) nixManagedHookMarkers;
+  skillsDir = "${cfg.configDir}/skills";
+  # Activation runs with HOME set, also when the checks use a scratch home.
+  skillsTarget = ''"$HOME"/${lib.escapeShellArg (lib.removePrefix "${config.home.homeDirectory}/" skillsDir)}'';
 
   # jq filter: deep-merge objects, but for `.hooks.<event>` arrays strip any
   # existing entries whose hook command contains a Nix-managed marker, then
@@ -231,13 +234,18 @@ in
 
     home = {
       # NOTE: `home.file` instead of `skills` to enable cross-platform evaluation used in checks.
-      file = lib.mkIf enabled {
-        "${cfg.configDir}/skills" = {
-          source = "${pkgs.claude-skills}/skills";
-          # Claude also writes server-synced skills into skills/synced/.
-          recursive = true;
-        };
-      };
+      file = lib.mkIf enabled (
+        lib.listToAttrs (
+          map (
+            name:
+            lib.nameValuePair "${skillsDir}/${name}" {
+              source = "${pkgs.claude-skills}/skills/${name}";
+              # Claude also writes server-synced skills into skills/synced/.
+              recursive = true;
+            }
+          ) config.programs.aldur.claude-code.skills
+        )
+      );
 
       # Write settings and MCP config as writable files (not read-only symlinks).
       # The native claude binary from ~/.local/bin bypasses the Nix wrapper,
@@ -248,6 +256,29 @@ in
         lib.hm.dag.entryBetween [ "linkGeneration" ] [ "writeBoundary" ] ''
           ${mergeJsonActivation "settings" ".claude/settings.json" claudeSettings}
           ${mergeJsonActivation "mcp" ".claude.json" claudeMcpConfig}
+        ''
+      );
+
+      # Older generations linked the full skills directory into the store.
+      # Home Manager keeps that link when the new generation has a directory
+      # at the same path. Then nothing can write new skills into it. This step
+      # removes the link before the link check. It writes before
+      # writeBoundary, because the check fails on the old link.
+      activation.claudeSkillsLink = lib.mkIf enabled (
+        lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
+          skillsDir=${skillsTarget}
+          if [[ -L $skillsDir \
+            && $(readlink "$skillsDir") == "$(readlink -e ${lib.escapeShellArg builtins.storeDir})"/*-home-manager-files/* ]]; then
+            run rm $VERBOSE_ARG "$skillsDir"
+          fi
+        ''
+      );
+
+      # Claude Code watches the skills directory only if it exists when the
+      # session starts. Make sure that it exists, also with no Nix skills.
+      activation.claudeSkillsDir = lib.mkIf enabled (
+        lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+          run mkdir -p $VERBOSE_ARG ${skillsTarget}
         ''
       );
 

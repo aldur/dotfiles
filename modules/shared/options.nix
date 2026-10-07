@@ -71,6 +71,23 @@ in
           || (config.targets.genericLinux.enable or false);
         description = "Prefer a Claude installation in ~/.local/bin over the Nix package.";
       };
+      skills = mkOption {
+        type = types.listOf types.str;
+        default = [
+          "docx"
+          "frontend-design"
+          "pdf"
+          "pptx"
+          "webapp-testing"
+          "xlsx"
+        ];
+        description = ''
+          The skills from the `claude-skills` package to link into
+          ~/.claude/skills. Each skill adds its description to every turn,
+          so keep only the skills that you use. Other skills in that
+          directory are not managed by Nix.
+        '';
+      };
     };
 
     codex = {

@@ -94,6 +94,10 @@ in
   crostini-pcscd = pkgs.callPackage ../base_hosts/crostini/tests/pcscd.nix { };
   crostini-piv = pkgs.callPackage ../base_hosts/crostini/tests/piv.nix { };
 
+  claude-skills-migration = pkgs.callPackage ../modules/home/claude/tests/skills-migration.nix {
+    inherit self;
+  };
+
   codex-settings = pkgs.callPackage ../modules/home/codex/tests/codex-settings.nix {
     inherit self inputs system;
   };
