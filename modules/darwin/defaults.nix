@@ -1,4 +1,4 @@
-{ ... }: {
+{ config, ... }: {
   system.defaults = {
     dock.autohide = true;
     dock.autohide-delay = 0.0;
@@ -11,7 +11,7 @@
 
     finder.FXPreferredViewStyle = "clmv";
 
-    screencapture.location = "~/Documents/Screenshots";
+    screencapture.location = "${config.users.users.${config.mainUser}.home}/Documents/Screenshots";
 
     screensaver.askForPassword = true;
     screensaver.askForPasswordDelay = 0;
@@ -59,5 +59,12 @@
       # Turn on app auto-update
       "com.apple.commerce".AutoUpdate = true;
     };
+  };
+
+  home-manager.users.${config.mainUser} = { lib, ... }: {
+    # The screencapture preference does not create its destination directory.
+    home.activation.createScreenshotDirectory = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      run mkdir -p ${lib.escapeShellArg config.system.defaults.screencapture.location}
+    '';
   };
 }
