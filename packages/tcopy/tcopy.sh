@@ -15,15 +15,14 @@ set -euo pipefail
 declare -a argc_text=()
 eval "$(argc --argc-eval "$0" "$@")"
 
-if [ "${#argc_text[@]}" -gt 0 ]; then
-    data="${argc_text[*]}"
-else
-    data=$(cat)
-fi
-
 # `base64 | tr -d '\n'` not `base64 -w 0`: -w is GNU-only and macOS
 # /usr/bin/base64 rejects it. tr gives single-line output on both.
-encoded=$(printf '%s' "$data" | base64 | tr -d '\n')
+if [ "${#argc_text[@]}" -gt 0 ]; then
+    encoded=$(printf '%s' "${argc_text[*]}" | base64 | tr -d '\n')
+else
+    # Encode stdin directly: command substitution of raw data drops newlines.
+    encoded=$(base64 | tr -d '\n')
+fi
 
 # Terminals cap how long an OSC string they will buffer (tmux included), and
 # silently drop anything past it — say so rather than appearing to succeed.
