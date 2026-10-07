@@ -55,6 +55,7 @@ in
   agent-log = pkgs.agent-log.tests.integration;
   telegram = pkgs.telegram.tests.integration;
   pi-config-sync = pkgs.pi.configSync.tests.integration;
+  qemu-vm-preflight = self.legacyPackages.${system}.qemu-vm.tests.preflight;
 
   llm-runtime = pkgs.callPackage ./llm-runtime.nix { };
 

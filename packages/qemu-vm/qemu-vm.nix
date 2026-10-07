@@ -147,12 +147,16 @@ let
       excludeShellChecks ? [ ],
     }:
     let
+      extraPassthru = passthru;
       literals = map (f: "(literal \"${f}\")" ) bootFiles;
       bootReadRule = "(allow file-read* ${lib.concatStringsSep " " literals})";
       bootAncestors = lib.concatMapStringsSep " " (f: "$(ancestors \"${f}\")") bootFiles;
     in
-    pkgs.writeArgcApplication {
-      inherit name passthru excludeShellChecks;
+    pkgs.writeArgcApplication rec {
+      inherit name excludeShellChecks;
+      passthru = extraPassthru // {
+        launcherText = text;
+      };
       runtimeInputs = with pkgs; [
         qemu
         gvproxy
@@ -192,6 +196,40 @@ let
     declare argc_clipboard argc_no_clipboard argc_no_sandbox argc_no_network
     eval "$(argc --argc-eval "$0" "$@")"
 
+    # Some setup commands (notably readlink -f) fail without a diagnostic.
+    launcher_error() {
+      local status=$1 line=$2
+      printf 'VM launcher failed at line %s (exit status %s).\n' "$line" "$status" >&2
+      exit "$status"
+    }
+    trap 'launcher_error "$?" "$LINENO"' ERR
+
+    # Validate and resolve files before --clean, disk creation, and sandbox
+    # setup. Reuse the canonical paths for fw_cfg and the macOS allowlist.
+    FILE_ARGS=()
+    FILE_PATHS=()
+    FILE_MESSAGES=()
+    for file_spec in "''${argc_file[@]}"; do
+      if [[ "$file_spec" =~ ^([A-Za-z0-9._-]+)=(.+)$ ]]; then
+        file_name="''${BASH_REMATCH[1]}"
+        file_path="''${BASH_REMATCH[2]}"
+      else
+        printf 'Invalid file specification: %s (want NAME=PATH)\n' "$file_spec" >&2
+        exit 1
+      fi
+      if [[ ! -f "$file_path" || ! -r "$file_path" ]]; then
+        printf 'Cannot read file: %s\n' "$file_path" >&2
+        if [[ "$file_path" == \~/* ]]; then
+          printf "Use --file \"NAME=\$HOME/path/to/file\"; the shell left ~ unexpanded.\n" >&2
+        fi
+        exit 1
+      fi
+      file_path=$(readlink -f "$file_path")
+      FILE_PATHS+=("$file_path")
+      FILE_ARGS+=(-fw_cfg "name=opt/qemu-vm/$file_name,file=$file_path")
+      FILE_MESSAGES+=("  File: $file_path -> /run/qemu-vm-files/$file_name")
+    done
+
     EPHEMERAL=${if defaultEphemeral then "1" else "0"}
     [[ "''${argc_ephemeral:-0}" -eq 1 ]] && EPHEMERAL=1
     [[ "''${argc_persistent:-0}" -eq 1 ]] && EPHEMERAL=0
@@ -229,7 +267,7 @@ let
       TEMP_RAW=$(mktemp)
       qemu-img create -f raw "$TEMP_RAW" "''${DISK_SIZE_MB}M"
       mkfs.ext4 -L nixos "$TEMP_RAW"
-      qemu-img convert -f raw -O qcow2 "$TEMP_RAW" "$NIX_DISK_IMAGE"
+      qemu-img convert -p -f raw -O qcow2 "$TEMP_RAW" "$NIX_DISK_IMAGE"
       rm "$TEMP_RAW"
     fi
 
@@ -353,9 +391,8 @@ let
         done
       }
       FILE_READ_RULES=()
-      for file_spec in "''${argc_file[@]:-}"; do
-        [[ -n "$file_spec" ]] || continue
-        FILE_READ_RULES+=("(allow file-read* (literal \"$(readlink -f "''${file_spec#*=}")\"))")
+      for file_path in "''${FILE_PATHS[@]}"; do
+        FILE_READ_RULES+=("(allow file-read* (literal \"$file_path\"))")
       done
       {
         echo "(version 1)"
@@ -482,29 +519,9 @@ let
       echo "  Clipboard: shared"
     fi
 
-    # Files for the guest. QEMU exposes them through fw_cfg. The guest
-    # module (modules/nixos/qemu-guest.nix) copies them to
-    # /run/qemu-vm-files at boot.
-    FILE_ARGS=()
-    if [[ -n "''${argc_file:-}" ]]; then
-      for file_spec in "''${argc_file[@]}"; do
-        if [[ "$file_spec" =~ ^([A-Za-z0-9._-]+)=(.+)$ ]]; then
-          file_name="''${BASH_REMATCH[1]}"
-          file_path="''${BASH_REMATCH[2]}"
-        else
-          echo "Invalid file specification: $file_spec (want NAME=PATH)"
-          exit 1
-        fi
-        if [[ ! -r "$file_path" ]]; then
-          echo "Cannot read file: $file_path"
-          exit 1
-        fi
-        # Canonical: the sandbox matches canonical paths.
-        file_path=$(readlink -f "$file_path")
-        FILE_ARGS+=(-fw_cfg "name=opt/qemu-vm/$file_name,file=$file_path")
-        echo "  File: $file_path -> /run/qemu-vm-files/$file_name"
-      done
-    fi
+    # The validated files are exposed through fw_cfg and copied by the
+    # guest module to /run/qemu-vm-files at boot.
+    for message in "''${FILE_MESSAGES[@]}"; do echo "$message"; done
     echo ""
 
     # Build the QEMU command — no shell passthrough, all options are explicit.
@@ -660,6 +677,11 @@ mkLauncher (
   // {
     passthru = {
       modules = baseModules;
+      inherit mkLauncher;
+      tests.preflight = pkgs.callPackage ./tests/preflight.nix {
+        inherit mkLauncher;
+        darwinMkLauncher = inputs.self.legacyPackages.aarch64-darwin.qemu-vm.mkLauncher;
+      };
       storeImage = nixStoreImage;
       nixosConfig = qemuNixos;
       # Boots a live ISO through this same script and probes the sandbox
