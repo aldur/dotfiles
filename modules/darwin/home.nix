@@ -67,6 +67,20 @@ in
     pinentry.package = pkgs.pinentry_mac;
   };
 
+  launchd.agents = {
+    # Keep Home Manager's GPG configuration, but let GnuPG start its agent
+    # on demand. Its --supervised mode cannot consume launchd's sockets.
+    gpg-agent.enable = lib.mkForce false;
+
+    yubikey-agent.config = lib.mkIf config.services.yubikey-agent.enable {
+      # The agent creates its own socket instead of consuming launchd's.
+      Sockets = lib.mkForce null;
+      RunAtLoad = true;
+      KeepAlive = lib.mkForce true;
+      Umask = 63; # 0077 in decimal; the agent's socket stays owner-only.
+    };
+  };
+
   programs.fish.functions.container-tty = {
     description = "Apple container with a terminal workaround for interactive sessions";
     wraps = "container";
