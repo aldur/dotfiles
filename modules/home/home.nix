@@ -210,13 +210,10 @@ in
                 return 1
             end
 
-            # Strip remote prefix if branch starts with a known remote name
-            for remote in $remotes
-                if echo "$branch" | grep -q "^$remote/"
-                    set branch (echo "$branch" | sed "s/^$remote\///")
-                    break
-                end
-            end
+            # This is a local branch name, even when it happens to begin with
+            # a remote name. Escape characters such as # so the browser does
+            # not interpret part of the ref as a URL fragment.
+            set branch_url (string escape --style=url -- "$branch")
 
             for remote in $remotes
                 set remote_url (git remote get-url $remote 2>/dev/null)
@@ -230,7 +227,7 @@ in
                     set branch_path "src/branch"
                 end
 
-                set full_url "$url/$branch_path/$branch"
+                set full_url "$url/$branch_path/$branch_url"
                 printf "%s\t\033]8;;%s\033\134%s\033]8;;\033\134\n" "$remote" "$full_url" "$full_url"
             end
           '';
