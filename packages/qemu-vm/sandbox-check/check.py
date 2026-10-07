@@ -45,7 +45,7 @@ BENIGN_DENIALS = [
     r"mach-lookup com\.apple\.(DiskArbitration|system\.opendirectoryd|dock\.fullscreen)",
     r"mach-lookup com\.apple\.(bsd\.dirhelper|uiintelligencesupport)",
     # Cocoa, non-fatal: the window shows and works without them
-    r"mach-lookup com\.apple\.(CoreServices\.coreservicesd|coreservices\.appleevents|ViewBridgeAuxiliary)",
+    r"mach-lookup com\.apple\.(CoreServices\.coreservicesd|coreservices\.appleevents)",
     r"mach-lookup com\.apple\.(distributed_notifications|dock\.server|touchbarserver|window_proxies)",
     r"mach-register com\.apple\.(tsm\.portname|coredrag|axserver)",
     r"file-read-data /dev/dtracehelper",
@@ -64,8 +64,6 @@ BENIGN_DENIALS = [
     r"system-socket domain:32",
     r"network-outbound /private/var/run/syslog",
     r"user-preference-read com\.apple\.hitoolbox",
-    # the GPU stays denied; Cocoa renders in software
-    r"iokit-open-user-client AGXDeviceUserClient",
 ]
 # Denials that specific probes provoke on purpose.
 PROVOKED_DENIALS = [

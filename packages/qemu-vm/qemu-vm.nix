@@ -329,8 +329,7 @@ let
     # denied is what the processes work without: logging and
     # diagnostics services, OS version and CPU feature sysctls (gvproxy
     # only; QEMU asserts on those), the working directory, and for the
-    # display DiskArbitration, directory services, the Dock, and the
-    # GPU, which leaves Cocoa on software rendering.
+    # display DiskArbitration, directory services, and the Dock.
     QEMU_WRAP=()
     GVPROXY_WRAP=()
     SANDBOX=${if isLinuxHost then "0" else "1"}
@@ -406,6 +405,8 @@ let
           echo "  (global-name \"com.apple.windowserver.active\")"
           echo "  (global-name \"com.apple.windowmanager.server\")"
           echo "  (global-name \"com.apple.CARenderServer\")"
+          echo "  (global-name \"com.apple.ViewBridgeAuxiliary\")"
+          echo "  (global-name \"com.apple.MTLCompilerService\")"
           echo "  (global-name \"com.apple.pasteboard.1\")"
           echo "  (global-name \"com.apple.iohideventsystem\")"
           echo "  (global-name \"com.apple.hiservices-xpcservice\")"
@@ -414,7 +415,12 @@ let
           # tight loop.
           echo "  (global-name \"com.apple.lsd.mapdb\")"
           echo "  (global-name \"com.apple.lsd.modifydb\"))"
-          echo "(allow iokit-open-user-client (iokit-user-client-class \"IOSurfaceRootUserClient\") (iokit-user-client-class \"IOHIDParamUserClient\"))"
+          # AppKit needs Metal to draw the Cocoa view on recent macOS. Denying
+          # the GPU leaves a gray window even when the guest framebuffer is
+          # populated. AGX queries physical memory and compiles its shaders;
+          # denying either dependency makes the renderer abort at startup.
+          echo "(allow sysctl-read (sysctl-name \"hw.memsize\"))"
+          echo "(allow iokit-open-user-client (iokit-user-client-class \"IOSurfaceRootUserClient\") (iokit-user-client-class \"IOHIDParamUserClient\") (iokit-user-client-class \"AGXDeviceUserClient\"))"
         fi
       } > "$TMPDIR/qemu.sb"
       [[ "$NETWORK" -eq 1 ]] && {
