@@ -24,6 +24,11 @@ else
   output_file="${base}.flat.pdf"
 fi
 
+# Render beside the destination, then replace it only after Ghostscript succeeds.
+# This also supports using the same file for input and output.
+temporary=$(mktemp --tmpdir="$(dirname -- "$output_file")" .flatten-pdf.XXXXXX.pdf)
+trap 'rm -f -- "$temporary"' EXIT
+
 # https://unix.stackexchange.com/questions/162922
 gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite \
   -sColorConversionStrategy=LeaveColorUnchanged \
@@ -33,6 +38,8 @@ gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite \
   -dDownsampleGrayImages=true \
   -dDownsampleColorImages=true \
   -dPreserveAnnots=false \
-  -sOutputFile="$output_file" "$argc_input"
+  -sOutputFile="$temporary" "$argc_input"
+
+mv -fT -- "$temporary" "$output_file"
 
 echo "Flattened PDF written to: $output_file"
