@@ -38,4 +38,10 @@ runs:
         # first error of a long test suite. Set the option in the daemon
         # configuration, not on the command line: log-lines is a restricted
         # setting, and nix ignores it from a client that is not trusted.
-        extra-conf: log-lines = 1000
+        # Evaluating the checks in parallel can use nearly all of a Linux
+        # runner's memory before any build starts. Apply the limit to every
+        # CI job, including `nix eval --json` in build-flake-checks.sh.
+        # This only limits evaluation; build parallelism is unchanged.
+        extra-conf: |
+          log-lines = 1000
+          eval-cores = 1
