@@ -39,8 +39,7 @@
     detnix = {
       url = "github:DeterminateSystems/nix-src";
       inputs = {
-        # `detnix` wants its own Rust version
-        # nixpkgs.follows = "nixpkgs-unstable";
+        nixpkgs.follows = "nixpkgs";
 
         nixpkgs-regression.follows = "";
         nixpkgs-23-11.follows = "";
