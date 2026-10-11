@@ -12,7 +12,7 @@ pkgs.writeShellApplication {
     pkgs.socat
   ];
   text = ''
-    socket=/var/host-services/llama.sock
+    socket="''${LLAMA_SOCKET_PATH:-/var/host-services/llama.sock}"
     if (( $# == 0 )) || [[ "$1" == -* ]]; then set -- pi-yolo "$@"; fi
     if [ "$(id -u)" = 0 ]; then
       if [ -S "$socket" ] && [ ! -L "$socket" ]; then

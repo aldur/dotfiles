@@ -197,10 +197,12 @@ def main():
     bundle.mkdir()
     launches = 0
 
-    def launch(*args, caps=capabilities, missing_socket=False, terminal=False,
+    def launch(*args, caps=capabilities, socket_path=None, terminal=False,
                masked_proc=True, readonly_proc=True, workspace=True, workdir="/workspace",
                home_source=home, transcript_source=None):
         nonlocal launches
+        socket_destination = socket_path or "/var/host-services/llama.sock"
+        socket_source = root / socket_destination.lstrip("/")
         if not privileged:
             result = command.copy()
             result[result.index("--chdir") + 1] = workdir
@@ -211,9 +213,12 @@ def main():
             if transcript_source is not None:
                 index = result.index("--")
                 result[index:index] = ["--bind", str(transcript_source), "/home/aldur/.pi-sessions"]
-            if missing_socket:
+            if socket_source.exists():
                 index = result.index("--")
-                result[index:index] = ["--setenv", "LLAMA_SOCKET_PATH", "/var/host-services/llama.sock"]
+                result[index:index] = ["--bind", str(socket_source), socket_destination]
+            if socket_path is not None:
+                index = result.index("--")
+                result[index:index] = ["--setenv", "LLAMA_SOCKET_PATH", socket_path]
             # Reproduce each kind of locked child mount without host root.
             if masked_proc:
                 index = result.index("--")
@@ -242,10 +247,9 @@ def main():
         if transcript_source is not None:
             mounts.append({"destination": "/home/aldur/.pi-sessions", "type": "bind",
                            "source": str(transcript_source), "options": ["bind", "rw"]})
-        socket = root / "var/host-services/llama.sock"
-        if socket.exists():
-            mounts.append({"destination": "/var/host-services/llama.sock", "type": "bind", "source": str(socket), "options": ["bind", "rw"]})
-        environment = config["Env"] + (["LLAMA_SOCKET_PATH=/var/host-services/llama.sock"] if missing_socket else [])
+        if socket_source.exists():
+            mounts.append({"destination": socket_destination, "type": "bind", "source": str(socket_source), "options": ["bind", "rw"]})
+        environment = config["Env"] + ([f"LLAMA_SOCKET_PATH={socket_path}"] if socket_path is not None else [])
         spec = {
             "ociVersion": "1.0.2",
             "root": {"path": str(root), "readonly": True},
@@ -399,14 +403,32 @@ PY
         assert failed.returncode != 0 and "chroot" in failed.stderr
         assert "UNSAFE_COMMAND" not in failed.stdout
     # Make sure that these commands stop when the required socket is not available.
-    failed = subprocess.run(launch("/bin/bash", "-c", "echo UNSAFE_COMMAND", missing_socket=True), stdin=subprocess.DEVNULL, text=True, capture_output=True, timeout=10)
-    assert failed.returncode != 0 and "inference socket missing" in failed.stderr
-    assert "UNSAFE_COMMAND" not in failed.stdout
+    def missing_socket(path):
+        failed = run("/bin/bash", "-c", "echo UNSAFE_COMMAND", socket_path=path, success=False)
+        assert f"inference socket missing: {path}" in failed.stderr, failed.stderr
+        assert "UNSAFE_COMMAND" not in failed.stdout
+
+    for path in ("/var/host-services/llama.sock", "/var/host-services/custom.sock"):
+        missing_socket(path)
+    # A custom path must work without the default socket, including the root
+    # ownership hand-off for a socket that only its owner can access.
+    with Server(str(root / "var/host-services/custom.sock"), Inference) as server:
+        os.chmod(server.server_address, 0o600)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            result = run("/bin/bash", "-c", 'curl --fail --silent --show-error "$LLAMA_BASE_URL/models"',
+                         socket_path="/var/host-services/custom.sock")
+            assert json.loads(result.stdout)["data"][0]["id"] == "local", result.stdout
+            if privileged:
+                assert Path(server.server_address).stat().st_uid == 501
+        finally:
+            server.shutdown()
+            thread.join()
+    Path(server.server_address).unlink()
     with Server(str(root / "var/host-services/llama.sock"), Inference) as server:
         server.root = root
         server.home = home
-        index = command.index("--")
-        command[index:index] = ["--bind", server.server_address, "/var/host-services/llama.sock"]
         if privileged:
             os.chmod(server.server_address, 0o600)
             for capability in capabilities:
@@ -418,6 +440,12 @@ PY
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
         try:
+            # An explicit missing path must not fall back to a live default.
+            missing_socket("/var/host-services/custom.sock")
+            # Empty values retain default-socket discovery.
+            result = run("/bin/bash", "-c", 'curl --fail --silent --show-error "$LLAMA_BASE_URL/models"',
+                         socket_path="")
+            assert json.loads(result.stdout)["data"][0]["id"] == "local", result.stdout
             scratch = run("--models", "llama-cpp/*", "-p", "--no-session", "--no-skills", "--no-extensions",
                           "create a scratch workspace file", workspace=False)
             assert "offline inference works" in scratch.stdout, (scratch.stdout, scratch.stderr)

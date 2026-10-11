@@ -29,11 +29,9 @@ env -u SSH_AUTH_SOCK container run -it --rm \
   --tmpfs /home/aldur:uid=501,gid=100,mode=0700 \
   --cap-drop ALL \
   --cap-add CHOWN --cap-add SETUID --cap-add SETGID --cap-add SYS_CHROOT \
-  --volume ~/.local/state/sandboxed-ai/sockets/llama-server.sock:/var/host-services/llama.sock \
+  --volume "$HOME/.local/state/sandboxed-ai/sockets/llama-server.sock:/var/host-services/llama.sock" \
   --volume "$PWD:/workspace" \
-  --env LLAMA_SOCKET_PATH=/var/host-services/llama.sock \
   ghcr.io/aldur/aldur-pi:latest --models 'llama-cpp/*'
-
 ```
 
 Add `--cpus 2` or `--memory 2G` if you want to limit system resources.
