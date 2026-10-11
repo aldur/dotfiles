@@ -40,11 +40,8 @@ let
 in
 # Changing home persistence must not disable ChromeOS registration.
 assert persistentHome.config.users.users.${persistentHome.config.mainUser}.linger == true;
-# Keep the console workaround on stock systemd, including any compatibility
-# patches NixOS applies through the package option.
-assert
-  configuration.config.systemd.package.outPath
-  == (configuration.options.systemd.package.apply pkgs.systemd).outPath;
+# Keep the console workaround on stock systemd.
+assert configuration.config.systemd.package.outPath == pkgs.systemd.outPath;
 assert
   configuration.config.programs.git.package.outPath == configuration.pkgs.gitMinimal-runtime.outPath;
 assert !(pkgs.lib.any (p: p.outPath == configuration.pkgs.git.outPath)
