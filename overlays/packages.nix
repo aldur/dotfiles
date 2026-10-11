@@ -111,6 +111,7 @@ in
     pi-no-docs = final.callPackage ../packages/pi/plugins/pi-no-docs { };
     pi-statusline = prev.callPackage ../packages/pi/plugins/pi-statusline { };
     pi-system-prompt = prev.callPackage ../packages/pi/plugins/pi-system-prompt { };
+    pi-throughput = final.callPackage ../packages/pi/plugins/pi-throughput { };
   };
   pi = prev.callPackage ../packages/pi/pi.nix { plugins = final.piPlugins; };
 
