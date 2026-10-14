@@ -52,57 +52,7 @@ in
   # re-points the stable node paths at the one runtime node of this repo,
   # and an unstable node would stay behind as a twin. Both channels ship
   # Node 24, which strips TS types by default.
-  pi-coding-agent = import ../utils/override-until-upgrade.nix {
-    package = unstable.pi-coding-agent;
-    note = "Drop the pi 1.0.0 override once nixpkgs-unstable catches up; keep the stable buildNpmPackage override.";
-    replacement =
-      (unstable.pi-coding-agent.override { inherit (prev) buildNpmPackage; }).overrideAttrs
-        (
-          new: old: {
-            version = "1.0.0";
-            src = prev.fetchFromGitHub {
-              owner = "earendil-works";
-              repo = "pi";
-              tag = "v1.0.0";
-              hash = "sha256-CGznIVHXG6gr2F8vzHcR/v4P9xJgZHeMTt/CJ/kB78o=";
-            };
-            npmDepsHash = "sha256-ndEvWdB6sa5nNNtabk2OMZKUFG9x3op185deZHxFnXk=";
-            npmDeps = prev.fetchNpmDeps {
-              inherit (new) src;
-              name = "pi-coding-agent-${new.version}-npm-deps";
-              hash = new.npmDepsHash;
-            };
-            modelData = prev.fetchurl {
-              url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-1.0.0.tgz";
-              hash = "sha256-85uZwpuFmPF1sQhA5dKoGYPnwM5crk19+DoQB0R9LCs=";
-            };
-
-            # 1.0.0 adds codemode, MCP and durable workspaces, and uses tsc
-            # rather than tsgo. The offline build uses the modelData above.
-            buildPhase = ''
-              runHook preBuild
-              npm run build:offline
-              runHook postBuild
-            '';
-            # Older recipes lack these runtime workspaces; newer ones
-            # already copy them. Repeating an entry fails on the second rm.
-            postInstall =
-              let
-                missing = prev.lib.filter (ws: !(prev.lib.hasInfix ws old.postInstall)) [
-                  "@earendil-works/pi-codemode:packages/codemode"
-                  "@earendil-works/pi-mcp:packages/mcp"
-                ];
-                anchor = "@earendil-works/chord:packages/chord";
-                extra = prev.lib.concatMapStrings (ws: "${ws} \\\n              ") missing;
-              in
-              prev.lib.replaceStrings [ anchor ] [ (extra + anchor) ] old.postInstall;
-
-            passthru = (old.passthru or { }) // {
-              updatePin.exempt = "Temporary pi 1.0.0 backport; remove when the nixpkgs version guard fires.";
-            };
-          }
-        );
-  };
+  pi-coding-agent = unstable.pi-coding-agent.override { inherit (prev) buildNpmPackage; };
 
   piPlugins = {
     # final.callPackage: the build-time checks must see the same
