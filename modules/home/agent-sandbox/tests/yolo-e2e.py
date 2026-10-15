@@ -488,15 +488,22 @@ result.with_suffix('.tmp').replace(result)
             args = ['--no-alt-screen'] if kind == 'codex' else []
             terminal = Terminal([launcher, *args], env)
             try:
-                ready = 'model:gpt-5' if kind == 'codex' else 'bypasspermissions'
                 def screen():
                     return re.sub(r'\s+', '', terminal.text()).lower()
-                terminal.until(lambda: ready in screen() or 'doyouwanttousethisapikey?' in screen(),
+
+                def composer_ready():
+                    if kind == 'codex':
+                        # The status line's model label changes between releases.
+                        # Require the fixture model and the input prompt instead.
+                        return 'gpt-5' in screen() and '›' in terminal.text()
+                    return 'bypasspermissions' in screen()
+
+                terminal.until(lambda: composer_ready() or 'doyouwanttousethisapikey?' in screen(),
                                f'{kind} composer did not become ready')
-                if ready not in screen():
+                if not composer_ready():
                     # Approve only the synthetic API key in the disposable home.
                     terminal.send(b'\x1b[A\r')
-                    terminal.until(lambda: ready in screen(), f'{kind} composer did not become ready after fixture-key approval')
+                    terminal.until(composer_ready, f'{kind} composer did not become ready after fixture-key approval')
                 terminal.send(b'original-editor-draft')
                 terminal.until(lambda: 'original-editor-draft' in terminal.text(), f'{kind} did not accept input')
                 terminal.send(b'\x07')
