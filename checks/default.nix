@@ -1,5 +1,6 @@
 {
   pkgs,
+  pkgsUnstable,
   # This flake and its inputs, for the pins it discovers and the system the
   # headless check evaluates.
   self,
@@ -85,6 +86,10 @@ in
 
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+  # Exercise the same unstable Codex runtime installed by the home module.
+  codex-runtime = pkgs.linkFarm "codex-runtime-tests" {
+    inherit (pkgsUnstable.codex.tests) voice-runtime app-server-daemon;
+  };
   slim-runtime = pkgs.callPackage ./slim-runtime.nix { };
   playwright-runtime = pkgs.callPackage ./playwright-runtime.nix { };
   runtime-libraries = pkgs.callPackage ./runtime-libraries.nix { };

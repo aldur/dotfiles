@@ -756,25 +756,66 @@ let
     else
       let
         cached = prev.codex;
+        hasVoice = builtins.elem "codex-voice-host" (cached.cargoBuildFlags or [ ]);
+        replacements = prev.lib.optionals hasVoice runtimeLibraries.codexVoice;
+        # Header paths only identify references to erase; realizing their
+        # outputs would needlessly build the compiler/libc development files.
+        buildOnlyReferences = map (p: builtins.unsafeDiscardStringContext (toString p)) [
+          prev.stdenv.cc.cc
+          prev.stdenv.cc.libc.dev
+        ];
       in
       prev.runCommand cached.name
         {
-          nativeBuildInputs = [ prev.binutils ];
-          inherit (cached) meta;
+          nativeBuildInputs = [
+            prev.binutils
+            prev.removeReferencesTo
+          ];
+          inherit (cached) meta version;
+          passthru = (cached.passthru or { }) // {
+            tests =
+              (cached.tests or { })
+              // prev.lib.optionalAttrs hasVoice {
+                voice-runtime = cached.tests.voice-runtime.override {
+                  codex = final.codex // {
+                    inherit (cached) buildCommit;
+                  };
+                };
+                app-server-daemon = cached.tests.app-server-daemon.override { codex = final.codex; };
+              };
+          };
+          disallowedReferences = [
+            cached
+          ]
+          ++ map (r: r.oldDependency) replacements
+          ++ prev.lib.optionals hasVoice buildOnlyReferences;
         }
         ''
           cp -a ${cached} $out
           chmod -R u+w $out
-          find $out/bin -type f -exec strip --keep-section=.dep-v0 {} +
+          find $out -type f -executable -exec strip --keep-section=.dep-v0 {} +
           # bin/codex is a binary wrapper pinning the original's prefix and
           # PATH; same names → equal lengths, safe inside the ELF.
           find $out -type f -exec sed -i "s|${cached}|$out|g" {} +
+          ${prev.lib.concatMapStringsSep "\n" (r: ''
+            find $out -type f -exec sed -i "s|${r.oldDependency}|${r.newDependency}|g" {} +
+            find $out -type l -lname '${r.oldDependency}/*' -print0 | while IFS= read -r -d ''' link; do
+              target=$(readlink "$link")
+              ln -sfn "${r.newDependency}/''${target#${r.oldDependency}/}" "$link"
+            done
+          '') replacements}
+          ${prev.lib.optionalString hasVoice ''
+            # bindgen embeds compiler/header locations in the voice helper's
+            # diagnostics. They are build metadata, not runtime dependencies.
+            find $out -type f -exec remove-references-to \
+              ${prev.lib.concatMapStringsSep " " (p: "-t ${p}") buildOnlyReferences} {} +
+          ''}
           # A leftover would silently chain the copy to the original; a
           # no-op strip would silently keep the symbol tables. The layout
           # shifts across versions (0.133 ships one binary, 0.144 three),
           # so sweep every ELF rather than naming one.
           ! grep -r ${cached} $out
-          find $out/bin -type f | while IFS= read -r f; do
+          find $out -type f -executable | while IFS= read -r f; do
             [ "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" = 7f454c46 ] || continue
             if readelf -SW "$f" | grep -qe '\.symtab'; then
               echo "unstripped: $f"; exit 1

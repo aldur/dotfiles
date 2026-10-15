@@ -165,6 +165,7 @@
           checks = import ./checks {
             inherit
               pkgs
+              pkgsUnstable
               self
               inputs
               packages
