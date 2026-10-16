@@ -51,6 +51,7 @@ async function setup(t, options = {}) {
   const events = new Map();
   const calls = [];
   const warnings = [];
+  const notices = [];
   const widgets = [];
   const thinkingChanges = [];
   let provider;
@@ -58,6 +59,7 @@ async function setup(t, options = {}) {
   let thinking = options.thinking ?? "off";
   let stale = false;
   const ctx = {
+    hasUI: options.hasUI ?? true,
     sessionManager: { getBranch: () => options.entries ?? [] },
     get model() {
       if (stale) throw new Error("context stale after session replacement");
@@ -65,7 +67,7 @@ async function setup(t, options = {}) {
     },
     ui: {
       setWidget: (_key, widget) => widgets.push(widget),
-      notify: (...args) => warnings.push(args),
+      notify: (...args) => (args[1] === "info" ? notices : warnings).push(args),
       theme: { fg: (_color, text) => text },
     },
   };
@@ -91,7 +93,7 @@ async function setup(t, options = {}) {
   const emit = async (name, event = {}) => events.get(name)?.(event, ctx);
   t.after(async () => { await emit("session_shutdown"); });
   return {
-    emit, calls, warnings, widgets, thinkingChanges,
+    emit, calls, warnings, notices, widgets, thinkingChanges,
     get provider() { return provider; },
     get active() { return active; },
     get thinking() { return thinking; },
@@ -113,7 +115,43 @@ test("hosted startup and model picker tolerate an unavailable server silently", 
   await h.emit("input", { text: "/model" });
   assert.equal(h.calls.length, 2);
   assert.deepEqual(h.warnings, []);
+  assert.deepEqual(h.notices, []);
   assert.deepEqual(h.thinkingChanges, []);
+});
+
+test("interactive startup reports a discovered local server once, even on a hosted model", async (t) => {
+  const h = await setup(t);
+  assert.deepEqual(h.notices, [], "wait for a session UI before reporting discovery");
+  await h.emit("session_start");
+  await h.emit("session_start", { reason: "new" });
+  await h.emit("input", { text: "/model" });
+  await h.emit("before_agent_start");
+  assert.deepEqual(h.notices, [["Found local inference server.", "info"]]);
+  assert.deepEqual(h.warnings, []);
+  assert.equal(h.active.provider, "hosted");
+});
+
+test("noninteractive discovery does not emit a startup notification", async (t) => {
+  const h = await setup(t, { hasUI: false });
+  await h.emit("session_start");
+  assert.ok(h.provider);
+  assert.deepEqual(h.notices, []);
+  assert.deepEqual(h.warnings, []);
+});
+
+test("missing and refused sockets stay silent at launch", async (t) => {
+  for (const code of ["ENOENT", "ECONNREFUSED"]) {
+    await t.test(code, async (t) => {
+      const h = await setup(t, { models: () => {
+        throw new TypeError("fetch failed", { cause: Object.assign(new Error("socket unavailable"), { code }) });
+      } });
+      await h.emit("session_start");
+      await h.emit("before_agent_start");
+      assert.deepEqual(h.warnings, []);
+      assert.deepEqual(h.notices, []);
+      assert.equal(h.provider, undefined);
+    });
+  }
 });
 
 const advertisedCatalog = (efforts, defaultEffort = "off", fields = {}) => () => Response.json({ data: [{

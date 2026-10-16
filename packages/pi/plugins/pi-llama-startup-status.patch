@@ -1,0 +1,72 @@
+--- a/index.ts
++++ b/index.ts
+@@ -312,13 +312,13 @@
+ 	const baseUrl = (process.env.LLAMA_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
+ 	const apiKey = process.env.LLAMA_API_KEY ?? "no-key";
+ 
+-	async function refreshProvider(quiet = false): Promise<void> {
++	async function refreshProvider(quiet = false): Promise<boolean> {
+ 		const warn = (message: string) => { if (!quiet) console.warn(message); };
+ 		try {
+ 			const response = await fetch(`${baseUrl}/models`, { signal: AbortSignal.timeout(MODELS_TIMEOUT_MS) });
+ 			if (!response.ok) {
+ 				warn(`[llama-cpp] ${baseUrl}/models returned ${response.status}`);
+-				return;
++				return false;
+ 			}
+ 
+ 			const payload: unknown = await response.json();
+@@ -327,7 +327,7 @@
+ 					.map((e) => `${"path" in e ? e.path : ""} ${e.message}`)
+ 					.join("; ");
+ 				warn(`[llama-cpp] invalid /models response: ${errors}`);
+-				return;
++				return false;
+ 			}
+ 
+ 			const previousById = new Map(currentModels.map((m) => [m.id, m]));
+@@ -403,7 +403,7 @@
+ 
+ 			if (currentModels.length === 0) {
+ 				warn(`[llama-cpp] no models returned from ${baseUrl}/models`);
+-				return;
++				return false;
+ 			}
+ 
+ 			// Track which model is currently loaded on the server
+@@ -417,8 +417,10 @@
+ 				api: "openai-completions",
+ 				models: currentModels,
+ 			});
++			return true;
+ 		} catch (error) {
+ 			warn(`[llama-cpp] failed to reach ${baseUrl}/models: ${(error as Error).message}`);
++			return false;
+ 		}
+ 	}
+ 
+@@ -766,7 +768,8 @@
+ 
+ 	// Pi chooses the model after extensions load. Try the local server now,
+ 	// but stop after one second. Keep failures quiet for hosted sessions.
+-	await refreshProvider(true);
++	const serverFoundAtStartup = await refreshProvider(true);
++	let startupNoticePending = serverFoundAtStartup;
+ 
+ 	pi.on("input", async (event, ctx) => {
+ 		const trimmed = event.text.trim().toLowerCase();
+@@ -790,9 +793,13 @@
+ 	// Restored sessions do not emit model_select. Read the local model
+ 	// settings before the first prompt.
+ 	pi.on("session_start", async (event, ctx) => {
++		if (startupNoticePending) {
++			startupNoticePending = false;
++			if (ctx.hasUI) notify(ctx, "Found local inference server.", "info");
++		}
+ 		initializedThinking.clear();
+ 		const model = ctx.model;
+-		if (model?.provider === PROVIDER_ID) {
++		if (model?.provider === PROVIDER_ID && serverFoundAtStartup) {
+ 			// Restoring a session must keep its saved choice, including off.
+ 			if (["resume", "fork", "reload"].includes(event.reason) ||
+ 				ctx.sessionManager.getBranch().some((entry) => entry.type === "message")) {
