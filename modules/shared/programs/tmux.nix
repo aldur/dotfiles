@@ -87,6 +87,10 @@
     # `Q` quits. The wrapper opens at the current pane's path.
     bind-key g display-popup -E -w 90% -h 90% lazygit-popup
 
+    # Task browser for the current pane's project; shift-T keeps the clock.
+    bind-key t display-popup -E -w 90% -h 90% -d "#{pane_current_path}" taskmd-ui
+    bind-key T clock-mode
+
     # y to yank in copy mode, remaining in copy mode
     bind -T copy-mode-vi y send-keys -X copy-selection
 
