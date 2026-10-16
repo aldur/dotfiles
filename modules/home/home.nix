@@ -88,6 +88,7 @@ in
 {
   imports = [
     ../shared/options.nix
+    ./agents
     ./direnv.nix
     ./llm.nix
     ./pi.nix
