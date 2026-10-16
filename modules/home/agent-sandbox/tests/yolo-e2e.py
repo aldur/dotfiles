@@ -89,6 +89,14 @@ record = {'argv': sys.argv[1:], 'env': dict(os.environ), 'cwd': os.getcwd(),
           'kvm_visible': Path('/dev/kvm').is_char_device(),
           'docker_visible': Path(os.environ['XDG_RUNTIME_DIR']).joinpath('docker.sock').is_socket(),
           'codex_state': Path.home().joinpath('.codex/auth.json').exists()}
+instructions = Path.home() / ('.codex/AGENTS.md' if Path(sys.argv[0]).name == 'codex' else '.claude/CLAUDE.md')
+record['instructions'] = instructions.read_text() if instructions.exists() else None
+try:
+    with instructions.open('r+'):
+        pass
+    record['instructions_writable'] = True
+except OSError:
+    record['instructions_writable'] = False
 if 'probe-kvm' in sys.argv:
     fd = os.open('/dev/kvm', os.O_RDWR)
     os.write(fd, b'fixture')
@@ -144,6 +152,8 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                 assert record['argv'] == [*prefix, *payload], record
                 assert record['cwd'] == str(WORK), record
                 assert record['host_visible'] == (not sandboxed), record
+                assert record['instructions'] == 'shared instructions', record
+                assert record['instructions_writable'] == (not sandboxed), record
                 assert record['kvm_visible'] == (not sandboxed), record
                 assert record['docker_visible'] == (not sandboxed or case['docker']), record
                 actual = record['env']
@@ -541,8 +551,11 @@ def main():
     with tempfile.TemporaryDirectory(prefix='agent-yolo-e2e-') as directory:
         fixture = Path(directory)
         home = fixture / 'home'
-        for name in ('Work', '.local/bin', '.claude', '.codex'):
+        for name in ('Work', '.local/bin', '.claude', '.codex', '.config/agents'):
             (home / name).mkdir(parents=True, exist_ok=True)
+        (home / '.config/agents/AGENTS.md').write_text('shared instructions')
+        for name in ('.codex/AGENTS.md', '.claude/CLAUDE.md'):
+            (home / name).symlink_to('../.config/agents/AGENTS.md')
         for name in ('Reference notes', 'Extra reference', 'Shared code', 'Extra output', 'Other workspace/.git'):
             (home / name).mkdir(parents=True, exist_ok=True)
             (home / name / 'marker').write_text('fixture')

@@ -7,6 +7,15 @@
 }:
 let
   agents = config.programs.aldur;
+  instructionsDirectory =
+    let
+      directory = config.programs.agent-instructions.directory;
+      homePrefix = "${config.home.homeDirectory}/";
+    in
+    if lib.hasPrefix homePrefix directory then
+      "~/${lib.removePrefix homePrefix directory}"
+    else
+      directory;
   profile = cfg: {
     runtimeAllowlist = cfg.extraRuntimeDirAllowlist;
     inherit (cfg)
@@ -26,13 +35,17 @@ let
           agentReadOnlyPaths = [
             "~/.codex/packages"
             "~/.agents/skills"
+            instructionsDirectory
           ];
         };
       }
       // lib.optionalAttrs agents.claude-code.enable {
         claude = profile agents.claude-code.sandbox // {
           stateKind = "claude";
-          agentReadOnlyPaths = [ "~/.local/share/claude/versions" ];
+          agentReadOnlyPaths = [
+            "~/.local/share/claude/versions"
+            instructionsDirectory
+          ];
           extraEnvironmentAllowlist = agents.claude-code.sandbox.extraEnvironmentAllowlist ++ [
             "IS_SANDBOX"
             "CLAUBBIT"

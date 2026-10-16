@@ -3,6 +3,7 @@
   homeFiles,
   homeProfile,
   piConfigSync,
+  resetAgentInstructions,
 }:
 uid:
 pkgs.writeShellApplication {
@@ -49,6 +50,7 @@ pkgs.writeShellApplication {
     # Apply the same managed configuration as Home Manager, including to an
     # existing home. Undeclared settings and keybindings are preserved.
     ${pkgs.lib.getExe piConfigSync}
+    ${pkgs.lib.getExe resetAgentInstructions}
 
     export PATH="/bin:/run/current-system/sw/bin:$PATH"
     if [[ -n "''${LLAMA_SOCKET_PATH:-}" || -S "$socket" ]]; then

@@ -107,6 +107,7 @@ in
   codex-settings = pkgs.callPackage ../modules/home/codex/tests/codex-settings.nix {
     inherit self inputs system;
   };
+  agent-instructions = pkgs.callPackage ../modules/home/agents/tests { inherit self; };
 
   agent-sandbox = pkgs.callPackage ../modules/home/agent-sandbox/tests { };
   agent-sandbox-transport = pkgs.callPackage ../modules/home/agent-sandbox/tests/transport.nix {

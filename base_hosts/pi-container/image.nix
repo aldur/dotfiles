@@ -31,6 +31,7 @@ let
     homeFiles = home.config.home-files;
     homeProfile = home.config.home.path;
     piConfigSync = home.config.programs.pi.configSync;
+    resetAgentInstructions = home.config.programs.agent-instructions.reset;
   } uid;
   root = pkgs.buildEnv {
     name = "pi-container-root";
