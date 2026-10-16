@@ -6,6 +6,7 @@
 }:
 let
   cfg = config.programs.pi;
+  dotfilesSkills = import ../../skills;
   jsonType = (pkgs.formats.json { }).type;
   managedConfig = pkgs.writeText "pi-managed-config.json" (
     builtins.toJSON { inherit (cfg) settings keybindings; }
@@ -64,6 +65,17 @@ in
 
     home = {
       packages = lib.optionals cfg.enable [ pkgs.pi ];
+
+      # Share the same skill files as Codex and Claude, including Pi-only hosts.
+      file = lib.mkIf cfg.enable (
+        lib.mapAttrs' (
+          name: source:
+          lib.nameValuePair ".pi/agent/skills/${name}" {
+            inherit source;
+            recursive = true;
+          }
+        ) dotfilesSkills
+      );
 
       # Both Home Manager and the container call this explicit helper. Running
       # after linkGeneration lets HM retire its former keybindings symlink first.

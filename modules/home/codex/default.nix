@@ -11,6 +11,7 @@ let
   sandbox = sandboxCfg.enable && pkgs.stdenv.hostPlatform.isLinux;
   tomlFormat = pkgs.formats.toml { };
   tomlPython = pkgs.python3.withPackages (ps: [ ps.tomlkit ]);
+  dotfilesSkills = import ../../../skills;
 
   codexSettings = {
     # The model catalog sets the summary to "none" for gpt-6-astra. Without a
@@ -110,6 +111,15 @@ in
     };
 
     home = {
+      # Shared with Claude; link individual skills so other skills stay writable.
+      file = lib.mapAttrs' (
+        name: source:
+        lib.nameValuePair ".agents/skills/${name}" {
+          inherit source;
+          recursive = true;
+        }
+      ) dotfilesSkills;
+
       activation.codexSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         target="$HOME/.codex/config.toml"
         if [[ -v DRY_RUN ]]; then

@@ -76,14 +76,18 @@ in
         default = [
           "docx"
           "frontend-design"
+          "github-ci"
           "pdf"
           "pptx"
+          "taskmd"
           "webapp-testing"
           "xlsx"
         ];
         description = ''
-          The skills from the `claude-skills` package to link into
-          ~/.claude/skills. Each skill adds its description to every turn,
+          The skills to link into ~/.claude/skills: skills listed in
+          skills/default.nix come from these dotfiles; the others come from
+          the `claude-skills` package.
+          Each skill adds its description to every turn,
           so keep only the skills that you use. Other skills in that
           directory are not managed by Nix.
         '';

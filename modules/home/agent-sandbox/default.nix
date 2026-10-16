@@ -23,7 +23,10 @@ let
       lib.optionalAttrs agents.codex.enable {
         codex = profile agents.codex.sandbox // {
           stateKind = "codex";
-          agentReadOnlyPaths = [ "~/.codex/packages" ];
+          agentReadOnlyPaths = [
+            "~/.codex/packages"
+            "~/.agents/skills"
+          ];
         };
       }
       // lib.optionalAttrs agents.claude-code.enable {

@@ -11,6 +11,7 @@ let
   sandbox = sandboxCfg.enable;
   jsonFormat = pkgs.formats.json { };
   cfg = config.programs.claude-code;
+  dotfilesSkills = import ../../../skills;
 
   # Keep this package's license allowance local to the module that installs it.
   claudePkgs = import inputs.nixpkgs-unstable {
@@ -239,7 +240,7 @@ in
           map (
             name:
             lib.nameValuePair "${skillsDir}/${name}" {
-              source = "${pkgs.claude-skills}/skills/${name}";
+              source = dotfilesSkills.${name} or "${pkgs.claude-skills}/skills/${name}";
               # Claude also writes server-synced skills into skills/synced/.
               recursive = true;
             }
