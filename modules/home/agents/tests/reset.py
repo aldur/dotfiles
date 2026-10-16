@@ -6,8 +6,11 @@ import sys
 import tempfile
 
 
-activation, source, entrypoint, command = sys.argv[1:]
+activation, source, entrypoint, command, closure = sys.argv[1:]
 expected = Path(source).read_bytes()
+
+for path in Path(closure).read_text().splitlines():
+    assert Path(path).exists(), f"SBOM scanner cannot inspect store output: {path}"
 
 with tempfile.TemporaryDirectory() as directory:
     home = Path(directory)

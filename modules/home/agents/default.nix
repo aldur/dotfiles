@@ -16,7 +16,14 @@ let
       ''"$HOME"/${lib.escapeShellArg (lib.removePrefix homePrefix directory)}''
     else
       lib.escapeShellArg directory;
-  instructions.source = config.lib.file.mkOutOfStoreSymlink "${directory}/AGENTS.md";
+  # SBOM tools cannot inspect a store output that is itself a dangling link.
+  instructions = name: {
+    source = pkgs.runCommand "agent-instructions-${name}" { } ''
+      mkdir "$out"
+      ln -s ${lib.escapeShellArg "${directory}/AGENTS.md"} "$out"/${lib.escapeShellArg name}
+    '';
+    recursive = true;
+  };
   reset = pkgs.writeShellApplication {
     name = "reset-agent-instructions";
     runtimeInputs = [ pkgs.coreutils ];
@@ -52,13 +59,13 @@ in
   config.home = {
     file =
       lib.optionalAttrs config.programs.aldur.codex.enable {
-        ".codex/AGENTS.md" = instructions;
+        ".codex" = instructions "AGENTS.md";
       }
       // lib.optionalAttrs config.programs.aldur.claude-code.enable {
-        "${config.programs.claude-code.configDir}/CLAUDE.md" = instructions;
+        "${config.programs.claude-code.configDir}" = instructions "CLAUDE.md";
       }
       // lib.optionalAttrs config.programs.pi.enable {
-        ".pi/agent/AGENTS.md" = instructions;
+        ".pi/agent" = instructions "AGENTS.md";
       };
 
     activation.agentInstructions = lib.mkIf enabled (
