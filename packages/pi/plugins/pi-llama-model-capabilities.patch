@@ -1,0 +1,260 @@
+--- a/index.ts
++++ b/index.ts
+@@ -38,6 +38,11 @@
+ 		Type.Array(
+ 			Type.Object({
+ 				id: Type.String(),
++				// Optional extensions must not invalidate an otherwise usable catalog.
++				reasoning_efforts: Type.Optional(Type.Unknown()),
++				default_reasoning_effort: Type.Optional(Type.Unknown()),
++				context_length: Type.Optional(Type.Unknown()),
++				max_model_len: Type.Optional(Type.Unknown()),
+ 				aliases: Type.Optional(Type.Array(Type.String())),
+ 				status: Type.Optional(
+ 					Type.Object({
+@@ -60,6 +65,7 @@
+ 				meta: Type.Optional(
+ 					Type.Object({
+ 						n_ctx: Type.Optional(Type.Number()),
++						context_length: Type.Optional(Type.Unknown()),
+ 						n_params: Type.Optional(Type.Number()),
+ 					}),
+ 				),
+@@ -109,7 +115,10 @@
+ 	mmproj_model: "Loading projector",
+ };
+ 
+-type LlamaModel = NonNullable<Parameters<ExtensionAPI["registerProvider"]>[1]["models"]>[number];
++type LlamaModel = Extract<
++	NonNullable<Parameters<ExtensionAPI["registerProvider"]>[1]["models"]>[number],
++	{ reasoning: boolean }
++> & { status?: { value?: string } };
+ type ExtensionCtx = Parameters<Parameters<ExtensionAPI["on"]>[1]>[1];
+ 
+ // llama.cpp template thinking is boolean, so expose Pi's default off/medium toggle only.
+@@ -177,6 +186,52 @@
+ 	};
+ }
+ 
++const THINKING_LEVELS = ["off", "minimal", "low", "medium", "high", "xhigh", "max"] as const;
++type ThinkingLevel = typeof THINKING_LEVELS[number];
++type AdvertisedThinking = {
++	levels: NonNullable<LlamaModel["thinkingLevelMap"]>;
++	defaultLevel?: ThinkingLevel;
++};
++
++// An advertised vocabulary describes top-level reasoning_effort. Use exact
++// supported words; do not guess a model family or round an unsupported effort.
++// A binary on/off contract gets a single Pi "medium" switch.
++function advertisedThinking(efforts: unknown, defaultEffort: unknown): AdvertisedThinking | undefined {
++	if (!Array.isArray(efforts) || !efforts.every((word) => typeof word === "string")) return;
++	const levels: AdvertisedThinking["levels"] = {};
++	for (const level of THINKING_LEVELS) {
++		levels[level] = efforts.includes(level) ? level : null;
++	}
++	if (efforts.includes("none") && !efforts.includes("off")) levels.off = "none";
++	if (!THINKING_LEVELS.slice(1).some((level) => typeof levels[level] === "string") && efforts.includes("on")) {
++		levels.medium = "on";
++	}
++	// Empty is an explicit no-reasoning declaration. An unknown vocabulary is
++	// inconclusive, so retain the existing template fallback for future servers.
++	if (efforts.length > 0 && !Object.values(levels).some((word) => typeof word === "string")) return;
++	const defaultLevel = typeof defaultEffort === "string"
++		? THINKING_LEVELS.find((level) => levels[level] === defaultEffort)
++		: undefined;
++	return { levels, defaultLevel };
++}
++
++function applyAdvertisedThinking(model: MutableModelMetadata, thinking: AdvertisedThinking): void {
++	model.reasoning = THINKING_LEVELS.slice(1).some((level) => typeof thinking.levels[level] === "string");
++	model.thinkingLevelMap = thinking.levels;
++	model.compat = {
++		...model.compat,
++		thinkingFormat: "openai",
++		supportsReasoningEffort: true,
++		chatTemplateKwargs: undefined,
++	};
++}
++
++function positiveContext(...values: unknown[]): number {
++	return values.find((value): value is number =>
++		typeof value === "number" && Number.isSafeInteger(value) && value > 0,
++	) ?? DEFAULT_CONTEXT_WINDOW;
++}
++
+ // Pi invalidates a captured ctx when the session is replaced (e.g. new_session in
+ // RPC mode). Any later ctx access then throws this error. Background work started
+ // before the replacement should treat it as "session gone" and stop quietly.
+@@ -204,6 +259,27 @@
+ 
+ export default async function (pi: ExtensionAPI) {
+ 	let currentModels: LlamaModel[] = [];
++	let advertisedById = new Map<string, AdvertisedThinking>();
++	const initializedThinking = new Set<string>();
++	const unavailableProps = new Set<string>();
++
++	function syncAdvertisedThinking(modelId: string, selectedModel?: MutableModelMetadata): boolean {
++		const thinking = advertisedById.get(modelId);
++		if (!thinking) return false;
++		if (selectedModel) {
++			applyAdvertisedThinking(selectedModel, thinking);
++			const current = pi.getThinkingLevel();
++			const available: readonly ThinkingLevel[] = selectedModel.reasoning
++				? THINKING_LEVELS.filter((level) => typeof thinking.levels[level] === "string")
++				: ["off"];
++			const level = !initializedThinking.has(modelId) && current === "off"
++				? thinking.defaultLevel ?? current : current;
++			initializedThinking.add(modelId);
++			const effective = available.includes(level) ? level : thinking.defaultLevel ?? available[0];
++			if (effective !== undefined && effective !== current) pi.setThinkingLevel(effective);
++		}
++		return true;
++	}
+ 
+ 	pi.registerCommand("llama-version", {
+ 		description: "Get build info of llama.cpp server",
+@@ -255,6 +331,7 @@
+ 			}
+ 
+ 			const previousById = new Map(currentModels.map((m) => [m.id, m]));
++			const nextAdvertisedById = new Map<string, AdvertisedThinking>();
+ 
+ 			const capabilitiesById = new Map<string, string[]>();
+ 
+@@ -271,6 +348,9 @@
+ 
+ 			currentModels = (payload.data ?? []).map((model) => {
+ 				const previous = previousById.get(model.id);
++				// If the server changes contracts for this id, do not reuse the old
++				// advertised request dialect while probing the template fallback.
++				const previousThinking = advertisedById.has(model.id) ? undefined : previous;
+ 				const isLoaded = model.status?.value === "loaded";
+ 				const modalities =
+ 					model.architecture?.input_modalities ??
+@@ -286,24 +366,40 @@
+ 				if (isLoaded) {
+ 					suffixes.push("(loaded)");
+ 				}
+-				const contextWindow =
+-					model.meta?.n_ctx ?? previous?.contextWindow ?? DEFAULT_CONTEXT_WINDOW;
++				const contextWindow = positiveContext(
++					model.meta?.n_ctx, model.context_length, model.max_model_len,
++					model.meta?.context_length, previous?.contextWindow,
++				);
+ 				const displayName = model.aliases?.[0] || model.id;
+-				return {
++				const registered = {
+ 					id: model.id,
+ 					name: suffixes.length > 0 ? `${displayName} ${suffixes.join(" ")}` : displayName,
+ 					// /v1/models does not include /props-discovered capabilities, so preserve
+ 					// template thinking metadata across refreshes.
+-					reasoning: previous?.reasoning ?? false,
+-					thinkingLevelMap: previous?.thinkingLevelMap,
++					reasoning: previousThinking?.reasoning ?? false,
++					thinkingLevelMap: previousThinking?.thinkingLevelMap,
+ 					input,
+ 					cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+ 					contextWindow,
+ 					maxTokens: Math.min(DEFAULT_MAX_TOKENS, contextWindow),
+-					compat: previous?.compat,
++					compat: previousThinking?.compat,
+ 					status: model.status,
+ 				} as LlamaModel;
++				const thinking = advertisedThinking(model.reasoning_efforts, model.default_reasoning_effort);
++				if (thinking) {
++					nextAdvertisedById.set(model.id, thinking);
++					applyAdvertisedThinking(registered, thinking);
++				}
++				return registered;
+ 			});
++			for (const model of currentModels) {
++				if (JSON.stringify(advertisedById.get(model.id)) !== JSON.stringify(nextAdvertisedById.get(model.id))) {
++					discoveredMetadata.delete(model.id);
++				}
++			}
++			advertisedById = nextAdvertisedById;
++			// A successful catalog refresh also allows explicitly retrying /props.
++			unavailableProps.clear();
+ 
+ 			if (currentModels.length === 0) {
+ 				warn(`[llama-cpp] no models returned from ${baseUrl}/models`);
+@@ -345,7 +441,7 @@
+ 	async function connectToLoadingProgress(
+ 		modelId: string,
+ 		ctx: ExtensionCtx,
+-		loader: Loader,
++		loader: Loader | null,
+ 	): Promise<void> {
+ 		// Close any existing SSE connection
+ 		if (sseAbortController) {
+@@ -492,6 +588,13 @@
+ 		if (!model) {
+ 			return;
+ 		}
++		// Catalog capabilities are usable even when /props is absent or fails.
++		const hasAdvertisedThinking = syncAdvertisedThinking(modelId, selectedModel);
++		if (selectedModel) {
++			selectedModel.contextWindow = model.contextWindow;
++			selectedModel.maxTokens = model.maxTokens;
++		}
++		if (unavailableProps.has(modelId)) return;
+ 		const displayName = model.name.split(" ")[0];
+ 		// Use tracked state instead of stale currentModels status.
+ 		const isLoaded = currentlyLoadedModel === modelId;
+@@ -540,7 +643,7 @@
+ 
+ 		try {
+ 			if (shouldAutoload && ctx) {
+-				let loader = null;
++				let loader: Loader | null = null;
+ 				ctx.ui.setWidget(PROVIDER_ID, (ui, theme) => {
+ 					const prefix = theme.fg("accent", " [llama.cpp]");
+ 					const prefixWidth = visibleWidth(" [llama.cpp]");
+@@ -552,8 +655,9 @@
+ 					);
+ 					return {
+ 						dispose: () => loader?.stop(),
++						invalidate: () => loader?.invalidate(),
+ 						render: (width: number) => {
+-							const [_, line] = loader.render(width - prefixWidth);
++							const line = loader?.render(width - prefixWidth)[1] ?? "";
+ 							return [prefix + truncateToWidth(line, width - prefixWidth)];
+ 						},
+ 					};
+@@ -565,6 +669,10 @@
+ 			const response = await fetch(propsUrl, { signal: controller.signal });
+ 			if (controller.signal.aborted || !isCurrentSelection()) return;
+ 			if (!response.ok) {
++				if (response.status === 404 || response.status === 405) {
++					unavailableProps.add(modelId);
++					return;
++				}
+ 				// 500 during autoload is expected when the server cancels a load to start
+ 				// another model. Suppress the notification for that case.
+ 				if (!(shouldAutoload && response.status === 500)) {
+@@ -598,7 +706,7 @@
+ 			}
+ 			const chatTemplate = data.chat_template ?? "";
+ 			// Only use these effort levels when the template lists them.
+-			const applyThinkingSupport = hasQwenEffortLevels(chatTemplate)
++			const applyThinkingSupport = hasAdvertisedThinking ? undefined : hasQwenEffortLevels(chatTemplate)
+ 				? applyTemplateEffortSupport
+ 				: chatTemplate.includes("enable_thinking")
+ 					? applyTemplateThinkingSupport
+@@ -681,9 +789,15 @@
+ 
+ 	// Restored sessions do not emit model_select. Read the local model
+ 	// settings before the first prompt.
+-	pi.on("session_start", async (_event, ctx) => {
++	pi.on("session_start", async (event, ctx) => {
++		initializedThinking.clear();
+ 		const model = ctx.model;
+ 		if (model?.provider === PROVIDER_ID) {
++			// Restoring a session must keep its saved choice, including off.
++			if (["resume", "fork", "reload"].includes(event.reason) ||
++				ctx.sessionManager.getBranch().some((entry) => entry.type === "message")) {
++				initializedThinking.add(model.id);
++			}
+ 			await discoverModelMetadata(model.id, ctx, true, PROPS_TIMEOUT_MS, model);
+ 		}
+ 	});

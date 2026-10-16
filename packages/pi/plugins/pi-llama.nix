@@ -20,13 +20,14 @@ stdenvNoCC.mkDerivation {
     hash = "sha256-Q63awf1R2Un2Is0UfxFFTKH0FKeayP5+5/MhpzVNJn0=";
   };
 
-  # Only use Qwen's effort levels when the template lists them. Read local
-  # model settings before the first prompt. Limit model-list requests to one
-  # second, and cancel old requests when the user changes models.
+  # Prefer advertised reasoning efforts and defaults; retain template-based
+  # discovery for llama.cpp. Read metadata before the first prompt, bound
+  # catalog requests, and cancel requests when the user changes models.
   # Drop once merged upstream: https://github.com/huggingface/pi-llama
   patches = [
     ./pi-llama-reasoning-effort.patch
     ./pi-llama-startup-discovery.patch
+    ./pi-llama-model-capabilities.patch
   ];
 
   # llama.cpp has no output-token cap (generation is bounded only by n_ctx),
