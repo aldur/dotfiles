@@ -2,8 +2,9 @@
  * Throughput for any Pi provider. Prefer server timings (llama.cpp, Sushi,
  * mlx-serve, vLLM); otherwise label client estimates with ~. Input / TTFT is
  * a separate estimate, since queueing, caching and transport affect it.
- * Live estimates use characters / 4 until final token usage arrives, including
- * thinking and tool arguments. No fetch wrapper or server polling is needed.
+ * Live estimates use characters / 4 over recent output, including thinking
+ * and tool arguments, and refresh through pauses. Final usage gives the reply
+ * average. No fetch wrapper or server polling is needed.
  * The existing pi-statusline renders this extension's status.
  *
  * Protocol: https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md
@@ -14,6 +15,8 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 const STATUS_KEY = "pi-throughput";
 // The bundled Hugging Face provider and Pi's built-in llama.cpp provider.
 const PROGRESS_PROVIDERS = new Set(["llama-cpp", "llama.cpp"]);
+const DECODE_WINDOW_MS = 2000;
+const REFRESH_MS = 250;
 
 function record(value: unknown): Record<string, unknown> | undefined {
 	return value !== null && typeof value === "object" && !Array.isArray(value)
@@ -42,7 +45,8 @@ function rate(timings: Record<string, unknown>, phase: "prompt" | "predicted"): 
 export default function (pi: ExtensionAPI) {
 	let request: {
 		provider: string; model: string; api: string; started: number;
-		firstOutput?: number; lastOutput?: number; firstCharacters: number; characters: number;
+		firstOutput?: number; lastOutput?: number; characters: number;
+		samples: { at: number; characters: number }[];
 	} | undefined;
 	let prefill: number | "cached" | undefined;
 	let inputRate: number | undefined;
@@ -51,8 +55,36 @@ export default function (pi: ExtensionAPI) {
 	let percent: number | undefined;
 	let lastStatus: string | undefined;
 	let lastRender = 0;
+	let refreshTimer: ReturnType<typeof setInterval> | undefined;
+
+	function stopRefreshing() {
+		clearInterval(refreshTimer);
+		refreshTimer = undefined;
+	}
+
+	function updateDecode(now: number) {
+		if (!request || serverDecode || request.firstOutput === undefined) return;
+		const samples = request.samples;
+		// Keep the sample just before the window as its baseline. This also
+		// lets the estimate fall to zero when output stops arriving.
+		while (samples.length > 1 && samples[1].at <= now - DECODE_WINDOW_MS) samples.shift();
+		const first = samples[0];
+		const seconds = (now - first.at) / 1000;
+		if (seconds > 0) decode = ((request.characters - first.characters) / 4) / seconds;
+	}
+
+	function startRefreshing(ctx: ExtensionContext) {
+		if (refreshTimer) return;
+		refreshTimer = setInterval(() => {
+			if (!request || ctx.signal?.aborted) { stopRefreshing(); return; }
+			updateDecode(performance.now());
+			render(ctx);
+		}, REFRESH_MS);
+		refreshTimer.unref();
+	}
 
 	function clear(ctx: ExtensionContext) {
+		stopRefreshing();
 		request = undefined;
 		prefill = inputRate = decode = percent = undefined;
 		serverDecode = false;
@@ -72,6 +104,7 @@ export default function (pi: ExtensionAPI) {
 		}
 		else if (inputRate !== undefined) parts.push(`input/TTFT:~${inputRate.toFixed(1)} tok/s`);
 		if (decode !== undefined) parts.push(`decode:${serverDecode ? "" : "~"}${decode.toFixed(1)} tok/s`);
+		else if (refreshTimer && request?.firstOutput !== undefined) parts.push("decode:…");
 		if (request?.firstOutput !== undefined) {
 			parts.push(`TTFT:${((request.firstOutput - request.started) / 1000).toFixed(2)}s`);
 		}
@@ -95,7 +128,7 @@ export default function (pi: ExtensionAPI) {
 		clear(ctx);
 		request = {
 			provider: model.provider, model: model.id, api: model.api,
-			started: performance.now(), firstCharacters: 0, characters: 0,
+			started: performance.now(), characters: 0, samples: [],
 		};
 		// Only llama.cpp needs these nonstandard request fields. Other servers
 		// are observed without changing their requests.
@@ -164,14 +197,18 @@ export default function (pi: ExtensionAPI) {
 		request.characters += delta.delta.length;
 		if (request.firstOutput === undefined) {
 			request.firstOutput = now;
-			request.firstCharacters = request.characters;
+			startRefreshing(ctx);
 		}
 		request.lastOutput = now;
+		if (!serverDecode) request.samples.push({ at: now, characters: request.characters });
 		percent = undefined;
-		const seconds = (now - request.firstOutput) / 1000;
+		// Some providers report prompt usage before generation finishes.
+		const input = (message.usage?.input ?? 0) + (message.usage?.cacheWrite ?? 0);
+		const ttft = (request.firstOutput - request.started) / 1000;
+		if (prefill === undefined && input > 0 && ttft > 0) inputRate = input / ttft;
 		// These are estimates: providers can buffer or bundle multiple tokens
 		// per delta. Do not let them replace a server-reported decode rate.
-		if (!serverDecode && seconds > 0) decode = ((request.characters - request.firstCharacters) / 4) / seconds;
+		updateDecode(now);
 		render(ctx);
 	});
 
@@ -180,6 +217,7 @@ export default function (pi: ExtensionAPI) {
 		if (message.role !== "assistant") return;
 		if (message.stopReason === "error" || message.stopReason === "aborted") { clear(ctx); return; }
 		if (ctx.mode !== "tui" || !request || message.provider !== request.provider || message.model !== request.model) return;
+		stopRefreshing();
 		if (request.firstOutput !== undefined) {
 			const ttft = (request.firstOutput - request.started) / 1000;
 			const input = message.usage.input + message.usage.cacheWrite;
@@ -191,7 +229,7 @@ export default function (pi: ExtensionAPI) {
 		render(ctx, true);
 		request = undefined;
 	});
-	pi.on("agent_end", () => { request = undefined; });
+	pi.on("agent_end", () => { stopRefreshing(); request = undefined; });
 	pi.on("session_start", (_event, ctx) => clear(ctx));
 	pi.on("session_tree", (_event, ctx) => clear(ctx));
 	pi.on("model_select", (_event, ctx) => clear(ctx));

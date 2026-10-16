@@ -1,10 +1,27 @@
 import assert from "node:assert/strict";
+import { createRequire, registerHooks } from "node:module";
 import { join } from "node:path";
 import { test } from "node:test";
 import { pathToFileURL } from "node:url";
 
-const [extensionPath, piRoot] = process.argv.slice(2);
+const [extensionPath, piRoot, statuslinePath] = process.argv.slice(2);
+const requirePi = createRequire(join(piRoot, "package.json"));
+const tuiUrl = pathToFileURL(requirePi.resolve("@earendil-works/pi-tui")).href;
+registerHooks({
+  resolve(specifier, context, nextResolve) {
+    if (specifier === "@earendil-works/pi-tui") {
+      return nextResolve(tuiUrl, context);
+    }
+    return nextResolve(specifier, context);
+  },
+});
 const { default: extension } = await import(pathToFileURL(extensionPath));
+const { default: statusline } = await import(pathToFileURL(statuslinePath));
+const { TuiMainScreen } = await import("@earendil-works/pi-tui");
+const { FooterDataProvider } = await import(pathToFileURL(join(piRoot, "dist/core/footer-data-provider.js")));
+const { runAgentLoop } = await import(pathToFileURL(join(
+  piRoot, "node_modules/@earendil-works/pi-agent-core/dist/agent-loop.js",
+)));
 const { streamSimple } = await import(pathToFileURL(join(
   piRoot, "node_modules/@earendil-works/pi-ai/dist/api/openai-completions.js",
 )));
@@ -35,6 +52,7 @@ function setup(t) {
   };
   extension({ on: (name, handler) => handlers.set(name, handler) });
   const emit = (name, event = {}) => handlers.get(name)?.(event, ctx);
+  t.after(() => emit("session_shutdown"));
   const payload = { model: ctx.model.id, stream: true, messages: [] };
   return {
     ctx, emit, statuses, payload,
@@ -43,9 +61,9 @@ function setup(t) {
       role: "assistant", provider: ctx.model.provider, model: ctx.model.id,
       stopReason: "stop", usage: { input: 0, cacheWrite: 0, output: 0 }, ...fields,
     } }),
-    delta(type, delta) {
+    delta(type, delta, usage) {
       return emit("message_update", {
-        message: { role: "assistant", provider: ctx.model.provider, model: ctx.model.id },
+        message: { role: "assistant", provider: ctx.model.provider, model: ctx.model.id, usage },
         assistantMessageEvent: { type, delta },
       });
     },
@@ -217,7 +235,7 @@ test("any provider gets labeled client estimates including thinking and tool del
   assert.equal(h.start(), undefined);
   h.advance(400);
   h.delta("thinking_delta", "Thinking");
-  assert.equal(h.status, "TTFT:0.40s");
+  assert.equal(h.status, "decode:… | TTFT:0.40s");
   h.advance(1000);
   h.delta("toolcall_delta", '{"x":42}');
   h.advance(1000);
@@ -238,6 +256,80 @@ test("a buffered single output chunk does not invent a decode rate", (t) => {
   h.delta("text_delta", "Buffered response");
   h.end({ usage: { input: 500, cacheWrite: 0, output: 50 } });
   assert.equal(h.status, "input/TTFT:~500.0 tok/s | TTFT:1.00s");
+});
+
+test("decode updates during thinking and follows recent changes in speed", (t) => {
+  const h = setup(t);
+  h.ctx.model.provider = "sushi";
+  h.start();
+  h.advance(400);
+  h.delta("thinking_delta", "Thinking");
+  assert.equal(h.status, "decode:… | TTFT:0.40s");
+  for (let i = 0; i < 2; i++) {
+    h.advance(1000);
+    h.delta("thinking_delta", "x".repeat(40));
+    assert.equal(h.status, "decode:~10.0 tok/s | TTFT:0.40s");
+  }
+  for (let i = 0; i < 2; i++) {
+    h.advance(1000);
+    h.delta("text_delta", "slow");
+  }
+  assert.equal(h.status, "decode:~1.0 tok/s | TTFT:0.40s");
+  h.chunk({ timings });
+  assert.equal(h.status, "prefill:1250.0 tok/s | decode:50.0 tok/s | TTFT:0.40s");
+});
+
+test("prompt usage reported early is shown from the first decoded output", (t) => {
+  const h = setup(t);
+  h.ctx.model.provider = "custom-anthropic";
+  h.start();
+  h.advance(400);
+  h.delta("thinking_delta", "Thinking", { input: 600, cacheWrite: 200, cacheRead: 9000 });
+  assert.equal(h.status, "input/TTFT:~2000.0 tok/s | decode:… | TTFT:0.40s");
+});
+
+test("live decoding refreshes through pauses and stops refreshing after completion", (t) => {
+  t.mock.timers.enable({ apis: ["setInterval"] });
+  const h = setup(t);
+  h.start();
+  h.advance(400);
+  h.delta("text_delta", "Hello");
+  h.advance(1000);
+  h.delta("text_delta", "x".repeat(40));
+  assert.equal(h.status, "decode:~10.0 tok/s | TTFT:0.40s");
+  h.advance(2000);
+  t.mock.timers.tick(2000);
+  assert.equal(h.status, "decode:~0.0 tok/s | TTFT:0.40s");
+  h.end({ usage: { input: 800, cacheWrite: 0, output: 11 } });
+  assert.equal(h.status, "input/TTFT:~2000.0 tok/s | decode:~10.0 tok/s | TTFT:0.40s");
+  const finalCount = h.statuses.length;
+  h.advance(10000);
+  t.mock.timers.tick(10000);
+  assert.equal(h.statuses.length, finalCount);
+});
+
+test("live refresh cannot update an aborted or replaced session", (t) => {
+  t.mock.timers.enable({ apis: ["setInterval"] });
+  for (const event of ["model_select", "session_tree", "session_shutdown", "agent_end"]) {
+    const h = setup(t);
+    h.start();
+    h.advance(400);
+    h.delta("text_delta", "Hello");
+    h.emit(event);
+    const count = h.statuses.length;
+    h.advance(10000);
+    t.mock.timers.tick(10000);
+    assert.equal(h.statuses.length, count);
+  }
+  const h = setup(t);
+  h.start();
+  h.advance(400);
+  h.delta("text_delta", "Hello");
+  h.ctx.signal = AbortSignal.abort();
+  const count = h.statuses.length;
+  h.advance(10000);
+  t.mock.timers.tick(10000);
+  assert.equal(h.statuses.length, count);
 });
 
 test("Pi's OpenAI adapter sends flags and forwards progress and timing chunks", async (t) => {
@@ -275,4 +367,79 @@ test("Pi's OpenAI adapter sends flags and forwards progress and timing chunks", 
   assert.equal(message.usage.cacheRead, 9000);
   assert.ok(message.content.some((block) => block.type === "thinking"));
   assert.ok(message.content.some((block) => block.type === "text" && block.text === "Hello"));
+});
+
+test("the real agent loop paints the footer while its SSE response is still open", async (t) => {
+  const h = setup(t);
+  h.ctx.model.provider = "sushi";
+  const output = [];
+  const terminal = {
+    columns: 160, rows: 24, kittyProtocolActive: false,
+    start() {}, stop() {}, write: (text) => output.push(text),
+    hideCursor() {}, showCursor() {}, clearLine() {}, clearFromCursor() {},
+    clearScreen() {}, moveBy() {}, setTitle() {}, setProgress() {}, setProgramStatus() {},
+  };
+  const tui = new TuiMainScreen(terminal);
+  const footerData = new FooterDataProvider("/");
+  const setStatus = h.ctx.ui.setStatus;
+  h.ctx.ui.setStatus = (key, text) => {
+    setStatus(key, text);
+    footerData.setExtensionStatus(key, text);
+    tui.requestRender();
+  };
+  h.ctx.getContextUsage = () => ({ tokens: 0, percent: 0, contextWindow: 32768 });
+  h.ctx.sessionManager = { getCwd: () => "/", getBranch: () => [] };
+  let footer;
+  h.ctx.ui.setFooter = (factory) => {
+    footer = factory(tui, h.ctx.ui.theme, footerData);
+    tui.addChild(footer);
+  };
+  let startFooter;
+  statusline({
+    getThinkingLevel: () => "medium",
+    on: (name, handler) => { if (name === "session_start") startFooter = handler; },
+  });
+  await startFooter({}, h.ctx);
+  tui.start();
+  t.after(() => { tui.stop(); footer.dispose(); footerData.dispose(); });
+
+  let controller;
+  let finished = false;
+  const encoder = new TextEncoder();
+  const body = new ReadableStream({ start(value) { controller = value; } });
+  const send = (chunk) => controller.enqueue(encoder.encode(`data: ${JSON.stringify(chunk)}\n\n`));
+  const thinking = (text) => ({ choices: [{ index: 0, delta: { reasoning_content: text }, finish_reason: null }] });
+  const response = runAgentLoop([
+    { role: "user", content: "Hi", timestamp: Date.now() },
+  ], { messages: [], tools: [] }, {
+    model: h.ctx.model, apiKey: "local", convertToLlm: (messages) => messages,
+  }, (event) => h.emit(event.type, event), undefined, (model, context, options) => streamSimple(model, context, {
+    ...options, maxRetries: 0,
+    onPayload: (payload) => h.emit("before_provider_request", { payload }),
+    onProviderStreamEvent: (data) => h.chunk(data),
+    fetch: async () => {
+      h.advance(400);
+      send(thinking("Thinking"));
+      return new Response(body, { headers: { "content-type": "text/event-stream" } });
+    },
+  })).then((messages) => { finished = true; return messages; });
+  t.after(async () => { if (!finished) controller.close(); await response; });
+
+  await t.waitFor(() => assert.match(output.join(""), /decode:…/), { interval: 10, timeout: 2000 });
+  output.length = 0;
+  h.advance(1000);
+  send(thinking("x".repeat(40)));
+  await t.waitFor(() => assert.match(output.join(""), /decode:~/), { interval: 10, timeout: 2000 });
+  assert.equal(finished, false, "the footer must update before the server finishes");
+  assert.ok(footer.render(160)[1].includes("TTFT:"));
+
+  send({ choices: [{ index: 0, delta: { content: "Hello" }, finish_reason: null }] });
+  send({ choices: [{ index: 0, delta: {}, finish_reason: "stop" }] });
+  send({ choices: [], timings, usage: { prompt_tokens: 10000, completion_tokens: 35,
+    prompt_tokens_details: { cached_tokens: 9000 } } });
+  controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+  controller.close();
+  const messages = await response;
+  assert.equal(messages.at(-1).stopReason, "stop");
+  assert.ok(footer.render(160)[1].includes("decode:50.0 tok/s"));
 });
