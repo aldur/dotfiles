@@ -179,6 +179,16 @@ crostini.lib.mkBaguetteSmokeTest {
     expect_success in_session nix build --offline --no-link --print-out-paths --impure --expr 'derivation { name = "probe"; system = builtins.currentSystem; builder = "/bin/sh"; args = [ "-c" "echo ok > $out" ]; }'
     echo "PROBE nix $(printf '%s\n' "$probe_output" | tail -n 1)"
 
+    # Only the guest-local Unix socket may accept SSH connections.
+    expect_success test -S /run/ssh-unix-local/socket
+    expect_success ss -H -ltn 'sport = :22'
+    test -z "$probe_output"
+    for unit in sshd.service sshd.socket sshd-vsock.socket sshd-unix-export.socket; do
+      expect_success systemctl show -p LoadState --value "$unit"
+      test "$probe_output" = masked
+    done
+    echo "PROBE ssh local-socket-only"
+
     # The root login of the guest, and what it administers with.
     install -m 0600 "$probe/ssh-key" /root/probe-key
     # The entry of /etc is a symlink into the read-only store, so a bind
@@ -198,7 +208,7 @@ crostini.lib.mkBaguetteSmokeTest {
     ssh_root() {
       # The caller supplies the intended remote command string.
       # shellcheck disable=SC2029
-      ssh "''${ssh_opts[@]}" root@127.0.0.1 "$@" > /tmp/ssh.out 2>&1 < /dev/null
+      ssh "''${ssh_opts[@]}" root@.host "$@" > /tmp/ssh.out 2>&1 < /dev/null
     }
 
     ssh_root umask
@@ -224,12 +234,12 @@ crostini.lib.mkBaguetteSmokeTest {
     install -m 0444 -o root -g root "$probe/authorized-keys" "$keys"
     ssh_root true
 
-    # A root session over the loopback needs no tunnel and no agent. The
+    # A root session over the Unix socket needs no tunnel and no agent. The
     # daemon sets up a remote forward when the session opens, so it
     # refuses this one there; ExitOnForwardFailure turns that into a
     # failure of ssh itself.
     if ssh "''${ssh_opts[@]}" -o ExitOnForwardFailure=yes -R 12222:127.0.0.1:22 \
-      root@127.0.0.1 true > /tmp/ssh-forward.out 2>&1; then
+      root@.host true > /tmp/ssh-forward.out 2>&1; then
       echo "FAIL: SSH allowed remote TCP forwarding" >&2
       exit 1
     fi
@@ -292,6 +302,7 @@ crostini.lib.mkBaguetteSmokeTest {
     "after-rebuild failed \\[ *\\]"
     "after-rebuild sudo ok"
     "nix users allowed-users = root ${mainUser}$"
+    "ssh local-socket-only$"
     "sshd tcpforward refused$"
     "sshd AllowTcpForwarding no$"
     "sshd AllowAgentForwarding yes$"

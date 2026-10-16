@@ -11,7 +11,7 @@ let
       ../ssh.nix
       ../../../modules/nixos/ssh-policy.nix
     ];
-    # Verify that the module enforces loopback and root-only access even
+    # Verify that the module enforces socket-only and root-only access even
     # when callers request broader access.
     services.openssh = {
       openFirewall = true;
@@ -97,7 +97,7 @@ pkgs.testers.runNixOSTest {
     # -n: the test driver runs each command from a shell whose stdin is
     # /dev/hvc0. An ssh client without -n stalls.
     SSH = (
-        "ssh -n -F /dev/null -i /root/client-key -o BatchMode=yes "
+        "ssh -n -i /root/client-key -o BatchMode=yes "
         "-o IdentitiesOnly=yes -o IdentityAgent=none -o ConnectTimeout=3 "
         "-o StrictHostKeyChecking=yes -o UserKnownHostsFile=/root/known_hosts "
     )
@@ -109,13 +109,23 @@ pkgs.testers.runNixOSTest {
 
     def check_boundary(machine, peer):
         # Assert actual listeners, not just the Nix option values.
-        listeners = machine.succeed("ss -H -ltn 'sport = :22'").splitlines()
-        assert sorted(line.split()[3] for line in listeners) == ["127.0.0.1:22", "[::1]:22"], listeners
-        for address in ("127.0.0.1", "::1"):
-            assert machine.succeed(SSH + f"root@{address} id -u").strip() == "0"
-            status, output = machine.execute(SSH + f"aldur@{address} true 2>&1")
-            assert status == 255 and "Permission denied (publickey)" in output, output
-        machine.succeed("journalctl -u sshd --grep='User aldur .*not listed in AllowUsers'")
+        assert not machine.succeed("ss -H -ltn 'sport = :22'").strip()
+        machine.succeed("test -S /run/ssh-unix-local/socket")
+        for unit in ("sshd.service", "sshd.socket", "sshd-vsock.socket", "sshd-unix-export.socket"):
+            state = machine.succeed(f"systemctl show -p LoadState --value {unit}").strip()
+            assert state == "masked", (unit, state)
+            machine.fail(f"systemctl start {unit}")
+        assert machine.succeed(SSH + "root@.host id -u").strip() == "0"
+        status, output = machine.execute(SSH + "aldur@.host true 2>&1")
+        assert status == 255 and "Permission denied (publickey)" in output, output
+        machine.succeed("journalctl --grep='User aldur .*not listed in AllowUsers'")
+        for family, ip in (("AF_INET", "127.0.0.1"), ("AF_INET6", "::1")):
+            probe = (
+                f"import errno, socket; s = socket.socket(socket.{family}); "
+                f"s.settimeout(3); result = s.connect_ex(('{ip}', 22)); "
+                "assert result == errno.ECONNREFUSED, result"
+            )
+            machine.succeed("python3 -c " + shlex.quote(probe))
 
         addresses = json.loads(machine.succeed("ip -j address show"))
         interfaces = {entry["ifname"]: entry for entry in addresses}
@@ -141,11 +151,11 @@ pkgs.testers.runNixOSTest {
     second.start()
     identities = {}
     for machine in (first, second):
-        machine.wait_for_unit("sshd.service")
+        machine.wait_for_unit("sshd-unix-local.socket")
         machine.wait_for_unit("multi-user.target")
         machine.succeed("install -m 600 ${snakeOilEd25519PrivateKey} /root/client-key")
         # Trust the key through the test console, not an unauthenticated scan.
-        machine.succeed(f"awk '{{print \"127.0.0.1,::1 \" $1 \" \" $2}}' {KEY}.pub > /root/known_hosts")
+        machine.succeed(f"awk '{{print \".host \" $1 \" \" $2}}' {KEY}.pub > /root/known_hosts")
         assert machine.succeed(f"stat -c '%U:%G:%a' {KEY}").strip() == "root:root:600"
         machine.succeed(f"test ! -L {KEY}", "findmnt -M /persist", "findmnt -t tmpfs /home")
         identities[machine.name] = fingerprint(machine)
@@ -154,15 +164,15 @@ pkgs.testers.runNixOSTest {
     with subtest("each instance generates a distinct host identity"):
         assert identities[first.name] != identities[second.name]
 
-    with subtest("root-only loopback access with the firewall disabled"):
+    with subtest("root-only Unix socket access with the firewall disabled"):
         check_boundary(first, second)
         check_boundary(second, first)
 
     with subtest("host identity survives keygen/service restarts and reboot"):
-        first.succeed("systemctl restart sshd-keygen.service sshd.service")
+        first.succeed("systemctl restart sshd-keygen.service sshd-unix-local.socket")
         assert fingerprint(first) == identities[first.name]
         first.reboot()
-        first.wait_for_unit("sshd.service")
+        first.wait_for_unit("sshd-unix-local.socket")
         first.wait_for_unit("multi-user.target")
         assert fingerprint(first) == identities[first.name]
         check_boundary(first, second)

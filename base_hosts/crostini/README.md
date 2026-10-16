@@ -57,11 +57,10 @@ nix build ./base_hosts/crostini#checks.x86_64-linux.baguette-boot \
 
 ## SSH as `root`
 
-SSH is for root administration **from inside the guest**. `ssh.nix` forces port
-22 to bind to `127.0.0.1` and, when IPv6 is enabled, `::1`. Upstream Crostini
-currently disables IPv6. The allowlist is just `root`. Only public-key
-authentication is accepted, using the root-managed authorized keys configured
-in `crostini.nix`.
+SSH is for root administration **from inside the guest**. Run `ssh root@.host`
+to connect through `/run/ssh-unix-local/socket`. Only public-key authentication
+is accepted, using root-managed authorized keys. TCP, VSOCK and exported Unix
+socket listeners are masked. Host keys persist under `/persist/ssh`.
 
 ## SSH validation
 
@@ -76,12 +75,11 @@ nix build ./base_hosts/crostini#checks.x86_64-linux.ssh-configurations \
 
 The first check boots two independent VMs using the production SSH policy,
 with firewalls disabled, two external interfaces each, and IPv4/IPv6.
-It checks successful root login on loopback, rejection of `aldur` even with
-an authorized key, and refused TCP connections to every external address
-from the guest and its peer. Ping provides a routing control. It also
-checks distinct generated identities, rejection of a store-backed fixture key as
-host identity, mode `0600`, and persistence through service restart and
-reboot with a separate `/persist` disk and tmpfs `/home`.
+It checks root login through the Unix socket and rejection of `aldur` with
+a valid key. Network listeners must be masked. TCP connections to loopback
+and external addresses must fail. Ping confirms that peer routes work.
+It also checks distinct host keys, mode `0600`, and persistence through
+service restart and reboot with a separate `/persist` disk and tmpfs `/home`.
 
 The second check evaluates the complete LXC and Baguette configurations
 and parses their rendered configuration with OpenSSH, including variants
@@ -90,8 +88,9 @@ without tmpfs `/home` and with IPv6 enabled. Both checks are available for
 
 These tests cover the guest policy, not ChromeOS's proprietary host
 integration. On a deployed Chromebook, also verify `ss -ltn 'sport = :22'`
-and `sshd -T` through the guest console. Root SSH to guest loopback must
-succeed with an authorized key; `aldur` must be denied. For each guest
+and `systemctl status sshd-unix-local.socket` through the guest console.
+No TCP listener may appear. `ssh root@.host` must succeed with an authorized
+key; `aldur` must be denied. For each guest
 non-loopback IPv4/IPv6 address, test port 22 from the guest, ChromeOS, and
 an available sibling guest or LAN peer with a working route: it must be
 closed. Repeat after reboot and any ChromeOS forwarding changes, and
