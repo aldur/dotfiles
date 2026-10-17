@@ -113,6 +113,19 @@ with pkgs.vimPlugins;
             pkgs.runCommandLocal pkgsUnstable.vimPlugins.link-vim.name { } ''
               cp -a ${pkgsUnstable.vimPlugins.link-vim} $out
               chmod -R u+w $out
+              ${pkgs.patch}/bin/patch -d $out -p1 <<'PATCH'
+              --- a/autoload/linkvim/u.vim
+              +++ b/autoload/linkvim/u.vim
+              @@ -58,3 +58,8 @@
+              +  " Tree-sitter highlighting disables the legacy syntax groups checked below.
+              +  if has('nvim') && luaeval("require('util.link').is_code(_A[1], _A[2])", [l:lnum, l:col])
+              +    return v:true
+              +  endif
+              +
+                 " vint: -ProhibitInvalidMapCall
+                 return synstack(l:lnum, l:col)
+                       \ ->map("synIDattr(v:val, 'name')")
+              PATCH
               rm -rf $out/.git_hooks
               ! grep -r /nix/store/ $out
             ''

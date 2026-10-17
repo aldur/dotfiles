@@ -134,6 +134,28 @@ report(function()
 		check("highlights captured: " .. sample.lang, captured)
 	end
 
+	-- link.vim must recognize inline code with legacy syntax disabled by
+	-- Tree-sitter, including injected Markdown spans and multi-backtick spans.
+	do
+		local cases = {
+			"`http://localhost`",
+			"é ``http://localhost:3000/a ` example``",
+			"`[local](http://localhost)`",
+			"`http://localhost\ncontinued`",
+		}
+		for i, code in ipairs(cases) do
+			open("link-code-" .. i .. ".md", code .. " and [web](https://example.com)\n")
+			require("lazy").load({ plugins = { "link.vim" } })
+			vim.bo.syntax = ""
+			vim.b.link_start_index = 1
+			vim.cmd.LinkConvertAll()
+			local got = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
+			local want = code .. " and [web][1]\n\n[1]: https://example.com"
+			check("link conversion preserves code " .. i, got == want, got)
+			vim.bo.modified = false
+		end
+	end
+
 	-- Formatting end to end. LazyVim's extras configure a superset of what the
 	-- editor ships and conform quietly skips whatever is missing, so asking
 	-- whether each formatter is `available` proves nothing: run them and compare
