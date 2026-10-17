@@ -8,7 +8,7 @@ on:
       image:
         description: Baguette guest
         type: choice
-        options: [crostini, browser]
+        options: [crostini, browser, signal]
         default: crostini
       retention-days:
         description: Days to keep the artifact

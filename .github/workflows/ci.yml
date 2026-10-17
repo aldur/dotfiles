@@ -250,6 +250,17 @@ jobs:
           - runner: ubuntu-26.04
             target: ./base_hosts/browser#checks.x86_64-linux.qemu-boot
 
+          - runner: ubuntu-26.04-arm
+            target: ./base_hosts/signal#baguette-zimage
+          - runner: ubuntu-26.04
+            target: ./base_hosts/signal#checks.x86_64-linux.baguette-boot
+          - runner: ubuntu-26.04
+            target: ./base_hosts/signal#signal-vm
+          - runner: ubuntu-26.04-arm
+            target: ./base_hosts/signal#signal-vm
+          - runner: ubuntu-26.04
+            target: ./base_hosts/signal#checks.x86_64-linux.qemu-boot
+
           # Build the Apple `container` OCI image as a test. The image
           # serves `container run` and `container machine`. The test builds
           # the image and checks its closure and size on each architecture.

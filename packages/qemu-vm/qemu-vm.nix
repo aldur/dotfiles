@@ -252,6 +252,7 @@ let
     # Canonical, like the disk image: the sandbox matches canonical paths.
     STORE_IMAGE=$(readlink -f "$STORE_IMAGE")
 
+    umask 077
     mkdir -p "$VM_DIR"
 
     # Handle clean flag
@@ -271,6 +272,7 @@ let
       rm "$TEMP_RAW"
     fi
 
+    chmod 600 "$NIX_DISK_IMAGE"
     NIX_DISK_IMAGE=$(readlink -f "$NIX_DISK_IMAGE")
 
     # The guest network. gvproxy serves DHCP on 192.168.127.0/24 and

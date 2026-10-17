@@ -13,6 +13,8 @@ pkgs.testers.runNixOSTest {
       cores = 4;
     };
     environment.systemPackages = [ pkgs.xdotool ];
+    environment.etc."appliance-isolation.sh".source =
+      "${specialArgs.inputs.self}/base_hosts/appliance/tests/isolation.sh";
     programs.firefox.policies.Homepage = {
       URL = lib.mkForce "http://localhost/";
       StartPage = "homepage";
@@ -31,22 +33,10 @@ pkgs.testers.runNixOSTest {
     };
   };
   testScript = { nodes, ... }: ''
-    import shlex
-
     user = "${nodes.machine.mainUser}"
     firefox = "${nodes.machine.programs.firefox.finalPackage}/bin/firefox"
 
-    def session():
-        machine.wait_for_unit("graphical.target")
-        machine.wait_until_succeeds(f"pgrep -u {user} -f xfce4-session")
-        environ = machine.succeed(
-            f"cat /proc/$(pgrep -u {user} -f xfce4-session | head -n1)/environ | tr '\\0' '\\n'"
-        )
-        return " ".join(shlex.quote(line) for line in environ.splitlines()
-            if line.startswith(("DISPLAY=", "XAUTHORITY=", "DBUS_SESSION_BUS_ADDRESS=", "XDG_RUNTIME_DIR=")))
-
-    def as_user(command):
-        return f"runuser -u {user} -- env HOME=/home/{user} {env} sh -c {shlex.quote(command)}"
+    ${builtins.readFile "${specialArgs.inputs.self}/base_hosts/appliance/tests/session.py"}
 
     def wait_for_page(visit):
         try:
@@ -60,13 +50,7 @@ pkgs.testers.runNixOSTest {
 
     env = session()
     wait_for_page(1)
-    machine.succeed("test ! -e /run/wrappers/bin/sudo && test ! -e /run/wrappers/bin/su")
-    machine.fail("systemctl is-active sshd.service")
-    machine.succeed("systemctl is-active firewall.service systemd-sysctl.service")
-    machine.succeed(f"test $(stat -c %a /home/{user}) = 700")
-    for directory in ("/tmp", "/var/tmp", "/var/log"):
-        machine.succeed(f"test $(findmnt -n -o FSTYPE -T {directory}) = tmpfs")
-    machine.succeed("findmnt -n -o OPTIONS / | grep -w nosuid | grep -w nodev")
+    machine.succeed("user=" + user + " bash -e " + "/etc/appliance-isolation.sh")
 
     # Quit through Firefox so it saves its profile and session before the VM
     # shuts down. A signal is not the user-initiated quit used for backups.

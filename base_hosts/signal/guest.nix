@@ -1,0 +1,274 @@
+{
+  config,
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  user = config.mainUser;
+  wayland = config.services.cage.enable;
+  home = config.users.users.${user}.home;
+  signal = import ./package.nix { inherit pkgs; };
+  python = pkgs.python3.withPackages (p: [ p.dbus-python ]);
+  serviceHardening = {
+    SystemCallArchitectures = "native";
+    RestrictRealtime = true;
+    ProtectKernelTunables = true;
+    ProtectKernelModules = true;
+    ProtectKernelLogs = true;
+    ProtectControlGroups = true;
+    ProtectClock = true;
+    ProtectHostname = true;
+    NoNewPrivileges = true;
+    RestrictSUIDSGID = true;
+    LockPersonality = true;
+    PrivateTmp = true;
+  };
+  launcher = pkgs.writeShellApplication {
+    name = "signal-desktop";
+    passthru = { inherit signal; };
+    meta.description = "Signal";
+    runtimeInputs = [
+      pkgs.systemd
+      pkgs.gnome-keyring
+      pkgs.zenity
+    ];
+    text = ''
+      if (( $# )); then
+        echo 'This appliance launcher takes no arguments.' >&2
+        exit 1
+      fi
+      umask 077
+      unset NODE_OPTIONS NODE_PATH ELECTRON_RUN_AS_NODE ELECTRON_ENABLE_LOGGING SIGNAL_PASSWORD_STORE
+      ${python}/bin/python ${./keyring.py}
+      mkdir -p "$HOME/.config/Signal" "$HOME/.cache"
+      systemctl --user import-environment DISPLAY XAUTHORITY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+      systemctl --user start ${lib.optionalString wayland "--wait"} signal.service
+    '';
+  };
+  # Restrict all traffic from the session account, including a compromised
+  # Electron main process. Only the local DNS stub is exempt.
+  private4 = "0.0.0.0/8,10.0.0.0/8,100.64.0.0/10,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.168.0.0/16,198.18.0.0/15,224.0.0.0/4,240.0.0.0/4";
+in
+{
+  imports = [ "${inputs.self}/base_hosts/appliance/guest.nix" ];
+  aldur.appliance.application = launcher;
+  environment.systemPackages = [
+    launcher
+    (pkgs.makeDesktopItem {
+      name = "signal";
+      desktopName = "Signal";
+      exec = "signal-desktop";
+      icon = "${signal}/share/icons/hicolor/256x256/apps/signal-desktop.png";
+      categories = [
+        "Network"
+        "InstantMessaging"
+      ];
+    })
+    (pkgs.makeDesktopItem {
+      name = "blocked-url";
+      desktopName = "External links disabled";
+      exec = "${pkgs.coreutils}/bin/false";
+      noDisplay = true;
+    })
+  ];
+  services.gnome.gnome-keyring.enable = true;
+  services.openssh.enable = lib.mkForce false;
+  services.avahi.enable = lib.mkForce false;
+  services.spice-vdagentd.enable = lib.mkForce false;
+  services.printing.enable = lib.mkForce false;
+  xdg.portal.enable = lib.mkForce false;
+  environment.sessionVariables.BROWSER = "${pkgs.coreutils}/bin/false";
+  xdg.mime.defaultApplications = lib.genAttrs [
+    "x-scheme-handler/http"
+    "x-scheme-handler/https"
+    "text/html"
+  ] (_: lib.mkForce "blocked-url.desktop");
+  environment.etc =
+    lib.genAttrs
+      [
+        "xdg/autostart/gnome-keyring-ssh.desktop"
+        "xdg/autostart/gnome-keyring-pkcs11.desktop"
+      ]
+      (_: {
+        text = ''
+          [Desktop Entry]
+          Type=Application
+          Hidden=true
+        '';
+      });
+
+  # Maitred replaces /run/resolv.conf when ChromeOS changes DNS servers.
+  # Keep that upstream file outside the application's mount namespace.
+  services.dnsmasq = {
+    enable = true;
+    resolveLocalQueries = false;
+    settings = {
+      listen-address = "127.0.0.53";
+      bind-interfaces = true;
+      resolv-file = "/etc/resolv.conf";
+    };
+  };
+  systemd.tmpfiles.rules = [ "d /var/lib/dnsmasq 0750 dnsmasq dnsmasq -" ];
+  systemd.services.dnsmasq = {
+    # The upstream pre-start changes ownership, which needs CAP_CHOWN.
+    preStart = lib.mkForce "dnsmasq --test -C ${config.services.dnsmasq.configFile}";
+    serviceConfig = serviceHardening // {
+      # D-Bus mode requires NET_RAW for dynamic upstream interface binding.
+      Type = lib.mkForce "simple";
+      BusName = lib.mkForce "";
+      ExecStart = lib.mkForce "${pkgs.dnsmasq}/bin/dnsmasq -k --user=dnsmasq -C ${config.services.dnsmasq.configFile}";
+      ProtectSystem = lib.mkForce "strict";
+      ReadWritePaths = [ "/var/lib/dnsmasq" ];
+      CapabilityBoundingSet = [
+        "CAP_NET_BIND_SERVICE"
+        "CAP_SETUID"
+        "CAP_SETGID"
+      ];
+      RestrictAddressFamilies = [
+        "AF_UNIX"
+        "AF_INET"
+        "AF_INET6"
+        "AF_NETLINK"
+      ];
+    };
+  };
+  systemd.services.firewall.unitConfig.FailureAction = "poweroff-force";
+
+  networking.firewall = {
+    allowedTCPPorts = lib.mkForce [ ];
+    allowedUDPPorts = lib.mkForce [ ];
+    extraCommands = ''
+      for cmd in iptables ip6tables; do
+        $cmd -N signal-egress 2>/dev/null || true
+        $cmd -F signal-egress
+      done
+      iptables -A signal-egress -d 127.0.0.53 -p udp --dport 53 -j RETURN
+      iptables -A signal-egress -d 127.0.0.53 -p tcp --dport 53 -j RETURN
+      iptables -A signal-egress -d ${private4} -j REJECT
+      ip6tables -A signal-egress ! -d 2000::/3 -j REJECT
+      for cmd in iptables ip6tables; do
+        $cmd -A OUTPUT -m owner --uid-owner ${user} -j signal-egress
+      done
+    '';
+    extraStopCommands = ''
+      for cmd in iptables ip6tables; do
+        $cmd -D OUTPUT -m owner --uid-owner ${user} -j signal-egress 2>/dev/null || true
+        $cmd -F signal-egress 2>/dev/null || true
+        $cmd -X signal-egress 2>/dev/null || true
+      done
+    '';
+  };
+
+  systemd.user.services.signal-keyring-check = {
+    description = "Check the Signal keyring";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${python}/bin/python ${./keyring.py} --check";
+      NoNewPrivileges = true;
+      ProtectSystem = "strict";
+      ProtectHome = "read-only";
+      PrivateUsers = true;
+    };
+  };
+
+  systemd.user.services.signal-bus = {
+    description = "Signal Secret Service proxy";
+    serviceConfig = serviceHardening // {
+      ExecStartPre = "${pkgs.coreutils}/bin/rm -f %t/signal-bus";
+      ExecStart = "${pkgs.xdg-dbus-proxy}/bin/xdg-dbus-proxy unix:path=%t/bus %t/signal-bus --filter --talk=org.freedesktop.secrets";
+      ExecStartPost = "${pkgs.writeShellScript "wait-signal-bus" ''
+        until ${pkgs.systemd}/bin/busctl --address="$1" --timeout=1 list >/dev/null 2>&1; do
+          sleep 0.1
+        done
+      ''} unix:path=%t/signal-bus";
+      ExecStopPost = "${pkgs.coreutils}/bin/rm -f %t/signal-bus";
+      TimeoutStartSec = 10;
+      UMask = "0077";
+      CapabilityBoundingSet = "";
+      PrivateUsers = true;
+      ProtectSystem = "strict";
+      ProtectHome = "tmpfs";
+      BindPaths = [ "%t" ];
+      RestrictAddressFamilies = [ "AF_UNIX" ];
+    };
+  };
+
+  systemd.user.services.signal = {
+    description = "Signal Desktop";
+    requires = [ "signal-keyring-check.service" ];
+    bindsTo = [ "signal-bus.service" ];
+    after = [
+      "signal-keyring-check.service"
+      "signal-bus.service"
+    ];
+    environment = {
+      BROWSER = "${pkgs.coreutils}/bin/false";
+      DBUS_SESSION_BUS_ADDRESS = "unix:path=%t/bus";
+    }
+    // lib.optionalAttrs wayland { GDK_BACKEND = "wayland"; };
+    serviceConfig = serviceHardening // {
+      ExecStartPre =
+        map (unit: "${pkgs.systemd}/bin/systemctl --system is-active --quiet ${unit}.service")
+          [
+            "firewall"
+            "dnsmasq"
+          ];
+      ExecStart = "${signal}/bin/signal-desktop --password-store=gnome-libsecret --ozone-platform=${
+        if wayland then "wayland" else "x11"
+      } --disable-gpu";
+      UMask = "0077";
+      LimitCORE = "0";
+      UnsetEnvironment = [
+        "NODE_OPTIONS"
+        "NODE_PATH"
+        "ELECTRON_RUN_AS_NODE"
+        "ELECTRON_ENABLE_LOGGING"
+      ];
+      CapabilityBoundingSet = "";
+      PrivateUsers = true;
+      # Resolver updates replace files in /run. A private parent mount keeps
+      # those replacements from hiding the application's resolver bind mount.
+      TemporaryFileSystem = [ "/run:ro" ];
+      BindReadOnlyPaths = [
+        "/run/current-system"
+        "/run/dbus/system_bus_socket"
+        "/run/systemd/system"
+        "-/run/opengl-driver"
+        "%t/signal-bus:%t/bus"
+        "${pkgs.writeText "signal-resolv.conf" "nameserver 127.0.0.53\n"}:/etc/resolv.conf"
+      ]
+      ++ (
+        if wayland then
+          [ "%t/wayland-0" ]
+        else
+          [
+            "/tmp/.X11-unix"
+            "-${home}/.Xauthority"
+          ]
+      );
+      ProtectSystem = "strict";
+      ProtectHome = "tmpfs";
+      BindPaths = [
+        "${home}/.config/Signal"
+        "${home}/.cache"
+      ];
+      InaccessiblePaths = [
+        "-/mnt"
+        "-/media"
+        "-/run/media"
+        "-/dev/dri"
+      ];
+      RestrictAddressFamilies = [
+        "AF_UNIX"
+        "AF_INET"
+        "AF_INET6"
+      ];
+      # Namespaces remain available for Chromium's own renderer sandbox.
+      StandardOutput = "null";
+      StandardError = "journal";
+      TimeoutStopSec = 30;
+    };
+  };
+}

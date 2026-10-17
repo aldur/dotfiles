@@ -260,6 +260,7 @@
       homeModules.default = ./modules/home/home.nix;
 
       lib = {
+        mkGuiAppliance = import ./utils/gui-appliance.nix;
         mkHome = import ./utils/mk-home.nix { inherit inputs; };
 
         # Render an authorized_keys file without changing key order, options,
