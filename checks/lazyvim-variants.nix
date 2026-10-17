@@ -64,8 +64,8 @@ let
   # Formatter, input and the exact output the shipped binary produces. LazyVim
   # configures a superset of what the editor ships and conform skips the rest
   # in silence, so only the result tells the two apart. `nixfmt` rides the
-  # `nix` category; `stylua`, `shfmt` and conform's own `trim_whitespace` are
-  # in `general`, so they must work in both variants.
+  # `nix` category; `stylua` and `shfmt` are in `general`, so they must work
+  # in both variants. Markdown without its tooling must preserve the text.
   generalFormats = [
     {
       ext = "lua";
@@ -79,8 +79,13 @@ let
     }
     {
       ext = "md";
-      input = "# hi\n\ntrailing   \n";
-      want = "# hi\n\ntrailing";
+      input = "# Stop!\n\n## Details:\n\n### Really?\n\n#### Done.\n\nHard break  \nNext line\n";
+      want = "# Stop!\n\n## Details:\n\n### Really?\n\n#### Done.\n\nHard break  \nNext line";
+    }
+    {
+      ext = "mdx";
+      input = "# Stop!\n\n## Details:\n\n### Really?\n\n#### Done.\n\nHard break  \nNext line\n";
+      want = "# Stop!\n\n## Details:\n\n### Really?\n\n#### Done.\n\nHard break  \nNext line";
     }
   ];
   nixFormat = {
@@ -88,6 +93,19 @@ let
     input = "{foo=1;}\n";
     want = "{ foo = 1; }";
   };
+  # The full editor keeps markdownlint fixes (MD022 adds heading spacing),
+  # while MD026 must leave heading punctuation alone in Markdown and MDX.
+  markdownFormats =
+    map
+      (ext: {
+        inherit ext;
+        input = "# Stop!\n## Details:\n### Really?\n#### Done.\n";
+        want = "# Stop!\n\n## Details:\n\n### Really?\n\n#### Done.";
+      })
+      [
+        "md"
+        "mdx"
+      ];
 
   # A word each dictionary knows and one no dictionary does, so a spellfile
   # that is on the runtimepath but never read is still a failure.
@@ -352,7 +370,7 @@ runCommand "lazyvim-variants"
             min_grammars = 60;
             absent_grammars = [ ];
             samples = curatedSamples ++ extraSamples;
-            formats = generalFormats ++ [ nixFormat ];
+            formats = generalFormats ++ [ nixFormat ] ++ markdownFormats;
             inherit spells;
           };
         }}

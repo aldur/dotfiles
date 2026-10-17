@@ -162,6 +162,13 @@ report(function()
 	-- the buffer. `lsp_format = "never"` keeps this about the shipped binaries.
 	for _, case in ipairs(spec.formats) do
 		open("format." .. case.ext, case.input)
+		if case.ext == "md" or case.ext == "mdx" then
+			-- LazyVim only enables markdownlint's fixer once diagnostics exist.
+			-- Seed one so the test cannot pass just because linting has not run yet.
+			vim.diagnostic.set(vim.api.nvim_create_namespace("format-regression"), 0, {
+				{ lnum = 0, col = 0, message = "MD026: Trailing punctuation in heading", source = "markdownlint" },
+			})
+		end
 		local ok, err = pcall(require("conform").format, {
 			bufnr = 0,
 			async = false,
