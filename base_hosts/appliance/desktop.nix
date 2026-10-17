@@ -47,8 +47,6 @@
   services = {
     gvfs.enable = lib.mkForce false;
     tumbler.enable = lib.mkForce false;
-    # Available only when the launcher is given --clipboard.
-    spice-vdagentd.enable = lib.mkDefault false;
     xserver = {
       enable = true;
       desktopManager.xfce = {

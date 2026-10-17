@@ -5,5 +5,4 @@
     ./guest.nix
   ];
   networking.hostName = "browser-vm";
-  services.spice-vdagentd.enable = true;
 }

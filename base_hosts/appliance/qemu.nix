@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, lib, ... }:
 {
   imports = [
     inputs.self.nixosModules.qemu-guest
@@ -12,4 +12,5 @@
     writableStoreUseTmpfs = false;
   };
   hardware.graphics.enable = true;
+  services.getty.autologinUser = lib.mkForce null;
 }

@@ -11,7 +11,7 @@ let
   wayland = config.services.cage.enable;
   home = config.users.users.${user}.home;
   signal = import ./package.nix { inherit pkgs; };
-  python = pkgs.python3.withPackages (p: [ p.dbus-python ]);
+  keyring = pkgs.gnome-keyring.override { useWrappedDaemon = false; };
   serviceHardening = {
     SystemCallArchitectures = "native";
     RestrictRealtime = true;
@@ -35,18 +35,16 @@ let
     passthru = { inherit signal; };
     meta.description = "Signal";
     runtimeInputs = [
+      pkgs.argc
+      pkgs.coreutils
+      pkgs.diffutils
+      pkgs.gnugrep
+      pkgs.glib
       pkgs.systemd
-      pkgs.gnome-keyring
+      keyring
       pkgs.yad
     ];
-    text = ''
-      if (( $# )); then
-        echo 'This appliance launcher takes no arguments.' >&2
-        exit 1
-      fi
-      umask 077
-      unset NODE_OPTIONS NODE_PATH ELECTRON_RUN_AS_NODE ELECTRON_ENABLE_LOGGING SIGNAL_PASSWORD_STORE
-      ${python}/bin/python ${./keyring.py}
+    text = builtins.readFile ./launcher.sh + ''
       mkdir -p "$HOME/.config/Signal" "$HOME/.cache"
       systemctl --user import-environment DISPLAY XAUTHORITY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
       systemctl --user start ${lib.optionalString wayland "--wait"} signal.service
@@ -62,6 +60,7 @@ in
   users.users.${user}.uid = 1000;
   environment.systemPackages = [
     launcher
+    keyring
     (pkgs.makeDesktopItem {
       name = "signal";
       desktopName = "Signal";
@@ -79,32 +78,13 @@ in
       noDisplay = true;
     })
   ];
-  services.gnome.gnome-keyring.enable = true;
-  services.openssh.enable = lib.mkForce false;
-  services.avahi.enable = lib.mkForce false;
-  services.spice-vdagentd.enable = lib.mkForce false;
-  services.printing.enable = lib.mkForce false;
+  services.dbus.packages = [ keyring ];
   xdg.portal.enable = lib.mkForce false;
-  environment.sessionVariables.BROWSER = "${pkgs.coreutils}/bin/false";
   xdg.mime.defaultApplications = lib.genAttrs [
     "x-scheme-handler/http"
     "x-scheme-handler/https"
     "text/html"
   ] (_: lib.mkForce "blocked-url.desktop");
-  environment.etc =
-    lib.genAttrs
-      [
-        "xdg/autostart/gnome-keyring-ssh.desktop"
-        "xdg/autostart/gnome-keyring-pkcs11.desktop"
-      ]
-      (_: {
-        text = ''
-          [Desktop Entry]
-          Type=Application
-          Hidden=true
-        '';
-      });
-
   # Maitred replaces /run/resolv.conf when ChromeOS changes DNS servers.
   # Keep that upstream file outside the application's mount namespace.
   services.dnsmasq = {
@@ -168,30 +148,21 @@ in
     '';
   };
 
-  systemd.user.services.signal-keyring-check = {
-    description = "Check the Signal keyring";
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${python}/bin/python ${./keyring.py} --check";
-      NoNewPrivileges = true;
-      ProtectSystem = "strict";
-      ProtectHome = "read-only";
-      PrivateUsers = true;
-    };
-  };
-
-  systemd.user.services.signal-system-check = {
-    description = "Check Signal network services";
+  systemd.user.services.signal-preflight = {
+    description = "Check Signal prerequisites";
     serviceConfig = serviceHardening // {
       Type = "oneshot";
-      ExecStart = map (unit: "${pkgs.systemd}/bin/systemctl --system is-active --quiet ${unit}.service") [
+      ExecStart = [
+        "${launcher}/bin/signal-desktop --check"
+      ]
+      ++ map (unit: "${pkgs.systemd}/bin/systemctl --system is-active --quiet ${unit}.service") [
         "firewall"
         "dnsmasq"
       ];
       CapabilityBoundingSet = "";
       PrivateUsers = true;
       ProtectSystem = "strict";
-      ProtectHome = true;
+      ProtectHome = "read-only";
       RestrictAddressFamilies = [ "AF_UNIX" ];
     };
   };
@@ -249,13 +220,11 @@ in
   systemd.user.services.signal = {
     description = "Signal Desktop";
     requires = [
-      "signal-keyring-check.service"
-      "signal-system-check.service"
+      "signal-preflight.service"
     ];
     bindsTo = [ "signal-bus.service" ];
     after = [
-      "signal-keyring-check.service"
-      "signal-system-check.service"
+      "signal-preflight.service"
       "signal-bus.service"
     ];
     environment = {

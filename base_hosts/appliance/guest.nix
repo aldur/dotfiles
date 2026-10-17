@@ -49,11 +49,15 @@ in
 
   config = {
     networking.firewall.enable = lib.mkForce true;
+    environment.defaultPackages = [ ];
+    boot.kexec.enable = false;
+    system.nssModules = lib.mkForce [ ];
     system.stateVersion = "26.05";
 
     programs = {
       bash.shellInit = "umask 077";
       fish.enable = lib.mkForce false;
+      nano.enable = false;
     };
     users = {
       users.${user} = {
@@ -73,11 +77,25 @@ in
       polkit.enable = lib.mkForce false;
       pam.services.su.requireWheel = true;
       pam.enableUMask = true;
+      wrappers =
+        lib.genAttrs [ "mount" "umount" "newgrp" "newuidmap" "newgidmap" ] (_: {
+          enable = false;
+        })
+        // {
+          # PAM account checks still call this helper from root-started sessions.
+          unix_chkpwd.setuid = lib.mkForce false;
+        };
     };
     nix.enable = false;
 
     services = {
       userborn.enable = true;
+      openssh.enable = lib.mkForce false;
+      avahi.enable = lib.mkForce false;
+      printing.enable = lib.mkForce false;
+      spice-vdagentd.enable = lib.mkForce false;
+      logrotate.enable = false;
+      nscd.enable = false;
       # maitred may add the account to `disk` on startup. Group membership
       # must not grant raw access to this VM's session data or system image.
       udev.extraRules = ''
@@ -93,6 +111,7 @@ in
       '';
     };
     systemd = {
+      oomd.enable = false;
       suppressedSystemUnits = [ "systemd-importd.service" ];
       settings.Manager.DefaultLimitCORE = "0:0";
       user.extraConfig = "DefaultLimitCORE=0:0";

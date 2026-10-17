@@ -29,6 +29,7 @@ pkgs.testers.runNixOSTest {
       "appliance-isolation.sh".source =
         "${specialArgs.inputs.self}/base_hosts/appliance/tests/isolation.sh";
       "signal-probe.sh".source = probe;
+      "signal-keyring-probe.sh".source = ./keyring.sh;
       "signal-sandbox.sh".source = ./sandbox.sh;
       "signal-raw".source = "${config.aldur.appliance.application.signal}/bin/signal-desktop";
     };
@@ -117,6 +118,13 @@ pkgs.testers.runNixOSTest {
     for flags in ("-e", "-euo pipefail"):
         machine.fail(f"user={user} bash {flags} /etc/appliance-isolation.sh")
     machine.succeed("systemctl stop sshd")
+    machine.succeed("mkdir -p /run/systemd/system/serial-getty@.service.d")
+    machine.succeed("printf '[Service]\\nExecStart=\\nExecStart=/run/current-system/sw/bin/false --autologin test\\n' > /run/systemd/system/serial-getty@.service.d/autologin.conf")
+    machine.succeed("systemctl daemon-reload")
+    machine.fail(f"user={user} bash -euo pipefail /etc/appliance-isolation.sh")
+    machine.succeed("rm /run/systemd/system/serial-getty@.service.d/autologin.conf")
+    machine.succeed("systemctl daemon-reload")
+    machine.succeed(as_user("bash -euo pipefail /etc/signal-keyring-probe.sh"))
     profile = f"/home/{user}/.config/Signal"
     machine.succeed(f"cp {profile}/config.json /tmp/signal-config.json")
     machine.succeed(f"jq '.key = \"test-plaintext-key\"' /tmp/signal-config.json > {profile}/config.json")
@@ -153,6 +161,7 @@ pkgs.testers.runNixOSTest {
     machine.fail(f"nsenter -t {pid} -m -- touch /home/{user}/signal-forbidden")
     machine.fail(f"nsenter -t {pid} -m -- test -e /home/{user}/.local/share/keyrings/login.keyring")
     machine.succeed(f"nsenter -t {pid} -m -- grep -q 'nameserver 127.0.0.53' /etc/resolv.conf")
+    machine.succeed(f"nsenter -t {pid} -U -m --setuid=1000 --setgid=100 -- getent ahostsv4 probe.test | grep 203.0.113.5")
     for transport in ("+tcp", "+notcp"):
         machine.succeed(as_user(f"dig @127.0.0.53 probe.test +short {transport} | grep -x 203.0.113.5"))
     machine.succeed("systemd-run --unit=dns-target ${pkgs.dnsmasq}/bin/dnsmasq --keep-in-foreground --conf-file=/dev/null --no-resolv --bind-interfaces --listen-address=127.0.0.1,10.77.0.1,::1,fd00::1 --address=/probe.test/203.0.113.5")

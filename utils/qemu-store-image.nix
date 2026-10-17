@@ -3,6 +3,7 @@
   toplevel,
   regInfo,
   compress ? false,
+  compressor ? "lz4hc,level=12",
 }:
 # Compression requires Linux 6.1 or later with CONFIG_EROFS_FS_ZIP=y.
 # Deduplication requires one mkfs worker.
@@ -31,7 +32,7 @@ pkgs.runCommand "nix-store-image"
       | mkfs.erofs \
         --quiet \
         --workers=${if compress then "1" else "\${NIX_BUILD_CORES:-1}"} \
-        ${pkgs.lib.optionalString compress "-zlz4hc,level=12 -C65536 -Efragments,ztailpacking,dedupe"} \
+        ${pkgs.lib.optionalString compress "-z${pkgs.lib.escapeShellArg compressor} -C65536 -Efragments,ztailpacking,dedupe"} \
         --force-uid=0 \
         --force-gid=0 \
         -L nix-store \

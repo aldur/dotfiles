@@ -1,6 +1,7 @@
 {
   probeFiles."signal-probe.sh" = "${./probe.sh}";
   probeFiles."signal-sandbox.sh" = "${./sandbox.sh}";
+  probeFiles."signal-keyring-probe.sh" = "${./keyring.sh}";
   extraProbe = ''
     set -E
     trap 'journalctl -b --no-pager -n 100' ERR
@@ -13,6 +14,7 @@
     done
     user="$user" bash -e "$probe/signal-probe.sh"
     user="$user" bash -e "$probe/signal-sandbox.sh"
+    as_user bash -euo pipefail "$probe/signal-keyring-probe.sh"
     pid=$(as_user systemctl --user show signal -p MainPID --value)
     printf 'nameserver 100.115.92.1\n' > /run/resolv.conf.next
     mv /run/resolv.conf.next /run/resolv.conf

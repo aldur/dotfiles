@@ -10,6 +10,7 @@ let
     inherit (config.system.build) toplevel;
     regInfo = pkgs.closureInfo { rootPaths = config.virtualisation.additionalPaths; };
     compress = true;
+    compressor = "lz4";
   };
 in
 {
