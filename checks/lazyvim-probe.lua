@@ -32,6 +32,11 @@ local function report(body)
 end
 
 report(function()
+	-- LazyVim registers MDX filetype detection on VeryLazy, which normally
+	-- follows UIEnter. Headless runs never see that event, so initialize the
+	-- same configuration an interactive editor uses before opening samples.
+	vim.api.nvim_exec_autocmds("User", { pattern = "VeryLazy", modeline = false })
+
 	--- Write `text` to `dir/name` and open it. Formatters and treesitter both key
 	--- off a buffer backed by a real file: conform refuses to run a non-stdin
 	--- formatter on an unsaved buffer, and filetype detection wants the extension.
