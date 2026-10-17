@@ -13,9 +13,10 @@ to create or open a database without GNOME keyring encryption. The build fails
 if the patch no longer applies. There is no plaintext-key fallback.
 [Electron documents the Linux storage fallback](https://www.electronjs.org/docs/latest/api/safe-storage).
 
-The keyring does not encrypt the whole VM disk. Other profile files and cache
-data can remain unencrypted. Use encrypted host storage and backups. Keep both
-the Signal profile and `~/.local/share/keyrings` when you migrate state. A
+`/state` holds exactly the Signal profile (`~/.config/Signal`) and the keyrings
+(`~/.local/share/keyrings`). The keyring does not encrypt the whole VM disk.
+Other profile files can remain unencrypted. Use encrypted host storage and
+backups. Keep both the profile and keyrings when you migrate state. A
 password reset cannot recover a lost keyring password.
 Stop the old VM before starting a restored copy of a linked desktop.
 

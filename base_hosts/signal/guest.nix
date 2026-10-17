@@ -30,12 +30,12 @@ let
     MemoryDenyWriteExecute = true;
     RestrictNamespaces = true;
   };
-  launcher = pkgs.writeShellApplication {
+  argcPkgs = pkgs.extend (import "${inputs.self}/overlays/argc.nix" { self = inputs.self; });
+  launcher = argcPkgs.writeArgcApplication {
     name = "signal-desktop";
     passthru = { inherit signal; };
     meta.description = "Signal";
     runtimeInputs = [
-      pkgs.argc
       pkgs.coreutils
       pkgs.diffutils
       pkgs.gnugrep
@@ -57,7 +57,10 @@ in
 {
   imports = [ "${inputs.self}/base_hosts/appliance/guest.nix" ];
   aldur.appliance.application = launcher;
-  users.users.${user}.uid = 1000;
+  aldur.appliance.state.directories = [
+    ".config/Signal"
+    ".local/share/keyrings"
+  ];
   environment.systemPackages = [
     launcher
     keyring

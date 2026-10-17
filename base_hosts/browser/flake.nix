@@ -4,7 +4,7 @@
   inputs = {
     aldur-dotfiles.url = "github:aldur/dotfiles";
     nixos-crostini = {
-      url = "github:aldur/nixos-crostini/626c356166f64fe3d2fe1b94601c5a86379be18b";
+      url = "github:aldur/nixos-crostini/main";
       inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
     };
   };

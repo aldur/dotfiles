@@ -52,6 +52,9 @@ nixpkgs.lib.recursiveUpdate qemu (
         // {
           inherit configuration;
           name = "${name}-baguette-smoke";
+          probeFiles = (baguetteProbe.probeFiles or { }) // {
+            "appliance-state.sh" = "${../base_hosts/appliance/tests/state.sh}";
+          };
           extraProbe =
             builtins.readFile ../base_hosts/appliance/tests/isolation.sh
             + builtins.readFile ../base_hosts/appliance/tests/baguette.sh

@@ -9,10 +9,6 @@
 let
   user = config.mainUser;
   fileSystems = {
-    "/".options = [
-      "nosuid"
-      "nodev"
-    ];
     "/var/tmp" = {
       device = "none";
       fsType = "tmpfs";
@@ -40,6 +36,7 @@ in
     "${inputs.self}/modules/shared/options.nix"
     "${inputs.self}/modules/nixos/users.nix"
     inputs.self.nixosModules.hardening
+    ./state.nix
   ];
 
   options.aldur.appliance.application = lib.mkOption {
@@ -61,6 +58,7 @@ in
     };
     users = {
       users.${user} = {
+        uid = 1000;
         shell = lib.mkForce pkgs.bashInteractive;
         extraGroups = lib.mkForce [
           "video"
@@ -78,7 +76,7 @@ in
       pam.services.su.requireWheel = true;
       pam.enableUMask = true;
       wrappers =
-        lib.genAttrs [ "mount" "umount" "newgrp" "newuidmap" "newgidmap" ] (_: {
+        lib.genAttrs [ "mount" "umount" ] (_: {
           enable = false;
         })
         // {

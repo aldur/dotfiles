@@ -1,10 +1,5 @@
-{
-  probeFiles."signal-probe.sh" = "${./probe.sh}";
-  probeFiles."signal-sandbox.sh" = "${./sandbox.sh}";
-  probeFiles."signal-keyring-probe.sh" = "${./keyring.sh}";
-  extraProbe = ''
-    set -E
-    trap 'journalctl -b --no-pager -n 100' ERR
+let
+  applicationProbe = ''
     # This disposable test password is never present in the production image.
     printf 'test-only-keyring-password' | as_user gnome-keyring-daemon --replace --unlock --components=secrets
     in_session signal-desktop
@@ -13,6 +8,17 @@
       sleep 1
     done
     user="$user" bash -e "$probe/signal-probe.sh"
+  '';
+in
+{
+  reboots = 1;
+  probeFiles."signal-probe.sh" = "${./probe.sh}";
+  probeFiles."signal-sandbox.sh" = "${./sandbox.sh}";
+  probeFiles."signal-keyring-probe.sh" = "${./keyring.sh}";
+  extraProbe = ''
+    set -E
+    trap 'journalctl -b --no-pager -n 100' ERR
+  '' + applicationProbe + ''
     user="$user" bash -e "$probe/signal-sandbox.sh"
     as_user bash -euo pipefail "$probe/signal-keyring-probe.sh"
     pid=$(as_user systemctl --user show signal -p MainPID --value)
@@ -21,6 +27,25 @@
     nsenter -t "$pid" -m -- grep -Fx 'nameserver 127.0.0.53' /etc/resolv.conf
     echo "PROBE signal encrypted and sandboxed"
     as_user systemctl --user stop signal.service
+    sed -n 's/.*"encryptedKey": *"\([^"]*\)".*/\1/p' \
+      /home/$user/.config/Signal/config.json > /home/$user/.config/Signal/.appliance-encrypted-key
+    test -s /home/$user/.config/Signal/.appliance-encrypted-key
+    user="$user" persist='.config/Signal .local/share/keyrings' bash "$probe/appliance-state.sh" plant
   '';
-  extraChecks = [ "signal encrypted and sandboxed$" ];
+  extraChecks = [
+    "signal encrypted and sandboxed$"
+    "state plant$"
+  ];
+  secondProbe = ''
+    user="$user" persist='.config/Signal .local/share/keyrings' bash "$probe/appliance-state.sh" verify
+  '' + applicationProbe + ''
+    encrypted_key=$(sed -n 's/.*"encryptedKey": *"\([^"]*\)".*/\1/p' /home/$user/.config/Signal/config.json)
+    test "$encrypted_key" = "$(cat /home/$user/.config/Signal/.appliance-encrypted-key)"
+    echo 'PROBE signal persisted encrypted key'
+    as_user systemctl --user stop signal.service
+  '';
+  secondChecks = [
+    "state verify$"
+    "signal persisted encrypted key$"
+  ];
 }

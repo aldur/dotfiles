@@ -7,6 +7,7 @@
 {
   imports = [ "${inputs.self}/base_hosts/appliance/guest.nix" ];
   aldur.appliance.application = config.programs.firefox.finalPackage;
+  aldur.appliance.state.directories = [ ".config/mozilla" ];
   programs = {
     firefox = {
       enable = true;
@@ -21,6 +22,7 @@
         OverrideFirstRunPage = "";
         OverridePostUpdatePage = "";
         ExtensionSettings."*".installation_mode = "blocked";
+        Preferences."browser.cache.disk.enable".Value = false;
       };
     };
   };

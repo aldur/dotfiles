@@ -1,9 +1,9 @@
 # Graphical appliances
 
-Run commands from the repository root. Select the image:
+Run commands from the repository root. Set `guest` to the image name:
 
 ```bash
-guest=signal # or browser
+guest=NAME
 ```
 
 ## ChromeOS Baguette
@@ -24,7 +24,7 @@ gh attestation verify baguette_rootfs.img.zst --repo aldur/dotfiles \
 ```
 
 Put the image in ChromeOS Downloads. Open crosh (`Ctrl+Alt+T`). Replace `NAME`
-with `signal` or `browser`:
+with the VM name:
 
 ```text
 vmc create --vm-type BAGUETTE --size 12G --source /home/chronos/user/MyFiles/Downloads/baguette_rootfs.img.zst NAME
@@ -55,24 +55,25 @@ The launcher supplies no audio device or microphone.
 
 ## State and updates
 
-The home directory persists with mode `0700`. Temporary files and system logs
-are volatile. Swap, core dumps, SSH and sudo are disabled.
+At each start, the VM uses a new root from the image. Only selected directories
+are kept under `/state`. All other writes use RAM. Files and downloads outside
+these directories are lost after a restart. The machine ID changes at each
+start. The home directory has mode `0700`. Swap, core dumps, SSH and sudo are
+disabled.
 
 Close the app before stopping the VM. For QEMU, connect to the printed monitor
 socket with `nc -U SOCKET`, issue `system_powerdown`, and wait for QEMU to exit.
 For Baguette, stop the VM through ChromeOS.
 
-Keep backups encrypted. A QEMU backup needs the stopped disk and its launcher
-Nix closure. The kernel, initrd and store image are outside the writable disk.
+Encrypt your backups. For QEMU, save the stopped disk and its launcher Nix
+closure. The disk contains `/state`. The closure contains the kernel, initrd
+and store image. For Baguette, save the stopped VM disk.
 Restore on the same guest architecture. Never start two copies of one disk.
 
-Apps update through Nix builds. Each appliance pins its Crostini revision.
-Other inputs use the root `flake.lock` through the `--override-input` argument.
-Update those pins before rebuilding. For QEMU,
-back up the stopped VM, then use the new launcher with the same `--dir`.
-For Baguette, create a replacement VM under a new name. Keep the old VM until
-migration is complete. A restored backup can contain an expired or vulnerable
-app version.
+Update the inputs and build a new image to update the VM. Keep `/state` when
+you change the image. For QEMU, stop the VM and use the new launcher with the
+same `--dir`. For Baguette, create a VM from the new image and copy `/state`
+from the stopped old VM. Keep the old VM until the copy is complete.
 
 ## Tests
 
@@ -87,3 +88,6 @@ nix build "path:./base_hosts/$guest#checks.x86_64-linux.qemu-boot" \
 The Baguette test boots the distributed image with crosvm and a Termina kernel.
 Its host services are test fixtures. Test ChromeOS registration and host display
 integration on the target Chromebook.
+
+QEMU tests use the same store-image builder with plain LZ4. Shipped images use
+LZ4HC level 12.

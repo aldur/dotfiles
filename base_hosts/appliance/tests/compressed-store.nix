@@ -25,11 +25,9 @@ in
       options = [ "ro" ];
     };
     "/nix/store" = {
-      overlay = {
-        lowerdir = [ "/nix/.ro-store" ];
-        upperdir = "/nix/.rw-store/upper";
-        workdir = "/nix/.rw-store/work";
-      };
+      device = "/nix/.ro-store";
+      fsType = "none";
+      options = [ "bind" ];
     };
   };
   virtualisation.qemu.drives = lib.mkForce [

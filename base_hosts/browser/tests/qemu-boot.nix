@@ -22,6 +22,8 @@ pkgs.testers.runNixOSTest {
     ];
     environment.etc."appliance-isolation.sh".source =
       "${specialArgs.inputs.self}/base_hosts/appliance/tests/isolation.sh";
+    environment.etc."appliance-state.sh".source =
+      "${specialArgs.inputs.self}/base_hosts/appliance/tests/state.sh";
     programs.firefox.policies.Homepage = {
       URL = lib.mkForce "http://localhost/";
       StartPage = "homepage";
@@ -57,7 +59,7 @@ pkgs.testers.runNixOSTest {
 
     env = session()
     wait_for_page(1)
-    machine.succeed("user=" + user + " bash -e " + "/etc/appliance-isolation.sh")
+    print(machine.succeed("user=" + user + " bash -e " + "/etc/appliance-isolation.sh"))
 
     original_theme = machine.succeed(as_user(
         "xfconf-query -c xsettings -p /Net/ThemeName"
@@ -85,9 +87,11 @@ pkgs.testers.runNixOSTest {
         "windowquit"
     ))
     machine.wait_until_fails(f"pgrep -u {user} -f {process}", timeout=180)
+    print(machine.succeed(f"user={user} persist=.config/mozilla bash /etc/appliance-state.sh plant"))
     machine.shutdown()
     machine.start()
     env = session()
+    print(machine.succeed(f"user={user} persist=.config/mozilla bash /etc/appliance-state.sh verify"))
     wait_for_page(2)
     machine.screenshot("browser-after-restart")
   '';

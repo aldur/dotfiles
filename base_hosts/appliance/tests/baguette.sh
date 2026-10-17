@@ -1,4 +1,5 @@
-test "$(findmnt -n -o FSTYPE -T /home/$user)" = btrfs
+test "$(findmnt -n -o FSTYPE -T /home/$user)" = overlay
+test "$(findmnt -n -o FSTYPE /state)" = btrfs
 test "$(in_session sh -c umask)" = 0077
 for disk in /dev/vda /dev/vdb; do
   test "$(stat -c '%U:%G:%a' "$disk")" = root:root:600

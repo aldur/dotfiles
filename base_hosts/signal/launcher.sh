@@ -29,7 +29,7 @@ if ! ready; then
   if ! password=$(prompt 'Unlock Signal keyring') || [[ -z "$password" ]]; then
     fail 'A nonempty keyring password is required'
   fi
-  if ! "$existing"; then
+  if [[ $existing == false ]]; then
     if ! confirmation=$(prompt 'Confirm Signal keyring password') || [[ -z "$confirmation" ]]; then
       fail 'A nonempty keyring password is required'
     fi
@@ -43,7 +43,7 @@ if ! ready; then
     sleep 0.1
   done
   if ! ready; then
-    if "$existing"; then fail 'Incorrect keyring password; Signal was not started'; fi
+    if [[ $existing == true ]]; then fail 'Incorrect keyring password; Signal was not started'; fi
     fail 'Could not unlock the new keyring; Signal was not started'
   fi
 fi

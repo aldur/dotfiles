@@ -11,6 +11,14 @@
     ./guest.nix
   ];
   hardening.foreignKernel = true;
+  baguette.ephemeralRoot = {
+    enable = true;
+    tmpfsSize = "1G";
+  };
+  # systemd-remount-fs applies these to the overlay declared by nixos-crostini.
+  fileSystems."/".options = [ "nosuid" "nodev" ];
+  systemd.services.cros-port-listener.enable = false;
+  systemd.user.services.cros-notificationd.enable = false;
   hardware.graphics.enable = false;
   virtualisation = {
     buildMemorySize = 4096;

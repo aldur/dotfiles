@@ -28,6 +28,8 @@ pkgs.testers.runNixOSTest {
     environment.etc = {
       "appliance-isolation.sh".source =
         "${specialArgs.inputs.self}/base_hosts/appliance/tests/isolation.sh";
+      "appliance-state.sh".source =
+        "${specialArgs.inputs.self}/base_hosts/appliance/tests/state.sh";
       "signal-probe.sh".source = probe;
       "signal-keyring-probe.sh".source = ./keyring.sh;
       "signal-sandbox.sh".source = ./sandbox.sh;
@@ -112,18 +114,28 @@ pkgs.testers.runNixOSTest {
     pause_session()
     machine.succeed(as_user("systemd-run --user --wait true"))
     machine.succeed(f"user={user} bash -e /etc/signal-sandbox.sh")
-    machine.succeed(f"user={user} bash -e /etc/appliance-isolation.sh")
+    print(machine.succeed(f"user={user} bash -e /etc/appliance-isolation.sh"))
+    dependencies = machine.succeed("systemctl list-dependencies --reverse state.mount --plain --no-pager")
+    print(dependencies)
+    assert "home-" + user + "-.config-Signal.mount" in dependencies
+    assert "home-" + user + "-.local-share-keyrings.mount" in dependencies
     # Each probe must reject a bad state under both callers' shell options.
     machine.succeed("systemd-run --unit=sshd sleep infinity")
     for flags in ("-e", "-euo pipefail"):
         machine.fail(f"user={user} bash {flags} /etc/appliance-isolation.sh")
     machine.succeed("systemctl stop sshd")
-    machine.succeed("mkdir -p /run/systemd/system/serial-getty@.service.d")
-    machine.succeed("printf '[Service]\\nExecStart=\\nExecStart=/run/current-system/sw/bin/false --autologin test\\n' > /run/systemd/system/serial-getty@.service.d/autologin.conf")
-    machine.succeed("systemctl daemon-reload")
-    machine.fail(f"user={user} bash -euo pipefail /etc/appliance-isolation.sh")
-    machine.succeed("rm /run/systemd/system/serial-getty@.service.d/autologin.conf")
-    machine.succeed("systemctl daemon-reload")
+    for unit in ("serial-getty@.service", "getty@.service", "container-getty@.service"):
+        dropin = f"/run/systemd/system/{unit}.d"
+        machine.succeed(f"mkdir -p {dropin}")
+        machine.succeed("printf '[Service]\\nExecStart=\\nExecStart=/run/current-system/sw/bin/false --autologin test\\n' > " + dropin + "/autologin.conf")
+        machine.succeed("systemctl daemon-reload")
+        machine.fail(f"user={user} bash -euo pipefail /etc/appliance-isolation.sh")
+        machine.succeed(f"rm {dropin}/autologin.conf")
+        machine.succeed("systemctl daemon-reload")
+    machine.succeed("cp /run/current-system/sw/bin/true /run/wrappers/capability-probe; setcap cap_net_raw+ep /run/wrappers/capability-probe")
+    for flags in ("-e", "-euo pipefail"):
+        machine.fail(f"user={user} bash {flags} /etc/appliance-isolation.sh")
+    machine.succeed("rm /run/wrappers/capability-probe")
     machine.succeed(as_user("bash -euo pipefail /etc/signal-keyring-probe.sh"))
     profile = f"/home/{user}/.config/Signal"
     machine.succeed(f"cp {profile}/config.json /tmp/signal-config.json")
@@ -180,9 +192,11 @@ pkgs.testers.runNixOSTest {
     machine.fail(as_user("systemctl --user start signal.service"))
     machine.succeed("systemctl start firewall")
     machine.succeed("kill -CONT $(pgrep -P $(systemctl show cage-tty1 -p MainPID --value))")
+    print(machine.succeed(f"user={user} persist='.config/Signal .local/share/keyrings' bash /etc/appliance-state.sh plant"))
     machine.shutdown()
     machine.start()
     session()
+    print(machine.succeed(f"user={user} persist='.config/Signal .local/share/keyrings' bash /etc/appliance-state.sh verify"))
     password_prompt("Unlock Signal keyring", "wrong-password")
     try:
         machine.wait_until_succeeds("journalctl _UID=1000 --no-pager | grep 'Incorrect keyring password'", timeout=20)
