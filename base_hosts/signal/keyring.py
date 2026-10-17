@@ -29,7 +29,8 @@ def ready(bus):
 
 def prompt(title):
     result = subprocess.run(
-        ["zenity", "--password", f"--title={title}"],
+        ["yad", "--entry", "--hide-text", f"--title={title}", f"--text={title}",
+         "--entry-label=Password", "--button=yad-cancel:1", "--button=yad-ok:0"],
         stdout=subprocess.PIPE,
         check=False,
     )

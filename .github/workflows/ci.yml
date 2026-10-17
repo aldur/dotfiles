@@ -288,7 +288,17 @@ jobs:
       - *fetch-signing-keys
 
       - run: |
-          nix build --override-input aldur-dotfiles . \
+          build_options=()
+          case "$NIX_TARGET" in
+            ./base_hosts/browser#*|./base_hosts/signal#*)
+              # Limit concurrent builds to reduce memory use.
+              build_options+=(--max-jobs 1 --cores 4)
+              ;;
+          esac
+          .github/scripts/sample-resources.sh &
+          sampler=$!
+          trap 'kill "$sampler"' EXIT
+          nix build "${build_options[@]}" --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             "$NIX_TARGET"
         env:

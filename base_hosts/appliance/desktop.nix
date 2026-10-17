@@ -7,6 +7,23 @@
 {
   imports = [ ./qemu.nix ];
 
+  nixpkgs.overlays = [
+    (_final: prev: {
+      # XFCE requires the XApp schemas for appearance settings, but not libxapp.
+      xfce4-settings = prev.xfce4-settings.override {
+        xapp =
+          prev.runCommand "xapp-schemas-${prev.xapp.version}"
+            {
+              disallowedReferences = [ prev.xapp ];
+            }
+            ''
+              mkdir -p $out/share
+              cp -r ${prev.xapp}/share/gsettings-schemas $out/share/
+            '';
+      };
+    })
+  ];
+
   environment = {
     etc."xdg/autostart/appliance.desktop".text = ''
       [Desktop Entry]

@@ -14,6 +14,7 @@ let
     qemuModule = (directory + /desktop.nix);
     vmOverrides = {
       baseModules = [ ];
+      compressStoreImage = true;
       defaultVmDir = "$HOME/.local/share/${name}-vm";
       defaultMemory = 4096;
       defaultCores = 4;

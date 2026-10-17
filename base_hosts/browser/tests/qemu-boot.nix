@@ -4,15 +4,22 @@
 pkgs.testers.runNixOSTest {
   name = "browser-qemu-boot";
   node.specialArgs = specialArgs;
+  node.pkgsReadOnly = false;
   nodes.machine = { lib, ... }: {
-    imports = [ ../desktop.nix ];
+    imports = [
+      ../desktop.nix
+      "${specialArgs.inputs.self}/base_hosts/appliance/tests/compressed-store.nix"
+    ];
     # Keep the production root lock; the driver has a separate root console.
     users.users.root.hashedPasswordFile = lib.mkForce null;
     virtualisation = {
       memorySize = 4096;
       cores = 4;
     };
-    environment.systemPackages = [ pkgs.xdotool ];
+    environment.systemPackages = [
+      pkgs.xdotool
+      pkgs.dconf
+    ];
     environment.etc."appliance-isolation.sh".source =
       "${specialArgs.inputs.self}/base_hosts/appliance/tests/isolation.sh";
     programs.firefox.policies.Homepage = {
@@ -51,6 +58,24 @@ pkgs.testers.runNixOSTest {
     env = session()
     wait_for_page(1)
     machine.succeed("user=" + user + " bash -e " + "/etc/appliance-isolation.sh")
+
+    original_theme = machine.succeed(as_user(
+        "xfconf-query -c xsettings -p /Net/ThemeName"
+    )).strip()
+    machine.succeed(as_user("xfce4-appearance-settings >/tmp/appearance.log 2>&1 &"))
+    machine.wait_until_succeeds(as_user(
+        "xdotool search --onlyvisible --name '^Appearance$'"
+    ))
+    machine.succeed(as_user(
+        "xfconf-query -c xsettings -p /Net/ThemeName -s Adwaita-dark"
+    ))
+    machine.wait_until_succeeds(as_user(
+        "dconf read /org/x/apps/portal/color-scheme | grep -Fx \"'prefer-dark'\""
+    ))
+    machine.succeed(as_user(
+        "xfconf-query -c xsettings -p /Net/ThemeName -s " + shlex.quote(original_theme)
+    ))
+    machine.succeed(as_user("xdotool search --onlyvisible --name '^Appearance$' windowquit"))
 
     # Quit through Firefox so it saves its profile and session before the VM
     # shuts down. A signal is not the user-initiated quit used for backups.

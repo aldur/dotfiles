@@ -7,6 +7,7 @@
 }:
 let
   user = config.mainUser;
+  uid = toString config.users.users.${user}.uid;
   wayland = config.services.cage.enable;
   home = config.users.users.${user}.home;
   signal = import ./package.nix { inherit pkgs; };
@@ -25,6 +26,10 @@ let
     LockPersonality = true;
     PrivateTmp = true;
   };
+  daemonHardening = serviceHardening // {
+    MemoryDenyWriteExecute = true;
+    RestrictNamespaces = true;
+  };
   launcher = pkgs.writeShellApplication {
     name = "signal-desktop";
     passthru = { inherit signal; };
@@ -32,7 +37,7 @@ let
     runtimeInputs = [
       pkgs.systemd
       pkgs.gnome-keyring
-      pkgs.zenity
+      pkgs.yad
     ];
     text = ''
       if (( $# )); then
@@ -54,6 +59,7 @@ in
 {
   imports = [ "${inputs.self}/base_hosts/appliance/guest.nix" ];
   aldur.appliance.application = launcher;
+  users.users.${user}.uid = 1000;
   environment.systemPackages = [
     launcher
     (pkgs.makeDesktopItem {
@@ -114,7 +120,8 @@ in
   systemd.services.dnsmasq = {
     # The upstream pre-start changes ownership, which needs CAP_CHOWN.
     preStart = lib.mkForce "dnsmasq --test -C ${config.services.dnsmasq.configFile}";
-    serviceConfig = serviceHardening // {
+    serviceConfig = daemonHardening // {
+      PrivateDevices = true;
       # D-Bus mode requires NET_RAW for dynamic upstream interface binding.
       Type = lib.mkForce "simple";
       BusName = lib.mkForce "";
@@ -149,12 +156,12 @@ in
       iptables -A signal-egress -d ${private4} -j REJECT
       ip6tables -A signal-egress ! -d 2000::/3 -j REJECT
       for cmd in iptables ip6tables; do
-        $cmd -A OUTPUT -m owner --uid-owner ${user} -j signal-egress
+        $cmd -A OUTPUT -m owner --uid-owner ${uid} -j signal-egress
       done
     '';
     extraStopCommands = ''
       for cmd in iptables ip6tables; do
-        $cmd -D OUTPUT -m owner --uid-owner ${user} -j signal-egress 2>/dev/null || true
+        $cmd -D OUTPUT -m owner --uid-owner ${uid} -j signal-egress 2>/dev/null || true
         $cmd -F signal-egress 2>/dev/null || true
         $cmd -X signal-egress 2>/dev/null || true
       done
@@ -173,11 +180,55 @@ in
     };
   };
 
+  systemd.user.services.signal-system-check = {
+    description = "Check Signal network services";
+    serviceConfig = serviceHardening // {
+      Type = "oneshot";
+      ExecStart = map (unit: "${pkgs.systemd}/bin/systemctl --system is-active --quiet ${unit}.service") [
+        "firewall"
+        "dnsmasq"
+      ];
+      CapabilityBoundingSet = "";
+      PrivateUsers = true;
+      ProtectSystem = "strict";
+      ProtectHome = true;
+      RestrictAddressFamilies = [ "AF_UNIX" ];
+    };
+  };
+
   systemd.user.services.signal-bus = {
     description = "Signal Secret Service proxy";
-    serviceConfig = serviceHardening // {
+    serviceConfig = daemonHardening // {
+      SystemCallFilter = [ "@system-service" ];
+      PrivatePIDs = true;
+      # PID 1 ignores the proxy's default SIGTERM action.
+      KillSignal = "SIGKILL";
       ExecStartPre = "${pkgs.coreutils}/bin/rm -f %t/signal-bus";
-      ExecStart = "${pkgs.xdg-dbus-proxy}/bin/xdg-dbus-proxy unix:path=%t/bus %t/signal-bus --filter --talk=org.freedesktop.secrets";
+      ExecStart = lib.concatStringsSep " " (
+        [
+          "${pkgs.xdg-dbus-proxy}/bin/xdg-dbus-proxy unix:path=%t/bus %t/signal-bus --filter --see=org.freedesktop.secrets"
+        ]
+        ++
+          lib.concatMap
+            (
+              interface:
+              map (rule: "--${rule}=org.freedesktop.secrets=${interface}.*") [
+                "call"
+                "broadcast"
+              ]
+            )
+            # Proxy rules require each interface name; .* selects its methods.
+            (
+              [ "org.freedesktop.DBus.Properties" ]
+              ++ map (interface: "org.freedesktop.Secret.${interface}") [
+                "Service"
+                "Collection"
+                "Item"
+                "Session"
+                "Prompt"
+              ]
+            )
+      );
       ExecStartPost = "${pkgs.writeShellScript "wait-signal-bus" ''
         until ${pkgs.systemd}/bin/busctl --address="$1" --timeout=1 list >/dev/null 2>&1; do
           sleep 0.1
@@ -197,10 +248,14 @@ in
 
   systemd.user.services.signal = {
     description = "Signal Desktop";
-    requires = [ "signal-keyring-check.service" ];
+    requires = [
+      "signal-keyring-check.service"
+      "signal-system-check.service"
+    ];
     bindsTo = [ "signal-bus.service" ];
     after = [
       "signal-keyring-check.service"
+      "signal-system-check.service"
       "signal-bus.service"
     ];
     environment = {
@@ -209,12 +264,6 @@ in
     }
     // lib.optionalAttrs wayland { GDK_BACKEND = "wayland"; };
     serviceConfig = serviceHardening // {
-      ExecStartPre =
-        map (unit: "${pkgs.systemd}/bin/systemctl --system is-active --quiet ${unit}.service")
-          [
-            "firewall"
-            "dnsmasq"
-          ];
       ExecStart = "${signal}/bin/signal-desktop --password-store=gnome-libsecret --ozone-platform=${
         if wayland then "wayland" else "x11"
       } --disable-gpu";
@@ -233,8 +282,6 @@ in
       TemporaryFileSystem = [ "/run:ro" ];
       BindReadOnlyPaths = [
         "/run/current-system"
-        "/run/dbus/system_bus_socket"
-        "/run/systemd/system"
         "-/run/opengl-driver"
         "%t/signal-bus:%t/bus"
         "${pkgs.writeText "signal-resolv.conf" "nameserver 127.0.0.53\n"}:/etc/resolv.conf"

@@ -7,7 +7,10 @@ pkgs.testers.runNixOSTest {
   enableOCR = true;
   node.specialArgs = specialArgs;
   nodes.machine = { lib, config, ... }: {
-    imports = [ ../desktop.nix ];
+    imports = [
+      ../desktop.nix
+      "${specialArgs.inputs.self}/base_hosts/appliance/tests/compressed-store.nix"
+    ];
     users.users.root.hashedPasswordFile = lib.mkForce null;
     virtualisation = {
       memorySize = 4096;
@@ -34,6 +37,11 @@ pkgs.testers.runNixOSTest {
     user = "${nodes.machine.mainUser}"
     import shlex
 
+    def wait_for_text(text, timeout):
+        # OCR can stop indefinitely when it processes the inverted password screen.
+        with machine.nested(f"waiting for {text} to appear on screen"):
+            retry(lambda _: text in machine.get_screen_text(), timeout)
+
     def as_user(command):
         return f"runuser -u {user} -- env HOME=/home/{user} XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus WAYLAND_DISPLAY=wayland-0 GDK_BACKEND=wayland sh -c {shlex.quote(command)}"
 
@@ -47,9 +55,17 @@ pkgs.testers.runNixOSTest {
         machine.succeed("kill -STOP $(pgrep -P $(systemctl show cage-tty1 -p MainPID --value))")
 
     def password_prompt(title, password="test-only-keyring-password"):
-        machine.wait_for_text(title, timeout=60)
+        wait_for_prompt(title)
         machine.send_chars(password)
         machine.send_key("ret")
+
+    def wait_for_prompt(title):
+        try:
+            wait_for_text(title, timeout=60)
+        except Exception:
+            print(machine.execute("journalctl _UID=1000 --no-pager -n 80")[1])
+            machine.screenshot("signal-prompt-failure")
+            raise
 
     def unlock(first_use=False):
         password_prompt("Unlock Signal keyring")
@@ -59,7 +75,7 @@ pkgs.testers.runNixOSTest {
     def signal_ready():
         try:
             machine.wait_until_succeeds(as_user("systemctl --user is-active signal.service"), timeout=45)
-            machine.wait_for_text("Signal", timeout=180)
+            wait_for_text("Signal", timeout=180)
             machine.wait_until_succeeds(f"user={user} bash -e /etc/signal-probe.sh", timeout=180)
         except Exception:
             print(machine.execute("journalctl _UID=1000 --no-pager -n 100")[1])
@@ -73,6 +89,15 @@ pkgs.testers.runNixOSTest {
     session()
     # Exercise the actual first-run password prompt, launcher and app.
     machine.succeed(as_user("systemctl --user set-environment ELECTRON_ENABLE_LOGGING=1"))
+    for rejection, key in enumerate(("esc", "ret"), start=1):
+        wait_for_prompt("Unlock Signal keyring")
+        machine.send_key(key)
+        machine.wait_until_succeeds(
+            "test $(journalctl _UID=1000 --no-pager | grep -c 'A nonempty keyring password is required') "
+            f"-eq {rejection}", timeout=30
+        )
+        machine.fail(f"test -e /home/{user}/.local/share/keyrings/login.keyring")
+        machine.fail(as_user("systemctl --user is-active signal"))
     password_prompt("Unlock Signal keyring")
     password_prompt("Confirm Signal keyring password", "wrong-password")
     machine.fail(f"test -e /home/{user}/.local/share/keyrings/login.keyring")
@@ -170,12 +195,12 @@ pkgs.testers.runNixOSTest {
     machine.succeed(as_user("systemd-run --user --unit=signal-insecure /etc/signal-raw --password-store=basic --user-data-dir=/home/" + user + "/insecure-profile --ozone-platform=wayland --disable-gpu"))
     try:
         machine.wait_until_succeeds("journalctl _UID=1000 --no-pager | grep 'plaintext key storage is forbidden'", timeout=45)
-        # Signal waits for dismissal of its database error dialog.
-        machine.wait_for_text("Open Signal", timeout=45)
+        wait_for_text("Secure keyring required", timeout=45)
         machine.send_key("esc")
         machine.wait_until_fails(as_user("systemctl --user is-active signal-insecure"), timeout=45)
     except Exception:
         print(machine.execute("journalctl _UID=1000 --no-pager -n 100")[1])
+        print(machine.get_screen_text())
         machine.screenshot("signal-insecure-failure")
         raise
     machine.succeed(as_user("systemctl --user stop signal-insecure"))

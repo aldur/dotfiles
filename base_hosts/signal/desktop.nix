@@ -11,6 +11,8 @@
     ./guest.nix
   ];
   networking.hostName = "signal-vm";
+  # Cage uses pixman. Signal disables GPU access. Neither requires hardware GL drivers.
+  hardware.graphics.enable = lib.mkForce false;
   services.cage = {
     enable = true;
     user = config.mainUser;
@@ -23,11 +25,9 @@
       GDK_BACKEND = "wayland";
       GSK_RENDERER = "cairo";
       WLR_RENDERER = "pixman";
-      DBUS_SESSION_BUS_ADDRESS = "unix:path=/run/user/${
-        toString config.users.users.${config.mainUser}.uid
-      }/bus";
     };
     program = pkgs.writeShellScript "signal-session" ''
+      export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
       while true; do
         ${lib.getExe config.aldur.appliance.application} || true
         sleep 1
