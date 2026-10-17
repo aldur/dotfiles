@@ -14,6 +14,8 @@
   qemuModule ? ../../base_hosts/qemu/qemu.nix,
   # Appliances can reuse the launcher without the development configuration.
   baseModules ? [ inputs.self.nixosModules.default ],
+  # LZ4 EROFS compression requires CONFIG_EROFS_FS_ZIP in the guest kernel.
+  compressStoreImage ? false,
   ...
 }:
 
@@ -97,38 +99,9 @@ let
     rootPaths = qemuNixos.config.virtualisation.additionalPaths;
   };
 
-  nixStoreImage = pkgs.stdenv.mkDerivation {
-    name = "nix-store-image";
-    nativeBuildInputs = with pkgs; [
-      gnutar
-      erofs-utils
-    ];
-    buildCommand = ''
-      mkdir -p $out
-      tar --create \
-        --absolute-names \
-        --verbatim-files-from \
-        --transform 'flags=rSh;s|/nix/store/||' \
-        --transform 'flags=rSh;s|~nix~case~hack~[[:digit:]]\+||g' \
-        --files-from ${
-          pkgs.closureInfo {
-            rootPaths = [
-              qemuNixos.config.system.build.toplevel
-              regInfo
-            ];
-          }
-        }/store-paths \
-        | mkfs.erofs \
-          --quiet \
-          --force-uid=0 \
-          --force-gid=0 \
-          -L nix-store \
-          -U eb176051-bd15-49b7-9e6b-462e0b467019 \
-          -T 0 \
-          --hard-dereference \
-          --tar=f \
-          $out/store.img
-    '';
+  nixStoreImage = import ../../utils/qemu-store-image.nix {
+    inherit pkgs toplevel regInfo;
+    compress = compressStoreImage;
   };
 
   # The launcher, as a function of what it boots. The package boots the
@@ -252,6 +225,7 @@ let
     # Canonical, like the disk image: the sandbox matches canonical paths.
     STORE_IMAGE=$(readlink -f "$STORE_IMAGE")
 
+    umask 077
     mkdir -p "$VM_DIR"
 
     # Handle clean flag
@@ -271,6 +245,7 @@ let
       rm "$TEMP_RAW"
     fi
 
+    chmod 600 "$NIX_DISK_IMAGE"
     NIX_DISK_IMAGE=$(readlink -f "$NIX_DISK_IMAGE")
 
     # The guest network. gvproxy serves DHCP on 192.168.127.0/24 and

@@ -89,6 +89,17 @@ def check_launcher(launcher):
             assert "Invalid file specification:" not in result.stderr, (args, result)
             assert disk.read_bytes() == original_disk
 
+        # Reach directory creation, then stop at the invalid zero-size disk.
+        # An existing --dir may be the user's home directory.
+        for existing in (True, False):
+            vm_dir = root / ("existing-dir" if existing else "new-dir")
+            if existing:
+                vm_dir.mkdir(mode=0o755)
+            result = run([], vm_dir=vm_dir)
+            assert result.returncode != 0, result
+            assert "Creating VM disk:" in result.stdout, result
+            assert vm_dir.stat().st_mode & 0o777 == (0o755 if existing else 0o700)
+
         unreadable.chmod(0o600)
         print(f"{Path(launcher).name}: file preflight and error reporting passed")
 

@@ -8,7 +8,7 @@ on:
       image:
         description: Baguette guest
         type: choice
-        options: [crostini, browser]
+        options: [crostini, browser, signal]
         default: crostini
       retention-days:
         description: Days to keep the artifact
@@ -45,7 +45,16 @@ jobs:
           path: ${{ env.SIGNING_KEYS }}
 
       - run: |
-          nix build --override-input aldur-dotfiles . \
+          build_options=()
+          case "$IMAGE_FLAKE" in
+            ./base_hosts/browser|./base_hosts/signal)
+              build_options+=(--max-jobs 1 --cores 4)
+              ;;
+          esac
+          .github/scripts/sample-resources.sh &
+          sampler=$!
+          trap 'kill "$sampler"' EXIT
+          nix build "${build_options[@]}" --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             "$IMAGE_FLAKE#baguette-zimage"
 
