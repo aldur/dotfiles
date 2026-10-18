@@ -4,8 +4,12 @@ return {
 		opts = function(_, opts)
 			opts.formatters_by_ft = opts.formatters_by_ft or {}
 
-			opts.formatters_by_ft["markdown"] = opts.formatters_by_ft["markdown"] or {}
-			table.insert(opts.formatters_by_ft["markdown"], "trim_whitespace")
+			-- Only the audited markdownlint fixes may edit Markdown. Generic trimming
+			-- removes hard line breaks, and other formatters can rewrite authored text.
+			for _, ft in ipairs({ "markdown", "markdown.mdx" }) do
+				opts.formatters_by_ft[ft] = nixCats("markdown") and { "markdownlint-cli2", lsp_format = "never" }
+					or { lsp_format = "never" }
+			end
 
 			opts.formatters_by_ft["beancount"] = {
 				"beans",

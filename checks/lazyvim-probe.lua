@@ -32,6 +32,11 @@ local function report(body)
 end
 
 report(function()
+	-- LazyVim registers MDX filetype detection on VeryLazy, which normally
+	-- follows UIEnter. Headless runs never see that event, so initialize the
+	-- same configuration an interactive editor uses before opening samples.
+	vim.api.nvim_exec_autocmds("User", { pattern = "VeryLazy", modeline = false })
+
 	--- Write `text` to `dir/name` and open it. Formatters and treesitter both key
 	--- off a buffer backed by a real file: conform refuses to run a non-stdin
 	--- formatter on an unsaved buffer, and filetype detection wants the extension.
@@ -134,12 +139,41 @@ report(function()
 		check("highlights captured: " .. sample.lang, captured)
 	end
 
+	-- link.vim must recognize inline code with legacy syntax disabled by
+	-- Tree-sitter, including injected Markdown spans and multi-backtick spans.
+	do
+		local cases = {
+			"`http://localhost`",
+			"é ``http://localhost:3000/a ` example``",
+			"`[local](http://localhost)`",
+			"`http://localhost\ncontinued`",
+		}
+		for i, code in ipairs(cases) do
+			open("link-code-" .. i .. ".md", code .. " and [web](https://example.com)\n")
+			require("lazy").load({ plugins = { "link.vim" } })
+			vim.bo.syntax = ""
+			vim.b.link_start_index = 1
+			vim.cmd.LinkConvertAll()
+			local got = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
+			local want = code .. " and [web][1]\n\n[1]: https://example.com"
+			check("link conversion preserves code " .. i, got == want, got)
+			vim.bo.modified = false
+		end
+	end
+
 	-- Formatting end to end. LazyVim's extras configure a superset of what the
 	-- editor ships and conform quietly skips whatever is missing, so asking
 	-- whether each formatter is `available` proves nothing: run them and compare
 	-- the buffer. `lsp_format = "never"` keeps this about the shipped binaries.
 	for _, case in ipairs(spec.formats) do
 		open("format." .. case.ext, case.input)
+		if case.ext == "md" or case.ext == "mdx" then
+			-- LazyVim only enables markdownlint's fixer once diagnostics exist.
+			-- Seed one so the test cannot pass just because linting has not run yet.
+			vim.diagnostic.set(vim.api.nvim_create_namespace("format-regression"), 0, {
+				{ lnum = 0, col = 0, message = "MD026: Trailing punctuation in heading", source = "markdownlint" },
+			})
+		end
 		local ok, err = pcall(require("conform").format, {
 			bufnr = 0,
 			async = false,

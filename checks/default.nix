@@ -49,6 +49,7 @@ in
   # Carried as `passthru.tests` on the packages, so `nix-update --test` runs
   # them on a bump too.
   gpg-encrypt = pkgs.gpg-encrypt.tests.integration;
+  markdownlint-formatting = pkgs.markdownlint-cli2.tests.formatting;
   taskmd = pkgs.taskmd.tests.version;
   taskmd-ui = pkgs.taskmd-ui.tests.smoke;
   solidity-language-server = pkgs.nomicfoundation-solidity-language-server.tests.smoke;
