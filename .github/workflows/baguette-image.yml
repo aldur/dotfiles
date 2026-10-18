@@ -8,7 +8,7 @@ on:
       image:
         description: Baguette guest
         type: choice
-        options: [crostini, browser]
+        options: [crostini, browser, signal]
         default: crostini
       retention-days:
         description: Days to keep the artifact
@@ -44,22 +44,42 @@ jobs:
           token: ${{ github.token }}
           path: ${{ env.SIGNING_KEYS }}
 
+      - name: Resolve build inputs
+        run: |
+          mkdir -p /tmp/subject
+          nix flake metadata --refresh --json --override-input aldur-dotfiles . \
+            --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
+            "$IMAGE_FLAKE" > /tmp/subject/inputs.json
+          jq .locks /tmp/subject/inputs.json > /tmp/appliance.lock
+
       - run: |
-          nix build --override-input aldur-dotfiles . \
+          build_options=()
+          case "$IMAGE_FLAKE" in
+            ./base_hosts/browser|./base_hosts/signal)
+              build_options+=(--max-jobs 1 --cores 4)
+              ;;
+          esac
+          .github/scripts/sample-resources.sh &
+          sampler=$!
+          trap 'kill "$sampler"' EXIT
+          nix build "${build_options[@]}" --reference-lock-file /tmp/appliance.lock \
+            --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             "$IMAGE_FLAKE#baguette-zimage"
 
       # The SBOM of the system in the image. The build above made the
       # system, so this only walks its closure. See utils/sbom.nix.
       - run: |
-          nix run --override-input aldur-dotfiles . \
+          nix run --reference-lock-file /tmp/appliance.lock --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             "$IMAGE_FLAKE#sbom-baguette" -- /tmp/subject
 
       # The attest job below attests the image by its checksum. The subject
       # name is the file name in the checksums file, so run the command in
       # the directory of the image.
-      - run: (cd result && sha256sum -- *.zst) > /tmp/subject/checksums.txt
+      - run: |
+          (cd result && sha256sum -- *.zst) > /tmp/subject/checksums.txt
+          (cd /tmp/subject && sha256sum inputs.json) >> /tmp/subject/checksums.txt
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -76,6 +96,7 @@ jobs:
           path: |
             /tmp/subject/checksums.txt
             /tmp/subject/sbom.spdx.json
+            /tmp/subject/inputs.json
           if-no-files-found: error
           retention-days: 1
 

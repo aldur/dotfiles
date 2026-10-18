@@ -541,9 +541,9 @@ in
         su.enable = lib.mkDefault false;
         sudoedit.enable = lib.mkDefault false;
         sg.enable = lib.mkDefault false;
-        newgrp.setuid = lib.mkDefault false;
-        newuidmap.setuid = lib.mkDefault false;
-        newgidmap.setuid = lib.mkDefault false;
+        newgrp.enable = lib.mkDefault false;
+        newuidmap.enable = lib.mkDefault false;
+        newgidmap.enable = lib.mkDefault false;
         fusermount.enable = lib.mkDefault false;
         fusermount3.enable = lib.mkDefault false;
       }

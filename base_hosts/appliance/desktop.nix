@@ -1,0 +1,64 @@
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
+  imports = [ ./qemu.nix ];
+
+  nixpkgs.overlays = [
+    (_final: prev: {
+      # XFCE requires the XApp schemas for appearance settings, but not libxapp.
+      xfce4-settings = prev.xfce4-settings.override {
+        xapp =
+          prev.runCommand "xapp-schemas-${prev.xapp.version}"
+            {
+              disallowedReferences = [ prev.xapp ];
+            }
+            ''
+              mkdir -p $out/share
+              cp -r ${prev.xapp}/share/gsettings-schemas $out/share/
+            '';
+      };
+    })
+  ];
+
+  environment = {
+    etc."xdg/autostart/appliance.desktop".text = ''
+      [Desktop Entry]
+      Type=Application
+      Name=${config.aldur.appliance.application.meta.description or "Application"}
+      Exec=${lib.getExe config.aldur.appliance.application}
+      OnlyShowIn=XFCE;
+    '';
+    xfce.excludePackages = with pkgs; [
+      mousepad
+      parole
+      pavucontrol
+      ristretto
+      xfce4-appfinder
+      xfce4-screenshooter
+      xfce4-taskmanager
+      xdg-desktop-portal-xapp
+    ];
+  };
+
+  services = {
+    gnome.gnome-keyring.enable = false;
+    gvfs.enable = lib.mkForce false;
+    tumbler.enable = lib.mkForce false;
+    xserver = {
+      enable = true;
+      desktopManager.xfce = {
+        enable = true;
+        enableScreensaver = false;
+      };
+      displayManager.lightdm.enable = true;
+    };
+    displayManager.autoLogin = {
+      enable = true;
+      user = config.mainUser;
+    };
+  };
+}

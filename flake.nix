@@ -50,7 +50,8 @@
     };
 
     # preservation has no inputs of its own (pure NixOS module).
-    preservation.url = "github:nix-community/preservation";
+    # Pending upstream: stage-2 preservation without a systemd initrd.
+    preservation.url = "github:aldur/preservation/main";
 
     # SSH signing keys registered on GitHub, rendered into git's
     # allowed-signers file; refresh with `nix flake update gh-signing-keys`.
@@ -260,6 +261,7 @@
       homeModules.default = ./modules/home/home.nix;
 
       lib = {
+        mkGuiAppliance = import ./utils/gui-appliance.nix;
         mkHome = import ./utils/mk-home.nix { inherit inputs; };
 
         # Render an authorized_keys file without changing key order, options,

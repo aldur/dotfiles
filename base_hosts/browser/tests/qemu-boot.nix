@@ -4,15 +4,26 @@
 pkgs.testers.runNixOSTest {
   name = "browser-qemu-boot";
   node.specialArgs = specialArgs;
+  node.pkgsReadOnly = false;
   nodes.machine = { lib, ... }: {
-    imports = [ ../desktop.nix ];
+    imports = [
+      ../desktop.nix
+      "${specialArgs.inputs.self}/base_hosts/appliance/tests/compressed-store.nix"
+    ];
     # Keep the production root lock; the driver has a separate root console.
     users.users.root.hashedPasswordFile = lib.mkForce null;
     virtualisation = {
       memorySize = 4096;
       cores = 4;
     };
-    environment.systemPackages = [ pkgs.xdotool ];
+    environment.systemPackages = [
+      pkgs.xdotool
+      pkgs.dconf
+    ];
+    environment.etc."appliance-isolation.sh".source =
+      "${specialArgs.inputs.self}/base_hosts/appliance/tests/isolation.sh";
+    environment.etc."appliance-state.sh".source =
+      "${specialArgs.inputs.self}/base_hosts/appliance/tests/state.sh";
     programs.firefox.policies.Homepage = {
       URL = lib.mkForce "http://localhost/";
       StartPage = "homepage";
@@ -31,22 +42,10 @@ pkgs.testers.runNixOSTest {
     };
   };
   testScript = { nodes, ... }: ''
-    import shlex
-
     user = "${nodes.machine.mainUser}"
     firefox = "${nodes.machine.programs.firefox.finalPackage}/bin/firefox"
 
-    def session():
-        machine.wait_for_unit("graphical.target")
-        machine.wait_until_succeeds(f"pgrep -u {user} -f xfce4-session")
-        environ = machine.succeed(
-            f"cat /proc/$(pgrep -u {user} -f xfce4-session | head -n1)/environ | tr '\\0' '\\n'"
-        )
-        return " ".join(shlex.quote(line) for line in environ.splitlines()
-            if line.startswith(("DISPLAY=", "XAUTHORITY=", "DBUS_SESSION_BUS_ADDRESS=", "XDG_RUNTIME_DIR=")))
-
-    def as_user(command):
-        return f"runuser -u {user} -- env HOME=/home/{user} {env} sh -c {shlex.quote(command)}"
+    ${builtins.readFile "${specialArgs.inputs.self}/base_hosts/appliance/tests/session.py"}
 
     def wait_for_page(visit):
         try:
@@ -60,13 +59,25 @@ pkgs.testers.runNixOSTest {
 
     env = session()
     wait_for_page(1)
-    machine.succeed("test ! -e /run/wrappers/bin/sudo && test ! -e /run/wrappers/bin/su")
-    machine.fail("systemctl is-active sshd.service")
-    machine.succeed("systemctl is-active firewall.service systemd-sysctl.service")
-    machine.succeed(f"test $(stat -c %a /home/{user}) = 700")
-    for directory in ("/tmp", "/var/tmp", "/var/log"):
-        machine.succeed(f"test $(findmnt -n -o FSTYPE -T {directory}) = tmpfs")
-    machine.succeed("findmnt -n -o OPTIONS / | grep -w nosuid | grep -w nodev")
+    print(machine.succeed("user=" + user + " bash -e " + "/etc/appliance-isolation.sh"))
+
+    original_theme = machine.succeed(as_user(
+        "xfconf-query -c xsettings -p /Net/ThemeName"
+    )).strip()
+    machine.succeed(as_user("xfce4-appearance-settings >/tmp/appearance.log 2>&1 &"))
+    machine.wait_until_succeeds(as_user(
+        "xdotool search --onlyvisible --name '^Appearance$'"
+    ))
+    machine.succeed(as_user(
+        "xfconf-query -c xsettings -p /Net/ThemeName -s Adwaita-dark"
+    ))
+    machine.wait_until_succeeds(as_user(
+        "dconf read /org/x/apps/portal/color-scheme | grep -Fx \"'prefer-dark'\""
+    ))
+    machine.succeed(as_user(
+        "xfconf-query -c xsettings -p /Net/ThemeName -s " + shlex.quote(original_theme)
+    ))
+    machine.succeed(as_user("xdotool search --onlyvisible --name '^Appearance$' windowquit"))
 
     # Quit through Firefox so it saves its profile and session before the VM
     # shuts down. A signal is not the user-initiated quit used for backups.
@@ -76,9 +87,11 @@ pkgs.testers.runNixOSTest {
         "windowquit"
     ))
     machine.wait_until_fails(f"pgrep -u {user} -f {process}", timeout=180)
+    print(machine.succeed(f"user={user} persist=.config/mozilla bash /etc/appliance-state.sh plant"))
     machine.shutdown()
     machine.start()
     env = session()
+    print(machine.succeed(f"user={user} persist=.config/mozilla bash /etc/appliance-state.sh verify"))
     wait_for_page(2)
     machine.screenshot("browser-after-restart")
   '';
