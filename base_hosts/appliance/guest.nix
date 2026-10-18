@@ -34,7 +34,6 @@ in
 {
   imports = [
     "${inputs.self}/modules/shared/options.nix"
-    "${inputs.self}/modules/nixos/users.nix"
     inputs.self.nixosModules.hardening
     ./state.nix
   ];
@@ -47,7 +46,14 @@ in
   config = {
     networking.firewall.enable = lib.mkForce true;
     environment.defaultPackages = [ ];
+    environment.etc."appliance-release".source = (pkgs.formats.json { }).generate "appliance-release" {
+      date = inputs.appliance.lastModifiedDate or "unknown";
+      inputs = lib.mapAttrs (_: input:
+        builtins.removeAttrs (input.sourceInfo or input) [ "outPath" ]
+      ) (builtins.removeAttrs inputs [ "self" ]);
+    };
     boot.kexec.enable = false;
+    services.timesyncd.enable = false;
     system.nssModules = lib.mkForce [ ];
     system.stateVersion = "26.05";
 
@@ -57,10 +63,13 @@ in
       nano.enable = false;
     };
     users = {
+      mutableUsers = false;
       users.${user} = {
+        isNormalUser = true;
         uid = 1000;
-        shell = lib.mkForce pkgs.bashInteractive;
-        extraGroups = lib.mkForce [
+        homeMode = "700";
+        shell = pkgs.bashInteractive;
+        extraGroups = [
           "video"
           "render"
         ];
@@ -128,6 +137,7 @@ in
       inherit fileSystems;
     };
 
+    nixpkgs.overlays = [ (import "${inputs.self}/overlays/argc.nix" { self = inputs.self; }) ];
     nixpkgs.flake = {
       setFlakeRegistry = false;
       setNixPath = false;

@@ -28,8 +28,8 @@ in
     echo "PROBE signal encrypted and sandboxed"
     as_user systemctl --user stop signal.service
     sed -n 's/.*"encryptedKey": *"\([^"]*\)".*/\1/p' \
-      /home/$user/.config/Signal/config.json > /home/$user/.config/Signal/.appliance-encrypted-key
-    test -s /home/$user/.config/Signal/.appliance-encrypted-key
+      /home/$user/.config/Signal/config.json > /state/appliance-encrypted-key
+    test -s /state/appliance-encrypted-key
     user="$user" persist='.config/Signal .local/share/keyrings' bash "$probe/appliance-state.sh" plant
   '';
   extraChecks = [
@@ -40,7 +40,7 @@ in
     user="$user" persist='.config/Signal .local/share/keyrings' bash "$probe/appliance-state.sh" verify
   '' + applicationProbe + ''
     encrypted_key=$(sed -n 's/.*"encryptedKey": *"\([^"]*\)".*/\1/p' /home/$user/.config/Signal/config.json)
-    test "$encrypted_key" = "$(cat /home/$user/.config/Signal/.appliance-encrypted-key)"
+    test "$encrypted_key" = "$(cat /state/appliance-encrypted-key)"
     echo 'PROBE signal persisted encrypted key'
     as_user systemctl --user stop signal.service
   '';

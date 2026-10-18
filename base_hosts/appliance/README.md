@@ -70,10 +70,18 @@ closure. The disk contains `/state`. The closure contains the kernel, initrd
 and store image. For Baguette, save the stopped VM disk.
 Restore on the same guest architecture. Never start two copies of one disk.
 
-Update the inputs and build a new image to update the VM. Keep `/state` when
-you change the image. For QEMU, stop the VM and use the new launcher with the
-same `--dir`. For Baguette, create a VM from the new image and copy `/state`
-from the stopped old VM. Keep the old VM until the copy is complete.
+VMs are never upgraded in place. Dependabot proposes input updates on the 1st
+and 15th of each month. CI builds and tests the changes. After the updates are
+merged, build a new image and create a new VM. Do this twice a month and after
+urgent security fixes. A VM you keep runs old software. A restart does not
+update it.
+
+Use a new VM name on Baguette or a new `--dir` on QEMU. Start with empty state
+and set up the app again. Data is not migrated from the old VM. A restored
+backup also runs the software from that backup.
+
+Read `/etc/appliance-release` for the resolved build inputs and their source
+date. CI attests the image and the `inputs.json` file together.
 
 ## Tests
 

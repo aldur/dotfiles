@@ -8,7 +8,7 @@
 let
   user = config.mainUser;
   uid = toString config.users.users.${user}.uid;
-  wayland = config.services.cage.enable;
+  kiosk = config.services.cage.enable;
   home = config.users.users.${user}.home;
   signal = import ./package.nix { inherit pkgs; };
   keyring = pkgs.gnome-keyring.override { useWrappedDaemon = false; };
@@ -30,8 +30,7 @@ let
     MemoryDenyWriteExecute = true;
     RestrictNamespaces = true;
   };
-  argcPkgs = pkgs.extend (import "${inputs.self}/overlays/argc.nix" { self = inputs.self; });
-  launcher = argcPkgs.writeArgcApplication {
+  launcher = pkgs.writeArgcApplication {
     name = "signal-desktop";
     passthru = { inherit signal; };
     meta.description = "Signal";
@@ -47,7 +46,7 @@ let
     text = builtins.readFile ./launcher.sh + ''
       mkdir -p "$HOME/.config/Signal" "$HOME/.cache"
       systemctl --user import-environment DISPLAY XAUTHORITY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
-      systemctl --user start ${lib.optionalString wayland "--wait"} signal.service
+      systemctl --user start ${lib.optionalString kiosk "--wait"} signal.service
     '';
   };
   # Restrict all traffic from the session account, including a compromised
@@ -233,12 +232,11 @@ in
     environment = {
       BROWSER = "${pkgs.coreutils}/bin/false";
       DBUS_SESSION_BUS_ADDRESS = "unix:path=%t/bus";
-    }
-    // lib.optionalAttrs wayland { GDK_BACKEND = "wayland"; };
+      GDK_BACKEND = "wayland";
+    };
     serviceConfig = serviceHardening // {
-      ExecStart = "${signal}/bin/signal-desktop --password-store=gnome-libsecret --ozone-platform=${
-        if wayland then "wayland" else "x11"
-      } --disable-gpu";
+      ExecStart = "${signal}/bin/signal-desktop --password-store=gnome-libsecret --ozone-platform=wayland --disable-gpu";
+      KillMode = "mixed";
       UMask = "0077";
       LimitCORE = "0";
       UnsetEnvironment = [
@@ -256,17 +254,10 @@ in
         "/run/current-system"
         "-/run/opengl-driver"
         "%t/signal-bus:%t/bus"
+        "%t/wayland-0"
+        "-%t/wayland-1"
         "${pkgs.writeText "signal-resolv.conf" "nameserver 127.0.0.53\n"}:/etc/resolv.conf"
-      ]
-      ++ (
-        if wayland then
-          [ "%t/wayland-0" ]
-        else
-          [
-            "/tmp/.X11-unix"
-            "-${home}/.Xauthority"
-          ]
-      );
+      ];
       ProtectSystem = "strict";
       ProtectHome = "tmpfs";
       BindPaths = [

@@ -7,18 +7,21 @@
 }:
 {
   imports = [
-    inputs.self.nixosModules.baguette-guest
+    inputs.nixos-crostini.nixosModules.baguette
     ./guest.nix
   ];
   hardening.foreignKernel = true;
-  baguette.ephemeralRoot = {
-    enable = true;
-    tmpfsSize = "1G";
+  users.users.${config.mainUser}.crostini.enable = true;
+  baguette = {
+    ephemeralRoot = {
+      enable = true;
+      tmpfsSize = "1G";
+      mountOptions = [ "nosuid" "nodev" ];
+    };
+    portListener.enable = false;
+    notifications.enable = false;
   };
-  # systemd-remount-fs applies these to the overlay declared by nixos-crostini.
-  fileSystems."/".options = [ "nosuid" "nodev" ];
-  systemd.services.cros-port-listener.enable = false;
-  systemd.user.services.cros-notificationd.enable = false;
+  crostini.extraTools.enable = false;
   hardware.graphics.enable = false;
   virtualisation = {
     buildMemorySize = 4096;

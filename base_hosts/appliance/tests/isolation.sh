@@ -8,7 +8,7 @@ for unit in serial-getty@.service getty@.service container-getty@.service; do
   getty=$(systemctl cat "$unit")
   if grep -- --autologin <<< "$getty"; then exit 1; fi
 done
-for unit in logrotate.timer systemd-oomd.service nscd.service; do
+for unit in logrotate.timer systemd-oomd.service nscd.service systemd-timesyncd.service; do
   if systemctl is-active --quiet "$unit"; then exit 1; fi
 done
 if systemctl is-active --quiet sshd.service; then exit 1; fi

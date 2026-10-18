@@ -6,9 +6,10 @@
 let
   inherit (inputs) aldur-dotfiles nixos-crostini;
   inherit (aldur-dotfiles.inputs) nixpkgs flake-utils;
-  specialArgs = aldur-dotfiles.lib.mkSpecialArgs inputs;
+  guestInputs = inputs // { appliance = inputs.self; };
+  specialArgs = aldur-dotfiles.lib.mkSpecialArgs guestInputs;
   qemu = aldur-dotfiles.lib.mkQemuGuest {
-    inherit inputs;
+    inputs = guestInputs;
     name = "${name}-vm";
     hostName = "${name}-vm";
     qemuModule = (directory + /desktop.nix);

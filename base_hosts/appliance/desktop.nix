@@ -45,6 +45,7 @@
   };
 
   services = {
+    gnome.gnome-keyring.enable = false;
     gvfs.enable = lib.mkForce false;
     tumbler.enable = lib.mkForce false;
     xserver = {

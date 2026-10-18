@@ -6,6 +6,7 @@ pkgs.testers.runNixOSTest {
   name = "signal-qemu-boot";
   enableOCR = true;
   node.specialArgs = specialArgs;
+  node.pkgsReadOnly = false;
   nodes.machine = { lib, config, ... }: {
     imports = [
       ../desktop.nix
