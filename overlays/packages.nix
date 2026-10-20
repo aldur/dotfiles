@@ -31,6 +31,7 @@ in
   usrbin = prev.callPackage ../packages/usrbin { };
   fps = prev.callPackage ../packages/fps { };
   lstrip = prev.callPackage ../packages/lstrip { };
+  nospace = prev.callPackage ../packages/nospace { };
   trim = prev.callPackage ../packages/trim { };
   claude-skills = prev.callPackage ../packages/claude-skills { };
   telegram = prev.callPackage ../packages/telegram { };

@@ -38,6 +38,7 @@ let
         lazyvim-bin = if lazyvim-bin != null then lazyvim-bin else "lazyvim";
       })
       lstrip
+      nospace
       shrink-pdf
       split-pdf
       taskmd
