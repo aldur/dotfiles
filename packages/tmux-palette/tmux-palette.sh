@@ -34,7 +34,7 @@ entries=(
     $'Rename window\tcommand-prompt -p "window:" "rename-window %%"'
     $'Rename session\tcommand-prompt -p "session:" "rename-session %%"'
     $'Rename pane (sticky, empty clears)\tcommand-prompt -p "pane:" "set-option -p @pane_name \'%%\'"'
-    $'Toggle pane border labels\tif-shell -F \'#{==:#{E:pane-border-status},off}\' \'set-window-option pane-border-status top ; display-message "Pane border labels: on"\' \'set-window-option pane-border-status off ; display-message "Pane border labels: off"\''
+    $'Toggle pane border labels\tif-shell -F \'#{==:#{E:pane-border-status},off}\' \'set-window-option pane-border-status bottom ; display-message "Pane border labels: on"\' \'set-window-option pane-border-status off ; display-message "Pane border labels: off"\''
     $'Toggle status bar\tif-shell -F \'#{==:#{status},on}\' \'set -g status off ; display-message "Status bar: off"\' \'set -g status on ; display-message "Status bar: on"\''
     $'Break pane to new window\tbreak-pane'
     $'Layout: tiled (grid)\tselect-layout tiled'

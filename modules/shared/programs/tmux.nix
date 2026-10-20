@@ -104,6 +104,7 @@
     %hidden FG="#a9b1d6"
     %hidden BBLACK="#2A2F41"
     %hidden BLUE="#7aa2f7"
+    %hidden LABEL_ACTIVE="#737aa2"
     %hidden GREEN="#73daca"
     %hidden BGREEN="#41a6b5"
     %hidden YELLOW="#e0af68"
@@ -132,7 +133,7 @@
     # Push each pane's label to its outer edge: panes that touch the right edge
     # (and not also the left, i.e. not full-width) align right, the rest left.
     %hidden PANE_ALIGN="#{?#{&&:#{pane_at_right},#{?pane_at_left,0,1}},right,left}"
-    set -g pane-border-format "#[align=#{E:PANE_ALIGN}]#{?pane_active,#[fg=#{BLUE}]  #{E:PANE_LABEL} ,#[fg=#{BBLACK}] #{E:PANE_LABEL} }"
+    set -g pane-border-format "#{?pane_active,#[align=#{E:PANE_ALIGN}]#[fg=#{LABEL_ACTIVE}]  #{E:PANE_LABEL} ,}"
 
     # Popup
     set -g popup-border-style "fg=#{BLUE}"
