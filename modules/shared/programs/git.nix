@@ -6,6 +6,7 @@
     autoSetupRemote = true;
     followTags = true;
   };
+  url."git@github.com:".pushInsteadOf = "https://github.com/";
   pull = {
     default = "current";
     rebase = true;
