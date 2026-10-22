@@ -29,6 +29,8 @@ in
   # $ darwin-rebuild changelog
   system.stateVersion = 6; # Did you read the comment?
 
+  environment.variables.LANG = "en_US.UTF-8";
+
   users.users.${user} = {
     home = "/Users/${user}";
     uid = 501;
