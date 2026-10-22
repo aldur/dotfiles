@@ -11,7 +11,8 @@ guest=NAME
 Build on ARM Linux:
 
 ```bash
-nix build "path:./base_hosts/$guest#baguette-zimage" --override-input aldur-dotfiles path:.
+nix build "path:./base_hosts/$guest#baguette-zimage" \
+  --override-input aldur-dotfiles path:.
 ```
 
 Alternatively, select the image in **Build Baguette image**. Verify the artifact
@@ -21,18 +22,36 @@ before use:
 gh run download --repo aldur/dotfiles --name "$guest-baguette-arm64"
 gh attestation verify baguette_rootfs.img.zst --repo aldur/dotfiles \
   --signer-workflow aldur/dotfiles/.github/workflows/baguette-image.yml
+gh attestation verify baguette_state.img.zst --repo aldur/dotfiles \
+  --signer-workflow aldur/dotfiles/.github/workflows/baguette-image.yml
 ```
 
-Put the image in ChromeOS Downloads. Open crosh (`Ctrl+Alt+T`). Replace `NAME`
-with the VM name:
+Put both compressed files in ChromeOS `Downloads/NAME`. Use a separate
+folder for each VM. The base uses seekable zstd with 128 KiB frames.
+ChromeOS reads it directly. Open crosh (`Ctrl+Alt+T`). Replace `NAME` with
+the VM name:
 
 ```text
-vmc create --vm-type BAGUETTE --size 12G --source /home/chronos/user/MyFiles/Downloads/baguette_rootfs.img.zst NAME
-vmc start --vm-type BAGUETTE NAME
+vmc create --vm-type BAGUETTE --size 12G \
+  --source /home/chronos/user/MyFiles/Downloads/NAME/baguette_state.img.zst \
+  NAME
+vmc start --vm-type BAGUETTE \
+  --rootfs /home/chronos/user/MyFiles/Downloads/NAME/baguette_rootfs.img.zst \
+  NAME
 vsh NAME penguin
 ```
 
-Start the app from its ChromeOS launcher entry or the guest shell.
+Start the VM with this command before using its app launcher entry. Repeat
+the command after each VM stop or ChromeOS login. The app launcher does not
+retain `--rootfs`. Do not use it to start a stopped VM.
+Guest root can make the state disk bootable. A start without `--rootfs`
+can then run code from that disk.
+
+ChromeOS attaches the base image read-only. The separate VM disk holds
+`/state`. Keep the base image outside all folders shared with Linux.
+Use a new VM for this layout. Select the state disk size at creation.
+Do not use ChromeOS disk resizing: it assumes the state disk is `/dev/vdb`,
+but this layout puts it at `/dev/vdc`.
 
 ChromeOS controls the kernel, display, input and clipboard. The VM boundary
 requires a trusted, updated host. Do not share ChromeOS folders with the VM.
@@ -42,7 +61,8 @@ requires a trusted, updated host. Do not share ChromeOS folders with the VM.
 On Linux or Apple Silicon macOS:
 
 ```bash
-nix run "path:./base_hosts/$guest#$guest-vm" --override-input aldur-dotfiles path:. -- --gui
+nix run "path:./base_hosts/$guest#$guest-vm" \
+  --override-input aldur-dotfiles path:. -- --gui
 ```
 
 The launcher requires KVM on Linux or HVF on macOS. An ARM Linux builder or
@@ -67,14 +87,14 @@ For Baguette, stop the VM through ChromeOS.
 
 Encrypt your backups. For QEMU, save the stopped disk and its launcher Nix
 closure. The disk contains `/state`. The closure contains the kernel, initrd
-and store image. For Baguette, save the stopped VM disk.
+and store image. For Baguette, save the stopped VM disk and its base image.
 Restore on the same guest architecture. Never start two copies of one disk.
 
-VMs are never upgraded in place. Dependabot proposes input updates on the 1st
-and 15th of each month. CI builds and tests the changes. After the updates are
-merged, build a new image and create a new VM. Do this twice a month and after
-urgent security fixes. A VM you keep runs old software. A restart does not
-update it.
+These appliances are not upgraded in place. Dependabot proposes input updates
+on the 1st and 15th of each month. CI builds and tests the changes. After
+the updates are merged, build a new image and create a new VM. Do this twice
+a month and after urgent security fixes. A VM you keep runs old software.
+A restart does not update it.
 
 Use a new VM name on Baguette or a new `--dir` on QEMU. Start with empty state
 and set up the app again. Data is not migrated from the old VM. A restored

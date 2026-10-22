@@ -1,8 +1,6 @@
 {
   config,
   inputs,
-  lib,
-  pkgs,
   ...
 }:
 {
@@ -13,6 +11,10 @@
   hardening.foreignKernel = true;
   users.users.${config.mainUser}.crostini.enable = true;
   baguette = {
+    imageCompression = {
+      level = 19;
+      threads = 4;
+    };
     ephemeralRoot = {
       enable = true;
       tmpfsSize = "1G";
@@ -25,15 +27,7 @@
   hardware.graphics.enable = false;
   virtualisation = {
     buildMemorySize = 4096;
-    # ChromeOS expands this filesystem to the requested VM size.
-    # Set virtualisation.diskImageSize = lib.mkForce 8192; to use an 8 GiB seed image.
+    # The base has a fixed size. ChromeOS expands the separate state disk.
     diskImageSize = 4096;
   };
-  system.build.btrfsImageCompressed = lib.mkForce (
-    pkgs.runCommand "nixos-baguette-btrfs-compressed" { nativeBuildInputs = [ pkgs.zstd ]; } ''
-      mkdir -p $out
-      zstd -19 -T4 ${config.system.build.btrfsImage}/baguette_rootfs.img \
-        -o $out/baguette_rootfs.img.zst
-    ''
-  );
 }
