@@ -7,11 +7,9 @@ description: >-
 inputs:
   trust-runner-user:
     description: >-
-      The action sends this value to the installer. Set this value to "true"
-      only for jobs that use restricted client options, for example
-      `nix copy --no-check-sigs`.
+      Magic Nix Cache needs a trusted runner user to configure the store.
     required: false
-    default: "false"
+    default: "true"
 
 runs:
   using: composite
@@ -45,3 +43,9 @@ runs:
         extra-conf: |
           log-lines = 1000
           eval-cores = 1
+    # Share store paths between jobs and commits.
+    - uses: DeterminateSystems/magic-nix-cache-action@84c0677f58dcedf3b91f8223ce36a9ea5b3c84b7 # v15
+      with:
+        use-gha-cache: true
+        use-flakehub: false
+        diagnostic-endpoint: ""

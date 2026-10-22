@@ -5,8 +5,15 @@ description: >-
   repository does not use them. The action form lets other repositories
   reuse the script.
 
+inputs:
+  minimum-free-gib:
+    description: Skip cleanup when the store has this much free space.
+    default: "64"
+
 runs:
   using: composite
   steps:
     - shell: bash
       run: "$GITHUB_ACTION_PATH/reclaim-disk.sh"
+      env:
+        MINIMUM_FREE_GIB: ${{ inputs.minimum-free-gib }}

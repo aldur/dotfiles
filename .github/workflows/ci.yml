@@ -87,35 +87,15 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - *checkout
-      # Not *setup-nix: the cache seed step below is only possible with a
-      # trusted user.
-      - uses: ./.github/actions/setup-nix
-        with:
-          trust-runner-user: true
+      - *setup-nix
       - name: Allow user namespaces for sandbox checks
         # Ubuntu restricts user namespaces for the Nix-store bwrap.
         # Allow nested sandbox checks on these temporary test runners.
-        run: &allow-user-namespaces sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
       # The checks put more than 17 GiB into the store. A cold build uses
       # more space for its work files. The image builds reclaim disk space
       # for the same reason.
       - uses: ./.github/actions/reclaim-disk
-      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        id: nix-cache
-        with:
-          path: /tmp/nix-cache
-          key: &nix-cache-key nix-store-${{ matrix.system }}-${{ matrix.shard }}-${{ hashFiles('flake.lock') }}-${{ github.sha }}
-          restore-keys: |
-            nix-store-${{ matrix.system }}-${{ matrix.shard }}-${{ hashFiles('flake.lock') }}-
-      # `--quiet` on the copies: without it, nix writes one log line for
-      # each copied path, and that is thousands of lines for each run.
-      - name: Seed the store from the cache
-        run: |
-          if [ -f /tmp/nix-cache/roots ]; then
-            xargs -r nix copy --quiet --no-check-sigs --from file:///tmp/nix-cache \
-              < /tmp/nix-cache/roots \
-              || echo "::warning::nix cache seed failed; building cold"
-          fi
       - *fetch-signing-keys
       # A runner with no free memory stops with no Nix error in the log,
       # and the steps after it do not run. The sampler writes the free
@@ -129,28 +109,6 @@ jobs:
         env:
           NIX_SYSTEM: ${{ matrix.system }}
           CHECK_SHARD: ${{ matrix.shard }}
-      # `always()`: keep the completed paths, also after a failure.
-      # Do not do this step if the cache had a hit.
-      - name: Export locally-built paths to the cache
-        if: always() && steps.nix-cache.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p /tmp/nix-cache
-          nix path-info --all --json \
-            | jq -r 'to_entries[]
-                | select((.value.signatures // []) | any(startswith("cache.nixos.org")) | not)
-                | select(.value.ca == null or .value.ca == "")
-                | select(.key | endswith(".drv") | not)
-                | .key' \
-            | tee /tmp/nix-cache/roots \
-            | xargs -r nix copy --quiet --to 'file:///tmp/nix-cache?compression=zstd'
-          du -sh /tmp/nix-cache || true
-      # Upload what the step above exported also in case of failure.
-      - name: Save the cache
-        if: always() && steps.nix-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: /tmp/nix-cache
-          key: *nix-cache-key
 
   # Exercise the actual standalone activation on Ubuntu, with a fresh account
   # and a real systemd user manager. NixOS VM checks do not cover this path.
@@ -261,29 +219,14 @@ jobs:
           - runner: ubuntu-26.04
             target: ./base_hosts/signal#checks.x86_64-linux.qemu-boot
 
-          # Build the Apple `container` OCI image as a test. The image
-          # serves `container run` and `container machine`. The test builds
-          # the image and checks its closure and size on each architecture.
-          - runner: ubuntu-26.04
-            target: ./base_hosts/apple-container#checks.x86_64-linux.container-size
-          - runner: ubuntu-26.04-arm
-            target: ./base_hosts/apple-container#checks.aarch64-linux.container-size
-          - runner: ubuntu-26.04
-            target: ./base_hosts/pi-container#checks.x86_64-linux.image
-          - runner: ubuntu-26.04
-            target: ./base_hosts/pi-container#checks.x86_64-linux.hardening
-          - runner: ubuntu-26.04-arm
-            target: ./base_hosts/pi-container#checks.aarch64-linux.image
     runs-on: ${{ matrix.runner }}
     steps:
       - *checkout
       - *setup-nix
 
-      - name: Allow user namespaces for Pi image checks
-        if: startsWith(matrix.target, './base_hosts/pi-container#')
-        run: *allow-user-namespaces
-
       - uses: ./.github/actions/reclaim-disk
+        with:
+          minimum-free-gib: ${{ endsWith(matrix.target, '.baguette-verifier') && 4 || 64 }}
 
       - *fetch-signing-keys
 
@@ -351,3 +294,13 @@ jobs:
             ".#checks.$NIX_SYSTEM.llm-runtime"
         env:
           NIX_SYSTEM: ${{ matrix.system }}
+
+  containers:
+    uses: ./.github/workflows/publish-apple-container.yml
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    with:
+      publish: ${{ github.event_name == 'push' }}
