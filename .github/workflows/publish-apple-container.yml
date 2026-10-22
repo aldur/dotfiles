@@ -2,13 +2,19 @@ name: Publish Apple container
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-      - staging
+    inputs:
+      publish:
+        description: Publish the tested images to GHCR
+        type: boolean
+        default: true
+  workflow_call:
+    inputs:
+      publish:
+        type: boolean
+        default: false
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: containers-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -27,22 +33,20 @@ env:
 
 jobs:
   push:
-    name: ${{ matrix.app.name }} (${{ matrix.arch.suffix }})
+    name: ${{ matrix.app }} (${{ matrix.arch.suffix }})
     permissions:
       contents: read
       packages: write # necessary to push the image to ghcr.io
     strategy:
+      fail-fast: false
       matrix:
         arch: &architectures
-          - { runner: ubuntu-26.04-arm, suffix: arm64 }
-          - { runner: ubuntu-26.04, suffix: amd64 }
-        # `image` is the `virtualisation.appleContainer.imageName` of the
-        # configuration that `name` pushes. The attestation names its subject
-        # with it.
-        app:
-          - { name: push, sbom: sbom, image: aldur-nixos, reclaim-disk: true }
-          - { name: push-minimal, sbom: sbom-minimal, image: nixos, reclaim-disk: false }
+          - { runner: ubuntu-26.04-arm, suffix: arm64, system: aarch64-linux }
+          - { runner: ubuntu-26.04, suffix: amd64, system: x86_64-linux }
+        app: ${{ fromJSON(inputs.publish && '["push","push-minimal"]' || '["push"]') }}
     runs-on: ${{ matrix.arch.runner }}
+    env:
+      IMAGE_NAME: ${{ matrix.app == 'push' && 'aldur-nixos' || 'nixos' }}
     steps:
       - &checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -51,10 +55,12 @@ jobs:
       - &setup-nix
         uses: ./.github/actions/setup-nix
 
-      - if: matrix.app.reclaim-disk
-        uses: ./.github/actions/reclaim-disk
+      - uses: ./.github/actions/reclaim-disk
+        with:
+          minimum-free-gib: ${{ matrix.app == 'push' && 64 || 4 }}
 
       - &ghcr-login
+        if: inputs.publish
         run: echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -64,30 +70,42 @@ jobs:
           token: ${{ github.token }}
           path: ${{ env.SIGNING_KEYS }}
 
+      - name: Build and check the image
+        if: matrix.app == 'push'
+        run: |
+          nix build --no-link --override-input aldur-dotfiles . \
+            --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
+            "./base_hosts/apple-container#checks.$NIX_SYSTEM.container-size"
+        env:
+          NIX_SYSTEM: ${{ matrix.arch.system }}
+
       # The app writes the digest of the pushed manifest to the file. The
       # attest job below uses it as the subject.
-      - run: |
+      - if: inputs.publish
+        run: |
           mkdir -p /tmp/subject
           nix run --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             "./base_hosts/apple-container#$NIX_APP" \
             -- "ghcr.io/$GITHUB_REPOSITORY_OWNER" "$TAG_PREFIX-$ARCH_SUFFIX" /tmp/subject/digest
         env:
-          NIX_APP: ${{ matrix.app.name }}
+          NIX_APP: ${{ matrix.app }}
           ARCH_SUFFIX: ${{ matrix.arch.suffix }}
 
       # The SBOM of the system in the image. The system is already built,
       # so this only walks its closure. See utils/sbom.nix.
-      - run: |
+      - if: inputs.publish
+        run: |
           nix run --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             "./base_hosts/apple-container#$SBOM_APP" -- /tmp/subject
         env:
-          SBOM_APP: ${{ matrix.app.sbom }}
+          SBOM_APP: ${{ matrix.app == 'push' && 'sbom' || 'sbom-minimal' }}
 
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      - if: inputs.publish
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: subject-${{ matrix.app.image }}-${{ matrix.arch.suffix }}
+          name: subject-${{ env.IMAGE_NAME }}-${{ matrix.arch.suffix }}
           path: |
             /tmp/subject/digest
             /tmp/subject/sbom.spdx.json
@@ -95,6 +113,7 @@ jobs:
           retention-days: 1
 
   manifest:
+    if: inputs.publish
     needs: push
     name: ${{ matrix.app.name }}
     permissions:
@@ -135,6 +154,7 @@ jobs:
       contents: read
       packages: write
     strategy:
+      fail-fast: false
       matrix:
         arch: *architectures
     runs-on: ${{ matrix.arch.runner }}
@@ -144,7 +164,23 @@ jobs:
       - *ghcr-login
       - *fetch-signing-keys
       - uses: ./.github/actions/reclaim-disk
-      - run: |
+        with:
+          minimum-free-gib: 12
+      - name: Allow user namespaces for Pi image checks
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - name: Build and check the image
+        run: |
+          checks=("./base_hosts/pi-container#checks.$NIX_SYSTEM.image")
+          if [[ $NIX_SYSTEM == x86_64-linux ]]; then
+            checks+=("./base_hosts/pi-container#checks.$NIX_SYSTEM.hardening")
+          fi
+          nix build --no-link --override-input aldur-dotfiles . \
+            --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
+            "${checks[@]}" --keep-going
+        env:
+          NIX_SYSTEM: ${{ matrix.arch.system }}
+      - if: inputs.publish
+        run: |
           nix build --out-link pi-image --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             ./base_hosts/pi-container#container-image
@@ -154,6 +190,7 @@ jobs:
           ARCH_SUFFIX: ${{ matrix.arch.suffix }}
 
   manifest-pi:
+    if: inputs.publish
     needs: push-pi
     name: Pi manifest
     permissions:
@@ -175,6 +212,7 @@ jobs:
   # Attest the provenance of each NixOS index in a job without Nix.
   # See .github/actions/attest.
   attest:
+    if: inputs.publish
     needs: [push, manifest]
     name: attest ${{ matrix.image }} (${{ matrix.subject }})
     permissions:
