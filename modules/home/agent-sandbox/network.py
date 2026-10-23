@@ -32,6 +32,8 @@ def resolver(text):
             address = addresses[version]
             lines.append(f"nameserver {address}")
             args += ["--dns-forward", address, "--dns-host", fields[1]]
+        else:
+            lines.append(line)
     return "\n".join(lines) + "\n", args
 
 

@@ -5,6 +5,7 @@ import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import os
 from pathlib import Path
+import runpy
 import signal
 import socket
 from socketserver import UnixStreamServer
@@ -22,6 +23,32 @@ def wait_for(predicate):
             return
         time.sleep(0.05)
     raise AssertionError("condition did not become true")
+
+
+def check_resolver(path):
+    resolver = runpy.run_path(path)["resolver"]
+    text, args = resolver(
+        "search fixture.test\n"
+        "nameserver 127.0.0.53\n"
+        "nameserver ::1\n"
+        "nameserver 192.0.2.2\n"
+        "nameserver 2001:db8::2\n"
+        "nameserver 192.0.2.3\n"
+        "options timeout:1 attempts:2\n"
+    )
+    assert text == (
+        "search fixture.test\n"
+        "nameserver 169.254.1.53\n"
+        "nameserver fd00::53\n"
+        "nameserver 192.0.2.2\n"
+        "nameserver 2001:db8::2\n"
+        "nameserver 192.0.2.3\n"
+        "options timeout:1 attempts:2\n"
+    ), text
+    assert args == [
+        "--dns-forward", "169.254.1.53", "--dns-host", "127.0.0.53",
+        "--dns-forward", "fd00::53", "--dns-host", "::1",
+    ], args
 
 
 def inside():
@@ -102,6 +129,7 @@ def descendants(pid):
 
 def main():
     wrapper = sys.argv[1]
+    check_resolver(sys.argv[2])
     def command(*args):
         subprocess.run(args, check=True)
 
@@ -128,6 +156,9 @@ def main():
                           "18080", "--bind", "192.0.2.2", "--directory", str(fixture)]),
         subprocess.Popen(["dnsmasq", "--no-daemon", "--no-resolv", "--bind-interfaces",
                           "--listen-address=127.0.0.53", "--address=/fixture.test/192.0.2.2"]),
+        subprocess.Popen(["ip", "netns", "exec", "peer", "dnsmasq", "--no-daemon",
+                          "--no-resolv", "--bind-interfaces", "--listen-address=192.0.2.2",
+                          "--address=/fixture.test/192.0.2.2"]),
     ]
     host = ThreadingHTTPServer(("127.0.0.1", 18080), BaseHTTPRequestHandler)
     Thread(target=host.serve_forever, daemon=True).start()
@@ -162,6 +193,13 @@ def main():
                 return False
         wait_for(peer_ready)
         for number, stop in enumerate((None, signal.SIGTERM, signal.SIGKILL)):
+            if number == 1:
+                # The first server has no listener. The peer is the backup.
+                Path("/etc/resolv.conf").write_text(
+                    "nameserver 127.0.0.54\nnameserver 192.0.2.2\n"
+                    "options timeout:1 attempts:2\n"
+                )
+                wait_for(peer_ready)
             work = Path(f"/home/tester/work-{number}")
             work.mkdir()
             os.chown(work, 1000, 100)
@@ -199,7 +237,7 @@ def main():
                                  "import socket; socket.create_connection(('127.0.0.1',18080),timeout=1)"],
                                 env=env, preexec_fn=user, capture_output=True, timeout=15)
         assert result.returncode == 0, result.stderr
-        print("passed: DNS, outbound access, port isolation, Unix activity socket, rootless Docker, exit status and cleanup")
+        print("passed: DNS fallback, outbound access, port isolation, Unix activity socket, rootless Docker, exit status and cleanup")
     finally:
         for process in reversed(processes):
             if process.poll() is None:

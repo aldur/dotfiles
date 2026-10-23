@@ -32,6 +32,6 @@ pkgs.testers.runNixOSTest {
   testScript = ''
     machine.start()
     machine.wait_for_unit("multi-user.target")
-    machine.succeed("${pkgs.python3}/bin/python3 ${./network.py} ${lib.getExe sandbox}", timeout=600)
+    machine.succeed("${pkgs.python3}/bin/python3 ${./network.py} ${lib.getExe sandbox} ${../network.py}", timeout=600)
   '';
 }
