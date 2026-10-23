@@ -5,8 +5,8 @@
 # The override gives fish a new derivation. Each package with fish as a
 # build input then builds from source on the macOS runner, with its test
 # suite. neovim runs its functional tests with fish. It gets the stock
-# fish, so it keeps the cached derivation. checks/darwin-overlays.nix
-# makes sure of that.
+# fish to prevent an extra rebuild. checks/darwin-overlays.nix checks
+# this with the version pin in packages/neovim/default.nix.
 (
   final: prev:
   let
