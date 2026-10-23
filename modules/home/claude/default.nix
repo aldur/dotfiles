@@ -230,6 +230,16 @@ in
                     --strict-mcp-config ${lib.optionalString (!bare) "--mcp-config ${claudeMcpConfig}"} \
                     ''${effort:+--effort "$effort"}
                 '';
+                progress = ''
+                  if .type == "assistant" then
+                    .message.content[]
+                    | if .type == "tool_use" then
+                        "\(.name): \(.input.command // .input.file_path // .input.pattern // .input.description // "")"
+                      elif .type == "text" then .text
+                      else empty end
+                  elif .type == "result" then "result: \(.subtype)"
+                  else empty end
+                '';
                 # The last result event has the totals for each model, subagents included.
                 usage = ''
                   (map(select(.type == "result")) | last | .modelUsage // {} | [.[]]) as $m

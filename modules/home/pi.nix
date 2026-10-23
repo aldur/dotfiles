@@ -85,6 +85,13 @@ in
                 } -p --mode json \
                   --model "$model" ''${effort:+--thinking "$effort"} "$prompt"
               '';
+              progress = ''
+                if .type == "tool_execution_start" then
+                  "\(.toolName): \(.args.command // .args.path // .args.file_path // .args.pattern // "")"
+                elif .type == "message_end" and .message.role == "assistant" then
+                  .message.content[] | select(.type == "text") | .text
+                else empty end
+              '';
               usage = ''
                 map(select(.type == "message_end" and .message.role == "assistant") | .message) as $msgs
                 | ($msgs | map(.usage)) as $u
