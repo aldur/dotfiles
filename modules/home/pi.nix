@@ -133,9 +133,12 @@ in
     home = {
       packages = lib.optionals cfg.enable [ pkgs.pi ];
 
-      # Share the same skill files as Codex and Claude, including Pi-only hosts.
       file = lib.mkIf cfg.enable (
-        lib.mapAttrs' (
+        {
+          ".pi/agent/extensions/subagent/index.ts".source = ./pi/extensions/subagent/index.ts;
+        }
+        # Share the same skill files as Codex and Claude, including Pi-only hosts.
+        // lib.mapAttrs' (
           name: source:
           lib.nameValuePair ".pi/agent/skills/${name}" {
             inherit source;
