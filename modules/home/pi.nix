@@ -38,6 +38,44 @@ in
       internal = true;
       description = "Synchronize the declared Pi settings and keybindings.";
     };
+    evalHarness = lib.mkOption {
+      type = lib.types.package;
+      readOnly = true;
+      internal = true;
+      description = "Eval harness that runs pi with the home files of this module.";
+      default = import ./eval-harness.nix { inherit pkgs lib; } {
+        name = "pi";
+        inherit (pkgs.pi-coding-agent) version;
+        home = {
+          ".pi/agent" = pkgs.runCommand "pi-eval-agent-config" { } ''
+            mkdir "$out"
+            ${lib.getExe pkgs.pi.configSync} ${managedConfig} "$out"
+          '';
+          ".pi/agent/AGENTS.md" = ./agents/AGENTS.md;
+        }
+        // lib.mapAttrs' (name: lib.nameValuePair ".pi/agent/skills/${name}") dotfilesSkills;
+        credentials = [ ".pi/agent/auth.json" ];
+        sessionDirs = [ ".pi/agent/sessions" ];
+        # No self-updates: the run must use the pinned pi.
+        command = ''
+          exec ${lib.getExe (pkgs.pi.override { selfUpdates = false; })} -p --mode json \
+            --model "$model" ''${effort:+--thinking "$effort"} "$prompt"
+        '';
+        usage = ''
+          map(select(.type == "message_end" and .message.role == "assistant") | .message) as $msgs
+          | ($msgs | map(.usage)) as $u
+          | {
+              input_tokens: ($u | map(.input) | add),
+              cache_read_tokens: ($u | map(.cacheRead) | add),
+              cache_write_tokens: ($u | map(.cacheWrite) | add),
+              output_tokens: ($u | map(.output) | add),
+              reasoning_tokens: null,
+              cost_usd: ($u | map(.cost.total) | add),
+              models: ($msgs | map(.provider + "/" + (.responseModel // .model)) | unique | if . == [] then null else . end)
+            }
+        '';
+      };
+    };
   };
 
   config = {

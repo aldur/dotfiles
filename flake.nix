@@ -157,10 +157,29 @@
           // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux (
             let
               home = self.lib.mkHome { inherit system; };
+              # A shared home module with all agents enabled, useful for evaluations.
+              evalHome =
+                (self.lib.mkHome {
+                  inherit system;
+                  modules = [
+                    {
+                      programs = {
+                        aldur.claude-code.enable = true;
+                        aldur.codex.enable = true;
+                        pi.enable = true;
+                      };
+                    }
+                  ];
+                }).config.programs;
             in
             {
               homeConfiguration = home;
               home = home.activationPackage;
+              evalHarnesses = {
+                claude = evalHome.aldur.claude-code.evalHarness;
+                codex = evalHome.aldur.codex.evalHarness;
+                pi = evalHome.pi.evalHarness;
+              };
             }
           );
 

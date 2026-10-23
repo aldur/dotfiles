@@ -20,9 +20,13 @@ let
   };
 
   inherit (cfg) nixManagedHookMarkers;
+  configDirRelative = lib.removePrefix "${config.home.homeDirectory}/" cfg.configDir;
   skillsDir = "${cfg.configDir}/skills";
   # Activation runs with HOME set, also when the checks use a scratch home.
-  skillsTarget = ''"$HOME"/${lib.escapeShellArg (lib.removePrefix "${config.home.homeDirectory}/" skillsDir)}'';
+  skillsTarget = ''"$HOME"/${lib.escapeShellArg "${configDirRelative}/skills"}'';
+  skillSources = lib.genAttrs config.programs.aldur.claude-code.skills (
+    name: dotfilesSkills.${name} or "${pkgs.claude-skills}/skills/${name}"
+  );
 
   # jq filter: deep-merge objects, but for `.hooks.<event>` arrays strip any
   # existing entries whose hook command contains a Nix-managed marker, then
@@ -170,35 +174,80 @@ let
   };
 in
 {
-  options.programs.claude-code.writableSettings = lib.mkOption {
-    inherit (jsonFormat) type;
-    default = { };
-    description = ''
-      Settings merged into ~/.claude/settings.json as a writable file
-      (not a read-only symlink). Any module can contribute to this option
-      and the module system deep-merges all contributions.
+  options = {
+    programs = {
+      claude-code.writableSettings = lib.mkOption {
+        inherit (jsonFormat) type;
+        default = { };
+        description = ''
+          Settings merged into ~/.claude/settings.json as a writable file
+          (not a read-only symlink). Any module can contribute to this option
+          and the module system deep-merges all contributions.
 
-      Do NOT use the upstream `programs.claude-code.settings` option — it
-      creates a read-only symlink that claude-code cannot write to at runtime.
-    '';
-  };
+          Do NOT use the upstream `programs.claude-code.settings` option — it
+          creates a read-only symlink that claude-code cannot write to at runtime.
+        '';
+      };
 
-  options.programs.claude-code.nixManagedHookMarkers = lib.mkOption {
-    type = lib.types.listOf lib.types.str;
-    default = [ ];
-    description = ''
-      Substrings identifying hook commands wired via Nix. On activation,
-      any entry in ~/.claude/settings.json whose hook command contains one
-      of these substrings is stripped before the Nix-generated entries are
-      merged in, so:
-        - hooks contributed by other modules are preserved untouched
-        - dropping a hook from Nix removes it on next activation
-        - Nix store path churn doesn't accumulate duplicates
-      Substring match is used because writeShellScript paths include a
-      content hash that changes on every rebuild. Hosts wiring their own
-      hooks via `writableSettings.hooks` should contribute the relevant
-      substrings here so their stale generations get reclaimed.
-    '';
+      aldur.claude-code.evalHarness = lib.mkOption {
+        type = lib.types.package;
+        readOnly = true;
+        internal = true;
+        description = "Eval harness that runs claude with the home files of this module.";
+        default = import ../eval-harness.nix { inherit pkgs lib; } {
+          name = "claude";
+          inherit (claudePkgs.claude-code) version;
+          home = {
+            "${configDirRelative}/settings.json" = claudeSettings;
+            ".claude.json" = claudeMcpConfig;
+            "${configDirRelative}/CLAUDE.md" = ../agents/AGENTS.md;
+          }
+          // lib.mapAttrs' (name: lib.nameValuePair "${configDirRelative}/skills/${name}") skillSources;
+          credentials = [ "${configDirRelative}/.credentials.json" ];
+          sessionDirs = [ "${configDirRelative}/projects" ];
+          command = ''
+            # Without these, the account syncs its skills, plugins, and claude.ai
+            # MCP servers into the run, part by part while the run continues.
+            export DISABLE_AUTOUPDATER=1 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+            exec ${lib.getExe claudePkgs.claude-code} -p "$prompt" --model "$model" \
+              --output-format stream-json --verbose --dangerously-skip-permissions \
+              --strict-mcp-config --mcp-config ${claudeMcpConfig} \
+              ''${effort:+--effort "$effort"}
+          '';
+          # The last result event has the totals for each model, subagents included.
+          usage = ''
+            (map(select(.type == "result")) | last | .modelUsage // {} | [.[]]) as $m
+            | {
+                input_tokens: ($m | map(.inputTokens) | add),
+                cache_read_tokens: ($m | map(.cacheReadInputTokens) | add),
+                cache_write_tokens: ($m | map(.cacheCreationInputTokens) | add),
+                output_tokens: ($m | map(.outputTokens) | add),
+                reasoning_tokens: null,
+                cost_usd: ($m | map(.costUSD) | add),
+                models: (map(select(.type == "assistant") | .message.model) | unique | if . == [] then null else . end)
+              }
+          '';
+        };
+      };
+
+      claude-code.nixManagedHookMarkers = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = ''
+          Substrings identifying hook commands wired via Nix. On activation,
+          any entry in ~/.claude/settings.json whose hook command contains one
+          of these substrings is stripped before the Nix-generated entries are
+          merged in, so:
+            - hooks contributed by other modules are preserved untouched
+            - dropping a hook from Nix removes it on next activation
+            - Nix store path churn doesn't accumulate duplicates
+          Substring match is used because writeShellScript paths include a
+          content hash that changes on every rebuild. Hosts wiring their own
+          hooks via `writableSettings.hooks` should contribute the relevant
+          substrings here so their stale generations get reclaimed.
+        '';
+      };
+    };
   };
 
   config = {
@@ -236,16 +285,14 @@ in
     home = {
       # NOTE: `home.file` instead of `skills` to enable cross-platform evaluation used in checks.
       file = lib.mkIf enabled (
-        lib.listToAttrs (
-          map (
-            name:
-            lib.nameValuePair "${skillsDir}/${name}" {
-              source = dotfilesSkills.${name} or "${pkgs.claude-skills}/skills/${name}";
-              # Claude also writes server-synced skills into skills/synced/.
-              recursive = true;
-            }
-          ) config.programs.aldur.claude-code.skills
-        )
+        lib.mapAttrs' (
+          name: source:
+          lib.nameValuePair "${skillsDir}/${name}" {
+            inherit source;
+            # Claude also writes server-synced skills into skills/synced/.
+            recursive = true;
+          }
+        ) skillSources
       );
 
       # Write settings and MCP config as writable files (not read-only symlinks).
