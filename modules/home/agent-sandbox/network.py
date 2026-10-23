@@ -128,9 +128,11 @@ def main():
         try:
             # The first bubblewrap only creates the network namespace. The
             # trusted launcher then builds the normal empty-root sandbox.
+            # --dev-bind: --bind adds nodev, and the inner sandbox mounts its
+            # /dev/null and the other devices from this tree.
             process = subprocess.Popen([
                 options.bwrap, "--die-with-parent", "--unshare-user", "--unshare-net",
-                "--bind", "/", "/", "--", sys.executable, "-I", __file__,
+                "--dev-bind", "/", "/", "--", sys.executable, "-I", __file__,
                 "--wait-dir", str(directory), "--seccomp", options.seccomp, "--", *command,
             ])
 
