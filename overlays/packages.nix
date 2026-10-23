@@ -26,7 +26,14 @@ in
   update-pins = prev.callPackage ../packages/update-pins { };
   # Track stable Neovim releases without updating the full nixpkgs input.
   # Keep upstream override arguments for overlays/darwin/fish.nix.
-  neovim-unwrapped = import ../packages/neovim { inherit (prev) neovim-unwrapped fetchFromGitHub; };
+  neovim-unwrapped = import ../packages/neovim {
+    inherit (prev)
+      lib
+      stdenv
+      neovim-unwrapped
+      fetchFromGitHub
+      ;
+  };
   neovim-nightly = prev.callPackage ../packages/neovim-nightly { };
 
   aldurs-dotfiles-version = prev.callPackage ../packages/aldurs-dotfiles-version { inherit self; };
