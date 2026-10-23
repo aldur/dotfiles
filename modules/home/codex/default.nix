@@ -100,42 +100,66 @@ in
     description = "Codex settings merged into the writable config.toml during activation.";
   };
 
-  options.programs.aldur.codex.evalHarness = lib.mkOption {
-    type = lib.types.package;
+  options.programs.aldur.codex.evalHarnesses = lib.mkOption {
+    type = lib.types.attrsOf lib.types.package;
     readOnly = true;
     internal = true;
-    description = "Eval harness that runs codex with the home files of this module.";
-    default = import ../eval-harness.nix { inherit pkgs lib; } {
-      name = "codex";
-      inherit (pkgsUnstable.codex) version;
-      home = {
-        ".codex/config.toml" = codexSettingsFile;
-        ".codex/AGENTS.md" = ../agents/AGENTS.md;
-      }
-      // lib.mapAttrs' (name: lib.nameValuePair ".agents/skills/${name}") dotfilesSkills;
-      credentials = [ ".codex/auth.json" ];
-      sessionDirs = [ ".codex/sessions" ];
-      command = ''
-        exec ${lib.getExe pkgsUnstable.codex} exec --json --model "$model" \
-          --dangerously-bypass-approvals-and-sandbox --skip-git-repo-check \
-          ''${effort:+--config "model_reasoning_effort=$effort"} \
-          "$prompt"
-      '';
-      # input_tokens of codex include the cached tokens.
-      usage = ''
-        map(select(.type == "turn.completed") | .usage) as $u
-        | {
-            input_tokens: ($u | map(.input_tokens - (.cached_input_tokens // 0)) | add),
-            cache_read_tokens: ($u | map(.cached_input_tokens // 0) | add),
-            cache_write_tokens: null,
-            output_tokens: ($u | map(.output_tokens) | add),
-            reasoning_tokens: ($u | map(.reasoning_output_tokens // 0) | add),
-            cost_usd: null,
-            # The JSON events do not name the model. The session files do.
-            models: null
-          }
-      '';
-    };
+    description = ''
+      Eval harnesses that run codex: `codex` with the home files of this
+      module, `codex-bare` with none of them.
+    '';
+    default =
+      let
+        mk =
+          bare:
+          import ../eval-harness.nix { inherit pkgs lib; } {
+            name = if bare then "codex-bare" else "codex";
+            inherit (pkgsUnstable.codex) version;
+            home = lib.optionalAttrs (!bare) (
+              {
+                ".codex/config.toml" = codexSettingsFile;
+                ".codex/AGENTS.md" = ../agents/AGENTS.md;
+              }
+              // lib.mapAttrs' (name: lib.nameValuePair ".agents/skills/${name}") dotfilesSkills
+            );
+            credentials = [ ".codex/auth.json" ];
+            sessionDirs = [ ".codex/sessions" ];
+            # From the codex binary: codex sends the value to the API unchecked.
+            effortLevels = [
+              "minimal"
+              "low"
+              "medium"
+              "high"
+              "xhigh"
+              "max"
+              "ultra"
+            ];
+            command = ''
+              exec ${lib.getExe pkgsUnstable.codex} exec --json --model "$model" \
+                --dangerously-bypass-approvals-and-sandbox --skip-git-repo-check \
+                ''${effort:+--config "model_reasoning_effort=$effort"} \
+                "$prompt"
+            '';
+            # input_tokens of codex include the cached tokens.
+            usage = ''
+              map(select(.type == "turn.completed") | .usage) as $u
+              | {
+                  input_tokens: ($u | map(.input_tokens - (.cached_input_tokens // 0)) | add),
+                  cache_read_tokens: ($u | map(.cached_input_tokens // 0) | add),
+                  cache_write_tokens: null,
+                  output_tokens: ($u | map(.output_tokens) | add),
+                  reasoning_tokens: ($u | map(.reasoning_output_tokens // 0) | add),
+                  cost_usd: null,
+                  # The JSON events do not name the model. The session files do.
+                  models: null
+                }
+            '';
+          };
+      in
+      {
+        codex = mk false;
+        codex-bare = mk true;
+      };
   };
 
   # Keep config.toml writable: Codex stores runtime state such as project trust

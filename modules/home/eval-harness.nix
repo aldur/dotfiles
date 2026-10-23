@@ -5,9 +5,9 @@
 #   bin/eval-harness <model> <prompt> [effort=<level>]
 #     Runs the agent once in the current directory. JSON events on stdout.
 #   home/          Files for the fresh $HOME of a run.
-#   harness.json   Name, version, allowed `params`, and paths relative to
-#                  $HOME: `credentials` to copy from the host, `sessionDirs`
-#                  to keep after the run.
+#   harness.json   Name, version, `params` (name -> allowed values), and
+#                  paths relative to $HOME: `credentials` to copy from the
+#                  host, `sessionDirs` to keep after the run.
 #   usage.jq       jq filter: the array of JSON events -> token usage, with
 #                  the fields below. null if the harness does not report one.
 { pkgs, lib }:
@@ -21,6 +21,8 @@
   sessionDirs,
   # Bash that runs the agent, with $model, $prompt, and $effort (can be empty).
   command,
+  # The values that the agent accepts for effort=<level>.
+  effortLevels,
   # jq filter for usage.jq. Output: input_tokens (not from the cache),
   # cache_read_tokens, cache_write_tokens, output_tokens, reasoning_tokens
   # (part of output_tokens), cost_usd (as the harness calculates it), and
@@ -40,7 +42,9 @@ let
       effort=""
       for param in "$@"; do
         case $param in
-          effort=?*) effort=''${param#effort=} ;;
+          ${
+            lib.concatMapStringsSep " | " (level: "effort=${level}") effortLevels
+          }) effort=''${param#effort=} ;;
           *)
             echo "eval-harness: unknown parameter: $param" >&2
             exit 2
@@ -52,7 +56,7 @@ let
   };
   metadata = pkgs.writeText "harness.json" (
     builtins.toJSON {
-      params = [ "effort" ];
+      params.effort = effortLevels;
       inherit
         name
         version

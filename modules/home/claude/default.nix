@@ -189,45 +189,66 @@ in
         '';
       };
 
-      aldur.claude-code.evalHarness = lib.mkOption {
-        type = lib.types.package;
+      aldur.claude-code.evalHarnesses = lib.mkOption {
+        type = lib.types.attrsOf lib.types.package;
         readOnly = true;
         internal = true;
-        description = "Eval harness that runs claude with the home files of this module.";
-        default = import ../eval-harness.nix { inherit pkgs lib; } {
-          name = "claude";
-          inherit (claudePkgs.claude-code) version;
-          home = {
-            "${configDirRelative}/settings.json" = claudeSettings;
-            ".claude.json" = claudeMcpConfig;
-            "${configDirRelative}/CLAUDE.md" = ../agents/AGENTS.md;
-          }
-          // lib.mapAttrs' (name: lib.nameValuePair "${configDirRelative}/skills/${name}") skillSources;
-          credentials = [ "${configDirRelative}/.credentials.json" ];
-          sessionDirs = [ "${configDirRelative}/projects" ];
-          command = ''
-            # Without these, the account syncs its skills, plugins, and claude.ai
-            # MCP servers into the run, part by part while the run continues.
-            export DISABLE_AUTOUPDATER=1 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
-            exec ${lib.getExe claudePkgs.claude-code} -p "$prompt" --model "$model" \
-              --output-format stream-json --verbose --dangerously-skip-permissions \
-              --strict-mcp-config --mcp-config ${claudeMcpConfig} \
-              ''${effort:+--effort "$effort"}
-          '';
-          # The last result event has the totals for each model, subagents included.
-          usage = ''
-            (map(select(.type == "result")) | last | .modelUsage // {} | [.[]]) as $m
-            | {
-                input_tokens: ($m | map(.inputTokens) | add),
-                cache_read_tokens: ($m | map(.cacheReadInputTokens) | add),
-                cache_write_tokens: ($m | map(.cacheCreationInputTokens) | add),
-                output_tokens: ($m | map(.outputTokens) | add),
-                reasoning_tokens: null,
-                cost_usd: ($m | map(.costUSD) | add),
-                models: (map(select(.type == "assistant") | .message.model) | unique | if . == [] then null else . end)
-              }
-          '';
-        };
+        description = ''
+          Eval harnesses that run claude: `claude` with the home files and MCP
+          servers of this module, `claude-bare` with none of them.
+        '';
+        default =
+          let
+            mk =
+              bare:
+              import ../eval-harness.nix { inherit pkgs lib; } {
+                name = if bare then "claude-bare" else "claude";
+                inherit (claudePkgs.claude-code) version;
+                home = lib.optionalAttrs (!bare) (
+                  {
+                    "${configDirRelative}/settings.json" = claudeSettings;
+                    ".claude.json" = claudeMcpConfig;
+                    "${configDirRelative}/CLAUDE.md" = ../agents/AGENTS.md;
+                  }
+                  // lib.mapAttrs' (name: lib.nameValuePair "${configDirRelative}/skills/${name}") skillSources
+                );
+                credentials = [ "${configDirRelative}/.credentials.json" ];
+                sessionDirs = [ "${configDirRelative}/projects" ];
+                effortLevels = [
+                  "low"
+                  "medium"
+                  "high"
+                  "xhigh"
+                  "max"
+                ];
+                command = ''
+                  # Without these, the account syncs its skills, plugins, and claude.ai
+                  # MCP servers into the run, part by part while the run continues.
+                  export DISABLE_AUTOUPDATER=1 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+                  exec ${lib.getExe claudePkgs.claude-code} -p "$prompt" --model "$model" \
+                    --output-format stream-json --verbose --dangerously-skip-permissions \
+                    --strict-mcp-config ${lib.optionalString (!bare) "--mcp-config ${claudeMcpConfig}"} \
+                    ''${effort:+--effort "$effort"}
+                '';
+                # The last result event has the totals for each model, subagents included.
+                usage = ''
+                  (map(select(.type == "result")) | last | .modelUsage // {} | [.[]]) as $m
+                  | {
+                      input_tokens: ($m | map(.inputTokens) | add),
+                      cache_read_tokens: ($m | map(.cacheReadInputTokens) | add),
+                      cache_write_tokens: ($m | map(.cacheCreationInputTokens) | add),
+                      output_tokens: ($m | map(.outputTokens) | add),
+                      reasoning_tokens: null,
+                      cost_usd: ($m | map(.costUSD) | add),
+                      models: (map(select(.type == "assistant") | .message.model) | unique | if . == [] then null else . end)
+                    }
+                '';
+              };
+          in
+          {
+            claude = mk false;
+            claude-bare = mk true;
+          };
       };
 
       claude-code.nixManagedHookMarkers = lib.mkOption {

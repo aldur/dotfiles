@@ -175,11 +175,10 @@
             {
               homeConfiguration = home;
               home = home.activationPackage;
-              evalHarnesses = {
-                claude = evalHome.aldur.claude-code.evalHarness;
-                codex = evalHome.aldur.codex.evalHarness;
-                pi = evalHome.pi.evalHarness;
-              };
+              evalHarnesses =
+                evalHome.aldur.claude-code.evalHarnesses
+                // evalHome.aldur.codex.evalHarnesses
+                // evalHome.pi.evalHarnesses;
             }
           );
 
