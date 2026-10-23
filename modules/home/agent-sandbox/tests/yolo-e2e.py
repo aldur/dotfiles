@@ -176,7 +176,14 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
             assert not records, records
             assert '--kvm' in result.stdout + result.stderr, result
             assert '--docker' in result.stdout + result.stderr, result
-            for option in ('--workspace', '--ro', '--rw', '--env', '--profile'):
+            for mode in ('private', 'host'):
+                option = '--network'
+                assert option in result.stdout + result.stderr, result
+                _, records = invoke(launcher, ['--', option, mode])
+                assert records[-1]['argv'] == [*prefix, option, mode], records
+                failed, records = invoke(launcher, [option, mode, '--no-sandbox'], code=1)
+                assert 'sandbox options require' in failed.stderr and not records, failed
+            for option in ('--workspace', '--ro', '--rw', '--env', '--profile', '--network'):
                 result, records = invoke(launcher, [option], code=1)
                 assert 'requires a value' in result.stderr and not records, result
             _, records = invoke(launcher, ['--', '--ro', 'agent argument'])
@@ -197,6 +204,10 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                           '--rw', str(HOME / 'Shared code'), '--rw=' + str(HOME / 'Extra output'),
                           '--env', 'HOST_SECRET', '--env=EXTRA_ENV', '--profile=' + kind]
             if case['sandbox']:
+                _, records = invoke(launcher, ['--network', 'host', 'resume'])
+                assert records[-1]['argv'] == [*prefix, 'resume'], records
+                failed, records = invoke(launcher, ['--network', 'private', 'resume'], code=1)
+                assert '/dev/net/tun' in failed.stderr and not records, failed
                 _, records = invoke(launcher, ['--docker', 'probe-docker'])
                 assert records[-1]['argv'] == [*prefix, 'probe-docker'], records
                 assert records[-1]['docker_visible'] and not records[-1]['host_visible'], records
@@ -222,7 +233,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                     if kind == 'claude':
                         trust = json.loads((HOME / '.claude.json').read_text())
                         assert trust['projects'][str(HOME / 'Other workspace')]['hasTrustDialogAccepted'], trust
-                _, records = invoke(launcher, ['--profile', 'default', 'resume'])
+                _, records = invoke(launcher, ['--network', 'host', '--profile', 'default', 'resume'])
                 assert not records[-1]['codex_state'], records
             else:
                 result, records = invoke(launcher, ['--docker'], code=1)

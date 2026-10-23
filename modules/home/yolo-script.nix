@@ -26,6 +26,7 @@ let
   };
   options = {
     profile = "<NAME> Mount profile (default: ${agent})";
+    network = "<MODE> Network mode: private or host (default: profile setting)";
     workspace = "<DIR> Writable workspace (default: launch directory)";
     "ro*" = "<PATH> Additional existing read-only file or directory";
     "rw*" = "<PATH> Additional existing writable file or directory";

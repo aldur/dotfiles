@@ -22,6 +22,7 @@ let
       extraDbusTalk
       allowNixDaemon
       allowDocker
+      network
       extraEnvironmentAllowlist
       ;
     inherit (cfg.filesystem) readOnlyPaths readWritePaths;

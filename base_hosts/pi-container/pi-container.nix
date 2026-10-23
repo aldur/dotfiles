@@ -6,11 +6,13 @@
   resetAgentInstructions,
 }:
 uid:
+let
+  relay = import ./relay.nix { inherit pkgs; };
+in
 pkgs.writeShellApplication {
   name = "pi-container";
   runtimeInputs = [
     pkgs.coreutils
-    pkgs.socat
   ];
   text = ''
     socket="''${LLAMA_SOCKET_PATH:-/var/host-services/llama.sock}"
@@ -55,12 +57,7 @@ pkgs.writeShellApplication {
     export PATH="/bin:/run/current-system/sw/bin:$PATH"
     if [[ -n "''${LLAMA_SOCKET_PATH:-}" || -S "$socket" ]]; then
       [[ -S "$socket" ]] || { echo "inference socket missing: $socket" >&2; exit 1; }
-      # Make sure that you can access the socket. Start one relay for this container.
-      socat -u /dev/null "UNIX-CONNECT:$socket"
-      socat TCP4-LISTEN:8080,bind=127.0.0.1,reuseaddr,fork "UNIX-CONNECT:$socket" &
-      relay=$!
-      socat -u /dev/null TCP4:127.0.0.1:8080,retry=50,interval=0.02
-      kill -0 "$relay"
+      export LLAMA_SOCKET_PATH="$socket"
       export LLAMA_BASE_URL=http://127.0.0.1:8080/v1
     fi
     if [[ "$1" == pi-yolo ]] && [ -t 0 ] && [ -t 1 ]; then
@@ -72,6 +69,10 @@ pkgs.writeShellApplication {
       exec tmux start-server \; set-option -p remain-on-exit failed \; \
         respawn-pane -k "exec $pi_command" \; attach-session
     fi
-    exec "$@"
+    if [[ "$1" == pi-yolo ]]; then
+      exec "$@"
+    fi
+    # Explicit commands run outside the agent sandbox and get their own relay.
+    exec ${pkgs.lib.getExe relay} "$@"
   '';
 }

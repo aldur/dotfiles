@@ -33,6 +33,22 @@ or when the agent sandbox is disabled.
 | `--git-write` | Let the command write Git metadata for this launch. Prints a warning. |
 | `--kvm` | Forward `/dev/kvm` for hardware-accelerated VMs, including NixOS test drivers. |
 | `--docker` | Expose the current user's rootless Docker socket and set `DOCKER_HOST`. |
+| `--hide PATH` | Show this existing file or directory empty. Repeatable. |
+| `--network private\|host` | Override the profile network mode. The default is private. |
+
+Private networking gives each launch its own loopback and ports. Host loopback
+services and inbound ports are not forwarded. DNS requests use the host's
+resolver, including a resolver on host loopback. Outbound destinations are not
+restricted. Explicitly mounted Unix sockets still reach their host services.
+Setup failures stop the launch; there is no automatic host-network fallback.
+
+Private outbound networking uses `pasta` and requires `/dev/net/tun`.
+The `*-yolo` launchers forward `--network`. To change an agent's default:
+
+```nix
+programs.aldur.codex.sandbox.network = "host";
+programs.aldur.claude-code.sandbox.network = "host";
+```
 
 KVM is hidden by default. `--kvm` requires a host `/dev/kvm` device that the
 current user can read and write; it does not change host permissions. It
@@ -69,7 +85,8 @@ mounts, so a `--ro` path inside a writable directory stays read-only.
 
 An agent that works on project A must not change the files the host runs
 later, such as Git hooks and shell configuration. It must not change
-project B. Network access is not restricted.
+project B. Network namespaces isolate loopback and ports, but do not restrict
+outbound destinations.
 
 The agent state is shared with the host. A sandboxed agent can change the
 hooks, MCP servers and instructions that the host runs later. The sandbox
@@ -107,6 +124,9 @@ processes. Each extra grant and `--git-write` makes the protection weaker.
   keeps the controlling terminal, so it receives `SIGWINCH` on resize. Open
   files of the parent shell are closed. The sandbox stops when the launcher
   stops. Terminal output is not filtered.
+- **Network.** Private by default, with outbound access through `pasta`.
+  `--network host` shares the host network. The network supervisor stops
+  the helper and its children when the launcher exits.
 
 ## Protected Git metadata
 
@@ -169,7 +189,7 @@ See the [direnv policy](../../shared/programs/direnv/README.md).
 Set permanent grants per agent with
 `programs.aldur.<agent>.sandbox.filesystem.readOnlyPaths` and
 `readWritePaths`. Use strings, not Nix paths, or the contents go into the
-Nix store. The other options are `allowNixDaemon`, `allowDocker`,
+Nix store. The other options are `network`, `allowNixDaemon`, `allowDocker`,
 `extraEnvironmentAllowlist`, `extraRuntimeDirAllowlist` and `extraDbusTalk`.
 See [options.nix](options.nix).
 
@@ -178,6 +198,15 @@ Code: mount defaults in [package.nix](package.nix), argument parsing and the
 and Git metadata protection in [launch.py](launch.py).
 
 ## Tests
+
+`agent-sandbox-network` runs in a disposable VM, with software emulation when
+KVM is unavailable. It checks a host-loopback DNS resolver, outbound HTTP to
+a separate network, port isolation, an allowed Unix activity socket, exit
+status, and cleanup after normal exit, TERM and KILL. It uses no public
+endpoint. This does not verify host-specific Bee hook configuration.
+
+`pi-model-relay` checks concurrent private relays, large responses, stdin,
+exit status and cleanup without TUN or external network access.
 
 ```sh
 nix build --no-link -L \

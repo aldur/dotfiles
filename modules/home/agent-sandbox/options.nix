@@ -13,8 +13,22 @@ alias: {
       selected configuration read-only, and the launch directory and
       the agent state read/write. Git metadata is protected.
       Other host paths, including /persist, are absent unless explicitly
-      granted. Network access is unchanged; writable workspaces and agent
-      state remain persistent.
+      granted. The network is private by default. Writable workspaces and
+      agent state remain persistent.
+    '';
+  };
+  network = mkOption {
+    type = types.enum [
+      "private"
+      "host"
+    ];
+    default = "private";
+    description = ''
+      Use a private network namespace with outbound access through pasta.
+      Host loopback services and inbound ports are not forwarded. Outbound
+      destinations are not restricted. Requires a usable /dev/net/tun.
+      Use --network private|host to override this default. Never falls back
+      to the host network when setup fails.
     '';
   };
   filesystem = {

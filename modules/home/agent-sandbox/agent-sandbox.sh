@@ -10,6 +10,8 @@ set -euo pipefail
 # @flag --git-write Allow Git metadata writes for this launch (including hooks/config)
 # @flag --kvm Forward /dev/kvm for hardware-accelerated virtual machines
 # @flag --docker Allow access to the current user's rootless Docker daemon
+# @option --hide* <PATH> Existing file or directory to show empty (repeatable)
+# @option --network <MODE> Network mode: private or host (default: profile setting)
 # @arg cmd~ Command to run inside the sandbox (required)
 
 # @sandbox-configuration@
@@ -24,6 +26,8 @@ argc_env=()
 argc_git_write=0
 argc_kvm=0
 argc_docker=0
+argc_hide=()
+unset argc_network
 argc_cmd=()
 eval "$(argc --argc-eval "$0" "$@")"
 
@@ -34,6 +38,11 @@ die() {
 
 [ "${#argc_cmd[@]}" -gt 0 ] || die "missing command; usage: $sandbox_name [--ro PATH] [--rw PATH] -- COMMAND..."
 select_profile "$argc_profile"
+network_mode=${argc_network-$network_mode}
+case "$network_mode" in
+  private | host) ;;
+  *) die "--network must be private or host: $network_mode" ;;
+esac
 workspace=$argc_workspace
 extra_read_only_paths+=("${argc_ro[@]}")
 extra_read_write_paths+=("${argc_rw[@]}")
@@ -283,6 +292,33 @@ isolation_args=(
   --seccomp 3
 )
 
+# Hidden paths are mounted empty. The launcher mounts them last, after its
+# own protection mounts, so that no other mount shows them again.
+hide_args=(--empty-file "$sandbox_empty_file")
+for path in "${argc_hide[@]}"; do
+  [[ "$path" == /* ]] || die "--hide needs an absolute path: $path"
+  [ -e "$path" ] || die "path does not exist: $path"
+  hide_args+=(--hide "$path")
+done
+
+# The network helper keeps the launcher UID and PID namespace unchanged.
+# Only loopback and ports are private; outbound destinations are unrestricted.
+network_prefix=()
+if [ "$network_mode" = private ] && [ "$allow_outbound_network" = 0 ]; then
+  isolation_args+=(--unshare-net)
+elif [ "$network_mode" = private ]; then
+  [ -c /dev/net/tun ] || die "private networking requires /dev/net/tun"
+  # pasta leaves a process behind when it cannot open the device: test first.
+  # Opening the device without configuring it changes nothing.
+  { exec {tun}<>/dev/net/tun; } 2>/dev/null || die "private networking cannot open /dev/net/tun"
+  exec {tun}>&-
+  # The supervisor stops pasta and its children when this wrapper exits.
+  network_prefix=(
+    "$sandbox_python" -I "$sandbox_network" --pasta "$sandbox_pasta"
+    --bwrap "$sandbox_bwrap" --seccomp "$seccomp_filter" --
+  )
+fi
+
 policy_args=()
 for ((index = 0; index < ${#writable_mounts[@]}; index += 3)); do
   policy_args+=(--writable "${writable_mounts[index + 1]}" "${writable_mounts[index + 2]}")
@@ -291,20 +327,29 @@ for ((index = 0; index < ${#read_only_mounts[@]}; index += 3)); do
   policy_args+=(--readonly "${read_only_mounts[index + 1]}" "${read_only_mounts[index + 2]}")
 done
 
-# Keep the wrapper alive so its EXIT trap cleans up the proxy.
+launch=(
+  "$sandbox_python" -I "$sandbox_launcher"
+  --home "$home_dir" --state-kind "$agent_state_kind" --git-write "$argc_git_write"
+  "${hide_args[@]}"
+  "${docker_args[@]}"
+  "${policy_args[@]}" -- "$sandbox_bwrap"
+  "${filesystem_args[@]}"
+  "${device_mounts[@]}"
+  "${system_mounts[@]}"
+  --sandbox-writable
+  --sandbox-state
+  "${service_mounts[@]}"
+  "${environment_args[@]}"
+  "${isolation_args[@]}"
+  --chdir "$workspace" -- "$@"
+)
+
+# Keep the wrapper alive so its EXIT trap cleans up the proxy. The network
+# helper opens the seccomp filter after namespace setup.
 (
   close_extra_fds
-  exec "$sandbox_python" -I "$sandbox_launcher" \
-    --home "$home_dir" --state-kind "$agent_state_kind" --git-write "$argc_git_write" \
-    "${docker_args[@]}" \
-    "${policy_args[@]}" -- "$sandbox_bwrap" \
-    "${filesystem_args[@]}" \
-    "${device_mounts[@]}" \
-    "${system_mounts[@]}" \
-    --sandbox-writable \
-    --sandbox-state \
-    "${service_mounts[@]}" \
-    "${environment_args[@]}" \
-    "${isolation_args[@]}" \
-    --chdir "$workspace" -- "$@" 3< "$seccomp_filter"
+  if [ "${#network_prefix[@]}" -gt 0 ]; then
+    exec "${network_prefix[@]}" "${launch[@]}"
+  fi
+  exec "${launch[@]}" 3< "$seccomp_filter"
 )

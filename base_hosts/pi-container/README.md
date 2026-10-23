@@ -36,11 +36,14 @@ env -u SSH_AUTH_SOCK container run -it --rm \
 
 Add `--cpus 2` or `--memory 2G` if you want to limit system resources.
 
-For a local build, use `aldur-pi:latest` in the run command. The image
-entrypoint uses socat to relay the socket to `127.0.0.1:8080`. Pi arguments go
+For a local build, use `aldur-pi:latest` in the run command. Each sandboxed Pi
+launch uses socat to relay the socket to `127.0.0.1:8080` inside its own
+network namespace. This offline namespace needs no TUN device. Pi arguments go
 directly after the image name; `pi-yolo ...` also works. `pi-yolo` uses the
 shared agent sandbox to keep the workspace writable and existing `.git`
-metadata read-only, including nested repositories and worktrees.
+metadata read-only, including nested repositories and worktrees. The relay
+stops with the launch. Explicit commands outside `pi-yolo` get a separate
+relay in the container network.
 
 For extra folders, mount them into the container and grant them to `pi-yolo`:
 

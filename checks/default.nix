@@ -111,6 +111,8 @@ in
   agent-instructions = pkgs.callPackage ../modules/home/agents/tests { inherit self; };
 
   agent-sandbox = pkgs.callPackage ../modules/home/agent-sandbox/tests { };
+  agent-sandbox-network = pkgs.callPackage ../modules/home/agent-sandbox/tests/network.nix { };
+  pi-model-relay = pkgs.callPackage ../base_hosts/pi-container/tests/relay.nix { };
   agent-sandbox-transport = pkgs.callPackage ../modules/home/agent-sandbox/tests/transport.nix {
     manifest = agentSandboxModules.transportManifest;
   };

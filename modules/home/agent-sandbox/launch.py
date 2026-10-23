@@ -386,6 +386,9 @@ def main():
     parser.add_argument("--docker-socket", type=Path)
     parser.add_argument("--writable", nargs=2, action="append", default=[])
     parser.add_argument("--readonly", nargs=2, action="append", default=[])
+    parser.add_argument("--hide", type=Path, action="append", default=[])
+    parser.add_argument("--empty-file", type=Path)
+    parser.add_argument("--resolv-conf", type=Path)
     options, command = parser.parse_known_args()
     command = command[1:]
     separator = command.index("--")
@@ -432,7 +435,13 @@ def main():
         # --clearenv only clears the command's environment, not Bubblewrap's
         # initial environment exposed by its PID-1 supervisor through /proc.
         # The command's allowed variables are already supplied via --setenv.
-        process = subprocess.Popen(mounts + protections + child, env={}, pass_fds=(3, *policy.fds))
+        # Hidden paths come after every other mount: none can show them again.
+        hides = []
+        if options.resolv_conf is not None:
+            hides += policy.bind(options.resolv_conf, Path("/etc/resolv.conf"))
+        for path in options.hide:
+            hides += ["--tmpfs", str(path)] if path.is_dir() else ["--ro-bind", str(options.empty_file), str(path)]
+        process = subprocess.Popen(mounts + protections + hides + child, env={}, pass_fds=(3, *policy.fds))
         result = process.wait()
         return result if result >= 0 else 128 - result
     finally:

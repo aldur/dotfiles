@@ -488,8 +488,7 @@ test "$LLAMA_BASE_URL" = http://127.0.0.1:8080/v1
 pi-yolo --models 'llama-cpp/*' -p --no-session --no-tools --no-skills --no-extensions 'say hello'
 pi-yolo --models 'llama-cpp/*' -p --no-skills --no-extensions 'create agent.txt'
 pi-yolo --ro /reference --rw /output --models 'llama-cpp/*' -p --no-session --no-skills --no-extensions 'check mounts'
-# Make sure that both Pi sessions use one relay.
-# Make sure that the relay stays available.
+# Each Pi session has a private relay. The explicit shell keeps its own relay.
 test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
 ''')
             assert "offline inference works" in result.stdout, (result.stdout, result.stderr)

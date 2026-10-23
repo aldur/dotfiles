@@ -179,8 +179,55 @@ for agent in ["claude", "codex"]:
     finally:
         git_config.unlink()
 
+    # Hidden paths are empty inside, and unchanged outside.
+    hidden_dir = Path("/home/tester/Work/hidden-dir")
+    hidden_dir.mkdir(exist_ok=True)
+    (hidden_dir / "secret").write_text("secret\n")
+    hidden_file = Path("/home/tester/Work/hidden-file")
+    hidden_file.write_text("secret\n")
+    run([
+        *launch, "--hide", str(hidden_dir), "--hide", str(hidden_file), "--",
+        sys.executable, "-c",
+        "from pathlib import Path; "
+        f"assert list(Path({str(hidden_dir)!r}).iterdir()) == []; "
+        f"assert Path({str(hidden_file)!r}).read_text() == ''",
+    ], check=True)
+    assert (hidden_dir / "secret").read_text() == "secret\n"
+    # Hiding wins over the other mounts of the same path: a read-only grant,
+    # and the read-only Git metadata that the launcher adds itself.
+    repository = Path("/home/tester/Work/hidden-repo")
+    (repository / ".git").mkdir(parents=True, exist_ok=True)
+    (repository / ".git/config").write_text("[core]\n")
+    run([
+        *launch, "--ro", str(hidden_file), "--hide", str(hidden_file),
+        "--hide", str(repository / ".git"), "--",
+        sys.executable, "-c",
+        "from pathlib import Path; "
+        f"assert Path({str(hidden_file)!r}).read_text() == ''; "
+        f"assert list(Path({str(repository / '.git')!r}).iterdir()) == []",
+    ], check=True)
+    for args in [["--hide", "relative"], ["--hide", "/home/tester/Work/does-not-exist"]]:
+        result = run([*launch, *args, "--", "true"], capture_output=True)
+        assert result.returncode != 0, args
+
+    # Without a usable tun device, a private network fails at once instead of
+    # using the host network.
+    try:
+        os.close(os.open("/dev/net/tun", os.O_RDWR))
+        usable_tun = True
+    except OSError:
+        usable_tun = False
+    if not usable_tun:
+        result = run([*launch, "--network", "private", "--", "true"], capture_output=True, text=True)
+        assert result.returncode != 0
+        assert "/dev/net/tun" in result.stderr
+    result = run([*launch, "--network", "invalid", "--", "true"],
+                 capture_output=True, text=True)
+    assert result.returncode != 0 and "must be private or host" in result.stderr
+
     help_result = run([wrapper, "--help"], capture_output=True, text=True, check=True)
-    for option in ["--profile", "--workspace", "--ro", "--rw", "--env", "--git-write", "--kvm", "--docker"]:
+    for option in ["--profile", "--workspace", "--ro", "--rw", "--env", "--git-write", "--kvm", "--docker",
+                   "--hide", "--network"]:
         assert option in help_result.stdout + help_result.stderr
 
     print(f"passed: {agent} workspace selection and invalid grants", flush=True)

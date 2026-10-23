@@ -86,15 +86,18 @@ let
           enable = case.codex;
           sandbox.enable = case.sandbox;
           sandbox.allowDocker = case.docker or false;
+          sandbox.network = "host";
         };
         claude-code = {
           enable = case.claude;
           sandbox.enable = case.sandbox;
           sandbox.allowDocker = case.docker or false;
+          sandbox.network = "host";
         };
       };
     }
   ) cases;
+  defaults = evaluate { };
 
   findPackage =
     name: home:
@@ -152,6 +155,8 @@ let
   '';
 
 in
+assert defaults.programs.aldur.codex.sandbox.network == "private";
+assert defaults.programs.aldur.claude-code.sandbox.network == "private";
 assert lib.assertMsg (lib.all lib.id (
   lib.zipListsWith check cases homes
 )) "agent-sandbox package or -yolo script integration failed";

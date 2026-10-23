@@ -1,11 +1,12 @@
 # An explicit filesystem allowlist for the coding agents. The shell helper
 # assembles these groups into an empty root, then adds the selected workspace.
 # Writable workspaces and agent state are persistent; this is not a rollback
-# mechanism. Network access is unchanged.
+# mechanism. The network is private by default, with outbound access.
 { pkgs, lib }:
 {
   profiles ? { },
   enableDbus ? true,
+  network ? "private",
 
   # Apple containers default to locked /proc. They cannot mount fresh procfs in a
   # user namespace (essentially, what bubblewrap does), so this flag is required
@@ -40,6 +41,9 @@ let
     stateKind = "";
     allowNixDaemon = true;
     allowDocker = false;
+    inherit network;
+    # Offline containers need only loopback and explicitly mounted sockets.
+    allowOutboundNetwork = true;
     extraEnvironmentAllowlist = [ ];
   };
 
@@ -51,6 +55,8 @@ let
     ''
       allow_nix_daemon=${if cfg.allowNixDaemon then "1" else "0"}
       allow_docker=${if cfg.allowDocker then "1" else "0"}
+      network_mode=${lib.escapeShellArg cfg.network}
+      allow_outbound_network=${if cfg.allowOutboundNetwork then "1" else "0"}
       agent_read_only_paths=(${lib.escapeShellArgs cfg.agentReadOnlyPaths})
       agent_read_write_paths=(${lib.escapeShellArgs cfg.agentReadWritePaths})
       agent_state_kind=${lib.escapeShellArg cfg.stateKind}
@@ -100,6 +106,10 @@ let
     sandbox_env=${lib.escapeShellArg "${pkgs.coreutils}/bin/env"}
     sandbox_python=${lib.escapeShellArg "${pkgs.python3}/bin/python3"}
     sandbox_bwrap=${lib.escapeShellArg "${pkgs.bubblewrap}/bin/bwrap"}
+    sandbox_pasta=${lib.escapeShellArg "${pkgs.passt}/bin/pasta"}
+    sandbox_network=${./network.py}
+    # Grants are mounted nodev, so a hidden file is an empty file, not /dev/null.
+    sandbox_empty_file=${lib.escapeShellArg "${pkgs.emptyFile}"}
     sandbox_launcher=${./launch.py}
     seccomp_filter=${lib.escapeShellArg "${seccompFilter}"}
     enable_dbus=${if enableDbus then "1" else "0"}

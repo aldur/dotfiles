@@ -2,6 +2,8 @@
 let
   mkWrapper = import ../package.nix { inherit pkgs lib; };
   wrapper = mkWrapper {
+    # Filesystem and terminal fixtures have no external network or TUN device.
+    network = "host";
     profiles =
       lib.genAttrs [ "claude" "codex" ] (name: {
         runtimeAllowlist = [ "allowed" ];
