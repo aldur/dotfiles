@@ -51,7 +51,9 @@ let
 
   # The overlay's own attribute names, resolved through the final package set —
   # the same trick `slim-closures` uses. Values are never forced here.
-  introduced = lib.concatMap (o: builtins.attrNames (o pkgsDarwin pkgsDarwin)) darwin.nixpkgs.overlays;
+  introduced = lib.concatMap (
+    o: builtins.attrNames (o pkgsDarwin pkgsDarwin)
+  ) darwin.nixpkgs.overlays;
 
   force =
     pkgs: name:
@@ -60,24 +62,22 @@ let
     in
     if lib.isDerivation v then builtins.unsafeDiscardStringContext v.drvPath else builtins.typeOf v;
 
-  # Darwin overlays must not change build inputs of these packages.
-  # Apply the Neovim pin to stock dependencies for the reference build.
-  # This permits the pin but detects changes from overlays/darwin/fish.nix.
+  # The overlays must keep these packages on the cached upstream
+  # derivation. If a package moves off it, the macOS runner builds the
+  # package from source and runs its test suite (see
+  # overlays/darwin/fish.nix). Add a package to the list when the macOS
+  # job starts to build it.
   stock = import inputs.nixpkgs-darwin {
     inherit system;
     inherit (config.nixpkgs) config;
   };
-  reference = {
-    neovim-unwrapped = stock.callPackage ../packages/neovim { };
-  };
-  drifted = lib.filter (name: pkgsDarwin.${name}.drvPath != reference.${name}.drvPath) (
-    builtins.attrNames reference
-  );
+  cached = [ "neovim-unwrapped" ];
+  drifted = lib.filter (name: pkgsDarwin.${name}.drvPath != stock.${name}.drvPath) cached;
 in
 
 assert lib.assertMsg (
   drifted == [ ]
-) "darwin overlays change package build inputs: ${lib.concatStringsSep " " drifted}";
+) "darwin overlays change cached packages: ${lib.concatStringsSep " " drifted}";
 writeText "darwin-overlays" (
   builtins.toJSON (
     lib.genAttrs introduced (n: {
