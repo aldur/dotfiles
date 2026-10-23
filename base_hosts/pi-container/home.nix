@@ -11,7 +11,6 @@
 }:
 let
   base = import "${dotfiles}/modules/shared/environment.nix" { inherit pkgs lib; };
-  relay = import ./relay.nix { inherit pkgs; };
   agentSandbox =
     import "${dotfiles}/modules/home/agent-sandbox/package.nix"
       {
@@ -25,7 +24,8 @@ let
         # NOTE: Fine here, a container has no other running process usually.
         dangerouslyInheritProc = true;
         profiles.pi = {
-          allowOutboundNetwork = false;
+          # The container launch controls network access.
+          network = "host";
           allowNixDaemon = false;
           readOnlyPaths = [
             "/bin"
@@ -33,10 +33,7 @@ let
             "~/.config"
           ];
           agentReadWritePaths = [ "~/.pi/agent" ];
-          extraEnvironmentAllowlist = [
-            "LLAMA_BASE_URL"
-            "LLAMA_SOCKET_PATH"
-          ];
+          extraEnvironmentAllowlist = [ "LLAMA_BASE_URL" ];
         };
       };
   pi-yolo =
@@ -50,15 +47,7 @@ let
         describe = "Run Pi in the sandbox with read-only Git metadata";
         sandbox = true;
         text = ''
-          socket="''${LLAMA_SOCKET_PATH:-/var/host-services/llama.sock}"
-          if [[ -n "''${LLAMA_SOCKET_PATH:-}" || -S "$socket" ]]; then
-            [[ -S "$socket" ]] || { echo "inference socket missing: $socket" >&2; exit 1; }
-            export LLAMA_SOCKET_PATH="$socket"
-            if [ "''${#sandbox[@]}" -gt 0 ]; then
-              sandbox=("''${sandbox[@]:0:''${#sandbox[@]}-1}" --ro "$socket" --)
-            fi
-          fi
-          exec "''${sandbox[@]}" ${lib.getExe relay} pi "$@"
+          exec "''${sandbox[@]}" pi "$@"
         '';
       };
 in

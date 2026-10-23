@@ -66,13 +66,10 @@ pkgs.writeShellApplication {
       printf -v pi_command "'%s' " "''${@//\'/\'\\\'\'}"
       # Keep startup errors visible instead of discarding the failed pane.
       # A normal Pi exit still closes it.
-      exec tmux start-server \; set-option -p remain-on-exit failed \; \
+      set -- tmux start-server \; set-option -p remain-on-exit failed \; \
         respawn-pane -k "exec $pi_command" \; attach-session
     fi
-    if [[ "$1" == pi-yolo ]]; then
-      exec "$@"
-    fi
-    # Explicit commands run outside the agent sandbox and get their own relay.
+    # Pi and explicit commands share the container's inference relay.
     exec ${pkgs.lib.getExe relay} "$@"
   '';
 }

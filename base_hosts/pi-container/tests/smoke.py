@@ -199,12 +199,14 @@ def main():
 
     def launch(*args, caps=capabilities, socket_path=None, terminal=False,
                masked_proc=True, readonly_proc=True, workspace=True, workdir="/workspace",
-               home_source=home, transcript_source=None):
+               home_source=home, transcript_source=None, network=False):
         nonlocal launches
         socket_destination = socket_path or "/var/host-services/llama.sock"
         socket_source = root / socket_destination.lstrip("/")
         if not privileged:
             result = command.copy()
+            if network:
+                result.insert(result.index("--unshare-all") + 1, "--share-net")
             result[result.index("--chdir") + 1] = workdir
             if not workspace:
                 index = result.index(str(root / "workspace")) - 1
@@ -262,7 +264,8 @@ def main():
             },
             "mounts": mounts,
             "linux": {
-                "namespaces": [{"type": name} for name in ("pid", "network", "ipc", "uts", "mount")],
+                "namespaces": [{"type": name} for name in ("pid", "network", "ipc", "uts", "mount")
+                               if name != "network" or not network],
                 "maskedPaths": APPLE_MASKED_PATHS if masked_proc else [path for path in APPLE_MASKED_PATHS if path.startswith("/sys/")],
                 "readonlyPaths": APPLE_READONLY_PATHS if readonly_proc else [],
             },
@@ -410,6 +413,27 @@ PY
 
     for path in ("/var/host-services/llama.sock", "/var/host-services/custom.sock"):
         missing_socket(path)
+    # A TCP model outside the container tests the launch network policy.
+    # Use a local fixture so this check needs no public service.
+    with http.server.ThreadingHTTPServer(("127.0.0.1", 0), Inference) as server:
+        server.root = root
+        server.home = home
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            tcp_model = f'''
+export LLAMA_BASE_URL=http://localhost:{server.server_port}/v1
+exec pi-yolo --models 'llama-cpp/*' -p --no-session --no-tools --no-skills --no-extensions 'say hello'
+'''
+            Inference.completion = False
+            run("/bin/bash", "-c", tcp_model, success=False)
+            assert not Inference.completion, "offline Pi reached the TCP model"
+            result = run("/bin/bash", "-c", tcp_model, network=True)
+            assert Inference.completion and "offline inference works" in result.stdout, result
+            print("Pi TCP inference follows the container network policy", flush=True)
+        finally:
+            server.shutdown()
+            thread.join()
     # A custom path must work without the default socket, including the root
     # ownership hand-off for a socket that only its owner can access.
     with Server(str(root / "var/host-services/custom.sock"), Inference) as server:
@@ -488,7 +512,7 @@ test "$LLAMA_BASE_URL" = http://127.0.0.1:8080/v1
 pi-yolo --models 'llama-cpp/*' -p --no-session --no-tools --no-skills --no-extensions 'say hello'
 pi-yolo --models 'llama-cpp/*' -p --no-skills --no-extensions 'create agent.txt'
 pi-yolo --ro /reference --rw /output --models 'llama-cpp/*' -p --no-session --no-skills --no-extensions 'check mounts'
-# Each Pi session has a private relay. The explicit shell keeps its own relay.
+# Pi sessions and the explicit shell share the container relay.
 test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
 ''')
             assert "offline inference works" in result.stdout, (result.stdout, result.stderr)
