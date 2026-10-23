@@ -10,6 +10,8 @@
 #                  host, `sessionDirs` to keep after the run.
 #   usage.jq       jq filter: the array of JSON events -> token usage, with
 #                  the fields below. null if the harness does not report one.
+#   progress.jq    jq filter: one JSON event -> zero or more short lines, such
+#                  as the tool calls and the messages of the agent.
 { pkgs, lib }:
 {
   name,
@@ -28,6 +30,8 @@
   # (part of output_tokens), cost_usd (as the harness calculates it), and
   # models (the model IDs that the provider reports).
   usage,
+  # jq filter for progress.jq: one event -> zero or more strings.
+  progress,
 }:
 let
   bin = pkgs.writeShellApplication {
@@ -71,6 +75,12 @@ pkgs.runCommand "eval-harness-${name}" { } ''
   ln -s ${lib.getExe bin} "$out/bin/eval-harness"
   cp ${metadata} "$out/harness.json"
   cp ${pkgs.writeText "usage.jq" usage} "$out/usage.jq"
+  # Progress is only for display: an unknown event gives no line, not an
+  # error. Each line is one line of at most 200 characters.
+  cp ${pkgs.writeText "progress.jq" ''
+    (try (${progress}) catch empty) | strings | gsub("\\s+"; " ") | .[0:200]
+  ''} "$out/progress.jq"
+  echo '{}' | ${lib.getExe pkgs.jq} -r -f "$out/progress.jq" >/dev/null
   # The filter must give all the fields, also for a run with no events.
   ${lib.getExe pkgs.jq} -e -s -f "$out/usage.jq" </dev/null \
     | ${lib.getExe pkgs.jq} -e 'keys == ["cache_read_tokens", "cache_write_tokens", "cost_usd", "input_tokens", "models", "output_tokens", "reasoning_tokens"]'

@@ -140,6 +140,18 @@ in
                 ''${effort:+--config "model_reasoning_effort=$effort"} \
                 "$prompt"
             '';
+            progress = ''
+              if .type == "item.completed" then
+                .item
+                | if .type == "command_execution" then "command: \(.command)"
+                  elif .type == "agent_message" then .text
+                  elif .type == "file_change" then "files: \([.changes[].path] | join(", "))"
+                  elif .type == "mcp_tool_call" then "\(.server)/\(.tool)"
+                  elif .type == "web_search" then "search: \(.query)"
+                  else empty end
+              elif .type == "turn.failed" or .type == "error" then "error: \(.error.message // .message)"
+              else empty end
+            '';
             # input_tokens of codex include the cached tokens.
             usage = ''
               map(select(.type == "turn.completed") | .usage) as $u

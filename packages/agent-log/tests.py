@@ -542,6 +542,24 @@ else:
         self.assertEqual(len(self.run_log("--all", "--list").splitlines()), 4)
         self.assertIn("elsewhere", self.run_log("--list", other))
 
+    def test_directory_with_agent_stores_lists_its_conversations(self):
+        # Like the sessions/ that ~/Work/evals keeps from a run: a home with
+        # the directories of the agents, and conversations of another cwd.
+        run = self.root / "runs" / "task" / "run" / "sessions"
+        for name in ("claude", "pi"):
+            source = self.files[["claude", "pi", "codex"].index(name)]
+            target = run / source.relative_to(self.root)
+            target.parent.mkdir(parents=True)
+            target.write_text(source.read_text().replace(str(self.project), "/tmp/evals-x/workspace")
+                              .replace(f"First {name} prompt", f"Run {name} prompt"))
+        rows = self.run_log("--list", run).splitlines()
+        self.assertEqual(len(rows), 2)
+        self.assertTrue(all(str(run) in row for row in rows))
+        self.assertEqual(len(self.run_log("_sessions", run, "--query", "pi prompt").splitlines()), 1)
+        self.assertEqual(self.run_log("_sessions", run, "--query", "First").splitlines(), [])
+        # A project directory keeps its scope.
+        self.assertEqual(len(self.run_log("--list", self.project).splitlines()), 3)
+
     @contextlib.contextmanager
     def terminal_picker(self, *args, width=160, height=40):
         """A real fzf terminal, isolated from the user's transcripts/settings."""

@@ -60,22 +60,24 @@ let
     in
     if lib.isDerivation v then builtins.unsafeDiscardStringContext v.drvPath else builtins.typeOf v;
 
-  # The overlays must keep these packages on the cached upstream
-  # derivation. If a package moves off it, the macOS runner builds the
-  # package from source and runs its test suite (see
-  # overlays/darwin/fish.nix). Add a package to the list when the macOS
-  # job starts to build it.
+  # Darwin overlays must not change build inputs of these packages.
+  # Apply the Neovim pin to stock dependencies for the reference build.
+  # This permits the pin but detects changes from overlays/darwin/fish.nix.
   stock = import inputs.nixpkgs-darwin {
     inherit system;
     inherit (config.nixpkgs) config;
   };
-  cached = [ "neovim-unwrapped" ];
-  drifted = lib.filter (name: pkgsDarwin.${name}.drvPath != stock.${name}.drvPath) cached;
+  reference = {
+    neovim-unwrapped = stock.callPackage ../packages/neovim { };
+  };
+  drifted = lib.filter (name: pkgsDarwin.${name}.drvPath != reference.${name}.drvPath) (
+    builtins.attrNames reference
+  );
 in
 
 assert lib.assertMsg (
   drifted == [ ]
-) "darwin overlays change cached packages: ${lib.concatStringsSep " " drifted}";
+) "darwin overlays change package build inputs: ${lib.concatStringsSep " " drifted}";
 writeText "darwin-overlays" (
   builtins.toJSON (
     lib.genAttrs introduced (n: {

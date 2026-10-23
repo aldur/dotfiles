@@ -184,13 +184,36 @@ fn home() -> PathBuf {
     std::env::var("HOME").map(PathBuf::from).unwrap_or_default()
 }
 
-fn collect_sessions(opts: &Options, cwd: &Path) -> Vec<model::Session> {
+/// The sessions to list, and whether they come from all the projects.
+///
+/// A directory other than the home of the user can hold the directories of
+/// the agents, like a home that ~/Work/evals keeps from a run. Then list all
+/// the conversations in it. Only the contents of the directory decide, not
+/// the query, so a search cannot change the scope.
+fn find_sessions(opts: &Options, cwd: &Path) -> (Vec<model::Session>, bool) {
+    let stores = scan::other_home_roots(cwd);
+    let user_home = home().canonicalize().unwrap_or_else(|_| home());
+    if cwd != user_home && stores.iter().any(|(_, root)| root.is_dir()) {
+        return (collect_sessions(opts, cwd, stores, true), true);
+    }
+    (
+        collect_sessions(opts, cwd, scan::roots(&home()), opts.all),
+        opts.all,
+    )
+}
+
+fn collect_sessions(
+    opts: &Options,
+    cwd: &Path,
+    roots: Vec<(Agent, PathBuf)>,
+    all: bool,
+) -> Vec<model::Session> {
     let mut paths = Vec::new();
     // A scoped run is the usual command, and it removes most of the sessions
     // that a full read collects. Thus ignore the directories that cannot
     // agree, and read only the sessions of this project.
-    let candidates = (!opts.all).then(|| scan::project_dir_candidates(cwd));
-    for (agent, root) in scan::roots(&home()) {
+    let candidates = (!all).then(|| scan::project_dir_candidates(cwd));
+    for (agent, root) in roots {
         if opts.agent.is_some_and(|want| want != agent) {
             continue;
         }
@@ -201,7 +224,7 @@ fn collect_sessions(opts: &Options, cwd: &Path) -> Vec<model::Session> {
         &paths,
         opts.agent,
         &scan::search_terms(&opts.query),
-        (!opts.all).then_some(here.as_ref()),
+        (!all).then_some(here.as_ref()),
     )
 }
 
@@ -548,8 +571,8 @@ fn main() {
                 .target
                 .clone()
                 .unwrap_or_else(|| std::env::current_dir().unwrap_or_default());
-            let sessions = collect_sessions(&opts, &cwd);
-            emit_rows(&session_rows(&sessions, opts.all));
+            let (sessions, all) = find_sessions(&opts, &cwd);
+            emit_rows(&session_rows(&sessions, all));
             return;
         }
         _ => {}
@@ -570,9 +593,9 @@ fn main() {
     let target = match target {
         Some(path) => path,
         None => {
-            let sessions = collect_sessions(&opts, &cwd);
+            let (sessions, all) = find_sessions(&opts, &cwd);
             if opts.list {
-                emit_rows(&session_rows(&sessions, opts.all));
+                emit_rows(&session_rows(&sessions, all));
                 return;
             }
             if sessions.is_empty() {
@@ -585,12 +608,12 @@ fn main() {
             if opts.newest {
                 PathBuf::from(&sessions[0].path)
             } else {
-                let rows = session_rows(&sessions, opts.all);
+                let rows = session_rows(&sessions, all);
                 let reload = format!(
                     "{} _sessions {}{}{} --query {{q}}",
                     shell_quote(&exe),
                     shell_quote(&cwd.to_string_lossy()),
-                    if opts.all { " --all" } else { "" },
+                    if all { " --all" } else { "" },
                     opts.agent
                         .map(|a| format!(" --agent {}", a.name()))
                         .unwrap_or_default()
@@ -601,7 +624,7 @@ fn main() {
                     Picker::Sessions,
                     &format!("{} _preview {{2}} --color=always", shell_quote(&exe)),
                     &[
-                        if opts.all {
+                        if all {
                             "--prompt=all> ".into()
                         } else {
                             "--prompt=conversation> ".into()
