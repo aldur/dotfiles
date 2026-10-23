@@ -19,6 +19,17 @@ pub fn roots(home: &Path) -> Vec<(Agent, PathBuf)> {
     let pi_dir = std::env::var("PI_CODING_AGENT_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|_| home.join(".pi/agent"));
+    stores(home, &pi_dir)
+}
+
+/// The directory of each agent in a home that is not the home of the user,
+/// for example the home of a run that ~/Work/evals keeps.
+/// `PI_CODING_AGENT_DIR` does not apply to it.
+pub fn other_home_roots(home: &Path) -> Vec<(Agent, PathBuf)> {
+    stores(home, &home.join(".pi/agent"))
+}
+
+fn stores(home: &Path, pi_dir: &Path) -> Vec<(Agent, PathBuf)> {
     vec![
         (Agent::Claude, home.join(".claude/projects")),
         (Agent::Pi, pi_dir.join("sessions")),
