@@ -36,8 +36,24 @@ def resolver(text):
 
 
 def children():
-    path = Path(f"/proc/self/task/{os.getpid()}/children")
-    return [int(pid) for pid in path.read_text().split()]
+    """The children of this process, also adopted ones: it is a subreaper.
+
+    /proc/PID/task/TID/children needs CONFIG_PROC_CHILDREN, which some kernels
+    (for example ChromeOS) do not have. Read the parent of each process.
+    """
+    found = []
+    for entry in os.scandir("/proc"):
+        if not entry.name.isdigit():
+            continue
+        try:
+            stat = Path(entry.path, "stat").read_text()
+        except OSError:
+            continue
+        # The command name can contain spaces and ")": the state and the
+        # parent come after its last ")".
+        if int(stat[stat.rindex(")") + 2:].split()[1]) == os.getpid():
+            found.append(int(entry.name))
+    return found
 
 
 def cleanup():
