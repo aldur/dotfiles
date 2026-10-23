@@ -105,6 +105,7 @@
           packages = {
             inherit (lazyvims) lazyvim lazyvim-light lazyvim-nightly;
             inherit (pkgs)
+              neovim-unwrapped
               beancount-language-server # from aldur/beancount-language-server
               nomicfoundation-solidity-language-server
               claude-skills # consumed by modules/home/claude

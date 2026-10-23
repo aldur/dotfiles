@@ -24,6 +24,8 @@ in
   totp-qr-decode = prev.callPackage ../packages/totp-qr-decode { };
   flake-lock-cooldown = prev.callPackage ../packages/flake-lock-cooldown { };
   update-pins = prev.callPackage ../packages/update-pins { };
+  # Track stable Neovim releases without updating the full nixpkgs input.
+  neovim-unwrapped = prev.callPackage ../packages/neovim { inherit (prev) neovim-unwrapped; };
   neovim-nightly = prev.callPackage ../packages/neovim-nightly { };
 
   aldurs-dotfiles-version = prev.callPackage ../packages/aldurs-dotfiles-version { inherit self; };
