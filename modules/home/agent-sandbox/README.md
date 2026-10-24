@@ -13,6 +13,7 @@ codex-yolo --ro ~/dotfiles --workspace .
 claude-yolo --ro ~/dotfiles --workspace . -- --resume
 codex-yolo --kvm
 claude-yolo --kvm
+codex-yolo --tun
 codex-yolo --docker
 claude-yolo --docker
 ```
@@ -32,6 +33,7 @@ or when the agent sandbox is disabled.
 | `--env NAME` | Also pass this environment variable. Repeatable. |
 | `--git-write` | Let the command write Git metadata for this launch. Prints a warning. |
 | `--kvm` | Forward `/dev/kvm` for hardware-accelerated VMs, including NixOS test drivers. |
+| `--tun` | Forward `/dev/net/tun` for nested private networks. |
 | `--docker` | Expose the current user's rootless Docker socket and set `DOCKER_HOST`. |
 | `--hide PATH` | Show this existing file or directory empty. Repeatable. |
 | `--network private\|host` | Override the profile network mode. The default is private. |
@@ -54,6 +56,9 @@ KVM is hidden by default. `--kvm` requires a host `/dev/kvm` device that the
 current user can read and write; it does not change host permissions. It
 forwards only this device, so other host devices remain hidden. For example,
 use `codex-yolo --kvm` or `agent-sandbox --kvm -- nix run .#test.driverInteractive`.
+
+Use `--tun` when a command must create a nested private network. This mounts
+`/dev/net/tun` as a device.
 
 Docker access is off by default, including rootless Docker. Use `--docker`
 for one launch, or enable it in an agent's configuration:

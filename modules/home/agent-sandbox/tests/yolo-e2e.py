@@ -87,6 +87,7 @@ record = {'argv': sys.argv[1:], 'env': dict(os.environ), 'cwd': os.getcwd(),
           'profile_config': profile_config, 'profile_name': profile_name,
           'host_visible': Path.home().joinpath('host-only').exists(),
           'kvm_visible': Path('/dev/kvm').is_char_device(),
+          'tun_visible': Path('/dev/net/tun').is_char_device(),
           'docker_visible': Path(os.environ['XDG_RUNTIME_DIR']).joinpath('docker.sock').is_socket(),
           'codex_state': Path.home().joinpath('.codex/auth.json').exists()}
 instructions = Path.home() / ('.codex/AGENTS.md' if Path(sys.argv[0]).name == 'codex' else '.claude/CLAUDE.md')
@@ -99,6 +100,10 @@ except OSError:
     record['instructions_writable'] = False
 if 'probe-kvm' in sys.argv:
     fd = os.open('/dev/kvm', os.O_RDWR)
+    os.write(fd, b'fixture')
+    os.close(fd)
+if 'probe-tun' in sys.argv:
+    fd = os.open('/dev/net/tun', os.O_RDWR)
     os.write(fd, b'fixture')
     os.close(fd)
 if 'probe-docker' in sys.argv:
@@ -175,6 +180,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
             result, records = invoke(launcher, ['--help'])
             assert not records, records
             assert '--kvm' in result.stdout + result.stderr, result
+            assert '--tun' in result.stdout + result.stderr, result
             assert '--docker' in result.stdout + result.stderr, result
             for mode in ('private', 'host'):
                 option = '--network'
@@ -190,11 +196,15 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
             assert records[-1]['argv'] == [*prefix, '--ro', 'agent argument'], records
             _, records = invoke(launcher, ['--', '--kvm'])
             assert records[-1]['argv'] == [*prefix, '--kvm'], records
+            _, records = invoke(launcher, ['--', '--tun'])
+            assert records[-1]['argv'] == [*prefix, '--tun'], records
             _, records = invoke(launcher, ['--', '--docker'])
             assert records[-1]['argv'] == [*prefix, '--docker'], records
             result, records = invoke(launcher, ['--docker', '--no-sandbox'], code=1)
             assert 'sandbox options require' in result.stderr and not records, result
             result, records = invoke(launcher, ['--kvm', '--no-sandbox'], code=1)
+            assert 'sandbox options require' in result.stderr and not records, result
+            result, records = invoke(launcher, ['--tun', '--no-sandbox'], code=1)
             assert 'sandbox options require' in result.stderr and not records, result
             result, records = invoke(launcher, ['--ro', str(HOME / 'Reference notes'), '--no-sandbox'], code=1)
             assert 'sandbox options require' in result.stderr and not records, result
@@ -214,6 +224,15 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                 _, records = invoke(launcher, ['--kvm', 'probe-kvm'])
                 assert records[-1]['argv'] == [*prefix, 'probe-kvm'], records
                 assert records[-1]['kvm_visible'] and not records[-1]['host_visible'], records
+                tun = Path('/dev/net/tun')
+                tun.parent.mkdir(exist_ok=True)
+                tun.symlink_to('/dev/null')
+                try:
+                    _, records = invoke(launcher, ['--tun', 'probe-tun'])
+                    assert records[-1]['argv'] == [*prefix, 'probe-tun'], records
+                    assert records[-1]['tun_visible'] and not records[-1]['host_visible'], records
+                finally:
+                    tun.unlink()
                 for git_write in (False, True):
                     workspace_args = (['--workspace=~/Other workspace'] if git_write else
                                       ['--workspace', '../Other workspace'])

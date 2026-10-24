@@ -9,8 +9,10 @@ set -euo pipefail
 # @option --env* <NAME> Additional inherited environment variable (repeatable)
 # @flag --git-write Allow Git metadata writes for this launch (including hooks/config)
 # @flag --kvm Forward /dev/kvm for hardware-accelerated virtual machines
+# @flag --tun Forward /dev/net/tun for nested private networks
 # @flag --docker Allow access to the current user's rootless Docker daemon
 # @option --hide* <PATH> Existing file or directory to show empty (repeatable)
+# @option --store-seed <DIR> Private Nix seed store (required for evaluations)
 # @option --network <MODE> Network mode: private or host (default: profile setting)
 # @arg cmd~ Command to run inside the sandbox (required)
 
@@ -25,8 +27,10 @@ argc_rw=()
 argc_env=()
 argc_git_write=0
 argc_kvm=0
+argc_tun=0
 argc_docker=0
 argc_hide=()
+argc_store_seed=""
 unset argc_network
 argc_cmd=()
 eval "$(argc --argc-eval "$0" "$@")"
@@ -38,6 +42,14 @@ die() {
 
 [ "${#argc_cmd[@]}" -gt 0 ] || die "missing command; usage: $sandbox_name [--ro PATH] [--rw PATH] -- COMMAND..."
 select_profile "$argc_profile"
+if [ "$private_store" = 1 ]; then
+  [ -n "$argc_store_seed" ] || die "--store-seed is required"
+  [ -d "$argc_store_seed/nix/store" ] && [ -f "$argc_store_seed/nix/var/nix/db/db.sqlite" ] ||
+    die "invalid Nix seed store: $argc_store_seed"
+  allow_nix_daemon=0
+elif [ -n "$argc_store_seed" ]; then
+  die "--store-seed requires the evaluation sandbox"
+fi
 network_mode=${argc_network-$network_mode}
 case "$network_mode" in
   private | host) ;;
@@ -55,6 +67,11 @@ if [ "$argc_kvm" = 1 ]; then
   [ -c /dev/kvm ] || die "--kvm requires a host /dev/kvm character device"
   [ -r /dev/kvm ] && [ -w /dev/kvm ] || die "--kvm requires read and write access to /dev/kvm"
   device_mounts+=(--dev-bind /dev/kvm /dev/kvm)
+fi
+if [ "$argc_tun" = 1 ]; then
+  [ -c /dev/net/tun ] || die "--tun requires a host /dev/net/tun character device"
+  [ -r /dev/net/tun ] && [ -w /dev/net/tun ] || die "--tun requires read and write access to /dev/net/tun"
+  device_mounts+=(--dev-bind /dev/net/tun /dev/net/tun)
 fi
 
 # Bubblewrap preserves unrelated inherited descriptors. Close them in an
@@ -124,8 +141,11 @@ add_mount() {
   mount_args+=("$mode" "$source" "$path")
 }
 
-# System tools and configuration. /nix/store is the only mandatory host tree.
-for path in "${system_read_only_paths[@]}" "/etc/profiles/per-user/$username"; do
+# Mount only the system files selected by the package.
+if [ "$private_store" = 0 ]; then
+  system_read_only_paths+=("/etc/profiles/per-user/$username")
+fi
+for path in "${system_read_only_paths[@]}"; do
   add_mount --ro-bind "$path" 1
 done
 system_mounts=("${mount_args[@]}")
@@ -227,7 +247,6 @@ fi
 # Start empty. No host root, home, /persist, /tmp or /run bind is inherited.
 filesystem_args=(
   --tmpfs /
-  --ro-bind /nix/store /nix/store
   --dev /dev
   --tmpfs /tmp
   --tmpfs /var/tmp
@@ -238,6 +257,15 @@ filesystem_args=(
   --symlink "$sandbox_shell" /bin/bash
   --symlink "$sandbox_env" /usr/bin/env
 )
+
+store_args=()
+if [ "$private_store" = 1 ]; then
+  filesystem_args+=(--sandbox-store)
+  nix_environment=(--setenv NIX_REMOTE local)
+  store_args=(--store-seed "$argc_store_seed" --store-shell "$sandbox_shell")
+else
+  filesystem_args+=(--ro-bind /nix/store /nix/store)
+fi
 
 if [ "$dangerously_inherit_proc" -eq 1 ]; then
   filesystem_args+=(--ro-bind /proc /proc)
@@ -330,6 +358,7 @@ done
 launch=(
   "$sandbox_python" -I "$sandbox_launcher"
   --home "$home_dir" --state-kind "$agent_state_kind" --git-write "$argc_git_write"
+  "${store_args[@]}"
   "${hide_args[@]}"
   "${docker_args[@]}"
   "${policy_args[@]}" -- "$sandbox_bwrap"

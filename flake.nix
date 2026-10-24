@@ -178,16 +178,16 @@
                 evalHome.aldur.claude-code.evalHarnesses
                 // evalHome.aldur.codex.evalHarnesses
                 // evalHome.pi.evalHarnesses;
-              # The agent sandbox for evaluations: no session bus. The claude and
-              # codex profiles mount only the state of the agent, writable.
+              # Evaluations use a private Nix store and no session bus.
               evalSandbox =
-                import ./modules/home/agent-sandbox/package.nix
-                  {
+                pkgs.lib.makeOverridable
+                  (import ./modules/home/agent-sandbox/package.nix {
                     inherit pkgs;
                     inherit (pkgs) lib;
-                  }
+                  })
                   {
                     enableDbus = false;
+                    privateStore = true;
                     profiles = {
                       claude.stateKind = "claude";
                       codex.stateKind = "codex";

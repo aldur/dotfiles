@@ -7,6 +7,8 @@
   profiles ? { },
   enableDbus ? true,
   network ? "private",
+  privateStore ? false,
+  allowOutboundNetwork ? true,
 
   # Apple containers default to locked /proc. They cannot mount fresh procfs in a
   # user namespace (essentially, what bubblewrap does), so this flag is required
@@ -39,11 +41,11 @@ let
     agentReadOnlyPaths = [ ];
     agentReadWritePaths = [ ];
     stateKind = "";
-    allowNixDaemon = true;
+    allowNixDaemon = !privateStore;
     allowDocker = false;
     inherit network;
     # Offline containers need only loopback and explicitly mounted sockets.
-    allowOutboundNetwork = true;
+    inherit allowOutboundNetwork;
     extraEnvironmentAllowlist = [ ];
   };
 
@@ -69,7 +71,15 @@ let
 
   # These are optional across hosts. Never include /etc, /run, /nix or
   # /home wholesale: they contain state and sockets as well as tools.
-  systemReadOnlyPaths = [
+  systemReadOnlyPaths = if privateStore then [
+    "/etc/passwd"
+    "/etc/group"
+    "/etc/hosts"
+    "/etc/resolv.conf"
+    "/etc/nsswitch.conf"
+    "/etc/services"
+    "/etc/protocols"
+  ] else [
     "/run/current-system/sw"
     "/nix/var/nix/profiles/default"
     "/lib"
@@ -90,7 +100,7 @@ let
     "/etc/direnv"
   ];
 
-  userReadOnlyPaths = [
+  userReadOnlyPaths = if privateStore then [ ] else [
     "~/.nix-profile"
     "~/.local/state/nix/profiles/profile"
     "~/.local/bin"
@@ -102,7 +112,7 @@ let
 
   shellConfig = ''
     sandbox_name=agent-sandbox
-    sandbox_shell=${lib.escapeShellArg "${pkgs.bash}/bin/bash"}
+    sandbox_shell=${lib.escapeShellArg "${if privateStore then pkgs.bashInteractive else pkgs.bash}/bin/bash"}
     sandbox_env=${lib.escapeShellArg "${pkgs.coreutils}/bin/env"}
     sandbox_python=${lib.escapeShellArg "${pkgs.python3}/bin/python3"}
     sandbox_bwrap=${lib.escapeShellArg "${pkgs.bubblewrap}/bin/bwrap"}
@@ -112,6 +122,7 @@ let
     sandbox_empty_file=${lib.escapeShellArg "${pkgs.emptyFile}"}
     sandbox_launcher=${./launch.py}
     seccomp_filter=${lib.escapeShellArg "${seccompFilter}"}
+    private_store=${if privateStore then "1" else "0"}
     enable_dbus=${if enableDbus then "1" else "0"}
     dangerously_inherit_proc=${if dangerouslyInheritProc then "1" else "0"}
 

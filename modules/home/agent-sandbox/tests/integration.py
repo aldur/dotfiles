@@ -80,6 +80,23 @@ run([
 ], check=True)
 print("passed: opt-in device forwarding and unavailable KVM errors", flush=True)
 
+tun = Path("/dev/net/tun")
+tun.parent.mkdir(exist_ok=True)
+assert not tun.exists()
+for regular_file in (False, True):
+    if regular_file:
+        tun.touch()
+    result = run([wrapper, "--tun", "--", "true"], capture_output=True, text=True)
+    assert result.returncode != 0 and "--tun requires a host /dev/net/tun character device" in result.stderr, result
+tun.unlink()
+tun.symlink_to("/dev/null")
+run([wrapper, "--", sys.executable, "-c",
+     "from pathlib import Path; assert not Path('/dev/net/tun').exists()"], check=True)
+run([wrapper, "--tun", "--", sys.executable, "-c",
+     "import os; fd = os.open('/dev/net/tun', os.O_RDWR); os.write(fd, b'fixture'); os.close(fd)"], check=True)
+tun.unlink()
+print("passed: opt-in TUN device opens and unavailable device errors", flush=True)
+
 # A generic command does not inherit either agent's state or extra grants.
 run([
     wrapper, "--", sys.executable, "-c",
@@ -226,7 +243,7 @@ for agent in ["claude", "codex"]:
     assert result.returncode != 0 and "must be private or host" in result.stderr
 
     help_result = run([wrapper, "--help"], capture_output=True, text=True, check=True)
-    for option in ["--profile", "--workspace", "--ro", "--rw", "--env", "--git-write", "--kvm", "--docker",
+    for option in ["--profile", "--workspace", "--ro", "--rw", "--env", "--git-write", "--kvm", "--tun", "--docker",
                    "--hide", "--network"]:
         assert option in help_result.stdout + help_result.stderr
 

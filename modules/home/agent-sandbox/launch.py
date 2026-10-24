@@ -14,6 +14,7 @@ import stat
 import struct
 import subprocess
 import sys
+import tempfile
 
 
 DIRECTORIES = (".git",)
@@ -389,6 +390,8 @@ def main():
     parser.add_argument("--hide", type=Path, action="append", default=[])
     parser.add_argument("--empty-file", type=Path)
     parser.add_argument("--resolv-conf", type=Path)
+    parser.add_argument("--store-seed", type=Path)
+    parser.add_argument("--store-shell")
     options, command = parser.parse_known_args()
     command = command[1:]
     separator = command.index("--")
@@ -399,6 +402,7 @@ def main():
         print("agent-sandbox: WARNING: --git-write permits repository metadata, hooks and configuration writes.", file=sys.stderr)
     policy = Policy(options.home, options.git_write == "1")
     process = None
+    store = None
 
     def interrupted(signum, _frame):
         if process is not None and process.poll() is None:
@@ -414,6 +418,35 @@ def main():
             raise OSError(ctypes.get_errno(), "cannot set parent death signal")
         if os.getppid() != parent:
             interrupted(signal.SIGTERM, None)
+        if options.store_seed is not None:
+            if not options.store_shell:
+                fail("--store-shell is required with --store-seed")
+            store = tempfile.TemporaryDirectory(prefix="evals-store-")
+            root = Path(store.name)
+            seed = options.store_seed.resolve(strict=True)
+            overlays = []
+            for name, target in (("store", "/nix/store"), ("state", "/nix/var/nix")):
+                upper, work = root / (name + "-upper"), root / (name + "-work")
+                upper.mkdir()
+                work.mkdir()
+                overlays += ["--overlay-src", str(seed / target.lstrip("/")),
+                             "--overlay", str(upper), str(work), target]
+            config = root / "nix.conf"
+            config.write_text(
+                "experimental-features = nix-command flakes\n"
+                "build-users-group =\n"
+                "require-drop-supplementary-groups = false\n"
+                "sandbox = true\n"
+                "sandbox-fallback = false\n"
+                f"sandbox-paths = /bin/sh={options.store_shell}\n"
+                "builders =\n"
+                "substituters = https://cache.nixos.org/\n"
+                "trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=\n"
+                "flake-registry =\n"
+                "max-jobs = auto\n"
+            )
+            index = mounts.index("--sandbox-store")
+            mounts[index:index + 1] = overlays + ["--ro-bind", str(config), "/etc/nix/nix.conf"]
         writable_mounts = []
         pinned = []
         for source, destination in writable:
@@ -453,6 +486,8 @@ def main():
                 process.kill()
                 process.wait()
         policy.close()
+        if store is not None:
+            store.cleanup()
 
 
 if __name__ == "__main__":
