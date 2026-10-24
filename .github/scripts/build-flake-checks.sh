@@ -49,8 +49,8 @@ available=$(nix config show system-features | jq -R 'split(" ")')
 # memory (about 5 GiB for these checks) for the full build. A large build,
 # for example a Rust package, then has less memory on the 16 GiB runner.
 #
-# `kvm` in the required features marks a VM test. A new VM test therefore
-# lands in the `vm` shard on its own.
+# `nixos-test` marks a VM test, including tests that permit software
+# emulation without KVM. These tests belong in the `vm` shard.
 rows=$(jq -r '.[]' <<< "$drvs" | xargs nix derivation show \
   | jq -r --argjson drvs "$drvs" --argjson available "$available" --arg shard "$shard" '
   .derivations as $shown
@@ -58,7 +58,7 @@ rows=$(jq -r '.[]' <<< "$drvs" | xargs nix derivation show \
   # The dedicated llm matrix builds this check on every supported platform.
   | select($shard == "all" or .key != "llm-runtime")
   | ($shown[.value | split("/") | last].env.requiredSystemFeatures // "") as $required
-  | ($required | split(" ") | any(. == "kvm")) as $isVM
+  | ($required | split(" ") | any(. == "nixos-test")) as $isVM
   | select($shard == "all" or ($shard == "vm") == $isVM)
   | (($required | split(" ") | map(select(. != ""))) - $available) as $missing
   | "\(.key)\t\(.value)\t\($missing | join(" "))"')
