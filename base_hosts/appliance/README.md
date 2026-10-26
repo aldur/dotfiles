@@ -26,6 +26,8 @@ gh attestation verify baguette_state.img.zst --repo aldur/dotfiles \
   --signer-workflow aldur/dotfiles/.github/workflows/baguette-image.yml
 ```
 
+### Start the VM
+
 Decompress the verified base before use. The ARM64 disk sandbox in ChromeOS
 156 blocks `pread64`, which crosvm uses to read compressed images:
 
@@ -47,13 +49,16 @@ vmc start --vm-type BAGUETTE \
 vsh NAME penguin
 ```
 
-After `vmc create` succeeds, you can delete the downloaded
-`baguette_state.img.zst`. ChromeOS keeps its own writable state disk. Keep
-that VM disk and `baguette_rootfs.img` for future starts.
+`baguette_state.img.zst` contains an empty Btrfs filesystem. At creation,
+ChromeOS copies it to the VM's writable state disk. You can delete the
+download after `vmc create` succeeds. Keep the VM disk and
+`baguette_rootfs.img` for future starts. Each guest selects which application
+directories to keep under `/state`.
 
 Start the VM with this command before using its app launcher entry. Repeat
 the command after each VM stop or ChromeOS login. The app launcher does not
 retain `--rootfs`. Do not use it to start a stopped VM.
+
 The initial state disk has no init program, so a start without `--rootfs`
 fails. The base init also requires read-only `/dev/vda`.
 Guest root can make the state disk bootable. A start without `--rootfs`
