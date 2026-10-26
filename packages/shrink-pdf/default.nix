@@ -9,13 +9,13 @@
 
 stdenv.mkDerivation {
   pname = "shrink-pdf";
-  version = "1.2-unstable-2025-11-27";
+  version = "1.2-unstable-2026-10-20";
 
   src = fetchFromGitHub {
     owner = "aklomp";
     repo = "shrinkpdf";
-    rev = "d8e4aca8a4caebcc1ef0f569e6651c8dc5964334";
-    hash = "sha256-URS7V00TJgrUiRC7YAaCrcmONgC5+xaHS6QPE6wv+Jo=";
+    rev = "cd157c2838607317ace3ad43821c29c0815c19ab";
+    hash = "sha256-yn7QW/hrOC+GWFFvLHYKCZLoXZJnqm1nvIgjAxGTYEc=";
   };
 
   nativeBuildInputs = [ makeWrapper ];
