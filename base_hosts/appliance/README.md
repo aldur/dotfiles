@@ -47,11 +47,17 @@ vmc start --vm-type BAGUETTE \
 vsh NAME penguin
 ```
 
+After `vmc create` succeeds, you can delete the downloaded
+`baguette_state.img.zst`. ChromeOS keeps its own writable state disk. Keep
+that VM disk and `baguette_rootfs.img` for future starts.
+
 Start the VM with this command before using its app launcher entry. Repeat
 the command after each VM stop or ChromeOS login. The app launcher does not
 retain `--rootfs`. Do not use it to start a stopped VM.
+The initial state disk has no init program, so a start without `--rootfs`
+fails. The base init also requires read-only `/dev/vda`.
 Guest root can make the state disk bootable. A start without `--rootfs`
-can then run code from that disk.
+can then run code from that disk; ChromeOS does not enforce this flag.
 
 ChromeOS attaches the base image read-only. The separate VM disk holds
 `/state`. Keep the base image outside all folders shared with Linux.
