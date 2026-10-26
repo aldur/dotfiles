@@ -242,16 +242,15 @@
     },
     "preservation": {
       "locked": {
-        "lastModified": 1792248142,
-        "narHash": "sha256-2rVpe+BHtP8MpoB3PO2qv4tAWG53qN9dyFpf+kaP5qA=",
-        "owner": "aldur",
+        "lastModified": 1792953443,
+        "narHash": "sha256-s/A2rSO2Ndf8Y5yiouesnI/3Zkn9pmVGF2NxFxOUvx8=",
+        "owner": "nix-community",
         "repo": "preservation",
-        "rev": "31afe5c2ab26f38765cd17bf3b482fa4321e08a8",
+        "rev": "00be7f7dd1a11ae0605386f2272288de7cf33abe",
         "type": "github"
       },
       "original": {
-        "owner": "aldur",
-        "ref": "main",
+        "owner": "nix-community",
         "repo": "preservation",
         "type": "github"
       }
