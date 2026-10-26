@@ -26,17 +26,23 @@ gh attestation verify baguette_state.img.zst --repo aldur/dotfiles \
   --signer-workflow aldur/dotfiles/.github/workflows/baguette-image.yml
 ```
 
-Put both compressed files in ChromeOS `Downloads/NAME`. Use a separate
-folder for each VM. The base uses seekable zstd with 128 KiB frames.
-ChromeOS reads it directly. Open crosh (`Ctrl+Alt+T`). Replace `NAME` with
-the VM name:
+Decompress the verified base before use. The ARM64 disk sandbox in ChromeOS
+156 blocks `pread64`, which crosvm uses to read compressed images:
+
+```bash
+zstd --decompress --keep baguette_rootfs.img.zst
+```
+
+Put `baguette_rootfs.img` and `baguette_state.img.zst` in ChromeOS
+`Downloads/NAME`. Use a separate folder for each VM. Open crosh (`Ctrl+Alt+T`).
+Replace `NAME` with the VM name:
 
 ```text
 vmc create --vm-type BAGUETTE --size 12G \
   --source /home/chronos/user/MyFiles/Downloads/NAME/baguette_state.img.zst \
   NAME
 vmc start --vm-type BAGUETTE \
-  --rootfs /home/chronos/user/MyFiles/Downloads/NAME/baguette_rootfs.img.zst \
+  --rootfs /home/chronos/user/MyFiles/Downloads/NAME/baguette_rootfs.img \
   NAME
 vsh NAME penguin
 ```
@@ -116,6 +122,8 @@ nix build "path:./base_hosts/$guest#checks.x86_64-linux.qemu-boot" \
 The Baguette test boots the distributed image with crosvm and a Termina kernel.
 Its host services are test fixtures. Test ChromeOS registration and host display
 integration on the target Chromebook.
+The test uses x86-64 with the crosvm sandbox disabled. It does not check the
+ARM64 host disk policy.
 
 QEMU tests use the same store-image builder with plain LZ4. Shipped images use
 LZ4HC level 12.
