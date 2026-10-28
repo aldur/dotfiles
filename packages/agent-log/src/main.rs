@@ -37,6 +37,7 @@ Options:
   --full            Print the whole conversation and exit
   --turn <n>        Print the nth turn and exit (negative counts from the end)
   --list            Print picker rows to stdout instead of running fzf
+  --show-model      Show the model in conversation rows
   --query <text>    Filter sessions by full text (space-separated AND terms)
   --no-tools        With --full, drop tool calls and results (dialogue only)
   --pretty          Render through glow/bat when stdout is a terminal
@@ -46,6 +47,7 @@ Options:
 Typing in either picker searches the whole conversation — prompts, replies,
 thinking and tool traffic — by exact substring, case-insensitive; a space
 separates AND terms.
+Conversation search also matches the agent, project, model and date.
 
 Results and marked turns are always newest first, including while searching.
 --turn numbers still count from the beginning; --full reads chronologically.
@@ -57,12 +59,15 @@ shift-up/down     scroll preview by a line (also alt-up/down)
 mouse wheel       scroll the pane under the pointer
 alt-p             show/hide preview
 alt-e             toggle context, thinking and tool details
-esc               close picker · f1 hide help";
+alt-w             wrap/unwrap list rows
+ctrl-/           show/hide help (also alt-h or f1)
+esc               close picker";
 const SESSION_HELP: &str = "enter             open conversation
+alt-m             show/hide model
 alt-i             print session id and exit
 alt-a             whole conversation in pager
 alt-v             open in nvim
-ctrl-a            search all projects";
+alt-s             search all projects";
 const TURN_HELP: &str = "enter             print selected turns
 tab / shift-tab   mark/unmark turns
 alt-enter         print focused turn via glow/bat
@@ -82,6 +87,7 @@ struct Options {
     newest: bool,
     full: bool,
     list: bool,
+    show_model: bool,
     pretty: bool,
     no_tools: bool,
     turn: Option<i64>,
@@ -135,6 +141,7 @@ fn parse_args(args: &[String]) -> Options {
             "--newest" => opts.newest = true,
             "--full" => opts.full = true,
             "--list" => opts.list = true,
+            "--show-model" => opts.show_model = true,
             "--pretty" => opts.pretty = true,
             "--no-tools" => opts.no_tools = true,
             "--color" => opts.color = Some(next()),
@@ -228,9 +235,24 @@ fn collect_sessions(
     )
 }
 
-/// Compact session rows. Full text is searched on demand by `_sessions`;
-/// feeding entire transcripts to fzf made even an empty query expensive.
-fn session_rows(sessions: &[model::Session], show_project: bool) -> Vec<String> {
+#[derive(Clone, Copy)]
+enum SessionLayout {
+    Picker,
+    List { show_model: bool },
+}
+
+/// Search full text on demand. Keep paths and IDs in fields 2 and 4.
+fn session_rows(
+    sessions: &[model::Session],
+    show_project: bool,
+    layout: SessionLayout,
+) -> Vec<String> {
+    let model_width = sessions
+        .iter()
+        .map(|s| model::flatten(&s.model).chars().count())
+        .max()
+        .unwrap_or(1)
+        .max(1);
     sessions
         .iter()
         .map(|s| {
@@ -243,18 +265,29 @@ fn session_rows(sessions: &[model::Session], show_project: bool) -> Vec<String> 
             } else {
                 String::new()
             };
-            // Keep the old column positions for paths and IDs. Full search
-            // text no longer travels through the reserved third column.
-            format!(
-                "{}  {} {}{}\t{}\t{}\t{}",
+            let prefix = format!(
+                "{}  {} {}",
                 style::dim(&scan::format_when(s.last_activity)),
                 style::dim(&format!("{:<6}", s.agent)),
-                project,
-                model::truncate(&s.title, 110),
-                s.path,
-                "",
-                s.id
-            )
+                project
+            );
+            let name = model::flatten(&s.model);
+            let name = if name.is_empty() { "?" } else { &name };
+            let model_label = format!("[{name}]");
+            let model = style::dim(&format!("{model_label:<width$} ", width = model_width + 2));
+            match layout {
+                SessionLayout::Picker => {
+                    // Separate fields let fzf hide the model without a reload.
+                    format!("{prefix}\t{}\t{}\t{}\t{model}", s.path, s.title, s.id)
+                }
+                SessionLayout::List { show_model } => format!(
+                    "{prefix}{}{}\t{}\t\t{}",
+                    if show_model { &model } else { "" },
+                    s.title,
+                    s.path,
+                    s.id
+                ),
+            }
         })
         .collect()
 }
@@ -391,10 +424,10 @@ fn run_fzf(
     let (help, footer, hidden) = match picker {
         Picker::Sessions => (
             SESSION_HELP,
-            "enter open · alt-p preview · f1 help",
+            "ctrl-/ help · alt-m model · alt-p preview · alt-s all · enter open",
             ",hidden",
         ),
-        Picker::Turns => (TURN_HELP, "enter print · alt-e details · f1 help", ""),
+        Picker::Turns => (TURN_HELP, "ctrl-/ help · alt-e details · enter print", ""),
     };
     let mut child = Command::new("fzf")
         .args([
@@ -420,6 +453,9 @@ fn run_fzf(
             "--footer-border=none",
             "--bind=start:hide-header+first",
             "--bind=f1:toggle-header",
+            "--bind=alt-h:toggle-header",
+            "--bind=ctrl-/:toggle-header",
+            "--bind=alt-w:toggle-wrap",
             "--bind=alt-p:toggle-preview",
             // Paging the list changes the focused row and restarts its
             // preview. These bindings scroll the existing preview instead.
@@ -428,7 +464,8 @@ fn run_fzf(
             "--bind=alt-up:preview-up,alt-down:preview-down",
             "--bind=preview-scroll-up:preview-up,preview-scroll-down:preview-down",
             "--preview-label=",
-            "--wrap-sign=",
+            "--wrap-sign=↳ ",
+            "--ellipsis=…",
         ])
         .arg(format!("--header={help}\n{COMMON_HELP}"))
         .arg(format!("--footer={footer}"))
@@ -572,7 +609,7 @@ fn main() {
                 .clone()
                 .unwrap_or_else(|| std::env::current_dir().unwrap_or_default());
             let (sessions, all) = find_sessions(&opts, &cwd);
-            emit_rows(&session_rows(&sessions, all));
+            emit_rows(&session_rows(&sessions, all, SessionLayout::Picker));
             return;
         }
         _ => {}
@@ -595,7 +632,13 @@ fn main() {
         None => {
             let (sessions, all) = find_sessions(&opts, &cwd);
             if opts.list {
-                emit_rows(&session_rows(&sessions, all));
+                emit_rows(&session_rows(
+                    &sessions,
+                    all,
+                    SessionLayout::List {
+                        show_model: opts.show_model,
+                    },
+                ));
                 return;
             }
             if sessions.is_empty() {
@@ -608,7 +651,12 @@ fn main() {
             if opts.newest {
                 PathBuf::from(&sessions[0].path)
             } else {
-                let rows = session_rows(&sessions, all);
+                let rows = session_rows(&sessions, all, SessionLayout::Picker);
+                let (fields, alternate_fields) = if opts.show_model {
+                    ("{1}{5}{3}", "{1}{3}")
+                } else {
+                    ("{1}{3}", "{1}{5}{3}")
+                };
                 let reload = format!(
                     "{} _sessions {}{}{} --query {{q}}",
                     shell_quote(&exe),
@@ -629,13 +677,14 @@ fn main() {
                         } else {
                             "--prompt=conversation> ".into()
                         },
-                        "--with-nth=1".into(),
+                        format!("--with-nth={fields}"),
+                        format!("--bind=alt-m:change-with-nth({alternate_fields}|{fields})"),
                         format!("--query={}", opts.query),
                         "--disabled".into(),
                         format!("--bind=change:reload({reload})"),
                         format!("--bind=alt-a:execute({} _page {{2}})", shell_quote(&exe)),
                         format!("--bind=alt-v:execute({} _view {{2}})", shell_quote(&exe)),
-                        format!("--bind=ctrl-a:change-prompt(all> )+reload({reload} --all)"),
+                        format!("--bind=alt-s:change-prompt(all> )+reload({reload} --all)"),
                         // alt-i selects a row, and fzf writes the name of the
                         // key on the first line. Thus this program can write
                         // the id and stop.

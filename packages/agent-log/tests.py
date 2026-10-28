@@ -327,7 +327,7 @@ else:
         self.assertEqual(output.strip(), "codex")
         self.assertIn("--no-sort", args)
         self.assertIn("--disabled", args)
-        self.assertIn("--with-nth=1", args)
+        self.assertIn("--with-nth={1}{3}", args)
         self.assertNotIn("ToolOnly", rows[0])
         binding = next(a for a in args if a.startswith("--bind=change:reload("))
         command = binding[len("--bind=change:reload("):-1]
@@ -340,6 +340,49 @@ else:
         # Widening the scope must persist over subsequent query changes.
         self.assertEqual(len(self.run_log("_sessions", "--query", "first", self.root,
                                          env=dict(self.env, FZF_PROMPT="all> ")).splitlines()), 3)
+
+    def test_session_titles_use_the_available_width(self):
+        path = self.files[2]
+        records = [json.loads(line) for line in path.read_text().splitlines()]
+        title = "Long request " * 12 + "VisiblePast110 " + "more text " * 20 + "EndOfTitle"
+        records[1]["payload"]["content"] = title
+        path.write_text("\n".join(map(json.dumps, records)) + "\n")
+        row = self.run_log("--all", "--list", "--agent", "codex").split("\t")[0]
+        self.assertTrue(row.endswith(title), row)
+        with self.terminal_picker("--agent", "codex", width=220) as (fd, until):
+            initial = until(rb"1/1")
+            self.assertIn(b"VisiblePast110", initial)
+            self.assertIn("…".encode(), initial)
+            self.assertNotIn(b"EndOfTitle", initial)
+            fcntl.ioctl(fd, termios.TIOCSWINSZ, struct.pack("HHHH", 40, 80, 0, 0))
+            narrow = until(rb"1/1")
+            self.assertNotIn(b"VisiblePast110", narrow)
+            os.write(fd, b"\x1bw")  # Alt-W
+            until(rb"EndOfTitle")
+            os.write(fd, b"\x1bw")
+            collapsed = until("…".encode())
+            self.assertNotIn(b"EndOfTitle", collapsed)
+
+    def test_optional_model_column_preserves_session_fields_and_reload(self):
+        path = self.files[2]
+        with path.open("a") as out:
+            out.write(json.dumps({"type": "turn_context", "payload": {
+                "model": "gpt-daybreak-blue-latest"}}) + "\n")
+        self.assertEqual(self.ids("--query", "gpt-daybreak"), ["codex"])
+        plain = self.run_log("--list").splitlines()[0].split("\t")
+        shown = self.run_log("--list", "--show-model").splitlines()[0].split("\t")
+        self.assertNotIn("gpt-daybreak", plain[0])
+        self.assertIn("[gpt-daybreak-blue-latest]", shown[0])
+        self.assertEqual(plain[1:4], shown[1:4])
+        output, args, _ = self.capture_picker(["--agent", "codex", "--show-model"])
+        self.assertEqual(output.strip(), "codex")
+        self.assertIn("--with-nth={1}{5}{3}", args)
+        binding = next(a for a in args if a.startswith("--bind=change:reload("))
+        command = binding[len("--bind=change:reload("):-1]
+        result = subprocess.run(["sh", "-c", command.replace("{q}", "toolonly")],
+                                env=self.env, capture_output=True, text=True, check=True)
+        self.assertIn("[gpt-daybreak-blue-latest]", result.stdout.split("\t")[4])
+        self.assertIn("[?]", self.run_log("--list", "--show-model", "--agent", "claude"))
 
     def test_turn_picker_search_and_selection_stay_newest_first(self):
         output, args, rows = self.capture_picker([self.files[2]], mode="turn")
@@ -365,11 +408,19 @@ else:
                 _, args, _ = self.capture_picker(command, mode=mode)
                 self.assertIn("--gap=0", args)
                 self.assertIn("--bind=f1:toggle-header", args)
+                self.assertIn("--bind=alt-h:toggle-header", args)
+                self.assertIn("--bind=ctrl-/:toggle-header", args)
+                self.assertIn("--bind=alt-w:toggle-wrap", args)
                 self.assertIn("--bind=alt-p:toggle-preview", args)
                 self.assertIn("--bind=pgup:preview-page-up,pgdn:preview-page-down", args)
                 self.assertIn("--bind=preview-scroll-up:preview-up,preview-scroll-down:preview-down", args)
                 footer = next(a for a in args if a.startswith("--footer="))
-                self.assertLess(len(footer), 60)
+                self.assertLess(len(footer), 80)
+                self.assertIn("ctrl-/ help", footer)
+                if mode == "session":
+                    self.assertIn("alt-s all", footer)
+                    self.assertTrue(any(a.startswith("--bind=alt-s:") for a in args))
+                    self.assertFalse(any(a.startswith("--bind=ctrl-a:") for a in args))
                 preview = next(a for a in args if a.startswith("--preview-window="))
                 self.assertIn("<60(down,50%,border-top", preview)
                 self.assertEqual("hidden" in preview, mode == "session")
@@ -627,9 +678,9 @@ else:
                 # A match far beyond the clipped snippet must still be found.
                 os.write(fd, b"ScrollLine179")
                 until(rb"1/5")
-                os.write(fd, b"\x1bOP")  # F1
+                os.write(fd, b"\x1f")  # Ctrl-/
                 until(rb"toggle tools and dialogue")
-                os.write(fd, b"\x1bOP")
+                os.write(fd, b"\x1bOP")  # F1 closes the same help.
                 os.write(fd, b"\r")
                 result = until(rb"ScrollLine179")
                 self.assertIn(b"session: codex", result)
@@ -651,6 +702,63 @@ else:
             until(rb"1/1")
             os.write(fd, b"\x1bi")  # Alt-I returns the same session
             until(rb"codex\r\n$")
+
+    def test_real_terminal_model_toggle_help_and_search(self):
+        with self.files[2].open("a") as out:
+            out.write(json.dumps({"type": "turn_context", "payload": {
+                "model": "gpt-daybreak-blue-latest"}}) + "\n")
+        for flags in [[], ["--show-model"]]:
+            with self.subTest(flags=flags), self.terminal_picker(*flags) as (fd, until):
+                initial = until(rb"3/3")
+                self.assertEqual(b"gpt-daybreak" in initial, bool(flags))
+                os.write(fd, b"\x1bm")  # Alt-M
+                toggled = until(rb"3/3")
+                self.assertEqual(b"gpt-daybreak" in toggled, not flags)
+                os.write(fd, b"\x1bh")
+                until(rb"show/hide model")
+                os.write(fd, b"\x1f")  # Ctrl-/ closes help opened with Alt-H.
+                hidden = until(rb"3/3")
+                self.assertNotIn(b"show/hide model", hidden)
+                os.write(fd, b"?")  # Punctuation remains part of the query.
+                until(rb"0/0")
+                os.write(fd, b"\x15gpt-daybreak")  # Ctrl-U clears the query.
+                filtered = until(rb"1/1")
+                self.assertEqual(b"gpt-daybreak-blue-latest" in filtered, not flags)
+                os.write(fd, b"\x1bm")
+                toggled = until(rb"1/1")
+                self.assertEqual(b"gpt-daybreak-blue-latest" in toggled, bool(flags))
+                os.write(fd, b"\x1bi")
+                until(rb"codex\r\n$")
+        with self.terminal_picker(width=80) as (fd, until):
+            until(rb"3/3")
+            os.write(fd, b"\x1b[B")  # Focus pi instead of the newest session.
+            until(rb"First pi prompt")
+            os.write(fd, b"\x1bm")
+            until(rb"gpt-daybreak-blue-latest")
+            os.write(fd, b"\x1bi")
+            until(rb"pi\r\n$")
+
+    def test_real_terminal_scope_shortcut_preserves_query_editing(self):
+        path = self.files[0]
+        records = [json.loads(line) for line in path.read_text().splitlines()]
+        records[0]["cwd"] = str(self.root / "other-project")
+        path.write_text("\n".join(map(json.dumps, records)) + "\n")
+        with self.terminal_picker() as (fd, until):
+            until(rb"2/2")
+            os.write(fd, b"prompt")
+            until(rb"2/2")
+            os.write(fd, b"\x01First codex ")  # Ctrl-A inserts at the start.
+            edited = until(rb"1/1")
+            self.assertNotIn(b"all> ", edited)
+            os.write(fd, b"\x05\x15prompt")  # Ctrl-E, then Ctrl-U.
+            until(rb"2/2")
+            os.write(fd, b"\x1bs")  # Alt-S includes the other project.
+            broadened = until(rb"3/3")
+            self.assertIn(b"all> ", broadened)
+            os.write(fd, b"\x15claude")
+            until(rb"1/1")
+            os.write(fd, b"\x1bi")
+            until(rb"claude\r\n$")
 
     def test_real_terminal_expand_collapse_and_search(self):
         path = self.files[2]

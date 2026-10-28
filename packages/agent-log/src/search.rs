@@ -99,10 +99,11 @@ impl<'a, 'q> Matches<'a, 'q> {
 
     pub fn finish(mut self, session: &Session) -> bool {
         self.text(&format!(
-            "{} {} {} {}",
+            "{} {} {} {} {}",
             crate::scan::format_when(session.last_activity),
             session.agent,
             session.cwd,
+            session.model,
             session.title
         ));
         self.remaining == 0
