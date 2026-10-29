@@ -274,6 +274,52 @@ with sqlite3.connect(root / 'fixture.sqlite') as db:
         result = sandbox(repo, 'pass', '--profile', kind, '--rw', str(host), check=False)
         assert result.returncode != 0 and 'must use --profile' in result.stderr
 
+    for kind in ('codex', 'claude'):
+        state = Path.home() / f'.{kind}'
+        managed_worktree = state / 'worktrees' / base.name / 'repo'
+        call([git, '-C', str(repo), 'worktree', 'add', '--quiet', '--detach', str(managed_worktree)])
+        (managed_worktree / 'src').mkdir()
+        for options in ((), ('--profile', kind)):
+            for workspace in (managed_worktree, managed_worktree / 'src'):
+                sandbox(workspace, f'''
+import subprocess
+Path('edit').write_text('worktree edit')
+subprocess.run([{git!r}, 'status', '--short'], check=True)
+subprocess.run([{git!r}, 'log', '-1', '--oneline'], check=True)
+denied(lambda: Path({str(managed_worktree / '.git')!r}).write_text('changed'))
+denied(lambda: Path({str(repo / '.git/config')!r}).write_text('changed'))
+''', *options)
+                assert (workspace / 'edit').read_text() == 'worktree edit'
+        sandbox(repo, f"Path({str(managed_worktree / 'file')!r}).write_text('explicit grant')",
+                '--rw', str(managed_worktree))
+        sandbox(managed_worktree, f"import subprocess; subprocess.run([{git!r}, 'add', 'file'], check=True)",
+                '--profile', kind, '--git-write')
+
+        lookalike = state / 'worktrees-other'
+        lookalike.mkdir(exist_ok=True)
+        config = state / ('config.toml' if kind == 'codex' else 'settings.json')
+        state_link = managed_worktree / 'state-link'
+        state_link.symlink_to(config)
+        for path in (config, lookalike, state_link):
+            result = sandbox(repo, 'pass', '--profile', kind, '--rw', str(path), check=False)
+            assert result.returncode != 0 and 'must use --profile' in result.stderr, result.stderr
+        state_link.unlink()
+
+        alias_state = Path('/persist/home/tester') / f'.{kind}'
+        if alias_state.exists():
+            result = sandbox(repo, 'pass', '--profile', kind, '--rw', str(alias_state), check=False)
+            assert result.returncode != 0 and 'must use --profile' in result.stderr
+            alias_worktree = alias_state / managed_worktree.relative_to(state)
+            sandbox(alias_worktree, f'''
+import subprocess
+Path('edit').write_text('alias edit')
+subprocess.run([{git!r}, 'status', '--short'], check=True)
+denied(lambda: Path('.git').write_text('changed'))
+denied(lambda: Path({str(managed_worktree / '.git')!r}).write_text('changed'))
+''', '--profile', kind)
+            assert (managed_worktree / 'edit').read_text() == 'alias edit'
+        print(f'passed: {kind} worktree grants and state boundaries', flush=True)
+
     # ~/.claude.json is a file mount. A rename over it fails with EBUSY, so a
     # writer must fall back to an in-place write, as Claude Code does. A
     # missing file is created before the first launch, so a first run inside
@@ -301,8 +347,6 @@ else:
     config.write_bytes(original)
 
     if Path('/persist/home/tester/.codex').exists():
-        result = sandbox(repo, 'pass', '--profile', 'codex', '--rw', '/persist/home/tester/.codex', check=False)
-        assert result.returncode != 0 and 'must use --profile' in result.stderr
         preserved = Path('/home/tester/Work/preserved-repo')
         repository(preserved)
         sandbox(preserved, "denied(lambda: Path('/persist/home/tester/Work/preserved-repo/.git/config').write_text('changed'))", '--rw', '/persist/home/tester/Work/preserved-repo/.git/config')

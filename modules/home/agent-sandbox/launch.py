@@ -220,6 +220,7 @@ class Policy:
         protected = {}
         git_dirs = set()
         hardlinks = {}
+        state_aliases = set()
 
         def walk_error(error):
             raise error
@@ -266,17 +267,23 @@ class Policy:
             managed = self.reservations.root
             if within(source, managed) or within(managed, source):
                 fail(f"cannot grant sandbox lifecycle state: {destination}")
-            # Explicit grants cannot make agent configuration writable through
-            # another spelling. Its state must use the selected profile.
+            # Agent worktrees are workspaces. Other agent state must use the
+            # selected profile, including grants through another path.
             for root in (self.home / ".codex", self.home / ".claude", self.home / ".claude.json"):
                 # Preservation bind mounts can name the same tree under /persist
                 # without any symlink for realpath to resolve.
-                same_tree = root.exists() and any(
-                    ancestor.exists() and os.path.samefile(ancestor, root)
-                    for ancestor in (source, *source.parents)
-                )
-                if within(source, root.resolve()) or same_tree:
-                    fail(f"agent state must use --profile, not a writable grant: {destination}")
+                state_roots = {root.resolve()}
+                if root.exists():
+                    state_roots.update(
+                        ancestor for ancestor in (source, *source.parents)
+                        if os.path.samefile(ancestor, root)
+                    )
+                for state_root in state_roots:
+                    if within(source, state_root):
+                        if within(source, state_root / "worktrees"):
+                            state_aliases.add((state_root, root))
+                            continue
+                        fail(f"agent state must use --profile, not a writable grant: {destination}")
             if not source.is_dir():
                 remember_hardlink(source, direct_grant=True)
                 if source.name in names:
@@ -359,7 +366,8 @@ class Policy:
         destinations = set()
         for source in sorted(restrictions, key=lambda path: len(path.parts)):
             targets = {source} if source in protected or source in git_dirs else set()
-            for root, destination in writable:
+            # The profile can expose worktree metadata through its state path.
+            for root, destination in (*writable, *state_aliases):
                 if within(source, root):
                     targets.add(destination / source.relative_to(root))
                 elif within(root, source):

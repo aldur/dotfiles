@@ -228,7 +228,9 @@ pkgs.runCommand "agent-sandbox-test"
       )
       if [ "$persistence" = present ]; then
         args+=(--bind "$fixture/persist" /persist)
-        args+=(--bind "$fixture/home/.codex" /persist/home/tester/.codex)
+        for agent in claude codex; do
+          args+=(--bind "$fixture/home/.$agent" "/persist/home/tester/.$agent")
+        done
         args+=(--bind "$fixture/home/.local/share/direnv" /persist/home/tester/.local/share/direnv)
       fi
       bwrap "''${args[@]}" -- dbus-run-session \
