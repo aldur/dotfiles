@@ -237,8 +237,8 @@ let
   };
 
   # Several of node's C dependencies have no dev output: headers, cmake
-  # exports and pkg-config files ride in the runtime output (uvwasi's .pc
-  # even pins libuv's -dev headers). node links the libraries, never the
+  # exports and build metadata ride in the runtime output (uvwasi's metadata
+  # pins libuv's -dev headers). node links the libraries, never the
   # headers. Same name → same store path length, so the copies can
   # replace the originals byte-for-byte inside node's ELF below.
   withoutHeaders =
@@ -247,6 +247,7 @@ let
       cp -a ${pkg} $out
       chmod -R u+w $out
       rm -rf $out/include $out/lib/pkgconfig $out/lib/cmake
+      rm -f $out/nix-support/propagated-build-inputs
     '';
 
   # node compiles its build configuration into the binary (process.config),
