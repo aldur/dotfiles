@@ -81,14 +81,14 @@
     # (normal mode) backgrounds it and the next summon reattaches with state
     # intact, while quitting nvim (:qa) starts fresh. The session sets
     # NVIM_POPUP=1 so the nvim config knows to map `q` accordingly.
-    bind-key e display-popup -E -w 90% -h 90% lazyvim-popup
+    bind-key e display-popup -E -w 95% -h 95% lazyvim-popup
 
     # Lazygit in a big popup, persistent the same way: `q` backgrounds it,
     # `Q` quits. The wrapper opens at the current pane's path.
-    bind-key g display-popup -E -w 90% -h 90% lazygit-popup
+    bind-key g display-popup -E -w 95% -h 95% lazygit-popup
 
     # Task browser for the current pane's project; shift-T keeps the clock.
-    bind-key t display-popup -E -w 90% -h 90% -d "#{pane_current_path}" taskmd-ui
+    bind-key t display-popup -E -w 95% -h 95% -d "#{pane_current_path}" taskmd-ui
     bind-key T clock-mode
 
     # y to yank in copy mode, remaining in copy mode
