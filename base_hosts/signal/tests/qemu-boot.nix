@@ -88,7 +88,8 @@ pkgs.testers.runNixOSTest {
             machine.screenshot("signal-start-failure")
             raise
         machine.fail("pgrep -x 'Xorg|Xwayland|lightdm|xfce4-session'")
-        machine.fail(f"sqlite3 /home/{user}/.config/Signal/sql/db.sqlite .tables")
+        # The .tables command can ignore errors from an encrypted database.
+        machine.fail(f"sqlite3 -readonly /home/{user}/.config/Signal/sql/db.sqlite 'SELECT count(*) FROM sqlite_master;'")
 
     session()
     # Exercise the actual first-run password prompt, launcher and app.
