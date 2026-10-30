@@ -22,6 +22,7 @@ pkgs.testers.runNixOSTest {
     environment.systemPackages = [
       pkgs.dnsutils
       pkgs.curl
+      pkgs.glib
       pkgs.jq
       pkgs.python3
       pkgs.sqlite
@@ -230,7 +231,9 @@ pkgs.testers.runNixOSTest {
         raise
     machine.succeed(as_user("systemctl --user stop signal-insecure"))
     machine.fail(f"test -f /home/{user}/insecure-profile/sql/db.sqlite")
-    machine.succeed(as_user("busctl --user call org.freedesktop.secrets /org/freedesktop/secrets org.freedesktop.Secret.Service Lock ao 1 /org/freedesktop/secrets/collection/login"))
+    # Introspection registers the client before GNOME Keyring handles Lock.
+    machine.succeed(as_user("gdbus call --session --dest org.freedesktop.secrets --object-path /org/freedesktop/secrets --method org.freedesktop.Secret.Service.Lock \"['/org/freedesktop/secrets/collection/login']\""))
+    machine.succeed(as_user("gdbus call --session --dest org.freedesktop.secrets --object-path /org/freedesktop/secrets/aliases/default --method org.freedesktop.DBus.Properties.Get org.freedesktop.Secret.Collection Locked | grep -qx '(<true>,)'"))
     machine.fail(as_user("systemctl --user start signal.service"))
     machine.succeed("journalctl _UID=1000 --no-pager | grep 'Keyring is locked'")
     machine.fail(as_user("signal-desktop --no-sandbox"))
