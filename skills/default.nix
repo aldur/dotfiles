@@ -2,4 +2,5 @@
 {
   github-ci = ./github-ci;
   taskmd = ./taskmd;
+  writing-well = ./writing-well;
 }

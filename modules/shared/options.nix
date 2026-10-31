@@ -81,6 +81,7 @@ in
           "pptx"
           "taskmd"
           "webapp-testing"
+          "writing-well"
           "xlsx"
         ];
         description = ''
