@@ -76,6 +76,7 @@ in
   # The lazygit counterpart: `q` backgrounds the per-window session, `Q` ends it.
   lazygit-popup = pkgs.callPackage ./lazygit-popup.nix { };
 
+  passage-yubikey = import ../modules/home/tests/secrets.nix { inherit pkgs; };
   # The build runs config-loading and hot-reload regression tests.
   lazygit-config = pkgs.lazygit;
   claude-state = pkgs.callPackage ../modules/home/claude/tests/claude-state.nix {

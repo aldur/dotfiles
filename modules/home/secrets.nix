@@ -12,7 +12,8 @@ let
   # Read and validate before generating store files. Passing the paths to
   # runCommand would copy them into the store before its guard could run.
   # A key included in a flake source is already copied before module evaluation.
-  identities = map (path:
+  identities = map (
+    path:
     let
       text = builtins.readFile path;
       recipient = lib.findFirst builtins.isList null (builtins.split "(age1[a-z0-9]+)" text);
@@ -21,13 +22,67 @@ let
       throw "secrets.nix: identities must contain public identity stubs, never plaintext age secret keys"
     else if recipient == null then
       throw "secrets.nix: no 'age1...' recipient found in identity: ${toString path}"
-    else {
-      inherit text;
-      recipient = builtins.head recipient;
-    }
+    else
+      {
+        inherit text;
+        recipient = builtins.head recipient;
+      }
   ) cfg.identities;
 
-  identitiesFile = pkgs.writeText "age-identities" (lib.concatMapStrings (identity: identity.text + "\n") identities);
+  identitiesFile = pkgs.writeText "age-identities" (
+    lib.concatMapStrings (identity: identity.text + "\n") identities
+  );
+
+  passageAge = pkgs.writeShellApplication {
+    name = "passage-age";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.gawk
+      pkgs.gnugrep
+    ]
+    ++ cfg.plugins;
+    text = ''
+      args=("$@")
+      ${lib.optionalString
+        (lib.any (identity: lib.hasInfix "AGE-PLUGIN-YUBIKEY-" identity.text) identities)
+        ''
+          decrypt=false
+          for arg in "$@"; do
+            case "$arg" in
+              -d | --decrypt) decrypt=true ;;
+            esac
+          done
+          if "$decrypt"; then
+            identity_dir=$(mktemp -d)
+            trap 'rm -rf "$identity_dir"' EXIT
+            if ! age-plugin-yubikey --identity > "$identity_dir/connected"; then
+              : > "$identity_dir/connected"
+            fi
+            awk '
+              FILENAME == ARGV[1] { connected[$1] = 1; next }
+              $1 ~ /^AGE-PLUGIN-YUBIKEY-/ {
+                if ($1 in connected) print $1
+                next
+              }
+              { print }
+            ' "$identity_dir/connected" ${identitiesFile} > "$identity_dir/identities"
+            if ! grep -q '^[^#[:space:]]' "$identity_dir/identities"; then
+              echo "passage: no configured identity is available; connect a configured YubiKey" >&2
+              exit 1
+            fi
+            for i in "''${!args[@]}"; do
+              if [[ "''${args[i]}" == ${identitiesFile} ]]; then
+                args[i]="$identity_dir/identities"
+              fi
+            done
+            ${pkgs.age}/bin/age "''${args[@]}"
+            exit $?
+          fi
+        ''
+      }
+      exec ${pkgs.age}/bin/age "''${args[@]}"
+    '';
+  };
 
   recipientsFile =
     let
@@ -45,10 +100,12 @@ let
       # Only plumbing runs here (add/commit/rev-parse); share the editor's git.
       pkgs.gitMinimal-runtime
       pkgs.coreutils
-    ];
+    ]
+    ++ cfg.plugins;
     text = ''
       export PASSAGE_DIR=${cfg.store}
       export PASSAGE_IDENTITIES_FILE=${identitiesFile}
+      export PASSAGE_AGE=${passageAge}/bin/passage-age
 
       passage_bin=${pkgs.passage}/bin/passage
 
@@ -168,6 +225,11 @@ let
       ln -s ${passageDispatch}/bin/passage "$out/bin/passage"
     '';
   };
+
+  ghToken = pkgs.callPackage ../../packages/gh-token {
+    inherit identitiesFile recipientsFile;
+    ageCommand = "${passageAge}/bin/passage-age";
+  };
 in
 {
   options.programs.aldur.secrets = {
@@ -178,8 +240,9 @@ in
       description = ''
         Age identity files. Each is scanned for its `age1...` recipient to
         build the recipients file used by `passage add`, and all are
-        concatenated into the file passage reads via
-        $PASSAGE_IDENTITIES_FILE. Identity stubs from `age-plugin-yubikey`
+        combined for decryption. Only YubiKey identities on connected
+        keys are used for decryption. Encryption uses all recipients.
+        Identity stubs from `age-plugin-yubikey`
         are public info and safe in the nix store; do not put plaintext
         age secret keys here. Evaluation rejects plaintext secret keys and
         identities without an `age1...` recipient before generating store
@@ -234,6 +297,12 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = [ passageWrapped ] ++ cfg.plugins;
+    programs.fish.functions.ghs = import ./fish/ghs.nix { inherit ghToken; };
+    home.packages = [
+      passageWrapped
+      ghToken
+      pkgs.gh
+    ]
+    ++ cfg.plugins;
   };
 }
