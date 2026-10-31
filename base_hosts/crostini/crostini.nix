@@ -41,6 +41,8 @@ in
     # Crostini guests run the ChromeOS kernel, not the one this
     # configuration builds; see the option's description.
     hardening.foreignKernel = true;
+    # The ChromeOS integration disables the guest firewall.
+    hardening.blockIPv4TcpOptions.enable = false;
     users.users = {
       # We rely on the UID in a few places, so better making sure about it.
       ${username} = {
