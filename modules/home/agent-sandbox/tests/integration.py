@@ -243,7 +243,7 @@ for agent in ["claude", "codex"]:
     assert result.returncode != 0 and "must be private or host" in result.stderr
 
     help_result = run([wrapper, "--help"], capture_output=True, text=True, check=True)
-    for option in ["--profile", "--workspace", "--ro", "--rw", "--env", "--git-write", "--kvm", "--tun", "--docker",
+    for option in ["--profile", "--workspace", "--ro", "--rw", "--env", "--git-write", "--kvm", "--tun", "--docker", "--journal",
                    "--hide", "--network"]:
         assert option in help_result.stdout + help_result.stderr
 
@@ -445,3 +445,4 @@ print("passed: inherited descriptors closed", flush=True)
 subprocess.run([sys.executable, "@metadataTests@", wrapper], check=True, timeout=300)
 subprocess.run([sys.executable, "@direnvTests@", wrapper], check=True, timeout=120)
 subprocess.run([sys.executable, "@dockerTests@", wrapper], check=True, timeout=60)
+subprocess.run([sys.executable, "@journalTests@", wrapper], check=True, timeout=60)

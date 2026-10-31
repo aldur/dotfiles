@@ -17,6 +17,7 @@ let
       })
       // {
         docker.allowDocker = true;
+        journal.allowJournal = true;
       };
   };
 
@@ -113,6 +114,10 @@ let
       git = "${pkgs.git}/bin/git";
     };
     dockerTests = "${./docker.py}";
+    journalTests = pkgs.replaceVars ./journal.py {
+      journalctl = "${pkgs.systemd}/bin/journalctl";
+      journalRemote = "${pkgs.systemd}/lib/systemd/systemd-journal-remote";
+    };
     direnvTests = pkgs.replaceVars ./direnv.py {
       direnv = lib.getExe pkgs.direnv;
       git = lib.getExe pkgs.git;

@@ -11,6 +11,7 @@ set -euo pipefail
 # @flag --kvm Forward /dev/kvm for hardware-accelerated virtual machines
 # @flag --tun Forward /dev/net/tun for nested private networks
 # @flag --docker Allow access to the current user's rootless Docker daemon
+# @flag --journal Allow read-only access to the host systemd journal
 # @option --hide* <PATH> Existing file or directory to show empty (repeatable)
 # @option --store-seed <DIR> Private Nix seed store (required for evaluations)
 # @option --network <MODE> Network mode: private or host (default: profile setting)
@@ -29,6 +30,7 @@ argc_git_write=0
 argc_kvm=0
 argc_tun=0
 argc_docker=0
+argc_journal=0
 argc_hide=()
 argc_store_seed=""
 unset argc_network
@@ -167,6 +169,9 @@ mount_args=()
 
 # Read-only grants are applied after writable ones. Keep installations out
 # of writable agent state, and let explicit --ro grants restrict a workspace.
+if [ "$allow_journal" = 1 ] || [ "$argc_journal" = 1 ]; then
+  user_read_only_paths+=(/etc/machine-id /var/log/journal /run/log/journal)
+fi
 for path in "${user_read_only_paths[@]}" "${agent_read_only_paths[@]}"; do
   add_mount --ro-bind "$path" 1
 done

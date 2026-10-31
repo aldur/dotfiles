@@ -54,6 +54,10 @@ def run(command, **kwargs):
 
 
 def wrappers(config):
+    journal_marker = Path('/var/log/journal/marker')
+    journal_marker.parent.mkdir(parents=True)
+    journal_marker.write_text('journal fixture')
+
     class DockerHandler(BaseHTTPRequestHandler):
         def do_GET(self):
             assert self.path == '/info'
@@ -89,6 +93,7 @@ record = {'argv': sys.argv[1:], 'env': dict(os.environ), 'cwd': os.getcwd(),
           'kvm_visible': Path('/dev/kvm').is_char_device(),
           'tun_visible': Path('/dev/net/tun').is_char_device(),
           'docker_visible': Path(os.environ['XDG_RUNTIME_DIR']).joinpath('docker.sock').is_socket(),
+          'journal_visible': Path('/var/log/journal/marker').exists(),
           'codex_state': Path.home().joinpath('.codex/auth.json').exists()}
 instructions = Path.home() / ('.codex/AGENTS.md' if Path(sys.argv[0]).name == 'codex' else '.claude/CLAUDE.md')
 record['instructions'] = instructions.read_text() if instructions.exists() else None
@@ -133,7 +138,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
         link(BIN / kind, probe)
     env = dict(os.environ, EDITOR='fixture-editor --wait', VISUAL='fixture-visual -f',
                HOST_SECRET='synthetic-host-secret', EXTRA_ENV='extra-fixture')
-    payload = ['resume', 'two words', '', 'line one\nline two', '$(literal)', '--no-sandbox', '--kvm', '--docker', '--help']
+    payload = ['resume', 'two words', '', 'line one\nline two', '$(literal)', '--no-sandbox', '--kvm', '--docker', '--journal', '--help']
     calls = WORK / 'calls.jsonl'
     stamp = HOME / '.claude/yolo-refresh'
 
@@ -161,6 +166,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                 assert record['instructions_writable'] == (not sandboxed), record
                 assert record['kvm_visible'] == (not sandboxed), record
                 assert record['docker_visible'] == (not sandboxed or case['docker']), record
+                assert record['journal_visible'] == (not sandboxed or case['journal']), record
                 actual = record['env']
                 if sandboxed:
                     assert ('DOCKER_HOST' in actual) == case['docker'], record
@@ -182,6 +188,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
             assert '--kvm' in result.stdout + result.stderr, result
             assert '--tun' in result.stdout + result.stderr, result
             assert '--docker' in result.stdout + result.stderr, result
+            assert '--journal' in result.stdout + result.stderr, result
             for mode in ('private', 'host'):
                 option = '--network'
                 assert option in result.stdout + result.stderr, result
@@ -200,6 +207,10 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
             assert records[-1]['argv'] == [*prefix, '--tun'], records
             _, records = invoke(launcher, ['--', '--docker'])
             assert records[-1]['argv'] == [*prefix, '--docker'], records
+            _, records = invoke(launcher, ['--', '--journal'])
+            assert records[-1]['argv'] == [*prefix, '--journal'], records
+            result, records = invoke(launcher, ['--journal', '--no-sandbox'], code=1)
+            assert 'sandbox options require' in result.stderr and not records, result
             result, records = invoke(launcher, ['--docker', '--no-sandbox'], code=1)
             assert 'sandbox options require' in result.stderr and not records, result
             result, records = invoke(launcher, ['--kvm', '--no-sandbox'], code=1)
@@ -214,6 +225,9 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                           '--rw', str(HOME / 'Shared code'), '--rw=' + str(HOME / 'Extra output'),
                           '--env', 'HOST_SECRET', '--env=EXTRA_ENV', '--profile=' + kind]
             if case['sandbox']:
+                _, records = invoke(launcher, ['--journal', 'resume'])
+                assert records[-1]['argv'] == [*prefix, 'resume'], records
+                assert records[-1]['journal_visible'] and not records[-1]['host_visible'], records
                 _, records = invoke(launcher, ['--network', 'host', 'resume'])
                 assert records[-1]['argv'] == [*prefix, 'resume'], records
                 failed, records = invoke(launcher, ['--network', 'private', 'resume'], code=1)
@@ -255,6 +269,8 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                 _, records = invoke(launcher, ['--network', 'host', '--profile', 'default', 'resume'])
                 assert not records[-1]['codex_state'], records
             else:
+                result, records = invoke(launcher, ['--journal'], code=1)
+                assert 'sandbox options require' in result.stderr and not records, result
                 result, records = invoke(launcher, ['--docker'], code=1)
                 assert 'sandbox options require' in result.stderr and not records, result
                 result, records = invoke(launcher, ['--kvm'], code=1)

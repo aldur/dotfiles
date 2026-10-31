@@ -63,6 +63,7 @@ let
       claude = true;
       sandbox = true;
       docker = true;
+      journal = true;
     }
   ];
 
@@ -86,12 +87,14 @@ let
           enable = case.codex;
           sandbox.enable = case.sandbox;
           sandbox.allowDocker = case.docker or false;
+          sandbox.allowJournal = case.journal or false;
           sandbox.network = "host";
         };
         claude-code = {
           enable = case.claude;
           sandbox.enable = case.sandbox;
           sandbox.allowDocker = case.docker or false;
+          sandbox.allowJournal = case.journal or false;
           sandbox.network = "host";
         };
       };
@@ -127,6 +130,7 @@ let
         cases = lib.zipListsWith (case: home: {
           inherit (case) sandbox;
           docker = case.docker or false;
+          journal = case.journal or false;
           launchers = lib.mapAttrs (name: _: lib.getExe (findPackage "${name}-yolo" home)) (
             lib.filterAttrs (_: agent: agent.enabled case) agents
           );
@@ -157,6 +161,8 @@ let
 in
 assert defaults.programs.aldur.codex.sandbox.network == "private";
 assert defaults.programs.aldur.claude-code.sandbox.network == "private";
+assert !defaults.programs.aldur.codex.sandbox.allowJournal;
+assert !defaults.programs.aldur.claude-code.sandbox.allowJournal;
 assert lib.assertMsg (lib.all lib.id (
   lib.zipListsWith check cases homes
 )) "agent-sandbox package or -yolo script integration failed";

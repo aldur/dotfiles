@@ -43,6 +43,7 @@ let
     stateKind = "";
     allowNixDaemon = !privateStore;
     allowDocker = false;
+    allowJournal = false;
     inherit network;
     # Offline containers need only loopback and explicitly mounted sockets.
     inherit allowOutboundNetwork;
@@ -57,6 +58,7 @@ let
     ''
       allow_nix_daemon=${if cfg.allowNixDaemon then "1" else "0"}
       allow_docker=${if cfg.allowDocker then "1" else "0"}
+      allow_journal=${if cfg.allowJournal then "1" else "0"}
       network_mode=${lib.escapeShellArg cfg.network}
       allow_outbound_network=${if cfg.allowOutboundNetwork then "1" else "0"}
       agent_read_only_paths=(${lib.escapeShellArgs cfg.agentReadOnlyPaths})

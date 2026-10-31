@@ -73,6 +73,16 @@ alias: {
       it to omit this socket. Do not use a trusted Nix user for confinement.
     '';
   };
+  allowJournal = mkOption {
+    type = types.bool;
+    default = false;
+    description = ''
+      Expose /var/log/journal, /run/log/journal and /etc/machine-id read-only
+      when present, so journalctl can read host system and user logs.
+      Host file permissions still apply. Journal and system bus sockets
+      remain hidden. The wrapper also accepts --journal for one launch.
+    '';
+  };
   allowDocker = mkOption {
     type = types.bool;
     default = false;

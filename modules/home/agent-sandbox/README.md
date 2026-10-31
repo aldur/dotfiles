@@ -16,6 +16,7 @@ claude-yolo --kvm
 codex-yolo --tun
 codex-yolo --docker
 claude-yolo --docker
+codex-yolo --journal
 ```
 
 The `*-yolo` launchers accept the same sandbox options before the agent
@@ -35,6 +36,7 @@ or when the agent sandbox is disabled.
 | `--kvm` | Forward `/dev/kvm` for hardware-accelerated VMs, including NixOS test drivers. |
 | `--tun` | Forward `/dev/net/tun` for nested private networks. |
 | `--docker` | Expose the current user's rootless Docker socket and set `DOCKER_HOST`. |
+| `--journal` | Mount host systemd journal files read-only for `journalctl`. |
 | `--hide PATH` | Show this existing file or directory empty. Repeatable. |
 | `--network private\|host` | Override the profile network mode. The default is private. |
 
@@ -59,6 +61,13 @@ use `codex-yolo --kvm` or `agent-sandbox --kvm -- nix run .#test.driverInteracti
 
 Use `--tun` when a command must create a nested private network. This mounts
 `/dev/net/tun` as a device.
+
+Use `--journal` to read host logs with `journalctl`, including system and user
+unit logs. It mounts `/var/log/journal`, `/run/log/journal` and `/etc/machine-id`
+read-only when present. Host file permissions still apply. Journal and system
+bus sockets remain hidden. To enable this for an agent's profile, set
+`programs.aldur.codex.sandbox.allowJournal = true;` or
+`programs.aldur.claude-code.sandbox.allowJournal = true;`.
 
 Docker access is off by default, including rootless Docker. Use `--docker`
 for one launch, or enable it in an agent's configuration:
@@ -195,7 +204,8 @@ Set permanent grants per agent with
 `programs.aldur.<agent>.sandbox.filesystem.readOnlyPaths` and
 `readWritePaths`. Use strings, not Nix paths, or the contents go into the
 Nix store. The other options are `network`, `allowNixDaemon`, `allowDocker`,
-`extraEnvironmentAllowlist`, `extraRuntimeDirAllowlist` and `extraDbusTalk`.
+`allowJournal`, `extraEnvironmentAllowlist`, `extraRuntimeDirAllowlist` and
+`extraDbusTalk`.
 See [options.nix](options.nix).
 
 Code: mount defaults in [package.nix](package.nix), argument parsing and the
@@ -225,8 +235,8 @@ All four checks run in CI on Linux (replace `x86_64-linux` with
 `aarch64-linux` on ARM). Each uses a disposable synthetic host.
 
 - `agent-sandbox` covers mounts, environment, open files, seccomp, the bus
-  proxy, Git metadata protection, shared agent state and direnv, with and
-  without `/persist`.
+  proxy, journal access, Git metadata protection, shared agent state and
+  direnv, with and without `/persist`.
 - `agent-sandbox-transport` runs the pinned Codex and Claude clients through
   the actual module-generated YOLO launchers and requires completed model
   turns with the expected text. A local HTTPS server returns fixed Responses

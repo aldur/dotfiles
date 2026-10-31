@@ -22,6 +22,7 @@ let
       extraDbusTalk
       allowNixDaemon
       allowDocker
+      allowJournal
       network
       extraEnvironmentAllowlist
       ;
