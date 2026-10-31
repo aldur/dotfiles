@@ -76,10 +76,10 @@ in
         default = [
           "docx"
           "frontend-design"
-          "github-ci"
+          "maintaining-github-actions"
+          "managing-taskmd-tasks"
           "pdf"
           "pptx"
-          "taskmd"
           "webapp-testing"
           "writing-well"
           "xlsx"

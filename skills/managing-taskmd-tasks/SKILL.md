@@ -1,9 +1,9 @@
 ---
-name: taskmd
+name: managing-taskmd-tasks
 description: Read and edit taskmd Markdown task files.
 ---
 
-# taskmd
+# Managing taskmd tasks
 
 Follow the project's task directory, `.taskmd.yaml`, and existing task conventions.
 Create or update tasks when requested or required by the project's instructions.

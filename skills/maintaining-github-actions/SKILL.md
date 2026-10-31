@@ -1,9 +1,9 @@
 ---
-name: github-ci
+name: maintaining-github-actions
 description: Create, edit, or review GitHub Actions workflows.
 ---
 
-# GitHub CI
+# Maintaining GitHub Actions
 
 Follow the repository's CI conventions and preserve the intended triggers,
 permissions, and job behavior while making the requested changes.
