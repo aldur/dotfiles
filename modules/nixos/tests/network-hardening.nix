@@ -59,6 +59,7 @@ pkgs.testers.runNixOSTest {
 
     def check(server, client, suffix):
         server.wait_for_unit("http.service")
+        server.wait_for_open_port(8080)
         assert server.succeed("sysctl -n net.mptcp.enabled").strip() == "0"
         assert not server.succeed("ss -HlnM").strip()
         before = drops(server)
