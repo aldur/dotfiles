@@ -61,6 +61,14 @@ See [the README](base_hosts/qemu/README.md) for more information.
 nix run "github:aldur/dotfiles#qemu-vm"
 ```
 
+### `pi`
+
+[`modules/home/pi.nix`](modules/home/pi.nix) writes bundled extension paths to
+the shared Pi settings. Child processes load these paths when they bypass the
+wrapper. The wrapper also supplies `-e`; Pi loads each canonical path once.
+Add other paths through `programs.pi.settings.extensions`. The configuration
+sync helper replaces the settings array with the declared list.
+
 ### Everything else
 
 Use `nix flake show github:aldur/dotfiles` for a full list. Some of my

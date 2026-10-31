@@ -119,6 +119,11 @@ in
       # Keep terminal/tmux scrollback with Pi 1.0's regular UI mode.
       settings.tuiMode = lib.mkDefault "regular";
 
+      # Subagents can bypass the wrapper and its extension flags.
+      settings.extensions = lib.mapAttrsToList (
+        _: plugin: plugin.entryPoint or "${plugin}/index.ts"
+      ) pkgs.pi.plugins;
+
       keybindings = lib.mkDefault {
         # Move within the prompt, then browse history.
         "tui.editor.cursorUp" = [
