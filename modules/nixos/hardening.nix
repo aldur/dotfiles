@@ -31,6 +31,27 @@ in
       '';
     };
 
+    mptcp.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Allow new Multipath TCP sockets when sysctl hardening is enabled.
+        Existing MPTCP listeners require a service restart or a reboot.
+      '';
+    };
+
+    blockIPv4TcpOptions.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = ''
+        Drop incoming and forwarded IPv4 TCP packets with IP options before
+        connection tracking. Requires an enabled NixOS iptables or nftables
+        firewall. Count all drops and limit log messages to five per second.
+        Disable this filter for networks that require CIPSO/NetLabel IP
+        options. This filter does not replace a kernel security update.
+      '';
+    };
+
     minimizeWrappers.enable = lib.mkOption {
       type = lib.types.bool;
       default = true;
@@ -170,6 +191,7 @@ in
         "vm.mmap_rnd_compat_bits" = if pkgs.stdenv.hostPlatform.isx86_64 then 16 else null;
 
         # Network hardening (workstation, not a router)
+        "-net.mptcp.enabled" = if cfg.mptcp.enable then 1 else 0;
         "net.ipv4.tcp_syncookies" = 1;
         "net.ipv4.tcp_rfc1337" = 1;
         "net.ipv4.icmp_ignore_bogus_error_responses" = 1;
@@ -190,6 +212,58 @@ in
         "net.ipv6.conf.default.accept_redirects" = 0;
         "net.ipv6.conf.all.accept_source_route" = 0;
         "net.ipv6.conf.default.accept_source_route" = 0;
+      };
+    })
+
+    (lib.mkIf cfg.blockIPv4TcpOptions.enable {
+      assertions = [
+        {
+          assertion = config.networking.firewall.enable;
+          message = "hardening.blockIPv4TcpOptions.enable requires networking.firewall.enable. Enable the firewall or set hardening.blockIPv4TcpOptions.enable = false.";
+        }
+        {
+          assertion = lib.elem config.networking.firewall.backend [
+            "iptables"
+            "nftables"
+          ];
+          message = "hardening.blockIPv4TcpOptions requires the iptables or nftables firewall backend.";
+        }
+      ];
+
+      # CVE-2026-98432: filter before port, interface, and connection accepts.
+      # https://almalinux.org/blog/2026-10-30-cve-2026-98432/
+      networking.nftables.tables.tcp-ip-options =
+        lib.mkIf (config.networking.firewall.backend == "nftables")
+          {
+            family = "ip";
+            content = ''
+              chain prerouting {
+                type filter hook prerouting priority raw; policy accept;
+                ip protocol tcp ip hdrlength > 5 jump drop_tcp_ip_options
+              }
+
+              chain drop_tcp_ip_options {
+                limit rate 5/second burst 10 packets log prefix "tcp-ip-options: " level info
+                counter drop
+              }
+            '';
+          };
+
+      networking.firewall = lib.mkIf (config.networking.firewall.backend == "iptables") {
+        extraCommands = ''
+          iptables -w -t raw -N nixos-tcp-ip-options 2>/dev/null || true
+          iptables -w -t raw -F nixos-tcp-ip-options
+          iptables -w -t raw -A nixos-tcp-ip-options -m limit --limit 5/second --limit-burst 10 \
+            -j LOG --log-prefix "tcp-ip-options: " --log-level info
+          iptables -w -t raw -A nixos-tcp-ip-options -j DROP
+          iptables -w -t raw -C PREROUTING -p tcp -m u32 --u32 '0>>24&0x0f=6:15' -j nixos-tcp-ip-options 2>/dev/null || \
+            iptables -w -t raw -I PREROUTING 1 -p tcp -m u32 --u32 '0>>24&0x0f=6:15' -j nixos-tcp-ip-options
+        '';
+        extraStopCommands = ''
+          iptables -w -t raw -D PREROUTING -p tcp -m u32 --u32 '0>>24&0x0f=6:15' -j nixos-tcp-ip-options 2>/dev/null || true
+          iptables -w -t raw -F nixos-tcp-ip-options 2>/dev/null || true
+          iptables -w -t raw -X nixos-tcp-ip-options 2>/dev/null || true
+        '';
       };
     })
 

@@ -100,6 +100,7 @@ in
   crostini-ssh = pkgs.callPackage ../base_hosts/crostini/tests/ssh.nix { };
   crostini-pcscd = pkgs.callPackage ../base_hosts/crostini/tests/pcscd.nix { };
   crostini-piv = pkgs.callPackage ../base_hosts/crostini/tests/piv.nix { };
+  network-hardening = pkgs.callPackage ../modules/nixos/tests/network-hardening.nix { };
 
   claude-skills-migration = pkgs.callPackage ../modules/home/claude/tests/skills-migration.nix {
     inherit self;
