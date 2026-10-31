@@ -128,7 +128,7 @@
     "gh-signing-keys": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-hACuSQSPcTrmY3RNB16owpZiHhaoiFWmZ9nqr5eQ6ew=",
+        "narHash": "sha256-se65vQP9ypXDnXUAW/prNtPqNyeuHJjUgvuYxxMgGrw=",
         "type": "file",
         "url": "https://api.github.com/users/aldur/ssh_signing_keys"
       },
