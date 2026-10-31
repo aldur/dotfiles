@@ -61,6 +61,7 @@ in
     pi-llama = final.callPackage ../packages/pi/plugins/pi-llama.nix { };
     pi-no-docs = final.callPackage ../packages/pi/plugins/pi-no-docs { };
     pi-statusline = prev.callPackage ../packages/pi/plugins/pi-statusline { };
+    pi-subagent = final.callPackage ../packages/pi/plugins/pi-subagent { };
     pi-system-prompt = prev.callPackage ../packages/pi/plugins/pi-system-prompt { };
     pi-throughput = final.callPackage ../packages/pi/plugins/pi-throughput { };
   };
