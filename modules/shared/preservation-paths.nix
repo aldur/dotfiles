@@ -8,6 +8,10 @@
     ".cache/nix"
     ".local/state/nix"
     ".local/state/lazygit"
+    {
+      directory = ".local/state/gh-token";
+      mode = "0700";
+    }
     ".local/share/atuin"
     ".local/share/dasht"
     ".local/share/direnv"
