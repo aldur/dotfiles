@@ -19,15 +19,9 @@ let
   softwarePlugin = pkgs.writeShellScriptBin "age-plugin-test" ''
     exec ${plugin}/bin/age-plugin-yubikey "$@"
   '';
-  identities = map (text: builtins.toFile "test-yubikey-identity" text) [
-    ''
-      # Recipient: age1yubikey1qq0w0756
-        AGE-PLUGIN-YUBIKEY-1QQQVUTDQ
-    ''
-    ''
-      # Recipient: age1yubikey1pqqnqylu
-      AGE-PLUGIN-YUBIKEY-1PQ03N3XX
-    ''
+  identities = [
+    ./secrets-yubikey-first.identity
+    ./secrets-yubikey-second.identity
   ];
   store =
     pkgs.runCommand "test-passage-store"
@@ -65,10 +59,7 @@ let
   fallbackPassage = mkPassage (
     identities
     ++ [
-      (builtins.toFile "test-software-identity" ''
-        # Recipient: age1test1qq2y9hht
-        AGE-PLUGIN-TEST-1QQK45Y5S
-      '')
+      ./secrets-software.identity
     ]
   );
 in
