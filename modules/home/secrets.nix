@@ -100,6 +100,7 @@ let
       # Only plumbing runs here (add/commit/rev-parse); share the editor's git.
       pkgs.gitMinimal-runtime
       pkgs.coreutils
+      pkgs.openssl
     ]
     ++ cfg.plugins;
     text = ''
