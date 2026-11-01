@@ -104,32 +104,29 @@ with pkgs.vimPlugins;
 
     {
       plugin =
-        pkgs.lib.throwIf (pkgs.vimPlugins ? link-vim)
-          ''
-            nixpkgs' stable channel now packages link-vim.
-            Take it from `pkgs` instead of `pkgsUnstable`, and drop this guard.''
-          (
-            # No need for `.git_hooks`, let's save space (it would otherwise bring bash in)
-            pkgs.runCommandLocal pkgsUnstable.vimPlugins.link-vim.name { } ''
-              cp -a ${pkgsUnstable.vimPlugins.link-vim} $out
-              chmod -R u+w $out
-              ${pkgs.patch}/bin/patch -d $out -p1 <<'PATCH'
-              --- a/autoload/linkvim/u.vim
-              +++ b/autoload/linkvim/u.vim
-              @@ -58,3 +58,8 @@
-              +  " Tree-sitter highlighting disables the legacy syntax groups checked below.
-              +  if has('nvim') && luaeval("require('util.link').is_code(_A[1], _A[2])", [l:lnum, l:col])
-              +    return v:true
-              +  endif
-              +
-                 " vint: -ProhibitInvalidMapCall
-                 return synstack(l:lnum, l:col)
-                       \ ->map("synIDattr(v:val, 'name')")
-              PATCH
-              rm -rf $out/.git_hooks
-              ! grep -r /nix/store/ $out
-            ''
-          );
+        let
+          linkVim = pkgs.vimPlugins.link-vim or pkgsUnstable.vimPlugins.link-vim;
+        in
+        # No need for `.git_hooks`, let's save space (it would otherwise bring bash in)
+        pkgs.runCommandLocal linkVim.name { } ''
+          cp -a ${linkVim} $out
+          chmod -R u+w $out
+          ${pkgs.patch}/bin/patch -d $out -p1 <<'PATCH'
+          --- a/autoload/linkvim/u.vim
+          +++ b/autoload/linkvim/u.vim
+          @@ -58,3 +58,8 @@
+          +  " Tree-sitter highlighting disables the legacy syntax groups checked below.
+          +  if has('nvim') && luaeval("require('util.link').is_code(_A[1], _A[2])", [l:lnum, l:col])
+          +    return v:true
+          +  endif
+          +
+             " vint: -ProhibitInvalidMapCall
+             return synstack(l:lnum, l:col)
+                   \ ->map("synIDattr(v:val, 'name')")
+          PATCH
+          rm -rf $out/.git_hooks
+          ! grep -r /nix/store/ $out
+        '';
       name = "link.vim";
     }
 
