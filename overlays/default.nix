@@ -15,6 +15,8 @@
     prev.lib.composeManyExtensions overlays final prev
   )
 
+  (import ./direnv { inherit self; })
+
   (final: prev: {
     # SQLite 3.53 changed SQL BLOB literals from X'...' to x'...' and broke
     # pnpm archive hashes in stable. Use the fixed fetcher from the existing

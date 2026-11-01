@@ -3,6 +3,7 @@
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tempfile
@@ -10,6 +11,7 @@ import time
 
 
 direnv = str(Path(sys.argv[1]).resolve())
+ansi = re.compile(r"\x1b\[[0-9;]*m")
 
 
 def check(paths):
@@ -82,8 +84,9 @@ def check(paths):
         allowed = run("allow")
         assert not allowed.stdout
         assert len(allowed.stderr.splitlines()) == 1, allowed.stderr
-        assert allowed.stderr.startswith("[approval] allowed ")
-        assert len(allowed.stderr) < 250
+        allowed_message = ansi.sub("", allowed.stderr)
+        assert allowed_message.startswith("[approval] allowed ")
+        assert len(allowed_message) < 250
         load()
         assert env["APPROVAL_FIXTURE"] == "loaded"
         assert not env.get("DIRENV_REQUIRED")

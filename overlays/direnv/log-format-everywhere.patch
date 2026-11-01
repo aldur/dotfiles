@@ -12,22 +12,15 @@ index 7fd1e13..1693e1d 100644
  
  	return nil
 diff --git a/internal/cmd/log.go b/internal/cmd/log.go
-index 5a0ef08..7e27a7b 100644
 --- a/internal/cmd/log.go
 +++ b/internal/cmd/log.go
-@@ -25,7 +25,11 @@ func setupLogging(env Env) {
- }
- 
- func logError(c *Config, msg string, a ...interface{}) {
+@@ -27 +27,5 @@ func logError(c *Config, msg string, a ...any) {
 -	if c.LogColor {
 +	// A custom log_format also styles errors. The default format keeps
 +	// the error color.
 +	if c.LogFormat != "" && c.LogFormat != defaultLogFormat {
 +		logMsg(c.LogFormat, msg, a...)
 +	} else if c.LogColor {
- 		logMsg(defaultLogFormat, msg, a...)
- 	} else {
- 		logMsg(errorColor+defaultLogFormat+clearColor, msg, a...)
 diff --git a/internal/cmd/mod.go b/internal/cmd/mod.go
 index 88e95b4..c13047c 100644
 --- a/internal/cmd/mod.go

@@ -7,7 +7,7 @@
 -		logStatus(config, "allowing %s", relPath)
  	}
  
-+	logStatus(config, "allowed %s", requiredFilesSummary(paths))
++	logStatus(config, "allowed %s", requiredFilesSummary(strings.Split(requiredPaths, ":")))
  	return nil
  }
 --- a/internal/cmd/cmd_check_required.go

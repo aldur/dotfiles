@@ -24,9 +24,9 @@ Review changes before `direnv allow`. Initial setup approves `.envrc`,
 then its inputs. Missing selected files block loading until restored or
 their reviewed removal is staged.
 Approval does not freeze files; stop writers before host execution.
-This uses upstream [`require_allowed`](https://github.com/direnv/direnv/pull/1530),
-[backported](../../../../overlays/overrides/direnv.nix) until the next direnv release,
-with checker errors made fatal and parent-relative inputs supported.
+This uses upstream [`require_allowed`](https://github.com/direnv/direnv/pull/1530)
+from direnv 2.38, with checker errors made fatal and parent-relative inputs
+supported.
 Approvals remain tied to the active `.envrc`.
 
 Approval messages show a bounded preview (up to three paths) and the remaining
