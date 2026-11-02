@@ -23,6 +23,7 @@
   dangerouslyInheritProc ? false,
 }:
 let
+  python = import ./python.nix { inherit pkgs; };
   seccompFilter =
     pkgs.runCommandCC "agent-sandbox-seccomp.bpf"
       {
@@ -116,7 +117,7 @@ let
     sandbox_name=agent-sandbox
     sandbox_shell=${lib.escapeShellArg "${if privateStore then pkgs.bashInteractive else pkgs.bash}/bin/bash"}
     sandbox_env=${lib.escapeShellArg "${pkgs.coreutils}/bin/env"}
-    sandbox_python=${lib.escapeShellArg "${pkgs.python3}/bin/python3"}
+    sandbox_python=${lib.escapeShellArg "${python}/bin/python3"}
     sandbox_bwrap=${lib.escapeShellArg "${pkgs.bubblewrap}/bin/bwrap"}
     sandbox_pasta=${lib.escapeShellArg "${pkgs.passt}/bin/pasta"}
     sandbox_network=${./network.py}

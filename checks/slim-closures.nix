@@ -45,6 +45,7 @@ let
     llmWithPlugins = 510;
     pi = 385;
     pi-coding-agent = 365;
+    pi-yolo = 495;
     pandoc-runtime = 190;
     # A node interpreter and one stdlib-only script; it is nodejs-slim-runtime
     # plus a wrapper, so it inherits that entry's budget.
