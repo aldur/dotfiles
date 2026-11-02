@@ -118,11 +118,11 @@
               llmcat
               taskmd
               taskmd-ui
-              pi # pi-coding-agent bundled with plugins
               llama-wiretap # records what clients send to llama-server
               agent-log # one picker over claude, pi and codex conversations
               ;
             llm = pkgs.llmWithPlugins;
+            pi = import ./packages/pi/standalone.nix { inherit pkgs; };
           }
           // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
             inherit (pkgs) uvc-util c920-defaults;

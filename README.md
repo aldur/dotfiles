@@ -69,11 +69,24 @@ nix run "github:aldur/dotfiles#qemu-vm"
 
 ### `pi`
 
-[`modules/home/pi.nix`](modules/home/pi.nix) writes bundled extension paths to
-the shared Pi settings. Child processes load these paths when they bypass the
-wrapper. The wrapper also supplies `-e`; Pi loads each canonical path once.
-Add other paths through `programs.pi.settings.extensions`. The configuration
-sync helper replaces the settings array with the declared list.
+Run Pi with the extensions, settings, keybindings, skills, and agent
+instructions from this repository:
+
+```bash
+nix run "github:aldur/dotfiles#pi"
+```
+
+On each run, the command applies the settings and keybindings declared in
+[`modules/home/pi.nix`](modules/home/pi.nix). It keeps other settings and
+keybindings, but replaces declared values, including the extensions list. It
+also updates the repository's skills and agent instructions. If a file or skill
+with the same name exists, the command moves it to a `.dotfiles-backup.*`
+directory in the Pi agent directory.
+
+Pi stores these files in `~/.pi/agent` by default. Set `PI_CODING_AGENT_DIR`
+to use another directory. If you use Home Manager, add extension paths through
+`programs.pi.settings.extensions`; the standalone command uses the list from
+this repository.
 
 ### Everything else
 
