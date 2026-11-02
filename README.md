@@ -9,6 +9,12 @@ My collection of dotfiles:
 
 Most modules assume the username to be `aldur`.
 
+## Quick starts
+
+- [macOS](base_hosts/macos/)
+- [Linux with Home Manager](base_hosts/home-manager/)
+- [Containers](#containers)
+
 ## Containers
 
 The whole NixOS configuration ships as an OCI container, built in CI. Try it

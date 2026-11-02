@@ -13,11 +13,12 @@ sudo darwin-rebuild --flake .#macOS switch
 
 ## Bootstrapping
 
-After installing [`nix`][1]:
+On Apple Silicon, install [`nix`][1] and run this as user `aldur` (UID 501):
 
 ```bash
-sudo nix --extra-experimental-features "nix-command flakes" \
-  run nix-darwin/master#darwin-rebuild -- switch --flake .#macOS
+sudo nix --extra-experimental-features 'nix-command flakes' \
+  run nix-darwin/master#darwin-rebuild -- switch \
+  --flake 'github:aldur/dotfiles?dir=base_hosts/macos#macOS'
 ```
 
 ## Configuration
