@@ -153,6 +153,13 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
     for case in config['cases']:
         for kind, launcher in case['launchers'].items():
             stamp.write_text(f'fixture-1 {int(time.time())}\n')
+            _, records = invoke(launcher, ['update', '--fixture'], environ=dict(
+                env, DISABLE_AUTOUPDATER='1', CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC='1'))
+            assert len(records) == 1 and records[0]['argv'] == ['update', '--fixture'], records
+            assert records[0]['host_visible'], records
+            if kind == 'claude':
+                assert 'DISABLE_AUTOUPDATER' not in records[0]['env'], records
+                assert 'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC' not in records[0]['env'], records
             for bypass in (False, True):
                 result, records = invoke(launcher, (['--no-sandbox'] if bypass else []) + payload)
                 assert len(records) == 1, records

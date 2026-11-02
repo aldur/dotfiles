@@ -43,8 +43,15 @@ assert !(disabled.home.activation ? agentInstructions);
 assert !(disabled.home.file ? ".codex");
 assert !(disabled.home.file ? ".pi/agent");
 assert !(disabled.home.file ? "${disabled.programs.claude-code.configDir}");
+assert lib.all (name: builtins.hasAttr name enabled.home.shellAliases && !(builtins.hasAttr name disabled.home.shellAliases)) [
+  "claude" "codex" "pi"
+];
 assert toString source == toString enabled.home.file.".pi/agent".source;
 pkgs.runCommand "agent-instructions-test" { nativeBuildInputs = [ pkgs.gettext ]; } ''
+  ${lib.concatMapStringsSep "\n" (name: ''
+    if ${enabled.home.shellAliases.${name}} --version 2>error; then exit 1; fi
+    test "$(cat error)" = 'Use ${name}-yolo instead.'
+  '') [ "claude" "codex" "pi" ]}
   test "$(readlink ${source}/AGENTS.md)" = /home/instructions-check/.config/agents/AGENTS.md
   test "$(readlink ${claudeSource}/CLAUDE.md)" = /home/instructions-check/.config/agents/AGENTS.md
   for file in .codex/AGENTS.md .claude/CLAUDE.md .pi/agent/AGENTS.md; do

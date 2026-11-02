@@ -76,6 +76,9 @@ let
     describe = "Run codex in the sandbox, with no approvals and no native sandbox";
     inherit sandbox;
     text = ''
+      if [ "''${1-}" = update ]; then
+        exec codex "$@"
+      fi
       # Keep execution inside this sandbox instead of the shared host daemon.
       # Its auto-install also needs writes to the read-only ~/.codex/packages.
       # Older (including Nix-pinned) clients do not have this option.

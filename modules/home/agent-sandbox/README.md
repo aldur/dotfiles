@@ -25,6 +25,12 @@ to end wrapper options explicitly; otherwise the first unrecognized argument
 starts the agent arguments. Sandbox options cannot be used with `--no-sandbox`
 or when the agent sandbox is disabled.
 
+Interactive shells block `claude`, `codex`, and `pi` when the matching agent
+is enabled. Use its `-yolo` command instead. The guard is a shell alias; it
+does not block scripts or direct executable paths. Containers retain their
+existing commands. `claude-yolo update` and `codex-yolo update` run the
+respective updater on the host.
+
 | Option | Effect |
 | --- | --- |
 | `--profile NAME` | Also mount the state of `codex` or `claude`. Without it, no agent state is mounted. |

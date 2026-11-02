@@ -48,6 +48,7 @@ in
 
   home-manager.users.${config.mainUser} = _: {
     programs = {
+      agent-launch-guard.enable = false;
       fish.package = fishWithoutDocs;
       aldur.lazyvim.enable = true;
       git.settings.gpg.ssh.defaultKeyCommand = "sh -c 'echo key::$(ssh-add -L | grep -i sign)'";

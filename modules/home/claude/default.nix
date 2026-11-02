@@ -114,6 +114,9 @@ let
     runtimeInputs = [ pkgs.coreutils ];
     text = ''
       ${lib.optionalString needsPathPrefix ''export PATH="$HOME/.local/bin:$PATH"''}
+      if [ "''${1-}" = update ]; then
+        exec env -u DISABLE_AUTOUPDATER -u CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC claude "$@"
+      fi
       refresh_stamp=""
       max_age=$((7 * 24 * 3600))
 

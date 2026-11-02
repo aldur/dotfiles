@@ -37,6 +37,13 @@ let
       mv -fT -- "$temporary" "$directory/AGENTS.md"
     '';
   };
+  guard = name: lib.getExe (pkgs.writeShellApplication {
+    inherit name;
+    text = ''
+      echo 'Use ${name}-yolo instead.' >&2
+      exit 1
+    '';
+  });
 in
 {
   options.programs.agent-instructions = {
@@ -56,7 +63,23 @@ in
     };
   };
 
+  options.programs.agent-launch-guard.enable = lib.mkOption {
+    type = lib.types.bool;
+    default = config.programs.aldur.profile != "minimal";
+    description = "Block direct agent commands in interactive shells.";
+  };
+
   config.home = {
+    shellAliases = lib.mkIf config.programs.agent-launch-guard.enable (
+      lib.optionalAttrs config.programs.aldur.codex.enable { codex = guard "codex"; }
+      // lib.optionalAttrs config.programs.aldur.claude-code.enable { claude = guard "claude"; }
+      // lib.optionalAttrs config.programs.pi.enable { pi = guard "pi"; }
+    );
+
+    packages = lib.optionals (config.programs.agent-launch-guard.enable && config.programs.pi.enable) [
+      (import ../../../packages/pi/yolo.nix { inherit pkgs; pi = pkgs.pi; })
+    ];
+
     file =
       lib.optionalAttrs config.programs.aldur.codex.enable {
         ".codex" = instructions "AGENTS.md";
