@@ -21,13 +21,13 @@ buildGoModule (finalAttrs: {
   # Nothing is tagged upstream and development happens on the branch, so the
   # version is the commit's date — the shape `nix-update --version=branch`
   # writes, and what the bump below keeps refreshing.
-  version = "0.1.0-unstable-2026-10-09";
+  version = "0.1.0-unstable-2026-11-02";
 
   src = fetchFromGitHub {
     owner = "aldur";
     repo = "taskmd-ui";
-    rev = "c9bd25ccffa1c9e3178ab6a55ba0701eb76bd88f";
-    hash = "sha256-gNptPsVFz7REFQGOsrSTbpLUTQWYKqjq1AFu0bn9gEY=";
+    rev = "70eae1b81e0148fadf09fc38ecf58d4f1bf69646";
+    hash = "sha256-aKusdx/aoyCQm2QpM7gj22wftrPx8trj0CVIIovgo0k=";
   };
 
   vendorHash = "sha256-fAb1dbdSRJSFBHN0Fv0OhhfFBzzRX+vDQUV6I8KFTF8=";
