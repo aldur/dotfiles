@@ -88,6 +88,19 @@ to use another directory. If you use Home Manager, add extension paths through
 `programs.pi.settings.extensions`; the standalone command uses the list from
 this repository.
 
+On Linux, run Pi in the agent sandbox with:
+
+```bash
+nix run "github:aldur/dotfiles#pi-yolo"
+```
+
+The workspace and Pi's agent directory are writable; Git metadata is
+read-only by default. The sandbox has private networking. Pass wrapper options
+after `--`, for example `nix run "github:aldur/dotfiles#pi-yolo" -- --network host`
+for a local model server. Use `--env NAME` to pass an API key. See the
+[agent sandbox guide](modules/home/agent-sandbox/README.md) for more options.
+On macOS, `pi-yolo` runs on the host.
+
 ### Everything else
 
 Use `nix flake show github:aldur/dotfiles` for a full list. Some of my

@@ -123,6 +123,7 @@
               ;
             llm = pkgs.llmWithPlugins;
             pi = import ./packages/pi/standalone.nix { inherit pkgs; };
+            pi-yolo = import ./packages/pi/yolo.nix { inherit pkgs; inherit (packages) pi; };
           }
           // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
             inherit (pkgs) uvc-util c920-defaults;
