@@ -11,13 +11,13 @@
 # nix-update can bump in CI.
 stdenvNoCC.mkDerivation {
   pname = "pi-llama";
-  version = "0-unstable-2026-09-23";
+  version = "0-unstable-2026-10-30";
 
   src = fetchFromGitHub {
     owner = "huggingface";
     repo = "pi-llama";
-    rev = "e03e07be02abdf0f7ac52032e2050e19e2bdd5c7";
-    hash = "sha256-Q63awf1R2Un2Is0UfxFFTKH0FKeayP5+5/MhpzVNJn0=";
+    rev = "306f8a885f49986f6346cb5cffab351c7d43d02c";
+    hash = "sha256-3t+4y6vNHOwOmC9b+pK++Euqwra/pKSlBuk8q5DB+Hs=";
   };
 
   # Prefer advertised reasoning efforts and defaults; retain template-based
