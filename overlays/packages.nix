@@ -64,7 +64,7 @@ in
   agent-log = final.callPackage ../packages/agent-log { };
 
   llm-mlx = prev.callPackage ../packages/llm-mlx { };
-  llmWithPlugins = prev.python3.withPackages (
+  llmWithPlugins = (prev.python3.withPackages (
     ps:
     [
       ps.llm
@@ -77,7 +77,9 @@ in
     ++ prev.lib.optional (
       prev.stdenv.hostPlatform.isDarwin && prev.stdenv.hostPlatform.isAarch64
     ) final.llm-mlx
-  );
+  )).override {
+    makeWrapperArgs = [ "--set HF_HUB_DISABLE_TELEMETRY 1" ];
+  };
 
   markdownlint-cli2 = final.callPackage ../packages/markdownlint-cli2 {
     # katex's vendored python scripts otherwise pull an interpreter into
