@@ -82,14 +82,20 @@ async function setup(t, options = {}) {
   t.mock.method(globalThis, "fetch", async (url, init = {}) => {
     const parsed = new URL(url);
     calls.push({ url: parsed, signal: init.signal });
-    if (parsed.pathname.endsWith("/models/sse")) return new Response(null, { status: 404 });
+    if (parsed.pathname.endsWith("/models/sse")) return options.progress ? options.progress() : new Response("");
     if (parsed.pathname.endsWith("/models")) return (options.models ?? catalog)(init.signal);
     if (parsed.pathname === "/props") {
       return options.metadata ? options.metadata(init.signal) : Response.json(props());
     }
     throw new Error(`Unexpected request: ${url}`);
   });
-  await extension(pi);
+  const previousBaseUrl = process.env.LLAMA_BASE_URL;
+  if (options.disabled) delete process.env.LLAMA_BASE_URL;
+  else process.env.LLAMA_BASE_URL = "http://localhost:9931/v1";
+  try { await extension(pi); } finally {
+    if (previousBaseUrl === undefined) delete process.env.LLAMA_BASE_URL;
+    else process.env.LLAMA_BASE_URL = previousBaseUrl;
+  }
   const emit = async (name, event = {}) => events.get(name)?.(event, ctx);
   t.after(async () => { await emit("session_shutdown"); });
   return {
@@ -107,14 +113,24 @@ async function setup(t, options = {}) {
   };
 }
 
-test("hosted startup and model picker tolerate an unavailable server silently", async (t) => {
+test("llama discovery is disabled without LLAMA_BASE_URL", async (t) => {
+  const h = await setup(t, { disabled: true });
+  await h.emit("session_start");
+  await h.emit("input", { text: "/model" });
+  assert.deepEqual(h.calls, []);
+  assert.equal(h.provider, undefined);
+  assert.deepEqual(h.warnings, []);
+});
+
+test("an unavailable configured server logs discovery failures", async (t) => {
   const h = await setup(t, { models: () => { throw new Error("connection refused"); } });
   await h.emit("session_start");
   await h.emit("before_agent_start");
   assert.equal(h.calls.length, 1);
   await h.emit("input", { text: "/model" });
   assert.equal(h.calls.length, 2);
-  assert.deepEqual(h.warnings, []);
+  assert.equal(h.warnings.length, 2);
+  assert.ok(h.warnings.every(([message]) => message.includes("connection refused")));
   assert.deepEqual(h.notices, []);
   assert.deepEqual(h.thinkingChanges, []);
 });
@@ -139,7 +155,7 @@ test("noninteractive discovery does not emit a startup notification", async (t) 
   assert.deepEqual(h.warnings, []);
 });
 
-test("missing and refused sockets stay silent at launch", async (t) => {
+test("missing and refused sockets are logged at launch", async (t) => {
   for (const code of ["ENOENT", "ECONNREFUSED"]) {
     await t.test(code, async (t) => {
       const h = await setup(t, { models: () => {
@@ -147,7 +163,8 @@ test("missing and refused sockets stay silent at launch", async (t) => {
       } });
       await h.emit("session_start");
       await h.emit("before_agent_start");
-      assert.deepEqual(h.warnings, []);
+      assert.equal(h.warnings.length, 1);
+      assert.match(h.warnings[0][0], /fetch failed/);
       assert.deepEqual(h.notices, []);
       assert.equal(h.provider, undefined);
     });
@@ -236,7 +253,65 @@ test("missing /props preserves catalog capabilities and avoids repeated probes",
       assert.equal(h.thinking, "medium");
       assert.equal((await capturePayload(h.active, h.thinking)).reasoning_effort, "medium");
       assert.equal(h.calls.filter(({ url }) => url.pathname === "/props").length, 2, "manual refresh retries discovery");
-      assert.deepEqual(h.warnings, []);
+      assert.equal(h.warnings.length, 2);
+      assert.ok(h.warnings.every(([message]) => message.includes(`returned ${status}`)));
+    });
+  }
+});
+
+test("failed autoload clears the loading widget", async (t) => {
+  for (const [name, metadata] of [
+    ["missing", () => new Response(null, { status: 404 })],
+    ["server error", () => new Response(null, { status: 500 })],
+    ["invalid response", () => Response.json({ default_generation_settings: "invalid" })],
+    ["invalid JSON", () => new Response("invalid JSON")],
+    ["aborted", () => { throw new DOMException("timed out", "AbortError"); }],
+  ]) {
+    await t.test(name, async (t) => {
+      const h = await setup(t, { models: advertisedCatalog(["off", "on"]), metadata });
+      h.useLocal();
+      await h.emit("model_select", { model: h.active });
+      await nextTurn();
+      assert.ok(h.widgets.some((widget) => typeof widget === "function"));
+      assert.equal(h.widgets.at(-1), undefined);
+      assert.ok(h.warnings.some(([message]) => message.includes("/props")));
+    });
+  }
+});
+
+test("autoload timeout is logged", async (t) => {
+  const originalSetTimeout = globalThis.setTimeout;
+  t.mock.method(globalThis, "setTimeout", (callback, delay, ...args) =>
+    originalSetTimeout(callback, delay === 120000 ? 1 : delay, ...args));
+  const h = await setup(t, {
+    models: advertisedCatalog(["off", "on"]),
+    metadata: (signal) => new Promise((_resolve, reject) => {
+      signal.addEventListener("abort", () => reject(signal.reason), { once: true });
+    }),
+  });
+  h.useLocal();
+  await h.emit("session_start");
+  assert.ok(h.warnings.some(([message]) => message.includes("timed out")));
+  assert.equal(h.widgets.at(-1), undefined);
+});
+
+test("loading progress failures are logged", async (t) => {
+  for (const progress of [
+    () => new Response(null, { status: 404 }),
+    () => new Response("data: not-json\n\n"),
+  ]) {
+    await t.test(String(progress), async (t) => {
+      const body = deferred();
+      const h = await setup(t, {
+        models: advertisedCatalog(["off", "on"]), progress,
+        metadata: () => ({ ok: true, json: () => body.promise }),
+      });
+      h.useLocal();
+      const startup = h.emit("session_start");
+      await nextTurn();
+      assert.ok(h.warnings.some(([message]) => message.includes("loading progress")));
+      body.resolve(props());
+      await startup;
     });
   }
 });
@@ -428,10 +503,11 @@ test("automatic catalog requests time out within one second", async (t) => {
   } });
   assert.equal(signal.aborted, true);
   assert.ok(performance.now() - start < 2000, "allow one second of scheduling slack");
-  assert.deepEqual(h.warnings, []);
+  assert.equal(h.warnings.length, 1);
+  assert.match(h.warnings[0][0], /failed to reach/);
 });
 
-test("HTTP and malformed catalog failures stay quiet during hosted use", async (t) => {
+test("HTTP and malformed catalog failures are logged during hosted use", async (t) => {
   for (const models of [
     () => new Response(null, { status: 503 }),
     () => new Response("not JSON"),
@@ -441,7 +517,7 @@ test("HTTP and malformed catalog failures stay quiet during hosted use", async (
     await t.test(String(models), async (t) => {
       const h = await setup(t, { models });
       await h.emit("input", { text: "/model" });
-      assert.deepEqual(h.warnings, []);
+      assert.equal(h.warnings.length, 2);
     });
   }
 });

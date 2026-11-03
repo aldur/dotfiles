@@ -57,7 +57,7 @@ in
   agent-log = pkgs.agent-log.tests.integration;
   telegram = pkgs.telegram.tests.integration;
   pi-config-sync = pkgs.pi.configSync.tests.integration;
-  pi-standalone = import ./pi-standalone.nix { inherit pkgs; inherit (packages) pi; };
+  pi-standalone = import ../packages/pi/standalone-test.nix { inherit pkgs; inherit (packages) pi; };
   qemu-vm-preflight = self.legacyPackages.${system}.qemu-vm.tests.preflight;
 
   llm-runtime = pkgs.callPackage ./llm-runtime.nix { };

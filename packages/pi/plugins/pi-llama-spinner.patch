@@ -1,0 +1,26 @@
+--- a/index.ts
++++ b/index.ts
+@@ -643,6 +643,7 @@
+ 			}, 8000);
+ 		};
+ 
++		let loaded = false;
+ 		try {
+ 			if (shouldAutoload && ctx) {
+ 				let loader: Loader | null = null;
+@@ -723,6 +724,7 @@
+ 				}
+ 				updated = true;
+ 			}
++			loaded = true;
+ 			discoveredMetadata.add(modelId);
+ 			if (shouldAutoload) {
+ 				currentlyLoadedModel = modelId;
+@@ -760,6 +762,7 @@
+ 			if (pendingMetadata.get(modelId) === version) pendingMetadata.delete(modelId);
+ 			// Do not let an old request stop a newer one.
+ 			if (propsAbortController === controller) {
++				if (!loaded && shouldAutoload && isCurrentSelection()) ctx?.ui.setWidget(PROVIDER_ID, undefined);
+ 				propsAbortController = null;
+ 				sseAbortController?.abort();
+ 			}

@@ -29,6 +29,8 @@ stdenvNoCC.mkDerivation {
     ./pi-llama-startup-discovery.patch
     ./pi-llama-model-capabilities.patch
     ./pi-llama-startup-status.patch
+    ./pi-llama-spinner.patch
+    ./pi-llama-errors.patch
   ];
 
   # llama.cpp has no output-token cap (generation is bounded only by n_ctx),

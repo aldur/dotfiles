@@ -92,7 +92,7 @@ in
     ./agents
     ./direnv.nix
     ./llm.nix
-    ./pi.nix
+    ../../packages/pi/home.nix
   ]
   ++ lib.optionals full [
     (import ../../packages/lazyvim/lazyvim.nix { inherit inputs pkgs pkgsUnstable; }).defaultHomeModule

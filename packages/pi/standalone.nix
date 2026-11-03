@@ -6,7 +6,7 @@ let
   config = (lib.evalModules {
     specialArgs = { inherit pkgs; };
     modules = [
-      ../../modules/home/pi.nix
+      ./home.nix
       {
         options.home = lib.mkOption { type = lib.types.lazyAttrsOf lib.types.anything; default = { }; };
         config.programs.pi.enable = true;
@@ -19,7 +19,7 @@ let
 in
 pkgs.writeShellApplication {
   name = "pi";
-  passthru = { inherit (pi) plugins configSync; };
+  passthru = { inherit (pi) plugins configSync modelsCatalog; };
   meta = pi.meta;
   text = ''
     agent_dir="''${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}"

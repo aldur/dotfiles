@@ -48,25 +48,6 @@ in
   tiktoken = prev.callPackage ../packages/tiktoken/tiktoken.nix { };
   llmcat = prev.callPackage ../packages/llmcat/llmcat.nix { };
 
-  # pi releases often; stable nixpkgs lags too far behind, so follow
-  # unstable by default. Build it with the stable Node toolchain: slim.nix
-  # re-points the stable node paths at the one runtime node of this repo,
-  # and an unstable node would stay behind as a twin. Both channels ship
-  # Node 24, which strips TS types by default.
-  pi-coding-agent = unstable.pi-coding-agent.override { inherit (prev) buildNpmPackage; };
-
-  piPlugins = {
-    # final.callPackage: the build-time checks must see the same
-    # pi-coding-agent (above) that the wrapper runs.
-    pi-llama = final.callPackage ../packages/pi/plugins/pi-llama.nix { };
-    pi-no-docs = final.callPackage ../packages/pi/plugins/pi-no-docs { };
-    pi-statusline = prev.callPackage ../packages/pi/plugins/pi-statusline { };
-    pi-subagent = final.callPackage ../packages/pi/plugins/pi-subagent { };
-    pi-system-prompt = prev.callPackage ../packages/pi/plugins/pi-system-prompt { };
-    pi-throughput = final.callPackage ../packages/pi/plugins/pi-throughput { };
-  };
-  pi = prev.callPackage ../packages/pi/pi.nix { plugins = final.piPlugins; };
-
   # AppArmor unix socket rules on a kernel newer than 6.16 need parser 5.
   # Stable ships 4, which downgrades those rules with a warning.
   apparmor-parser = import ../utils/override-until-upgrade.nix {
@@ -107,3 +88,4 @@ in
   uvc-util = prev.callPackage ../packages/uvc-util { };
   c920-defaults = final.callPackage ../packages/c920-defaults { };
 }
+// import ../packages/pi/overlay.nix { inherit final prev unstable; }

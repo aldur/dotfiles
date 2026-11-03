@@ -69,37 +69,13 @@ nix run "github:aldur/dotfiles#qemu-vm"
 
 ### `pi`
 
-Run Pi with the extensions, settings, keybindings, skills, and agent
-instructions from this repository:
+Run Pi with this repository's settings and extensions:
 
 ```bash
 nix run "github:aldur/dotfiles#pi"
 ```
 
-On each run, the command applies the settings and keybindings declared in
-[`modules/home/pi.nix`](modules/home/pi.nix). It keeps other settings and
-keybindings, but replaces declared values, including the extensions list. It
-also updates the repository's skills and agent instructions. If a file or skill
-with the same name exists, the command moves it to a `.dotfiles-backup.*`
-directory in the Pi agent directory.
-
-Pi stores these files in `~/.pi/agent` by default. Set `PI_CODING_AGENT_DIR`
-to use another directory. If you use Home Manager, add extension paths through
-`programs.pi.settings.extensions`; the standalone command uses the list from
-this repository.
-
-On Linux, run Pi in the agent sandbox with:
-
-```bash
-nix run "github:aldur/dotfiles#pi-yolo"
-```
-
-The workspace and Pi's agent directory are writable; Git metadata is
-read-only by default. The sandbox has private networking. Pass wrapper options
-after `--`, for example `nix run "github:aldur/dotfiles#pi-yolo" -- --network host`
-for a local model server. Use `--env NAME` to pass an API key. See the
-[agent sandbox guide](modules/home/agent-sandbox/README.md) for more options.
-On macOS, `pi-yolo` runs on the host.
+See the [Pi guide](packages/pi/README.md) for setup and sandbox options.
 
 ### Everything else
 

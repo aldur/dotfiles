@@ -50,7 +50,7 @@ in
         let
           mk =
             bare:
-            import ./eval-harness.nix { inherit pkgs lib; } {
+            import ../../modules/home/eval-harness.nix { inherit pkgs lib; } {
               name = if bare then "pi-bare" else "pi";
               inherit (pkgs.pi-coding-agent) version;
               home = lib.optionalAttrs (!bare) (
@@ -59,7 +59,7 @@ in
                     mkdir "$out"
                     ${lib.getExe pkgs.pi.configSync} ${managedConfig} "$out"
                   '';
-                  ".pi/agent/AGENTS.md" = ./agents/AGENTS.md;
+                  ".pi/agent/AGENTS.md" = ../../modules/home/agents/AGENTS.md;
                 }
                 // lib.mapAttrs' (name: lib.nameValuePair ".pi/agent/skills/${name}") dotfilesSkills
               );
@@ -118,6 +118,7 @@ in
     programs.pi = {
       # Keep terminal/tmux scrollback with Pi 1.0's regular UI mode.
       settings.tuiMode = lib.mkDefault "regular";
+      settings.quietStartup = lib.mkDefault false;
 
       # Subagents can bypass the wrapper and its extension flags.
       settings.extensions = lib.mapAttrsToList (

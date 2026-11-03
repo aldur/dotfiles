@@ -7,6 +7,7 @@
   nodejs,
   pnpm,
   pi-coding-agent,
+  modelsCatalog,
   selfUpdates ? true,
   # Plugin derivations to bundle, keyed by name (see ./plugins). Each is
   # auto-loaded on every run through `pi -e <plugin>/index.ts` (a
@@ -90,12 +91,15 @@ let
 
               llama.cpp provider:
                 LLAMA_BASE_URL  Server API URL, including /v1.
-                                Default: http://localhost:8080/v1
-                                Apple Container default: http://192.168.64.1:8080/v1
-                                faraday-pi default: http://127.0.0.1:8080/v1
+                                Set this to enable the provider.
 
-                Set LLAMA_BASE_URL to override the default:
+                Example:
                   LLAMA_BASE_URL=http://my-server:8080/v1 pi
+
+              OpenAI-compatible provider:
+                PI_OPENAI_BASE_URL  Server API URL, including /v1.
+                PI_OPENAI_API_KEY   API key, if required.
+                PI_OPENAI_PROFILE   models.dev provider ID.
             ''}
             exit 0
           fi
@@ -142,7 +146,7 @@ runCommand "pi-with-plugins-${pi-coding-agent.version}"
   {
     # Plugins stay reachable (e.g. `pi.plugins.pi-llama`) so nix-update can
     # bump their pins in CI without dedicated flake outputs.
-    passthru = { inherit plugins configSync; };
+    passthru = { inherit plugins configSync modelsCatalog; };
     meta = pi-coding-agent.meta // {
       mainProgram = "pi";
       description = "pi-coding-agent bundled with plugins";
@@ -151,4 +155,5 @@ runCommand "pi-with-plugins-${pi-coding-agent.version}"
   ''
     mkdir -p $out/bin
     ln -s ${lib.getExe wrapper} $out/bin/pi
+    ln -s ${modelsCatalog}/catalog.json $out/models-catalog.json
   ''
