@@ -21,6 +21,25 @@
         DisableTelemetry = true;
         DisableFirefoxStudies = true;
         DisableFirefoxAccounts = true;
+        FirefoxSuggest = {
+          WebSuggestions = false;
+          SponsoredSuggestions = false;
+          ImproveSuggest = false;
+          OnlineEnabled = false;
+          Locked = true;
+        };
+        FirefoxHome = {
+          SponsoredTopSites = false;
+          Stories = false;
+          SponsoredStories = false;
+          Locked = true;
+        };
+        SearchSuggestEnabled = false;
+        UserMessaging = {
+          ExtensionRecommendations = false;
+          FeatureRecommendations = false;
+          Locked = true;
+        };
         OfferToSaveLogins = false;
         PasswordManagerEnabled = false;
         DontCheckDefaultBrowser = true;
@@ -28,6 +47,10 @@
         OverridePostUpdatePage = "";
         ExtensionSettings."*".installation_mode = "blocked";
         Preferences."browser.cache.disk.enable".Value = false;
+        Preferences."browser.crashReports.unsubmittedCheck.autoSubmit2" = {
+          Value = false;
+          Status = "locked";
+        };
       };
     };
   };
