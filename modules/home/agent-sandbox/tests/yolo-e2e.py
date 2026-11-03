@@ -397,6 +397,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
     _, records = invoke(launcher, ['--online', 'resume'],
                         environ=dict(env, CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC='1'))
     assert len(records) == 1 and 'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC' not in records[0]['env'], records
+    assert records[0]['argv'] == [FLAGS['claude'], 'resume'], records
     _, records = invoke(launcher, ['--refresh', 'resume'])
     assert len(records) == 2, records
     assert records[0]['argv'] == ['-p', '/model', '--strict-mcp-config', '--settings', '{"disableAllHooks":true}'], records

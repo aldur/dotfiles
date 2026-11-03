@@ -304,6 +304,7 @@ in
         };
         # These apply to every `claude` invocation, sandboxed or not.
         env = {
+          DISABLE_ERROR_REPORTING = "1";
           # Skip the "How is Claude doing this session?" surveys.
           CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY = "1";
           # Clone plugin marketplaces over HTTPS. This stops the
