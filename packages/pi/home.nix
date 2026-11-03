@@ -77,6 +77,7 @@ in
               # No self-updates: the run must use the pinned pi. The bare pi has
               # no plugins.
               command = ''
+                export PI_TELEMETRY=0 PI_SKIP_VERSION_CHECK=1
                 exec ${
                   if bare then
                     lib.getExe pkgs.pi-coding-agent
