@@ -102,6 +102,25 @@ in
   container-size-guard = pkgs.callPackage ./container-image/tests.nix { };
   home-portability = import ./home-portability.nix { inherit self inputs pkgs; };
 
+  go-telemetry =
+    let
+      home = self.legacyPackages.${system}.homeConfiguration.config;
+    in
+    assert !home.programs.go.enable;
+    pkgs.runCommand "go-telemetry" { } ''
+      export HOME="$TMPDIR/home"
+      export XDG_CONFIG_HOME="$HOME/.config"
+      mkdir -p "$XDG_CONFIG_HOME/go/telemetry"
+      ln -s ${home.xdg.configFile."go/telemetry/mode".source} "$XDG_CONFIG_HOME/go/telemetry/mode"
+      test "$(${pkgs.go}/bin/go env GOTELEMETRY)" = off
+      ${pkgs.gopls}/bin/gopls version
+      test ! -e "$XDG_CONFIG_HOME/go/telemetry/local"
+      test ! -e "$XDG_CONFIG_HOME/go/telemetry/upload"
+      ${pkgs.go}/bin/go env -w GOPROXY=direct
+      test "$(${pkgs.go}/bin/go env GOPROXY)" = direct
+      touch "$out"
+    '';
+
   crostini-ssh = pkgs.callPackage ../base_hosts/crostini/tests/ssh.nix { };
   crostini-pcscd = pkgs.callPackage ../base_hosts/crostini/tests/pcscd.nix { };
   crostini-piv = pkgs.callPackage ../base_hosts/crostini/tests/piv.nix { };

@@ -147,7 +147,18 @@ in
     };
   };
 
+  # Cover external Go tools without enabling Home Manager's Go module.
+  xdg.configFile."go/telemetry/mode" = lib.mkIf (
+    pkgs.stdenv.hostPlatform.isLinux
+    && !config.programs.go.enable
+    && config.programs.go.telemetry.mode != null
+  ) {
+    text = "${config.programs.go.telemetry.mode} ${config.programs.go.telemetry.date}";
+  };
+
   programs = {
+    go.telemetry.mode = "off";
+
     fish = {
       enable = true;
 

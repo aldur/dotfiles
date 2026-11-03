@@ -43,6 +43,13 @@ in
     # Silence "Last login: ..."
     file.".hushlogin".text = "";
 
+    # Cover external Go tools without enabling Home Manager's Go module.
+    file."Library/Application Support/go/telemetry/mode" = lib.mkIf (
+      !config.programs.go.enable && config.programs.go.telemetry.mode != null
+    ) {
+      text = "${config.programs.go.telemetry.mode} ${config.programs.go.telemetry.date}";
+    };
+
     # Don't mount $HOME into `container` VMs.
     activation.appleContainerConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       config="$HOME/.config/container/config.toml"

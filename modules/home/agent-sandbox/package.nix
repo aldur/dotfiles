@@ -111,6 +111,7 @@ let
     "~/.gitconfig"
     "~/.config/fish"
     "~/.config/direnv"
+    "~/.config/go/telemetry/mode"
   ];
 
   shellConfig = ''

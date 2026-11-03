@@ -222,6 +222,22 @@ assert require "llm defaults" (
     apple.config.home-manager.users.alice
   ]
 );
+assert require "Go telemetry does not enable Go or manage its environment" (
+  lib.all (home:
+    !home.programs.go.enable
+    && home.programs.go.telemetry.mode == "off"
+    && !(home.xdg.configFile ? "go/env")
+    && !(home.home.file ? "Library/Application Support/go/env")
+  ) [ standalone.config custom.config alice bob darwin.config ]
+);
+assert require "Go telemetry uses only the native platform path" (
+  lib.all (home:
+    home.xdg.configFile."go/telemetry/mode".text == "off 1970-01-01"
+    && !(home.home.file ? "Library/Application Support/go/telemetry/mode")
+  ) [ standalone.config custom.config alice bob ]
+  && darwin.config.home.file."Library/Application Support/go/telemetry/mode".text == "off 1970-01-01"
+  && !(darwin.config.xdg.configFile ? "go/telemetry/mode")
+);
 assert require "standalone customization and agent packages" (
   custom.config.home.username == "alice"
   && custom.config.home.homeDirectory == "/srv/alice"
