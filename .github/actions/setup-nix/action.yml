@@ -40,9 +40,12 @@ runs:
         # runner's memory before any build starts. Apply the limit to every
         # CI job, including `nix eval --json` in build-flake-checks.sh.
         # This only limits evaluation; build parallelism is unchanged.
+        # Omit the initial list of store paths. Build progress and failure
+        # logs still identify the paths when Nix processes them.
         extra-conf: |
           log-lines = 1000
           eval-cores = 1
+          print-missing = false
     # Share store paths between jobs and commits.
     - uses: DeterminateSystems/magic-nix-cache-action@84c0677f58dcedf3b91f8223ce36a9ea5b3c84b7 # v15
       with:

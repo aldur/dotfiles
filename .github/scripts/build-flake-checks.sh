@@ -81,4 +81,5 @@ if [ ${#targets[@]} -eq 0 ]; then
   exit 0
 fi
 
+echo "Building ${#targets[@]} checks for shard $shard on $system"
 nix build "${targets[@]}"
