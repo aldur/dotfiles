@@ -1,3 +1,4 @@
+{ pkgs }:
 let
   applicationProbe = ''
     in_session --property=RuntimeMaxSec=180 firefox --headless \

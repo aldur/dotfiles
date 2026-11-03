@@ -1,4 +1,5 @@
 # Run against a separate home and bus so the test cannot change the live keyring.
+command -v gdbus >/dev/null || { echo 'Missing gdbus for the keyring probe' >&2; exit 1; }
 workspace=$(mktemp -d)
 trap 'rm -rf "$workspace"' EXIT
 mkdir -m 700 "$workspace/home" "$workspace/run"
@@ -8,9 +9,10 @@ HOME="$workspace/home" XDG_DATA_HOME="$workspace/home/.local/share" XDG_RUNTIME_
     printf "\0" | gnome-keyring-daemon --foreground --unlock --components=secrets &
     daemon=$!
     trap "kill $daemon 2>/dev/null || true; wait $daemon 2>/dev/null || true" EXIT
-    for ((attempt=0; attempt<50; attempt++)); do
+    for ((attempt=0; attempt<300; attempt++)); do
       if gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/DBus --method org.freedesktop.DBus.NameHasOwner org.freedesktop.secrets | grep -q true &&
         gdbus call --session --dest org.freedesktop.secrets --object-path /org/freedesktop/secrets --method org.freedesktop.Secret.Service.ReadAlias default 2>/dev/null | grep -q /collection/login; then break; fi
+      kill -0 "$daemon" || { echo "Keyring daemon exited before becoming ready" >&2; exit 1; }
       sleep 0.1
     done
     gdbus call --session --dest org.freedesktop.secrets --object-path /org/freedesktop/secrets --method org.freedesktop.Secret.Service.ReadAlias default | grep -q /collection/login

@@ -1,3 +1,4 @@
+{ pkgs }:
 let
   applicationProbe = ''
     # This disposable test password is never present in the production image.
@@ -20,7 +21,7 @@ in
     trap 'journalctl -b --no-pager -n 100' ERR
   '' + applicationProbe + ''
     user="$user" bash -e "$probe/signal-sandbox.sh"
-    as_user bash -euo pipefail "$probe/signal-keyring-probe.sh"
+    as_user env PATH=${pkgs.glib}/bin:"$PATH" bash -euo pipefail "$probe/signal-keyring-probe.sh"
     pid=$(as_user systemctl --user show signal -p MainPID --value)
     printf 'nameserver 100.115.92.1\n' > /run/resolv.conf.next
     mv /run/resolv.conf.next /run/resolv.conf

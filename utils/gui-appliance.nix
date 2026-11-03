@@ -4,7 +4,7 @@
   directory,
 }:
 let
-  inherit (inputs) aldur-dotfiles nixos-crostini;
+  inherit (inputs) aldur-dotfiles;
   inherit (aldur-dotfiles.inputs) nixpkgs flake-utils;
   guestInputs = inputs // { appliance = inputs.self; };
   specialArgs = aldur-dotfiles.lib.mkSpecialArgs guestInputs;
@@ -37,7 +37,6 @@ nixpkgs.lib.recursiveUpdate qemu (
     system:
     let
       configuration = guest system;
-      baguetteProbe = import (directory + /tests/baguette-boot.nix);
     in
     {
       packages = {
@@ -48,23 +47,9 @@ nixpkgs.lib.recursiveUpdate qemu (
         pkgs = nixpkgs.legacyPackages.${system};
         inherit configuration;
       };
-      checks.baguette-boot = nixos-crostini.lib.mkBaguetteSmokeTest (
-        baguetteProbe
-        // {
-          inherit configuration;
-          name = "${name}-baguette-smoke";
-          probeFiles = (baguetteProbe.probeFiles or { }) // {
-            "appliance-state.sh" = "${../base_hosts/appliance/tests/state.sh}";
-          };
-          extraProbe =
-            builtins.readFile ../base_hosts/appliance/tests/isolation.sh
-            + builtins.readFile ../base_hosts/appliance/tests/baguette.sh
-            + baguetteProbe.extraProbe;
-        }
-      );
-      checks.qemu-boot = import (directory + /tests/qemu-boot.nix) {
+      checks = import ../base_hosts/appliance/tests {
+        inherit configuration directory inputs name specialArgs;
         pkgs = nixpkgs.legacyPackages.${system};
-        inherit specialArgs;
       };
     }
   )
