@@ -13,11 +13,7 @@ let
   tomlPython = pkgs.python3.withPackages (ps: [ ps.tomlkit ]);
   dotfilesSkills = import ../../../skills;
 
-  codexSettings = {
-    # The model catalog sets the summary to "none" for gpt-6-astra. Without a
-    # summary, a session records only the encrypted reasoning, and agent-log
-    # cannot show a thinking turn.
-    model_reasoning_summary = "auto";
+  privacySettings = {
     analytics.enabled = false;
     feedback.enabled = false;
     otel = {
@@ -25,6 +21,14 @@ let
       metrics_exporter = "none";
       trace_exporter = "none";
     };
+  };
+  privacySettingsFile = tomlFormat.generate "codex-privacy-config" privacySettings;
+
+  codexSettings = privacySettings // {
+    # The model catalog sets the summary to "none" for gpt-6-astra. Without a
+    # summary, a session records only the encrypted reasoning, and agent-log
+    # cannot show a thinking turn.
+    model_reasoning_summary = "auto";
 
     tui = {
       alternate_screen = "never";
@@ -109,7 +113,7 @@ in
     internal = true;
     description = ''
       Eval harnesses that run codex: `codex` with the home files of this
-      module, `codex-bare` with none of them.
+      module, `codex-bare` with only the telemetry opt-outs.
     '';
     default =
       let
@@ -118,9 +122,10 @@ in
           import ../eval-harness.nix { inherit pkgs lib; } {
             name = if bare then "codex-bare" else "codex";
             inherit (pkgsUnstable.codex) version;
-            home = lib.optionalAttrs (!bare) (
+            home = {
+              ".codex/config.toml" = if bare then privacySettingsFile else codexSettingsFile;
+            } // lib.optionalAttrs (!bare) (
               {
-                ".codex/config.toml" = codexSettingsFile;
                 ".codex/AGENTS.md" = ../agents/AGENTS.md;
               }
               // lib.mapAttrs' (name: lib.nameValuePair ".agents/skills/${name}") dotfilesSkills
