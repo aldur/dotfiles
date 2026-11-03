@@ -72,6 +72,10 @@ let
     # Keep the extension source files, types, and assets. Remove the dependency tests and source maps.
     find "$out/lib/node_modules" -type d \( -name test -o -name tests -o -name __tests__ -o -name examples \) -prune -exec rm -rf {} +
     find "$out/lib/node_modules" -type f -name '*.map' -delete
+    # The OpenAI SDK uses compiled files, except for this type metadata target.
+    sdk="$out/lib/node_modules/pi-monorepo/node_modules/@earendil-works/pi-ai/node_modules/openai"
+    find "$sdk/src" -type f ! -path '*/internal/auth/x509-transport-state.cts' -delete
+    find "$sdk/src" -depth -type d -empty -delete
   '';
 in
 {
