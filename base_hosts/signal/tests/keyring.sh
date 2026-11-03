@@ -9,10 +9,11 @@ HOME="$workspace/home" XDG_DATA_HOME="$workspace/home/.local/share" XDG_RUNTIME_
     daemon=$!
     trap "kill $daemon 2>/dev/null || true; wait $daemon 2>/dev/null || true" EXIT
     for ((attempt=0; attempt<50; attempt++)); do
-      if busctl --user --auto-start=no call org.freedesktop.secrets /org/freedesktop/secrets org.freedesktop.Secret.Service ReadAlias s default 2>/dev/null | grep -q /collection/login; then break; fi
+      if gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/DBus --method org.freedesktop.DBus.NameHasOwner org.freedesktop.secrets | grep -q true &&
+        gdbus call --session --dest org.freedesktop.secrets --object-path /org/freedesktop/secrets --method org.freedesktop.Secret.Service.ReadAlias default 2>/dev/null | grep -q /collection/login; then break; fi
       sleep 0.1
     done
-    busctl --user --auto-start=no call org.freedesktop.secrets /org/freedesktop/secrets org.freedesktop.Secret.Service ReadAlias s default | grep -q /collection/login
+    gdbus call --session --dest org.freedesktop.secrets --object-path /org/freedesktop/secrets --method org.freedesktop.Secret.Service.ReadAlias default | grep -q /collection/login
     for option in --check ""; do
       if error=$(signal-desktop $option 2>&1); then exit 1; fi
       if ! grep -F "Signal requires an encrypted login keyring" <<< "$error"; then
