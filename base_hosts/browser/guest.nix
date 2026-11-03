@@ -12,6 +12,11 @@
     firefox = {
       enable = true;
       wrapperConfig.speechSynthesisSupport = false;
+      # Prevent telemetry from starting during shutdown of short sessions.
+      # https://bugzilla.mozilla.org/show_bug.cgi?id=2079773
+      autoConfig = ''
+        lockPref("telemetry.fog.init_on_shutdown", false);
+      '';
       policies = {
         DisableTelemetry = true;
         DisableFirefoxStudies = true;
