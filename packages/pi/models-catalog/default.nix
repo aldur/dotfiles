@@ -14,19 +14,17 @@ let
     rev = "0c1517c823371cc97d46a8bfa7b382c257141b31";
     hash = "sha256-+WrZsh+Dibsruo85AFOKNhRBVwewggPlLDTuBQlhVA0=";
   };
-  # Use the generator dependencies and hashes from the pinned upstream lock.
-  lockLines = lib.splitString "\n" (builtins.readFile "${src}/bun.lock");
-  dependency = name:
-    let
-      matches = builtins.filter (match: match != null) (map (line:
-        builtins.match ''[[:space:]]*"${name}":.*"${name}@([^"]+)".*"(sha512-[^"]+)".*'' line
-      ) lockLines);
-      locked = builtins.head matches;
-    in
-    fetchurl {
-      url = "https://registry.npmjs.org/${name}/-/${name}-${builtins.elemAt locked 0}.tgz";
-      hash = builtins.elemAt locked 1;
+  # Check these against bun.lock during the build, not during evaluation.
+  dependencies = {
+    remeda = {
+      version = "2.33.7";
+      hash = "sha512-cXlyjevWx5AcslOUEETG4o8XYi9UkoCXcJmj7XhPFVbla+ITuOBxv6ijBrmbeg+ZhzmDThkNdO+iXKUfrJep1w==";
     };
+    zod = {
+      version = "3.24.2";
+      hash = "sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==";
+    };
+  };
 in
 stdenvNoCC.mkDerivation {
   pname = "models-dev-catalog";
@@ -35,9 +33,21 @@ stdenvNoCC.mkDerivation {
   nativeBuildInputs = [ bun ];
   buildPhase = ''
     runHook preBuild
-    mkdir -p node_modules/remeda node_modules/zod
-    tar -xzf ${dependency "remeda"} --strip-components=1 -C node_modules/remeda
-    tar -xzf ${dependency "zod"} --strip-components=1 -C node_modules/zod
+    bun -e '
+      const lock = Bun.JSON5.parse(await Bun.file("bun.lock").text());
+      for (const [name, expected] of Object.entries(JSON.parse(process.argv[1]))) {
+        const actual = lock.packages[name];
+        if (actual?.[0] !== `''${name}@''${expected.version}` || actual?.[3] !== expected.hash)
+          throw new Error(`Update ''${name} to match bun.lock`);
+      }
+    ' ${lib.escapeShellArg (builtins.toJSON dependencies)}
+    ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: dep: ''
+      mkdir -p node_modules/${name}
+      tar -xzf ${fetchurl {
+        url = "https://registry.npmjs.org/${name}/-/${name}-${dep.version}.tgz";
+        inherit (dep) hash;
+      }} --strip-components=1 -C node_modules/${name}
+    '') dependencies)}
     bun -e 'import { generate } from "./packages/core/src/generate.ts"; console.log(JSON.stringify(await generate("./providers")))' > catalog.json
     runHook postBuild
   '';
@@ -55,6 +65,10 @@ stdenvNoCC.mkDerivation {
 
   passthru.updatePin = {
     args = "--version=branch";
-    verify = "nix build .#pi -L";
+    verify = ''
+      nix run nixpkgs#bun -- packages/pi/models-catalog/update-deps.mjs \
+        "$(nix build .#pi.modelsCatalog.src --no-link --print-out-paths)/bun.lock"
+      nix build .#pi -L
+    '';
   };
 }
