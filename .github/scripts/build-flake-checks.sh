@@ -38,9 +38,13 @@ fi
 # not show its attributes, so `nix derivation show` reads the required
 # features from the derivation itself. Its output uses the base name of the
 # derivation path as the key.
-# One evaluation thread keeps the heavy configuration checks from running
-# concurrently and exhausting memory, also when this script is run locally.
-drvs=$(nix eval --json --option eval-cores 1 ".#checks.$system" "${override[@]}" \
+# Linux check evaluation needs most of a 16 GiB runner. The smaller Darwin
+# check set can use all cores. This does not limit build parallelism.
+eval_cores=1
+if [[ $system == *-darwin ]]; then
+  eval_cores=0
+fi
+drvs=$(nix eval --json --option eval-cores "$eval_cores" ".#checks.$system" "${override[@]}" \
   --apply 'checks: builtins.mapAttrs (_: check: check.drvPath) checks')
 available=$(nix config show system-features | jq -R 'split(" ")')
 

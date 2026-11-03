@@ -1,10 +1,20 @@
 name: Set up Nix
 description: >-
-  Install Determinate Nix with the shared daemon configuration for this
-  repository. YAML anchors do not work across workflow files. This action
-  keeps the action pin and the configuration in one location.
+  Install Determinate Nix and GitHub Actions caching with concise build logs.
 
 inputs:
+  log-lines:
+    description: Number of build log lines to show when a build fails.
+    required: false
+    default: "1000"
+  print-missing:
+    description: Print the initial list of paths to build or download.
+    required: false
+    default: "false"
+  eval-cores:
+    description: Number of evaluation threads; empty keeps the installed setting.
+    required: false
+    default: ""
   trust-runner-user:
     description: >-
       Magic Nix Cache needs a trusted runner user to configure the store.
@@ -17,7 +27,6 @@ runs:
     - uses: DeterminateSystems/determinate-nix-action@92957199488000b908fdad19f63711000965d8f3 # v3.24.1
       env:
         # This variable stops the telemetry of all Determinate tools.
-        # modules/nix.nix sets the same variable on the real machines.
         # https://docs.determinate.systems/guides/telemetry
         DETSYS_IDS_TELEMETRY: disabled
       with:
@@ -29,23 +38,12 @@ runs:
         # no option to collapse it, so this input removes the full summary.
         # A failed build shows its log in the job log (see log-lines).
         summarize: false
-        # The CI does not stream the build logs (no `-L` flags), because
-        # full logs hide a failure in megabytes of unwanted data. When a
-        # build fails, nix shows the last lines of the log of that build.
-        # This option sets that count. 1000 lines are sufficient to show the
-        # first error of a long test suite. Set the option in the daemon
-        # configuration, not on the command line: log-lines is a restricted
-        # setting, and nix ignores it from a client that is not trusted.
-        # Evaluating the checks in parallel can use nearly all of a Linux
-        # runner's memory before any build starts. Apply the limit to every
-        # CI job, including `nix eval --json` in build-flake-checks.sh.
-        # This only limits evaluation; build parallelism is unchanged.
-        # Omit the initial list of store paths. Build progress and failure
-        # logs still identify the paths when Nix processes them.
+        # Set restricted options in the daemon configuration so they also
+        # apply to clients that are not trusted.
         extra-conf: |
-          log-lines = 1000
-          eval-cores = 1
-          print-missing = false
+          log-lines = ${{ inputs.log-lines }}
+          ${{ inputs.eval-cores != '' && format('eval-cores = {0}', inputs.eval-cores) || '' }}
+          print-missing = ${{ inputs.print-missing }}
     # Share store paths between jobs and commits.
     - uses: DeterminateSystems/magic-nix-cache-action@84c0677f58dcedf3b91f8223ce36a9ea5b3c84b7 # v15
       with:

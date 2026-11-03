@@ -48,7 +48,8 @@ jobs:
       # Evaluate each system in a separate process so Nix releases its
       # evaluation memory between systems. A single --all-systems process
       # can exhaust the runner and make it lose contact with GitHub.
-      # One evaluation thread also bounds Determinate Nix's memory use.
+      # Limit Linux evaluation threads to reduce memory use.
+      # Darwin can use all cores.
       # The override stops an unauthenticated eval-time fetch of
       # api.github.com, which hits the shared rate limit.
       - run: |
@@ -56,7 +57,11 @@ jobs:
           sampler=$!
           trap 'kill "$sampler"' EXIT
           for system in x86_64-linux aarch64-linux aarch64-darwin; do
-            nix flake check --system "$system" --no-build --option eval-cores 1 \
+            eval_cores=1
+            if [[ $system == *-darwin ]]; then
+              eval_cores=0
+            fi
+            nix flake check --system "$system" --no-build --option eval-cores "$eval_cores" \
               --override-input gh-signing-keys "file+file://$SIGNING_KEYS" .
           done
 
