@@ -1,3 +1,7 @@
+vim.lsp.config("solidity_ls_nomicfoundation", {
+	init_options = { telemetryEnabled = false },
+})
+
 local servers = {
 	{ "beancount", "beancount-language-server" },
 	{ "clarinet", "clarinet" },

@@ -39,10 +39,19 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   ];
 
   env = {
-    SOLIDITY_GA_SECRET = "dummy-secret";
-    SOLIDITY_GOOGLE_TRACKING_ID = "dummy-tracking-id";
-    SOLIDITY_SENTRY_DSN = "https://public@sentry.example.com/1";
+    SOLIDITY_GA_SECRET = "";
+    SOLIDITY_GOOGLE_TRACKING_ID = "";
+    SOLIDITY_SENTRY_DSN = "";
   };
+
+  # Permit an empty Sentry DSN and skip analytics without credentials.
+  postPatch = ''
+    substituteInPlace scripts/bundle/utils/env.ts --replace-fail \
+      'value === undefined || value === ""' 'value === undefined'
+    substituteInPlace server/src/analytics/GoogleAnalytics.ts --replace-fail \
+      'this.serverState?.env !== "production" ||' \
+      'this.measurementID === "" || this.apiSecret === "" || this.serverState?.env !== "production" ||'
+  '';
 
   buildPhase = ''
     runHook preBuild
