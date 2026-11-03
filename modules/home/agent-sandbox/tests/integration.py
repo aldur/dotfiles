@@ -441,6 +441,7 @@ with open("/home/tester/Unrelated/secret", "rb") as secret:
 assert result.returncode == 0, result.stderr
 print("passed: inherited descriptors closed", flush=True)
 
+subprocess.run([sys.executable, "@accountTests@", wrapper], check=True, timeout=60)
 # The metadata suite starts many sandboxes. Allow time for concurrent CI builds.
 subprocess.run([sys.executable, "@metadataTests@", wrapper], check=True, timeout=300)
 subprocess.run([sys.executable, "@direnvTests@", wrapper], check=True, timeout=120)

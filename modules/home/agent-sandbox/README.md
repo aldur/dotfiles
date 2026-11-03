@@ -123,6 +123,8 @@ processes. Each extra grant and `--git-write` makes the protection weaker.
   directory. `/tmp` and the home directory are new for each launch.
 - **Read-only.** The Nix profiles, `~/.local/bin`, some `/etc` files (users,
   hosts, DNS, TLS, Nix), and the Git, fish and direnv configuration.
+  `/etc/passwd` and `/etc/group` are private copies that survive host rebuilds.
+  Host account changes take effect on the next sandbox launch.
 - **Writable.** The workspace, the `--rw` grants and the agent state. These
   are the real host directories. Changes stay after the sandbox exits.
 - **Environment.** Only `PATH`, `EDITOR`, `VISUAL`, terminal, locale, TLS and

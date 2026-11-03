@@ -411,6 +411,7 @@ def main():
     policy = Policy(options.home, options.git_write == "1")
     process = None
     store = None
+    accounts = None
 
     def interrupted(signum, _frame):
         if process is not None and process.poll() is None:
@@ -426,6 +427,16 @@ def main():
             raise OSError(ctypes.get_errno(), "cannot set parent death signal")
         if os.getppid() != parent:
             interrupted(signal.SIGTERM, None)
+        if "--sandbox-account-file" in mounts:
+            # Host activation replaces account files. Keep named copies until
+            # exit so nested sandboxes can still bind them after a rebuild.
+            accounts = tempfile.TemporaryDirectory(prefix="agent-sandbox-accounts-")
+            while "--sandbox-account-file" in mounts:
+                index = mounts.index("--sandbox-account-file")
+                source, destination = mounts[index + 1:index + 3]
+                snapshot = Path(accounts.name) / Path(destination).name
+                snapshot.write_bytes(Path(source).read_bytes())
+                mounts[index:index + 3] = ["--ro-bind", str(snapshot), destination]
         if options.store_seed is not None:
             if not options.store_shell:
                 fail("--store-shell is required with --store-seed")
@@ -496,6 +507,8 @@ def main():
         policy.close()
         if store is not None:
             store.cleanup()
+        if accounts is not None:
+            accounts.cleanup()
 
 
 if __name__ == "__main__":

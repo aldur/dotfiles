@@ -148,7 +148,10 @@ if [ "$private_store" = 0 ]; then
   system_read_only_paths+=("/etc/profiles/per-user/$username")
 fi
 for path in "${system_read_only_paths[@]}"; do
-  add_mount --ro-bind "$path" 1
+  case "$path" in
+    /etc/passwd | /etc/group) add_mount --sandbox-account-file "$path" 1 ;;
+    *) add_mount --ro-bind "$path" 1 ;;
+  esac
 done
 system_mounts=("${mount_args[@]}")
 mount_args=()

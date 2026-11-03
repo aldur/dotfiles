@@ -110,6 +110,9 @@ let
     bwrap = "${pkgs.bubblewrap}/bin/bwrap";
     dbusTestTool = "${pkgs.dbus}/bin/dbus-test-tool";
     dbusSend = "${pkgs.dbus}/bin/dbus-send";
+    accountTests = pkgs.replaceVars ./accounts.py {
+      bwrap = "${pkgs.bubblewrap}/bin/bwrap";
+    };
     metadataTests = pkgs.replaceVars ./metadata.py {
       git = "${pkgs.git}/bin/git";
     };
