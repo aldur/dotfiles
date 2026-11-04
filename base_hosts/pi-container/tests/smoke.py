@@ -9,6 +9,7 @@ from pathlib import Path
 import pty
 import re
 import select
+import shlex
 import shutil
 import socket
 import socketserver
@@ -160,6 +161,7 @@ printf verified > /output/verified
 
 def main():
     root = Path(sys.argv[2])
+    managed_settings = json.loads(Path(sys.argv[4]).read_text())
     print("Unpacking OCI image", flush=True)
     config = unpack(sys.argv[1], root)
     shutil.copyfile(sys.argv[3], root / "nix/store/pi-proc-isolation.py")
@@ -368,17 +370,22 @@ for tool in bat btop htop curl dig fd file jq less pv rg tmux age tree totp-cli 
     custom_keybindings = {"tui.editor.cursorUp": ["ctrl+k"], "app.session.new": ["ctrl+alt+n"]}
     (state / "keybindings.json").write_text(json.dumps(custom_keybindings))
     settings = json.loads((state / "settings.json").read_text())
-    settings.update(tuiMode="fullscreen", quietStartup="header")
+    assert "smokeTestPreference" not in managed_settings, "The preservation fixture must be unmanaged"
+    settings.update(tuiMode="fullscreen", quietStartup="header", smokeTestPreference="preserved")
     (state / "settings.json").write_text(json.dumps(settings))
-    run("pi-yolo", "--version")
-    run("--version")
-    bindings = json.loads((state / "keybindings.json").read_text())
-    assert bindings["tui.editor.cursorUp"] == ["up", "ctrl+p"]
-    assert bindings["app.session.new"] == ["ctrl+alt+n"]
-    settings = json.loads((state / "settings.json").read_text())
-    assert settings["tuiMode"] == "regular"
-    assert settings["quietStartup"] == "header"
-    assert (state / "marker").read_text() == "preserved"
+    for args in (("pi-yolo", "--version"), ("--version",)):
+        run(*args)
+        bindings = json.loads((state / "keybindings.json").read_text())
+        assert bindings["tui.editor.cursorUp"] == ["up", "ctrl+p"], f"Managed keybinding was not restored: {bindings}"
+        assert bindings["app.session.new"] == ["ctrl+alt+n"], f"Unmanaged keybinding was changed: {bindings}"
+        settings = json.loads((state / "settings.json").read_text())
+        for key, expected in managed_settings.items():
+            assert settings.get(key) == expected, (
+                f"After {shlex.join(args)}: settings.json managed key {key!r}: "
+                f"expected {expected!r}, got {settings.get(key)!r}"
+            )
+        assert settings.get("smokeTestPreference") == "preserved", f"Unmanaged preference was changed: {settings}"
+        assert (state / "marker").read_text() == "preserved", "Unmanaged state file was changed"
     # Inherited procfs also works when callers clear either set of defaults.
     for masked, readonly in ((True, False), (False, True), (False, False)):
         result = subprocess.run(launch("pi-yolo", "--version", masked_proc=masked, readonly_proc=readonly),

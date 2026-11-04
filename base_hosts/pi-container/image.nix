@@ -110,4 +110,7 @@ let
 in
 {
   inherit image closure name;
+  managedPiSettings = pkgs.writeText "pi-expected-settings.json" (
+    builtins.toJSON home.config.programs.pi.settings
+  );
 }
