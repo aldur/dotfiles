@@ -121,11 +121,6 @@ in
       settings.tuiMode = lib.mkDefault "regular";
       settings.quietStartup = lib.mkDefault false;
 
-      # Subagents can bypass the wrapper and its extension flags.
-      settings.extensions = lib.mapAttrsToList (
-        _: plugin: plugin.entryPoint or "${plugin}/index.ts"
-      ) pkgs.pi.plugins;
-
       keybindings = lib.mkDefault {
         # Move within the prompt, then browse history.
         "tui.editor.cursorUp" = [

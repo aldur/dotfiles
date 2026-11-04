@@ -8,7 +8,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { pathToFileURL } from "node:url";
 
-const { syncConfig } = await import(pathToFileURL(process.env.PI_CONFIG_SYNC_MODULE));
+const { syncConfig, migrateExtensions } = await import(pathToFileURL(process.env.PI_CONFIG_SYNC_MODULE));
 const piPackage = process.env.PI_CONFIG_SYNC_PACKAGE;
 const { SettingsManager } = await import(pathToFileURL(join(piPackage, "dist/core/settings-manager.js")));
 const { KeybindingsManager } = await import(pathToFileURL(join(piPackage, "dist/core/keybindings.js")));
@@ -116,4 +116,32 @@ test("a busy Pi lock fails without changing the file or stealing the lock", asyn
   } finally {
     await release();
   }
+});
+
+test("migration removes legacy managed paths and preserves user extensions", async (t) => {
+  const dir = fixture(t);
+  const path = join(dir, "settings.json");
+  await migrateExtensions(join(dir, "missing"));
+  assert.equal(fs.existsSync(join(dir, "missing")), false);
+  const store = `/nix/store/${"0".repeat(32)}-`;
+  const user = [
+    "./user.ts", "~/extensions/custom.ts",
+    `${store}unrelated-1.0/index.ts`,
+    `${store}pi-subagent-custom/index.ts`,
+    `${store}pi-subagent-1.4.0/other.ts`,
+    "/tmp/pi-subagent-1.4.0/index.ts",
+  ];
+  const legacy = [
+    "pi-llama-0-unstable-2026-10-30", "pi-no-docs", "pi-startup-header",
+    "pi-openai-discovery", "pi-statusline", "pi-subagent-1.4.0",
+    "pi-system-prompt", "pi-throughput",
+  ].map((name) => `${store}${name}/index.ts`);
+  write(path, { extensions: [...legacy, ...user], theme: "dark", packages: ["npm:user-package"] });
+  await migrateExtensions(dir);
+  assert.deepEqual(read(path), { extensions: user, theme: "dark", packages: ["npm:user-package"] });
+  const before = fs.statSync(path, { bigint: true }).mtimeNs;
+  await migrateExtensions(dir);
+  assert.equal(fs.statSync(path, { bigint: true }).mtimeNs, before);
+  await syncConfig({ settings: { extensions: ["./declared.ts", ...legacy] } }, dir);
+  assert.deepEqual(read(path).extensions, ["./declared.ts"]);
 });

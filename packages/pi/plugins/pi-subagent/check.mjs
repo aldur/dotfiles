@@ -11,6 +11,7 @@ if (process.argv[2] === "--mode") {
   const { createSessionManager } = await import(pathToFileURL(join(root, "dist/main.js")));
   const args = parseArgs(process.argv.slice(2));
   assert.deepEqual(args.diagnostics, []);
+  assert.deepEqual(args.extensions ?? [], JSON.parse(process.env.DOTFILES_PI_EXTENSIONS ?? "[]"));
   assert.equal(args.noSession, undefined);
   const session = await createSessionManager(args, process.cwd());
   assert.deepEqual(session.getEntries(), [], "Children must start without parent messages");
@@ -24,6 +25,7 @@ const root = mkdtempSync(join(tmpdir(), "pi-subagent-check-"));
 process.env.PI_CODING_AGENT_DIR = join(root, "agent");
 delete process.env.PI_CODING_AGENT_SESSION_DIR;
 process.env.PI_SUBAGENT_CHECK_ROOT = piRoot;
+process.env.DOTFILES_PI_EXTENSIONS = JSON.stringify([extensionPath, join(root, "extension with spaces.ts")]);
 const { loadExtensions } = await import(pathToFileURL(join(piRoot, "dist/core/extensions/loader.js")));
 const { SessionManager } = await import(pathToFileURL(join(piRoot, "dist/core/session-manager.js")));
 const { extensions, errors } = await loadExtensions([extensionPath], process.cwd());
@@ -66,6 +68,9 @@ try {
   );
   assert.equal(grandchildren.length, 1);
   assert.equal(grandchildren[0].name, "subagent:scout");
+  delete process.env.DOTFILES_PI_EXTENSIONS;
+  const unwrapped = await execute("unwrapped", tasks[0], undefined, undefined, ctx);
+  assert.equal(unwrapped.details.results[0].exitCode, 0, JSON.stringify(unwrapped));
 } finally {
   rmSync(root, { recursive: true, force: true });
 }

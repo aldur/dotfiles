@@ -120,7 +120,9 @@ cover case differences and model aliases.
 
 The package checks its extensions during the Nix build. The
 [standalone test](standalone-test.nix) checks the managed settings and file links.
+The [extension test](tests/extensions/default.nix) checks revision changes, rollback,
+individual extension paths, and subagent startup without model requests.
 
 ```sh
-nix build .#pi .#checks.x86_64-linux.pi-standalone
+nix build .#pi .#checks.x86_64-linux.pi-standalone .#checks.x86_64-linux.pi-extensions
 ```

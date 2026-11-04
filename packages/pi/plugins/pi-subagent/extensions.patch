@@ -1,0 +1,16 @@
+--- a/index.ts
++++ b/index.ts
+@@ -247,6 +247,13 @@
+ }
+ 
+ function getPiInvocation(args: string[]): { command: string; args: string[] } {
++	// Keep the parent wrapper's plugin builds when starting the current script.
++	const extensions: unknown = JSON.parse(process.env.DOTFILES_PI_EXTENSIONS ?? "[]");
++	if (!Array.isArray(extensions) || extensions.some((path) => typeof path !== "string")) {
++		throw new Error("DOTFILES_PI_EXTENSIONS must be a JSON array of paths");
++	}
++	args = [...args, ...extensions.flatMap((path) => ["-e", path])];
++
+ 	const currentScript = process.argv[1];
+ 	const isBunVirtualScript = currentScript?.startsWith("/$bunfs/root/");
+ 	if (currentScript && !isBunVirtualScript && fs.existsSync(currentScript)) {

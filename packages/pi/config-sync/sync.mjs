@@ -24,7 +24,7 @@ function merge(current, managed) {
   };
 }
 
-async function syncFile(path, managed) {
+async function syncFile(path, managed, transform = (value) => value) {
   // Match Pi's realpath:false lock, including for files that do not exist yet.
   // Read after acquiring it so another Pi session's latest writes are preserved.
   const release = await lockfile.lock(path, {
@@ -48,7 +48,7 @@ async function syncFile(path, managed) {
     }
     const original = info ? fs.readFileSync(path, "utf8") : undefined;
     const current = original === undefined ? {} : parseObject(original, path);
-    const next = merge(current, managed);
+    const next = transform(merge(current, managed));
     if (info?.isFile() && (info.mode & 0o777) === 0o600 &&
         JSON.stringify(current) === JSON.stringify(next)) return;
 
@@ -65,6 +65,23 @@ async function syncFile(path, managed) {
   }
 }
 
+// These package names were written by home.nix. Keep other store paths.
+const legacyExtension = /^\/nix\/store\/[0-9a-z]{32}-pi-(?:llama|no-docs|startup-header|openai-discovery|statusline|subagent|system-prompt|throughput)(?:-[0-9][^/]*)?\/index\.ts$/;
+
+function removeManagedExtensions(settings) {
+  if (!Array.isArray(settings.extensions)) return settings;
+  return {
+    ...settings,
+    extensions: settings.extensions.filter((path) =>
+      !(typeof path === "string" && legacyExtension.test(path))),
+  };
+}
+
+export async function migrateExtensions(agentDir) {
+  const path = join(resolve(agentDir), "settings.json");
+  if (fs.existsSync(path)) await syncFile(path, {}, removeManagedExtensions);
+}
+
 export async function syncConfig(managed, agentDir) {
   if (!isObject(managed)) throw new Error("managed configuration must be a JSON object");
   for (const [name, value] of Object.entries(managed)) {
@@ -75,15 +92,20 @@ export async function syncConfig(managed, agentDir) {
   const directory = resolve(agentDir);
   fs.mkdirSync(directory, { recursive: true, mode: 0o700 });
   for (const [name, value] of Object.entries(managed)) {
-    await syncFile(join(directory, `${name}.json`), value);
+    await syncFile(join(directory, `${name}.json`), value,
+      name === "settings" ? removeManagedExtensions : undefined);
   }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   try {
-    if (process.argv.length !== 4) throw new Error("usage: pi-config-sync MANAGED_JSON AGENT_DIR");
+    if (process.argv.length !== 4) throw new Error("usage: pi-config-sync MANAGED_JSON|--migrate-extensions AGENT_DIR");
     const [managedPath, agentDir] = process.argv.slice(2);
-    await syncConfig(parseObject(fs.readFileSync(managedPath, "utf8"), managedPath), agentDir);
+    if (managedPath === "--migrate-extensions") {
+      await migrateExtensions(agentDir);
+    } else {
+      await syncConfig(parseObject(fs.readFileSync(managedPath, "utf8"), managedPath), agentDir);
+    }
   } catch (error) {
     console.error(`pi-config-sync: ${error.message}`);
     process.exitCode = 1;

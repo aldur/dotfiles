@@ -20,9 +20,8 @@
 }:
 
 let
-  pluginFlags = lib.concatMapStringsSep " " (
-    plugin: "-e ${lib.escapeShellArg (plugin.entryPoint or "${plugin}/index.ts")}"
-  ) (lib.attrValues plugins);
+  pluginPaths = map (plugin: plugin.entryPoint or "${plugin}/index.ts") (lib.attrValues plugins);
+  pluginFlags = lib.concatMapStringsSep " " (path: "-e ${lib.escapeShellArg path}") pluginPaths;
 
   npmPackage = "@earendil-works/pi-coding-agent";
 
@@ -50,6 +49,13 @@ let
       # headers (docs/usage.md). Analytics (enableAnalytics) is already opt-in.
       # Assigned as a default so the runtime override stays available.
       export PI_TELEMETRY="''${PI_TELEMETRY-0}"
+
+      # The packaged subagent forwards these paths when it bypasses this wrapper.
+      export DOTFILES_PI_EXTENSIONS=${lib.escapeShellArg (builtins.toJSON pluginPaths)}
+      case "''${1-}" in
+      --version | -v | --help | -h | install | remove | uninstall | update | list | config) ;;
+      *) ${lib.getExe configSync} --migrate-extensions "''${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}" ;;
+      esac
 
       # pi only recognises its package subcommands as the first argument, and
       # rejects `-e` after them, so those run without the plugin flags.
