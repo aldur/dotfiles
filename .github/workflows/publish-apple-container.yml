@@ -38,6 +38,7 @@ jobs:
       packages: write # necessary to push the image to ghcr.io
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         arch: &architectures
           - { runner: ubuntu-26.04-arm, suffix: arm64, system: aarch64-linux }
@@ -126,7 +127,10 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - *checkout
-      - *setup-nix
+      - &setup-nix-no-cache
+        uses: ./.github/actions/setup-nix
+        with:
+          cache: "false"
 
       # Push the multi-arch manifest for the tag prefix of the branch
       # (`latest` on master). The app writes the digest of the index to the
@@ -154,6 +158,7 @@ jobs:
       packages: write
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         arch: *architectures
         variant: &pi-variants
@@ -217,7 +222,7 @@ jobs:
       PI_IMAGE: ghcr.io/${{ github.repository_owner }}/${{ matrix.variant.image }}
     steps:
       - *checkout
-      - *setup-nix
+      - *setup-nix-no-cache
       - *ghcr-login
       - run: |
           nix shell --inputs-from . nixpkgs#regclient --command \

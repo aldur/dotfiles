@@ -29,6 +29,7 @@ All inputs are optional.
 
 | Input | Default | Effect |
 | --- | --- | --- |
+| `cache` | `"true"` | Enable Magic Nix Cache. Set `"false"` for jobs that do not need to cache build results. |
 | `log-lines` | `"1000"` | Number of build log lines shown after a build fails. |
 | `print-missing` | `"false"` | Print the initial list of paths to build or download. |
 | `eval-cores` | `""` | Keep the installed setting. Set a value to override the number of evaluation threads. |

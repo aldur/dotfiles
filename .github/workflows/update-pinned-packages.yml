@@ -33,8 +33,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - &setup-nix
-        uses: ./.github/actions/setup-nix
+      - uses: ./.github/actions/setup-nix
+        with:
+          cache: "false"
 
       - name: Derive the matrix from the packages themselves
         id: read
@@ -53,11 +54,12 @@ jobs:
       contents: read
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         include: ${{ fromJSON(needs.discover.outputs.legs) }}
     steps:
       - *checkout
-      - *setup-nix
+      - uses: ./.github/actions/setup-nix
 
       - name: Bump and verify ${{ matrix.package }}
         # Read the commands from the checked-out flake through the same app

@@ -27,6 +27,8 @@ env:
 # .github/actions/setup-nix, and all workflows use it. The attestation steps
 # are in .github/actions/attest for the same reason.
 jobs:
+  # Evaluate first. Limit build matrices to reduce cache requests. System
+  # and image jobs wait for the Linux checks to make shared packages available.
   flake-check:
     name: flake-check
     runs-on: ubuntu-26.04
@@ -35,8 +37,10 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - &setup-nix
+      - &setup-nix-no-cache
         uses: ./.github/actions/setup-nix
+        with:
+          cache: "false"
       - uses: DeterminateSystems/flake-checker-action@786422608c7bded2bbc9741ad9f91356842bf520  # v14
         with:
           send-statistics: false
@@ -69,10 +73,12 @@ jobs:
   # architecture. The flake-check job above only evaluates the checks
   # (`--no-build`).
   flake-checks-build:
+    needs: flake-check
     name: flake-checks-build (${{ matrix.runner }}, ${{ matrix.system }}, ${{ matrix.shard }})
     strategy:
       # If one architecture fails, continue with the other to fill the cache.
       fail-fast: false
+      max-parallel: 2
       matrix:
         include:
           - runner: ubuntu-26.04
@@ -92,7 +98,8 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - *checkout
-      - *setup-nix
+      - &setup-nix
+        uses: ./.github/actions/setup-nix
       - name: Allow user namespaces for sandbox checks
         # Ubuntu restricts user namespaces for the Nix-store bwrap.
         # Allow nested sandbox checks on these temporary test runners.
@@ -118,9 +125,11 @@ jobs:
   # Exercise the actual standalone activation on Ubuntu, with a fresh account
   # and a real systemd user manager. NixOS VM checks do not cover this path.
   home-manager-ubuntu:
+    needs: flake-checks-build
     name: home-manager-ubuntu (${{ matrix.runner }}, ${{ matrix.system }})
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         include:
           - runner: ubuntu-26.04
@@ -149,6 +158,7 @@ jobs:
   # Start from an Ubuntu cloud image with no Nix. This also tests installation,
   # a non-aldur account, the default login shell, and services after reboot.
   home-manager-ubuntu-vm:
+    needs: flake-checks-build
     name: home-manager-ubuntu-vm
     runs-on: ubuntu-26.04
     timeout-minutes: 90
@@ -156,7 +166,7 @@ jobs:
       - *checkout
       # Host Nix is used only to verify the signing-key input. The guest starts
       # without Nix and installs it through the same bootstrap as users.
-      - *setup-nix
+      - *setup-nix-no-cache
       - uses: ./.github/actions/reclaim-disk
       - *fetch-signing-keys
       - name: Install VM tools
@@ -179,9 +189,11 @@ jobs:
   # and a copy into the store. A new runner for each build prevents a full
   # disk.
   nixos-ci:
+    needs: flake-checks-build
     name: nixos-ci (${{ matrix.runner }}, ${{ matrix.target }})
     strategy:
       fail-fast: false  # The targets are independent.
+      max-parallel: 2
       matrix:
         include:
           # Build the QEMU VM configuration as a test.
@@ -253,6 +265,7 @@ jobs:
           NIX_TARGET: ${{ matrix.target }}
 
   nix-darwin-ci:
+    needs: flake-check
     name: nix-darwin-ci
     runs-on: macos-26  # arm, beta
     steps:
@@ -278,9 +291,11 @@ jobs:
 
   # Build and test llm on every platform exported by packages.<system>.llm.
   llm:
+    needs: flake-check
     name: llm (${{ matrix.system }})
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         include:
           - runner: ubuntu-26.04
@@ -301,6 +316,7 @@ jobs:
           NIX_SYSTEM: ${{ matrix.system }}
 
   containers:
+    needs: flake-checks-build
     uses: ./.github/workflows/publish-apple-container.yml
     permissions:
       contents: read
