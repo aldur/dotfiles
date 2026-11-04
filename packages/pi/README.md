@@ -69,6 +69,11 @@ telemetry and its automatic version check by default.
 Pi uses the shared [skills](../../skills) and
 [agent instructions](../../modules/home/agents/AGENTS.md).
 
+The `tavily-search` skill uses the bundled `tvly` command to search the web and
+read URLs. Search and extraction work without a key, subject to Tavily's rate
+limits. Set `TAVILY_API_KEY` to use an account. The
+[package](../tavily-cli/default.nix) pins the CLI, SDK, and upstream skill.
+
 ## Models
 
 The [pi-llama](plugins/pi-llama.nix) extension discovers models on a llama.cpp server. Set

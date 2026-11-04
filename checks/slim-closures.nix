@@ -43,9 +43,11 @@ let
     remarks = 700;
     llm = 510; # the flake alias of llmWithPlugins
     llmWithPlugins = 510;
-    pi = 385;
+    # Pi's web tools include Tavily's Python runtime.
+    pi = 605;
     pi-coding-agent = 365;
-    pi-yolo = 495;
+    pi-yolo = 700;
+    tavily-cli = 285;
     pandoc-runtime = 190;
     # A node interpreter and one stdlib-only script; it is nodejs-slim-runtime
     # plus a wrapper, so it inherits that entry's budget.

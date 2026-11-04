@@ -7,6 +7,7 @@
   nodejs,
   pnpm,
   pi-coding-agent,
+  tavily-cli,
   modelsCatalog,
   selfUpdates ? true,
   # Plugin derivations to bundle, keyed by name (see ./plugins). Each is
@@ -42,6 +43,7 @@ let
   # is a bootstrap, and once a self-managed release exists it takes over.
   wrapper = writeShellApplication {
     name = "pi";
+    runtimeInputs = [ tavily-cli ];
     text = ''
       # The anonymous install/update ping (enableInstallTelemetry) defaults to
       # on; PI_TELEMETRY=0 turns it off, along with provider attribution

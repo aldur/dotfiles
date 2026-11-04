@@ -62,6 +62,7 @@ in
   };
 
   agent-log = final.callPackage ../packages/agent-log { };
+  tavily-cli = final.callPackage ../packages/tavily-cli { };
 
   llm-mlx = prev.callPackage ../packages/llm-mlx { };
   llmWithPlugins = (prev.python3.withPackages (

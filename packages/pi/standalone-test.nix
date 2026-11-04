@@ -14,6 +14,8 @@ pkgs.runCommand "pi-standalone-test" { } ''
   test "$(cat "''${backup[0]}/skills/writing-well/SKILL.md")" = 'local skill'
   cmp "$PI_CODING_AGENT_DIR/AGENTS.md" ${../../modules/home/agents/AGENTS.md}
   cmp "$PI_CODING_AGENT_DIR/skills/writing-well/SKILL.md" ${../../skills/writing-well/SKILL.md}
+  cmp "$PI_CODING_AGENT_DIR/skills/tavily-search/SKILL.md" ${pkgs.tavily-cli.skills}/tavily-search/SKILL.md
+  test -f "$PI_CODING_AGENT_DIR/skills/tavily-search/references/setup.md"
 
   ${pkgs.lib.getExe pi} --version
   backups=("$PI_CODING_AGENT_DIR"/.dotfiles-backup.*)

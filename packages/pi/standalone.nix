@@ -2,7 +2,7 @@
 let
   inherit (pkgs) lib;
   inherit (pkgs) pi;
-  skills = import ../../skills;
+  skills = import ./skills.nix { inherit pkgs; };
   config = (lib.evalModules {
     specialArgs = { inherit pkgs; };
     modules = [

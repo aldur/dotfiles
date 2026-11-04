@@ -120,6 +120,7 @@
               taskmd-ui
               llama-wiretap # records what clients send to llama-server
               agent-log # one picker over claude, pi and codex conversations
+              tavily-cli
               ;
             llm = pkgs.llmWithPlugins;
             pi = import ./packages/pi/standalone.nix { inherit pkgs; };
