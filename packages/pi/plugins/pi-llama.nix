@@ -47,7 +47,7 @@ stdenvNoCC.mkDerivation {
   doCheck = true;
   checkPhase = ''
     runHook preCheck
-    ${lib.getExe nodejs} --no-warnings ${./pi-llama-check.mjs} "$PWD/index.ts" \
+    ${lib.getExe nodejs} --no-warnings ${../tests/plugins/pi-llama.mjs} "$PWD/index.ts" \
       "$(dirname "$(find ${pi-coding-agent}/lib -path '*/dist/core/model-registry.js')")/../.."
     runHook postCheck
   '';

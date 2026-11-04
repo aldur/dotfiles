@@ -118,8 +118,9 @@ cover case differences and model aliases.
 - [pi-subagent](plugins/pi-subagent): packages Pi's subagent extension.
 - [pi-system-prompt](plugins/pi-system-prompt): adds a read-only `/system-prompt` command.
 
-The package checks its extensions during the Nix build. The
-[standalone test](standalone-test.nix) checks the managed settings and file links.
+All Pi tests are in [tests](tests). The package checks its extensions during
+the Nix build. The
+[standalone test](tests/standalone.nix) checks the managed settings and file links.
 The [extension test](tests/extensions/default.nix) checks revision changes, rollback,
 individual extension paths, and subagent startup without model requests.
 

@@ -76,9 +76,8 @@ stdenvNoCC.mkDerivation {
   nativeCheckInputs = [ python3 ];
   checkPhase = ''
     runHook preCheck
-    python ${./.}/test_unpack.py
-    bun -e 'const catalog = await Bun.file("catalog.json").json(); if (!catalog["privatemode-ai"]?.models?.["glm-5.3-flash"]?.limit?.context) throw new Error("Missing Privatemode model metadata")'
-    bun -e 'const catalog = await Bun.file("catalog.json").json(); for (const id of ["Qwen/Qwen3-Embedding-0.6B", "qwen/qwen3.5-397b-a17b"]) if (!catalog.nearai?.models?.[id]) throw new Error(`Missing case-sensitive model ID: ''${id}`)'
+    PYTHONPATH=${./.} python ${../tests/models-catalog/test_unpack.py}
+    bun ${../tests/models-catalog/check.mjs}
     runHook postCheck
   '';
   installPhase = ''

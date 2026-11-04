@@ -12,8 +12,8 @@ pkgs.runCommand "pi-standalone-test" { } ''
   test "''${#backup[@]}" = 1
   test "$(cat "''${backup[0]}/AGENTS.md")" = 'local instructions'
   test "$(cat "''${backup[0]}/skills/writing-well/SKILL.md")" = 'local skill'
-  cmp "$PI_CODING_AGENT_DIR/AGENTS.md" ${../../modules/home/agents/AGENTS.md}
-  cmp "$PI_CODING_AGENT_DIR/skills/writing-well/SKILL.md" ${../../skills/writing-well/SKILL.md}
+  cmp "$PI_CODING_AGENT_DIR/AGENTS.md" ${../../../modules/home/agents/AGENTS.md}
+  cmp "$PI_CODING_AGENT_DIR/skills/writing-well/SKILL.md" ${../../../skills/writing-well/SKILL.md}
   cmp "$PI_CODING_AGENT_DIR/skills/tavily-search/SKILL.md" ${pkgs.tavily-cli.skills}/tavily-search/SKILL.md
   test -f "$PI_CODING_AGENT_DIR/skills/tavily-search/references/setup.md"
 
@@ -24,7 +24,7 @@ pkgs.runCommand "pi-standalone-test" { } ''
   rm "$PI_CODING_AGENT_DIR/skills/writing-well"
   ln -s /old/skill "$PI_CODING_AGENT_DIR/skills/writing-well"
   ${pkgs.lib.getExe pi} --version
-  cmp "$PI_CODING_AGENT_DIR/skills/writing-well/SKILL.md" ${../../skills/writing-well/SKILL.md}
+  cmp "$PI_CODING_AGENT_DIR/skills/writing-well/SKILL.md" ${../../../skills/writing-well/SKILL.md}
   backups=("$PI_CODING_AGENT_DIR"/.dotfiles-backup.*)
   test "''${#backups[@]}" = 2
   touch "$out"

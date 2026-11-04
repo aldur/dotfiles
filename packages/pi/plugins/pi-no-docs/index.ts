@@ -7,7 +7,7 @@
  *
  * Two guards call the same stripDocsBlock below, so the anchor lives in
  * one place:
- * - check.mjs (run by default.nix) applies it to the default prompt of
+ * - ../../tests/plugins/pi-no-docs.mjs applies it to the default prompt of
  *   the pinned pi at build time;
  * - this extension throws when the default prompt has no block to strip
  *   (a self-updated pi can drift from the nix pin). pi catches the

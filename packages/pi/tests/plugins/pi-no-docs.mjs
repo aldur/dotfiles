@@ -1,4 +1,4 @@
-// Build-time check for the pi-no-docs extension (see default.nix).
+// Build-time check for the pi-no-docs extension (see packages/pi/plugins/pi-no-docs/default.nix).
 // Loads stripDocsBlock from index.ts and buildSystemPrompt from the
 // pinned pi, then verifies removal of docs without changing other sections.
 // Node strips the type-only import in index.ts, so no dependencies.
