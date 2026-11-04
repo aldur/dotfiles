@@ -41,6 +41,7 @@ if grep -Eq $'Good "git"|Checking 1/|\033' "$work/output"; then
 fi
 git commit -q --allow-empty -m second
 git-verify-ssh
+git-verify-ssh --allow-github .
 git clone -q --bare . "$work/bare"
 git-verify-ssh "$work/bare"
 
@@ -51,6 +52,7 @@ fail .
 grep -F "$unsigned" "$work/output"
 grep -F 'Subject: unsigned' "$work/output"
 grep -F 'No verifiable SSH signature.' "$work/output"
+fail --allow-github .
 git replace "$unsigned" "$root"
 fail .
 git replace -d "$unsigned"
@@ -83,6 +85,7 @@ git switch -q -c other "$root"
 git -c user.signingKey="$work/other" commit -q --allow-empty -m other
 git config gpg.ssh.allowedSignersFile "$work/other.signers"
 fail .
+fail --allow-github .
 git config gpg.ssh.program true
 fail .
 git config --unset gpg.ssh.program
@@ -100,6 +103,7 @@ tampered=$(git hash-object -t commit -w "$work/commit")
 git update-ref refs/heads/tampered "$tampered"
 git switch -q tampered
 fail .
+fail --allow-github .
 git switch -q main
 git branch -D tampered
 
@@ -112,9 +116,23 @@ git -c gpg.format=openpgp -c user.signingKey=test@example.com \
   commit -q --allow-empty -m openpgp
 git verify-commit HEAD
 fail .
+fail --allow-github .
 git switch -q main
 git branch -D openpgp
 gpgconf --kill gpg-agent
+
+# Verify a real GitHub signature without fetching history or changing HEAD.
+github_commit=$(git hash-object -t commit -w "$GITHUB_COMMIT")
+git -c gpg.openpgp.program="$GITHUB_VERIFIER" -c gpg.minTrustLevel=undefined \
+  verify-commit "$github_commit"
+cat "$GITHUB_COMMIT" > "$work/github-commit"
+printf '\nchanged\n' >> "$work/github-commit"
+github_tampered=$(git hash-object -t commit -w "$work/github-commit")
+if git -c gpg.openpgp.program="$GITHUB_VERIFIER" -c gpg.minTrustLevel=undefined \
+  verify-commit "$github_tampered"; then
+  echo 'Accepted an altered GitHub commit.' >&2
+  exit 1
+fi
 
 git clone -q --depth=1 "file://$work/repo" "$work/shallow"
 fail "$work/shallow"

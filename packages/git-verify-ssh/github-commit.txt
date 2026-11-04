@@ -1,0 +1,42 @@
+tree 90e541672f92709c9df65c9c8f39b2e4be7cb09d
+parent 8cc0dd08b0bbb43676ea775b7ab9619a31189db0
+author dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com> 1793525650 +0100
+committer GitHub <noreply@github.com> 1793525650 +0100
+gpgsig -----BEGIN PGP SIGNATURE-----
+ 
+ wsFcBAABCAAQBQJq5weSCRC1aQ7uu5UhlAAAiSsQABQH7i0kAiLKEq71EEGRo6ND
+ LkLi4GlFDKwTGmZjs5r6XCf+8eWT4Ju/z3E3SXHIETlDybyukboak2PV6chFj45q
+ iuPFjb0SZtEWKq4flPVY1IkQ/qU8unkHgL8ZQCjwslKH4G6Xzd5/9klUoytQABnT
+ l1uF8MS2uG6Lc2Zj9yKbIOXs8vZFUFrIJ1PbHr51qh7n/oVso1tmWVyRSrz6XRU5
+ tjIp9/B5hHzQA63hikvfV8Efj/stRoW0k9oxyoePDlFLUTju5AAJr7SrW0YzldKo
+ 0siQLCXjr9xCjMRGZuDN38OEg43l357H7gGCy31iBho3q/i3pf5U+HX+9kJ+fO0g
+ HNrOOHykLgQ0dRuuVtGjPptIhkWlXt9eBNCpHIBwabj9OmDVnZs+zeDq9mNEqhax
+ kSj0zEZLMz6riU0917rqsU7ie1eRdH6UA/6qGYkSzZvFXV/2ByMiZKtApzpToVYz
+ NyoFSIZoi8oy3hE4eFaNt+iC8QieOLFMxxckGSveuDdlCXQCed7Kgt0x346QWuYq
+ WHSD845OFofkyBKSnelHs2nxdWNzEp4aObSy3kW7ApkwZbQgyHaCJgrhy1wsnkjG
+ JeYQkL7D3UHMyJmw0OvesuFKAL0cbxWuLy1QwcvjsxAExhxI2J5XwNyubIwCFqZw
+ 0fpBadCsHXkLUuj3IKLe
+ =Fov5
+ -----END PGP SIGNATURE-----
+ 
+
+Bump DeterminateSystems/determinate-nix-action (#123)
+
+Bumps the actions group with 1 update in the /.github/actions/setup-nix directory: [DeterminateSystems/determinate-nix-action](https://github.com/determinatesystems/determinate-nix-action).
+
+
+Updates `DeterminateSystems/determinate-nix-action` from 3.23.2 to 3.24.1
+- [Release notes](https://github.com/determinatesystems/determinate-nix-action/releases)
+- [Commits](https://github.com/determinatesystems/determinate-nix-action/compare/e847f25223456b3058e12f7fc9d777b6a6f25060...92957199488000b908fdad19f63711000965d8f3)
+
+---
+updated-dependencies:
+- dependency-name: DeterminateSystems/determinate-nix-action
+  dependency-version: 3.24.1
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: actions
+...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
