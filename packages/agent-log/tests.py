@@ -102,6 +102,23 @@ class AgentLogTests(unittest.TestCase):
                 "type": "message", "role": "assistant", "content": warning}}) + "\n")
         self.assertEqual(self.run_log("--full", self.files[2]).count(warning), 1)
 
+    def test_pi_system_sections_are_visible_and_searchable(self):
+        path = self.files[1]
+        sections = {"addendum": "Inspect code before edits.",
+                    "project_context": "Use concise comments.", "empty": "", "removed": None}
+        with path.open("a") as out:
+            out.write(json.dumps({"type": "message", "message": {
+                "role": "system", "content": "", "sections": sections}}) + "\n")
+        self.assertEqual(self.ids("--query", "Inspect code"), ["pi"])
+        self.assertIn("Inspect code", self.run_log("--list", path))
+        for args in [("--full", path), ("--full", path, "--no-tools"), ("_show", "3", path),
+                     ("_preview", path, "--expanded")]:
+            output = self.run_log(*args)
+            for text in ["addendum:", "Inspect code before edits.",
+                         "project_context:", "Use concise comments."]:
+                self.assertIn(text, output)
+        self.assertNotIn("Inspect code", self.run_log("_preview", path))
+
     def test_reads_track_append_rewrite_truncate_replace_and_delete(self):
         path = self.files[0]
         original = path.read_text()

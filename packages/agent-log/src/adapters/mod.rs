@@ -131,7 +131,7 @@ pub fn blocks(agent: Agent, record: &Value, no_tools: bool) -> (String, Vec<Bloc
                 .and_then(Value::as_str)
                 .unwrap_or("?")
                 .into(),
-            message_blocks(&record["message"]["content"], no_tools),
+            pi::blocks(&record["message"], no_tools),
         ),
         Agent::Codex => codex::blocks(record),
     }
@@ -144,7 +144,7 @@ pub fn text(agent: Agent, record: &Value) -> String {
         Agent::Claude if matches!(kind, "user" | "assistant") => {
             message_text(&record["message"], false)
         }
-        Agent::Pi if kind == "message" => message_text(&record["message"], false),
+        Agent::Pi if kind == "message" => pi::message_text(&record["message"], false),
         Agent::Codex => codex::payload_parts(&record["payload"])
             .map(|(_, text)| text)
             .unwrap_or_default(),

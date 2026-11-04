@@ -6,13 +6,37 @@
 //! `message` record. Its content is a text or a list of blocks with the types
 //! `text`, `thinking`, `toolCall` and `toolResult`.
 //!
-//! A session does not contain the system prompt or the tool definitions. pi
-//! makes them again at each start. Only a llama-wiretap transcript has them.
+//! Pi 1.4 stores system instructions in message `sections` fields.
 
 use serde_json::Value;
 
-use super::{clock, message_text, parse_timestamp};
-use crate::model::{flatten, Session, Turn};
+use super::{clock, parse_timestamp};
+use crate::model::{flatten, Block, Session, Turn};
+
+pub fn blocks(message: &Value, no_tools: bool) -> Vec<Block> {
+    let mut blocks = super::message_blocks(&message["content"], no_tools);
+    if message["role"] == "system" {
+        if let Some(sections) = message.get("sections").and_then(Value::as_object) {
+            for (name, value) in sections {
+                if let Some(text) = value.as_str().filter(|text| !text.is_empty()) {
+                    blocks.push(Block::text(format!("{name}:\n{text}")));
+                }
+            }
+        }
+    }
+    blocks
+}
+
+pub fn message_text(message: &Value, no_tools: bool) -> String {
+    if message["role"] != "system" {
+        return super::message_text(message, no_tools);
+    }
+    blocks(message, no_tools)
+        .into_iter()
+        .map(|block| block.text)
+        .collect::<Vec<_>>()
+        .join("\n\n")
+}
 
 pub fn summarize(path: &str, records: &[Value], mtime: i64) -> Session {
     let mut last_activity = 0;
