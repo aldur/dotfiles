@@ -23,6 +23,7 @@ in
   split-pdf = prev.callPackage ../packages/split-pdf { };
   totp-qr-decode = prev.callPackage ../packages/totp-qr-decode { };
   flake-lock-cooldown = prev.callPackage ../packages/flake-lock-cooldown { };
+  git-verify-ssh = prev.callPackage ../packages/git-verify-ssh { };
   update-pins = prev.callPackage ../packages/update-pins { };
   neovim-nightly = prev.callPackage ../packages/neovim-nightly { };
 

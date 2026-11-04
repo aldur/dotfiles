@@ -113,6 +113,7 @@
               flatten-pdf
               watermark-pdf
               flake-lock-cooldown
+              git-verify-ssh
               update-pins # runs a flake's `updatePins` bump legs locally
               aldurs-dotfiles-version
               llmcat

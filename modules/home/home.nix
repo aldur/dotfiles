@@ -30,6 +30,7 @@ let
       flatten-pdf
       fps
       gpg-encrypt
+      git-verify-ssh
       (lazygit-popup.override {
         lazygit = config.programs.lazygit.package;
         inherit (config.programs.lazygit) settings;
