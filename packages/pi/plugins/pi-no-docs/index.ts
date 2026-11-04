@@ -5,8 +5,8 @@
  * (dist/core/system-prompt.js). The section costs tokens on every turn
  * and only helps when the user works on pi itself.
  *
- * Two guards call the same stripDocsBlock below, so the anchor lives in
- * one place:
+ * The request hook and startup preview use prepareSystemPrompt below.
+ * Two guards check the docs format:
  * - ../../tests/plugins/pi-no-docs.mjs applies it to the default prompt of
  *   the pinned pi at build time;
  * - this extension throws when the default prompt has no block to strip
@@ -30,16 +30,20 @@ export function stripDocsBlock(prompt: string): string | null {
   return stripped === prompt ? null : stripped;
 }
 
+export function prepareSystemPrompt(prompt: string, options: { customPrompt?: string }): string {
+  const stripped = stripDocsBlock(prompt);
+  if (stripped !== null) return stripped;
+  if (!options.customPrompt) {
+    throw new Error(
+      "pi-no-docs: the default prompt has no docs block; the upstream wording changed",
+    );
+  }
+  return prompt;
+}
+
 export default function (pi: ExtensionAPI) {
   pi.on("before_agent_start", (event) => {
-    const stripped = stripDocsBlock(event.systemPrompt);
-    if (stripped !== null) {
-      return { systemPrompt: stripped };
-    }
-    if (!event.systemPromptOptions.customPrompt) {
-      throw new Error(
-        "pi-no-docs: the default prompt has no docs block; the upstream wording changed",
-      );
-    }
+    const systemPrompt = prepareSystemPrompt(event.systemPrompt, event.systemPromptOptions);
+    if (systemPrompt !== event.systemPrompt) return { systemPrompt };
   });
 }

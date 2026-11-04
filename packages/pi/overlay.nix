@@ -21,7 +21,7 @@ in
     };
     pi-statusline = prev.callPackage ./plugins/pi-statusline { };
     pi-subagent = final.callPackage ./plugins/pi-subagent { };
-    pi-system-prompt = prev.callPackage ./plugins/pi-system-prompt { };
+    pi-system-prompt = final.callPackage ./plugins/pi-system-prompt { };
     pi-throughput = final.callPackage ./plugins/pi-throughput { };
   };
   pi = prev.callPackage ./pi.nix {

@@ -1,10 +1,15 @@
 {
+  lib,
   runCommandLocal,
+  nodejs,
+  pi-coding-agent,
 }:
 
-# Adds a /system-prompt command that shows the current system prompt in
-# an ephemeral editor view. Local source, so no pin to track — just a
-# store copy for pi.nix to load with `-e`.
 runCommandLocal "pi-system-prompt" { } ''
-  install -Dm444 ${./index.ts} $out/index.ts
+  mkdir -p $out
+  substitute ${./index.ts} $out/index.ts \
+    --replace-fail '../pi-no-docs/index.ts' '${../pi-no-docs/index.ts}'
+  ${lib.getExe nodejs} --no-warnings ${../../tests/plugins/pi-system-prompt.mjs} $out/index.ts \
+    "$(dirname "$(find ${pi-coding-agent}/lib -path '*/dist/core/model-registry.js')")/../.." \
+    ${../pi-no-docs/index.ts}
 ''
