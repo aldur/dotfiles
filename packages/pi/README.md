@@ -98,6 +98,9 @@ The full models.dev catalog is built from a pinned upstream revision in
 [models-catalog](models-catalog/default.nix). The catalog and its generator
 use the upstream dependency lock. The [update workflow](../../.github/workflows/update-pinned-packages.yml)
 checks the catalog pin.
+Model filenames use hexadecimal IDs during the build to prevent case
+collisions on macOS. The generator restores the original IDs. Build checks
+cover case differences and model aliases.
 
 ## Extensions
 
