@@ -1,5 +1,5 @@
-{ pkgs }:
+{ lib, tavily-cli }:
 import ../../skills
-// {
-  tavily-search = "${pkgs.tavily-cli.skills}/tavily-search";
+// lib.optionalAttrs (tavily-cli != null) {
+  tavily-search = "${tavily-cli.skills}/tavily-search";
 }

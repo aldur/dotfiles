@@ -1,5 +1,5 @@
 {
-  description = "An offline Pi sandbox for Apple container, with inference on macOS.";
+  description = "Pi containers with online providers and optional offline inference on macOS.";
 
   inputs.aldur-dotfiles.url = "github:aldur/dotfiles";
 
@@ -17,34 +17,51 @@
       let
         targetSystem = apple-container.lib.linuxSystem system;
         base = apple-container.lib.mkConfiguration targetSystem;
-        image = import ./image.nix {
-          inherit (base) pkgs;
-          inherit home-manager;
-          inherit (base.config.virtualisation.appleContainer) uid;
-          inherit (base._module.args) mkOciArchive;
-          baseHome = base.config.home-manager.users.${base.config.mainUser};
-          lazyvim-light = aldur-dotfiles.packages.${targetSystem}.lazyvim-light;
-          dotfiles = aldur-dotfiles;
-        };
+        mkImage =
+          overrides:
+          import ./image.nix (
+            {
+              inherit (base) pkgs;
+              inherit home-manager;
+              inherit (base.config.virtualisation.appleContainer) uid;
+              inherit (base._module.args) mkOciArchive;
+              baseHome = base.config.home-manager.users.${base.config.mainUser};
+              lazyvim-light = aldur-dotfiles.packages.${targetSystem}.lazyvim-light;
+              dotfiles = aldur-dotfiles;
+            }
+            // overrides
+          );
+        online = mkImage { };
+        offline = mkImage { offline = true; };
+        mkChecks =
+          image:
+          base.pkgs.lib.mapAttrs'
+            (name: value: {
+              name = "${image.variant}-${name}";
+              inherit value;
+            })
+            (
+              (import ./tests {
+                inherit (base) pkgs;
+                inherit image;
+                dotfiles = aldur-dotfiles;
+              })
+              // {
+                hardening = import ./tests/hardening.nix {
+                  inherit (base) pkgs;
+                  inherit image;
+                };
+              }
+            );
       in
       {
-        packages = rec {
-          container-image = image.image;
-          default = container-image;
+        packages = {
+          container-image-online = online.image;
+          container-image-offline = offline.image;
+          default = online.image;
         };
 
-        checks =
-          (import ./tests {
-            inherit (base) pkgs;
-            inherit image;
-            dotfiles = aldur-dotfiles;
-          })
-          // {
-            hardening = import ./tests/hardening.nix {
-              inherit (base) pkgs;
-              inherit image;
-            };
-          };
+        checks = mkChecks online // mkChecks offline;
       }
     );
 }

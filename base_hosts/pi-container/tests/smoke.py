@@ -1,4 +1,4 @@
-"""Test the offline OCI filesystem with bubblewrap, or runc in a root VM."""
+"""Test the Pi OCI filesystem with bubblewrap, or runc in a root VM."""
 import hashlib
 import http.server
 import io
@@ -95,6 +95,9 @@ class Inference(http.server.BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def do_GET(self):
+        if hasattr(self.server, "api_key") and self.headers.get("Authorization") != f"Bearer {self.server.api_key}":
+            self.send_error(401)
+            return
         if self.path == "/v1/large":
             self.reply(b"x" * (4 * 1024 * 1024), "text/plain")
             return
@@ -108,19 +111,34 @@ class Inference(http.server.BaseHTTPRequestHandler):
         self.reply(json.dumps(data).encode())
 
     def do_POST(self):
-        assert self.path == "/v1/chat/completions", self.path
         request = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+        if self.path == "/search":
+            assert self.headers.get("Authorization") == "Bearer tvly-fixture"
+            assert request["query"] == "sandbox smoke"
+            self.server.search = True
+            self.reply(json.dumps({"query": request["query"], "results": [{
+                "title": "Fixture", "url": "https://example.invalid/",
+                "content": "sandbox search works", "score": 1.0,
+            }], "response_time": 0.01}).encode())
+            return
+        assert self.path == "/v1/chat/completions", self.path
+        if hasattr(self.server, "api_key") and self.headers.get("Authorization") != f"Bearer {self.server.api_key}":
+            self.send_error(401)
+            return
         assert request["model"] == "local"
         Inference.completion = True
         mounts = "check mounts" in json.dumps(request["messages"])
         scratch = "scratch workspace" in json.dumps(request["messages"])
+        web_tools = "check web tools" in json.dumps(request["messages"])
         marker = "output/verified" if mounts else "workspace/agent.txt"
+        if web_tools:
+            marker = "workspace/web-tools.json"
         marker = self.server.home / "workspace/agent.txt" if scratch else self.server.root / marker
         if (request.get("tools") and not marker.exists()
                 and not any(message.get("role") == "tool" for message in request["messages"])):
             name = "write"
             arguments = {"path": "agent.txt" if scratch else "/workspace/agent.txt", "content": "sandboxed task complete\n"}
-            if mounts:
+            if mounts or web_tools:
                 name = "bash"
                 arguments = {"command": r'''
 set -eu
@@ -143,12 +161,18 @@ assert all(int(status[name], 16) == 0 for name in ('CapEff', 'CapPrm', 'CapBnd',
 PY
 printf verified > /output/verified
 '''}
+                if web_tools:
+                    arguments["command"] += r'''
+test "$TAVILY_API_KEY" = tvly-fixture
+test -z "${UNRELATED_API_KEY+x}"
+tvly search 'sandbox smoke' --json > /workspace/web-tools.json
+'''
             events = [
                 {"choices": [{"index": 0, "delta": {"role": "assistant", "tool_calls": [{"index": 0, "id": "call_tool", "type": "function", "function": {"name": name, "arguments": json.dumps(arguments)}}]}, "finish_reason": None}]},
                 {"choices": [{"index": 0, "delta": {}, "finish_reason": "tool_calls"}]},
             ]
         else:
-            answer = "offline inference works"
+            answer = "inference works"
             if "second interactive smoke" in json.dumps(request["messages"]):
                 answer += " again"
             events = [
@@ -162,6 +186,7 @@ printf verified > /output/verified
 def main():
     root = Path(sys.argv[2])
     managed_settings = json.loads(Path(sys.argv[4]).read_text())
+    offline = len(sys.argv) > 5 and sys.argv[5] == "offline"
     print("Unpacking OCI image", flush=True)
     config = unpack(sys.argv[1], root)
     shutil.copyfile(sys.argv[3], root / "nix/store/pi-proc-isolation.py")
@@ -201,7 +226,7 @@ def main():
 
     def launch(*args, caps=capabilities, socket_path=None, terminal=False,
                masked_proc=True, readonly_proc=True, workspace=True, workdir="/workspace",
-               home_source=home, transcript_source=None, network=False):
+               home_source=home, transcript_source=None, network=False, environment=None):
         nonlocal launches
         socket_destination = socket_path or "/var/host-services/llama.sock"
         socket_source = root / socket_destination.lstrip("/")
@@ -223,6 +248,9 @@ def main():
             if socket_path is not None:
                 index = result.index("--")
                 result[index:index] = ["--setenv", "LLAMA_SOCKET_PATH", socket_path]
+            for key, value in (environment or {}).items():
+                index = result.index("--")
+                result[index:index] = ["--setenv", key, value]
             # Reproduce each kind of locked child mount without host root.
             if masked_proc:
                 index = result.index("--")
@@ -253,7 +281,8 @@ def main():
                            "source": str(transcript_source), "options": ["bind", "rw"]})
         if socket_source.exists():
             mounts.append({"destination": socket_destination, "type": "bind", "source": str(socket_source), "options": ["bind", "rw"]})
-        environment = config["Env"] + ([f"LLAMA_SOCKET_PATH={socket_path}"] if socket_path is not None else [])
+        environment = config["Env"] + [f"{key}={value}" for key, value in (environment or {}).items()] \
+            + ([f"LLAMA_SOCKET_PATH={socket_path}"] if socket_path is not None else [])
         spec = {
             "ociVersion": "1.0.2",
             "root": {"path": str(root), "readonly": True},
@@ -369,6 +398,7 @@ for tool in bat btop htop curl dig fd file jq less pv rg tmux age tree totp-cli 
 '''
     result = run("/bin/bash", "-c", smoke)
     print(result.stdout)
+    run("/bin/bash", "-c", f'test {"!" if offline else ""} -f "$HOME/.pi/agent/skills/tavily-search/SKILL.md"')
     # Nix owns declared keys; undeclared preferences survive later starts.
     custom_keybindings = {"tui.editor.cursorUp": ["ctrl+k"], "app.session.new": ["ctrl+alt+n"]}
     (state / "keybindings.json").write_text(json.dumps(custom_keybindings))
@@ -428,8 +458,12 @@ PY
         assert f"inference socket missing: {path}" in failed.stderr, failed.stderr
         assert "UNSAFE_COMMAND" not in failed.stdout
 
-    for path in ("/var/host-services/llama.sock", "/var/host-services/custom.sock"):
-        missing_socket(path)
+    if offline:
+        for path in ("/var/host-services/llama.sock", "/var/host-services/custom.sock"):
+            missing_socket(path)
+    else:
+        run("/bin/bash", "-c", 'test -z "${LLAMA_BASE_URL-}"',
+            socket_path="/var/host-services/missing.sock")
     # A TCP model outside the container tests the launch network policy.
     # Use a local fixture so this check needs no public service.
     with http.server.ThreadingHTTPServer(("127.0.0.1", 0), Inference) as server:
@@ -446,11 +480,37 @@ exec pi-yolo --models 'llama-cpp/*' -p --no-session --no-tools --no-skills --no-
             run("/bin/bash", "-c", tcp_model, success=False)
             assert not Inference.completion, "offline Pi reached the TCP model"
             result = run("/bin/bash", "-c", tcp_model, network=True)
-            assert Inference.completion and "offline inference works" in result.stdout, result
+            assert Inference.completion and "inference works" in result.stdout, result
             print("Pi TCP inference follows the container network policy", flush=True)
+            if not offline:
+                server.api_key = "provider-fixture"
+                server.search = False
+                metadata = root / "workspace/repository/.git/config"
+                original_config = metadata.read_bytes()
+                run("--env", "PI_OPENAI_BASE_URL", "--env", "PI_OPENAI_API_KEY",
+                    "--env", "TAVILY_API_BASE_URL", "--env", "TAVILY_API_KEY",
+                    "--ro", "/reference", "--rw", "/output",
+                    "--models", "openai-compatible/*", "-p", "--no-session", "--no-skills", "--no-extensions",
+                    "check web tools", network=True,
+                    environment={"PI_OPENAI_BASE_URL": f"http://localhost:{server.server_port}/v1",
+                                 "PI_OPENAI_API_KEY": server.api_key,
+                                 "TAVILY_API_BASE_URL": f"http://localhost:{server.server_port}",
+                                 "TAVILY_API_KEY": "tvly-fixture",
+                                 "UNRELATED_API_KEY": "must-stay-outside"})
+                assert server.search, "Pi could not reach Tavily from the sandbox"
+                result = json.loads((root / "workspace/web-tools.json").read_text())
+                assert result["results"][0]["content"] == "sandbox search works", result
+                assert metadata.read_bytes() == original_config
+                assert (root / "output/.git/config").read_text() == "protected\n"
+                assert (root / "output/verified").read_text() == "verified"
         finally:
             server.shutdown()
             thread.join()
+    if not offline:
+        if privileged:
+            subprocess.run(["umount", str(home)], check=True)
+        print("Online Pi: authenticated provider and Tavily requests, credential filtering and Git protection passed", flush=True)
+        return
     # A custom path must work without the default socket, including the root
     # ownership hand-off for a socket that only its owner can access.
     with Server(str(root / "var/host-services/custom.sock"), Inference) as server:
@@ -489,7 +549,7 @@ exec pi-yolo --models 'llama-cpp/*' -p --no-session --no-tools --no-skills --no-
             assert json.loads(result.stdout)["data"][0]["id"] == "local", result.stdout
             scratch = run("--models", "llama-cpp/*", "-p", "--no-session", "--no-skills", "--no-extensions",
                           "create a scratch workspace file", workspace=False)
-            assert "offline inference works" in scratch.stdout, (scratch.stdout, scratch.stderr)
+            assert "inference works" in scratch.stdout, (scratch.stdout, scratch.stderr)
             assert (home / "workspace/agent.txt").read_text() == "sandboxed task complete\n"
 
             if privileged:
@@ -516,10 +576,10 @@ exec pi-yolo --rw "$HOME/.pi-sessions" --session-dir "$HOME/.pi-sessions" \
 ''', home_source=fresh_home, transcript_source=transcripts),
                     stdin=subprocess.DEVNULL, text=True, capture_output=True, timeout=180)
                 assert result.returncode == 0, (result.stdout, result.stderr)
-                assert "offline inference works" in result.stdout, (result.stdout, result.stderr)
+                assert "inference works" in result.stdout, (result.stdout, result.stderr)
                 saved = list(transcripts.rglob("*.jsonl"))
                 assert saved, "Pi did not save a transcript on the writable mount"
-                assert any("offline inference works" in path.read_text() for path in saved)
+                assert any("inference works" in path.read_text() for path in saved)
                 assert (fresh_home / ".config/fresh-home-writable").exists()
                 print("Fresh home with a writable, chmod-rejecting transcript mount passed", flush=True)
 
@@ -532,7 +592,7 @@ pi-yolo --ro /reference --rw /output --models 'llama-cpp/*' -p --no-session --no
 # Pi sessions and the explicit shell share the container relay.
 test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
 ''')
-            assert "offline inference works" in result.stdout, (result.stdout, result.stderr)
+            assert "inference works" in result.stdout, (result.stdout, result.stderr)
             assert Inference.completion
             assert (root / "workspace/agent.txt").read_text() == "sandboxed task complete\n"
             assert (root / "output/verified").exists(), (result.stdout, result.stderr)
@@ -597,10 +657,10 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
                         os.write(master, b"tmux kill-session\r")
                         assert process.wait(timeout=30) == 0, bytes(output[-4000:])
                         return
-                    wait_for(b"offline inference works" if initial_prompt else b"local (loaded)")
+                    wait_for(b"inference works" if initial_prompt else b"local (loaded)")
                     response_start = len(output)
                     os.write(master, b"interactive smoke\r")
-                    wait_for(b"offline inference works", after=response_start)
+                    wait_for(b"inference works", after=response_start)
                     # The configured Ctrl-A prefix opens a second window. Its
                     # shell stays outside the agent sandbox and can control tmux.
                     os.write(master, b"\x01c")
@@ -611,7 +671,7 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
                     os.write(master, b'''test (tmux list-sessions -F '#{session_name}') = 0; and test (tmux display-message -p '#{session_windows}') = 2; and tmux set-hook window-unlinked 'run-shell "touch /workspace/pi-window-exited"'; and tmux select-window -t :1; and printf shell > /workspace/tmux-window-two\r''')
                     wait_for(marker="tmux-window-two")
                     os.write(master, b"second interactive smoke\r")
-                    wait_for(b"offline inference works again")
+                    wait_for(b"inference works again")
                     os.write(master, b"\x04")
                     wait_for(marker="pi-window-exited")
                     # Pi exits its window, but the second window and container

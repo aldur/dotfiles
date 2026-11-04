@@ -4,6 +4,7 @@
   homeProfile,
   piConfigSync,
   resetAgentInstructions,
+  offline ? false,
 }:
 uid:
 let
@@ -15,12 +16,16 @@ pkgs.writeShellApplication {
     pkgs.coreutils
   ];
   text = ''
-    socket="''${LLAMA_SOCKET_PATH:-/var/host-services/llama.sock}"
+    ${pkgs.lib.optionalString offline ''
+      socket="''${LLAMA_SOCKET_PATH:-/var/host-services/llama.sock}"
+    ''}
     if (( $# == 0 )) || [[ "$1" == -* ]]; then set -- pi-yolo "$@"; fi
     if [ "$(id -u)" = 0 ]; then
-      if [ -S "$socket" ] && [ ! -L "$socket" ]; then
-        chown -h ${toString uid}:100 "$socket"
-      fi
+      ${pkgs.lib.optionalString offline ''
+        if [ -S "$socket" ] && [ ! -L "$socket" ]; then
+          chown -h ${toString uid}:100 "$socket"
+        fi
+      ''}
       exec chroot --userspec=${toString uid}:100 --groups=100 --skip-chdir / "$0" "$@"
     fi
 
@@ -55,11 +60,13 @@ pkgs.writeShellApplication {
     ${pkgs.lib.getExe resetAgentInstructions}
 
     export PATH="/bin:/run/current-system/sw/bin:$PATH"
-    if [[ -n "''${LLAMA_SOCKET_PATH:-}" || -S "$socket" ]]; then
-      [[ -S "$socket" ]] || { echo "inference socket missing: $socket" >&2; exit 1; }
-      export LLAMA_SOCKET_PATH="$socket"
-      export LLAMA_BASE_URL=http://127.0.0.1:8080/v1
-    fi
+    ${pkgs.lib.optionalString offline ''
+      if [[ -n "''${LLAMA_SOCKET_PATH:-}" || -S "$socket" ]]; then
+        [[ -S "$socket" ]] || { echo "inference socket missing: $socket" >&2; exit 1; }
+        export LLAMA_SOCKET_PATH="$socket"
+        export LLAMA_BASE_URL=http://127.0.0.1:8080/v1
+      fi
+    ''}
     if [[ "$1" == pi-yolo ]] && [ -t 0 ] && [ -t 1 ]; then
       # Reuse the session created by the shared tmux configuration. Quote
       # each argument for its shell, including literal quotes and newlines.
@@ -69,7 +76,6 @@ pkgs.writeShellApplication {
       set -- tmux start-server \; set-option -p remain-on-exit failed \; \
         respawn-pane -k "exec $pi_command" \; attach-session
     fi
-    # Pi and explicit commands share the container's inference relay.
-    exec ${pkgs.lib.getExe relay} "$@"
+    exec ${pkgs.lib.optionalString offline (pkgs.lib.getExe relay)} "$@"
   '';
 }

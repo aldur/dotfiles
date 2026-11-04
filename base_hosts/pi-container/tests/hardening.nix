@@ -3,7 +3,7 @@ let
   python = pkgs.python3.withPackages (ps: [ ps.zstandard ]);
 in
 pkgs.testers.runNixOSTest {
-  name = "pi-container-hardening";
+  name = "pi-container-${image.variant}-hardening";
   # Permit software emulation on development hosts without /dev/kvm.
   requiredFeatures.kvm = false;
   globalTimeout = 1200;
@@ -22,7 +22,7 @@ pkgs.testers.runNixOSTest {
   testScript = ''
     machine.start()
     machine.wait_for_unit("multi-user.target")
-    status, output = machine.execute("python -u ${./smoke.py} ${image.image} /var/tmp/pi-root ${./proc-isolation.py} ${image.managedPiSettings} 2>&1", timeout=900)
+    status, output = machine.execute("python -u ${./smoke.py} ${image.image} /var/tmp/pi-root ${./proc-isolation.py} ${image.managedPiSettings} ${image.variant} 2>&1", timeout=900)
     assert status == 0, f"Pi container smoke test failed (exit {status}):\n{output}"
     machine.log(output)
   '';

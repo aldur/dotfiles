@@ -29,7 +29,6 @@ env:
   # they evaluate the system configuration. The manifest jobs only connect
   # the image tags and do not use these keys.
   SIGNING_KEYS: /tmp/ssh_signing_keys.json
-  PI_IMAGE: ghcr.io/${{ github.repository_owner }}/aldur-pi
 
 jobs:
   push:
@@ -149,7 +148,7 @@ jobs:
           retention-days: 1
 
   push-pi:
-    name: Pi (${{ matrix.arch.suffix }})
+    name: Pi ${{ matrix.variant.name }} (${{ matrix.arch.suffix }})
     permissions:
       contents: read
       packages: write
@@ -157,7 +156,16 @@ jobs:
       fail-fast: false
       matrix:
         arch: *architectures
+        variant: &pi-variants
+          - name: online
+            image: aldur-pi
+            description: Run Pi with configured providers and Tavily web tools.
+          - name: offline
+            image: aldur-pi-offline
+            description: Run Pi offline with inference on macOS through a Unix socket.
     runs-on: ${{ matrix.arch.runner }}
+    env:
+      PI_IMAGE: ghcr.io/${{ github.repository_owner }}/${{ matrix.variant.image }}
     steps:
       - *checkout
       - *setup-nix
@@ -171,35 +179,42 @@ jobs:
       - name: Build and check the image
         run: |
           checks=(
-            "./base_hosts/pi-container#checks.$NIX_SYSTEM.size"
-            "./base_hosts/pi-container#checks.$NIX_SYSTEM.image"
+            "./base_hosts/pi-container#checks.$NIX_SYSTEM.${PI_VARIANT}-size"
+            "./base_hosts/pi-container#checks.$NIX_SYSTEM.${PI_VARIANT}-image"
           )
           if [[ $NIX_SYSTEM == x86_64-linux ]]; then
-            checks+=("./base_hosts/pi-container#checks.$NIX_SYSTEM.hardening")
+            checks+=("./base_hosts/pi-container#checks.$NIX_SYSTEM.${PI_VARIANT}-hardening")
           fi
           nix build --no-link --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             "${checks[@]}" --keep-going
         env:
           NIX_SYSTEM: ${{ matrix.arch.system }}
+          PI_VARIANT: ${{ matrix.variant.name }}
       - if: inputs.publish
         run: |
           nix build --out-link pi-image --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
-            ./base_hosts/pi-container#container-image
+            "./base_hosts/pi-container#container-image-$PI_VARIANT"
           nix shell --inputs-from . nixpkgs#skopeo --command \
             skopeo --insecure-policy copy oci-archive:pi-image "docker://$PI_IMAGE:$TAG_PREFIX-$ARCH_SUFFIX"
         env:
           ARCH_SUFFIX: ${{ matrix.arch.suffix }}
+          PI_VARIANT: ${{ matrix.variant.name }}
 
   manifest-pi:
     if: inputs.publish
     needs: push-pi
-    name: Pi manifest
+    name: Pi ${{ matrix.variant.name }} manifest
     permissions:
       contents: read
       packages: write
+    strategy:
+      matrix:
+        variant: *pi-variants
     runs-on: ubuntu-26.04
+    env:
+      PI_IMAGE: ghcr.io/${{ github.repository_owner }}/${{ matrix.variant.image }}
     steps:
       - *checkout
       - *setup-nix
@@ -207,9 +222,11 @@ jobs:
       - run: |
           nix shell --inputs-from . nixpkgs#regclient --command \
             regctl index create "$PI_IMAGE:$TAG_PREFIX" \
-              --annotation "org.opencontainers.image.description=Run Pi offline in Apple container, with inference on macOS through a Unix socket. Load and run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/blob/$GITHUB_REF_NAME/base_hosts/pi-container/README.md" \
+              --annotation "org.opencontainers.image.description=$PI_DESCRIPTION Load and run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/blob/$GITHUB_REF_NAME/base_hosts/pi-container/README.md" \
               --ref "$PI_IMAGE:$TAG_PREFIX-amd64" \
               --ref "$PI_IMAGE:$TAG_PREFIX-arm64"
+        env:
+          PI_DESCRIPTION: ${{ matrix.variant.description }}
 
   # Attest the provenance and the SBOM of each NixOS image.
   # Attest the provenance of each NixOS index in a job without Nix.

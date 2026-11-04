@@ -6,10 +6,11 @@
   dotfiles,
   uid,
   mkOciArchive,
+  offline ? false,
 }:
 let
   inherit (pkgs) lib;
-  runtime = import ./runtime.nix { inherit pkgs dotfiles; };
+  runtime = import ./runtime.nix { inherit pkgs dotfiles offline; };
   tinyPkgs = pkgs.extend (
     _: prev: {
       inherit (runtime) fish pi moreutils;
@@ -26,8 +27,10 @@ let
   };
   inherit (home.config.home) username homeDirectory;
   homePath = lib.removePrefix "/" homeDirectory;
-  name = "aldur-pi";
+  variant = if offline then "offline" else "online";
+  name = "aldur-pi${lib.optionalString offline "-offline"}";
   entrypoint = pkgs.callPackage ./pi-container.nix {
+    inherit offline;
     homeFiles = home.config.home-files;
     homeProfile = home.config.home.path;
     piConfigSync = home.config.programs.pi.configSync;
@@ -109,7 +112,13 @@ let
 
 in
 {
-  inherit image closure name;
+  inherit
+    image
+    closure
+    name
+    variant
+    offline
+    ;
   managedPiSettings = pkgs.writeText "pi-expected-settings.json" (
     builtins.toJSON home.config.programs.pi.settings
   );

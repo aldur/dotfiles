@@ -6,7 +6,7 @@
 }:
 let
   cfg = config.programs.pi;
-  dotfilesSkills = import ./skills.nix { inherit pkgs; };
+  dotfilesSkills = pkgs.pi.skills;
   jsonType = (pkgs.formats.json { }).type;
   managedConfig = pkgs.writeText "pi-managed-config.json" (
     builtins.toJSON { inherit (cfg) settings keybindings; }

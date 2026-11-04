@@ -1,4 +1,8 @@
-{ pkgs, dotfiles }:
+{
+  pkgs,
+  dotfiles,
+  offline ? false,
+}:
 let
   inherit (pkgs) lib;
   unstable = dotfiles.inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
@@ -88,8 +92,11 @@ let
 in
 {
   inherit python fish moreutils;
-  pi = pkgs.pi.override {
-    selfUpdates = false;
-    pi-coding-agent = piRuntime;
-  };
+  pi = pkgs.pi.override (
+    {
+      selfUpdates = false;
+      pi-coding-agent = piRuntime;
+    }
+    // lib.optionalAttrs offline { tavily-cli = null; }
+  );
 }

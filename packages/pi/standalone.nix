@@ -2,7 +2,7 @@
 let
   inherit (pkgs) lib;
   inherit (pkgs) pi;
-  skills = import ./skills.nix { inherit pkgs; };
+  inherit (pi) skills;
   config = (lib.evalModules {
     specialArgs = { inherit pkgs; };
     modules = [
@@ -19,7 +19,7 @@ let
 in
 pkgs.writeShellApplication {
   name = "pi";
-  passthru = { inherit (pi) plugins configSync modelsCatalog; };
+  passthru = { inherit (pi) plugins configSync modelsCatalog skills; };
   meta = pi.meta;
   text = ''
     agent_dir="''${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}"

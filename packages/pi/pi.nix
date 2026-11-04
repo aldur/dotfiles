@@ -43,7 +43,7 @@ let
   # is a bootstrap, and once a self-managed release exists it takes over.
   wrapper = writeShellApplication {
     name = "pi";
-    runtimeInputs = [ tavily-cli ];
+    runtimeInputs = lib.optional (tavily-cli != null) tavily-cli;
     text = ''
       # The anonymous install/update ping (enableInstallTelemetry) defaults to
       # on; PI_TELEMETRY=0 turns it off, along with provider attribution
@@ -148,7 +148,10 @@ runCommand "pi-with-plugins-${pi-coding-agent.version}"
   {
     # Plugins stay reachable (e.g. `pi.plugins.pi-llama`) so nix-update can
     # bump their pins in CI without dedicated flake outputs.
-    passthru = { inherit plugins configSync modelsCatalog; };
+    passthru = {
+      inherit plugins configSync modelsCatalog;
+      skills = import ./skills.nix { inherit lib tavily-cli; };
+    };
     meta = pi-coding-agent.meta // {
       mainProgram = "pi";
       description = "pi-coding-agent bundled with plugins";
