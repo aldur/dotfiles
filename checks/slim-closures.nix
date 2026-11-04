@@ -37,6 +37,8 @@ let
   # MiB, ~10% above measured on x86_64-linux (2026-08). Only packages
   # that outgrow the default belong here; stale names fail the eval.
   budgets = {
+    # GitHub signature verification also needs GnuPG.
+    git-verify-ssh = 190;
     lazyvim = 1050;
     lazyvim-light = 250;
     lazyvim-nightly = 1070;
