@@ -538,13 +538,13 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
             assert (root / "output/.git/config").read_text() == "protected\n"
             assert list((state / "sessions").rglob("*.jsonl")), "Pi session was not saved"
 
-            def interactive_test(*args, failure=None):
+            def interactive_test(*args, failure=None, initial_prompt=False):
                 for marker in ("tmux-window-two", "pi-window-exited", "tmux-still-alive", "pi-alternate-screen", "pi-failure-status"):
                     (root / "workspace" / marker).unlink(missing_ok=True)
                 if privileged:
                     (bundle / "console.sock").unlink(missing_ok=True)
                 # Exercise the entrypoint and the real interactive Pi UI.
-                print("Starting interactive Pi", flush=True)
+                print(f"Starting interactive Pi: {shlex.join(args) or '(no arguments)'}", flush=True)
                 if privileged:
                     # An OCI terminal is delivered as a PTY descriptor over a socket.
                     with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as console:
@@ -564,7 +564,7 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
                     os.close(slave)
                 output = bytearray()
 
-                def wait_for(needle=None, *, marker=None):
+                def wait_for(needle=None, *, marker=None, after=0):
                     deadline = time.monotonic() + (120 if privileged else 30)
                     while time.monotonic() < deadline:
                         if select.select([master], [], [], 0.2)[0]:
@@ -572,12 +572,17 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
                                 output.extend(os.read(master, 65536))
                             except OSError:
                                 pass
-                        plain = re.sub(rb"\x1b\[[0-?]*[ -/]*[@-~]", b"", bytes(output))
+                        plain = re.sub(rb"\x1b(?:\[[0-?]*[ -/]*[@-~]|\([A-Z0-9])", b"", bytes(output[after:]))
                         if ((root / "workspace" / marker).is_file() if marker else needle in plain):
                             return
                         if not privileged and process.poll() is not None:
                             break
-                    raise AssertionError((needle, process.poll(), bytes(output[-4000:])))
+                    expected = f"file /workspace/{marker}" if marker else f"text {needle.decode()!r}"
+                    raise AssertionError(
+                        f"Interactive Pi {shlex.join(args) or '(no arguments)'}: timed out waiting for {expected}; "
+                        f"launcher exit status: {process.poll()}\n"
+                        f"Terminal output:\n{plain[-4000:].decode(errors='replace')}"
+                    )
 
                 try:
                     if failure:
@@ -589,9 +594,10 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
                         os.write(master, b"tmux kill-session\r")
                         assert process.wait(timeout=30) == 0, bytes(output[-4000:])
                         return
-                    wait_for(b"clear/exit")
+                    wait_for(b"offline inference works" if initial_prompt else b"local (loaded)")
+                    response_start = len(output)
                     os.write(master, b"interactive smoke\r")
-                    wait_for(b"offline inference works")
+                    wait_for(b"offline inference works", after=response_start)
                     # The configured Ctrl-A prefix opens a second window. Its
                     # shell stays outside the agent sandbox and can control tmux.
                     os.write(master, b"\x01c")
@@ -629,7 +635,7 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
 
             interactive_test()
             prompt = "quoted 'argument'; $(touch /workspace/argument-injection)\nsecond line"
-            interactive_test("--models", "llama-cpp/*", prompt)
+            interactive_test("--models", "llama-cpp/*", prompt, initial_prompt=True)
             assert not (root / "workspace/argument-injection").exists()
             interactive_test("--tui-mode", "invalid", failure=b"Invalid TUI mode")
         finally:
