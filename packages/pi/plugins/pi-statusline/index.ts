@@ -68,15 +68,28 @@ export default function (pi: ExtensionAPI) {
 	// runs on every keystroke.
 	const repoNames = new Map<string, string>();
 
-	// pi repaints the footer on a thinking level change but does not request a
-	// render for it (interactive-mode.ts, "thinking_level_changed"), so the line
-	// would sit stale until the next keypress.
 	let tui: TUI | undefined;
+	const subagentCalls = new Set<string>();
+	pi.on("tool_execution_start", (event) => {
+		if (event.toolName !== "subagent") return;
+		subagentCalls.add(event.toolCallId);
+		tui?.requestRender();
+	});
+	pi.on("tool_execution_end", (event) => {
+		if (!subagentCalls.delete(event.toolCallId)) return;
+		tui?.requestRender();
+	});
+	pi.on("agent_end", () => {
+		subagentCalls.clear();
+		tui?.requestRender();
+	});
+	// Pi does not request a render when the thinking level changes.
 	pi.on("thinking_level_select", async () => {
 		tui?.requestRender();
 	});
 
 	pi.on("session_start", async (_event, ctx) => {
+		subagentCalls.clear();
 		if (ctx.mode !== "tui") return;
 
 		ctx.ui.setFooter((footerTui, theme, footerData) => {
@@ -127,6 +140,7 @@ export default function (pi: ExtensionAPI) {
 					if (ctx.model?.reasoning) {
 						line += ` ${theme.fg("dim", "think:")}${pi.getThinkingLevel()}`;
 					}
+					if (subagentCalls.size > 0) line += ` ${theme.fg("accent", "subagents:running")}`;
 					line += ` ${theme.fg("accent", `[${model} ${Math.round(contextWindow / 1000)}k]`)}`;
 
 					const lines = [truncateToWidth(line, width, theme.fg("dim", "..."))];
