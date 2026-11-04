@@ -1,0 +1,42 @@
+--- a/index.ts
++++ b/index.ts
+@@ -25,6 +25,8 @@
+ 	formatReadLineRange,
+ 	getAgentDir,
+ 	getMarkdownTheme,
++	SessionManager,
++	SettingsManager,
+ 	withFileMutationQueue,
+ } from "@earendil-works/pi-coding-agent";
+ import { Container, Markdown, Spacer, Text } from "@earendil-works/pi-tui";
+@@ -263,6 +265,7 @@
+ type OnUpdateCallback = (partial: AgentToolResult<SubagentDetails>) => void;
+ 
+ interface DispatchDefaults {
++	parentSession?: string;
+ 	model?: string;
+ 	thinkingLevel?: ThinkingLevel;
+ }
+@@ -295,7 +298,13 @@
+ 		};
+ 	}
+ 
+-	const args: string[] = ["--mode", "json", "-p", "--no-session"];
++	const sessionCwd = path.resolve(cwd ?? defaultCwd);
++	const sessionDir = process.env.PI_CODING_AGENT_SESSION_DIR || SettingsManager.create(sessionCwd).getSessionDir();
++	const session = SessionManager.create(sessionCwd, sessionDir, { parentSession: dispatchDefaults.parentSession });
++	const sessionFile = session.getSessionFile()!;
++	// Write the empty header so the child can open it without copying parent messages.
++	fs.writeFileSync(sessionFile, `${JSON.stringify(session.getHeader())}\n`, { flag: "wx", mode: 0o600 });
++	const args: string[] = ["--mode", "json", "-p", "--session", sessionFile, "--name", `subagent:${agentName}`];
+ 	const inheritsDispatchConfig = !agent.model;
+ 	const model = agent.model ?? dispatchDefaults.model;
+ 	if (model) args.push("--model", model);
+@@ -481,6 +490,7 @@
+ 		async execute(_toolCallId, params, signal, onUpdate, ctx) {
+ 			const agentScope: AgentScope = params.agentScope ?? "user";
+ 			const dispatchDefaults: DispatchDefaults = {
++				parentSession: ctx.sessionManager.getSessionFile(),
+ 				model: ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : undefined,
+ 				thinkingLevel: ctx.thinkingLevel,
+ 			};
