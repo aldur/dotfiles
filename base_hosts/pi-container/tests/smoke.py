@@ -353,6 +353,13 @@ cmp one two
 chronic true
 tmux -L smoke new-session -d
 tmux -L smoke kill-server
+for tool in fish_indent fish_key_reader; do
+  if test "$(readlink -f /bin/fish)" != "$(readlink -f /bin/"$tool")"; then
+    echo "fish: $tool must link to the shared fish executable" >&2
+    exit 1
+  fi
+  "$tool" --version | grep -q "$tool"
+done
 for tool in bat btop htop curl dig fd file jq less pv rg tmux age tree totp-cli direnv lazygit; do command -v "$tool"; done
 '''
     result = run("/bin/bash", "-c", smoke)

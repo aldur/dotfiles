@@ -33,6 +33,14 @@ let
     rm -rf "$out/nix-support" "$out/share/man" "$out/share/locale" "$out/share/pkgconfig"
     find "$out" -type f -exec sed -i 's|${pkgs.python3}|${python}|g' {} +
     find "$out" -type f -exec ${lib.getExe pkgs.removeReferencesTo} -t ${pkgs.fish.doc} {} +
+    # NAR files store each hard link in full. Keep one multicall executable.
+    for tool in fish_indent fish_key_reader; do
+      if ! cmp -s "$out/bin/fish" "$out/bin/$tool"; then
+        echo "fish: $tool is no longer the same executable; review the runtime links" >&2
+        exit 1
+      fi
+      ln -sf fish "$out/bin/$tool"
+    done
   '';
   perl = trim pkgs.perl ''
     rm -rf "$out/nix-support"
