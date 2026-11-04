@@ -17,24 +17,35 @@ let
       ];
     }
   );
+  size =
+    pkgs.runCommand "pi-container-size-test"
+      {
+        __structuredAttrs = true;
+        exportReferencesGraph = {
+          image = [ image.closure ];
+          nixRuntime = [ ];
+        };
+        nativeBuildInputs = [ python ];
+      }
+      ''
+        mkdir -p "''${outputs[out]}"
+        python ${dotfiles}/checks/container-image/guard.py image \
+          --policy ${policy} --graph "$NIX_ATTRS_JSON_FILE" \
+          --report "''${outputs[out]}/size.json" ${image.image}
+      '';
 in
-pkgs.runCommand "pi-container-image-test"
-  {
-    __structuredAttrs = true;
-    exportReferencesGraph = {
-      image = [ image.closure ];
-      nixRuntime = [ ];
-    };
-    nativeBuildInputs = [
-      python
-      pkgs.bubblewrap
-    ];
-  }
-  ''
-    mkdir -p "''${outputs[out]}"
-    python ${dotfiles}/checks/container-image/guard.py image \
-      --policy ${policy} --graph "$NIX_ATTRS_JSON_FILE" \
-      --report "''${outputs[out]}/size.json" ${image.image}
-    python ${./smoke.py} ${image.image} "$TMPDIR/root" ${./proc-isolation.py} ${image.managedPiSettings}
-    touch "''${outputs[out]}/passed"
-  ''
+{
+  inherit size;
+  image =
+    pkgs.runCommand "pi-container-smoke-test"
+      {
+        nativeBuildInputs = [
+          python
+          pkgs.bubblewrap
+        ];
+      }
+      ''
+        python -u ${./smoke.py} ${image.image} "$TMPDIR/root" ${./proc-isolation.py} ${image.managedPiSettings}
+        touch "$out"
+      '';
+}

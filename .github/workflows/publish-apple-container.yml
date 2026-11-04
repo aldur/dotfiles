@@ -170,7 +170,10 @@ jobs:
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
       - name: Build and check the image
         run: |
-          checks=("./base_hosts/pi-container#checks.$NIX_SYSTEM.image")
+          checks=(
+            "./base_hosts/pi-container#checks.$NIX_SYSTEM.size"
+            "./base_hosts/pi-container#checks.$NIX_SYSTEM.image"
+          )
           if [[ $NIX_SYSTEM == x86_64-linux ]]; then
             checks+=("./base_hosts/pi-container#checks.$NIX_SYSTEM.hardening")
           fi

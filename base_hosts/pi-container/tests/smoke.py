@@ -281,9 +281,12 @@ def main():
         print(f"Running {args[0]}", flush=True)
         result = subprocess.run(launch(*args, **options), stdin=subprocess.DEVNULL, text=True, capture_output=True, timeout=180 if privileged else 45)
         if success:
-            assert result.returncode == 0, (args[0], result.returncode, result.stdout, result.stderr)
+            assert result.returncode == 0, (
+                f"Command {shlex.join(args)} failed (exit {result.returncode})\n"
+                f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+            )
         else:
-            assert result.returncode != 0, args
+            assert result.returncode != 0, f"Command unexpectedly succeeded: {shlex.join(args)}"
         return result
 
     smoke = r'''

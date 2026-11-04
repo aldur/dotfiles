@@ -22,6 +22,8 @@ pkgs.testers.runNixOSTest {
   testScript = ''
     machine.start()
     machine.wait_for_unit("multi-user.target")
-    machine.succeed("python ${./smoke.py} ${image.image} /var/tmp/pi-root ${./proc-isolation.py} ${image.managedPiSettings} > /dev/console 2>&1", timeout=900)
+    status, output = machine.execute("python -u ${./smoke.py} ${image.image} /var/tmp/pi-root ${./proc-isolation.py} ${image.managedPiSettings} 2>&1", timeout=900)
+    assert status == 0, f"Pi container smoke test failed (exit {status}):\n{output}"
+    machine.log(output)
   '';
 }

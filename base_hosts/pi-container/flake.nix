@@ -33,15 +33,18 @@
           default = container-image;
         };
 
-        checks.image = import ./tests {
-          inherit (base) pkgs;
-          inherit image;
-          dotfiles = aldur-dotfiles;
-        };
-        checks.hardening = import ./tests/hardening.nix {
-          inherit (base) pkgs;
-          inherit image;
-        };
+        checks =
+          (import ./tests {
+            inherit (base) pkgs;
+            inherit image;
+            dotfiles = aldur-dotfiles;
+          })
+          // {
+            hardening = import ./tests/hardening.nix {
+              inherit (base) pkgs;
+              inherit image;
+            };
+          };
       }
     );
 }
