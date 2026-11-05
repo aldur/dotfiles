@@ -119,6 +119,14 @@ faraday --allow hostA:8080 --allow hostB:8080 --local-port 8080 --local-port 808
 
 ## Testing
 
+CI runs the package test through the flake checks:
+
+```sh
+nix build .#checks.x86_64-linux.faraday
+```
+
+To run it directly:
+
 ```sh
 nix shell .#faraday nixpkgs#socat -c packages/faraday/test.sh
 ```

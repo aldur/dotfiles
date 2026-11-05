@@ -14,7 +14,17 @@ let
     browserExpression = pkgs.writeText "browser-fixture.nix" "{}";
   };
 in
-pkgs.runCommand "playwright-lazy-test" { nativeBuildInputs = [ pkgs.python3 ]; } ''
+pkgs.runCommand "playwright-lazy-test" {
+  nativeBuildInputs = [ pkgs.python3 ];
+  # Run on the CI host: installation needs a Nix daemon.
+  passthru.install = pkgs.writeShellApplication {
+    name = "check-playwright-install";
+    text = ''
+      exec ${pkgs.python3}/bin/python3 ${./playwright-install.py} \
+        ${pkgs.playwright-lazy.browserLauncher} ${pkgs.playwright-lazy.browser}
+    '';
+  };
+} ''
   python3 ${./playwright-lazy.py} ${launcher}
   touch "$out"
 ''

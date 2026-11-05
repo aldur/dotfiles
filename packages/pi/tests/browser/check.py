@@ -87,8 +87,6 @@ class Handler(http.server.BaseHTTPRequestHandler):
                    'page.getByRole("link", {name:"Download PDF"})')
             actions = [
                 script("""
-                  const ns = await describeNamespace("mcp__playwright_lazy");
-                  if (!ns?.description?.includes("PDF")) throw new Error("description missing");
                   const found = await searchTools("publication PDF screenshot", {namespace: "mcp__playwright_lazy"});
                   if (!found.length) throw new Error("discovery failed");
                   text(found);

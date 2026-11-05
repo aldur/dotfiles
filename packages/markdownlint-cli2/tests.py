@@ -56,6 +56,8 @@ fix = {
     ),
 }
 
+cases = {**{name: (text, text) for name, text in preserve.items()}, **fix}
+
 with tempfile.TemporaryDirectory(prefix="markdownlint-formatting-") as directory:
     for extension in ("md", "mdx"):
         path = pathlib.Path(directory, "fixture." + extension)
@@ -65,13 +67,14 @@ with tempfile.TemporaryDirectory(prefix="markdownlint-formatting-") as directory
             assert rule in result.stderr, (rule, result.stderr)
             assert path.read_text() == text, rule
 
-        cases = {**{name: (text, text) for name, text in preserve.items()}, **fix}
         for name, (before, expected) in cases.items():
             path.write_text(before)
             run(directory, "--fix", str(path))
             actual = path.read_text()
             assert actual == expected, (extension, name, actual, expected)
-            result = run(directory, "--format", input=before)
-            assert result.stdout == expected, (extension, name, result.stdout, expected)
+
+    for name, (before, expected) in cases.items():
+        result = run(directory, "--format", input=before)
+        assert result.stdout == expected, (name, result.stdout, expected)
 
 print("Markdownlint preserves authored content, keeps diagnostics, and applies style fixes.")

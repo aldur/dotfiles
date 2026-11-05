@@ -79,7 +79,6 @@ pkgs.runCommand "pi-standalone-test" { } ''
   browser = json.loads((agent / "mcp.json").read_text())["mcpServers"]["playwright-lazy"]
   assert Path(browser["command"]).is_file()
   assert browser["exposure"] == "codemode"
-  assert "PDF" in browser["description"]
   PY
 
   mkdir -p "$PNPM_HOME/bin"

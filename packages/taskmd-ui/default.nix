@@ -3,7 +3,7 @@
   buildGoModule,
   fetchFromGitHub,
   makeWrapper,
-  runCommand,
+  callPackage,
   taskmd,
 }:
 
@@ -49,29 +49,7 @@ buildGoModule (finalAttrs: {
   '';
 
   passthru = {
-    # The TUI needs a terminal, so CI cannot drive it; `--version` is the one
-    # path that runs without one. It catches the binary failing to start at
-    # all, and the wrapper below losing the `taskmd` it depends on — neither of
-    # which the compile would notice.
-    #
-    # Not `testers.testVersion`: the version here is a commit date, while the
-    # binary prints the release constant it was cut from, so there is nothing
-    # for it to compare.
-    tests.smoke =
-      runCommand "taskmd-ui-smoke"
-        {
-          nativeBuildInputs = [ finalAttrs.finalPackage ];
-        }
-        ''
-          taskmd-ui --version | grep -q '^taskmd-ui version '
-
-          # The wrapper's PATH only exists inside the process it wraps, so the
-          # dependency is asserted where it is written rather than by calling
-          # taskmd here. -a: makeBinaryWrapper emits an executable, not a script.
-          grep -qa '${lib.getBin taskmd}/bin' ${finalAttrs.finalPackage}/bin/taskmd-ui
-
-          touch $out
-        '';
+    tests.smoke = callPackage ./test.nix { taskmd-ui = finalAttrs.finalPackage; };
 
     updatePin = {
       # Tracks the default branch; nothing is tagged upstream.

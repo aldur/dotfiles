@@ -36,9 +36,7 @@ stdenv.mkDerivation (finalAttrs: {
       --set GPG_ENCRYPT_DEFAULT_EMAIL "${defaultEmail}"
   '';
 
-  # Round-trips encryption against three generated keys. Reachable as
-  # `gpg-encrypt.tests`, so `nix-update --test` and the flake check both find
-  # it without either being told it exists.
+  # Both keys for the selected email must decrypt; unrelated keys must not.
   passthru.tests.integration = callPackage ./test.nix {
     gpg-encrypt = finalAttrs.finalPackage;
   };

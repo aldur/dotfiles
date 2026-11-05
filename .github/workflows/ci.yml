@@ -121,6 +121,13 @@ jobs:
         env:
           NIX_SYSTEM: ${{ matrix.system }}
           CHECK_SHARD: ${{ matrix.shard }}
+      - name: Install and launch the browser from empty state
+        if: matrix.shard == 'rest'
+        run: |
+          nix run ".#checks.$NIX_SYSTEM.playwright-lazy.install" \
+            --override-input gh-signing-keys "file+file://$SIGNING_KEYS"
+        env:
+          NIX_SYSTEM: ${{ matrix.system }}
 
   # Exercise the actual standalone activation on Ubuntu, with a fresh account
   # and a real systemd user manager. NixOS VM checks do not cover this path.

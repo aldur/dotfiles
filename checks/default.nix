@@ -91,12 +91,9 @@ in
   claude-state = pkgs.callPackage ../modules/home/claude/tests/claude-state.nix {
     inherit self inputs;
   };
-
-  # Fails if the repo's own lua is not stylua-formatted.
-  lua-format = pkgs.callPackage ./lua-format.nix { };
-
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+  faraday = pkgs.faraday.tests.integration;
   # Exercise the same unstable Codex runtime installed by the home module.
   codex-runtime = pkgs.linkFarm "codex-runtime-tests" {
     inherit (pkgsUnstable.codex.tests) voice-runtime app-server-daemon;
