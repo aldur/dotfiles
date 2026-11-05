@@ -59,7 +59,10 @@ in
   telegram = pkgs.telegram.tests.integration;
   pi-config-sync = pkgs.pi.configSync.tests.integration;
   pi-extensions = import ../packages/pi/tests/extensions { inherit pkgs; };
-  pi-standalone = import ../packages/pi/tests/standalone.nix { inherit pkgs; inherit (packages) pi; };
+  pi-standalone = import ../packages/pi/tests/standalone.nix {
+    inherit pkgs;
+    pi = self.packages.${pkgs.stdenv.hostPlatform.system}.pi;
+  };
   qemu-vm-preflight = self.legacyPackages.${system}.qemu-vm.tests.preflight;
 
   llm-runtime = pkgs.callPackage ./llm-runtime.nix { };

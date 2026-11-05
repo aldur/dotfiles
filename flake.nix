@@ -124,7 +124,7 @@
               tavily-cli
               ;
             llm = pkgs.llmWithPlugins;
-            pi = import ./packages/pi/standalone.nix { inherit pkgs; };
+            pi = pkgs.callPackage ./packages/pi/standalone.nix { };
             pi-yolo = import ./packages/pi/yolo.nix { inherit pkgs; inherit (packages) pi; };
           }
           // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {

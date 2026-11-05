@@ -144,7 +144,8 @@ in
 
       # Share the same skill files as Codex and Claude, including Pi-only hosts.
       file = lib.mkIf cfg.enable (
-        lib.mapAttrs' (
+        { ".pi/agent/.home-manager".text = ""; }
+        // lib.mapAttrs' (
           name: source:
           lib.nameValuePair ".pi/agent/skills/${name}" {
             inherit source;

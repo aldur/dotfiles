@@ -1,7 +1,7 @@
-{ pkgs }:
+{ pkgs, ... }@args:
 let
   inherit (pkgs) lib;
-  inherit (pkgs) pi;
+  pi = pkgs.pi.override (builtins.removeAttrs args [ "pkgs" ]);
   inherit (pi) skills;
   config = (lib.evalModules {
     specialArgs = { inherit pkgs; };
@@ -23,6 +23,10 @@ pkgs.writeShellApplication {
   meta = pi.meta;
   text = ''
     agent_dir="''${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}"
+    # Home Manager owns the settings, instructions, and skill links.
+    if [ -e "$agent_dir/.home-manager" ]; then
+      exec ${lib.getExe pi} "$@"
+    fi
     ${lib.getExe pi.configSync} ${defaults} "$agent_dir"
     mkdir -p "$agent_dir/skills"
     backup_dir=

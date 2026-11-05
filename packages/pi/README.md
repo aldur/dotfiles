@@ -38,6 +38,11 @@ the Pi agent directory, `~/.pi/agent` by default:
 Set `PI_CODING_AGENT_DIR` to use another directory. For Home Manager, add
 extension paths through `programs.pi.settings.extensions`.
 
+Use `packages.${system}.pi.override { selfUpdates = false; }` to run the pinned
+version. Set `plugins = { };` to remove bundled plugins, or extend `pi.plugins`.
+Overrides retain the standalone launcher. Home Manager writes
+`.pi/agent/.home-manager`; the launcher leaves its configuration to Home Manager.
+
 The package definitions are in [overlay.nix](overlay.nix). The standalone
 wrapper is in [standalone.nix](standalone.nix).
 
