@@ -120,7 +120,8 @@ cover case differences and model aliases.
 - [pi-startup-header](plugins/pi-startup-header): hides the default startup header.
 - [pi-statusline](plugins/pi-statusline): displays session status in the footer.
 - [pi-throughput](plugins/pi-throughput): displays response and prompt processing rates.
-- [pi-subagent](plugins/pi-subagent): packages Pi's subagent extension.
+- [pi-subagent](plugins/pi-subagent): stores a local copy of Pi's subagent extension.
+  Supports repeated `--agent <file.md>` options and tool-call model overrides.
 - [pi-system-prompt](plugins/pi-system-prompt): adds a read-only `/system-prompt` command.
 
 All Pi tests are in [tests](tests). The package checks its extensions during
