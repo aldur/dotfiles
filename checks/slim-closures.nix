@@ -45,20 +45,20 @@ let
     remarks = 700;
     llm = 510; # the flake alias of llmWithPlugins
     llmWithPlugins = 510;
-    # Pi includes Tavily and the shared slim browser: 873/939 MiB on x86.
+    # Pi includes Tavily and the shared slim browser: 814/895 MiB on x86.
     # Keep the browser's existing extra allowance on ARM.
-    pi = if stdenv.hostPlatform.isAarch64 then 1400 else 970;
+    pi = if stdenv.hostPlatform.isAarch64 then 1400 else 900;
     pi-coding-agent = 365;
-    pi-yolo = if stdenv.hostPlatform.isAarch64 then 1470 else 1040;
+    pi-yolo = if stdenv.hostPlatform.isAarch64 then 1470 else 990;
     tavily-cli = 285;
     pandoc-runtime = 190;
     # A node interpreter and one stdlib-only script; it is nodejs-slim-runtime
     # plus a wrapper, so it inherits that entry's budget.
     llama-wiretap = 200;
     ripgrep-all = 315;
-    # Headless shell: 509 MiB on x86. Retain the ARM ceiling until its
+    # Headless shell and runtime: 451 MiB on x86. Retain the ARM ceiling until its
     # native CI measurement; playwright-runtime also guards the farm layout.
-    playwright-mcp = if stdenv.hostPlatform.isAarch64 then 1000 else 570;
+    playwright-mcp = if stdenv.hostPlatform.isAarch64 then 1000 else 500;
     watermark-pdf = 330;
     comma = 205;
     nix-direnv = 180;

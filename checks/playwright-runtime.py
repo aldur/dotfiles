@@ -15,6 +15,15 @@ import time
 
 command = Path(sys.argv[1])
 wrapper = command.read_text()
+closure = [Path(p) for p in Path(sys.argv[2]).read_text().splitlines()]
+for name in ("glib", "dbus", "at-spi2-core", "systemd-minimal", "libdrm", "mesa-libgbm"):
+    packages = [p for p in closure if re.search(rf"-{name}-[0-9]", p.name)]
+    assert len(packages) == 1, (name, packages)
+    assert {p.name for p in packages[0].iterdir()} == {"lib"}, packages[0]
+assert not any("-playwright-test-" in p.name for p in closure)
+core = next(p for p in closure if "-playwright-core-" in p.name)
+assert not (core / "lib/vite").exists()
+assert not list(core.rglob("*.d.ts"))
 farm = Path(re.search(r"PLAYWRIGHT_BROWSERS_PATH='([^']+)'", wrapper)[1])
 assert len(list(farm.glob("chromium_headless_shell-*"))) == 1
 assert not any(farm.glob("chromium-*")), "full Chromium returned"
@@ -41,7 +50,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.send_header("Content-Type", "text/html")
             body = b'''<title>Browser check</title><h1>Headless runtime</h1>
               <button onclick="this.textContent='Clicked'">Click me</button>
-              <a href="/download">Download</a><input type="file">'''
+              <a href="/download">Download</a><input type="file">
+              <input aria-label="Text"><canvas width="2" height="2"></canvas>'''
         self.end_headers()
         self.wfile.write(body)
 
@@ -102,13 +112,25 @@ with Path("mcp-stderr.log").open("w+") as errors:
           await page.getByRole('button', {name: 'Click me'}).click();
           if (await page.locator('button').textContent() !== 'Clicked')
             throw new Error('click failed');
+          await page.getByRole('textbox', {name: 'Text'}).pressSequentially('Hello');
+          await page.getByRole('textbox', {name: 'Text'}).press('End');
+          await page.keyboard.insertText(' café 日本語');
+          if (await page.getByRole('textbox').inputValue() !== 'Hello café 日本語')
+            throw new Error('keyboard failed');
+          if (!await page.evaluate(() => {
+            const context = document.querySelector('canvas').getContext('2d');
+            context.fillStyle = '#ff0000';
+            context.fillRect(0, 0, 2, 2);
+            const pixel = context.getImageData(0, 0, 1, 1).data;
+            return pixel[0] === 255 && pixel[1] === 0 && pixel[3] === 255;
+          })) throw new Error('canvas failed');
           const waiting = page.waitForEvent('download');
           await page.getByText('Download', {exact: true}).click();
           const download = await waiting;
           if (download.suggestedFilename() !== 'fixture.txt') throw new Error('filename');
           await download.saveAs(paths['download.txt']);
-          await page.locator('input').setInputFiles(paths['upload.txt']);
-          if (await page.locator('input').evaluate(el => el.files[0].text()) !== 'upload fixture')
+          await page.locator('input[type=file]').setInputFiles(paths['upload.txt']);
+          if (await page.locator('input[type=file]').evaluate(el => el.files[0].text()) !== 'upload fixture')
             throw new Error('upload failed');
           await page.evaluate(() => {
             localStorage.setItem('audit', 'retained');
@@ -135,4 +157,4 @@ with Path("mcp-stderr.log").open("w+") as errors:
         errors.seek(0)
         print(errors.read())
 
-print("Headless MCP: navigation, snapshot, click, files, storage, PDF and PNG passed")
+print("Headless MCP: navigation, snapshot, keyboard, canvas, files, storage, PDF and PNG passed")

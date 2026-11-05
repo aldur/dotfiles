@@ -622,11 +622,10 @@ let
   '';
 
   # Linux MCP runs headless, so ship the cached Chromium headless shell.
-  # Both the MCP wrapper and its playwright-test dependency reference the
-  # browser farm; repoint both so the other browsers leave the closure.
+  # Use the MCP source and core driver so builds do not fetch the full browser farm.
   playwright-mcp =
     let
-      inherit (prev.playwright-driver.passthru) browsers browsers-chromium selectBrowsers;
+      inherit (prev.playwright-driver.passthru) browsers-chromium selectBrowsers;
       browsers-headless = selectBrowsers {
         withChromium = false;
         withFirefox = false;
@@ -634,14 +633,16 @@ let
         withChromiumHeadlessShell = true;
       };
       fontconfig = prev.makeFontsConf { fontDirectories = [ ]; };
-      # Copy the bundles so locale pruning releases the originals. Keep
-      # the farm name for byte-exact reference swaps below. Darwin keeps
-      # the signed Chromium bundle intact.
+      # Copy the bundles so locale pruning releases the originals.
+      # Keep the signed Chromium bundle intact on Darwin.
       browsers-trimmed =
         if !prev.stdenv.hostPlatform.isLinux then
           browsers-chromium
         else
-          prev.runCommand "playwright-browsers" { nativeBuildInputs = [ prev.makeWrapper ]; } ''
+          prev.runCommand "playwright-browsers" {
+            nativeBuildInputs = [ prev.makeWrapper prev.patchelf ];
+            disallowedReferences = map (r: r.oldDependency) runtimeLibraries.chromium;
+          } ''
             mkdir $out
             for entry in ${browsers-headless}/*; do
               name=''${entry##*/}
@@ -655,6 +656,14 @@ let
             done
             find $out -type d -name locales | while IFS= read -r d; do
               find "$d" -name '*.pak' ! -name 'en-US.pak' -delete
+            done
+            ${prev.lib.concatMapStringsSep "\n" (r: ''
+              find "$out" -type f -exec sed -i "s|${r.oldDependency}|${r.newDependency}|g" {} +
+            '') runtimeLibraries.chromium}
+            find "$out" -type f | while IFS= read -r f; do
+              if patchelf --print-rpath "$f" >/dev/null 2>&1; then
+                patchelf --shrink-rpath "$f"
+              fi
             done
             # Unlike full Chromium, nixpkgs' shell has no wrapper. Carry
             # over its font and certificate defaults for portable homes.
@@ -674,76 +683,36 @@ let
             # A leftover would chain a copy back to the full bundle.
             ! grep -r ${browsers-headless} $out
           '';
-      playwright-test-chromium =
-        prev.runCommand prev.playwright-test.name { inherit (prev.playwright-test) meta; }
-          ''
-            cp -a ${prev.playwright-test} $out
-            chmod -R u+w $out
-            # bin/playwright embeds the original's prefix (NODE_PATH,
-            # --add-flags); left alone it chains the copy to the original
-            # and the full farm it pins.
-            find $out -type f -exec sed -i \
-              -e "s|${prev.playwright-test}|$out|g" \
-              -e "s|${browsers}|${browsers-trimmed}|g" {} +
-            # The shebangs point at the full nodejs join, though at runtime
-            # they only exec node — the join would keep npm, corepack and a
-            # second (unscrubbed) nodejs-slim in the closure.
-            ${nodeJoinRepoint}
-            # A no-op repoint would silently keep the npm/corepack join.
-            grep -rq ${final.nodejs-slim-runtime} $out
-            ! grep -r ${prev.nodejs} $out
-          '';
+      playwright-core = prev.runCommand prev.playwright-driver.name { } ''
+        cp -a ${prev.playwright-driver} "$out"
+        chmod -R u+w "$out"
+        find "$out" -name '*.d.ts' -delete
+        rm -rf "$out/lib/vite"
+        ${nodeJoinRepoint}
+        ! grep -r ${prev.nodejs} "$out"
+      '';
     in
     prev.runCommand prev.playwright-mcp.name
       {
-        nativeBuildInputs = [ prev.nodejs-slim ];
+        nativeBuildInputs = [ prev.makeWrapper ];
         inherit (prev.playwright-mcp) meta;
       }
       ''
-        cp -a ${prev.playwright-mcp} $out
-        chmod -R u+w $out
-        # The node_modules playwright/playwright-core symlinks point into the
-        # original playwright-test; sed can't rewrite symlink targets.
-        find $out -type l | while IFS= read -r l; do
-          t=$(readlink "$l")
-          case "$t" in
-            ${prev.playwright-test}*)
-              ln -sfn "${playwright-test-chromium}''${t#${prev.playwright-test}}" "$l"
-              ;;
-          esac
-        done
-        # The vendored install unpacked the monorepo's toolchain (typescript,
-        # esbuild, babel) next to the two packages cli.js actually requires;
-        # the server bundles the rest. Trim and prune verified end-to-end:
-        # navigate + snapshot over stdio with --headless --isolated, the
-        # flags home/claude passes. (Without --isolated the MCP puts
-        # its profile *inside* PLAYWRIGHT_BROWSERS_PATH — read-only here —
-        # so persistent mode has never worked from the store farm.)
-        node ${./prune-node-modules.js} $out/lib/node_modules/playwright-mcp-internal
-        find $out -xtype l -delete
-        # Both swaps are equal-length (same drv names), safe in any file.
-        find $out -type f -exec sed -i \
-          -e "s|${prev.playwright-mcp}|$out|g" \
-          -e "s|${browsers}|${browsers-trimmed}|g" {} +
+        pkg="$out/lib/node_modules/playwright-mcp-internal"
+        mkdir -p "$pkg/node_modules" "$out/bin"
+        cp ${prev.playwright-mcp.src}/packages/playwright-mcp/{cli.js,index.js,package.json} "$pkg/"
+        cp ${prev.playwright-mcp.src}/LICENSE "$pkg/"
+        ln -s ${playwright-core} "$pkg/node_modules/playwright-core"
+        makeWrapper ${final.nodejs-slim-runtime}/bin/node "$out/bin/playwright-mcp" \
+          --add-flags "$pkg/cli.js" \
+          --set PLAYWRIGHT_BROWSERS_PATH ${browsers-trimmed} \
+          --set-default PLAYWRIGHT_MCP_BROWSER chromium
         ${prev.lib.optionalString prev.stdenv.hostPlatform.isLinux ''
-          # MCP's chromium channel selects full Chrome even with --headless.
-          # Default to the shell explicitly, while allowing a CLI/env override.
           shell=$(find ${browsers-trimmed} -type f \( -name chrome-headless-shell -o -name headless_shell \))
           test -x "$shell"
           sed -i "2i export PLAYWRIGHT_MCP_EXECUTABLE_PATH=\''${PLAYWRIGHT_MCP_EXECUTABLE_PATH-'$shell'}" \
-            $out/bin/playwright-mcp
+            "$out/bin/playwright-mcp"
         ''}
-        # The shebangs point at the full nodejs join, though at runtime
-        # they only exec node — the join would keep npm, corepack and a
-        # second (unscrubbed) nodejs-slim in the closure.
-        ${nodeJoinRepoint}
-        # A leftover would silently keep the full farm in the closure; a
-        # no-op repoint, the npm/corepack join.
-        ! grep -r ${browsers} $out
-        ! grep -r ${browsers-chromium} $out
-        grep -rq ${final.nodejs-slim-runtime} $out
-        ! grep -r ${prev.nodejs} $out
-        [ -z "$(find $out -type l -lname "${prev.playwright-test}*")" ]
       '';
 
   # Repack of the cached build. nixpkgs ships codex unstripped: of the
