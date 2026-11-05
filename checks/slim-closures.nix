@@ -45,10 +45,11 @@ let
     remarks = 700;
     llm = 510; # the flake alias of llmWithPlugins
     llmWithPlugins = 510;
-    # Pi's web tools include Tavily's Python runtime.
-    pi = 605;
+    # Pi includes Tavily and the shared slim browser: 873/939 MiB on x86.
+    # Keep the browser's existing extra allowance on ARM.
+    pi = if stdenv.hostPlatform.isAarch64 then 1400 else 970;
     pi-coding-agent = 365;
-    pi-yolo = 700;
+    pi-yolo = if stdenv.hostPlatform.isAarch64 then 1470 else 1040;
     tavily-cli = 285;
     pandoc-runtime = 190;
     # A node interpreter and one stdlib-only script; it is nodejs-slim-runtime

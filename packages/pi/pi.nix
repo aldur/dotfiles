@@ -53,7 +53,7 @@ let
       # The packaged subagent forwards these paths when it bypasses this wrapper.
       export DOTFILES_PI_EXTENSIONS=${lib.escapeShellArg (builtins.toJSON pluginPaths)}
       case "''${1-}" in
-      --version | -v | --help | -h | install | remove | uninstall | update | list | config) ;;
+      --version | -v | --help | -h | install | remove | uninstall | update | list | config | mcp) ;;
       *) ${lib.getExe configSync} --migrate-extensions "''${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}" ;;
       esac
 
@@ -62,7 +62,7 @@ let
       flags=(${pluginFlags})
       skip_version_check=1
       case "''${1-}" in
-      install | remove | uninstall | update | list | config)
+      install | remove | uninstall | update | list | config | mcp)
         flags=()
         skip_version_check=
         ;;

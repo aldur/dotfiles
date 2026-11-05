@@ -34,7 +34,7 @@ let
     ];
   }).config;
   managed = pkgs.writeText "pi-test-managed.json" (
-    builtins.toJSON { inherit (home.programs.pi) settings keybindings; }
+    builtins.toJSON { inherit (home.programs.pi) settings keybindings mcp; }
   );
 in
 assert configured.plugins.ci-repair-session == probe;
@@ -74,6 +74,10 @@ pkgs.runCommand "pi-standalone-test" { } ''
   agent = Path(sys.argv[1])
   assert json.loads((agent / "settings.json").read_text())["tuiMode"] == "regular"
   assert "ctrl+p" in json.loads((agent / "keybindings.json").read_text())["tui.editor.cursorUp"]
+  browser = json.loads((agent / "mcp.json").read_text())["mcpServers"]["browser"]
+  assert Path(browser["command"]).is_file()
+  assert browser["exposure"] == "codemode"
+  assert "PDF" in browser["description"]
   PY
 
   mkdir -p "$PNPM_HOME/bin"
@@ -120,6 +124,7 @@ pkgs.runCommand "pi-standalone-test" { } ''
   ${lib.getExe configured.configSync} ${managed} "$PI_CODING_AGENT_DIR"
   cp "$PI_CODING_AGENT_DIR/settings.json" "$TMPDIR/settings.json"
   cp "$PI_CODING_AGENT_DIR/keybindings.json" "$TMPDIR/keybindings.json"
+  cp "$PI_CODING_AGENT_DIR/mcp.json" "$TMPDIR/mcp.json"
   for executable in ${lib.getExe configured} ${lib.getExe bare} ${lib.getExe configured}; do
     rm -f "$PI_TEST_LOG"
     flags=()
@@ -130,6 +135,7 @@ pkgs.runCommand "pi-standalone-test" { } ''
     test -s "$PI_TEST_LOG"
     cmp "$PI_CODING_AGENT_DIR/settings.json" "$TMPDIR/settings.json"
     cmp "$PI_CODING_AGENT_DIR/keybindings.json" "$TMPDIR/keybindings.json"
+    cmp "$PI_CODING_AGENT_DIR/mcp.json" "$TMPDIR/mcp.json"
     test "$(readlink "$PI_CODING_AGENT_DIR/AGENTS.md")" = "$HOME/.config/agents/AGENTS.md"
     test "$(cat "$PI_CODING_AGENT_DIR/AGENTS.md")" = 'managed instructions'
     test -L "$PI_CODING_AGENT_DIR/skills/writing-well/SKILL.md"

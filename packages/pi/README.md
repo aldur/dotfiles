@@ -25,9 +25,9 @@ On macOS, `pi-yolo` runs on the host. See the
 On each `nix run .#pi` or `nix run .#pi-yolo`, the standalone wrapper updates
 the Pi agent directory, `~/.pi/agent` by default:
 
-- It merges the settings and keybindings from [home.nix](home.nix) into
-  `settings.json` and `keybindings.json`. Declared keys replace existing
-  values, including the extensions list. Other keys stay in place.
+- It merges the settings, keybindings, and MCP servers from [home.nix](home.nix)
+  into `settings.json`, `keybindings.json`, and `mcp.json`. Declared keys replace
+  existing values, including the extensions list. Other keys stay in place.
 - It links `AGENTS.md` to the shared
   [agent instructions](../../modules/home/agents/AGENTS.md) and links the
   shared [skills](../../skills) under `skills/`.
@@ -78,6 +78,46 @@ The `tavily-search` skill uses the bundled `tvly` command to search the web and
 read URLs. Search and extraction work without a key, subject to Tavily's rate
 limits. Set `TAVILY_API_KEY` to use an account. The
 [package](../tavily-cli/default.nix) pins the CLI, SDK, and upstream skill.
+
+## Browser
+
+Pi and its subagents use the native `browser` MCP server from
+[home.nix](home.nix). It starts over stdio inside `pi-yolo`. Use `codemode`
+to find tools with `searchTools()` or `describeNamespace("browser")`.
+An agent with an explicit `tools` list must include `codemode`.
+Run `pi mcp list` to check the connection.
+
+[browser.nix](browser.nix) uses the same slim `pkgs.playwright-mcp` package as
+[Claude](../../modules/home/claude/default.nix). The
+[Nix lock](../../flake.lock) pins the MCP server and Chromium. The existing
+[slim overlay](../../overlays/slim.nix) keeps only the Chromium headless shell
+on Linux and removes unused dependencies and locales. No browser is installed
+at runtime.
+
+Each server has an isolated context without saved cookies or a personal profile.
+Downloads, snapshots, and screenshots go to `.pi/browser/worker-XXXXXXXX/`
+under the worker's working directory. Tool results give the file paths.
+These files remain readable after the session ends; remove them when no longer
+needed. Browser processes stop with their Pi session.
+
+Chromium's sandbox is enabled. The Pi sandbox rules stay unchanged. The browser
+uses a 1440×900 viewport, `en-US` locale, and light color scheme. These settings
+do not bypass site access checks.
+
+The [browser check](tests/browser/check.py) runs two Pi subagents with scripted
+local model responses and real browser tools. It checks discovery, context
+isolation, reference links, PDF downloads, screenshots, and process cleanup.
+The Nix check uses local publication pages. To test public RFC pages inside
+`pi-yolo`, use a new output directory:
+
+```sh
+nix build .#pi-yolo
+python3 packages/pi/tests/browser/check.py ./result/bin/pi-yolo \
+  /tmp/pi-browser-check --sandbox --live
+```
+
+This check uses the existing `--network host` option to reach its local model
+fixture. It keeps the filesystem, process, and seccomp sandbox enabled.
 
 ## Models
 

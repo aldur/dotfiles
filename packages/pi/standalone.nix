@@ -14,7 +14,7 @@ let
     ];
   }).config.programs.pi;
   defaults = pkgs.writeText "pi-standalone-config.json" (
-    builtins.toJSON { inherit (config) settings keybindings; }
+    builtins.toJSON { inherit (config) settings keybindings mcp; }
   );
 in
 pkgs.writeShellApplication {

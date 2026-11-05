@@ -9,7 +9,7 @@ let
   dotfilesSkills = pkgs.pi.skills;
   jsonType = (pkgs.formats.json { }).type;
   managedConfig = pkgs.writeText "pi-managed-config.json" (
-    builtins.toJSON { inherit (cfg) settings keybindings; }
+    builtins.toJSON { inherit (cfg) settings keybindings mcp; }
   );
 in
 {
@@ -32,11 +32,16 @@ in
         same ownership rules as programs.pi.settings. Shortcut arrays replace.
       '';
     };
+    mcp = lib.mkOption {
+      type = jsonType;
+      default = { };
+      description = "Nix-managed keys in Pi's writable mcp.json. Other keys are preserved.";
+    };
     configSync = lib.mkOption {
       type = lib.types.package;
       readOnly = true;
       internal = true;
-      description = "Synchronize the declared Pi settings and keybindings.";
+      description = "Synchronize the declared Pi settings, keybindings, and MCP servers.";
     };
     evalHarnesses = lib.mkOption {
       type = lib.types.attrsOf lib.types.package;
@@ -117,6 +122,11 @@ in
 
   config = {
     programs.pi = {
+      mcp.mcpServers.browser = {
+        command = lib.getExe (pkgs.callPackage ./browser.nix { });
+        exposure = "codemode";
+        description = "Browse web and publication pages with isolated Chromium: navigate, follow links, read page snapshots, capture screenshots, and download PDFs. Files are saved in a separate .pi/browser directory for each worker; tool results give readable paths.";
+      };
       # Keep terminal/tmux scrollback with Pi 1.0's regular UI mode.
       settings.tuiMode = lib.mkDefault "regular";
       settings.quietStartup = lib.mkDefault false;

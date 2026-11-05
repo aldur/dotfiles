@@ -85,7 +85,7 @@ export async function migrateExtensions(agentDir) {
 export async function syncConfig(managed, agentDir) {
   if (!isObject(managed)) throw new Error("managed configuration must be a JSON object");
   for (const [name, value] of Object.entries(managed)) {
-    if (!["settings", "keybindings"].includes(name) || !isObject(value)) {
+    if (!["settings", "keybindings", "mcp"].includes(name) || !isObject(value)) {
       throw new Error(`invalid managed configuration: ${name}`);
     }
   }

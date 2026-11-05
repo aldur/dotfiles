@@ -21,6 +21,17 @@ function fixture(t) {
   return dir;
 }
 
+test("MCP settings preserve other servers and remain writable", async (t) => {
+  const dir = fixture(t);
+  const path = join(dir, "mcp.json");
+  const other = { command: "/local/server", env: { TOKEN: "fixture" } };
+  write(path, { mcpServers: { other, browser: { enabled: false } } });
+  const browser = { command: "/nix/store/browser/bin/mcp", exposure: "codemode" };
+  await syncConfig({ mcp: { mcpServers: { browser } } }, dir);
+  assert.deepEqual(read(path), { mcpServers: { other, browser: { enabled: false, ...browser } } });
+  assert.equal(fs.statSync(path).mode & 0o777, 0o600);
+});
+
 test("both writable files preserve undeclared values and load in Pi", async (t) => {
   const dir = fixture(t);
   const settings = join(dir, "settings.json");
@@ -59,7 +70,7 @@ test("fresh home and the previous Nix keybindings symlink", async (t) => {
 
 test("malformed JSON and non-object files survive a failed merge", async (t) => {
   const dir = fixture(t);
-  for (const name of ["settings", "keybindings"]) {
+  for (const name of ["settings", "keybindings", "mcp"]) {
     const path = join(dir, `${name}.json`);
     for (const text of ["{invalid", "[]", "null", "", '{}\n{}']) {
       fs.writeFileSync(path, text);

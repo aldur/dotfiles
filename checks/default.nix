@@ -103,6 +103,10 @@ in
   };
   slim-runtime = pkgs.callPackage ./slim-runtime.nix { };
   playwright-runtime = pkgs.callPackage ./playwright-runtime.nix { };
+  pi-browser = import ../packages/pi/tests/browser {
+    inherit pkgs;
+    pi = self.packages.${system}.pi;
+  };
   runtime-libraries = pkgs.callPackage ./runtime-libraries.nix { };
   container-size-guard = pkgs.callPackage ./container-image/tests.nix { };
   home-portability = import ./home-portability.nix { inherit self inputs pkgs; };
