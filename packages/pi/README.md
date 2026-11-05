@@ -123,6 +123,8 @@ cover case differences and model aliases.
 - [pi-subagent](plugins/pi-subagent): stores a local copy of Pi's subagent extension.
   Supports repeated `--agent <file.md>` options and tool-call model overrides.
 - [pi-system-prompt](plugins/pi-system-prompt): adds a read-only `/system-prompt` command.
+- [pi-prompt-stash](plugins/pi-prompt-stash): Alt+S stores or restores the prompt.
+  If both contain text, it swaps them.
 
 All Pi tests are in [tests](tests). The package checks its extensions during
 the Nix build. The

@@ -8,14 +8,19 @@ const load = (path) => import(pathToFileURL(join(piRoot, path)));
 const { loadExtensions, loadExtensionsCached, clearExtensionCache } = await load("dist/core/extensions/loader.js");
 const { CustomEditor } = await load("dist/modes/interactive/components/custom-editor.js");
 const { KeybindingsManager } = await load("dist/core/keybindings.js");
+const { ExtensionRunner } = await load("dist/core/extensions/runner.js");
+const { matchesKey } = await load("node_modules/@earendil-works/pi-tui/dist/index.js");
 
 async function setup(loader = loadExtensions) {
-  const { extensions, errors } = await loader([extensionPath], process.cwd());
+  const { extensions, errors, runtime } = await loader([extensionPath], process.cwd());
   assert.deepEqual(errors, []);
   const extension = extensions[0];
-  const shortcut = extension.shortcuts.get("ctrl+s");
-  assert.ok(shortcut);
   const keybindings = new KeybindingsManager();
+  const runner = new ExtensionRunner(extensions, runtime, process.cwd());
+  const shortcuts = runner.getShortcuts(keybindings.getEffectiveConfig());
+  assert.deepEqual(runner.getShortcutDiagnostics(), []);
+  const shortcut = shortcuts.get("alt+s");
+  assert.ok(shortcut);
   const editor = new CustomEditor({ requestRender() {} }, { borderColor: (s) => s }, keybindings);
   let status;
   const ctx = {
@@ -30,19 +35,19 @@ async function setup(loader = loadExtensions) {
     },
   };
   editor.onExtensionShortcut = (data) => {
-    if (data !== "\x13") return false;
+    if (!matchesKey(data, "alt+s")) return false;
     shortcut.handler(ctx);
     return true;
   };
   return {
     editor, ctx, keybindings,
-    press: () => editor.handleInput("\x13"),
+    press: () => editor.handleInput("\x1bs"),
     get status() { return status; },
     start: () => extension.handlers.get("session_start")[0]({ type: "session_start" }, ctx),
   };
 }
 
-test("Ctrl+S preserves pasted text, whitespace, and both drafts during a swap", async () => {
+test("Alt+S preserves pasted text, whitespace, and both drafts during a swap", async () => {
   const h = await setup();
   h.press();
   assert.equal(h.editor.getText(), "");
@@ -52,7 +57,7 @@ test("Ctrl+S preserves pasted text, whitespace, and both drafts during a swap", 
   assert.equal(h.editor.getExpandedText(), draft);
   h.press();
   assert.equal(h.editor.getText(), "");
-  assert.match(h.status, /Ctrl\+S/);
+  assert.match(h.status, /Alt\+S/);
   h.editor.setText("Second draft");
   h.press();
   assert.equal(h.editor.getExpandedText(), draft);

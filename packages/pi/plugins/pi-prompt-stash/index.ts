@@ -5,10 +5,10 @@ let stash = "";
 
 export default function (pi: ExtensionAPI) {
   const updateStatus = (ctx: ExtensionContext) => {
-    ctx.ui.setStatus("pi-prompt-stash", stash ? "Prompt stashed (Ctrl+S)" : undefined);
+    ctx.ui.setStatus("pi-prompt-stash", stash ? "Prompt stashed (Alt+S)" : undefined);
   };
 
-  pi.registerShortcut("ctrl+s", {
+  pi.registerShortcut("alt+s", {
     description: "Stash or restore the prompt; swap if both contain text",
     handler(ctx) {
       if (ctx.mode !== "tui") return;
