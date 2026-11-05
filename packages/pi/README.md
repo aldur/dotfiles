@@ -141,6 +141,14 @@ cover case differences and model aliases.
 
 ## Extensions
 
+- [pi-daybreak](plugins/pi-daybreak): adds `/daybreak` for `openai-codex` login.
+  Open the menu, or use `blue`, `red`, `on`, `off`, `toggle`, `default`, or `status`.
+  `on` restores the last tier (initially Blue). `off` sends `standard`;
+  `default` leaves the request unchanged. Each session start, resume, or reload
+  resets to `default`. The footer shows the requested setting, not confirmed access.
+  Select a compatible model with `/model`. Red requires a Red-compatible model;
+  GPT-6 Sol uses Blue, even for accounts with Red approval. See the
+  [OpenAI Daybreak guide](https://developers.openai.com/api/docs/guides/daybreak).
 - [pi-llama](plugins/pi-llama.nix): llama.cpp discovery and router support.
 - [pi-openai-discovery](plugins/pi-openai-discovery): OpenAI-compatible model discovery.
 - [pi-no-docs](plugins/pi-no-docs): removes the Pi documentation section from the default prompt.

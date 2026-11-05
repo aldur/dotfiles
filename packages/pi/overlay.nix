@@ -21,6 +21,7 @@ in
     };
     pi-statusline = prev.callPackage ./plugins/pi-statusline { };
     pi-prompt-stash = final.callPackage ./plugins/pi-prompt-stash { };
+    pi-daybreak = final.callPackage ./plugins/pi-daybreak { };
     pi-subagent = final.callPackage ./plugins/pi-subagent { };
     pi-system-prompt = final.callPackage ./plugins/pi-system-prompt { };
     pi-throughput = final.callPackage ./plugins/pi-throughput { };

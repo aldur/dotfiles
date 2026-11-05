@@ -1,0 +1,130 @@
+import assert from "node:assert/strict";
+import { join } from "node:path";
+import { test } from "node:test";
+import { pathToFileURL } from "node:url";
+import { zstdDecompressSync } from "node:zlib";
+
+const [extensionPath, piRoot] = process.argv.slice(2);
+const load = (path) => import(pathToFileURL(join(piRoot, path)));
+const { loadExtensions } = await load("dist/core/extensions/loader.js");
+const { stream } = await load("node_modules/@earendil-works/pi-ai/dist/api/openai-codex-responses.js");
+
+async function setup() {
+  const { extensions, errors } = await loadExtensions([extensionPath], process.cwd());
+  assert.deepEqual(errors, []);
+  const extension = extensions[0];
+  const command = extension.commands.get("daybreak");
+  assert.ok(command);
+  const notices = [];
+  let status;
+  let choice;
+  const ctx = {
+    mode: "tui",
+    model: {
+      id: "gpt-6-sol", provider: "openai-codex", api: "openai-codex-responses",
+      baseUrl: "https://chatgpt.com/backend-api", reasoning: true,
+      input: ["text"], contextWindow: 272000, maxTokens: 128000,
+      cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+    },
+    ui: {
+      setStatus(key, value) { assert.equal(key, "pi-daybreak"); status = value; },
+      notify(text, level) { notices.push({ text, level }); },
+      select: async (_title, options) => choice === undefined ? undefined : options[choice],
+    },
+  };
+  const emit = async (name, event = {}) => extension.handlers.get(name)?.[0](event, ctx);
+  return {
+    ctx, notices, command, emit,
+    get status() { return status; },
+    run: (args) => command.handler(args, ctx),
+    menu: (index) => { choice = index; return command.handler("", ctx); },
+    request: (payload = { model: "gpt-6-sol" }) => emit("before_provider_request", { payload }),
+  };
+}
+
+test("default preserves requests; off sets standard and preserves other fields", async () => {
+  const h = await setup();
+  assert.equal(await h.request(), undefined);
+  await h.run("blue");
+  const payload = { model: "gpt-6-sol", input: [], access_programs: { other: "keep", cyber: "old" } };
+  const original = structuredClone(payload);
+  assert.deepEqual(await h.request(payload), { ...payload, access_programs: { other: "keep", cyber: "daybreak_blue" } });
+  assert.deepEqual(payload, original);
+  await h.run("off");
+  assert.equal((await h.request()).access_programs.cyber, "standard");
+  await h.run("default");
+  assert.equal(await h.request(), undefined);
+  assert.equal(h.status, undefined);
+});
+
+test("toggle and on restore the last tier; session changes reset it", async () => {
+  const h = await setup();
+  for (const [action, expected] of [
+    ["toggle", "daybreak_blue"], ["toggle", "standard"], ["red", "daybreak_red"],
+    ["off", "standard"], ["on", "daybreak_red"], ["toggle", "standard"], ["toggle", "daybreak_red"],
+  ]) {
+    await h.run(action);
+    assert.equal((await h.request()).access_programs.cyber, expected);
+  }
+  assert.match(h.status, /red \(requested\)/);
+  await h.emit("session_start", { reason: "resume" });
+  assert.equal(await h.request(), undefined);
+  await h.run("on");
+  assert.equal((await h.request()).access_programs.cyber, "daybreak_blue");
+});
+
+test("menu cancellation, status, and invalid input do not change the selection", async () => {
+  const h = await setup();
+  await h.menu(1);
+  assert.equal((await h.request()).access_programs.cyber, "daybreak_red");
+  await h.menu(undefined);
+  await h.run("status");
+  await h.run("blue red");
+  assert.equal(h.notices.at(-1).level, "error");
+  assert.equal((await h.request()).access_programs.cyber, "daybreak_red");
+  assert.deepEqual(h.command.getArgumentCompletions("bl"), [{ value: "blue", label: "blue" }]);
+  assert.equal(h.command.getArgumentCompletions("invalid"), null);
+  h.ctx.mode = "rpc";
+  await h.run("");
+  assert.match(h.notices.at(-1).text, /red/);
+});
+
+test("other providers are unchanged; the footer follows provider switches", async () => {
+  const h = await setup();
+  await h.run("blue");
+  h.ctx.model.provider = "anthropic";
+  await h.emit("model_select");
+  assert.match(h.status, /inactive/);
+  assert.equal(await h.request(), undefined);
+  h.ctx.model.provider = "openai-codex";
+  await h.emit("model_select");
+  assert.doesNotMatch(h.status, /inactive/);
+  assert.equal((await h.request()).access_programs.cyber, "daybreak_blue");
+  const other = await setup();
+  assert.equal(await other.request(), undefined);
+});
+
+test("the Codex HTTP transport sends each selected program", async () => {
+  const h = await setup();
+  const claims = Buffer.from(JSON.stringify({ "https://api.openai.com/auth": { chatgpt_account_id: "test" } })).toString("base64url");
+  for (const [action, program] of [["blue", "daybreak_blue"], ["red", "daybreak_red"], ["off", "standard"]]) {
+    await h.run(action);
+    let body;
+    const result = await stream(h.ctx.model, {
+      messages: [{ role: "user", content: "Hello", timestamp: 0 }],
+    }, {
+      apiKey: `test.${claims}.test`, transport: "sse", maxRetries: 0,
+      onPayload: (payload) => h.request(payload),
+      fetch: async (_url, init) => {
+        const bytes = new Headers(init.headers).get("content-encoding") === "zstd"
+          ? zstdDecompressSync(init.body).toString() : init.body;
+        body = JSON.parse(bytes);
+        return new Response('data: {"type":"response.completed","response":{"status":"completed","output":[],"usage":{"input_tokens":0,"output_tokens":0,"total_tokens":0}}}\n\n', {
+          headers: { "content-type": "text/event-stream" },
+        });
+      },
+    }).result();
+    assert.equal(result.stopReason, "stop", result.errorMessage);
+    assert.equal(body.access_programs.cyber, program);
+  }
+});
