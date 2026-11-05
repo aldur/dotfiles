@@ -7,6 +7,7 @@
   nodejs,
   pnpm,
   pi-coding-agent,
+  playwright-lazy,
   tavily-cli,
   modelsCatalog,
   selfUpdates ? true,
@@ -44,6 +45,12 @@ let
     name = "pi";
     runtimeInputs = lib.optional (tavily-cli != null) tavily-cli;
     text = ''
+      if [ "''${1-}" = browser-prefetch ]; then
+        shift
+        export PLAYWRIGHT_BROWSER_STATE_DIR="''${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/browser"
+        exec ${playwright-lazy}/bin/playwright-browser-prefetch "$@"
+      fi
+
       # The anonymous install/update ping (enableInstallTelemetry) defaults to
       # on; PI_TELEMETRY=0 turns it off, along with provider attribution
       # headers (docs/usage.md). Analytics (enableAnalytics) is already opt-in.
@@ -108,6 +115,9 @@ let
                 PI_OPENAI_BASE_URL  Server API URL, including /v1.
                 PI_OPENAI_API_KEY   API key, if required.
                 PI_OPENAI_PROFILE   models.dev provider ID.
+
+              Browser cache:
+                pi browser-prefetch  Install pinned Chromium before an offline session.
             ''}
             exit 0
           fi

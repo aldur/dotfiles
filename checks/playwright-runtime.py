@@ -16,15 +16,18 @@ import time
 command = Path(sys.argv[1])
 wrapper = command.read_text()
 closure = [Path(p) for p in Path(sys.argv[2]).read_text().splitlines()]
+assert not any(re.search(r"-playwright-(browsers|chromium.*|firefox.*|webkit.*)$", p.name) for p in closure)
+assert not any(p.name.endswith("-source") for p in closure), "Nixpkgs source in runtime closure"
+browser_closure = [Path(p) for p in Path(sys.argv[3]).read_text().splitlines()]
 for name in ("glib", "dbus", "at-spi2-core", "systemd-minimal", "libdrm", "mesa-libgbm"):
-    packages = [p for p in closure if re.search(rf"-{name}-[0-9]", p.name)]
+    packages = [p for p in browser_closure if re.search(rf"-{name}-[0-9]", p.name)]
     assert len(packages) == 1, (name, packages)
     assert {p.name for p in packages[0].iterdir()} == {"lib"}, packages[0]
 assert not any("-playwright-test-" in p.name for p in closure)
 core = next(p for p in closure if "-playwright-core-" in p.name)
 assert not (core / "lib/vite").exists()
 assert not list(core.rglob("*.d.ts"))
-farm = Path(re.search(r"PLAYWRIGHT_BROWSERS_PATH='([^']+)'", wrapper)[1])
+farm = Path(sys.argv[4])
 assert len(list(farm.glob("chromium_headless_shell-*"))) == 1
 assert not any(farm.glob("chromium-*")), "full Chromium returned"
 assert not any(farm.glob("firefox-*")) and not any(farm.glob("webkit-*"))
@@ -102,6 +105,13 @@ with Path("mcp-stderr.log").open("w+") as errors:
                                clientInfo=dict(name="runtime-check", version="1")))
         proc.stdin.write(b'{"jsonrpc":"2.0","method":"notifications/initialized"}\n')
         proc.stdin.flush()
+        assert rpc("tools/list", {})["tools"]
+        state = Path(os.environ["XDG_CACHE_HOME"]) / "playwright-nix"
+        assert not state.exists(), "tool discovery installed the browser"
+        # Nix builders have no daemon. Supply the browser after discovery.
+        root = state / sys.argv[5] / "browser"
+        root.parent.mkdir(parents=True)
+        root.symlink_to(farm)
         call("browser_navigate", url=f"http://127.0.0.1:{server.server_port}/")
         snapshot = max(output.glob("page-*.yml"), key=lambda p: p.stat().st_mtime_ns).read_text()
         assert "Headless runtime" in snapshot, snapshot

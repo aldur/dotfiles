@@ -45,20 +45,19 @@ let
     remarks = 700;
     llm = 510; # the flake alias of llmWithPlugins
     llmWithPlugins = 510;
-    # Pi includes Tavily and the shared slim browser: 814/895 MiB on x86.
-    # Keep the browser's existing extra allowance on ARM.
-    pi = if stdenv.hostPlatform.isAarch64 then 1400 else 900;
+    # Pi includes Tavily and the lazy browser launcher, without Chromium.
+    # Keep the ARM allowance until a native measurement is available.
+    pi = if stdenv.hostPlatform.isAarch64 then 1400 else 750;
     pi-coding-agent = 365;
-    pi-yolo = if stdenv.hostPlatform.isAarch64 then 1470 else 990;
+    pi-yolo = if stdenv.hostPlatform.isAarch64 then 1470 else 820;
     tavily-cli = 285;
     pandoc-runtime = 190;
     # A node interpreter and one stdlib-only script; it is nodejs-slim-runtime
     # plus a wrapper, so it inherits that entry's budget.
     llama-wiretap = 200;
     ripgrep-all = 315;
-    # Headless shell and runtime: 451 MiB on x86. Retain the ARM ceiling until its
-    # native CI measurement; playwright-runtime also guards the farm layout.
-    playwright-mcp = if stdenv.hostPlatform.isAarch64 then 1000 else 500;
+    # MCP, Node, and the Nix client: 288 MiB on x86 before first browser use.
+    playwright-lazy = if stdenv.hostPlatform.isAarch64 then 1000 else 320;
     watermark-pdf = 330;
     comma = 205;
     nix-direnv = 180;
@@ -100,10 +99,13 @@ let
       "gtk+3"
       "-sdl2"
     ];
-    playwright-mcp = [
+    playwright-lazy = [
       "firefox"
       "webkit"
       "-playwright-chromium$"
+      "-playwright-chromium-headless-shell$"
+      "-playwright-browsers$"
+      "-source$"
       # The full nodejs join, re-pointed to nodejs-slim-runtime.
       "-npm$"
       "corepack"

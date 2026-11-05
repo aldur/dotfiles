@@ -26,6 +26,7 @@ in
     pi-throughput = final.callPackage ./plugins/pi-throughput { };
   };
   pi = prev.callPackage ./pi.nix {
+    inherit (final) playwright-lazy;
     plugins = final.piPlugins;
     modelsCatalog = piModelsCatalog;
   };

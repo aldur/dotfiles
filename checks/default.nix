@@ -103,6 +103,7 @@ in
   };
   slim-runtime = pkgs.callPackage ./slim-runtime.nix { };
   playwright-runtime = pkgs.callPackage ./playwright-runtime.nix { };
+  playwright-lazy = import ./playwright-lazy.nix { inherit pkgs; };
   pi-browser = import ../packages/pi/tests/browser {
     inherit pkgs;
     pi = self.packages.${system}.pi;
@@ -164,7 +165,7 @@ in
     let
       # Same trick as `overlayPackages` in flake.nix: the overlay's own
       # attr names, resolved through the final `pkgs`.
-      slimPackages = builtins.intersectAttrs (import ../overlays/slim.nix pkgs pkgs) pkgs;
+      slimPackages = builtins.intersectAttrs (import ../overlays/slim.nix { inherit self; } pkgs pkgs) pkgs;
       candidates = slimPackages // overlayPackages // packages;
     in
     pkgs.callPackage ./slim-closures.nix {

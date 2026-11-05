@@ -1,5 +1,6 @@
 # Strip packages to what's required at runtime to reduce disk space (without
 # rebuilding the world).
+{ self }:
 final: prev:
 let
   runtimeLibraries = import ./runtime-libraries.nix { pkgs = prev; };
@@ -233,7 +234,7 @@ let
   pi = prev.pi.override {
     nodejs = final.nodejs-slim-runtime;
     pnpm = pnpmRuntime;
-    inherit (final) pi-coding-agent;
+    inherit (final) pi-coding-agent playwright-lazy;
   };
 
   # Several of node's C dependencies have no dev output: headers, cmake
@@ -623,66 +624,43 @@ let
 
   # Linux MCP runs headless, so ship the cached Chromium headless shell.
   # Use the MCP source and core driver so builds do not fetch the full browser farm.
-  playwright-mcp =
+  playwright-lazy =
     let
-      inherit (prev.playwright-driver.passthru) browsers-chromium selectBrowsers;
-      browsers-headless = selectBrowsers {
-        withChromium = false;
-        withFirefox = false;
-        withWebkit = false;
-        withChromiumHeadlessShell = true;
+      source = prev.lib.findFirst (input: toString input == toString prev.path)
+        (throw "No locked nixpkgs input matches the browser package set")
+        [ self.inputs.nixpkgs self.inputs.nixpkgs-unstable self.inputs.nixpkgs-darwin ];
+      pin = {
+        type = "github";
+        owner = "NixOS";
+        repo = "nixpkgs";
+        inherit (source) rev narHash;
       };
-      fontconfig = prev.makeFontsConf { fontDirectories = [ ]; };
-      # Copy the bundles so locale pruning releases the originals.
-      # Keep the signed Chromium bundle intact on Darwin.
-      browsers-trimmed =
-        if !prev.stdenv.hostPlatform.isLinux then
-          browsers-chromium
-        else
-          prev.runCommand "playwright-browsers" {
-            nativeBuildInputs = [ prev.makeWrapper prev.patchelf ];
-            disallowedReferences = map (r: r.oldDependency) runtimeLibraries.chromium;
-          } ''
-            mkdir $out
-            for entry in ${browsers-headless}/*; do
-              name=''${entry##*/}
-              target=$(readlink -f "$entry")
-              cp -a "$target" "$out/$name"
-              chmod -R u+w "$out/$name"
-              { grep -rlF "$target" "$out/$name" || true; } | while IFS= read -r f; do
-                [ "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" = 7f454c46 ] && continue
-                sed -i "s|$target|$out/$name|g" "$f"
-              done
-            done
-            find $out -type d -name locales | while IFS= read -r d; do
-              find "$d" -name '*.pak' ! -name 'en-US.pak' -delete
-            done
-            ${prev.lib.concatMapStringsSep "\n" (r: ''
-              find "$out" -type f -exec sed -i "s|${r.oldDependency}|${r.newDependency}|g" {} +
-            '') runtimeLibraries.chromium}
-            find "$out" -type f | while IFS= read -r f; do
-              if patchelf --print-rpath "$f" >/dev/null 2>&1; then
-                patchelf --shrink-rpath "$f"
-              fi
-            done
-            # Unlike full Chromium, nixpkgs' shell has no wrapper. Carry
-            # over its font and certificate defaults for portable homes.
-            # ARM's Playwright bundle uses headless_shell; x86's Chrome
-            # for Testing bundle uses chrome-headless-shell.
-            shell=$(find $out -type f \( -name chrome-headless-shell -o -name headless_shell \))
-            test -x "$shell"
-            # The two distributions also package their strings differently.
-            # Guard the resources each executable needs after pruning.
-            case "''${shell##*/}" in
-              headless_shell) test -s "$(dirname "$shell")/headless_lib_strings.pak" ;;
-              chrome-headless-shell) test -s "$(dirname "$shell")/locales/en-US.pak" ;;
-            esac
-            wrapProgram "$shell" \
-              --set-default SSL_CERT_FILE /etc/ssl/certs/ca-bundle.crt \
-              --set-default FONTCONFIG_FILE ${fontconfig}
-            # A leftover would chain a copy back to the full bundle.
-            ! grep -r ${browsers-headless} $out
-          '';
+      cachedSource = builtins.unsafeDiscardStringContext (builtins.baseNameOf source.outPath);
+      browserPkgs = import source { system = prev.stdenv.hostPlatform.system; };
+      browser = import ./playwright-browser.nix {
+        pkgs = browserPkgs;
+        runtimeLibraries = import ./runtime-libraries.nix { pkgs = browserPkgs; };
+      };
+      browserExpression = prev.writeText "playwright-browser.nix" ''
+        let
+          # The source path is a hint. Do not retain it in the runtime closure.
+          cached = builtins.storeDir + "/${builtins.substring 0 16 cachedSource}"
+            + "${builtins.substring 16 256 cachedSource}";
+          source = if builtins.pathExists cached then cached
+            else builtins.fetchTree (builtins.fromJSON ${builtins.toJSON (builtins.toJSON pin)});
+          pkgs = import source {
+            system = ${builtins.toJSON prev.stdenv.hostPlatform.system};
+          };
+          runtimeLibraries = import ${./runtime-libraries.nix} { inherit pkgs; };
+        in import ${./playwright-browser.nix} { inherit pkgs runtimeLibraries; }
+      '';
+      browserLauncher = prev.callPackage ./playwright-lazy.nix {
+        inherit browserExpression;
+        nix = prev.nixVersions.latest;
+      };
+      browserConfig = prev.writeText "playwright-lazy.json" (builtins.toJSON {
+        browser.launchOptions.timeout = 600000;
+      });
       playwright-core = prev.runCommand prev.playwright-driver.name { } ''
         cp -a ${prev.playwright-driver} "$out"
         chmod -R u+w "$out"
@@ -692,10 +670,14 @@ let
         ! grep -r ${prev.nodejs} "$out"
       '';
     in
-    prev.runCommand prev.playwright-mcp.name
+    prev.runCommand "playwright-lazy-${prev.playwright-mcp.version}"
       {
         nativeBuildInputs = [ prev.makeWrapper ];
-        inherit (prev.playwright-mcp) meta;
+        meta = prev.playwright-mcp.meta // {
+          mainProgram = "playwright-lazy";
+          description = "Playwright MCP with Chromium installed on first use";
+        };
+        passthru = { inherit browser browserExpression browserLauncher; };
       }
       ''
         pkg="$out/lib/node_modules/playwright-mcp-internal"
@@ -703,16 +685,11 @@ let
         cp ${prev.playwright-mcp.src}/packages/playwright-mcp/{cli.js,index.js,package.json} "$pkg/"
         cp ${prev.playwright-mcp.src}/LICENSE "$pkg/"
         ln -s ${playwright-core} "$pkg/node_modules/playwright-core"
-        makeWrapper ${final.nodejs-slim-runtime}/bin/node "$out/bin/playwright-mcp" \
-          --add-flags "$pkg/cli.js" \
-          --set PLAYWRIGHT_BROWSERS_PATH ${browsers-trimmed} \
+        makeWrapper ${final.nodejs-slim-runtime}/bin/node "$out/bin/playwright-lazy" \
+          --add-flags "$pkg/cli.js --config ${browserConfig}" \
+          --set-default PLAYWRIGHT_MCP_EXECUTABLE_PATH ${browserLauncher}/bin/playwright-browser \
           --set-default PLAYWRIGHT_MCP_BROWSER chromium
-        ${prev.lib.optionalString prev.stdenv.hostPlatform.isLinux ''
-          shell=$(find ${browsers-trimmed} -type f \( -name chrome-headless-shell -o -name headless_shell \))
-          test -x "$shell"
-          sed -i "2i export PLAYWRIGHT_MCP_EXECUTABLE_PATH=\''${PLAYWRIGHT_MCP_EXECUTABLE_PATH-'$shell'}" \
-            "$out/bin/playwright-mcp"
-        ''}
+        ln -s ${browserLauncher}/bin/playwright-browser-prefetch "$out/bin/playwright-browser-prefetch"
       '';
 
   # Repack of the cached build. nixpkgs ships codex unstripped: of the
@@ -805,6 +782,8 @@ if prev.stdenv.hostPlatform.isLinux then
 else
   builtins.intersectAttrs slimmed prev
   // {
+    # The MCP wrapper changes scripts and keeps the signed browser intact.
+    inherit (slimmed) playwright-lazy;
     withoutHeaders = pkg: pkg;
     withoutNpmBuildResidue = pkg: pkg;
     gitMinimal-runtime = prev.gitMinimal;

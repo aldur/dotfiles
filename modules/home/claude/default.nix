@@ -166,8 +166,11 @@ let
 
   claudeMcpConfig = jsonFormat.generate "claude-mcp.json" {
     mcpServers = {
-      playwright = {
-        command = lib.getExe pkgs.playwright-mcp;
+      playwright-lazy = {
+        command = lib.getExe (pkgs.writeShellScriptBin "claude-playwright-lazy" ''
+          export PLAYWRIGHT_BROWSER_STATE_DIR="''${CLAUDE_CONFIG_DIR:-$HOME/.claude}/browser"
+          exec ${lib.getExe pkgs.playwright-lazy} "$@"
+        '');
         args = [
           "--headless"
           "--isolated"

@@ -48,6 +48,8 @@ pkgs.runCommand "pi-standalone-test" { } ''
   printf 'local skill' > "$PI_CODING_AGENT_DIR/skills/writing-well/SKILL.md"
 
   ${pkgs.lib.getExe pi} --version
+  ${pkgs.lib.getExe pi} browser-prefetch --help
+  test ! -e "$PI_CODING_AGENT_DIR/browser"
   backup=("$PI_CODING_AGENT_DIR"/.dotfiles-backup.*)
   test "''${#backup[@]}" = 1
   test "$(cat "''${backup[0]}/AGENTS.md")" = 'local instructions'
@@ -74,7 +76,7 @@ pkgs.runCommand "pi-standalone-test" { } ''
   agent = Path(sys.argv[1])
   assert json.loads((agent / "settings.json").read_text())["tuiMode"] == "regular"
   assert "ctrl+p" in json.loads((agent / "keybindings.json").read_text())["tui.editor.cursorUp"]
-  browser = json.loads((agent / "mcp.json").read_text())["mcpServers"]["browser"]
+  browser = json.loads((agent / "mcp.json").read_text())["mcpServers"]["playwright-lazy"]
   assert Path(browser["command"]).is_file()
   assert browser["exposure"] == "codemode"
   assert "PDF" in browser["description"]

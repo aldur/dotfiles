@@ -122,9 +122,10 @@ in
 
   config = {
     programs.pi = {
-      mcp.mcpServers.browser = {
+      mcp.mcpServers.playwright-lazy = {
         command = lib.getExe (pkgs.callPackage ./browser.nix { });
         exposure = "codemode";
+        timeout = 660;
         description = "Browse web and publication pages with isolated Chromium: navigate, follow links, read page snapshots, capture screenshots, and download PDFs. Files are saved in a separate .pi/browser directory for each worker; tool results give readable paths.";
       };
       # Keep terminal/tmux scrollback with Pi 1.0's regular UI mode.

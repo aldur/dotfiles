@@ -32,6 +32,26 @@ test("MCP settings preserve other servers and remain writable", async (t) => {
   assert.equal(fs.statSync(path).mode & 0o777, 0o600);
 });
 
+test("renaming the packaged browser preserves settings and other browser servers", async (t) => {
+  const dir = fixture(t);
+  const path = join(dir, "mcp.json");
+  const legacy = {
+    command: `/nix/store/${"a".repeat(32)}-pi-browser-mcp/bin/pi-browser-mcp`,
+    enabled: false,
+  };
+  const next = { command: "/nix/store/new/bin/pi-playwright-lazy", exposure: "codemode" };
+  const managed = { mcp: { mcpServers: { "playwright-lazy": next } } };
+  write(path, { mcpServers: { browser: legacy } });
+  await syncConfig(managed, dir);
+  await syncConfig(managed, dir);
+  assert.deepEqual(read(path), { mcpServers: { "playwright-lazy": { enabled: false, ...next } } });
+
+  const personal = { command: "/local/browser" };
+  write(path, { mcpServers: { browser: personal } });
+  await syncConfig(managed, dir);
+  assert.deepEqual(read(path), { mcpServers: { browser: personal, "playwright-lazy": next } });
+});
+
 test("both writable files preserve undeclared values and load in Pi", async (t) => {
   const dir = fixture(t);
   const settings = join(dir, "settings.json");

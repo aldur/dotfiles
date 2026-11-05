@@ -81,20 +81,30 @@ limits. Set `TAVILY_API_KEY` to use an account. The
 
 ## Browser
 
-Pi and its subagents use the native `browser` MCP server from
+Pi and its subagents use the native `playwright-lazy` MCP server from
 [home.nix](home.nix). It starts over stdio inside `pi-yolo`. Use `codemode`
-to find tools with `searchTools()` or `describeNamespace("browser")`.
+to find tools with `searchTools()` or `describeNamespace("mcp__playwright_lazy")`.
 An agent with an explicit `tools` list must include `codemode`.
 Run `pi mcp list` to check the connection.
 
-[browser.nix](browser.nix) uses the same slim `pkgs.playwright-mcp` package as
-[Claude](../../modules/home/claude/default.nix). Each server has an isolated
-context without saved cookies or a personal profile. Downloads, snapshots, and
-screenshots go to `.pi/browser/worker-XXXXXXXX/` under the worker's working
-directory. Tool results give the file paths. These files remain readable after
-the session ends; remove them when no longer needed. Browser processes stop
-with their Pi session. Chromium's sandbox is enabled. The Pi sandbox rules stay
-unchanged. playwright-driver`, so they stay correct across lock updates.
+[browser.nix](browser.nix) configures the
+[shared Playwright MCP runtime](../../overlays/playwright.md). It enables
+Chromium's sandbox. Downloads, snapshots, and screenshots go to
+`.pi/browser/worker-XXXXXXXX/` under the worker's working directory. Tool
+results give the file paths. These files remain readable after the session
+ends; remove them when no longer needed.
+
+To prepare the browser before an offline session, run:
+
+```sh
+pi browser-prefetch
+# Or use the same sandbox as the workers:
+pi-yolo browser-prefetch
+```
+
+Both commands select Pi's persistent browser cache. See the
+[shared browser guide](../../overlays/playwright.md#cache-warmup) for cache
+locations and cleanup.
 
 ## Models
 

@@ -14,11 +14,17 @@ parser.add_argument("launcher")
 parser.add_argument("directory", type=Path)
 parser.add_argument("--sandbox", action="store_true")
 parser.add_argument("--live", action="store_true")
+parser.add_argument("--browser-package", type=Path)
+parser.add_argument("--browser-key")
 args = parser.parse_args()
 root = args.directory.resolve()
 root.mkdir(parents=True)
 agent = root / "agent"
 (agent / "agents").mkdir(parents=True, exist_ok=True)
+if args.browser_package:
+    browser_root = agent / "browser" / args.browser_key / "browser"
+    browser_root.parent.mkdir(parents=True)
+    browser_root.symlink_to(args.browser_package)
 barrier = threading.Barrier(2)
 failures = []
 requests = []
@@ -34,7 +40,7 @@ def script(code):
 
 def mcp(name, **arguments):
     return script(f"""
-      const result = await tools.mcp__browser__{name}({json.dumps(arguments)});
+      const result = await tools.mcp__playwright_lazy__{name}({json.dumps(arguments)});
       if (result.isError) throw new Error(JSON.stringify(result));
       text(result.content.filter(item => item.type === "text"));
     """)
@@ -81,9 +87,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
                    'page.getByRole("link", {name:"Download PDF"})')
             actions = [
                 script("""
-                  const ns = await describeNamespace("browser");
+                  const ns = await describeNamespace("mcp__playwright_lazy");
                   if (!ns?.description?.includes("PDF")) throw new Error("description missing");
-                  const found = await searchTools("publication PDF screenshot", {namespace: "browser"});
+                  const found = await searchTools("publication PDF screenshot", {namespace: "mcp__playwright_lazy"});
                   if (!found.length) throw new Error("discovery failed");
                   text(found);
                 """),
@@ -116,8 +122,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if step < len(actions):
                 action = actions[step]
         elif step == 0:
-            action = script('text(await describeNamespace("browser"));')
+            action = script('text(await describeNamespace("mcp__playwright_lazy"));')
         elif step == 1:
+            if not args.browser_package and (agent / "browser").exists():
+                failures.append("Tool discovery installed Chromium")
             action = call("subagent", {"tasks": [{"agent": "browser-check", "task": name} for name in ("worker-a", "worker-b")]})
         if not worker and step == 2:
             for _ in range(100):
@@ -213,6 +221,7 @@ assert proc.returncode == 0, (proc.returncode, (root / "stderr.log").read_text()
 assert not failures, failures
 assert seen, "No browser process observed"
 assert not browser_processes(), f"Browser processes survived Pi: {browser_processes()}"
+assert len(list((agent / "browser").glob("*/browser"))) == 1, "workers did not share one browser install"
 outputs = list((root / ".pi/browser").glob("worker-*"))
 completed = [p for p in outputs if list(p.glob("*.png")) and list(p.glob("*.pdf"))]
 assert len(completed) == 2, [(str(p), [f.name for f in p.iterdir()]) for p in outputs]

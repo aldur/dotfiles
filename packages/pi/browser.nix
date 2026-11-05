@@ -2,7 +2,7 @@
   lib,
   writeText,
   writeShellApplication,
-  playwright-mcp,
+  playwright-lazy,
   playwright-driver,
   stdenv,
   coreutils,
@@ -95,6 +95,7 @@ let
     browser = {
       launchOptions = {
         chromiumSandbox = true;
+        timeout = 600000;
         # Playwright passes this switch by default; it sets navigator.webdriver.
         ignoreDefaultArgs = [ "--enable-automation" ];
         args = [ "--disable-blink-features=AutomationControlled" ];
@@ -121,13 +122,14 @@ let
   });
 in
 writeShellApplication {
-  name = "pi-browser-mcp";
+  name = "pi-playwright-lazy";
   runtimeInputs = [ coreutils ];
   text = ''
     umask 077
+    export PLAYWRIGHT_BROWSER_STATE_DIR="''${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/browser"
     mkdir -p "$PWD/.pi/browser"
     output=$(mktemp -d "$PWD/.pi/browser/worker-XXXXXXXX")
-    exec ${lib.getExe playwright-mcp} \
+    exec ${lib.getExe playwright-lazy} \
       --config ${config} --headless --isolated --output-dir "$output"
   '';
 }

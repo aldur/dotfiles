@@ -77,6 +77,17 @@ function removeManagedExtensions(settings) {
   };
 }
 
+function renameBrowserServer(config) {
+  const servers = { ...config.mcpServers };
+  const legacy = servers.browser;
+  if (!/^\/nix\/store\/[0-9a-z]{32}-pi-browser-mcp\/bin\/pi-browser-mcp$/.test(legacy?.command)) {
+    return config;
+  }
+  servers["playwright-lazy"] = merge(legacy, servers["playwright-lazy"]);
+  delete servers.browser;
+  return { ...config, mcpServers: servers };
+}
+
 export async function migrateExtensions(agentDir) {
   const path = join(resolve(agentDir), "settings.json");
   if (fs.existsSync(path)) await syncFile(path, {}, removeManagedExtensions);
@@ -93,7 +104,8 @@ export async function syncConfig(managed, agentDir) {
   fs.mkdirSync(directory, { recursive: true, mode: 0o700 });
   for (const [name, value] of Object.entries(managed)) {
     await syncFile(join(directory, `${name}.json`), value,
-      name === "settings" ? removeManagedExtensions : undefined);
+      name === "settings" ? removeManagedExtensions :
+        name === "mcp" && value.mcpServers?.["playwright-lazy"] ? renameBrowserServer : undefined);
   }
 }
 
