@@ -31,5 +31,5 @@ writeShellApplication {
   text = ''
     github_verifier=${githubVerifier}
   '' + builtins.readFile ./git-verify-ssh.sh;
-  passthru.tests.integration = callPackage ./test.nix { inherit githubVerifier; };
+  passthru.tests.integration = callPackage ./test.nix { };
 }

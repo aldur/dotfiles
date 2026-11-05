@@ -121,18 +121,21 @@ git switch -q main
 git branch -D openpgp
 gpgconf --kill gpg-agent
 
-# Verify a real GitHub signature without fetching history or changing HEAD.
-github_commit=$(git hash-object -t commit -w "$GITHUB_COMMIT")
-git -c gpg.openpgp.program="$GITHUB_VERIFIER" -c gpg.minTrustLevel=undefined \
-  verify-commit "$github_commit"
-cat "$GITHUB_COMMIT" > "$work/github-commit"
+# Root commit: https://github.com/aldur/nixos-crostini/commit/78600065ad5b411c9a4476b94e06575d16702197
+# The bundle includes the commit, tree, and license blob. No network is needed.
+git clone -q --bare --branch github-root "$GITHUB_REPOSITORY" "$work/github"
+github_commit=$(git -C "$work/github" rev-parse HEAD)
+fail "$work/github"
+grep -F "$github_commit" "$work/output"
+git-verify-ssh --allow-github "$work/github"
+
+git -C "$work/github" cat-file commit HEAD > "$work/github-commit"
 printf '\nchanged\n' >> "$work/github-commit"
-github_tampered=$(git hash-object -t commit -w "$work/github-commit")
-if git -c gpg.openpgp.program="$GITHUB_VERIFIER" -c gpg.minTrustLevel=undefined \
-  verify-commit "$github_tampered"; then
-  echo 'Accepted an altered GitHub commit.' >&2
-  exit 1
-fi
+github_tampered=$(git -C "$work/github" hash-object -t commit -w "$work/github-commit")
+git -C "$work/github" update-ref refs/heads/github-root "$github_tampered"
+fail --allow-github "$work/github"
+grep -F "$github_tampered" "$work/output"
+grep -F 'BAD signature' "$work/output"
 
 git clone -q --depth=1 "file://$work/repo" "$work/shallow"
 fail "$work/shallow"

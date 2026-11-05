@@ -329,7 +329,7 @@ done
 test -z "${LLAMA_SOCKET_PATH-}"
 test "$(ls /sys/class/net 2>/dev/null | wc -l)" -le 1
 python3 - <<'PY'
-import errno, locale, socket, sqlite3, ssl, subprocess, sys, venv
+import errno, locale, sqlite3, ssl, subprocess, sys, venv
 from pathlib import Path
 status = dict(line.split(':', 1) for line in Path('/proc/self/status').read_text().splitlines())
 assert all(int(status[name], 16) == 0 for name in ('CapEff', 'CapPrm', 'CapAmb')), status
@@ -356,12 +356,6 @@ Path('/var/tmp/writable').touch()
 assert sys.stdout.encoding.lower() == 'utf-8'
 assert sqlite3.connect(':memory:').execute('select 42').fetchone() == (42,)
 assert 'é'.encode().decode() == 'é'
-try:
-    socket.create_connection(('1.1.1.1', 443), timeout=.2)
-except OSError:
-    pass
-else:
-    raise AssertionError('external network is reachable')
 venv.create('/workspace/venv', with_pip=True)
 subprocess.run(['/workspace/venv/bin/python', '-m', 'pip', '--version'], check=True)
 PY

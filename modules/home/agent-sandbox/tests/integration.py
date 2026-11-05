@@ -176,15 +176,27 @@ for agent in ["claude", "codex"]:
     ], check=True)
     assert Path("/home/tester/Other workspace/selected").read_text() == "edited"
 
-    # Invalid grants fail before starting a subprocess or the bus proxy.
-    for args in [
-        ["--workspace", "/"], ["--workspace", "/home/tester"],
-        ["--rw", "/persist"], ["--ro", "/home/tester/root-link"],
-        ["--rw", "/home/tester/does-not-exist"], ["--ro"],
-        ["--env", "INVALID=VALUE"], ["--env", "BAD-NAME"],
+    # The control must run before an absent marker can prove rejection.
+    marker = Path("/home/tester/Work/rejected-command")
+    command = [sys.executable, "-c",
+               "from pathlib import Path; import sys; Path(sys.argv[1]).touch()", str(marker)]
+    run([*launch, "--", *command], check=True)
+    assert marker.exists()
+    marker.unlink()
+    for args, message in [
+        (["--workspace", "/"], "refusing broad filesystem grant: /"),
+        (["--workspace", "/home/tester"], "refusing broad filesystem grant: /home/tester"),
+        (["--rw", "/persist"], "refusing broad filesystem grant: /persist" if Path("/persist").exists()
+         else "path does not exist: /persist"),
+        (["--ro", "/home/tester/root-link"], "refusing broad filesystem grant: /home/tester/root-link"),
+        (["--rw", "/home/tester/does-not-exist"], "path does not exist: /home/tester/does-not-exist"),
+        (["--ro"], "incorrect number of values for `--ro"),
+        (["--env", "INVALID=VALUE"], "invalid environment variable name: INVALID=VALUE"),
+        (["--env", "BAD-NAME"], "invalid environment variable name: BAD-NAME"),
     ]:
-        result = run([*launch, *args, "--", "true"], capture_output=True)
-        assert result.returncode != 0, args
+        result = run([*launch, *args, "--", *command], capture_output=True, text=True)
+        assert result.returncode == 1 and message in result.stderr, (args, result)
+        assert not marker.exists(), args
 
     # Optional built-in mounts also reject symlinks to a broad host root.
     git_config = Path("/home/tester/.config/git")
