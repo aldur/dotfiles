@@ -191,7 +191,7 @@ in
 
   # agent-log is installed when any agent is, and only then.
   agent-log-gating = pkgs.callPackage ./agent-log-gating.nix {
-    inherit self inputs system;
+    inherit self system;
   };
 
   headless-defaults = pkgs.callPackage ./headless-defaults.nix {

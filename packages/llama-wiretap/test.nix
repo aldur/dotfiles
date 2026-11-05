@@ -84,8 +84,7 @@ stdenvNoCC.mkDerivation {
     # lives outside `content`.
     request='{"model":"m","stream":true,"messages":[{"role":"system","content":"SYSMARK"},{"role":"user","content":"USERMARK"},{"role":"assistant","content":null,"tool_calls":[{"id":"call_1","type":"function","function":{"name":"TOOLMARK","arguments":"{\"p\":\"TOOLARGMARK\"}"}}]},{"role":"tool","tool_call_id":"call_1","content":"TOOLRESULTMARK"},{"role":"user","content":"FOLLOWUPMARK"}],"tools":[{"type":"function","function":{"name":"TOOLMARK","parameters":{}}}]}'
 
-    # Every field the transcript is supposed to carry, checked in one place so
-    # all three topologies get the same scrutiny.
+    # Check the payload and stream for each transport and log state.
     assert_transcript() {
       log="$1"
       sse="$2"
@@ -125,7 +124,10 @@ stdenvNoCC.mkDerivation {
       # The stream reached the client whole, chunk framing intact.
       grep 'data: \[DONE\]' "$sse" > /dev/null
       test "$(grep '^data: {' "$sse" | cut -c7- | jq -rs 'map(select(.choices)) | map(.choices[0].delta.content) | add')" = "hello"
+    }
 
+    assert_reader() {
+      log="$1"
       # The reader splits the same exchange back into its parts — every message
       # by role, not just the last, so the system prompt is visible.
       shown=$(llama-wiretap-show "$log")
@@ -178,12 +180,6 @@ stdenvNoCC.mkDerivation {
       printf '%s' "$full" | grep "thinking out loud" > /dev/null
       printf '%s' "$full" | grep -- "── ANSWER ──" > /dev/null
       printf '%s' "$full" | grep "hello" > /dev/null
-
-      # --all walks every exchange, including the readiness probe, so a whole
-      # conversation reads in one pass.
-      all=$(llama-wiretap-show "$log" --all --rendered)
-      test "$(printf '%s\n' "$all" | grep -c "^exchange ")" -ge 1
-      printf '%s' "$all" | grep -- "── ANSWER ──" > /dev/null
     }
 
     # One exchange over one topology, with either a new or an existing log.
@@ -287,6 +283,9 @@ SESSION
     exercise tcp-uds new 127.0.0.1:18083 http://127.0.0.1:18083
     exercise tcp-uds-existing existing 127.0.0.1:18085 http://127.0.0.1:18085
 
+    echo "=== transcript reader ==="
+    assert_reader tcp-uds.jsonl
+
     echo "=== prefix breaks are visible ==="
     # Wait until the log holds $2 completed chat exchanges.
     wait_for_chats() {
@@ -311,6 +310,14 @@ SESSION
     curl -sS --max-time 10 http://127.0.0.1:18083/v1/chat/completions \
       -H 'content-type: application/json' -d "$followup" > /dev/null
     wait_for_chats tcp-uds.jsonl 2
+    all=$(llama-wiretap-show tcp-uds.jsonl --all --rendered)
+    test "$(printf '%s\n' "$all" | grep -c "^exchange ")" -eq 2
+    ids=$(jq -r 'select(.path == "/v1/chat/completions" and .state == "done") | .id' tcp-uds.jsonl)
+    shown_ids=$(printf '%s\n' "$all" | sed -n 's/^exchange \([^ ]*\) —.*/\1/p')
+    test "$shown_ids" = "$ids"
+    printf '%s' "$all" | grep "NEXTMARK" > /dev/null
+    test "$(printf '%s\n' "$all" | grep -c "FOLLOWUPMARK")" -eq 2
+
     curl -sS --max-time 10 http://127.0.0.1:18083/v1/chat/completions \
       -H 'content-type: application/json' -d "$broken" > /dev/null
     wait_for_chats tcp-uds.jsonl 3

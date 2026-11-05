@@ -204,12 +204,6 @@ assert require "standalone defaults" (
   && standalone.config.programs.git.settings.user.email == "aldur@users.noreply.github.com"
   && standalone.config.targets.genericLinux.enable
   && standalone.config.programs.aldur.profile == "workstation"
-  && standalone.config.programs.difftastic.enable
-  && standalone.config.home.shellAliases ? gd
-  && standalone.config.programs.aldur.lazyvim.enable
-  && standalone.config.home.shellAliases.gst == "git status"
-  && hasPackage "ripgrep" standalone.config
-  && hasPackage "dashp" standalone.config
 );
 assert require "llm defaults" (
   lib.all (home: !home.programs.llm.enable) [

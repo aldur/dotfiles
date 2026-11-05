@@ -153,13 +153,6 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
     for case in config['cases']:
         for kind, launcher in case['launchers'].items():
             stamp.write_text(f'fixture-1 {int(time.time())}\n')
-            _, records = invoke(launcher, ['update', '--fixture'], environ=dict(
-                env, DISABLE_AUTOUPDATER='1', CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC='1'))
-            assert len(records) == 1 and records[0]['argv'] == ['update', '--fixture'], records
-            assert records[0]['host_visible'], records
-            if kind == 'claude':
-                assert 'DISABLE_AUTOUPDATER' not in records[0]['env'], records
-                assert 'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC' not in records[0]['env'], records
             for bypass in (False, True):
                 result, records = invoke(launcher, (['--no-sandbox'] if bypass else []) + payload)
                 assert len(records) == 1, records
@@ -187,6 +180,17 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                     trust = json.loads((HOME / '.claude.json').read_text())
                     assert trust['projects'][str(WORK)]['hasTrustDialogAccepted'] is True, trust
                 assert ('outside the sandbox' in result.stderr) == (bypass and case['sandbox']), result.stderr
+            print(f'passed: {kind}-yolo sandbox={case["sandbox"]}, docker={case["docker"]}, journal={case["journal"]}', flush=True)
+            # Check shared parsing once per agent and sandbox mode.
+            if set(case['launchers']) != set(FLAGS) or case['docker'] or case['journal']:
+                continue
+            _, records = invoke(launcher, ['update', '--fixture'], environ=dict(
+                env, DISABLE_AUTOUPDATER='1', CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC='1'))
+            assert len(records) == 1 and records[0]['argv'] == ['update', '--fixture'], records
+            assert records[0]['host_visible'], records
+            if kind == 'claude':
+                assert 'DISABLE_AUTOUPDATER' not in records[0]['env'], records
+                assert 'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC' not in records[0]['env'], records
             prefix = [FLAGS[kind]] + (['--no-daemon'] if kind == 'codex' and case['sandbox'] else [])
             _, records = invoke(launcher, ['--', '--help'])
             assert records[-1]['argv'] == [*prefix, '--help'], records

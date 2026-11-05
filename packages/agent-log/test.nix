@@ -9,7 +9,7 @@ stdenvNoCC.mkDerivation {
   name = "agent-log-test";
   nativeBuildInputs = [
     agent-log
-    python3
+    (python3.withPackages (ps: [ ps.pyte ]))
     fzf
   ];
   buildCommand = ''

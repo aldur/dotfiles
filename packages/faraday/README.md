@@ -128,10 +128,9 @@ nix build .#checks.x86_64-linux.faraday
 To run it directly:
 
 ```sh
-nix shell .#faraday nixpkgs#socat -c packages/faraday/test.sh
+nix develop .#checks.x86_64-linux.faraday -c python3 packages/faraday/test.py
 ```
 
-Runs as a non-root user (this matters: root would mask permission bugs like
-the loopback-bringup `EPERM`) and covers: relay reachability, everything-else
-blocked, read-only root + `--rw`, exit-code propagation, `--map`, and clean
-teardown including Ctrl-C.
+Run as a non-root user. The test checks allowed and blocked local endpoints,
+writable paths, name mapping, nscd socket masking, exit status, and cleanup
+after SIGINT and SIGTERM.

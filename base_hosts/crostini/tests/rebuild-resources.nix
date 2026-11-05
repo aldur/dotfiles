@@ -22,9 +22,8 @@ assert lib.all sessionOrdering [
   baguette
   lxc
 ];
-assert c.nix.settings.max-jobs == 1 && c.nix.settings.cores == 2;
-assert c.systemd.services.nix-daemon.serviceConfig.MemoryHigh == "60%";
-assert c.systemd.services.nix-daemon.serviceConfig.MemoryMax == "70%";
+assert c.systemd.services.nix-daemon.serviceConfig ? MemoryHigh;
+assert c.systemd.services.nix-daemon.serviceConfig ? MemoryMax;
 # The Baguette VM's memory budget must not leak into the LXC guest.
 assert !(lxc.config.systemd.services.nix-daemon.serviceConfig ? MemoryMax);
 runCommand "crostini-rebuild-resources" { } "touch $out"

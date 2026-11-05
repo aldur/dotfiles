@@ -1,9 +1,7 @@
-{ runCommand, faraday, bash, socat, procps, util-linux, getent }:
+{ runCommand, faraday, bash, python3, bubblewrap, procps, getent }:
 runCommand "faraday-test" {
-  nativeBuildInputs = [ faraday bash socat procps util-linux getent ];
+  nativeBuildInputs = [ faraday bash python3 bubblewrap procps getent ];
 } ''
-  export HOME="$TMPDIR/home"
-  mkdir -p "$HOME"
-  bash ${./test.sh}
+  python3 ${./test.py}
   touch "$out"
 ''

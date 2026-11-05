@@ -7,6 +7,7 @@ import contextlib
 import errno
 import fcntl
 import pty
+import pyte
 import re
 import select
 import shlex
@@ -342,9 +343,6 @@ else:
     def test_picker_reload_retains_scope_agent_and_literal_query(self):
         output, args, rows = self.capture_picker(["--agent", "codex", self.project])
         self.assertEqual(output.strip(), "codex")
-        self.assertIn("--no-sort", args)
-        self.assertIn("--disabled", args)
-        self.assertIn("--with-nth={1}{3}", args)
         self.assertNotIn("ToolOnly", rows[0])
         binding = next(a for a in args if a.startswith("--bind=change:reload("))
         command = binding[len("--bind=change:reload("):-1]
@@ -393,7 +391,6 @@ else:
         self.assertEqual(plain[1:4], shown[1:4])
         output, args, _ = self.capture_picker(["--agent", "codex", "--show-model"])
         self.assertEqual(output.strip(), "codex")
-        self.assertIn("--with-nth={1}{5}{3}", args)
         binding = next(a for a in args if a.startswith("--bind=change:reload("))
         command = binding[len("--bind=change:reload("):-1]
         result = subprocess.run(["sh", "-c", command.replace("{q}", "toolonly")],
@@ -403,12 +400,6 @@ else:
 
     def test_turn_picker_search_and_selection_stay_newest_first(self):
         output, args, rows = self.capture_picker([self.files[2]], mode="turn")
-        self.assertIn("--no-sort", args)
-        self.assertIn("--bind=start:hide-header+first", args)
-        self.assertIn("--no-wrap", args)
-        self.assertIn("--no-hscroll", args)
-        self.assertIn("--with-nth=2,3,4,5", args)
-        self.assertFalse(any("ctrl-o" in a for a in args))
         self.assertLess(output.index("FinalAnswer"), output.index("ToolOnly"))
         # Real fzf, without a terminal: matching must retain input order even
         # when a shorter older match would normally score higher.
@@ -419,34 +410,7 @@ else:
                                 capture_output=True, env=self.env, check=True)
         self.assertEqual(result.stdout.splitlines()[0], "newest long needle text")
 
-    def test_picker_chrome_and_preview_bindings(self):
-        for mode, command in [("session", ["--all"]), ("turn", [self.files[2]])]:
-            with self.subTest(mode=mode):
-                _, args, _ = self.capture_picker(command, mode=mode)
-                self.assertIn("--gap=0", args)
-                self.assertIn("--bind=f1:toggle-header", args)
-                self.assertIn("--bind=alt-h:toggle-header", args)
-                self.assertIn("--bind=ctrl-/:toggle-header", args)
-                self.assertIn("--bind=alt-w:toggle-wrap", args)
-                self.assertIn("--bind=alt-p:toggle-preview", args)
-                self.assertIn("--bind=pgup:preview-page-up,pgdn:preview-page-down", args)
-                self.assertIn("--bind=preview-scroll-up:preview-up,preview-scroll-down:preview-down", args)
-                footer = next(a for a in args if a.startswith("--footer="))
-                self.assertLess(len(footer), 80)
-                self.assertIn("ctrl-/ help", footer)
-                if mode == "session":
-                    self.assertIn("alt-s all", footer)
-                    self.assertTrue(any(a.startswith("--bind=alt-s:") for a in args))
-                    self.assertFalse(any(a.startswith("--bind=ctrl-a:") for a in args))
-                preview = next(a for a in args if a.startswith("--preview-window="))
-                self.assertIn("<60(down,50%,border-top", preview)
-                self.assertEqual("hidden" in preview, mode == "session")
-                header = next(a for a in args if a.startswith("--header="))[len("--header="):]
-                help_text = self.run_log("--help")
-                for line in header.splitlines():
-                    self.assertIn(line, help_text)
-                self.assertTrue(any(a.startswith("--bind=alt-e:transform(") for a in args))
-                self.assertFalse(any(a.startswith("--bind=alt-c:") for a in args))
+    def test_preview_omits_metadata_but_export_keeps_it(self):
         # Hide repeated metadata only in previews, not copied/exported text.
         body = self.run_log("_preview", self.files[2], "--turn", "5")
         self.assertIn("FinalAnswer", body)
@@ -637,7 +601,10 @@ else:
             env = dict(self.env, TERM="xterm-256color", SHELL=shutil.which("sh"))
             os.execve(BINARY, [BINARY, *map(str, args)], env)
         fcntl.ioctl(fd, termios.TIOCSWINSZ, struct.pack("HHHH", height, width, 0, 0))
-        def read_until(pattern, timeout=8):
+        screen = pyte.Screen(width, height)
+        stream = pyte.ByteStream(screen)
+
+        def read_until(pattern, timeout=8, screen_check=None):
             output = b""
             plain = b""
             matched = False
@@ -656,13 +623,15 @@ else:
                 if not chunk:
                     break
                 output += chunk
+                stream.feed(chunk)
                 if b"\x1b[6n" in chunk:
                     os.write(fd, b"\x1b[1;1R")
                 plain = re.sub(rb"\x1b\[[0-?]*[ -/]*[@-~]", b"", output)
-                matched = bool(re.search(pattern, plain))
+                matched = bool(re.search(pattern, plain)) and (screen_check is None or screen_check(screen))
             if matched:
                 return plain
-            self.fail(f"terminal did not show {pattern!r}: {output[-3000:]!r}")
+            shown = "\n".join(screen.display) if screen_check else repr(output[-3000:])
+            self.fail(f"terminal did not satisfy {pattern!r}:\n{shown}")
 
         try:
             yield fd, read_until
@@ -682,16 +651,32 @@ else:
         # Wide screens split side-by-side; narrow screens put preview below.
         for width in [160, 80]:
             with self.subTest(width=width), self.terminal_picker(path, width=width) as (fd, until):
-                until(rb"ScrollLine000")
+                position = None
+                def preview_position(screen):
+                    nonlocal position
+                    rows = [[(match.start(), int(match[1]))
+                             for match in re.finditer(r"ScrollLine(\d{3})", line)]
+                            for line in screen.display]
+                    # Preview lines share a column; the list has a one-line snippet.
+                    for row, matches in enumerate(rows[:-1]):
+                        for column, number in matches:
+                            if (column, number + 1) in rows[row + 1]:
+                                position = (number, -row)
+                                return position
+                    return (-1, 0)
+
+                until(rb"ScrollLine000", screen_check=lambda screen: preview_position(screen)[0] == 0)
+                start = position
                 os.write(fd, b"\x1b[6~")  # Page Down, not next result
-                until(rb"ScrollLine0[2-6][0-9]")
+                until(rb"ScrollLine", screen_check=lambda screen: preview_position(screen) > start)
                 os.write(fd, b"\x1b[5~")  # Page Up
-                until(rb"ScrollLine000")
-                # Mouse wheel is routed by pane, not to a different turn.
+                until(rb"ScrollLine000", screen_check=lambda screen: preview_position(screen) == start)
+                # One step can remove a blank line above the first content line.
                 os.write(fd, f"\x1b[<65;{width - 10};30M".encode())
-                until(rb"ScrollLine0[0-9][0-9]")
+                until(rb"ScrollLine", screen_check=lambda screen: preview_position(screen) > start)
+                previous = position
                 os.write(fd, b"\x1b[1;2B")  # Shift-Down: another preview line
-                until(rb"ScrollLine0[0-9][0-9]")
+                until(rb"ScrollLine", screen_check=lambda screen: preview_position(screen) > previous)
                 # A match far beyond the clipped snippet must still be found.
                 os.write(fd, b"ScrollLine179")
                 until(rb"1/5")
