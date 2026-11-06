@@ -392,6 +392,9 @@ for tool in bat btop htop curl dig fd file jq less pv rg tmux age tree totp-cli 
 '''
     result = run("/bin/bash", "-c", smoke)
     print(result.stdout)
+    assert "playwright-lazy" not in json.loads((state / "mcp.json").read_text()).get("mcpServers", {})
+    browser = run("pi", "browser-prefetch", success=False)
+    assert "Browser support is disabled" in browser.stderr, browser.stderr
     run("/bin/bash", "-c", f'test {"!" if offline else ""} -f "$HOME/.pi/agent/skills/tavily-search/SKILL.md"')
     # Nix owns declared keys; undeclared preferences survive later starts.
     custom_keybindings = {"tui.editor.cursorUp": ["ctrl+k"], "app.session.new": ["ctrl+alt+n"]}

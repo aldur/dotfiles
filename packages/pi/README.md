@@ -81,6 +81,9 @@ limits. Set `TAVILY_API_KEY` to use an account. The
 
 ## Browser
 
+Set `playwright-lazy = null` in the Pi package override to omit browser support
+and its Nix installer. The Pi container images use this override.
+
 Pi and its subagents use the native `playwright-lazy` MCP server from
 [home.nix](home.nix). It starts over stdio inside `pi-yolo`. Use `codemode`
 to find tools with `searchTools()` or `describeNamespace("mcp__playwright_lazy")`.

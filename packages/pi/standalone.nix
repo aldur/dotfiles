@@ -4,7 +4,7 @@ let
   pi = pkgs.pi.override (builtins.removeAttrs args [ "pkgs" ]);
   inherit (pi) skills;
   config = (lib.evalModules {
-    specialArgs = { inherit pkgs; };
+    specialArgs = { pkgs = pkgs // { inherit pi; }; };
     modules = [
       ./home.nix
       {
@@ -19,7 +19,7 @@ let
 in
 pkgs.writeShellApplication {
   name = "pi";
-  passthru = { inherit (pi) plugins configSync modelsCatalog skills; };
+  passthru = { inherit (pi) plugins configSync modelsCatalog skills browserEnabled; };
   meta = pi.meta;
   text = ''
     agent_dir="''${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}"

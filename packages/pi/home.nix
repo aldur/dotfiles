@@ -122,7 +122,7 @@ in
 
   config = {
     programs.pi = {
-      mcp.mcpServers.playwright-lazy = {
+      mcp.mcpServers.playwright-lazy = lib.mkIf pkgs.pi.browserEnabled {
         command = lib.getExe (pkgs.callPackage ./browser.nix { });
         exposure = "codemode";
         timeout = 660;

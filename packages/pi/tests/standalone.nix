@@ -19,6 +19,7 @@ let
     plugins = pi.plugins // { ci-repair-session = probe; };
   };
   bare = configured.override { plugins = { }; };
+  withoutBrowser = bare.override { playwright-lazy = null; };
   home = (lib.evalModules {
     specialArgs = { inherit pkgs; };
     modules = [
@@ -39,6 +40,7 @@ let
 in
 assert configured.plugins.ci-repair-session == probe;
 assert bare.plugins == { };
+assert pi.browserEnabled && !withoutBrowser.browserEnabled;
 pkgs.runCommand "pi-standalone-test" { } ''
   export HOME="$TMPDIR/home"
   export PI_CODING_AGENT_DIR="$HOME/agent"
@@ -144,5 +146,18 @@ pkgs.runCommand "pi-standalone-test" { } ''
     test ! -e "$PI_CODING_AGENT_DIR/skills/tavily-search"
     test -z "$(find "$PI_CODING_AGENT_DIR" -name '.dotfiles-backup.*')"
   done
+  export PI_CODING_AGENT_DIR="$HOME/without-browser"
+  ${lib.getExe withoutBrowser} --version
+  if ${lib.getExe withoutBrowser} browser-prefetch >"$TMPDIR/browser.log" 2>&1; then
+    echo 'Browser installation must be disabled' >&2
+    exit 1
+  fi
+  grep -q 'Browser support is disabled' "$TMPDIR/browser.log"
+  ${lib.getExe pkgs.python3} - <<'PY'
+  import json, os
+  from pathlib import Path
+  config = json.loads((Path(os.environ["PI_CODING_AGENT_DIR"]) / "mcp.json").read_text())
+  assert "playwright-lazy" not in config.get("mcpServers", {})
+  PY
   touch "$out"
 ''

@@ -7,7 +7,7 @@
   nodejs,
   pnpm,
   pi-coding-agent,
-  playwright-lazy,
+  playwright-lazy ? null,
   tavily-cli,
   modelsCatalog,
   selfUpdates ? true,
@@ -21,6 +21,7 @@
 }:
 
 let
+  browserEnabled = playwright-lazy != null;
   pluginPaths = map (plugin: plugin.entryPoint or "${plugin}/index.ts") (lib.attrValues plugins);
   pluginFlags = lib.concatMapStringsSep " " (path: "-e ${lib.escapeShellArg path}") pluginPaths;
 
@@ -46,9 +47,15 @@ let
     runtimeInputs = lib.optional (tavily-cli != null) tavily-cli;
     text = ''
       if [ "''${1-}" = browser-prefetch ]; then
-        shift
-        export PLAYWRIGHT_BROWSER_STATE_DIR="''${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/browser"
-        exec ${playwright-lazy}/bin/playwright-browser-prefetch "$@"
+        ${lib.optionalString (!browserEnabled) ''
+          echo 'Browser support is disabled in this Pi package.' >&2
+          exit 1
+        ''}
+        ${lib.optionalString browserEnabled ''
+          shift
+          export PLAYWRIGHT_BROWSER_STATE_DIR="''${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/browser"
+          exec ${playwright-lazy}/bin/playwright-browser-prefetch "$@"
+        ''}
       fi
 
       # The anonymous install/update ping (enableInstallTelemetry) defaults to
@@ -116,8 +123,10 @@ let
                 PI_OPENAI_API_KEY   API key, if required.
                 PI_OPENAI_PROFILE   models.dev provider ID.
 
-              Browser cache:
-                pi browser-prefetch  Install pinned Chromium before an offline session.
+              ${lib.optionalString browserEnabled ''
+                Browser cache:
+                  pi browser-prefetch  Install pinned Chromium before an offline session.
+              ''}
             ''}
             exit 0
           fi
@@ -165,7 +174,7 @@ runCommand "pi-with-plugins-${pi-coding-agent.version}"
     # Plugins stay reachable (e.g. `pi.plugins.pi-llama`) so nix-update can
     # bump their pins in CI without dedicated flake outputs.
     passthru = {
-      inherit plugins configSync modelsCatalog;
+      inherit plugins configSync modelsCatalog browserEnabled;
       skills = import ./skills.nix { inherit lib tavily-cli; };
     };
     meta = pi-coding-agent.meta // {

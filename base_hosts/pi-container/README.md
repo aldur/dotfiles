@@ -32,6 +32,8 @@ sandbox options before Pi arguments.
 
 For either image:
 
+- Browser support is disabled. The browser installer requires Nix, which these
+  images exclude.
 - Use `fish --login` after the image name to open a shell.
 - Mount extra folders with `--volume`, then grant them with `--ro` or `--rw`
   after the image name. Git metadata stays read-only in writable grants.

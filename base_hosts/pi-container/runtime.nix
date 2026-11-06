@@ -95,6 +95,8 @@ in
   pi = pkgs.pi.override (
     {
       selfUpdates = false;
+      # Browser installation requires Nix, which this image excludes.
+      playwright-lazy = null;
       pi-coding-agent = piRuntime;
     }
     // lib.optionalAttrs offline { tavily-cli = null; }
