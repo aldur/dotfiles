@@ -21,7 +21,10 @@ neovim-unwrapped.overrideAttrs (old: {
   };
 
   # Stable's patches target its release, not master.
-  patches = [ ./async-parse-conceal-lines.patch ];
+  patches = [
+    ./async-parse-conceal-lines.patch
+    ./async-string-parser-test.patch
+  ];
 
   # nvim reports its own v0.13.0-dev, not this nix-update-friendly label;
   # the functional test suite still runs and must pass.

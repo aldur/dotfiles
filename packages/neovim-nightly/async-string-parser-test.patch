@@ -1,0 +1,24 @@
+The async string parser test assumes parsing finishes within 3 ms.
+On a busy runner, parse() returns nil and completes through its callback.
+Wait for that callback before checking the tree. Keep parse errors visible.
+
+--- a/test/functional/treesitter/parser_spec.lua
++++ b/test/functional/treesitter/parser_spec.lua
+@@ -600,7 +600,16 @@
+   it('can run async parses with string parsers', function()
+     local ret = exec_lua(function()
+       local parser = vim.treesitter.get_string_parser('int foo = 42;', 'c')
+-      return { parser:parse(nil, function() end)[1]:root():range() }
++      local done, parse_error, result = false, nil, nil
++      parser:parse(nil, function(err, trees)
++        parse_error, result, done = err, trees, true
++      end)
++      assert(vim.wait(5000, function()
++        return done
++      end), 'Async string parse did not complete')
++      assert(not parse_error, parse_error)
++      assert(result)
++      return { result[1]:root():range() }
+     end)
+ 
+     eq({ 0, 0, 0, 13 }, ret)
