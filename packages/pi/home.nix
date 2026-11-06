@@ -142,6 +142,17 @@ in
           "down"
           "ctrl+n"
         ];
+        "tui.select.up" = [
+          "up"
+          "ctrl+p"
+        ];
+        "tui.select.down" = [
+          "down"
+          "ctrl+n"
+        ];
+        "app.session.togglePath" = [ "ctrl+alt+p" ];
+        "app.session.toggleNamedFilter" = [ "ctrl+alt+n" ];
+        "app.models.toggleProvider" = [ "ctrl+alt+p" ];
         "app.model.cycleForward" = [ ];
       };
 

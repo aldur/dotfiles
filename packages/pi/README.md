@@ -67,9 +67,12 @@ environment handling.
 ## Settings and skills
 
 The defaults in [home.nix](home.nix) use Pi's regular terminal mode and show
-startup messages. Up and Ctrl+P move the cursor up; Down moves it down. The
-forward model-cycle shortcut is disabled. The [wrapper](pi.nix) disables Pi
-telemetry and its automatic version check by default.
+startup messages. Up and Ctrl+P move up; Down and Ctrl+N move down in the
+editor and menus. In the session picker, Ctrl+Alt+P toggles paths and
+Ctrl+Alt+N toggles the named-session filter. In the scoped model picker,
+Ctrl+Alt+P toggles the provider. The forward model-cycle shortcut is disabled.
+The [wrapper](pi.nix) disables Pi telemetry and its automatic version check by
+default.
 
 Pi uses the shared [skills](../../skills) and
 [agent instructions](../../modules/home/agents/AGENTS.md).

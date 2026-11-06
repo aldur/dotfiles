@@ -110,6 +110,12 @@ in
     settings = {
       # Installed system-wide through `fonts.packages` in `packages.nix`.
       font-family = "FiraCode Nerd Font";
+      keybind = [
+        "cmd+h=goto_split:left"
+        "cmd+j=goto_split:down"
+        "cmd+k=goto_split:up"
+        "cmd+l=goto_split:right"
+      ];
     };
   };
 
