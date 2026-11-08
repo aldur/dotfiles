@@ -147,7 +147,8 @@ cover case differences and model aliases.
 
 ## Extensions
 
-- [pi-daybreak](plugins/pi-daybreak): adds `/daybreak` for `openai-codex` login.
+- [pi-daybreak](plugins/pi-daybreak): adds `/daybreak` for `openai` through the
+  Responses API (ChatGPT sign-in or API key) and for `openai-codex` login.
   Open the menu, or use `blue`, `red`, `on`, `off`, `toggle`, `default`, or `status`.
   `on` restores the last tier (initially Blue). `off` sends `standard`;
   `default` leaves the request unchanged. Each session start, resume, or reload

@@ -8,6 +8,7 @@ const [extensionPath, piRoot] = process.argv.slice(2);
 const load = (path) => import(pathToFileURL(join(piRoot, path)));
 const { loadExtensions } = await load("dist/core/extensions/loader.js");
 const { stream } = await load("node_modules/@earendil-works/pi-ai/dist/api/openai-codex-responses.js");
+const { stream: streamResponses } = await load("node_modules/@earendil-works/pi-ai/dist/api/openai-responses.js");
 
 async function setup() {
   const { extensions, errors } = await loadExtensions([extensionPath], process.cwd());
@@ -92,39 +93,61 @@ test("menu cancellation, status, and invalid input do not change the selection",
 test("other providers are unchanged; the footer follows provider switches", async () => {
   const h = await setup();
   await h.run("blue");
-  h.ctx.model.provider = "anthropic";
+  for (const [provider, api] of [
+    ["anthropic", "anthropic-messages"],
+    ["openai", "openai-completions"],
+    ["openai-compatible", "openai-responses"],
+  ]) {
+    Object.assign(h.ctx.model, { provider, api });
+    await h.emit("model_select");
+    assert.match(h.status, /inactive/);
+    assert.equal(await h.request(), undefined);
+  }
+  for (const [provider, api] of [
+    ["openai", "openai-responses"],
+    ["openai-codex", "openai-codex-responses"],
+  ]) {
+    Object.assign(h.ctx.model, { provider, api });
+    await h.emit("model_select");
+    assert.doesNotMatch(h.status, /inactive/);
+    assert.equal((await h.request()).access_programs.cyber, "daybreak_blue");
+  }
+  h.ctx.model = undefined;
   await h.emit("model_select");
   assert.match(h.status, /inactive/);
   assert.equal(await h.request(), undefined);
-  h.ctx.model.provider = "openai-codex";
-  await h.emit("model_select");
-  assert.doesNotMatch(h.status, /inactive/);
-  assert.equal((await h.request()).access_programs.cyber, "daybreak_blue");
   const other = await setup();
   assert.equal(await other.request(), undefined);
 });
 
-test("the Codex HTTP transport sends each selected program", async () => {
-  const h = await setup();
-  const claims = Buffer.from(JSON.stringify({ "https://api.openai.com/auth": { chatgpt_account_id: "test" } })).toString("base64url");
-  for (const [action, program] of [["blue", "daybreak_blue"], ["red", "daybreak_red"], ["off", "standard"]]) {
-    await h.run(action);
-    let body;
-    const result = await stream(h.ctx.model, {
-      messages: [{ role: "user", content: "Hello", timestamp: 0 }],
-    }, {
-      apiKey: `test.${claims}.test`, transport: "sse", maxRetries: 0,
-      onPayload: (payload) => h.request(payload),
-      fetch: async (_url, init) => {
-        const bytes = new Headers(init.headers).get("content-encoding") === "zstd"
-          ? zstdDecompressSync(init.body).toString() : init.body;
-        body = JSON.parse(bytes);
-        return new Response('data: {"type":"response.completed","response":{"status":"completed","output":[],"usage":{"input_tokens":0,"output_tokens":0,"total_tokens":0}}}\n\n', {
-          headers: { "content-type": "text/event-stream" },
-        });
-      },
-    }).result();
-    assert.equal(result.stopReason, "stop", result.errorMessage);
-    assert.equal(body.access_programs.cyber, program);
-  }
-});
+const claims = Buffer.from(JSON.stringify({ "https://api.openai.com/auth": { chatgpt_account_id: "test" } })).toString("base64url");
+for (const [name, provider, api, baseUrl, apiKey, transport] of [
+  ["Codex", "openai-codex", "openai-codex-responses", "https://chatgpt.com/backend-api", `test.${claims}.test`, stream],
+  ["OpenAI ChatGPT", "openai", "openai-responses", "https://api.openai.com/v1", "test-chatgpt-token", streamResponses],
+  ["OpenAI API key", "openai", "openai-responses", "https://api.openai.com/v1", "sk-test", streamResponses],
+]) {
+  test(`the ${name} HTTP transport sends each selected program`, async () => {
+    const h = await setup();
+    Object.assign(h.ctx.model, { provider, api, baseUrl });
+    for (const [action, program] of [["blue", "daybreak_blue"], ["red", "daybreak_red"], ["off", "standard"], ["default", undefined]]) {
+      await h.run(action);
+      let body;
+      const result = await transport(h.ctx.model, {
+        messages: [{ role: "user", content: "Hello", timestamp: 0 }],
+      }, {
+        apiKey, transport: "sse", maxRetries: 0,
+        onPayload: (payload) => h.request(payload),
+        fetch: async (_url, init) => {
+          const bytes = new Headers(init.headers).get("content-encoding") === "zstd"
+            ? zstdDecompressSync(init.body).toString() : init.body;
+          body = JSON.parse(bytes);
+          return new Response('data: {"type":"response.completed","response":{"status":"completed","output":[],"usage":{"input_tokens":0,"output_tokens":0,"total_tokens":0}}}\n\n', {
+            headers: { "content-type": "text/event-stream" },
+          });
+        },
+      }).result();
+      assert.equal(result.stopReason, "stop", result.errorMessage);
+      assert.equal(body.access_programs?.cyber, program);
+    }
+  });
+}

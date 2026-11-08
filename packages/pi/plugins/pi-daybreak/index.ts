@@ -9,20 +9,24 @@ const choices = {
   "Default — leave the request unchanged": "default",
 } as const;
 
+const supportsDaybreak = (ctx: ExtensionContext) =>
+  ctx.model?.provider === "openai-codex" ||
+  (ctx.model?.provider === "openai" && ctx.model.api === "openai-responses");
+
 export default function (pi: ExtensionAPI) {
   let mode: Mode = "default";
   let lastTier: "blue" | "red" = "blue";
 
   const status = (ctx: ExtensionContext) => {
     const label = mode === "default" ? "default (no override)" : `${mode} (requested)`;
-    return `Daybreak: ${label}${ctx.model?.provider === "openai-codex" ? "" : "; inactive on this provider"}`;
+    return `Daybreak: ${label}${supportsDaybreak(ctx) ? "" : "; inactive on this provider"}`;
   };
   const updateStatus = (ctx: ExtensionContext) => {
     ctx.ui.setStatus("pi-daybreak", mode === "default" ? undefined : status(ctx));
   };
 
   pi.registerCommand("daybreak", {
-    description: "Select Daybreak Blue, Red, or standard safeguards for openai-codex",
+    description: "Select Daybreak Blue, Red, or standard safeguards for openai and openai-codex",
     getArgumentCompletions(prefix) {
       const matches = actions.filter((action) => action.startsWith(prefix));
       return matches.length ? matches.map((value) => ({ value, label: value })) : null;
@@ -69,7 +73,7 @@ export default function (pi: ExtensionAPI) {
   });
   pi.on("model_select", (_event, ctx) => updateStatus(ctx));
   pi.on("before_provider_request", (event, ctx) => {
-    if (mode === "default" || ctx.model?.provider !== "openai-codex") return;
+    if (mode === "default" || !supportsDaybreak(ctx)) return;
     const body = event.payload as Record<string, unknown>;
     return {
       ...body,
