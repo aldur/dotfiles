@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import childProcess from "node:child_process";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { syncBuiltinESMExports } from "node:module";
 import { tmpdir } from "node:os";
@@ -8,7 +9,6 @@ import { pathToFileURL } from "node:url";
 
 // Use Pi's session startup code without a model request in child processes.
 if (process.argv[2] === "--mode") {
-  const startedAt = Date.now();
   assert.equal(process.env.PI_SUBAGENT_WORKER, "1");
   const root = process.env.PI_SUBAGENT_CHECK_ROOT;
   const { parseArgs } = await import(pathToFileURL(join(root, "dist/cli/args.js")));
@@ -26,7 +26,6 @@ if (process.argv[2] === "--mode") {
   assert.deepEqual(errors, []);
   assert.ok(extensions[0].handlers.has("before_provider_request"));
   session.appendCustomEntry("invocation", {
-    startedAt,
     model: args.model,
     thinking: args.thinking,
     tools: args.tools,
@@ -45,6 +44,14 @@ process.env.PI_SUBAGENT_CHECK_EXTENSION = extensionPath;
 process.env.DOTFILES_PI_EXTENSIONS = JSON.stringify([extensionPath, join(root, "extension with spaces.ts")]);
 const { loadExtensions } = await import(pathToFileURL(join(piRoot, "dist/core/extensions/loader.js")));
 const { SessionManager } = await import(pathToFileURL(join(piRoot, "dist/core/session-manager.js")));
+const starts = [];
+const spawn = childProcess.spawn;
+mock.method(childProcess, "spawn", (...args) => {
+  // Measure dispatch in the parent. Child startup time varies with system load.
+  starts.push(performance.now());
+  return spawn(...args);
+});
+syncBuiltinESMExports();
 const { extensions, errors } = await loadExtensions([extensionPath], process.cwd());
 
 assert.deepEqual(errors, []);
@@ -132,8 +139,7 @@ try {
   const sessions = await SessionManager.list(root);
   const children = sessions.filter((session) => session.parentSessionPath === parent.getSessionFile());
   assert.equal(children.length, startupTasks.length);
-  const starts = children.map((child) => SessionManager.open(child.path).getEntries()
-    .find((entry) => entry.customType === "invocation").data.startedAt).sort((a, b) => a - b);
+  assert.equal(starts.length, startupTasks.length);
   for (let index = 1; index < starts.length; index++) {
     assert.ok(starts[index] - starts[index - 1] >= 1400,
       `Worker start interval: ${starts[index] - starts[index - 1]} ms`);
@@ -256,5 +262,7 @@ try {
     assert.match(failed.errors[0].error, message);
   }
 } finally {
+  mock.restoreAll();
+  syncBuiltinESMExports();
   rmSync(root, { recursive: true, force: true });
 }
