@@ -24,6 +24,7 @@ import { StringEnum } from "@earendil-works/pi-ai";
 import {
 	CONFIG_DIR_NAME,
 	type ExtensionAPI,
+	type ExtensionContext,
 	formatReadLineRange,
 	getAgentDir,
 	getMarkdownTheme,
@@ -521,7 +522,18 @@ const SubagentParams = Type.Object({
 export default function (pi: ExtensionAPI) {
 	if (process.env.PI_SUBAGENT_WORKER === "1") {
 		let retryDelay = 0;
-		pi.on("session_start", () => { retryDelay = 0; });
+		const syncEnvironment = (ctx: ExtensionContext) => {
+			if (ctx.model) process.env.PI_MODEL = `${ctx.model.provider}/${ctx.model.id}`;
+			else delete process.env.PI_MODEL;
+			process.env.PI_THINKING = ctx.thinkingLevel ?? pi.getThinkingLevel();
+			process.env.PI_SESSION = ctx.sessionManager.getSessionId();
+		};
+		pi.on("session_start", (_event, ctx) => {
+			retryDelay = 0;
+			syncEnvironment(ctx);
+		});
+		pi.on("model_select", (_event, ctx) => syncEnvironment(ctx));
+		pi.on("thinking_level_select", (_event, ctx) => syncEnvironment(ctx));
 		pi.on("message_end", ({ message }) => {
 			if (message.role !== "assistant") return;
 			const rateLimited = message.stopReason === "error" &&

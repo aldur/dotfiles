@@ -59,6 +59,9 @@ assert.equal(extensions.length, 1);
 assert.ok(extensions[0].tools.has("subagent"), "Pi must register the subagent tool");
 assert.equal(extensions[0].flags.get("agent").type, "string");
 assert.ok(!extensions[0].handlers.has("before_provider_request"), "Parent requests must keep their retry policy");
+for (const event of ["session_start", "model_select", "thinking_level_select"]) {
+  assert.ok(!extensions[0].handlers.has(event), "Parent sessions must keep their environment");
+}
 
 async function loadWithArgs(args) {
   const original = process.argv;
@@ -77,11 +80,31 @@ try {
   const worker = await loadExtensions([extensionPath], process.cwd());
   delete process.env.PI_SUBAGENT_WORKER;
   assert.deepEqual(worker.errors, []);
-  const emit = async (name, event = {}, ctx = {}) => worker.extensions[0].handlers.get(name)?.[0](event, ctx);
+  const workerContext = {
+    model: { provider: "test", id: "worker" },
+    thinkingLevel: "high",
+    sessionManager: { getSessionId: () => "worker-session" },
+  };
+  const environmentKeys = ["PI_MODEL", "PI_THINKING", "PI_SESSION"];
+  const previousEnvironment = environmentKeys.map((key) => process.env[key]);
+  const emit = async (name, event = {}, ctx = workerContext) => worker.extensions[0].handlers.get(name)?.[0](event, ctx);
   const failed = (errorMessage) => emit("message_end", {
     message: { role: "assistant", stopReason: "error", errorMessage },
   });
   try {
+    process.env.PI_MODEL = "parent/model";
+    process.env.PI_THINKING = "low";
+    process.env.PI_SESSION = "parent-session";
+    await emit("session_start");
+    assert.deepEqual(environmentKeys.map((key) => process.env[key]), ["test/worker", "high", "worker-session"]);
+    const changedModel = { ...workerContext, model: { provider: "other", id: "org/model" }, thinkingLevel: "medium" };
+    await emit("model_select", { model: changedModel.model }, changedModel);
+    assert.deepEqual(environmentKeys.map((key) => process.env[key]), ["other/org/model", "medium", "worker-session"]);
+    await emit("thinking_level_select", { level: "max" }, { ...changedModel, thinkingLevel: "max" });
+    assert.deepEqual(environmentKeys.map((key) => process.env[key]), ["other/org/model", "max", "worker-session"]);
+    await emit("session_start", {}, { ...workerContext, model: undefined });
+    assert.equal(process.env.PI_MODEL, undefined, "A worker without a model must clear the inherited model");
+
     async function checkDelay(ms) {
       let done = false;
       const request = emit("before_provider_request").then(() => { done = true; });
@@ -113,6 +136,10 @@ try {
     await emit("session_start");
     await checkDelay(0);
   } finally {
+    environmentKeys.forEach((key, index) => {
+      if (previousEnvironment[index] === undefined) delete process.env[key];
+      else process.env[key] = previousEnvironment[index];
+    });
     mock.timers.reset();
     syncBuiltinESMExports();
   }
