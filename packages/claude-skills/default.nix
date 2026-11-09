@@ -6,13 +6,13 @@
 # Anthropic's first-party skills, pointed at by modules/home/claude.
 stdenvNoCC.mkDerivation {
   pname = "claude-skills";
-  version = "0-unstable-2026-10-28";
+  version = "0-unstable-2026-11-06";
 
   src = fetchFromGitHub {
     owner = "anthropics";
     repo = "skills";
-    rev = "ca45fc496a3436251f191354091d557da31c15b5";
-    hash = "sha256-MkCOANBAqCc1WmNf7S8PsyAphGJAIzEXGyCm8RrCR9M=";
+    rev = "2c5958ecac7cee2b583967a2c4981d0f4a75c579";
+    hash = "sha256-dRCZrNarCCJFuvATgfW6qmwwVS5HGFXNVGOhbVZd7LA=";
   };
 
   installPhase = ''
