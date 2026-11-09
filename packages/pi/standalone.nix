@@ -17,7 +17,7 @@ let
     builtins.toJSON { inherit (config) settings keybindings mcp; }
   );
 in
-pkgs.writeShellApplication {
+(pkgs.writeShellApplication {
   name = "pi";
   passthru = { inherit (pi) plugins configSync modelsCatalog skills browserEnabled; };
   meta = pi.meta;
@@ -50,4 +50,9 @@ pkgs.writeShellApplication {
     '') skills)}
     exec ${lib.getExe pi} "$@"
   '';
-}
+}).overrideAttrs (old: {
+  buildCommand = old.buildCommand + ''
+    mkdir -p $out/share/fish/vendor_completions.d
+    ln -s ${pi}/share/fish/vendor_completions.d/pi.fish $out/share/fish/vendor_completions.d/pi.fish
+  '';
+})

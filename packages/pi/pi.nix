@@ -183,7 +183,8 @@ runCommand "pi-with-plugins-${pi-coding-agent.version}"
     };
   }
   ''
-    mkdir -p $out/bin
+    mkdir -p $out/bin $out/share/fish/vendor_completions.d
+    cp ${./completions/pi.fish} $out/share/fish/vendor_completions.d/pi.fish
     ln -s ${lib.getExe wrapper} $out/bin/pi
     ln -s ${modelsCatalog}/catalog.json $out/models-catalog.json
   ''

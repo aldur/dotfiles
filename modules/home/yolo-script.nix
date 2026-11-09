@@ -39,6 +39,16 @@ in
 pkgs.writeArgcApplication {
   name = "${agent}-yolo";
   inherit runtimeInputs;
+  passthru = {
+    wrapperFlags = names ++ [
+      "git-write"
+      "kvm"
+      "tun"
+      "docker"
+      "journal"
+    ];
+    wrapperOptions = optionNames;
+  };
   text = ''
     # @describe ${describe}
     ${lib.concatMapStringsSep "\n" (name: "# @flag --${name} ${allFlags.${name}}") names}

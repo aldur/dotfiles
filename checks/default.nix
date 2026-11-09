@@ -57,6 +57,10 @@ in
   llama-wiretap = pkgs.llama-wiretap.tests.integration;
   agent-log = pkgs.agent-log.tests.integration;
   telegram = pkgs.telegram.tests.integration;
+  pi-completions = import ../packages/pi/tests/completions.nix {
+    inherit pkgs;
+    inherit (self.packages.${system}) pi pi-yolo;
+  };
   pi-config-sync = pkgs.pi.configSync.tests.integration;
   pi-extensions = import ../packages/pi/tests/extensions { inherit pkgs; };
   pi-standalone = import ../packages/pi/tests/standalone.nix {
