@@ -34,10 +34,15 @@ import { Container, Markdown, Spacer, Text } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 import { type AgentConfig, type AgentScope, discoverAgents, formatAgentList, loadCliAgents } from "./agents.ts";
 
-const MAX_PARALLEL_TASKS = 8;
-const MAX_CONCURRENCY = 4;
+const MAX_PARALLEL_TASKS = positiveInt(process.env.PI_SUBAGENT_MAX_TASKS, 8);
+const MAX_CONCURRENCY = positiveInt(process.env.PI_SUBAGENT_CONCURRENCY, 4);
 const COLLAPSED_ITEM_COUNT = 10;
 const PER_TASK_OUTPUT_CAP = 50 * 1024;
+
+function positiveInt(value: string | undefined, fallback: number): number {
+	const number = Number(value);
+	return Number.isInteger(number) && number > 0 ? number : fallback;
+}
 
 function formatTokens(count: number): string {
 	if (count < 1000) return count.toString();

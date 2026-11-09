@@ -7,6 +7,8 @@ let
       "PI_OPENAI_BASE_URL"
       "PI_OPENAI_API_KEY"
       "PI_OPENAI_PROFILE"
+      "PI_SUBAGENT_CONCURRENCY"
+      "PI_SUBAGENT_MAX_TASKS"
     ];
   };
 in
