@@ -8,14 +8,14 @@
 }:
 
 let
-  version = "0-unstable-2026-11-03";
+  version = "sdk-v0.0.5-unstable-2026-11-09";
   src =
     (fetchFromGitHub {
       name = "models-dev-source-${version}";
       owner = "anomalyco";
       repo = "models.dev";
-      rev = "0c1517c823371cc97d46a8bfa7b382c257141b31";
-      hash = "sha256-M9ZKR97vzrV/1GCnSO0nbVqpP7kxbyrHCo8RrnnzGO0=";
+      rev = "74318f789f2775c15967a73fe765752cc0d6e58e";
+      hash = "sha256-sJjO4+Lm7xuk/Rg+h8XdvLcEfnQtu3S5ruARqEXh9wY=";
       nativeBuildInputs = [ python3 ];
     }).overrideAttrs
       {
