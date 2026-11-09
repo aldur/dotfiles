@@ -120,6 +120,60 @@ test("other providers are unchanged; the footer follows provider switches", asyn
   assert.equal(await other.request(), undefined);
 });
 
+test("status distinguishes the selection, prepared request, and reported program", async () => {
+  const h = await setup();
+  Object.assign(h.ctx.model, { provider: "openai", api: "openai-responses" });
+  await h.run("blue");
+  await h.run("status");
+  assert.match(h.notices.at(-1).text, /No supported provider request observed/);
+  await h.request();
+  await h.run("red");
+  await h.run("status");
+  assert.match(h.notices.at(-1).text, /red \(requested\)/);
+  assert.match(h.notices.at(-1).text, /Last prepared request: openai\/gpt-6-sol \(openai-responses\); access_programs.cyber=daybreak_blue/);
+  assert.match(h.notices.at(-1).text, /Response access_programs.cyber: not reported/);
+  await h.emit("provider_stream_event", { data: { response: { access_programs: { cyber: "daybreak_blue" } } } });
+  await h.emit("provider_stream_event", { data: { type: "response.output_text.delta", delta: "Hello" } });
+  await h.run("status");
+  assert.match(h.notices.at(-1).text, /Response access_programs.cyber: daybreak_blue/);
+  assert.match(h.status, /red \(requested\); last response: daybreak_blue/);
+  assert.equal(h.notices.filter((notice) => notice.level === "warning").length, 0);
+  await h.request();
+  await h.run("status");
+  assert.match(h.notices.at(-1).text, /Response access_programs.cyber: not reported/);
+  await h.emit("session_start", { reason: "reload" });
+  await h.run("status");
+  assert.match(h.notices.at(-1).text, /No supported provider request observed/);
+});
+
+test("a server program mismatch updates the footer and warns once per request", async () => {
+  const h = await setup();
+  Object.assign(h.ctx.model, { provider: "openai", api: "openai-responses" });
+  await h.run("blue");
+  await h.request();
+  for (const type of ["response.created", "response.in_progress", "response.completed"]) {
+    await h.emit("provider_stream_event", { data: { type, response: { access_programs: { cyber: "standard" } } } });
+  }
+  assert.match(h.status, /blue \(requested\); last response: standard/);
+  const warnings = () => h.notices.filter((notice) => notice.level === "warning");
+  assert.equal(warnings().length, 1);
+  assert.match(warnings()[0].text, /requested daybreak_blue, but the server reported standard/);
+  await h.request();
+  assert.doesNotMatch(h.status, /last response/);
+  await h.emit("provider_stream_event", { data: { response: { access_programs: null } } });
+  assert.equal(warnings().length, 2);
+  assert.match(warnings()[1].text, /server reported standard/);
+  await h.run("off");
+  await h.request();
+  await h.emit("provider_stream_event", { data: { response: { access_programs: null } } });
+  assert.equal(warnings().length, 2);
+  await h.emit("model_select");
+  assert.doesNotMatch(h.status, /last response/);
+  await h.emit("provider_stream_event", { data: { response: { access_programs: { cyber: "daybreak_blue" } } } });
+  assert.doesNotMatch(h.status, /last response/);
+  assert.equal(warnings().length, 2);
+});
+
 const claims = Buffer.from(JSON.stringify({ "https://api.openai.com/auth": { chatgpt_account_id: "test" } })).toString("base64url");
 for (const [name, provider, api, baseUrl, apiKey, transport] of [
   ["Codex", "openai-codex", "openai-codex-responses", "https://chatgpt.com/backend-api", `test.${claims}.test`, stream],
@@ -137,17 +191,30 @@ for (const [name, provider, api, baseUrl, apiKey, transport] of [
       }, {
         apiKey, transport: "sse", maxRetries: 0,
         onPayload: (payload) => h.request(payload),
+        onProviderStreamEvent: (data) => h.emit("provider_stream_event", { data, provider, api, model: h.ctx.model.id }),
         fetch: async (_url, init) => {
           const bytes = new Headers(init.headers).get("content-encoding") === "zstd"
             ? zstdDecompressSync(init.body).toString() : init.body;
           body = JSON.parse(bytes);
-          return new Response('data: {"type":"response.completed","response":{"status":"completed","output":[],"usage":{"input_tokens":0,"output_tokens":0,"total_tokens":0}}}\n\n', {
+          const response = {
+            type: "response.completed",
+            response: {
+              status: "completed", output: [],
+              access_programs: program ? { cyber: program } : null,
+              usage: { input_tokens: 0, output_tokens: 0, total_tokens: 0 },
+            },
+          };
+          return new Response(`data: ${JSON.stringify(response)}\n\n`, {
             headers: { "content-type": "text/event-stream" },
           });
         },
       }).result();
       assert.equal(result.stopReason, "stop", result.errorMessage);
       assert.equal(body.access_programs?.cyber, program);
+      await h.run("status");
+      assert.ok(h.notices.at(-1).text.includes(`access_programs.cyber=${program ?? "omitted"}`));
+      assert.ok(h.notices.at(-1).text.includes(`Response access_programs.cyber: ${program ?? "null"}`));
+      assert.equal(h.notices.filter((notice) => notice.level === "warning").length, 0);
     }
   });
 }

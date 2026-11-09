@@ -152,7 +152,10 @@ cover case differences and model aliases.
   Open the menu, or use `blue`, `red`, `on`, `off`, `toggle`, `default`, or `status`.
   `on` restores the last tier (initially Blue). `off` sends `standard`;
   `default` leaves the request unchanged. Each session start, resume, or reload
-  resets to `default`. The footer shows the requested setting, not confirmed access.
+  resets to `default`. The footer shows the requested setting and the program
+  reported by the last response, if available. A warning shows if they differ.
+  `status` also shows the last request prepared by the plugin and the program
+  reported by the response, if available.
   Select a compatible model with `/model`. Red requires a Red-compatible model;
   GPT-6 Sol uses Blue, even for accounts with Red approval. See the
   [OpenAI Daybreak guide](https://developers.openai.com/api/docs/guides/daybreak).
