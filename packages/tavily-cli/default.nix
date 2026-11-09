@@ -26,12 +26,12 @@ let
   };
   skills = stdenvNoCC.mkDerivation {
     pname = "tavily-skills";
-    version = "0-unstable-2026-11-02";
+    version = "2.3.0-unstable-2026-11-06";
     src = fetchFromGitHub {
       owner = "tavily-ai";
       repo = "skills";
-      rev = "b282c623b12b3c58fd279ed072f7e67b693e4654";
-      hash = "sha256-Fa7FHPfn5veIPkNaylU1BFfiyZSKw8hXsXwiTESOZXY=";
+      rev = "3a136b5b2e2fb232234ad3aa7073d7735ee7ff11";
+      hash = "sha256-htTRGFfGTLZ/Xq/fsJMA4aOa6elMXanSwRnt94tHwNc=";
     };
     installPhase = ''
       mkdir -p "$out"
