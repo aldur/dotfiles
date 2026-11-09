@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { syncBuiltinESMExports } from "node:module";
 import { tmpdir } from "node:os";
 import { join, relative } from "node:path";
+import { mock } from "node:test";
 import { pathToFileURL } from "node:url";
 
 // Use Pi's session startup code without a model request in child processes.
 if (process.argv[2] === "--mode") {
+  const startedAt = Date.now();
+  assert.equal(process.env.PI_SUBAGENT_WORKER, "1");
   const root = process.env.PI_SUBAGENT_CHECK_ROOT;
   const { parseArgs } = await import(pathToFileURL(join(root, "dist/cli/args.js")));
   const { createSessionManager } = await import(pathToFileURL(join(root, "dist/main.js")));
@@ -20,7 +24,9 @@ if (process.argv[2] === "--mode") {
   const { loadExtensions } = await import(pathToFileURL(join(root, "dist/core/extensions/loader.js")));
   const { extensions, errors } = await loadExtensions([process.env.PI_SUBAGENT_CHECK_EXTENSION], process.cwd());
   assert.deepEqual(errors, []);
+  assert.ok(extensions[0].handlers.has("before_provider_request"));
   session.appendCustomEntry("invocation", {
+    startedAt,
     model: args.model,
     thinking: args.thinking,
     tools: args.tools,
@@ -45,6 +51,7 @@ assert.deepEqual(errors, []);
 assert.equal(extensions.length, 1);
 assert.ok(extensions[0].tools.has("subagent"), "Pi must register the subagent tool");
 assert.equal(extensions[0].flags.get("agent").type, "string");
+assert.ok(!extensions[0].handlers.has("before_provider_request"), "Parent requests must keep their retry policy");
 
 async function loadWithArgs(args) {
   const original = process.argv;
@@ -57,6 +64,52 @@ async function loadWithArgs(args) {
 }
 
 try {
+  mock.timers.enable({ apis: ["setTimeout"] });
+  syncBuiltinESMExports();
+  process.env.PI_SUBAGENT_WORKER = "1";
+  const worker = await loadExtensions([extensionPath], process.cwd());
+  delete process.env.PI_SUBAGENT_WORKER;
+  assert.deepEqual(worker.errors, []);
+  const emit = async (name, event = {}, ctx = {}) => worker.extensions[0].handlers.get(name)?.[0](event, ctx);
+  const failed = (errorMessage) => emit("message_end", {
+    message: { role: "assistant", stopReason: "error", errorMessage },
+  });
+  try {
+    async function checkDelay(ms) {
+      let done = false;
+      const request = emit("before_provider_request").then(() => { done = true; });
+      if (ms) {
+        mock.timers.tick(ms - 1);
+        await Promise.resolve();
+        assert.equal(done, false, "The retry must wait for its delay");
+        mock.timers.tick(1);
+      }
+      await request;
+      assert.equal(done, true);
+    }
+    await checkDelay(0);
+    for (const ms of [10_000, 20_000, 40_000, 60_000, 60_000]) {
+      await failed("HTTP 429: Too Many Requests");
+      await checkDelay(ms);
+    }
+    await emit("message_end", { message: { role: "assistant", stopReason: "stop" } });
+    await checkDelay(0);
+    await failed("rate_limit_exceeded");
+    await checkDelay(10_000);
+    await failed("401: Invalid API key");
+    await checkDelay(0);
+    await failed("429");
+    const controller = new AbortController();
+    const cancelled = emit("before_provider_request", {}, { signal: controller.signal });
+    controller.abort();
+    await assert.rejects(cancelled, { name: "AbortError" });
+    await emit("session_start");
+    await checkDelay(0);
+  } finally {
+    mock.timers.reset();
+    syncBuiltinESMExports();
+  }
+
   const agentsDir = join(process.env.PI_CODING_AGENT_DIR, "agents");
   mkdirSync(agentsDir, { recursive: true });
   for (const name of ["scout", "worker"]) {
@@ -71,17 +124,34 @@ try {
     { agent: "scout", task: "Find the code" },
     { agent: "worker", task: "Change the code" },
   ];
-  const result = await execute("parallel", { tasks }, undefined, undefined, ctx);
+  const startupTasks = [...tasks, ...Array.from({ length: 3 }, (_, index) => ({
+    agent: "worker", task: `Queued task ${index}`,
+  }))];
+  const result = await execute("parallel", { tasks: startupTasks }, undefined, undefined, ctx);
   assert.ok(result.details.results.every((child) => child.exitCode === 0), JSON.stringify(result));
   const sessions = await SessionManager.list(root);
   const children = sessions.filter((session) => session.parentSessionPath === parent.getSessionFile());
-  assert.equal(children.length, 2);
-  assert.deepEqual(children.map((session) => session.name).sort(), ["subagent:scout", "subagent:worker"]);
+  assert.equal(children.length, startupTasks.length);
+  const starts = children.map((child) => SessionManager.open(child.path).getEntries()
+    .find((entry) => entry.customType === "invocation").data.startedAt).sort((a, b) => a - b);
+  for (let index = 1; index < starts.length; index++) {
+    assert.ok(starts[index] - starts[index - 1] >= 1400,
+      `Worker start interval: ${starts[index] - starts[index - 1]} ms`);
+  }
+  assert.deepEqual(children.map((session) => session.name).sort(),
+    startupTasks.map((task) => `subagent:${task.agent}`).sort());
   for (const child of children) {
-    const task = tasks.find((task) => child.name === `subagent:${task.agent}`);
-    assert.equal(child.firstMessage, `Task: ${task.task}`);
+    const task = startupTasks.find((task) => child.firstMessage === `Task: ${task.task}`);
+    assert.ok(task);
+    assert.equal(child.name, `subagent:${task.agent}`);
   }
   assert.equal(parent.getEntries().length, 1, "The parent transcript must stay unchanged");
+
+  const cancelled = new AbortController();
+  cancelled.abort();
+  const sessionCount = (await SessionManager.list(root)).length;
+  await assert.rejects(execute("cancelled", { tasks }, cancelled.signal, undefined, ctx), { name: "AbortError" });
+  assert.equal((await SessionManager.list(root)).length, sessionCount);
 
   const child = SessionManager.open(children[0].path);
   const nested = await execute("nested", tasks[0], undefined, undefined, { ...ctx, sessionManager: child });

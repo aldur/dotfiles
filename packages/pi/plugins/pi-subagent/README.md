@@ -24,6 +24,11 @@ changes before you apply them. The build runs
 - **Extensions:** Upstream can start the current Pi script directly. This copy
   also passes the paths in `DOTFILES_PI_EXTENSIONS` as `-e` options, so children
   use the same plugin builds as the parent wrapper.
+- **Rate limits:** Worker starts are at least 1.5 seconds apart within each
+  parent process. After a 429 or rate limit error, the worker adds a delay before
+  its next request: 10, 20, 40, then at most 60 seconds. Pi keeps its retry limit
+  and adds its own delay. A successful response resets the added delay.
+  Cancellation stops the wait. Parent requests keep their usual retry policy.
 
 ## Agent files
 

@@ -17,6 +17,7 @@ import { spawn } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 import type { AgentToolResult, ThinkingLevel } from "@earendil-works/pi-agent-core";
 import type { Message } from "@earendil-works/pi-ai";
 import { StringEnum } from "@earendil-works/pi-ai";
@@ -38,6 +39,21 @@ const MAX_PARALLEL_TASKS = positiveInt(process.env.PI_SUBAGENT_MAX_TASKS, 8);
 const MAX_CONCURRENCY = positiveInt(process.env.PI_SUBAGENT_CONCURRENCY, 4);
 const COLLAPSED_ITEM_COUNT = 10;
 const PER_TASK_OUTPUT_CAP = 50 * 1024;
+const START_INTERVAL_MS = 1500;
+let nextStart = 0;
+let startQueue = Promise.resolve();
+
+function waitForWorkerStart(signal?: AbortSignal): Promise<void> {
+	const ready = startQueue.then(async () => {
+		signal?.throwIfAborted();
+		const wait = nextStart - performance.now();
+		if (wait > 0) await delay(Math.ceil(wait), undefined, { signal });
+		signal?.throwIfAborted();
+		nextStart = performance.now() + START_INTERVAL_MS;
+	});
+	startQueue = ready.catch(() => {});
+	return ready;
+}
 
 function positiveInt(value: string | undefined, fallback: number): number {
 	const number = Number(value);
@@ -297,6 +313,7 @@ async function runSingleAgent(
 	onUpdate: OnUpdateCallback | undefined,
 	makeDetails: (results: SingleResult[]) => SubagentDetails,
 ): Promise<SingleResult> {
+	signal?.throwIfAborted();
 	const agent = agents.find((a) => a.name === agentName);
 
 	if (!agent) {
@@ -363,11 +380,13 @@ async function runSingleAgent(
 
 		args.push(`Task: ${task}`);
 		let wasAborted = false;
+		await waitForWorkerStart(signal);
 
 		const exitCode = await new Promise<number>((resolve) => {
 			const invocation = getPiInvocation(args);
 			const proc = spawn(invocation.command, invocation.args, {
 				cwd: cwd ?? defaultCwd,
+				env: { ...process.env, PI_SUBAGENT_WORKER: "1" },
 				shell: false,
 				stdio: ["ignore", "pipe", "pipe"],
 			});
@@ -399,7 +418,7 @@ async function runSingleAgent(
 						}
 						if (!currentResult.model && msg.model) currentResult.model = msg.model;
 						if (msg.stopReason) currentResult.stopReason = msg.stopReason;
-						if (msg.errorMessage) currentResult.errorMessage = msg.errorMessage;
+						currentResult.errorMessage = msg.errorMessage;
 					}
 					emitUpdate();
 				}
@@ -500,6 +519,20 @@ const SubagentParams = Type.Object({
 });
 
 export default function (pi: ExtensionAPI) {
+	if (process.env.PI_SUBAGENT_WORKER === "1") {
+		let retryDelay = 0;
+		pi.on("session_start", () => { retryDelay = 0; });
+		pi.on("message_end", ({ message }) => {
+			if (message.role !== "assistant") return;
+			const rateLimited = message.stopReason === "error" &&
+				/\b429\b|rate[ _-]?limit|too many requests/i.test(message.errorMessage ?? "");
+			retryDelay = rateLimited ? Math.min(retryDelay ? retryDelay * 2 : 10_000, 60_000) : 0;
+		});
+		pi.on("before_provider_request", async (_event, ctx) => {
+			// Keep Pi's retry count and session. Delay only the next request.
+			if (retryDelay) await delay(retryDelay, undefined, { signal: ctx.signal });
+		});
+	}
 	pi.registerFlag("agent", {
 		type: "string",
 		description: "Load an agent Markdown file (can be used multiple times)",
