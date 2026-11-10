@@ -10,12 +10,15 @@ rustPlatform.buildRustPackage (finalAttrs: {
   pname = "agent-log";
   version = "0.1.0";
 
-  # `target/` contains the results of a local build. It is large, and each
-  # cargo command changes it. Thus the source must not include it.
-  src = lib.cleanSourceWith {
-    src = ./.;
-    filter = path: _: baseNameOf path != "target";
-    name = "agent-log-source";
+  # Only the crate. Thus a change to a test or to a local `target/` does not
+  # compile the crate again.
+  src = lib.fileset.toSource {
+    root = ./.;
+    fileset = lib.fileset.unions [
+      ./Cargo.toml
+      ./Cargo.lock
+      ./src
+    ];
   };
 
   cargoLock.lockFile = ./Cargo.lock;

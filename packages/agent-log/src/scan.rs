@@ -47,12 +47,18 @@ fn stores(home: &Path, pi_dir: &Path) -> Vec<(Agent, PathBuf)> {
 /// results stay correct.
 pub fn project_dir_candidates(cwd: &Path) -> Vec<String> {
     let path = cwd.to_string_lossy();
-    let dashed: String = path
+    let claude: String = path
         .chars()
         .map(|c| if c == '/' || c == '.' { '-' } else { c })
         .collect();
-    let trimmed = dashed.trim_start_matches('-');
-    vec![dashed.clone(), format!("--{trimmed}--")]
+    // pi keeps the dots. It removes one initial separator.
+    let pi: String = path
+        .strip_prefix('/')
+        .unwrap_or(&path)
+        .chars()
+        .map(|c| if matches!(c, '/' | '\\' | ':') { '-' } else { c })
+        .collect();
+    vec![claude, format!("--{pi}--")]
 }
 
 /// All the `.jsonl` files below `root`. Claude and pi use one level of
@@ -142,13 +148,13 @@ pub fn search_terms(query: &str) -> Vec<String> {
     query.split_whitespace().map(str::to_lowercase).collect()
 }
 
-pub fn summarize_file(path: &Path, terms: &[String]) -> Option<Session> {
+pub fn summarize_file(path: &Path) -> Option<Session> {
     crate::metadata::summarize(
         path,
         mtime(path),
         None,
         &mut Vec::new(),
-        &crate::search::Query::new(terms),
+        &crate::search::Query::new(&[]),
     )
 }
 

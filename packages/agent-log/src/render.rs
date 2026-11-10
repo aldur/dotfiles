@@ -89,7 +89,7 @@ fn render_record(
 
 /// Session metadata accompanies copied/exported turns, not every preview.
 pub fn header(path: &Path) -> String {
-    let Some(session) = scan::summarize_file(path, &[]) else {
+    let Some(session) = scan::summarize_file(path) else {
         return String::new();
     };
     header_from(&session)

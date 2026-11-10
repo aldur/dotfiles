@@ -39,7 +39,7 @@ Options:
   --list            Print picker rows to stdout instead of running fzf
   --show-model      Show the model in conversation rows
   --query <text>    Filter sessions by full text (space-separated AND terms)
-  --no-tools        With --full, drop tool calls and results (dialogue only)
+  --no-tools        Drop tool calls and results (dialogue only)
   --pretty          Render through glow/bat when stdout is a terminal
   --color <when>    always, never or auto (default: auto; NO_COLOR is honoured)
   -h, --help        Show this help

@@ -34,12 +34,14 @@ impl<'a> Query<'a> {
         let Some(raw) = &self.raw else {
             return true;
         };
-        // JSON Unicode escapes can spell any character. \b and \f are
-        // stripped by flatten(), potentially joining the two sides of a word.
+        // JSON Unicode escapes can spell any character. \b, \f, DEL and the C1
+        // controls are stripped by flatten(), potentially joining the two
+        // sides of a word.
         // These are the only non-ASCII scalars whose lowercase introduces an
         // ASCII character. The exhaustive test below guards Unicode updates.
         line.contains('\u{212a}')
             || line.contains('\u{0130}')
+            || line.contains(|c| matches!(c, '\u{7f}'..='\u{9f}'))
             || memchr::memmem::find(line.as_bytes(), b"\\u").is_some()
             || memchr::memmem::find(line.as_bytes(), b"\\b").is_some()
             || memchr::memmem::find(line.as_bytes(), b"\\f").is_some()
