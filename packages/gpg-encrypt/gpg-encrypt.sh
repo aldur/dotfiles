@@ -55,7 +55,6 @@ EXAMPLES:
   gpg-encrypt --email user@example.com document.txt
 
 EOF
-	exit 0
 }
 
 # Parse arguments
@@ -75,10 +74,12 @@ while [[ $# -gt 0 ]]; do
 			;;
 		-h|--help)
 			usage
+			exit 0
 			;;
 		-*)
-			echo "Error: Unknown option $1"
-			usage
+			echo "Error: Unknown option $1" >&2
+			usage >&2
+			exit 1
 			;;
 		*)
 			if [ -z "$INPUT_FILE" ]; then
