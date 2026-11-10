@@ -70,12 +70,16 @@ jobs:
           token: ${{ github.token }}
           path: ${{ env.SIGNING_KEYS }}
 
+      - name: Allow user namespaces for the entrypoint check
+        if: matrix.app == 'push'
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
       - name: Build and check the image
         if: matrix.app == 'push'
         run: |
           nix build --no-link --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
-            "./base_hosts/apple-container#checks.$NIX_SYSTEM.container-size"
+            "./base_hosts/apple-container#checks.$NIX_SYSTEM.container-size" \
+            "./base_hosts/apple-container#checks.$NIX_SYSTEM.entrypoint-fails-closed"
         env:
           NIX_SYSTEM: ${{ matrix.arch.system }}
 

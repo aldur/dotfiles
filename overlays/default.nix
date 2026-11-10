@@ -35,4 +35,17 @@
   # After packages.nix: it slims some of the packages defined there
   # (remarks), so it needs them in `prev`.
   (import ./slim.nix { inherit self; })
+
+  # `pkgsUnstable` also gets this list. nixpkgs-unstable has the fixes, so
+  # the expiry guards of these overrides throw there. Use the stock packages
+  # on that set only. Delete a name here when you delete its override.
+  (
+    _final: prev:
+    prev.lib.optionalAttrs (toString prev.path == toString self.inputs.nixpkgs-unstable) {
+      inherit (self.inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system})
+        nix-direnv
+        apparmor-parser
+        ;
+    }
+  )
 ]

@@ -126,9 +126,10 @@ jobs:
           branch: automated/update-${{ matrix.package }}
           title: "packages: bump ${{ matrix.package }}"
           commit-message: "packages: bump ${{ matrix.package }}"
+          # GitHub shows each newline in a pull request body as a line break.
+          # Keep each paragraph on one line.
           body: |
             Automated `${{ matrix.package }}` bump via `nix-update`.
 
-            Updates the pinned version/rev and source hashes,
-            verified to build on the runner before opening this PR.
+            Updates the pinned version/rev and source hashes, verified to build on the runner before opening this PR.
           delete-branch: true

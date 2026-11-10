@@ -221,6 +221,12 @@ jobs:
           - runner: ubuntu-26.04
             target: ./base_hosts/crostini#checks.x86_64-linux.baguette-verifier
 
+          - runner: ubuntu-26.04
+            target: ./base_hosts/crostini#checks.x86_64-linux.rebuild-resources
+
+          - runner: ubuntu-26.04
+            target: ./base_hosts/crostini#checks.x86_64-linux.ssh-configurations
+
           - runner: ubuntu-26.04-arm
             target: ./base_hosts/browser#baguette-zimage
           - runner: ubuntu-26.04
