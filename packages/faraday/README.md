@@ -103,7 +103,7 @@ faraday --allow hostA:8080 --allow hostB:8080 --local-port 8080 --local-port 808
   internal service. `--map` covers in-sandbox name lookups via `/etc/hosts`.
 - The read-only root includes all of `$HOME`: credentials such as `~/.aws`
   or `~/.config/gh` are **readable** inside the jail. Use `--mask` to hide
-  them (the `sandbox` alias below does this for personal directories).
+  them (the `sandbox` alias above does this for personal directories).
 - `--allow` restricts *destinations*, not data: any allowed destination is
   also an exfiltration channel for everything readable inside the jail.
 - The nscd/nsncd socket (`/run/nscd/socket`) is masked inside the sandbox:
