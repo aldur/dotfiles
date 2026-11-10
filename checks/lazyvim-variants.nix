@@ -27,7 +27,7 @@ let
   lightClosure = closureInfo { rootPaths = [ lazyvim-light ]; };
 
   # No grammar list is restated here. Which languages ship is the build's to
-  # say (packages/lazyvim/plugins.nix), and a copy of it would only drift into
+  # say (packages/lazyvim/grammars.nix), and a copy of it would only drift into
   # asserting a set nothing ships. What this check owns is the *shape*: each
   # variant clears a floor, the light set is contained in the full one, and
   # the languages below prove themselves by actually highlighting. The size

@@ -60,7 +60,7 @@ in
       # Make sure root has no password.
       root.initialHashedPassword = lib.mkForce null;
 
-      # Root administration from the guest's loopback interface; see ssh.nix.
+      # Root administration through the guest-local Unix socket; see ssh.nix.
       root.openssh.authorizedKeys.keys = config.identity.authorizedKeys;
     };
 

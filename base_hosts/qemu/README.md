@@ -27,8 +27,8 @@ qemu-vm -d /data/my-vm -p 22:2222 -p 80:8080
 # Start with more resources
 qemu-vm --memory 8192 --cores 4 --disk-size 128 -p 22:2222
 
-# Run in snapshot mode (changes not saved to disk)
-qemu-vm --snapshot -p 22:2222
+# Run in ephemeral mode (changes not saved to disk)
+qemu-vm --ephemeral -p 22:2222
 
 # Clean VM state and start fresh
 qemu-vm --clean -p 22:2222
@@ -111,7 +111,7 @@ needing to re-verify the guest fingerprint for every new VM.
 To modify the VM configuration, edit `qemu.nix` and rebuild the package:
 
 ```bash
-# From the nix directory
+# From the repository root
 nix build .#qemu-vm
 ./result/bin/qemu-vm -p 22:2222
 ```

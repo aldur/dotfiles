@@ -4,7 +4,7 @@ My collection of dotfiles:
 
 - [`flake.nix`](./flake.nix) is the entrypoint, while directories hold
   modules, overlays, packages, etc.
-- Host-specific configuration to into [`base_hosts`](base_hosts/), consuming
+- Host-specific configuration goes into [`base_hosts`](base_hosts/), consuming
   the root [flake.nix](flake.nix) as an input.
 
 Most modules assume the username to be `aldur`.
