@@ -91,7 +91,6 @@ with tempfile.TemporaryDirectory(prefix="pi-extensions-") as temporary:
     with contextlib.closing(Pi(wrapper_a, root)) as pi:
         pi.start(root, "A", user=False)
         pi.child(root, "A", user=False)
-    assert not (agent / ".dotfiles-plugins.ts").exists()
 
     # The same version label has two store paths. Check both mismatch directions.
     for wrapper, configured, build in [

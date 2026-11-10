@@ -630,15 +630,7 @@ test("recognized effort contracts produce valid low/medium/max and off payloads"
       h.useLocal();
       await h.emit("session_start");
       for (const level of ["off", "low", "medium", "max"]) {
-        let payload;
-        await streamSimple(h.active, {
-          messages: [{ role: "user", content: "test", timestamp: 0 }],
-        }, {
-          apiKey: "test-only",
-          reasoning: level === "off" ? undefined : level,
-          onPayload: (body) => { payload = body; throw new Error("Captured before network access"); },
-          fetch: async () => { throw new Error("Unexpected provider request"); },
-        }).result();
+        const payload = await capturePayload(h.active, level);
         assert.deepEqual(payload.chat_template_kwargs, {
           enable_thinking: level !== "off",
           preserve_thinking: true,

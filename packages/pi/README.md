@@ -56,6 +56,8 @@ wrapper is in [standalone.nix](standalone.nix).
 | `PI_OPENAI_BASE_URL` | OpenAI-compatible API URL, including `/v1`. | Unset; discovery is disabled. |
 | `PI_OPENAI_API_KEY` | OpenAI-compatible API key. | `no-key` |
 | `PI_OPENAI_PROFILE` | models.dev provider ID for model metadata. | Unset; use endpoint metadata. |
+| `PI_SUBAGENT_CONCURRENCY` | Maximum concurrent subagent workers for each provider. | `4` |
+| `PI_SUBAGENT_MAX_TASKS` | Maximum tasks in one parallel subagent call. | `8` |
 | `PI_TELEMETRY` | Pi telemetry setting. | `0` |
 | `PI_SKIP_VERSION_CHECK` | Skip Pi's startup version check. | `1` for normal runs. |
 | `PNPM_HOME` | Self-managed Pi installation directory. | `${XDG_DATA_HOME:-~/.local/share}/pnpm` on Linux; `~/Library/pnpm` on macOS. |
