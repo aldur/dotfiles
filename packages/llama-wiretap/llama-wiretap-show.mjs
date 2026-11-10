@@ -85,7 +85,6 @@ const tty = process.stdout.isTTY && !process.env.NO_COLOR;
 const style = (code, text) => (tty ? `\u001b[${code}m${text}\u001b[0m` : text);
 const bold = (text) => style("1", text);
 const dim = (text) => style("2", text);
-const cyan = (text) => style("36", text);
 
 const section = (title, body) => `\n${bold(`── ${title} ──`)}\n${body || dim("(empty)")}\n`;
 const out = (text) => process.stdout.write(text);

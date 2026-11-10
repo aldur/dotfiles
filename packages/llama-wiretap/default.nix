@@ -38,8 +38,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   # Proxies a streaming completion over both a TCP and a Unix socket and
   # checks the transcript against what the upstream actually received.
-  # Reachable as `llama-wiretap.tests`, so the flake check finds it without
-  # being told it exists.
   passthru.tests.integration = callPackage ./test.nix {
     llama-wiretap = finalAttrs.finalPackage;
   };

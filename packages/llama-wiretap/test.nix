@@ -119,7 +119,7 @@ stdenvNoCC.mkDerivation {
 
       # Secrets do not belong in a transcript that exists to be pasted around.
       printf '%s' "$record" | jq -e '.requestHeaders.authorization == "<redacted>"' > /dev/null
-      ! grep SECRET "$log" > /dev/null
+      if grep -q SECRET "$log"; then exit 1; fi
 
       # The stream reached the client whole, chunk framing intact.
       grep 'data: \[DONE\]' "$sse" > /dev/null
@@ -168,7 +168,7 @@ stdenvNoCC.mkDerivation {
       printf '%s' "$rendered" | grep "SYSMARK" > /dev/null
       printf '%s' "$rendered" | grep "thinking out loud" > /dev/null
       printf '%s' "$rendered" | grep "hello" > /dev/null
-      ! printf '%s' "$rendered" | grep -- "1. SYSTEM" > /dev/null
+      if printf '%s' "$rendered" | grep -q -- "1. SYSTEM"; then exit 1; fi
 
       # --full keeps both views side by side.
       full=$(llama-wiretap-show "$log" --full)
@@ -260,7 +260,7 @@ SESSION
     # It has to say what it cannot show, rather than imply pi sent no system prompt.
     printf '%s' "$session" | grep "no system prompt" > /dev/null
     # Piped output carries no escape codes.
-    ! printf '%s' "$session" | grep -q "$(printf '\033')" 
+    if printf '%s' "$session" | grep -q "$(printf '\033')"; then exit 1; fi
     echo "  ✓ pi session"
 
     echo "=== TCP upstream ==="
@@ -367,7 +367,7 @@ RENDERR
     printf '%s' "$toks" | grep "re-tokenized against 127.0.0.1:18083" > /dev/null
     printf '%s' "$toks" | grep "SYSMARK" > /dev/null
     printf '%s' "$toks" | grep "matches the capture" > /dev/null
-    ! printf '%s' "$toks" | grep -q "drifted"
+    if printf '%s' "$toks" | grep -q "drifted"; then exit 1; fi
     # The server target also takes the upstream's socket, or a pasted URL.
     llama-wiretap-show tcp-uds.jsonl --tokens --id 2 --server "$upstream" \
       | grep "matches the capture" > /dev/null

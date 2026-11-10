@@ -1,6 +1,6 @@
-// A stand-in for llama-server, for ./test.nix. Implements just the three
+// A stand-in for llama-server, for ./test.nix. Implements just the four
 // routes the proxy touches, with the same shapes llama.cpp uses: a streaming
-// chat completion, /apply-template, and /tokenize.
+// chat completion, /apply-template, /tokenize, and /props.
 //
 // The prompt it renders embeds the tool names and message contents it was
 // given, so the test can prove the proxy forwarded the real payload rather

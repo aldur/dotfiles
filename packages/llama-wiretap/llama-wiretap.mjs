@@ -227,6 +227,8 @@ const server = createServer((clientReq, clientRes) => {
 			request: request.json ?? request.text,
 		});
 
+		// Only the first terminal event of an exchange writes a record.
+		let settled = false;
 		const proxied = httpRequest(
 			{ ...upstream, path: clientReq.url, method: clientReq.method, headers },
 			(upstreamRes) => {
@@ -239,17 +241,29 @@ const server = createServer((clientReq, clientRes) => {
 					clientRes.write(chunk);
 				});
 				upstreamRes.on("end", () => {
+					settled = true;
 					clientRes.end();
 					void record(id, clientReq, reqBody, upstreamRes, Buffer.concat(resChunks));
+				});
+				// The upstream connection closed before the response was complete.
+				upstreamRes.on("error", (error) => {
+					if (settled) return;
+					settled = true;
+					clientRes.destroy();
+					write({ id, at: startedAt, state: "error", path: clientReq.url, error: error.message });
 				});
 			},
 		);
 		proxied.on("error", (error) => {
+			if (settled) return;
+			settled = true;
 			clientRes.writeHead(502, { "content-type": "application/json" });
 			clientRes.end(JSON.stringify({ error: { message: `llama-wiretap: ${error.message}` } }));
 			write({ id, at: startedAt, state: "error", path: clientReq.url, error: error.message });
 		});
-		clientReq.on("aborted", () => {
+		clientRes.on("close", () => {
+			if (settled) return;
+			settled = true;
 			proxied.destroy();
 			// The client walked away mid-stream — a cancelled turn, or the agent
 			// giving up on a model that is still generating.
