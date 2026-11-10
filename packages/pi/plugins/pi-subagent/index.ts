@@ -56,6 +56,46 @@ function waitForWorkerStart(signal?: AbortSignal): Promise<void> {
 	return ready;
 }
 
+// Workers of one provider share slots, also across parallel tool calls.
+const workerPools = new Map<string, { free: number; queue: Array<() => void> }>();
+
+function workerPool(model: string | undefined) {
+	const provider = model?.includes("/") ? model.slice(0, model.indexOf("/")) : "";
+	let pool = workerPools.get(provider);
+	if (!pool) {
+		pool = { free: MAX_CONCURRENCY, queue: [] };
+		workerPools.set(provider, pool);
+	}
+	return pool;
+}
+
+async function acquireWorkerSlot(model: string | undefined, signal?: AbortSignal): Promise<() => void> {
+	signal?.throwIfAborted();
+	const pool = workerPool(model);
+	const release = () => {
+		const next = pool.queue.shift();
+		if (next) next();
+		else pool.free++;
+	};
+	if (pool.free > 0) {
+		pool.free--;
+		return release;
+	}
+	await new Promise<void>((resolve, reject) => {
+		const grant = () => {
+			signal?.removeEventListener("abort", abort);
+			resolve();
+		};
+		const abort = () => {
+			pool.queue.splice(pool.queue.indexOf(grant), 1);
+			reject(signal?.reason);
+		};
+		pool.queue.push(grant);
+		signal?.addEventListener("abort", abort, { once: true });
+	});
+	return release;
+}
+
 function positiveInt(value: string | undefined, fallback: number): number {
 	const number = Number(value);
 	return Number.isInteger(number) && number > 0 ? number : fallback;
@@ -239,26 +279,6 @@ function getDisplayItems(messages: Message[]): DisplayItem[] {
 	return items;
 }
 
-async function mapWithConcurrencyLimit<TIn, TOut>(
-	items: TIn[],
-	concurrency: number,
-	fn: (item: TIn, index: number) => Promise<TOut>,
-): Promise<TOut[]> {
-	if (items.length === 0) return [];
-	const limit = Math.max(1, Math.min(concurrency, items.length));
-	const results: TOut[] = new Array(items.length);
-	let nextIndex = 0;
-	const workers = new Array(limit).fill(null).map(async () => {
-		while (true) {
-			const current = nextIndex++;
-			if (current >= items.length) return;
-			results[current] = await fn(items[current], current);
-		}
-	});
-	await Promise.all(workers);
-	return results;
-}
-
 async function writePromptToTempFile(agentName: string, prompt: string): Promise<{ dir: string; filePath: string }> {
 	const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "pi-subagent-"));
 	const safeName = agentName.replace(/[^\w.-]+/g, "_");
@@ -349,6 +369,7 @@ async function runSingleAgent(
 
 	let tmpPromptDir: string | null = null;
 	let tmpPromptPath: string | null = null;
+	let releaseWorkerSlot: (() => void) | undefined;
 
 	const currentResult: SingleResult = {
 		agent: agentName,
@@ -381,6 +402,7 @@ async function runSingleAgent(
 
 		args.push(`Task: ${task}`);
 		let wasAborted = false;
+		releaseWorkerSlot = await acquireWorkerSlot(model, signal);
 		await waitForWorkerStart(signal);
 
 		const exitCode = await new Promise<number>((resolve) => {
@@ -467,6 +489,7 @@ async function runSingleAgent(
 		if (wasAborted) throw new Error("Subagent was aborted");
 		return currentResult;
 	} finally {
+		releaseWorkerSlot?.();
 		if (tmpPromptPath)
 			try {
 				fs.unlinkSync(tmpPromptPath);
@@ -730,7 +753,7 @@ export default function (pi: ExtensionAPI) {
 					}
 				};
 
-				const results = await mapWithConcurrencyLimit(params.tasks, MAX_CONCURRENCY, async (t, index) => {
+				const results = await Promise.all(params.tasks.map(async (t, index) => {
 					const result = await runSingleAgent(
 						ctx.cwd,
 						dispatchDefaults,
@@ -753,7 +776,7 @@ export default function (pi: ExtensionAPI) {
 					allResults[index] = result;
 					emitParallelUpdate();
 					return result;
-				});
+				}));
 
 				const successCount = results.filter((r) => !isFailedResult(r)).length;
 				const summaries = results.map((r) => {

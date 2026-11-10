@@ -27,7 +27,11 @@ changes before you apply them. The build runs
 - **Worker environment:** On session start, model change, and thinking level
   change, workers set `PI_MODEL` to `provider/id`, `PI_THINKING` to the thinking
   level, and `PI_SESSION` to the session ID. Child commands inherit these values.
-- **Rate limits:** Worker starts are at least 1.5 seconds apart within each
+- **Rate limits:** Upstream limits each parallel call to its own pool of
+  workers. This copy limits the workers of each provider in the parent process
+  to `PI_SUBAGENT_CONCURRENCY` (default 4), across all modes and tool calls.
+  The provider is the model prefix before `/`. Models without a prefix share
+  one pool. Worker starts are at least 1.5 seconds apart within each
   parent process. After a 429 or rate limit error, the worker adds a delay before
   its next request: 10, 20, 40, then at most 60 seconds. Pi keeps its retry limit
   and adds its own delay. A successful response resets the added delay.
