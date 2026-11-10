@@ -61,8 +61,11 @@ pub fn project_dir_candidates(cwd: &Path) -> Vec<String> {
     vec![claude, format!("--{pi}--")]
 }
 
-/// All the `.jsonl` files below `root`. Claude and pi use one level of
-/// directories. Codex uses three levels, for the year, the month and the day.
+/// All the `.jsonl` files below `root`, at all levels. Claude and pi put a
+/// conversation one level down. Codex uses three levels, for the year, the
+/// month and the day. Claude also puts the transcripts of subagents at lower
+/// levels, in `<session>/subagents/`. Thus each of these transcripts shows as
+/// a conversation.
 ///
 /// `only` gives the names of the project directories to read. It applies to
 /// the first level below the root, because Claude and pi put the name of the

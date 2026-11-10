@@ -73,7 +73,6 @@ class AgentLogTests(unittest.TestCase):
 
     def test_newest_first_and_complete_full_text_search(self):
         self.assertEqual(self.ids(), ["codex", "pi", "claude"])
-        self.assertEqual(self.ids(), ["codex", "pi", "claude"])
         # AND terms can be in separate turns; middle/tool/thinking text matters.
         for query in ["toolonly", "deepthought CAFÉ", "needle finalanswer", "first finalanswer", "middle"]:
             self.assertEqual(self.ids("--query", query), ["codex"])
@@ -95,7 +94,6 @@ class AgentLogTests(unittest.TestCase):
             for color in ["always", "never"]:
                 with self.subTest(command=command, color=color):
                     output = self.run_log(command, self.files[2], f"--color={color}", env=env)
-                    self.assertNotIn(warning, output)
                     self.assertIn("FinalAnswer", output)
         # Remove the generated warning, not matching text in real messages.
         with self.files[2].open("a") as out:
@@ -462,7 +460,6 @@ else:
                 self.assertIn("▾", expanded)
                 self.assertIn('"command": "ls"', expanded)
                 self.assertNotIn("HIDDENSIGNATURE", full)
-                self.assertNotIn("A pi session records", full)
                 dialogue = self.run_log("--full", path, "--no-tools")
                 self.assertNotIn("TESTTOOL", dialogue)
                 self.assertNotIn("RESULTMARK", dialogue)

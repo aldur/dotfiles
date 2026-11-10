@@ -26,8 +26,9 @@ impl Block {
 
 /// One user message, assistant reply, tool call or tool result.
 pub struct Turn {
-    /// The address of the turn in its file: the number of its line. Only the
-    /// adapter reads it.
+    /// The address of the turn in its file: the position of its record among
+    /// the lines that are valid JSON, counted from 1. The picker rows carry
+    /// it, and `scan::turn_record` finds the record with it.
     pub key: String,
     /// For example `user`, `assistant`, `thinking` or `tool: bash`.
     /// The value is free text, because the agents use different names.
@@ -42,7 +43,8 @@ pub struct Turn {
 pub struct Session {
     pub path: String,
     /// The name that the agent gives to the conversation. A resume command
-    /// takes this value. If the format records no name, use the file stem.
+    /// takes this value. For Claude, it is the file stem. pi and Codex record
+    /// it in the file. The value is empty if the file does not record it.
     pub id: String,
     /// `claude`, `pi`, `codex`.
     pub agent: &'static str,

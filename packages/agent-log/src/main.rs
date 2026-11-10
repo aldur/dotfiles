@@ -302,12 +302,11 @@ fn turn_rows(path: &Path, no_tools: bool) -> Vec<(String, String)> {
             (
                 t.key.clone(),
                 format!(
-                    "{}\t{}\t{}\t{}\t{}",
+                    "{}\t{}\t{}\t{}",
                     t.key,
                     style::dim(&format!("{:<14}", model::truncate(&t.kind, 14))),
                     style::dim(&format!("{:>8}", t.time)),
-                    t.text,
-                    ""
+                    t.text
                 ),
             )
         })
@@ -701,7 +700,7 @@ fn main() {
                             return;
                         }
                         if key == "alt-i" {
-                            emit(&format!("{}\n", row.split('\t').nth(3).unwrap_or(&path)));
+                            emit(&format!("{}\n", row.split('\t').nth(3).unwrap_or_default()));
                             return;
                         }
                         PathBuf::from(path)
@@ -758,7 +757,7 @@ fn main() {
             &[
                 format!("--prompt={}", turn_prompt(opts.no_tools)),
                 // Hide the internal record key, not the searchable body.
-                "--with-nth=2,3,4,5".into(),
+                "--with-nth=2,3,4".into(),
                 "--multi".into(),
                 // Select a row above the cursor. This is the opposite of tab.
                 "--bind=shift-tab:toggle+up".into(),
