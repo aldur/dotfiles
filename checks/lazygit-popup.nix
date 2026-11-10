@@ -85,7 +85,7 @@ runCommand "lazygit-popup-check"
     # First summon: creates the session, then fails to attach (no tty).
     lazygit-popup || true
 
-    session=$(tmux -S "$sock" list-sessions -F '#{session_name}' | grep '^_lazygit_')
+    session=$(tmux -S "$sock" list-sessions -F '#{session_name}' | grep '^_lazygit_' || true)
     if [ -z "$session" ]; then
       echo "no popup session created"
       tmux -S "$sock" list-sessions

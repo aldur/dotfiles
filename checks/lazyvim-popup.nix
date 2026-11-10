@@ -71,7 +71,7 @@ runCommand "lazyvim-popup-check"
     # First summon: creates the session, then fails to attach (no tty).
     lazyvim-popup capture "$TMPDIR/note.txt" || true
 
-    session=$(tmux -S "$sock" list-sessions -F '#{session_name}' | grep '^_lazyvim_capture_')
+    session=$(tmux -S "$sock" list-sessions -F '#{session_name}' | grep '^_lazyvim_capture_' || true)
     if [ -z "$session" ]; then
       echo "no popup session created"
       tmux -S "$sock" list-sessions
