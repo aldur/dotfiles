@@ -28,8 +28,6 @@ def main() -> None:
         element.unwrap()
 
     for element in soup.select(".wy-nav-content"):
-        if element.get("style"):
-            element["style"] = ""
         element["style"] = "max-width: none; margin: 0;"
 
     # Write back
