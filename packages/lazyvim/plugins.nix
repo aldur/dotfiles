@@ -43,16 +43,11 @@ with pkgs.vimPlugins;
     nvim-ts-autotag
     ts-comments-nvim
     blink-cmp
-    nvim-web-devicons
     persistence-nvim
     plenary-nvim
-    telescope-fzf-native-nvim
-    telescope-nvim
     todo-comments-nvim
     tokyonight-nvim
     trouble-nvim
-    vim-illuminate
-    vim-startuptime
     which-key-nvim
     # snacks ships its test suite — 18M of fixtures beside 1.3M of lua.
     (snacks-nvim.overrideAttrs (old: {

@@ -208,6 +208,30 @@ report(function()
 	-- the first spec with a rockspec makes lazy bootstrap hererocks.
 	check("lazy rocks support is off", require("lazy.core.config").options.rocks.enabled == false)
 
+	-- The pack directory and the enabled lazy specs must name the same
+	-- plugins. A plugin that no spec names cannot load. A spec without a
+	-- plugin makes lazy clone it at runtime. The two sets go out of step
+	-- when LazyVim adds or drops a plugin.
+	do
+		local shipped, wanted = {}, {}
+		local pack = require("nixCats").vimPackDir .. "/pack/myNeovimPackages"
+		for _, kind in ipairs({ "start", "opt" }) do
+			for name in vim.fs.dir(pack .. "/" .. kind) do
+				-- nixCats adds its own entries. They are not plugins.
+				shipped[name] = not vim.startswith(name, "nixCats-") or nil
+			end
+		end
+		for _, plugin in ipairs(require("lazy").plugins()) do
+			wanted[plugin.name] = true
+		end
+		for name in pairs(shipped) do
+			check("shipped plugin has a lazy spec: " .. name, wanted[name])
+		end
+		for name in pairs(wanted) do
+			check("lazy spec has a shipped plugin: " .. name, shipped[name])
+		end
+	end
+
 	-- The wrapper ships no host interpreters, so every provider must be off:
 	-- one left on probes for its interpreter on each checkhealth. All four
 	-- ride `settings.hosts` (see lazyvim.nix) — nixCats only emits the
