@@ -49,7 +49,6 @@
     markdownlint-cli2
     marksman
     pandoc-runtime
-    (pkgs.callPackage ../pandoc_md2html_assets/md2html.nix { })
   ];
   json = [ vscode-langservers-extracted ];
   toml = [ taplo ];
