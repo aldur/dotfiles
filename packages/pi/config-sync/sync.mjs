@@ -24,7 +24,7 @@ function merge(current, managed) {
   };
 }
 
-async function syncFile(path, managed, transform = (value) => value) {
+async function syncFile(path, managed) {
   // Match Pi's realpath:false lock, including for files that do not exist yet.
   // Read after acquiring it so another Pi session's latest writes are preserved.
   const release = await lockfile.lock(path, {
@@ -38,17 +38,10 @@ async function syncFile(path, managed, transform = (value) => value) {
     } catch (error) {
       if (error.code !== "ENOENT") throw error;
     }
-    if (info?.isSymbolicLink()) {
-      // Migrate the old Home Manager symlink without modifying its target.
-      if (!fs.realpathSync(path).startsWith("/nix/store/")) {
-        throw new Error(`${path}: refusing to replace a non-Nix symlink`);
-      }
-    } else if (info && !info.isFile()) {
-      throw new Error(`${path}: expected a regular file`);
-    }
+    if (info && !info.isFile()) throw new Error(`${path}: expected a regular file`);
     const original = info ? fs.readFileSync(path, "utf8") : undefined;
     const current = original === undefined ? {} : parseObject(original, path);
-    const next = transform(merge(current, managed));
+    const next = merge(current, managed);
     if (info?.isFile() && (info.mode & 0o777) === 0o600 &&
         JSON.stringify(current) === JSON.stringify(next)) return;
 
@@ -65,34 +58,6 @@ async function syncFile(path, managed, transform = (value) => value) {
   }
 }
 
-// These package names were written by home.nix. Keep other store paths.
-const legacyExtension = /^\/nix\/store\/[0-9a-z]{32}-pi-(?:llama|no-docs|startup-header|openai-discovery|statusline|subagent|system-prompt|throughput)(?:-[0-9][^/]*)?\/index\.ts$/;
-
-function removeManagedExtensions(settings) {
-  if (!Array.isArray(settings.extensions)) return settings;
-  return {
-    ...settings,
-    extensions: settings.extensions.filter((path) =>
-      !(typeof path === "string" && legacyExtension.test(path))),
-  };
-}
-
-function renameBrowserServer(config) {
-  const servers = { ...config.mcpServers };
-  const legacy = servers.browser;
-  if (!/^\/nix\/store\/[0-9a-z]{32}-pi-browser-mcp\/bin\/pi-browser-mcp$/.test(legacy?.command)) {
-    return config;
-  }
-  servers["playwright-lazy"] = merge(legacy, servers["playwright-lazy"]);
-  delete servers.browser;
-  return { ...config, mcpServers: servers };
-}
-
-export async function migrateExtensions(agentDir) {
-  const path = join(resolve(agentDir), "settings.json");
-  if (fs.existsSync(path)) await syncFile(path, {}, removeManagedExtensions);
-}
-
 export async function syncConfig(managed, agentDir) {
   if (!isObject(managed)) throw new Error("managed configuration must be a JSON object");
   for (const [name, value] of Object.entries(managed)) {
@@ -103,21 +68,15 @@ export async function syncConfig(managed, agentDir) {
   const directory = resolve(agentDir);
   fs.mkdirSync(directory, { recursive: true, mode: 0o700 });
   for (const [name, value] of Object.entries(managed)) {
-    await syncFile(join(directory, `${name}.json`), value,
-      name === "settings" ? removeManagedExtensions :
-        name === "mcp" && value.mcpServers?.["playwright-lazy"] ? renameBrowserServer : undefined);
+    await syncFile(join(directory, `${name}.json`), value);
   }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   try {
-    if (process.argv.length !== 4) throw new Error("usage: pi-config-sync MANAGED_JSON|--migrate-extensions AGENT_DIR");
+    if (process.argv.length !== 4) throw new Error("usage: pi-config-sync MANAGED_JSON AGENT_DIR");
     const [managedPath, agentDir] = process.argv.slice(2);
-    if (managedPath === "--migrate-extensions") {
-      await migrateExtensions(agentDir);
-    } else {
-      await syncConfig(parseObject(fs.readFileSync(managedPath, "utf8"), managedPath), agentDir);
-    }
+    await syncConfig(parseObject(fs.readFileSync(managedPath, "utf8"), managedPath), agentDir);
   } catch (error) {
     console.error(`pi-config-sync: ${error.message}`);
     process.exitCode = 1;

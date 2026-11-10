@@ -66,10 +66,6 @@ let
 
       # The packaged subagent forwards these paths when it bypasses this wrapper.
       export DOTFILES_PI_EXTENSIONS=${lib.escapeShellArg (builtins.toJSON pluginPaths)}
-      case "''${1-}" in
-      --version | -v | --help | -h | install | remove | uninstall | update | list | config | mcp) ;;
-      *) ${lib.getExe configSync} --migrate-extensions "''${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}" ;;
-      esac
 
       # pi only recognises its package subcommands as the first argument, and
       # rejects `-e` after them, so those run without the plugin flags.

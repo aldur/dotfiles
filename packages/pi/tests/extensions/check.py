@@ -92,12 +92,8 @@ with tempfile.TemporaryDirectory(prefix="pi-extensions-") as temporary:
         pi.start(root, "A", user=False)
         pi.child(root, "A", user=False)
 
-    # The same version label has two store paths. Check both mismatch directions.
-    for wrapper, configured, build in [
-        (wrapper_a, plugin_a, "A"), (wrapper_b, plugin_a, "B"),
-        (wrapper_b, plugin_b, "B"), (wrapper_a, plugin_b, "A"),
-    ]:
-        settings.write_text(json.dumps({"extensions": [configured, str(user)], "theme": "dark"}))
+    settings.write_text(json.dumps({"extensions": [str(user)], "theme": "dark"}))
+    for wrapper, build in [(wrapper_a, "A"), (wrapper_b, "B")]:
         with contextlib.closing(Pi(wrapper, root)) as pi:
             pi.start(root, build)
             commands = pi.request("get_commands")["commands"]
@@ -110,8 +106,6 @@ with tempfile.TemporaryDirectory(prefix="pi-extensions-") as temporary:
             assert sources["system-prompt"].endswith("-pi-system-prompt/index.ts"), sources
             assert len({sources[name] for name in ["check-child", "user-extension", "system-prompt"]}) == 3
             pi.child(root, build)
-        saved = json.loads(settings.read_text())
-        assert saved == {"extensions": [str(user)], "theme": "dark"}, saved
 
     # A later wrapper must not change the plugins in an earlier wrapper's children.
     with contextlib.closing(Pi(wrapper_a, root)) as first:
@@ -127,4 +121,4 @@ with tempfile.TemporaryDirectory(prefix="pi-extensions-") as temporary:
         assert not any(command["name"] == "user-extension" for command in commands), commands
         pi.child(root, "B")
 
-print("Pi revisions, rollback, clean home, individual extensions, and children passed")
+print("Pi revisions, clean home, individual extensions, and children passed")

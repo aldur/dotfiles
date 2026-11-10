@@ -176,8 +176,7 @@ in
         ) dotfilesSkills
       );
 
-      # Both Home Manager and the container call this explicit helper. Running
-      # after linkGeneration lets HM retire its former keybindings symlink first.
+      # Both Home Manager and the container call this explicit helper.
       activation.piSettings = lib.mkIf cfg.enable (
         lib.hm.dag.entryAfter [ "linkGeneration" ] ''
           run ${lib.getExe cfg.configSync}

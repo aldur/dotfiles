@@ -8,7 +8,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { pathToFileURL } from "node:url";
 
-const { syncConfig, migrateExtensions } = await import(pathToFileURL(process.env.PI_CONFIG_SYNC_MODULE));
+const { syncConfig } = await import(pathToFileURL(process.env.PI_CONFIG_SYNC_MODULE));
 const piPackage = process.env.PI_CONFIG_SYNC_PACKAGE;
 const { SettingsManager } = await import(pathToFileURL(join(piPackage, "dist/core/settings-manager.js")));
 const { KeybindingsManager } = await import(pathToFileURL(join(piPackage, "dist/core/keybindings.js")));
@@ -30,26 +30,6 @@ test("MCP settings preserve other servers and remain writable", async (t) => {
   await syncConfig({ mcp: { mcpServers: { browser } } }, dir);
   assert.deepEqual(read(path), { mcpServers: { other, browser: { enabled: false, ...browser } } });
   assert.equal(fs.statSync(path).mode & 0o777, 0o600);
-});
-
-test("renaming the packaged browser preserves settings and other browser servers", async (t) => {
-  const dir = fixture(t);
-  const path = join(dir, "mcp.json");
-  const legacy = {
-    command: `/nix/store/${"a".repeat(32)}-pi-browser-mcp/bin/pi-browser-mcp`,
-    enabled: false,
-  };
-  const next = { command: "/nix/store/new/bin/pi-playwright-lazy", exposure: "codemode" };
-  const managed = { mcp: { mcpServers: { "playwright-lazy": next } } };
-  write(path, { mcpServers: { browser: legacy } });
-  await syncConfig(managed, dir);
-  await syncConfig(managed, dir);
-  assert.deepEqual(read(path), { mcpServers: { "playwright-lazy": { enabled: false, ...next } } });
-
-  const personal = { command: "/local/browser" };
-  write(path, { mcpServers: { browser: personal } });
-  await syncConfig(managed, dir);
-  assert.deepEqual(read(path), { mcpServers: { browser: personal, "playwright-lazy": next } });
 });
 
 test("both writable files preserve undeclared values and load in Pi", async (t) => {
@@ -77,15 +57,10 @@ test("both writable files preserve undeclared values and load in Pi", async (t) 
   }
 });
 
-test("fresh home and the previous Nix keybindings symlink", async (t) => {
+test("fresh home", async (t) => {
   const dir = join(fixture(t), "agent");
   await syncConfig({ settings: { tuiMode: "regular" } }, dir);
-  const bindings = join(dir, "keybindings.json");
-  fs.symlinkSync(process.env.PI_CONFIG_SYNC_LEGACY, bindings);
-  await syncConfig({ keybindings: { "tui.editor.cursorUp": ["up", "ctrl+p"] } }, dir);
-  assert.equal(fs.lstatSync(bindings).isSymbolicLink(), false);
-  assert.deepEqual(read(bindings)["app.session.new"], ["ctrl+alt+n"]);
-  assert.deepEqual(read(process.env.PI_CONFIG_SYNC_LEGACY)["tui.editor.cursorUp"], ["up"]);
+  assert.deepEqual(read(join(dir, "settings.json")), { tuiMode: "regular" });
 });
 
 test("malformed JSON and non-object files survive a failed merge", async (t) => {
@@ -102,13 +77,13 @@ test("malformed JSON and non-object files survive a failed merge", async (t) => 
   assert.equal(fs.readdirSync(dir).some((name) => name.startsWith(".pi-config-")), false);
 });
 
-test("unmanaged symlinks are left intact", async (t) => {
+test("symlinks are left intact", async (t) => {
   const dir = fixture(t);
   const original = join(dir, "user-config.json");
   write(original, { theme: "dark" });
   const link = join(dir, "settings.json");
   fs.symlinkSync(original, link);
-  await assert.rejects(syncConfig({ settings: { tuiMode: "regular" } }, dir), /non-Nix symlink/);
+  await assert.rejects(syncConfig({ settings: { tuiMode: "regular" } }, dir), /expected a regular file/);
   assert.equal(fs.lstatSync(link).isSymbolicLink(), true);
   assert.deepEqual(read(original), { theme: "dark" });
 });
@@ -147,32 +122,4 @@ test("a busy Pi lock fails without changing the file or stealing the lock", asyn
   } finally {
     await release();
   }
-});
-
-test("migration removes legacy managed paths and preserves user extensions", async (t) => {
-  const dir = fixture(t);
-  const path = join(dir, "settings.json");
-  await migrateExtensions(join(dir, "missing"));
-  assert.equal(fs.existsSync(join(dir, "missing")), false);
-  const store = `/nix/store/${"0".repeat(32)}-`;
-  const user = [
-    "./user.ts", "~/extensions/custom.ts",
-    `${store}unrelated-1.0/index.ts`,
-    `${store}pi-subagent-custom/index.ts`,
-    `${store}pi-subagent-1.4.0/other.ts`,
-    "/tmp/pi-subagent-1.4.0/index.ts",
-  ];
-  const legacy = [
-    "pi-llama-0-unstable-2026-10-30", "pi-no-docs", "pi-startup-header",
-    "pi-openai-discovery", "pi-statusline", "pi-subagent-1.4.0",
-    "pi-system-prompt", "pi-throughput",
-  ].map((name) => `${store}${name}/index.ts`);
-  write(path, { extensions: [...legacy, ...user], theme: "dark", packages: ["npm:user-package"] });
-  await migrateExtensions(dir);
-  assert.deepEqual(read(path), { extensions: user, theme: "dark", packages: ["npm:user-package"] });
-  const before = fs.statSync(path, { bigint: true }).mtimeNs;
-  await migrateExtensions(dir);
-  assert.equal(fs.statSync(path, { bigint: true }).mtimeNs, before);
-  await syncConfig({ settings: { extensions: ["./declared.ts", ...legacy] } }, dir);
-  assert.deepEqual(read(path).extensions, ["./declared.ts"]);
 });

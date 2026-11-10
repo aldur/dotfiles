@@ -176,7 +176,7 @@ cover case differences and model aliases.
 All Pi tests are in [tests](tests). The package checks its extensions during
 the Nix build. The
 [standalone test](tests/standalone.nix) checks the managed settings and file links.
-The [extension test](tests/extensions/default.nix) checks revision changes, rollback,
+The [extension test](tests/extensions/default.nix) checks revision changes,
 individual extension paths, and subagent startup without model requests.
 
 ```sh
