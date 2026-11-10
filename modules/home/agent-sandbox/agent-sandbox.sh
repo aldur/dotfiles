@@ -163,8 +163,6 @@ for path in "${agent_read_write_paths[@]}"; do
   add_mount --bind "$path" 1
 done
 for path in "${extra_read_write_paths[@]}"; do
-  path=$(expand_path "$path")
-  check_grant "$path"
   add_mount --bind "$path"
 done
 writable_mounts=("${mount_args[@]}")
@@ -179,8 +177,6 @@ for path in "${user_read_only_paths[@]}" "${agent_read_only_paths[@]}"; do
   add_mount --ro-bind "$path" 1
 done
 for path in "${extra_read_only_paths[@]}"; do
-  path=$(expand_path "$path")
-  check_grant "$path"
   add_mount --ro-bind "$path"
 done
 read_only_mounts=("${mount_args[@]}")

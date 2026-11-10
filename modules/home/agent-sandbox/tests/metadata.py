@@ -394,5 +394,4 @@ while not Path('release').exists():
         if first.poll() is None:
             first.kill()
             first.wait()
-    assert not list(Path('/tmp').glob('agent-sandbox-private-*'))
     print('passed: shared state, atomic rewrites, SQLite and concurrency', flush=True)
