@@ -36,13 +36,8 @@
         set base (git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null)
     end
 
-    set -l root (git rev-parse --show-toplevel) || return 1
-
-    if not set -q _flag_no_fetch
-        if not git fetch origin 2>/dev/null
-            echo "gw: warning: fetch failed, continuing with local state" >&2
-        end
-    end
+    # Use the main worktree, so that all worktrees are siblings.
+    set -l root (path dirname (git rev-parse --path-format=absolute --git-common-dir)) || return 1
 
     # Already checked out elsewhere? Exact-match the branch ref in
     # porcelain output with awk (no regex, so dots or other metachars in
@@ -52,6 +47,12 @@
         echo "gw: branch '$branch' already checked out at $existing_wt" >&2
         cd $existing_wt
         return
+    end
+
+    if not set -q _flag_no_fetch
+        if not git fetch origin 2>/dev/null
+            echo "gw: warning: fetch failed, continuing with local state" >&2
+        end
     end
 
     # A hash distinguishes slash/dash and case-only branch names.
