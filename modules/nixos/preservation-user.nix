@@ -74,12 +74,7 @@ in
   config = lib.mkIf cfg.enable {
     preservation.preserveAt."/persist".users.${cfg.username} = {
       commonMountOptions = [ "x-gvfs-hide" ];
-      directories =
-        paths.base
-        ++ lib.optionals cfg.persistLazyvim paths.lazyvim
-        ++ lib.optionals cfg.persistLlm paths.llm
-        ++ lib.optionals cfg.persistClaudeCode paths.claudeDirectories
-        ++ lib.optionals cfg.persistCodex paths.codexDirectories;
+      directories = persistedDirs;
       files = lib.optionals cfg.persistClaudeCode paths.claudeFiles;
     };
 
