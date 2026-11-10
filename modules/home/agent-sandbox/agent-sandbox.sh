@@ -328,7 +328,7 @@ isolation_args=(
 # own protection mounts, so that no other mount shows them again.
 hide_args=(--empty-file "$sandbox_empty_file")
 for path in "${argc_hide[@]}"; do
-  [[ "$path" == /* ]] || die "--hide needs an absolute path: $path"
+  path=$(expand_path "$path")
   [ -e "$path" ] || die "path does not exist: $path"
   hide_args+=(--hide "$path")
 done

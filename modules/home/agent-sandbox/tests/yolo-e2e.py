@@ -207,7 +207,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                 assert records[-1]['argv'] == [*prefix, option, mode], records
                 failed, records = invoke(launcher, [option, mode, '--no-sandbox'], code=1)
                 assert 'sandbox options require' in failed.stderr and not records, failed
-            for option in ('--workspace', '--ro', '--rw', '--env', '--profile', '--network'):
+            for option in ('--workspace', '--ro', '--rw', '--env', '--hide', '--profile', '--network'):
                 result, records = invoke(launcher, [option], code=1)
                 assert 'requires a value' in result.stderr and not records, result
             _, records = invoke(launcher, ['--', '--ro', 'agent argument'])

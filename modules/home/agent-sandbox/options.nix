@@ -1,15 +1,15 @@
-# Shared NixOS options for each agent profile.
+# Shared options for each agent profile.
 { lib, pkgs }:
 let
   inherit (lib) mkOption types;
 in
-alias: {
+{
   enable = mkOption {
     type = types.bool;
     default = pkgs.stdenv.hostPlatform.isLinux;
     description = ''
-      On Linux, wrap `${alias}` in bubblewrap with an empty root and a
-      private home, /tmp and runtime directory. Bind system tools and
+      On Linux, run the agent in `agent-sandbox`: bubblewrap with an empty
+      root and a private home, /tmp and runtime directory. Bind system tools and
       selected configuration read-only, and the launch directory and
       the agent state read/write. Git metadata is protected.
       Other host paths, including /persist, are absent unless explicitly
@@ -80,7 +80,8 @@ alias: {
       Expose /var/log/journal, /run/log/journal and /etc/machine-id read-only
       when present, so journalctl can read host system and user logs.
       Host file permissions still apply. Journal and system bus sockets
-      remain hidden. The wrapper also accepts --journal for one launch.
+      remain hidden. The agent-sandbox command also accepts --journal for
+      one launch.
     '';
   };
   allowDocker = mkOption {
@@ -94,7 +95,8 @@ alias: {
       rootless mode. Missing sockets and rootful daemons stop the launch.
       Rootless Docker can access host files with the host user's permissions,
       beyond the workspace.
-      The wrapper also accepts --docker to enable this for one launch.
+      The agent-sandbox command also accepts --docker to enable this for one
+      launch.
     '';
   };
   extraEnvironmentAllowlist = mkOption {
@@ -105,8 +107,9 @@ alias: {
       Additional environment variable names to inherit in this agent's
       profile. Only tools, terminal and locale settings are inherited by
       default. Values come from the launch environment, never the Nix store.
-      The wrapper also accepts repeated --env NAME. Sandbox home, temporary
-      and runtime locations always take precedence over inherited values.
+      The agent-sandbox command also accepts repeated --env NAME. Sandbox
+      home, temporary and runtime locations always take precedence over
+      inherited values.
     '';
   };
   extraRuntimeDirAllowlist = mkOption {

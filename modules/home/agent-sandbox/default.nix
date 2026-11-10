@@ -48,12 +48,6 @@ let
             "~/.local/share/claude/versions"
             instructionsDirectory
           ];
-          extraEnvironmentAllowlist = agents.claude-code.sandbox.extraEnvironmentAllowlist ++ [
-            "IS_SANDBOX"
-            "CLAUBBIT"
-            "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC"
-            "DISABLE_AUTOUPDATER"
-          ];
         };
       };
   };

@@ -117,6 +117,13 @@ let
       if [ "''${1-}" = update ]; then
         exec env -u DISABLE_AUTOUPDATER -u CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC claude "$@"
       fi
+      if [ "''${#sandbox[@]}" -gt 0 ]; then
+        sandbox=(
+          "''${sandbox[@]:0:''${#sandbox[@]}-1}"
+          --env IS_SANDBOX --env CLAUBBIT
+          --env CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC --env DISABLE_AUTOUPDATER --
+        )
+      fi
       refresh_stamp=""
       max_age=$((7 * 24 * 3600))
 

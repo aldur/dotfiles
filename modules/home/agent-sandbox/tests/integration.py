@@ -215,7 +215,7 @@ for agent in ["claude", "codex"]:
     hidden_file = Path("/home/tester/Work/hidden-file")
     hidden_file.write_text("secret\n")
     run([
-        *launch, "--hide", str(hidden_dir), "--hide", str(hidden_file), "--",
+        *launch, "--hide", "~/Work/hidden-dir", "--hide", "hidden-file", "--",
         sys.executable, "-c",
         "from pathlib import Path; "
         f"assert list(Path({str(hidden_dir)!r}).iterdir()) == []; "

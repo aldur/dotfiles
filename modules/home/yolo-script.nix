@@ -31,6 +31,7 @@ let
     "ro*" = "<PATH> Additional existing read-only file or directory";
     "rw*" = "<PATH> Additional existing writable file or directory";
     "env*" = "<NAME> Additional inherited environment variable (repeatable)";
+    "hide*" = "<PATH> Existing file or directory to show empty (repeatable)";
   };
   optionNames = map (name: lib.removeSuffix "*" name) (lib.attrNames options);
   names = lib.attrNames allFlags;

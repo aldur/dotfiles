@@ -62,7 +62,7 @@ in
   options.programs.aldur = {
     claude-code = {
       enable = mkEnableOption "claude-code";
-      sandbox = sandboxOptions "claude-yolo";
+      sandbox = sandboxOptions;
       preferLocalInstallation = mkOption {
         type = types.bool;
         default =
@@ -97,7 +97,7 @@ in
 
     codex = {
       enable = mkEnableOption "codex";
-      sandbox = sandboxOptions "codex-yolo";
+      sandbox = sandboxOptions;
     };
 
     profile = mkOption {
