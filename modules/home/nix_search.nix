@@ -21,7 +21,6 @@ in
     {
       # Override defaults inherited by importing the nix-index-database module.
       programs.nix-index.enable = cfg.enable;
-      programs.nix-index.symlinkToCacheHome = lib.mkDefault cfg.enable;
     }
 
     (mkIf cfg.enable {
