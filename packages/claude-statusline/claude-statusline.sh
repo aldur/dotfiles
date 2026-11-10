@@ -1,8 +1,9 @@
 input=$(cat)
 
 # One jq pass; degrade to empty/zero on malformed JSON rather than rendering
-# nothing (the six separate jq calls would each fail on bad input).
-IFS=$'\t' read -r MODEL DIR PCT CTX_SIZE CACHE_READ CACHE_CREATE INPUT < <(
+# nothing. The separator is not IFS whitespace, so an empty field does not
+# shift the fields after it.
+IFS=$'\x1f' read -r MODEL DIR PCT CTX_SIZE CACHE_READ CACHE_CREATE INPUT < <(
   jq -r '[
     .model.display_name,
     .workspace.current_dir,
@@ -11,7 +12,7 @@ IFS=$'\t' read -r MODEL DIR PCT CTX_SIZE CACHE_READ CACHE_CREATE INPUT < <(
     (.context_window.current_usage.cache_read_input_tokens // 0),
     (.context_window.current_usage.cache_creation_input_tokens // 0),
     (.context_window.current_usage.input_tokens // 0)
-  ] | @tsv' <<<"$input" 2>/dev/null
+  ] | map(. // "" | tostring) | join("\u001f")' <<<"$input" 2>/dev/null
 ) || true
 PCT=${PCT:-0}
 CTX_SIZE=${CTX_SIZE:-0}
