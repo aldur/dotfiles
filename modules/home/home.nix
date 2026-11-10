@@ -128,9 +128,7 @@ in
         pkgs.tree
         pkgs.totp-cli
         pkgs.moreutils
-      ]
-      # Install the Git manuals only in the full profile.
-      ++ lib.optional full pkgs.git.doc;
+      ];
 
     file."Documents/Notes/.marksman.toml" = lib.mkIf full { text = ""; };
 
@@ -374,7 +372,7 @@ in
       # The same git the editor ships (overlays/slim.nix), so one copy
       # serves both. Nothing here needs what full git adds: send-email
       # (perl), git-p4 (python), `grep -P` (pcre2), osxkeychain — remotes
-      # are ssh and signing is ssh-based. Manpages come from git.doc below.
+      # are ssh and signing is ssh-based.
       package = pkgs.gitMinimal-runtime;
 
       settings = lib.recursiveUpdate (import ../shared/programs/git.nix) (
