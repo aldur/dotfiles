@@ -3,10 +3,8 @@
   lib,
   baseHome,
   lazyvim-light,
-  lazyvim-bin,
   dotfiles,
   runtimePython,
-  config,
   ...
 }:
 let
@@ -67,12 +65,6 @@ in
         pi-yolo
         lazyvim-light
         tcopy
-        tmux-palette
-        (lazyvim-popup.override { inherit lazyvim-bin; })
-        (lazygit-popup.override {
-          lazygit = config.programs.lazygit.package;
-          inherit (config.programs.lazygit) settings;
-        })
       ]);
     # Use the C.UTF-8 locale from glibc. Do not include the other locales.
     sessionVariables.LOCALE_ARCHIVE_2_27 = lib.mkForce "";

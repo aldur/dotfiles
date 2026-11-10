@@ -23,6 +23,20 @@ let
     )
   );
 
+  # ../shared/programs/tmux.nix binds a key to each of these tools in all
+  # profiles.
+  tmuxTools = with pkgs; [
+    (lazygit-popup.override {
+      lazygit = config.programs.lazygit.package;
+      inherit (config.programs.lazygit) settings;
+    })
+    (lazyvim-popup.override {
+      lazyvim-bin = if lazyvim-bin != null then lazyvim-bin else "lazyvim";
+    })
+    taskmd-ui
+    tmux-palette
+  ];
+
   customTools =
     with pkgs;
     [
@@ -31,25 +45,17 @@ let
       fps
       gpg-encrypt
       git-verify-ssh
-      (lazygit-popup.override {
-        lazygit = config.programs.lazygit.package;
-        inherit (config.programs.lazygit) settings;
-      })
-      (lazyvim-popup.override {
-        lazyvim-bin = if lazyvim-bin != null then lazyvim-bin else "lazyvim";
-      })
       lstrip
       nospace
       shrink-pdf
       split-pdf
       taskmd
-      taskmd-ui
       tcopy
-      tmux-palette
       totp-qr-decode
       trim
       watermark-pdf
     ]
+    ++ tmuxTools
     # The Linux counterpart of the darwin `faraday` shell alias
     # (sandbox-exec based, see modules/darwin/home.nix).
     ++ lib.optionals stdenv.hostPlatform.isLinux [
@@ -122,6 +128,7 @@ in
           pkgs.watch
         ]
       )
+      ++ lib.optionals (!workstation) tmuxTools
       ++ [
         pkgs.age
         pkgs.rig
