@@ -55,7 +55,6 @@ in
   taskmd-ui = pkgs.taskmd-ui.tests.smoke;
   solidity-language-server = pkgs.nomicfoundation-solidity-language-server.tests.smoke;
   agent-log = pkgs.agent-log.tests.integration;
-  telegram = pkgs.telegram.tests.integration;
   pi-completions = import ../packages/pi/tests/completions.nix {
     inherit pkgs;
     inherit (self.packages.${system}) pi pi-yolo;

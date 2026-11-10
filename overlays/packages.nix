@@ -37,7 +37,6 @@ in
   nospace = prev.callPackage ../packages/nospace { };
   trim = prev.callPackage ../packages/trim { };
   claude-skills = prev.callPackage ../packages/claude-skills { };
-  telegram = prev.callPackage ../packages/telegram { };
   remarks = prev.callPackage ../packages/remarks { };
   tmux-palette = prev.callPackage ../packages/tmux-palette { };
   tcopy = prev.callPackage ../packages/tcopy { };
@@ -48,7 +47,6 @@ in
   taskmd = prev.callPackage ../packages/taskmd { inherit (unstable) pnpm_10; };
   taskmd-ui = final.callPackage ../packages/taskmd-ui { };
 
-  tiktoken = prev.callPackage ../packages/tiktoken/tiktoken.nix { };
   llmcat = prev.callPackage ../packages/llmcat/llmcat.nix { };
 
   # AppArmor unix socket rules on a kernel newer than 6.16 need parser 5.

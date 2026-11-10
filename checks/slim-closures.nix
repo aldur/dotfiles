@@ -66,7 +66,6 @@ let
     codex = 470;
     markdownlint-cli2 = 220;
     prettierd = 210;
-    tiktoken = 260;
     vscode-langservers-extracted = 200;
     vtsls = 240;
     tesseract-lite = 170;
