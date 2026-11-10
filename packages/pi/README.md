@@ -13,6 +13,7 @@ nix run .#pi-yolo
 ```
 
 On Linux, `pi-yolo` uses the [agent sandbox](../../modules/home/agent-sandbox/README.md).
+See the [launcher guide](../../modules/home/yolo-script.md) for its options.
 To reach a local model server, use:
 
 ```sh

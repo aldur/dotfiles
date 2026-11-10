@@ -1,7 +1,8 @@
 # `-yolo` launchers
 
-`codex-yolo` and `claude-yolo` use
+`codex-yolo`, `claude-yolo` and `pi-yolo` use
 [`agent-sandbox`](agent-sandbox/README.md) with the matching `--profile`.
+See the [Pi guide](../../packages/pi/README.md) for the `pi-yolo` environment.
 
 ```sh
 codex-yolo --ro ~/dotfiles --workspace .
@@ -12,6 +13,7 @@ codex-yolo --tun
 codex-yolo --docker
 claude-yolo --docker
 codex-yolo --journal
+pi-yolo --ro ~/dotfiles --hide .env
 ```
 
 The `*-yolo` launchers accept the same sandbox options before the agent
@@ -69,6 +71,9 @@ These checks run in CI on Linux (replace `x86_64-linux` with
   external editor with Ctrl-G, verifies the draft reaches the editor and
   the edited text returns to the composer, then exits and checks terminal
   restoration. It covers `EDITOR` fallback and `VISUAL` precedence.
+
+`pi-completions` checks the fish completions of `pi-yolo` for the wrapper
+options and the Pi arguments. It does not launch `pi-yolo`.
 
 The wrapper and CLI checks use [yolo-e2e.py](agent-sandbox/tests/yolo-e2e.py), dummy
 configuration and credentials, a cleared host environment and a network
