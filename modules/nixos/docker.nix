@@ -10,8 +10,8 @@
   # fusermount{,3} for the fuse-overlayfs storage driver. These plain
   # assignments override hardening.minimizeWrappers' mkDefault values.
   security.wrappers = {
-    newuidmap.setuid = true;
-    newgidmap.setuid = true;
+    newuidmap.enable = true;
+    newgidmap.enable = true;
     fusermount.enable = true;
     fusermount3.enable = true;
   };
