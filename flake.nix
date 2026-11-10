@@ -122,6 +122,7 @@
               llama-wiretap # records what clients send to llama-server
               agent-log # one picker over claude, pi and codex conversations
               tavily-cli
+              neovim-nightly # nix-update finds the pin only through `packages`
               ;
             llm = pkgs.llmWithPlugins;
             pi = pkgs.callPackage ./packages/pi/standalone.nix { };

@@ -50,8 +50,13 @@ let
 
   # Overlay attributes are only worth walking when this repo defines them; the
   # overlay also re-exports packages straight from nixpkgs-unstable.
+  # `overrideAttrs` keeps the nixpkgs `meta.position`. Thus `updatePin` also
+  # shows that this repo pins the package.
   overlayOnly = lib.filterAttrs (
-    n: v: !(packages ? ${n}) && definedHere v && try false (lib.meta.availableOn hostPlatform v)
+    n: v:
+    !(packages ? ${n})
+    && (definedHere v || try false (v ? updatePin))
+    && try false (lib.meta.availableOn hostPlatform v)
   ) overlayPackages;
 
   found =
