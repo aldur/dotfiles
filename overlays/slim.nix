@@ -317,7 +317,7 @@ let
     ];
   };
 
-  # Build-hook flavor for packages we compile anyway (nomicfoundation):
+  # Build-hook flavor for packages we compile anyway (pi-coding-agent):
   # cached builds get the same scripts inside runCommand repacks instead.
   withoutNpmBuildResidue =
     drv:
@@ -348,6 +348,24 @@ let
     ! grep -r ${prev.nodejs} $out
     ! grep -r ${prev.basedpyright.npmDeps} $out
   '';
+
+  # The wrapper (overlays/packages.nix), re-called with a repack of the
+  # cached build. katex's vendored python scripts otherwise pull an
+  # interpreter into the closure; see npmResidueSweep.
+  markdownlint-cli2 = prev.markdownlint-cli2.override (old: {
+    markdownlint-cli2-unwrapped =
+      let
+        cached = old.markdownlint-cli2-unwrapped;
+      in
+      prev.runCommand cached.name { inherit (cached) meta; } ''
+        cp -a ${cached} $out
+        chmod -R u+w $out
+        ${npmResidueSweep}
+        ${nodeJoinRepoint}
+        find $out -type f -exec sed -i "s|${cached}|$out|g" {} +
+        ! grep -r ${prev.nodejs} $out
+      '';
+  });
 
   # Repack of the cached build. The service is built (packages/service/
   # dist) from a vendored vscode source checkout that remains in the

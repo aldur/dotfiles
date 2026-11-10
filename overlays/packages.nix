@@ -80,9 +80,7 @@ in
   };
 
   markdownlint-cli2 = final.callPackage ../packages/markdownlint-cli2 {
-    # katex's vendored python scripts otherwise pull an interpreter into
-    # the closure; see withoutNpmBuildResidue.
-    markdownlint-cli2-unwrapped = final.withoutNpmBuildResidue prev.markdownlint-cli2;
+    markdownlint-cli2-unwrapped = prev.markdownlint-cli2;
   };
 
   uvc-util = prev.callPackage ../packages/uvc-util { };
