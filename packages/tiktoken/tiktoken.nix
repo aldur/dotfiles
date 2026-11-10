@@ -17,7 +17,7 @@ pkgs.stdenv.mkDerivation {
 
   dontUnpack = true;
   buildPhase = ''
-    # This is just the base64 of the URL.
+    # The file name is the SHA-1 of the URL.
     install -Dm755 $src $out/lib/data_gym/fb374d419588a4632f3f557e76b4b70aebbca790
     install -Dm755 ${./count_tokens.py} $out/bin/count-tokens
 
