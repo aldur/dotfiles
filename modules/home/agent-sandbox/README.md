@@ -273,10 +273,6 @@ include the rendered terminal screen and every interaction has a deadline.
 These checks cover local launch and editing behavior; authenticated model
 responses and remote services need separate online testing.
 
-[cli-smoke.py](tests/cli-smoke.py) remains an optional check of locally
-installed native clients' version, help, authentication status and Codex
-app-server startup. It does not replace the required launcher/PTY checks.
-
 After updating the standalone clients, run the transport check against them:
 
 ```sh

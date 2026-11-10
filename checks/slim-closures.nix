@@ -52,9 +52,6 @@ let
     pi-yolo = if stdenv.hostPlatform.isAarch64 then 1470 else 820;
     tavily-cli = 285;
     pandoc-runtime = 190;
-    # A node interpreter and one stdlib-only script; it is nodejs-slim-runtime
-    # plus a wrapper, so it inherits that entry's budget.
-    llama-wiretap = 200;
     ripgrep-all = 315;
     # MCP, Node, and the Nix client: 288 MiB on x86 before first browser use.
     playwright-lazy = if stdenv.hostPlatform.isAarch64 then 1000 else 320;

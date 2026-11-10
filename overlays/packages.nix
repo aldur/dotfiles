@@ -60,10 +60,6 @@ in
     replacement = unstable.apparmor-parser;
   };
 
-  llama-wiretap = final.callPackage ../packages/llama-wiretap {
-    nodejs-slim = final.nodejs-slim-runtime;
-  };
-
   agent-log = final.callPackage ../packages/agent-log { };
   tavily-cli = final.callPackage ../packages/tavily-cli { };
 
