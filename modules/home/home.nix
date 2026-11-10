@@ -487,7 +487,7 @@ in
     # Linux mirror of the darwin `sandbox` alias (see
     # modules/darwin/home.nix): no network, personal directories hidden.
     # `faraday --mask` skips directories that don't exist on this machine.
-    lib.optionalAttrs (full && pkgs.stdenv.hostPlatform.isLinux) {
+    lib.optionalAttrs (workstation && pkgs.stdenv.hostPlatform.isLinux) {
       sandbox = "faraday --mask ~/Documents --mask ~/Desktop --mask ~/Developer --mask ~/Movies --mask ~/Music --mask ~/Pictures";
     }
   // lib.optionalAttrs (lazyvim-bin != null) {
