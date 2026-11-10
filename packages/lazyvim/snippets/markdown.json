@@ -71,7 +71,7 @@
       "",
       "[^${1:reference}]: ${2:text}"
     ],
-    "description": "Reference under header"
+    "description": "Add a footnote"
   },
   "Collapsible": {
     "prefix": [
@@ -84,7 +84,7 @@
       "${0}",
       "</details>"
     ],
-    "description": "Reference under header"
+    "description": "Add a collapsible details block"
   },
   "Markdownlint Disable Next Line": {
     "prefix": [
