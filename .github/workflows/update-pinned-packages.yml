@@ -83,7 +83,8 @@ jobs:
           name: patch-${{ matrix.package }}
           path: update.patch
 
-  # Only this job has the write token, and only to open the pull request.
+  # Only this job has the write token. It opens the pull request and starts
+  # the CI on it.
   # The job runs on a low-cost Linux runner, because a text patch does not
   # need Nix or macOS. The job also runs when the build of a different
   # matrix leg failed (!cancelled()). One defective package then does not
@@ -97,6 +98,7 @@ jobs:
     permissions:
       contents: write # necessary to push the automated update branch
       pull-requests: write # necessary to create and update the pull request
+      actions: write # necessary to start the CI on the update branch
     strategy:
       fail-fast: false
       matrix:
@@ -118,6 +120,7 @@ jobs:
           rm update.patch
 
       - name: Open pull request # zizmor: ignore[superfluous-actions]
+        id: pr
         if: steps.patch.outcome == 'success'
         # This also commits changes, updates existing branches/PRs, and
         # deletes obsolete branches; `gh pr create` alone does not replace it.
@@ -133,3 +136,12 @@ jobs:
 
             Updates the pinned version/rev and source hashes, verified to build on the runner before opening this PR.
           delete-branch: true
+
+      # A pull request from GITHUB_TOKEN does not start `pull_request`
+      # workflows. A `workflow_dispatch` event from the same token does.
+      - name: Start the CI on the update branch
+        if: contains(fromJSON('["created", "updated"]'), steps.pr.outputs.pull-request-operation)
+        run: gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref "automated/update-$PACKAGE"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PACKAGE: ${{ matrix.package }}

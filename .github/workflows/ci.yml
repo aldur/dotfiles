@@ -330,6 +330,9 @@ jobs:
 
   containers:
     needs: flake-checks-build
+    # update-pinned-packages.yml dispatches this workflow on branches that
+    # nobody reviewed. Do not give those runs the registry token.
+    if: github.event_name != 'workflow_dispatch'
     uses: ./.github/workflows/publish-apple-container.yml
     permissions:
       contents: read
