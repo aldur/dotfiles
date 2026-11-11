@@ -109,6 +109,8 @@ let
       pkgs.gitMinimal-runtime
       pkgs.coreutils
     ]
+    # On Darwin, passage encodes with `openssl base64`.
+    ++ lib.optional pkgs.stdenv.hostPlatform.isDarwin pkgs.openssl
     ++ cfg.plugins;
     text = ''
       export PASSAGE_DIR=${cfg.store}
