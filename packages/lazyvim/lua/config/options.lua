@@ -7,9 +7,6 @@ vim.g.snacks_animate = false
 -- We use `basedpyright`
 vim.g.lazyvim_python_lsp = "basedpyright"
 
--- Fuzzy completion
--- vim.opt.completeopt:append { 'fuzzy' }
-
 -- No inline diagnostics in prose: harper and markdownlint get chatty while a
 -- sentence is still being typed. Wrapping the handler (rather than
 -- vim.diagnostic.config, which is global) keeps signs, underlines and the

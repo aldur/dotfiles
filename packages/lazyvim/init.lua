@@ -17,7 +17,7 @@ require("lazyCat").setup(
 		{ "LazyVim/LazyVim", import = "lazyvim.plugins" },
 
 		-- Import extras, as per `lazyvim_check_order`
-		{ import = "plugins.lazy_extras" },
+		{ import = "lazy_extras" },
 
 		-- Mason downloads mutable binaries; nix provides them instead.
 		{ "mason-org/mason-lspconfig.nvim", enabled = false },

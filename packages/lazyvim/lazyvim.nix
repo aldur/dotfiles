@@ -33,7 +33,6 @@ let
     # Repacked without the tree-sitter CLI, translations and duplicate
     # bundled parsers (see overlays/slim.nix).
     neovim-unwrapped = pkgs.neovim-unwrapped-runtime;
-    # aliases = [ defaultPackageName ];
   };
 
   allCategories = {
