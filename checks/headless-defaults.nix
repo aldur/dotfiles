@@ -15,11 +15,7 @@
 let
   headless = inputs.nixpkgs.lib.nixosSystem {
     inherit system;
-    specialArgs = {
-      inputs = inputs // {
-        inherit self;
-      };
-    };
+    specialArgs = { inherit inputs; };
     modules = [
       self.nixosModules.default
       (
