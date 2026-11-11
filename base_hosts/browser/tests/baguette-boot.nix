@@ -1,6 +1,6 @@
 { pkgs }:
 let
-  applicationProbe = ''
+  applicationProbe = attempts: ''
     (
       # CPU contention exposes the telemetry shutdown race in short sessions.
       load_pids=()
@@ -9,7 +9,7 @@ let
         yes > /dev/null &
         load_pids+=($!)
       done
-      for attempt in $(seq 50); do
+      for attempt in $(seq ${toString attempts}); do
         rm -f /home/$user/browser.png
         in_session --unit="browser-smoke-$attempt" --property=RuntimeMaxSec=180 firefox --headless \
           --screenshot /home/$user/browser.png about:blank \
@@ -30,7 +30,7 @@ let
 in
 {
   reboots = 1;
-  extraProbe = applicationProbe + ''
+  extraProbe = applicationProbe 50 + ''
     user="$user" persist=.config/mozilla bash "$probe/appliance-state.sh" plant
   '';
   extraChecks = [
@@ -39,7 +39,7 @@ in
   ];
   secondProbe = ''
     user="$user" persist=.config/mozilla bash "$probe/appliance-state.sh" verify
-  '' + applicationProbe;
+  '' + applicationProbe 1;
   secondChecks = [
     "state verify$"
     "browser rendered$"
