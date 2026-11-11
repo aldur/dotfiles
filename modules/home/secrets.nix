@@ -93,14 +93,15 @@ let
     else
       pkgs.writeText "age-recipients" (lib.concatMapStrings (recipient: recipient + "\n") recipients);
 
+  # The default wrapper puts the full git on PATH. Use the git of the profile.
+  passage = pkgs.passage.override { git = pkgs.gitMinimal-runtime; };
+
   passageDispatch = pkgs.writeShellApplication {
     name = "passage";
     runtimeInputs = [
       pkgs.age
-      # Only plumbing runs here (add/commit/rev-parse); share the editor's git.
       pkgs.gitMinimal-runtime
       pkgs.coreutils
-      pkgs.openssl
     ]
     ++ cfg.plugins;
     text = ''
@@ -108,7 +109,7 @@ let
       export PASSAGE_IDENTITIES_FILE=${identitiesFile}
       export PASSAGE_AGE=${passageAge}/bin/passage-age
 
-      passage_bin=${pkgs.passage}/bin/passage
+      passage_bin=${passage}/bin/passage
 
       # add/insert: encrypt stdin (or a silent prompt) to a new *.age file,
       # written under the git toplevel so it lands in the flake source.
@@ -220,7 +221,7 @@ let
   # Keep passage's shipped completions/man; override only the entrypoint.
   passageWrapped = pkgs.symlinkJoin {
     name = "passage-wrapped";
-    paths = [ pkgs.passage ];
+    paths = [ passage ];
     postBuild = ''
       rm -f "$out/bin/passage"
       ln -s ${passageDispatch}/bin/passage "$out/bin/passage"
