@@ -11,7 +11,7 @@ function positive(...values: unknown[]): number | undefined {
 	return values.find((v): v is number => typeof v === "number" && Number.isSafeInteger(v) && v > 0);
 }
 
-function modelFrom(entry: Entry, known: Entry | undefined, profile: string) {
+function modelFrom(entry: Entry, known: Entry | undefined) {
 	if (typeof entry.id !== "string" || !entry.id) return;
 	if (Array.isArray(entry.tasks) && !entry.tasks.includes("generate")) return;
 	const modalities = entry.architecture?.input_modalities ?? entry.modalities?.input ?? known?.modalities?.input;
@@ -29,10 +29,6 @@ function modelFrom(entry: Entry, known: Entry | undefined, profile: string) {
 	if (Array.isArray(efforts)) {
 		for (const level of LEVELS) thinkingLevelMap[level] = efforts.includes(level) ? level : null;
 		if (efforts.includes("none")) thinkingLevelMap.off = "none";
-		// Privatemode supports none for its GLM models, even if the catalog omits it.
-		if (profile === "privatemode-ai" && /^(glm-5\.3(-flash)?|glm(-flash)?-latest)$/.test(entry.id)) {
-			thinkingLevelMap.off = "none";
-		}
 	}
 	const cost = known?.cost ?? {};
 	return {
@@ -69,7 +65,7 @@ export default async function (pi: ExtensionAPI) {
 				if (!payload || typeof payload !== "object" || !Array.isArray((payload as Entry).data)) throw new Error("invalid model list");
 				const models = (payload as Entry).data
 					.filter((entry: unknown) => entry && typeof entry === "object")
-					.map((entry: Entry) => modelFrom(entry, knownModels[entry.id], profile))
+					.map((entry: Entry) => modelFrom(entry, knownModels[entry.id]))
 					.filter(Boolean);
 				if (models.length === 0) throw new Error("no chat models found");
 				const unknown = (payload as Entry).data.filter((entry: Entry) => entry && typeof entry === "object" &&

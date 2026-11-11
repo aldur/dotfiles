@@ -53,8 +53,8 @@ test("Privatemode discovery combines its catalog and model tasks", async (t) => 
   assert.equal(model.contextWindow, 1000000);
   assert.equal(model.maxTokens, 131072);
   assert.deepEqual(model.input, ["text", "image"]);
-  assert.deepEqual(getSupportedThinkingLevels(model), ["off", "low", "high", "max"]);
-  for (const [level, expected] of [["off", "none"], ["low", "low"], ["high", "high"], ["max", "max"]]) {
+  assert.deepEqual(getSupportedThinkingLevels(model), ["low", "high", "max"]);
+  for (const [level, expected] of [["low", "low"], ["high", "high"], ["max", "max"]]) {
     assert.equal((await payload(model, level)).reasoning_effort, expected);
   }
 });
