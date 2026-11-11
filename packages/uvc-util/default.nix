@@ -37,7 +37,7 @@ stdenv.mkDerivation {
     runHook postInstall
   '';
 
-  # Tracks its default branch; nothing is tagged upstream.
+  # Tracks its default branch. The newest tag, v1.2, is older than this pin.
   passthru.updatePin.args = "--version=branch";
 
   meta = {

@@ -13,6 +13,9 @@
     linux = "ubuntu-26.04";
     darwin = "macos-26";
   },
+  # With `days` set, a leg takes only upstream states that are at least that
+  # old. `exemptOwners` are GitHub owners that you trust.
+  cooldown ? { },
 }:
 
 let
@@ -38,8 +41,63 @@ let
     ) linuxByPath
     ++ map onDarwin (lib.filter (e: !(linuxByPath ? ${e.path})) darwin);
 
+  cooldownDays = cooldown.days or 0;
+  exemptOwners = map lib.toLower (cooldown.exemptOwners or [ ]);
+
+  # What packages/update-pins/cooldown.py needs to find the age of an
+  # upstream state.
+  cooldownFor =
+    e:
+    let
+      inherit (e.drv) src;
+      url = src.url or (lib.head (src.urls or [ "" ]));
+      asset = builtins.match "https://github.com/([^/]+)/([^/]+)/releases/download/([^/]+)/.*" url;
+      github =
+        if src ? owner && src ? repo && lib.hasInfix "github.com/" url then
+          {
+            inherit (src) owner repo rev;
+            tag = src.tag or null;
+          }
+        else if asset != null then
+          {
+            owner = lib.elemAt asset 0;
+            repo = lib.elemAt asset 1;
+            rev = lib.elemAt asset 2;
+            tag = lib.elemAt asset 2;
+          }
+        else
+          null;
+      common = {
+        days = cooldownDays;
+        args = e.pin.args or "";
+        inherit (e.drv) version;
+      };
+    in
+    if cooldownDays == 0 || !(e.pin.cooldown or true) then
+      null
+    else if github != null then
+      if lib.elem (lib.toLower github.owner) exemptOwners then
+        null
+      else
+        common // github // { type = "github"; }
+    else if lib.hasPrefix "mirror://pypi/" url || lib.hasPrefix "https://files.pythonhosted.org/" url then
+      common
+      // {
+        type = "pypi";
+        # The project is the directory that holds the file.
+        name = lib.last (lib.init (lib.splitString "/" url));
+      }
+    else
+      # cooldown.py stops this leg. The other legs continue.
+      common
+      // {
+        type = "unknown";
+        inherit url;
+      };
+
   leg = e: {
     inherit (e) runner os;
+    cooldown = cooldownFor e;
     # `lazyvim.plugins.foo` becomes the leg `foo`; the branch, PR and artifact
     # are named after it.
     package = e.name;

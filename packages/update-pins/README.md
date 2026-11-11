@@ -8,7 +8,7 @@ friends). It has three parts:
    `passthru.updatePin`.
 2. `lib.updatePins.mkLegs` turns the discovered pins into a list of legs.
    Each leg carries a `bump` command (nix-update), a `verify` command, a
-   `runner`, and an `os`.
+   `runner`, an `os`, and the `cooldown` data.
 3. This package, `update-pins`, runs the legs. It reads
    `nix eval --json .#updatePins` from the current directory, so it works
    on any flake that exports `updatePins`.
@@ -20,8 +20,36 @@ friends). It has three parts:
 - `verify`: the shell command that proves the bump. The default builds the
   top-level package the pin belongs to.
 - `exempt`: set it (any value) to skip the package.
+- `cooldown`: set it to `false` to bump the package without a cooldown.
 
 A package without `passthru.updatePin` still gets a leg, with the defaults.
+
+## Cooldown
+
+With a cooldown of three days, a leg takes only an upstream state that is
+at least three days old. A defective or malicious release then has time to
+be found before it gets here. `cooldown.py` selects the state before
+nix-update runs, so a state that is too new is not fetched or built.
+
+The cooldown is off by default. Set `cooldown.days` in the call of `mkLegs`
+to enable it. `cooldown.exemptOwners` is a list of GitHub owners that get
+no cooldown.
+
+| Source | State that the leg takes | Age comes from |
+|---|---|---|
+| GitHub branch (`--version=branch`) | The head of the branch three days ago | The push time, from the repository activity API |
+| GitHub release | The newest release, not a pre-release | The publication time of the release |
+| PyPI | The newest final version | The upload time of its files |
+
+These times come from the server. The commit date does not: the author of
+a commit sets it.
+
+- A leg never goes back to a state that is older than the pin.
+- If the data is not available, the leg fails and does not bump. This
+  includes a source that is not GitHub or PyPI, and a GitHub repository
+  that has tags but no releases.
+- Set `GITHUB_TOKEN` to raise the rate limit of the GitHub API.
+- `update-pins --no-cooldown <name>` takes the newest state.
 
 ## Use from another flake
 

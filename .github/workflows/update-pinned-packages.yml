@@ -67,6 +67,9 @@ jobs:
         run: nix run .#update-pins -- "$PACKAGE"
         env:
           PACKAGE: ${{ matrix.package }}
+          # The cooldown reads public data from the GitHub API. The token
+          # only raises the rate limit.
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Capture changes
         id: diff

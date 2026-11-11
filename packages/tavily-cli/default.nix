@@ -24,21 +24,21 @@ let
     pythonImportsCheck = [ "tavily" ];
     passthru.updatePin = { };
   };
-  skills = stdenvNoCC.mkDerivation {
+  skills = stdenvNoCC.mkDerivation (finalAttrs: {
     pname = "tavily-skills";
-    version = "2.3.0-unstable-2026-11-06";
+    version = "2.3.0";
     src = fetchFromGitHub {
       owner = "tavily-ai";
       repo = "skills";
-      rev = "3a136b5b2e2fb232234ad3aa7073d7735ee7ff11";
-      hash = "sha256-htTRGFfGTLZ/Xq/fsJMA4aOa6elMXanSwRnt94tHwNc=";
+      tag = "v${finalAttrs.version}";
+      hash = "sha256-gSalwSyz0TRBgfm5s+1o/C1mnNBsFG02gg1CoxwdXfI=";
     };
     installPhase = ''
       mkdir -p "$out"
       cp -r skills/core/tavily-search "$out/"
     '';
-    passthru.updatePin.args = "--version=branch";
-  };
+    passthru.updatePin = { };
+  });
 in
 python3.pkgs.buildPythonApplication rec {
   pname = "tavily-cli";

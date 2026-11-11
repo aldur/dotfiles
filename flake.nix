@@ -282,6 +282,10 @@
       updatePins = self.lib.updatePins.mkLegs { inherit (nixpkgs) lib; } {
         linux = self.legacyPackages.x86_64-linux.discoveredPins;
         darwin = self.legacyPackages.aarch64-darwin.discoveredPins;
+        cooldown = {
+          days = 3;
+          exemptOwners = [ "aldur" ];
+        };
       };
 
       homeConfigurations = {

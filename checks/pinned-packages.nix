@@ -21,6 +21,7 @@ let
     "args"
     "verify"
     "exempt"
+    "cooldown"
   ];
 
   problems = lib.concatMap (
@@ -41,6 +42,9 @@ let
       ++ lib.optional (
         e.pin ? exempt && !lib.isString e.pin.exempt
       ) "`${e.path}`: updatePin.exempt should be the reason, as a string"
+      ++ lib.optional (
+        e.pin ? cooldown && e.pin.cooldown != false
+      ) "`${e.path}`: updatePin.cooldown can only be `false`"
   ) discovered;
 in
 

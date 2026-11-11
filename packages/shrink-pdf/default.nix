@@ -69,6 +69,7 @@ stdenv.mkDerivation {
       }
   '';
 
-  # Tracks its default branch; nothing is tagged upstream.
+  # The newest tag, v1.2, does not have the annotation fix that this package
+  # uses.
   passthru.updatePin.args = "--version=branch";
 }

@@ -36,6 +36,10 @@ that publish and sign.
 3. The same job starts `ci.yml` on the branch with `workflow_dispatch`. A
    pull request from `GITHUB_TOKEN` does not start `pull_request` workflows.
 
+A bump takes only an upstream state that is at least three days old. See
+"Cooldown" in `packages/update-pins/README.md`. The repositories of the
+owner of this repository are exempt.
+
 The dispatched run builds code that nobody reviewed. For this reason
 `containers` does not run on `workflow_dispatch`, and all other jobs of
 `ci.yml` have a read-only token.

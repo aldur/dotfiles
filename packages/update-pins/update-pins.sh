@@ -7,9 +7,11 @@ set -euo pipefail
 # its `bump` and `verify` commands, and this script runs them verbatim.
 
 # @describe Run the `updatePins` bump legs of the flake in the current directory
+# @flag --no-cooldown Take the newest upstream state, also if it is new
 # @arg packages* The names of the legs to run; with no names, list the legs
 
 declare -a argc_packages=()
+declare argc_no_cooldown=0
 eval "$(argc --argc-eval "$0" "$@")"
 
 legs=$(nix eval --json .#updatePins)
@@ -40,6 +42,18 @@ for package in "${argc_packages[@]}"; do
   if [ "$(uname -s)" != "$os" ]; then
     echo "skip: CI bumps '$package' on $runner" >&2
     continue
+  fi
+
+  # A leg with a cooldown takes the newest upstream state that is old
+  # enough. cooldown.py selects it and prints the nix-update argument.
+  cooldown=$(jq -c '.cooldown // empty' <<<"$leg")
+  if [ -n "$cooldown" ] && [ "$argc_no_cooldown" -eq 0 ]; then
+    version=$(update-pins-cooldown <<<"$cooldown")
+    if [ -z "$version" ]; then
+      echo "skip: '$package' has no update older than $(jq -r '.days' <<<"$cooldown") days" >&2
+      continue
+    fi
+    bump="$bump $version"
   fi
 
   (

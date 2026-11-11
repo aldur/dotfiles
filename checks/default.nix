@@ -52,6 +52,7 @@ in
   git-verify-ssh = pkgs.git-verify-ssh.tests.integration;
   markdownlint-formatting = pkgs.markdownlint-cli2.tests.formatting;
   taskmd = pkgs.taskmd.tests.version;
+  update-pins-cooldown = pkgs.update-pins.tests.cooldown;
   taskmd-ui = pkgs.taskmd-ui.tests.smoke;
   solidity-language-server = pkgs.nomicfoundation-solidity-language-server.tests.smoke;
   agent-log = pkgs.agent-log.tests.integration;
