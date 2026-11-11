@@ -218,6 +218,13 @@ class Policy:
         def walk_error(error):
             raise error
 
+        def restriction_walk_error(error):
+            # The sandbox has the caller's credentials. It cannot reach
+            # entries below a directory that the caller cannot search.
+            if isinstance(error, PermissionError) and not os.access(error.filename, os.X_OK):
+                return
+            raise error
+
         def remember_hardlink(path, direct_grant=False):
             info = path.lstat()
             if stat.S_ISREG(info.st_mode) and (info.st_nlink > 1 or direct_grant):
@@ -342,7 +349,7 @@ class Policy:
                 if root.is_dir():
                     entries = (
                         Path(parent) / name
-                        for parent, _, files in os.walk(root, followlinks=False, onerror=walk_error)
+                        for parent, _, files in os.walk(root, followlinks=False, onerror=restriction_walk_error)
                         for name in files
                     )
                 else:

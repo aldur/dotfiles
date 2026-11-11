@@ -36,6 +36,25 @@ with socket.socket(socket.AF_UNIX) as journal_socket:
             ], input=entry, text=True, capture_output=True, check=True, timeout=20)
             files.append(str(path))
 
+        # Received journals of other machines can be unreadable to the caller.
+        # A writable file grant starts the hard link scan of read-only grants.
+        # The scan skips directories that the caller cannot search, but fails
+        # closed on searchable directories that it cannot list.
+        remote = root / "remote/ci1"
+        remote.mkdir(parents=True)
+        (remote / "system.journal").write_text("")
+        grant = Path.home() / "journal-grant"
+        grant.write_text("")
+        for mode, allowed in ((0o000, True), (0o100, False)):
+            remote.chmod(mode)
+            result = subprocess.run([
+                wrapper, "--journal", "--rw", str(grant), "--", "true",
+            ], capture_output=True, text=True, timeout=20)
+            assert (result.returncode == 0) == allowed, result
+            assert allowed or "Permission denied" in result.stderr, result
+        remote.chmod(0o700)
+        grant.unlink()
+
         subprocess.run([
             wrapper, "--", sys.executable, "-c",
             "from pathlib import Path; "
