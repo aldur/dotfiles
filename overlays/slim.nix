@@ -562,49 +562,46 @@ let
   # the closure entirely. Linux-only: patchelf cannot edit Mach-O, and on
   # darwin dotnet uses the system ICU anyway, so there is nothing to trim.
   marksman =
-    if !prev.stdenv.hostPlatform.isLinux then
-      prev.marksman
-    else
-      prev.runCommand prev.marksman.name
-        {
-          nativeBuildInputs = [
-            prev.removeReferencesTo
-            final.patchelf
-          ];
-          closure = prev.closureInfo { rootPaths = [ prev.marksman ]; };
-          inherit (prev.marksman) meta;
-        }
-        ''
-          cp -a ${prev.marksman} $out
-          chmod -R u+w $out
+    prev.runCommand prev.marksman.name
+      {
+        nativeBuildInputs = [
+          prev.removeReferencesTo
+          final.patchelf
+        ];
+        closure = prev.closureInfo { rootPaths = [ prev.marksman ]; };
+        inherit (prev.marksman) meta;
+      }
+      ''
+        cp -a ${prev.marksman} $out
+        chmod -R u+w $out
 
-          droot=$(sed -n "s|^export DOTNET_ROOT='\([^']*\)'$|\1|p" $out/bin/marksman)
-          host=$(readlink -f "$droot/dotnet")
-          runtime=''${host%/share/dotnet/dotnet}
-          cp -a "$runtime" $out/dotnet-runtime
-          chmod -R u+w $out/dotnet-runtime
-          # buildDotnetModule patches the ICU sonames into the apphost's
-          # DT_NEEDED so managed dlopen resolves them; it imports no ICU
-          # symbols (checked with nm -D), so dropping the entries is safe
-          # even under BIND_NOW. The rpaths in the apphost and the
-          # runtime's globalization libs go the same way.
-          # Kerberos rides the same overlinking (dotnet's System.Net
-          # negotiate auth, no imported symbols either).
-          patchelf --remove-needed libicui18n.so --remove-needed libicuuc.so \
-            --remove-needed libgssapi_krb5.so \
-            $out/lib/marksman/marksman
-          grep -e '-icu4c-' -e '-krb5-' "$closure/store-paths" | while IFS= read -r p; do
-            find $out -type f -exec remove-references-to -t "$p" {} +
-          done
+        droot=$(sed -n "s|^export DOTNET_ROOT='\([^']*\)'$|\1|p" $out/bin/marksman)
+        host=$(readlink -f "$droot/dotnet")
+        runtime=''${host%/share/dotnet/dotnet}
+        cp -a "$runtime" $out/dotnet-runtime
+        chmod -R u+w $out/dotnet-runtime
+        # buildDotnetModule patches the ICU sonames into the apphost's
+        # DT_NEEDED so managed dlopen resolves them; it imports no ICU
+        # symbols (checked with nm -D), so dropping the entries is safe
+        # even under BIND_NOW. The rpaths in the apphost and the
+        # runtime's globalization libs go the same way.
+        # Kerberos rides the same overlinking (dotnet's System.Net
+        # negotiate auth, no imported symbols either).
+        patchelf --remove-needed libicui18n.so --remove-needed libicuuc.so \
+          --remove-needed libgssapi_krb5.so \
+          $out/lib/marksman/marksman
+        grep -e '-icu4c-' -e '-krb5-' "$closure/store-paths" | while IFS= read -r p; do
+          find $out -type f -exec remove-references-to -t "$p" {} +
+        done
 
-          cat > $out/bin/marksman <<EOF
-          #!${prev.runtimeShell} -e
-          export DOTNET_ROOT="$out/dotnet-runtime/share/dotnet"
-          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-          exec "$out/lib/marksman/marksman" "\$@"
-          EOF
-          chmod +x $out/bin/marksman
-        '';
+        cat > $out/bin/marksman <<EOF
+        #!${prev.runtimeShell} -e
+        export DOTNET_ROOT="$out/dotnet-runtime/share/dotnet"
+        export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+        exec "$out/lib/marksman/marksman" "\$@"
+        EOF
+        chmod +x $out/bin/marksman
+      '';
 
   # A repack of the cached gitMinimal, not a rebuild (its install checks
   # alone run a 29k-test suite). Plugins only run plumbing and porcelain:
@@ -733,77 +730,74 @@ let
   # tooling can still read the dependency record. Linux-only: GNU strip
   # cannot edit Mach-O, and on darwin it would invalidate the signature.
   codex =
-    if !prev.stdenv.hostPlatform.isLinux then
-      prev.codex
-    else
-      let
-        cached = prev.codex;
-        hasVoice = builtins.elem "codex-voice-host" (cached.cargoBuildFlags or [ ]);
-        replacements = prev.lib.optionals hasVoice runtimeLibraries.codexVoice;
-        # Header paths only identify references to erase; realizing their
-        # outputs would needlessly build the compiler/libc development files.
-        buildOnlyReferences = map (p: builtins.unsafeDiscardStringContext (toString p)) [
-          prev.stdenv.cc.cc
-          prev.stdenv.cc.libc.dev
+    let
+      cached = prev.codex;
+      hasVoice = builtins.elem "codex-voice-host" (cached.cargoBuildFlags or [ ]);
+      replacements = prev.lib.optionals hasVoice runtimeLibraries.codexVoice;
+      # Header paths only identify references to erase; realizing their
+      # outputs would needlessly build the compiler/libc development files.
+      buildOnlyReferences = map (p: builtins.unsafeDiscardStringContext (toString p)) [
+        prev.stdenv.cc.cc
+        prev.stdenv.cc.libc.dev
+      ];
+    in
+    prev.runCommand cached.name
+      {
+        nativeBuildInputs = [
+          prev.binutils
+          prev.removeReferencesTo
         ];
-      in
-      prev.runCommand cached.name
-        {
-          nativeBuildInputs = [
-            prev.binutils
-            prev.removeReferencesTo
-          ];
-          inherit (cached) meta version;
-          passthru = (cached.passthru or { }) // {
-            tests =
-              (cached.tests or { })
-              // prev.lib.optionalAttrs hasVoice {
-                voice-runtime = cached.tests.voice-runtime.override {
-                  codex = final.codex // {
-                    inherit (cached) buildCommit;
-                  };
+        inherit (cached) meta version;
+        passthru = (cached.passthru or { }) // {
+          tests =
+            (cached.tests or { })
+            // prev.lib.optionalAttrs hasVoice {
+              voice-runtime = cached.tests.voice-runtime.override {
+                codex = final.codex // {
+                  inherit (cached) buildCommit;
                 };
-                app-server-daemon = cached.tests.app-server-daemon.override { codex = final.codex; };
               };
-          };
-          disallowedReferences = [
-            cached
-          ]
-          ++ map (r: r.oldDependency) replacements
-          ++ prev.lib.optionals hasVoice buildOnlyReferences;
-        }
-        ''
-          cp -a ${cached} $out
-          chmod -R u+w $out
-          find $out -type f -executable -exec strip --keep-section=.dep-v0 {} +
-          # bin/codex is a binary wrapper pinning the original's prefix and
-          # PATH; same names → equal lengths, safe inside the ELF.
-          find $out -type f -exec sed -i "s|${cached}|$out|g" {} +
-          ${prev.lib.concatMapStringsSep "\n" (r: ''
-            find $out -type f -exec sed -i "s|${r.oldDependency}|${r.newDependency}|g" {} +
-            find $out -type l -lname '${r.oldDependency}/*' -print0 | while IFS= read -r -d ''' link; do
-              target=$(readlink "$link")
-              ln -sfn "${r.newDependency}/''${target#${r.oldDependency}/}" "$link"
-            done
-          '') replacements}
-          ${prev.lib.optionalString hasVoice ''
-            # bindgen embeds compiler/header locations in the voice helper's
-            # diagnostics. They are build metadata, not runtime dependencies.
-            find $out -type f -exec remove-references-to \
-              ${prev.lib.concatMapStringsSep " " (p: "-t ${p}") buildOnlyReferences} {} +
-          ''}
-          # A leftover would silently chain the copy to the original; a
-          # no-op strip would silently keep the symbol tables. The layout
-          # shifts across versions (0.133 ships one binary, 0.144 three),
-          # so sweep every ELF rather than naming one.
-          ! grep -r ${cached} $out
-          find $out -type f -executable | while IFS= read -r f; do
-            [ "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" = 7f454c46 ] || continue
-            if readelf -SW "$f" | grep -qe '\.symtab'; then
-              echo "unstripped: $f"; exit 1
-            fi
+              app-server-daemon = cached.tests.app-server-daemon.override { codex = final.codex; };
+            };
+        };
+        disallowedReferences = [
+          cached
+        ]
+        ++ map (r: r.oldDependency) replacements
+        ++ prev.lib.optionals hasVoice buildOnlyReferences;
+      }
+      ''
+        cp -a ${cached} $out
+        chmod -R u+w $out
+        find $out -type f -executable -exec strip --keep-section=.dep-v0 {} +
+        # bin/codex is a binary wrapper pinning the original's prefix and
+        # PATH; same names → equal lengths, safe inside the ELF.
+        find $out -type f -exec sed -i "s|${cached}|$out|g" {} +
+        ${prev.lib.concatMapStringsSep "\n" (r: ''
+          find $out -type f -exec sed -i "s|${r.oldDependency}|${r.newDependency}|g" {} +
+          find $out -type l -lname '${r.oldDependency}/*' -print0 | while IFS= read -r -d ''' link; do
+            target=$(readlink "$link")
+            ln -sfn "${r.newDependency}/''${target#${r.oldDependency}/}" "$link"
           done
-        '';
+        '') replacements}
+        ${prev.lib.optionalString hasVoice ''
+          # bindgen embeds compiler/header locations in the voice helper's
+          # diagnostics. They are build metadata, not runtime dependencies.
+          find $out -type f -exec remove-references-to \
+            ${prev.lib.concatMapStringsSep " " (p: "-t ${p}") buildOnlyReferences} {} +
+        ''}
+        # A leftover would silently chain the copy to the original; a
+        # no-op strip would silently keep the symbol tables. The layout
+        # shifts across versions (0.133 ships one binary, 0.144 three),
+        # so sweep every ELF rather than naming one.
+        ! grep -r ${cached} $out
+        find $out -type f -executable | while IFS= read -r f; do
+          [ "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" = 7f454c46 ] || continue
+          if readelf -SW "$f" | grep -qe '\.symtab'; then
+            echo "unstripped: $f"; exit 1
+          fi
+        done
+      '';
   };
 in
 
