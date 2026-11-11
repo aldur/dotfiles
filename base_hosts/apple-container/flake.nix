@@ -16,7 +16,6 @@
         system:
         {
           aarch64-darwin = "aarch64-linux";
-          x86_64-darwin = "x86_64-linux";
         }
         .${system} or system;
 
@@ -69,15 +68,20 @@
     # Apple silicon) map to the matching linux system so `#container-image`
     # works directly and offloads to the user's Linux builder. Building the
     # aarch64 image natively needs an aarch64 builder.
-    flake-utils.lib.eachDefaultSystem (
+    #
+    # Use the systems of the dotfiles. The root flake.nix gives the reason
+    # for the list.
+    flake-utils.lib.eachSystem (builtins.attrNames aldur-dotfiles.packages) (
       system:
       let
         targetSystem = linuxSystem system;
+        full = cfg targetSystem;
+        small = minimal targetSystem;
       in
       {
         packages = rec {
-          container-image = (cfg targetSystem).config.system.build.containerImage;
-          minimal-image = (minimal targetSystem).config.system.build.containerImage;
+          container-image = full.config.system.build.containerImage;
+          minimal-image = small.config.system.build.containerImage;
           default = container-image;
         };
 
@@ -85,7 +89,7 @@
           nixos = entrypointTest targetSystem;
         };
         checks.container-size = import "${aldur-dotfiles}/checks/container-image" {
-          nixos = cfg targetSystem;
+          nixos = full;
         };
 
         # Build + load in one step: the image is the script's dependency, so
@@ -177,8 +181,8 @@
               };
           in
           rec {
-            load = mkLoad (cfg targetSystem).config.system.build.containerImage;
-            load-minimal = mkLoad (minimal targetSystem).config.system.build.containerImage;
+            load = mkLoad full.config.system.build.containerImage;
+            load-minimal = mkLoad small.config.system.build.containerImage;
             default = load;
 
             # Build (if needed) and push one image to a registry.
@@ -189,18 +193,18 @@
             # NB: pushes the arch you build on — aarch64 from a Mac. CI runs
             # this on a native runner per arch into `:latest-<arch>` tags,
             # then `manifest` stitches them into a multi-arch `:latest`.
-            push = mkPush (cfg targetSystem);
-            push-minimal = mkPush (minimal targetSystem);
+            push = mkPush full;
+            push-minimal = mkPush small;
 
             # Assemble the multi-arch `:latest` from the per-arch tags above.
             # Registry-only, so it runs on any one runner after both pushes.
-            manifest = mkManifest (cfg targetSystem);
-            manifest-minimal = mkManifest (minimal targetSystem);
+            manifest = mkManifest full;
+            manifest-minimal = mkManifest small;
 
             # Write the SBOM of the system in the image to a directory:
             # `nix run …#sbom -- ./sbom`. CI attests it to the pushed image.
-            sbom = mkSbom (cfg targetSystem);
-            sbom-minimal = mkSbom (minimal targetSystem);
+            sbom = mkSbom full;
+            sbom-minimal = mkSbom small;
           };
       }
     )
@@ -219,8 +223,8 @@
         default = apple-container;
       };
 
-      nixosConfigurations = {
-        apple-container = cfg "aarch64-linux";
+      nixosConfigurations = rec {
+        apple-container = apple-container-aarch64;
         apple-container-aarch64 = cfg "aarch64-linux";
         apple-container-x86_64 = cfg "x86_64-linux";
       };

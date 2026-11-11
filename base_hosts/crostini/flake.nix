@@ -14,7 +14,6 @@
   };
   outputs =
     {
-      self,
       aldur-dotfiles,
       nixos-crostini,
       ...
@@ -48,57 +47,60 @@
         "x86_64-linux"
         "aarch64-linux"
       ]
-      (system: {
-        packages = rec {
-          # The crostini module imports `lxc-container.nix`. That module sets
-          # `system.build.image` to the LXC tarball.
-          # See: https://nixos.org/manual/nixos/stable/#sec-image-nixos-rebuild-build-image
-          crostini-lxc = (generator system [ crostiniModule ]).config.system.build.image;
-          default = crostini-lxc;
-
-          baguette-tarball = self.nixosConfigurations.baguette-nixos.config.system.build.tarball;
-          baguette-image = self.nixosConfigurations.baguette-nixos.config.system.build.btrfsImage;
-          baguette-zimage = self.nixosConfigurations.baguette-nixos.config.system.build.btrfsImageCompressed;
-          baguette-benchmark = nixos-crostini.lib.mkBaguetteBenchmark {
-            configuration = generator system baguetteModules;
-            extraSystemUnits = [
-              "home-manager-${self.nixosConfigurations.baguette-nixos.config.mainUser}.service"
-            ];
-          };
-        };
-
-        # The SBOM of the system in baguette-zimage. CI attests it to the
-        # image.
-        apps.sbom-baguette = aldur-dotfiles.lib.mkSbomApp {
+      (
+        system:
+        let
           pkgs = nixpkgs.legacyPackages.${system};
-          configuration = self.nixosConfigurations.baguette-nixos;
-        };
+          lxc = generator system [ crostiniModule ];
+          baguette = generator system baguetteModules;
+        in
+        {
+          packages = rec {
+            # The crostini module imports `lxc-container.nix`. That module sets
+            # `system.build.image` to the LXC tarball.
+            # See: https://nixos.org/manual/nixos/stable/#sec-image-nixos-rebuild-build-image
+            crostini-lxc = lxc.config.system.build.image;
+            default = crostini-lxc;
 
-        # Simulates guest boot with the representative Termina kernel.
-        # Real ChromeOS registration is checked separately on the device.
-        checks.baguette-boot = nixpkgs.legacyPackages.${system}.callPackage ./tests/baguette-boot.nix {
-          configuration = generator system baguetteModules;
-          crostini = nixos-crostini;
-        };
-
-        checks.baguette-verifier = nixos-crostini.checks.${system}.boot-verifier;
-
-        checks.rebuild-resources =
-          nixpkgs.legacyPackages.${system}.callPackage ./tests/rebuild-resources.nix
-            {
-              baguette = generator system baguetteModules;
-              lxc = generator system [ crostiniModule ];
-            };
-
-        checks.ssh-configurations =
-          nixpkgs.legacyPackages.${system}.callPackage ./tests/ssh-configurations.nix
-            {
-              configurations = [
-                (generator system [ crostiniModule ])
-                (generator system baguetteModules)
+            baguette-tarball = baguette.config.system.build.tarball;
+            baguette-image = baguette.config.system.build.btrfsImage;
+            baguette-zimage = baguette.config.system.build.btrfsImageCompressed;
+            baguette-benchmark = nixos-crostini.lib.mkBaguetteBenchmark {
+              configuration = baguette;
+              extraSystemUnits = [
+                "home-manager-${baguette.config.mainUser}.service"
               ];
             };
-      })
+          };
+
+          # The SBOM of the system in baguette-zimage. CI attests it to the
+          # image.
+          apps.sbom-baguette = aldur-dotfiles.lib.mkSbomApp {
+            inherit pkgs;
+            configuration = baguette;
+          };
+
+          # Simulates guest boot with the representative Termina kernel.
+          # Real ChromeOS registration is checked separately on the device.
+          checks.baguette-boot = pkgs.callPackage ./tests/baguette-boot.nix {
+            configuration = baguette;
+            crostini = nixos-crostini;
+          };
+
+          checks.baguette-verifier = nixos-crostini.checks.${system}.boot-verifier;
+
+          checks.rebuild-resources = pkgs.callPackage ./tests/rebuild-resources.nix {
+            inherit baguette lxc;
+          };
+
+          checks.ssh-configurations = pkgs.callPackage ./tests/ssh-configurations.nix {
+            configurations = [
+              lxc
+              baguette
+            ];
+          };
+        }
+      )
     // {
       nixosConfigurations = {
         # Having this allows rebuilding the image _within_ the container.
