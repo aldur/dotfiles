@@ -2,14 +2,10 @@
   inputs,
   pkgs,
   pkgsUnstable,
-  config,
   ...
 }:
 let
-  unstable = import inputs.nixpkgs-unstable {
-    inherit (pkgs.stdenv.hostPlatform) system;
-    inherit (config.nixpkgs) config;
-  };
+  unstable = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in
 {
   nixpkgs.overlays = [
