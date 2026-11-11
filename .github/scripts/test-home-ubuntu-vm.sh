@@ -31,7 +31,16 @@ cleanup() {
 trap cleanup EXIT
 
 image_name=noble-server-cloudimg-amd64.img
-image_url=https://cloud-images.ubuntu.com/noble/current
+# The "current" directory can change to a new build between two downloads.
+# Thus, get all files from one dated build directory.
+serial=$(curl --fail --silent --show-error --location --retry 3 \
+  https://cloud-images.ubuntu.com/noble/current/unpacked/build-info.txt | sed -n 's/^serial=//p')
+[[ $serial =~ ^[0-9]{8}(\.[0-9]+)?$ ]] || {
+  echo "Unexpected Ubuntu image serial: '$serial'." >&2
+  exit 1
+}
+echo "Ubuntu image serial: $serial"
+image_url=https://cloud-images.ubuntu.com/noble/$serial
 curl --fail --location --retry 3 "$image_url/SHA256SUMS" -o "$work/SHA256SUMS"
 if [[ -n ${DOTFILES_VM_IMAGE:-} ]]; then
   ln -s "$(realpath "$DOTFILES_VM_IMAGE")" "$work/$image_name"
