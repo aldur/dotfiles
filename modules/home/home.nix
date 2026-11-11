@@ -462,14 +462,14 @@ in
   }
   // lib.optionalAttrs full { clipshare.enable = workstation; };
 
-  # atuin's daemon (as of 18.10) bind()s its unix socket without unlink()-ing
-  # a stale one first, so launchd's KeepAlive crash-loops with EADDRINUSE
-  # after any unclean shutdown. Strip the leftover socket before exec.
+  # `atuin daemon start` (18.15.2) does not remove a stale socket before it
+  # binds. After an unclean stop, the launchd KeepAlive restarts fail in a
+  # loop with EADDRINUSE. Remove the socket before exec.
   launchd.agents = lib.mkIf (pkgs.stdenv.hostPlatform.isDarwin && config.programs.atuin.enable) {
     atuin-daemon.config.ProgramArguments = lib.mkForce [
       "/bin/sh"
       "-c"
-      "rm -f ${config.programs.atuin.settings.daemon.socket_path} && exec ${lib.getExe config.programs.atuin.package} daemon"
+      "rm -f ${config.programs.atuin.settings.daemon.socket_path} && exec ${lib.getExe config.programs.atuin.package} daemon start"
     ];
   };
 
