@@ -63,9 +63,9 @@ wrapper is in [standalone.nix](standalone.nix).
 | `PI_SKIP_VERSION_CHECK` | Skip Pi's startup version check. | `1` for normal runs. |
 | `PNPM_HOME` | Self-managed Pi installation directory. | `${XDG_DATA_HOME:-~/.local/share}/pnpm` on Linux; `~/Library/pnpm` on macOS. |
 
-For `pi-yolo`, use `--env LLAMA_API_KEY` to pass the llama.cpp key into the
-sandbox. See the [sandbox guide](../../modules/home/agent-sandbox/README.md) for
-environment handling.
+`pi-yolo` passes the `LLAMA_*`, `PI_OPENAI_*`, and `PI_SUBAGENT_*` variables
+into the sandbox. See the [sandbox guide](../../modules/home/agent-sandbox/README.md)
+for environment handling.
 
 ## Settings and skills
 

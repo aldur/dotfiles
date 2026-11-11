@@ -5,6 +5,7 @@ import { syncBuiltinESMExports } from "node:module";
 import { tmpdir } from "node:os";
 import { join, relative } from "node:path";
 import { mock } from "node:test";
+import timers from "node:timers/promises";
 import { pathToFileURL } from "node:url";
 
 // Use Pi's session startup code without a model request in child processes.
@@ -51,6 +52,10 @@ mock.method(childProcess, "spawn", (...args) => {
   starts.push(performance.now());
   return spawn(...args);
 });
+// Only the start interval check needs the real delay.
+let startInterval = true;
+const delay = timers.setTimeout;
+mock.method(timers, "setTimeout", (...args) => (startInterval ? delay(...args) : Promise.resolve()));
 syncBuiltinESMExports();
 const { extensions, errors } = await loadExtensions([extensionPath], process.cwd());
 
@@ -171,6 +176,7 @@ try {
     assert.ok(starts[index] - starts[index - 1] >= 1400,
       `Worker start interval: ${starts[index] - starts[index - 1]} ms`);
   }
+  startInterval = false;
   assert.deepEqual(children.map((session) => session.name).sort(),
     startupTasks.map((task) => `subagent:${task.agent}`).sort());
   for (const child of children) {

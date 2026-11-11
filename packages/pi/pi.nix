@@ -25,6 +25,29 @@ let
   pluginPaths = map (plugin: plugin.entryPoint or "${plugin}/index.ts") (lib.attrValues plugins);
   pluginFlags = lib.concatMapStringsSep " " (path: "-e ${lib.escapeShellArg path}") pluginPaths;
 
+  helpSections =
+    lib.optionalString (plugins ? pi-llama) ''
+      llama.cpp provider:
+        LLAMA_BASE_URL  Server API URL, including /v1.
+                        Set this to enable the provider.
+
+        Example:
+          LLAMA_BASE_URL=http://my-server:8080/v1 pi
+
+    ''
+    + lib.optionalString (plugins ? pi-openai-discovery) ''
+      OpenAI-compatible provider:
+        PI_OPENAI_BASE_URL  Server API URL, including /v1.
+        PI_OPENAI_API_KEY   API key, if required.
+        PI_OPENAI_PROFILE   models.dev provider ID.
+
+    ''
+    + lib.optionalString browserEnabled ''
+      Browser cache:
+        pi browser-prefetch  Install pinned Chromium before an offline session.
+
+    '';
+
   npmPackage = "@earendil-works/pi-coding-agent";
 
   # pnpm rather than npm: it does not run dependency lifecycle scripts by
@@ -101,29 +124,11 @@ let
       run_pi() {
         local pi_bin="$1"
         shift
-        ${lib.optionalString (plugins ? pi-llama) ''
+        ${lib.optionalString (helpSections != "") ''
           # Add local server settings after Pi's own help.
           if [[ $# -eq 1 && ( "$1" == --help || "$1" == -h ) ]]; then
             "$pi_bin" "''${flags[@]}" "$@"
-            printf '%s\n' ${lib.escapeShellArg ''
-
-              llama.cpp provider:
-                LLAMA_BASE_URL  Server API URL, including /v1.
-                                Set this to enable the provider.
-
-                Example:
-                  LLAMA_BASE_URL=http://my-server:8080/v1 pi
-
-              OpenAI-compatible provider:
-                PI_OPENAI_BASE_URL  Server API URL, including /v1.
-                PI_OPENAI_API_KEY   API key, if required.
-                PI_OPENAI_PROFILE   models.dev provider ID.
-
-              ${lib.optionalString browserEnabled ''
-                Browser cache:
-                  pi browser-prefetch  Install pinned Chromium before an offline session.
-              ''}
-            ''}
+            printf '%s\n' ${lib.escapeShellArg "\n${helpSections}"}
             exit 0
           fi
         ''}

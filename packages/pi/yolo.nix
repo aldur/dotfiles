@@ -4,6 +4,7 @@ let
   sandbox = import ../../modules/home/agent-sandbox/package.nix { inherit pkgs lib; } {
     profiles.pi.extraEnvironmentAllowlist = [
       "LLAMA_BASE_URL"
+      "LLAMA_API_KEY"
       "PI_OPENAI_BASE_URL"
       "PI_OPENAI_API_KEY"
       "PI_OPENAI_PROFILE"
