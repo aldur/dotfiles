@@ -21,6 +21,19 @@ local function check(name, ok, detail)
 	end
 end
 
+--- Wait until all callbacks queued with vim.schedule so far have run. They run
+--- in order, so a flag queued now is set after them. Returns true when it is.
+local function drain()
+	local done = false
+	vim.schedule(function()
+		done = true
+	end)
+	vim.wait(10000, function()
+		return done
+	end, 10)
+	return done
+end
+
 --- Run `body`, then report and quit whatever happened. Reporting has to be
 --- unconditional: nvim keeps running after a script aborts, so an escaping
 --- error would turn a failed assertion into a hung build.
@@ -437,7 +450,10 @@ report(function()
 		for _, rel in ipairs({ "importer.py" }) do
 			local ok = pcall(vim.cmd.edit, beans .. "/" .. rel)
 			local buf = vim.api.nvim_get_current_buf()
-			vim.wait(500)
+			-- The FileType autocmd calls `root_dir`, which hands its result to
+			-- a scheduled start (vim/lsp.lua, lsp_enable_callback). That start
+			-- attaches the fake client synchronously.
+			check("attach decision for " .. rel .. " ran", drain())
 			check(
 				"beancount stays off " .. rel,
 				ok and vim.lsp.get_clients({ bufnr = buf, name = "beancount" })[1] == nil,
@@ -464,7 +480,7 @@ report(function()
 						},
 					},
 				})
-				vim.wait(500)
+				check("diagnostics handler for " .. vim.fs.basename(path) .. " ran", drain())
 			end
 
 			-- Neither file is open, so a buffer existing afterwards is the handler's
@@ -607,8 +623,34 @@ report(function()
 		opened, oerr = pcall(vim.cmd.edit, stray)
 		check("opens stray.sol", opened, oerr)
 		local sbuf = vim.api.nvim_get_current_buf()
+		-- LazyVim lints from a 100 ms debounce timer. Each lint pass first
+		-- calls `_resolve_linter_by_ft` and then gives the linters that pass
+		-- their condition to `try_lint`, in one callback. Record both, so the
+		-- check waits for the pass and sees what it started.
+		local lint = require("lint")
+		local resolve, try_lint = lint._resolve_linter_by_ft, lint.try_lint
+		local linted, started = false, {}
+		lint._resolve_linter_by_ft = function(...)
+			linted = linted or vim.api.nvim_get_current_buf() == sbuf
+			return resolve(...)
+		end
+		lint.try_lint = function(names, ...)
+			if vim.api.nvim_get_current_buf() == sbuf then
+				vim.list_extend(started, type(names) == "table" and names or { names })
+			end
+			return try_lint(names, ...)
+		end
 		vim.cmd.write()
-		vim.wait(1500)
+		vim.wait(10000, function()
+			return linted
+		end, 10)
+		lint._resolve_linter_by_ft, lint.try_lint = resolve, try_lint
+		check("lint pass runs outside a project", linted)
+		check(
+			"forge-lint not started outside a project",
+			not vim.list_contains(started, "forge-lint"),
+			vim.inspect(started)
+		)
 		check("no forge-lint outside a project", #forge_diags(sbuf) == 0, vim.inspect(vim.diagnostic.get(sbuf)))
 		local messages = vim.api.nvim_exec2("messages", { output = true }).output
 		check("no 'Error running forge'", not messages:find("Error running forge", 1, true), messages)
@@ -1105,8 +1147,15 @@ report(function()
 			check("closing help restores focus", vim.api.nvim_get_current_win() == picker.input.win.win)
 			check("closing help preserves the query", picker.input:get() == "widget")
 			picker:action("toggle_fuzzy")
+			local wins = vim.list_extend(vim.tbl_values(picker.layout.wins), vim.tbl_values(picker.layout.box_wins))
+			local function closed()
+				return not vim.iter(wins):any(function(win)
+					return win:valid()
+				end)
+			end
 			picker:close()
-			vim.wait(100)
+			vim.wait(10000, closed, 10)
+			check("picker windows close in " .. layout, closed())
 		end
 	end
 
