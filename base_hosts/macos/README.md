@@ -17,7 +17,7 @@ On Apple Silicon, install [`nix`][1] and run this as user `aldur` (UID 501):
 
 ```bash
 sudo nix --extra-experimental-features 'nix-command flakes' \
-  run nix-darwin/master#darwin-rebuild -- switch \
+  run 'github:aldur/dotfiles?dir=base_hosts/macos#darwin-rebuild' -- switch \
   --flake 'github:aldur/dotfiles?dir=base_hosts/macos#macOS'
 ```
 

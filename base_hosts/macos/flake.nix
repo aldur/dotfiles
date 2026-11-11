@@ -42,5 +42,9 @@
     in
     {
       darwinConfigurations."macOS" = nix-darwin.lib.darwinSystem { inherit specialArgs modules; };
+
+      # The bootstrap command in README.md runs this, so it uses the pinned
+      # nix-darwin.
+      packages.aarch64-darwin.darwin-rebuild = nix-darwin.packages.aarch64-darwin.darwin-rebuild;
     };
 }
