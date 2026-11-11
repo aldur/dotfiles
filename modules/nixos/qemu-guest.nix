@@ -16,9 +16,7 @@ in
     ../current_system_flake.nix
     ./qemu-vm-files.nix
 
-    # This is not technically required since the `vm-nogui` format already
-    # imports this modules.
-    # However, this way we can rebuild the NixOS image from
+    # This module also lets the guest rebuild the NixOS image from
     # _within_ the VM.
     "${modulesPath}/virtualisation/qemu-vm.nix"
   ];
@@ -51,11 +49,6 @@ in
 
     services.getty.autologinUser = config.mainUser;
     security.sudo-rs.wheelNeedsPassword = false;
-
-    # Overwrite since it does more harm than good
-    # https://github.com/nix-community/nixos-generators/blob/
-    # 032decf9db65efed428afd2fa39d80f7089085eb/formats/vm-nogui.nix#L20C3-L20C29
-    environment.loginShellInit = lib.mkForce "";
 
     virtualisation = {
       # By default, `nix` mounts the whole /nix/store of the host to the VM.
