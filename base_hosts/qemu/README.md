@@ -36,7 +36,8 @@ qemu-vm --clean -p 22:2222
 # Enable GUI mode
 qemu-vm --gui -p 22:2222
 
-# Share the clipboard with the guest (the guest must run spice-vdagent).
+# Share the clipboard with the guest. The guest must set
+# `services.spice-vdagentd.enable = true`.
 # Works with the Cocoa display on macOS; the GTK display on Linux has no
 # clipboard support in the nixpkgs build.
 qemu-vm --gui --clipboard -p 22:2222

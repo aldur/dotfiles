@@ -1,12 +1,15 @@
 # Validate on ChromeOS without developer mode
 
-Use normal crosh (`Ctrl+Alt+T`). No ChromeOS root shell, SSH server, custom
-kernel or host filesystem access is required. Keep the existing VM intact;
-use a new name for a fresh image test. Record the ChromeOS version from
-`chrome://version`, the downloaded image artifact/run and its published
-checksum. The simulated CI boot does not qualify as this device test.
+Use normal crosh (`Ctrl+Alt+T`). You do not need a ChromeOS root shell, an SSH
+server, a custom kernel or access to the host filesystem. The simulated CI
+boot does not replace this test.
 
-First collect the current failure without opening a guest shell:
+Record the ChromeOS version from `chrome://version`. Record the image
+artifact, its CI run and its published checksum.
+
+## Collect the host state
+
+Do not open a guest shell.
 
 ```text
 vmc list
@@ -14,12 +17,13 @@ vmc logs <vm>
 vmc start --help
 ```
 
-The help must list `--no-shell`. Do not substitute user-provisioning flags
-or a guest login if that option is unavailable; record the version/help so
-the startup procedure can be adapted. In particular, `--user` belongs to
-`vmc start`, not crosh's `vsh` command.
+The help must list `--no-shell`. If it does not, record the version and the
+help text. Do not use user-provisioning flags or a guest login as a
+substitute. `--user` is an option of `vmc start`, not of the `vsh` command.
 
-Once the corrected ARM artifact is in Downloads, create a separate VM:
+## Start a new VM
+
+Do not change an existing VM. Use a name that does not exist:
 
 ```text
 vmc create --vm-type BAGUETTE --size 10G --source /home/chronos/user/MyFiles/Downloads/baguette_rootfs.img.zst nixos-boot-test
@@ -27,21 +31,25 @@ vmc start --vm-type BAGUETTE --no-shell nixos-boot-test
 vmc logs nixos-boot-test
 ```
 
-Use that fresh name only if it does not already exist. Record whether start
-returns successfully and preserve the complete boot log before attempting
-`vsh` or launching an application. If start hangs, collect `vmc logs` from
-a second crosh tab. Do not enable lingering or start user services to help
-the test pass. Successful registration and user-manager startup must happen
-without a login. The no-shell start still performs the normal ChromeOS
-registration handshake; it does not replace maitred or garcon.
+- Record if `vmc start` returns successfully.
+- Save the full boot log before you use `vsh` or start an application.
+- If the start does not return, collect `vmc logs` from a second crosh tab.
+- Do not enable lingering. Do not start user services manually. Registration
+  and the user manager must start without a login.
 
-After recording startup, connect:
+A start with `--no-shell` does the normal ChromeOS registration handshake. It
+does not replace maitred or garcon.
+
+## Examine the guest
+
+Connect after you save the boot log:
 
 ```text
 vsh nixos-boot-test penguin
 ```
 
-Run these **inside the guest**, not at the `crosh>` prompt:
+If `vsh` fails, save the error and the host logs. Run these commands **in the
+guest**, not at the `crosh>` prompt:
 
 ```sh
 id
@@ -56,22 +64,24 @@ systemctl --user show garcon.service sommelier@0.service sommelier@1.service som
 systemctl --user show-environment
 ```
 
-Review environment output before sharing it; only the display, runtime
-directory and `MOZ_LEGACY_HOME` entries are relevant. These observations
-after login supplement the saved pre-login log, rather than proving startup
-on their own. If `vsh` fails, preserve that error and the host logs.
+Examine the environment output before you share it. Only the display and
+runtime directory entries are relevant. These results add to the saved boot
+log. They do not prove a correct startup by themselves.
 
-Then exercise the applications of the image, as its own README describes.
-Test clean stop/start, then host sleep/wake, collecting `vmc logs` and
-service restart counts each time. A guest with a tmpfs home loses its files
-at stop/start, so save test outputs to the shared folder first.
+## Applications, restart and sleep
 
-For the original regression, repeat the no-shell startup procedure with
-the original affected image under a different fresh VM name on the same
-ChromeOS build. It must fail registration/session startup while the corrected
-image succeeds. Do not infer the cause of a different failure from the name
-of the image. Keep both logs and artifact identities with the test result.
+1. Use the applications of the image as its README tells you.
+2. Stop the VM, then start it.
+3. Let the host sleep, then wake it.
 
-Normal crosh does not expose all host kernel/tools-disk bytes for hashing.
-Record the observable build/kernel/tools mount information and report this
-limit; do not claim byte-for-byte host equivalence from version strings.
+After each step, collect `vmc logs` and the service restart counts. A guest
+with a tmpfs home loses its files when it stops. Save the test outputs to the
+shared folder first.
+
+## Results
+
+Keep the logs and the artifact identity with the test result.
+
+Normal crosh cannot read all bytes of the host kernel and tools disk. Record
+the build, kernel and tools mount data that you can see, and report this
+limit. Version strings do not prove that the host is byte-for-byte equal.

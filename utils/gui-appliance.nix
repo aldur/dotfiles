@@ -20,8 +20,6 @@ let
       defaultMemory = 4096;
       defaultCores = 4;
       defaultDiskSize = 12;
-      defaultEphemeral = false;
-      defaultClipboard = false;
     };
   };
   guest =
