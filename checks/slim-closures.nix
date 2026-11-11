@@ -51,6 +51,7 @@ let
     pi-coding-agent = 365;
     pi-yolo = if stdenv.hostPlatform.isAarch64 then 1470 else 820;
     tavily-cli = 285;
+    update-pins = 225;
     ripgrep-all = 445;
     # MCP, Node, and the Nix client: 288 MiB on x86 before first browser use.
     playwright-lazy = if stdenv.hostPlatform.isAarch64 then 1000 else 320;
