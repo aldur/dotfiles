@@ -47,7 +47,10 @@ with tempfile.TemporaryDirectory() as temporary:
         raise AssertionError(output.decode(errors="replace"))
 
     def status():
-        return yaml.safe_load(task.read_text().split("---", 2)[1])["status"]
+        # taskmd truncates the file before it writes the new text.
+        # A read in that gap gets no complete frontmatter.
+        parts = task.read_text().split("---", 2)
+        return yaml.safe_load(parts[1])["status"] if len(parts) == 3 else None
 
     try:
         wait_for(lambda: b"Packaging fixture" in output)
