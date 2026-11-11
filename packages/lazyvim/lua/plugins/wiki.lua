@@ -86,7 +86,7 @@ return {
 			vim.g.wiki_link_creation = {
 				md = { link_type = "md", url_extension = ".md" },
 			}
-			-- Vimscript calls this as a Funcref; Lua functions cannot be stored in vim.g.
+			-- Vimscript calls this as a Funcref.
 			vim.cmd(
 				[[let g:wiki_link_creation.md.url_transform = {name -> luaeval("require('wiki.snacks').normalize_url(_A)", name)}]]
 			)

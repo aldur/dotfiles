@@ -1,7 +1,5 @@
 # Shared tmux settings.
-# Consumed by home-manager (programs.tmux) and NixOS (programs.tmux).
-# NixOS uses `shortcut` instead of `prefix`, and lacks `mouse`/`focusEvents`
-# options — callers must set those themselves.
+# Consumed by home-manager (programs.tmux) in modules/home/home.nix.
 { lib }:
 {
   terminal = "tmux-256color";

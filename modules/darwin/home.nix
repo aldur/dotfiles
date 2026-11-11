@@ -51,6 +51,7 @@ in
     };
 
     # Don't mount $HOME into `container` VMs.
+    # A `home.file` entry replaces the full file. The script keeps the other keys.
     activation.appleContainerConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       config="$HOME/.config/container/config.toml"
       run mkdir -p "$(dirname "$config")"
