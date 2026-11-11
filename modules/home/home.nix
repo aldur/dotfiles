@@ -496,6 +496,6 @@ in
       sandbox = "faraday --mask ~/Documents --mask ~/Desktop --mask ~/Developer --mask ~/Movies --mask ~/Music --mask ~/Pictures";
     }
   // lib.optionalAttrs (lazyvim-bin != null) {
-    lv = "lazyvim";
+    lv = baseNameOf lazyvim-bin;
   };
 }
