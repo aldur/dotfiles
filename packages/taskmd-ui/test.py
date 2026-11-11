@@ -39,9 +39,11 @@ with tempfile.TemporaryDirectory() as temporary:
                 except OSError as error:
                     if error.errno != errno.EIO:
                         raise
+            # Read the state one time. The process can exit between two reads.
+            exited = process.poll() is not None
             if condition():
                 return
-            assert process.poll() is None, output.decode(errors="replace")
+            assert not exited, output.decode(errors="replace")
         raise AssertionError(output.decode(errors="replace"))
 
     def status():
