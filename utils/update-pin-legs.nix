@@ -10,7 +10,7 @@
   darwin ? [ ],
   # The GitHub runner labels the workflow schedules the legs on.
   runners ? {
-    linux = "ubuntu-24.04";
+    linux = "ubuntu-26.04";
     darwin = "macos-26";
   },
 }:
