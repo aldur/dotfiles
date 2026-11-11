@@ -330,8 +330,9 @@ let
       '';
 
   # NOTE: python3's runtime output carries ~68M of build-time material
-  # (libpython.a + build config, IDLE, tests) shared by modules/shared/environment.nix and the
-  # python package envs. A repack works, but swapping it under the envs
+  # (libpython.a + build config, IDLE, tests) shared by
+  # modules/shared/environment.nix and the python package envs. A repack
+  # works, but swapping it under the envs
   # needs nixpkgs' replaceDependency, whose import-from-derivation breaks
   # cross-platform eval (checking darwin outputs from linux); a partial
   # swap would duplicate the interpreter instead. Left whole on purpose.

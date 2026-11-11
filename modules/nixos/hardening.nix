@@ -15,8 +15,9 @@ in
       description = ''
         Blacklist niche, legacy, and known-buggy kernel modules to reduce
         attack surface. Each entry in `boot.blacklistedKernelModules` is also
-        mapped to `install <mod> <coreutils>/bin/false` in /etc/modprobe.d so manual
-        `modprobe` is blocked too, matching Kicksecure security-misc semantics.
+        mapped to `install <mod> <coreutils>/bin/false` in /etc/modprobe.d so
+        manual `modprobe` is blocked too, matching Kicksecure security-misc
+        semantics.
         On activation, any already-loaded blacklisted module is unloaded.
       '';
     };
@@ -58,7 +59,8 @@ in
       description = ''
         Disable seldom-used setuid/setgid wrappers (su, sudoedit, sg, newgrp,
         newuidmap, newgidmap, fusermount[3]). If polkit is enabled, clear the
-        setuid bit of the pkexec wrapper. Each entry is set with `lib.mkDefault`, so modules that need a specific wrapper can re-enable
+        setuid bit of the pkexec wrapper. Each entry is set with
+        `lib.mkDefault`, so modules that need a specific wrapper can re-enable
         it with a plain assignment (rootless Docker re-enables newuidmap,
         newgidmap, fusermount, and fusermount3).
       '';
