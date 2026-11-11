@@ -25,7 +25,6 @@ let
       builtins.filter (
         entry:
         builtins.elem entry.name [
-          "claudeSkillsLink"
           "checkLinkTargets"
           "claudeSettings"
           "linkGeneration"
@@ -33,11 +32,6 @@ let
         ]
       ) (inputs.home-manager.lib.hm.dag.topoSort home.config.home.activation).result
     )}
-  '';
-  # Older generations linked the full skills directory into the store.
-  oldGeneration = pkgs.runCommand "home-manager-files" { } ''
-    mkdir -p $out/.claude/skills/fixture
-    echo old > $out/.claude/skills/fixture/SKILL.md
   '';
 in
 pkgs.runCommand "claude-state-test" { nativeBuildInputs = [ pkgs.gettext ]; } ''
@@ -57,18 +51,6 @@ pkgs.runCommand "claude-state-test" { nativeBuildInputs = [ pkgs.gettext ]; } ''
     test -L "$HOME/.claude/skills/fixture/SKILL.md"
     ${pkgs.jq}/bin/jq -e '.theme == "dark"' "$HOME/.claude/settings.json"
     ${activation}
-
-    # Replace the old store link with a directory that accepts new skills.
-    export HOME=$TMPDIR/old-home
-    mkdir -m 700 "$HOME" "$HOME/.claude"
-    ln -s ${oldGeneration}/.claude/skills "$HOME/.claude/skills"
-    ${activation}
-    test ! -L "$HOME/.claude/skills"
-    test -L "$HOME/.claude/skills/fixture/SKILL.md"
-    mkdir "$HOME/.claude/skills/mine"
-    echo mine > "$HOME/.claude/skills/mine/SKILL.md"
-    ${activation}
-    test "$(cat "$HOME/.claude/skills/mine/SKILL.md")" = mine
 
     # Claude watches the skills directory only if it exists at startup.
     export HOME=$TMPDIR/no-skills-home

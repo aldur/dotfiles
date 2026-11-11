@@ -135,10 +135,6 @@ in
   crostini-piv = pkgs.callPackage ../base_hosts/crostini/tests/piv.nix { };
   network-hardening = pkgs.callPackage ../modules/nixos/tests/network-hardening.nix { };
 
-  claude-skills-migration = pkgs.callPackage ../modules/home/claude/tests/skills-migration.nix {
-    inherit self;
-  };
-
   codex-settings = pkgs.callPackage ../modules/home/codex/tests/codex-settings.nix {
     inherit self inputs system;
   };

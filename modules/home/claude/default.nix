@@ -149,7 +149,7 @@ let
       # startup fetch.
       if [ "''${argc_online:-0}" -eq 0 ] && refresh_due; then
         echo "claude-yolo: refreshing the model list" >&2
-        if env -u CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC -u DISABLE_TELEMETRY \
+        if env -u CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC \
           DISABLE_AUTOUPDATER=1 timeout 15 "''${sandbox[@]}" claude \
           -p /model --strict-mcp-config --settings '{"disableAllHooks":true}' >/dev/null 2>&1; then
           printf '%s\n' "$refresh_stamp" | ${claudeState} write .claude/yolo-refresh
@@ -161,7 +161,7 @@ let
       ${claude-trust-cwd} "''${argc_workspace:-$PWD}"
       export IS_SANDBOX=1 CLAUBBIT=1
       if [ "''${argc_online:-0}" -eq 1 ]; then
-        unset CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC DISABLE_TELEMETRY
+        unset CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC
       else
         export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
       fi
@@ -323,8 +323,6 @@ in
           CLAUDE_CODE_PLUGIN_PREFER_HTTPS = "1";
         };
       };
-
-      nixManagedHookMarkers = [ "claude-tmux-silence" ];
     };
 
     home = {
@@ -349,21 +347,6 @@ in
         lib.hm.dag.entryBetween [ "linkGeneration" ] [ "writeBoundary" ] ''
           ${mergeJsonActivation "settings" ".claude/settings.json" claudeSettings}
           ${mergeJsonActivation "mcp" ".claude.json" claudeMcpConfig}
-        ''
-      );
-
-      # Older generations linked the full skills directory into the store.
-      # Home Manager keeps that link when the new generation has a directory
-      # at the same path. Then nothing can write new skills into it. This step
-      # removes the link before the link check. It writes before
-      # writeBoundary, because the check fails on the old link.
-      activation.claudeSkillsLink = lib.mkIf enabled (
-        lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
-          skillsDir=${skillsTarget}
-          if [[ -L $skillsDir \
-            && $(readlink "$skillsDir") == "$(readlink -e ${lib.escapeShellArg builtins.storeDir})"/*-home-manager-files/* ]]; then
-            run rm $VERBOSE_ARG "$skillsDir"
-          fi
         ''
       );
 
