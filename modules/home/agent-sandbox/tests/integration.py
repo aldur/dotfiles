@@ -341,6 +341,9 @@ sent = False
 try:
     deadline = time.monotonic() + 20
     while time.monotonic() < deadline:
+        # Read the exit state before the select. Output written before the
+        # exit is then readable in this select.
+        exited = proc.poll() is not None
         ready, _, _ = select.select([master], [], [], 0.1)
         if ready:
             try:
@@ -358,7 +361,7 @@ try:
                 fcntl.ioctl(master, termios.TIOCSWINSZ, struct.pack("HHHH", 40, 120, 0, 0))
                 os.write(master, b"q")
                 sent = True
-        elif proc.poll() is not None:
+        elif exited:
             break
     assert proc.wait(timeout=2) == 0, output
     assert b"terminal-passed" in output, output

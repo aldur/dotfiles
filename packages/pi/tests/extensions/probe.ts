@@ -23,7 +23,9 @@ export default async function(pi) {
     async handler(args, ctx) {
       const result = await tool.execute("check", { agent: "probe", task: "Check plugins" },
         undefined, undefined, { ...ctx, model: undefined });
-      fs.writeFileSync(args, JSON.stringify(result));
+      // The check polls for this file. Rename it into place so that the check never reads a partial file.
+      fs.writeFileSync(`${args}.tmp`, JSON.stringify(result));
+      fs.renameSync(`${args}.tmp`, args);
     },
   });
 }

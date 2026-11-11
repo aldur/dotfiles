@@ -235,7 +235,8 @@ pkgs.testers.runNixOSTest {
     machine.succeed(as_user("gdbus call --session --dest org.freedesktop.secrets --object-path /org/freedesktop/secrets --method org.freedesktop.Secret.Service.Lock \"['/org/freedesktop/secrets/collection/login']\""))
     machine.succeed(as_user("gdbus call --session --dest org.freedesktop.secrets --object-path /org/freedesktop/secrets/aliases/default --method org.freedesktop.DBus.Properties.Get org.freedesktop.Secret.Collection Locked | grep -qx '(<true>,)'"))
     machine.fail(as_user("systemctl --user start signal.service"))
-    machine.succeed("journalctl _UID=1000 --no-pager | grep 'Keyring is locked'")
+    # journald can store the preflight error after systemctl returns.
+    machine.succeed("journalctl --sync", "journalctl _UID=1000 --no-pager | grep 'Keyring is locked'")
     machine.fail(as_user("signal-desktop --no-sandbox"))
 
     machine.succeed("mkdir -p /run/systemd/system/firewall.service.d")

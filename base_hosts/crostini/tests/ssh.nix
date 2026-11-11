@@ -118,7 +118,8 @@ pkgs.testers.runNixOSTest {
         assert machine.succeed(SSH + "root@.host id -u").strip() == "0"
         status, output = machine.execute(SSH + "aldur@.host true 2>&1")
         assert status == 255 and "Permission denied (publickey)" in output, output
-        machine.succeed("journalctl --grep='User aldur .*not listed in AllowUsers'")
+        # journald can store the sshd message after ssh exits.
+        machine.succeed("journalctl --sync", "journalctl --grep='User aldur .*not listed in AllowUsers'")
         for family, ip in (("AF_INET", "127.0.0.1"), ("AF_INET6", "::1")):
             probe = (
                 f"import errno, socket; s = socket.socket(socket.{family}); "
