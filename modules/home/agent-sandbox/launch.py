@@ -71,7 +71,8 @@ class Reservations:
     def start(pid):
         try:
             return Path(f"/proc/{pid}/stat").read_text().rsplit(") ", 1)[1].split()[19]
-        except FileNotFoundError:
+        except (FileNotFoundError, ProcessLookupError):
+            # A read after the process exits fails with ESRCH.
             return None
 
     @contextmanager
@@ -215,7 +216,11 @@ class Policy:
         hardlinks = {}
         state_aliases = set()
 
-        def walk_error(error):
+        def walk_error(error, root):
+            # Other processes can remove entries while the walk runs. A
+            # removed entry has nothing to protect. The grant root must exist.
+            if isinstance(error, FileNotFoundError) and Path(error.filename) != root:
+                return
             raise error
 
         def restriction_walk_error(error):
@@ -293,12 +298,23 @@ class Policy:
                 protect(source / name, reserve=True)
             # Discover existing nested repositories/instructions without following
             # symlinks or descending into the metadata we are about to protect.
-            for directory_name, dirs, files in os.walk(source, followlinks=False, onerror=walk_error):
+            for directory_name, dirs, files in os.walk(
+                source, followlinks=False, onerror=lambda error: walk_error(error, source)
+            ):
                 parent = Path(directory_name)
-                if any(root.exists() and os.path.samefile(parent, root) for root in self.direnv_roots):
+                try:
+                    info = parent.stat()
+                except FileNotFoundError as error:
+                    walk_error(error, source)
+                    dirs[:] = []
+                    continue
+                if any(root.exists() and os.path.samestat(info, root.stat()) for root in self.direnv_roots):
                     fail(f"writable grant includes host direnv state: {destination}")
                 for name in files:
-                    remember_hardlink(parent / name)
+                    try:
+                        remember_hardlink(parent / name)
+                    except FileNotFoundError as error:
+                        walk_error(error, source)
                 for name in names:
                     if name in dirs or name in files:
                         protect(parent / name)

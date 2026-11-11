@@ -115,6 +115,7 @@ let
     };
     metadataTests = pkgs.replaceVars ./metadata.py {
       git = "${pkgs.git}/bin/git";
+      launcher = "${../launch.py}";
     };
     dockerTests = "${./docker.py}";
     journalTests = pkgs.replaceVars ./journal.py {

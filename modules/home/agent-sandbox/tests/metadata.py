@@ -2,6 +2,8 @@
 import json
 import os
 from pathlib import Path
+import runpy
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -201,6 +203,54 @@ denied(lambda: Path({str(repo / '.git/config')!r}).write_text('changed'))
     result = sandbox(empty, "raise AssertionError('must not run')", check=False)
     assert result.returncode != 0 and "hard links" in result.stderr
     (empty / ".git").unlink()
+
+    # Other processes can remove entries while the launcher scans a grant.
+    # Change the tree after the walk lists a directory and before the
+    # launcher reads the entries. This removes the timing from the race.
+    Policy = runpy.run_path("@launcher@")["Policy"]
+    churn = base / "churn"
+    walk = os.walk
+
+    def scan(trigger, change):
+        if churn.exists():
+            shutil.rmtree(churn)
+        (churn / "tree/.git").mkdir(parents=True)
+        (churn / "tree/file").write_text("")
+
+        def changing_walk(top, *args, **kwargs):
+            for entry in walk(top, *args, **kwargs):
+                if Path(entry[0]) == trigger:
+                    change()
+                yield entry
+
+        os.walk = changing_walk
+        policy = Policy(Path.home(), False)
+        try:
+            return policy.metadata([(churn, churn)], [])
+        finally:
+            os.walk = walk
+            policy.close()
+
+    tree = churn / "tree"
+    for trigger, change, kept in (
+        (churn, lambda: shutil.rmtree(tree), churn / ".git"),
+        (tree, lambda: (tree / "file").unlink(), tree / ".git"),
+        (tree, lambda: shutil.rmtree(tree), churn / ".git"),
+    ):
+        assert str(kept) in scan(trigger, change)
+    # A replaced entry and a removed grant still fail closed.
+    for trigger, change, error, message in (
+        (tree, lambda: (shutil.rmtree(tree / ".git"), (tree / ".git").symlink_to(repo / ".git")),
+         RuntimeError, "crosses a symlink"),
+        (churn, lambda: shutil.rmtree(churn), FileNotFoundError, repr(str(churn))),
+    ):
+        try:
+            scan(trigger, change)
+        except error as raised:
+            assert message in str(raised), raised
+        else:
+            raise AssertionError("changed grant was accepted")
+    print("passed: entries removed during the metadata scan", flush=True)
 
     # Missing paths are reserved only while an owner is alive. Parallel launches
     # do not remove each other's placeholders or share private config files.
