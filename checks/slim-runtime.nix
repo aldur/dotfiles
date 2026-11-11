@@ -4,7 +4,7 @@
   stdenv,
   lib,
   lua5_4,
-  pandoc-runtime,
+  pandoc,
   pi,
   ripgrep-all,
 }:
@@ -20,6 +20,6 @@ runCommand "slim-runtime" { nativeBuildInputs = [ python3 stdenv.cc ]; } ''
   }
   EOF
   cc -shared -fPIC -I${lib.getDev lua5_4}/include native.c -o native.so
-  python3 ${./slim-runtime.py} ${pandoc-runtime}/bin/pandoc ${pi}/bin/pi ${ripgrep-all}/bin/rga
+  python3 ${./slim-runtime.py} ${pandoc}/bin/pandoc ${pi}/bin/pi ${ripgrep-all}/bin/rga
   touch "$out"
 ''

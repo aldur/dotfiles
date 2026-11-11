@@ -48,7 +48,7 @@
   markdown = [
     markdownlint-cli2
     marksman
-    pandoc-runtime
+    pandoc
   ];
   json = [ vscode-langservers-extracted ];
   toml = [ taplo ];

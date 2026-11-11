@@ -113,21 +113,50 @@ let
     '';
   # The generic BLAS/LAPACK outputs each copy OpenBLAS twice to change its
   # SONAME. NumPy retains all four copies (including LAPACK through its build
-  # metadata), although OpenBLAS already provides every required ABI. Build
-  # NumPy against the same providers directly, keeping their integer width
-  # and CPU dispatch. This saves ~133 MiB without removing numerical code,
-  # headers, or configuration metadata. Keep the interface fields NumPy's
-  # expression expects from the generic wrappers.
-  numpyForLlm = prev.python3.pkgs.numpy.override {
-    blas = prev.blas.provider // {
-      inherit (prev.blas) isILP64 implementation provider;
-    };
-    lapack = prev.lapack.provider // {
-      inherit (prev.lapack) isILP64 implementation provider;
-    };
-  };
+  # metadata), although OpenBLAS already provides every required ABI. Repack
+  # the cached NumPy to load OpenBLAS directly: libblas.so.3 is a copy of
+  # libopenblas.so.0 with a different SONAME. This saves ~133 MiB without
+  # removing numerical code, headers, or configuration metadata.
+  numpyForLlm =
+    let
+      numpy = prev.python3.pkgs.numpy;
+      blas = prev.lib.getLib prev.blas;
+      openblas = prev.blas.provider;
+    in
+    prev.python3.pkgs.toPythonModule (
+      prev.runCommand numpy.name
+        {
+          # The stdenv replaces patchelf after the overlays. Only that
+          # one is in the binary cache, thus `final`.
+          nativeBuildInputs = [ final.patchelf ];
+          inherit (numpy) meta propagatedBuildInputs;
+          # A leftover would silently keep the copies in the closure.
+          disallowedReferences = [
+            numpy
+            blas
+            prev.blas.dev
+            (prev.lib.getLib prev.lapack)
+            prev.lapack.dev
+          ];
+        }
+        ''
+          cp -a ${numpy} $out
+          chmod -R u+w $out
+          find $out -type f -exec sed -i "s|${numpy}|$out|g" {} +
+          sed -i \
+            -e "s|${prev.blas.dev}|${openblas.dev}|g" \
+            -e "s|${prev.lapack.dev}|${openblas.dev}|g" \
+            $out/${prev.python3.sitePackages}/numpy/__config__.py
+          # The bytecode of the edited file is stale and keeps the old paths.
+          rm $out/${prev.python3.sitePackages}/numpy/__pycache__/__config__.*.pyc
+          grep -rlZ ${blas} $out | while IFS= read -r -d ''' f; do
+            patchelf --replace-needed libblas.so.3 libopenblas.so.0 \
+              --set-rpath "$(patchelf --print-rpath "$f" | sed "s|${blas}|${prev.lib.getLib openblas}|g")" "$f"
+          done
+        ''
+    );
 
-  # Repoint only llm's runtime Python modules at the rebuilt NumPy (same
+  # Repoint only llm's runtime Python modules at the repacked NumPy (same
   # version/ABI). Overriding the whole Python package set also rebuilds its
   # test-only dependencies, including SciPy and the networking stack.
   # `paths` is the environment's already resolved module closure. Using its
@@ -522,17 +551,6 @@ let
     install -Dm755 ${prev.harper}/bin/harper-ls $out/bin/harper-ls
   '';
 
-  # GHC exports every Haskell symbol by default. Besides the symbol tables,
-  # this keeps otherwise unreachable code alive. Only the CLI is rebuilt;
-  # its Haskell libraries still come from the binary cache.
-  # Keep this separate from the build-tool Pandoc: overriding that also
-  # rebuilds unrelated packages that use it to generate documentation.
-  pandoc-runtime = prev.pandoc.overrideAttrs (old: {
-    configureFlags = (old.configureFlags or [ ]) ++ [
-      "--ghc-option=-optl-Wl,--no-export-dynamic"
-    ];
-  });
-
   # marksman is the only dotnet consumer in the editor closure, and dotnet
   # only touches ICU through libSystem.Globalization.Native — 39M of
   # locale tables a markdown server has no use for. With invariant
@@ -551,7 +569,7 @@ let
         {
           nativeBuildInputs = [
             prev.removeReferencesTo
-            prev.patchelf
+            final.patchelf
           ];
           closure = prev.closureInfo { rootPaths = [ prev.marksman ]; };
           inherit (prev.marksman) meta;
@@ -635,8 +653,7 @@ let
       [ "$(head -c 4 "$f" | od -An -tx1 | tr -d ' \n')" = 7f454c46 ] && continue
       sed -i \
         -e "\|${prev.lib.getBin prev.ffmpeg}|d" \
-        -e "s|${prev.ripgrep-all}|$out|g" \
-        -e "s|${prev.pandoc}|${final.pandoc-runtime}|g" "$f"
+        -e "s|${prev.ripgrep-all}|$out|g" "$f"
     done
   '';
 
@@ -809,6 +826,5 @@ else
     neovim-bare = prev.neovim;
     neovim-unwrapped-runtime = final.neovim-unwrapped;
     nodejs-slim-runtime = prev.nodejs-slim;
-    pandoc-runtime = prev.pandoc;
     tree-sitter-runtime = prev.tree-sitter;
   }

@@ -39,9 +39,9 @@ let
   budgets = {
     # GitHub signature verification also needs GnuPG.
     git-verify-ssh = 190;
-    lazyvim = 1050;
+    lazyvim = 1170;
     lazyvim-light = 250;
-    lazyvim-nightly = 1070;
+    lazyvim-nightly = 1190;
     remarks = 700;
     llm = 510; # the flake alias of llmWithPlugins
     llmWithPlugins = 510;
@@ -51,8 +51,7 @@ let
     pi-coding-agent = 365;
     pi-yolo = if stdenv.hostPlatform.isAarch64 then 1470 else 820;
     tavily-cli = 285;
-    pandoc-runtime = 190;
-    ripgrep-all = 315;
+    ripgrep-all = 445;
     # MCP, Node, and the Nix client: 288 MiB on x86 before first browser use.
     playwright-lazy = if stdenv.hostPlatform.isAarch64 then 1000 else 320;
     watermark-pdf = 330;
