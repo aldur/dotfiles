@@ -12,8 +12,6 @@ import time
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("launcher")
 parser.add_argument("directory", type=Path)
-parser.add_argument("--sandbox", action="store_true")
-parser.add_argument("--live", action="store_true")
 parser.add_argument("--browser-package", type=Path)
 parser.add_argument("--browser-key")
 args = parser.parse_args()
@@ -81,10 +79,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
         step = len(results)
         action = None
         if worker:
-            reference = ('page.locator(\'a[href="/info/rfc9112"]\').first()' if args.live else
-                         'page.getByRole("link", {name:"Reference", exact:true})')
-            pdf = ('page.locator(\'a[href$="rfc9112.pdf"]\').first()' if args.live else
-                   'page.getByRole("link", {name:"Download PDF"})')
+            reference = 'page.getByRole("link", {name:"Reference", exact:true})'
+            pdf = 'page.getByRole("link", {name:"Download PDF"})'
             actions = [
                 script("""
                   const found = await searchTools("publication PDF screenshot", {namespace: "mcp__playwright_lazy"});
@@ -104,7 +100,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                   if (state[0] !== 'worker=' + {json.dumps(worker)} || state[1] !== {json.dumps(worker)})
                     throw new Error('context conflict');
                 }}"""),
-                mcp("browser_navigate", url="https://www.rfc-editor.org/info/rfc9110" if args.live else base + "/publication"),
+                mcp("browser_navigate", url=base + "/publication"),
                 mcp("browser_snapshot", depth=5),
                 mcp("browser_run_code", code=f"async (page) => {{ await {reference}.click(); }}"),
                 mcp("browser_snapshot", depth=5),
@@ -159,10 +155,7 @@ threading.Thread(target=server.serve_forever, daemon=True).start()
     "models": [{"id": "browser-check", "contextWindow": 128000, "maxTokens": 8192}],
 }}}))
 (agent / "agents/browser-check.md").write_text("---\nname: browser-check\ndescription: Browser integration test\n---\nRun the browser check.\n")
-command = [str(Path(args.launcher).resolve())]
-if args.sandbox:
-    command += ["--network", "host", "--workspace", str(root)]
-command += ["--offline", "--mode", "json", "--no-session", "--model", "fixture/browser-check", "-p", "coordinator"]
+command = [str(Path(args.launcher).resolve()), "--offline", "--mode", "json", "--no-session", "--model", "fixture/browser-check", "-p", "coordinator"]
 seen = {}
 
 

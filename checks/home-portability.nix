@@ -66,6 +66,7 @@ let
   alice = nixos.config.home-manager.users.alice;
   bob = nixos.config.home-manager.users.bob;
   aliceEditor = alice.programs.aldur.lazyvim.out.packages.lazyvim;
+  lazyvimLight = self.packages.${system}.lazyvim-light;
   qemu = nixos.extendModules { modules = [ ../base_hosts/qemu/qemu.nix ]; };
   apple = nixos.extendModules { modules = [ ../base_hosts/apple-container/configuration.nix ]; };
 
@@ -272,7 +273,11 @@ assert require "bare system editor" (
 );
 assert require "Alice has LazyVim" (
   lib.any (p: p.outPath == aliceEditor.outPath) alice.home.packages
-  && alice.home.shellAliases.lv == "lazyvim"
+  && alice.home.shellAliases.lv == aliceEditor.meta.mainProgram
+);
+assert require "lv runs the light variant" (
+  (custom.extendModules { modules = [ { home.packages = [ lazyvimLight ]; } ]; })
+  .config.home.shellAliases.lv == lazyvimLight.meta.mainProgram
 );
 assert require "Bob has no LazyVim" (
   !bob.programs.aldur.lazyvim.enable
