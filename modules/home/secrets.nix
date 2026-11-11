@@ -94,7 +94,13 @@ let
       pkgs.writeText "age-recipients" (lib.concatMapStrings (recipient: recipient + "\n") recipients);
 
   # The default wrapper puts the full git on PATH. Use the git of the profile.
-  passage = pkgs.passage.override { git = pkgs.gitMinimal-runtime; };
+  # The clipboard tools pull in perl through xdg-utils. Pipe to tcopy instead
+  # of `passage show -c`.
+  passage = pkgs.passage.override {
+    git = pkgs.gitMinimal-runtime;
+    wl-clipboard = null;
+    xclip = null;
+  };
 
   passageDispatch = pkgs.writeShellApplication {
     name = "passage";
