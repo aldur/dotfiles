@@ -68,10 +68,7 @@
     # Apple silicon) map to the matching linux system so `#container-image`
     # works directly and offloads to the user's Linux builder. Building the
     # aarch64 image natively needs an aarch64 builder.
-    #
-    # Use the systems of the dotfiles. The root flake.nix gives the reason
-    # for the list.
-    flake-utils.lib.eachSystem (builtins.attrNames aldur-dotfiles.packages) (
+    flake-utils.lib.eachDefaultSystem (
       system:
       let
         targetSystem = linuxSystem system;

@@ -62,22 +62,27 @@
             crostini-lxc = lxc.config.system.build.image;
             default = crostini-lxc;
 
-            baguette-tarball = baguette.config.system.build.tarball;
-            baguette-image = baguette.config.system.build.btrfsImage;
-            baguette-zimage = baguette.config.system.build.btrfsImageCompressed;
             baguette-benchmark = nixos-crostini.lib.mkBaguetteBenchmark {
               configuration = baguette;
               extraSystemUnits = [
                 "home-manager-${baguette.config.mainUser}.service"
               ];
             };
+          }
+          # Baguette devices are ARM.
+          // nixpkgs.lib.optionalAttrs (system == "aarch64-linux") {
+            baguette-tarball = baguette.config.system.build.tarball;
+            baguette-image = baguette.config.system.build.btrfsImage;
+            baguette-zimage = baguette.config.system.build.btrfsImageCompressed;
           };
 
           # The SBOM of the system in baguette-zimage. CI attests it to the
           # image.
-          apps.sbom-baguette = aldur-dotfiles.lib.mkSbomApp {
-            inherit pkgs;
-            configuration = baguette;
+          apps = nixpkgs.lib.optionalAttrs (system == "aarch64-linux") {
+            sbom-baguette = aldur-dotfiles.lib.mkSbomApp {
+              inherit pkgs;
+              configuration = baguette;
+            };
           };
 
           # Simulates guest boot with the representative Termina kernel.

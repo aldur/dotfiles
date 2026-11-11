@@ -12,9 +12,7 @@
         inherit aldur-dotfiles;
       };
     in
-    # Use the systems of the dotfiles. The root flake.nix gives the reason for
-    # the list.
-    flake-utils.lib.eachSystem (builtins.attrNames aldur-dotfiles.packages) (
+    flake-utils.lib.eachDefaultSystem (
       system:
       let
         targetSystem = apple-container.lib.linuxSystem system;
