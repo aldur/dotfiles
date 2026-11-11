@@ -194,6 +194,7 @@ let
   # Both tools otherwise retain nixpkgs' older default Nix alongside the
   # latest version installed by modules/nix.nix. Keep comma's patched build
   # and rewrite its embedded executable paths; nix-direnv is just a script.
+  # On Darwin, the two tools stay stock and keep the older Nix.
   # nix-index-database calls comma.override to supply its index package.
   comma = prev.lib.makeOverridable (
     { nix ? prev.nixVersions.latest, ... }@args:

@@ -101,6 +101,10 @@
 
           # Bound here rather than inline below so the pinned-packages check can
           # walk the same set without going through `self`.
+          #
+          # Export each overlay package that has a pin: nix-update reads only
+          # `packages`, and utils/update-pin-legs.nix fails if one is absent.
+          # The export of the other overlay packages is optional.
           packages = {
             inherit (lazyvims) lazyvim lazyvim-light lazyvim-nightly;
             inherit (pkgs)
