@@ -59,14 +59,7 @@ pkgs.writeShellApplication {
     ${pkgs.lib.getExe piConfigSync}
     ${pkgs.lib.getExe resetAgentInstructions}
 
-    export PATH="/bin:/run/current-system/sw/bin:$PATH"
-    ${pkgs.lib.optionalString offline ''
-      if [[ -n "''${LLAMA_SOCKET_PATH:-}" || -S "$socket" ]]; then
-        [[ -S "$socket" ]] || { echo "inference socket missing: $socket" >&2; exit 1; }
-        export LLAMA_SOCKET_PATH="$socket"
-        export LLAMA_BASE_URL=http://127.0.0.1:8080/v1
-      fi
-    ''}
+    export PATH="/bin:$PATH"
     if [[ "$1" == pi-yolo ]] && [ -t 0 ] && [ -t 1 ]; then
       # Reuse the session created by the shared tmux configuration. Quote
       # each argument for its shell, including literal quotes and newlines.
