@@ -29,6 +29,29 @@
       .fetchPnpmDeps;
   })
 
+  # The cargo setup hook of nixpkgs sets AWS_LC_SYS_USE_SYSTEM=1. The recipe
+  # for codex 0.167.0 does not list aws-lc, thus aws-lc-sys fails on Darwin
+  # ("requires a system-installed AWS-LC"). The Linux package comes from the
+  # binary cache.
+  #
+  # nixpkgs master has the correction since 0.167.1, in
+  # pkgs/by-name/co/codex/package.nix. On 2026-11-11 the nixos-unstable
+  # channel, which flake.lock follows, did not have it. This override
+  # applies to 0.167.0 only. Remove it after the first `nix flake update`
+  # that brings a different codex version.
+  (
+    _final: prev:
+    prev.lib.optionalAttrs prev.stdenv.hostPlatform.isDarwin {
+      codex =
+        if prev.codex.version == "0.167.0" then
+          prev.codex.overrideAttrs (old: {
+            buildInputs = old.buildInputs ++ [ prev.aws-lc ];
+          })
+        else
+          prev.codex;
+    }
+  )
+
   (import ./argc.nix { inherit self; })
   (import ./mlx.nix { nixpkgs = self.inputs.nixpkgs-darwin; })
   (import ./packages.nix { inherit self; })
