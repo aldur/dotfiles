@@ -100,10 +100,7 @@ class Reservations:
             path = Path(record["path"])
             try:
                 if identity(path) == record["identity"]:
-                    if path.is_dir():
-                        path.rmdir()
-                    elif path.stat().st_size == 0:
-                        path.unlink()
+                    path.rmdir()
             except OSError:
                 # Nonempty entries, renamed parents and host edits are retained.
                 pass
@@ -112,17 +109,13 @@ class Reservations:
     def prepare(self, paths):
         with self.locked() as records:
             self.reap(records)
-            for path, is_dir in paths.items():
+            for path in paths:
                 parent = path.parent.stat()
                 # Bind-mounted /persist aliases must share ownership too.
                 key = f"{parent.st_dev}:{parent.st_ino}:{path.name}"
                 if not path.exists() and not path.is_symlink():
                     try:
-                        if is_dir:
-                            path.mkdir(mode=0o700)
-                        else:
-                            fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
-                            os.close(fd)
+                        path.mkdir(mode=0o700)
                     except FileExistsError:
                         pass
                     else:
@@ -217,7 +210,7 @@ class Policy:
         # authority for further instruction-file symlinks.
         admitted_roots = tuple(root for root, _ in (*writable, *readonly))
         names = tuple(name for name in DIRECTORIES if name != ".git" or not self.git_write)
-        protected = {}
+        protected = set()
         git_dirs = set()
         hardlinks = {}
         state_aliases = set()
@@ -252,7 +245,7 @@ class Policy:
             if path.is_symlink() or path.resolve().parent != path.parent:
                 fail(f"protected metadata crosses a symlink: {path}")
             if path.exists() or reserve:
-                protected[path] = path.name in DIRECTORIES
+                protected.add(path)
             if path.is_file() and path.stat().st_nlink != 1:
                 fail(f"protected metadata has hard links: {path}")
             if path.name == ".git":
@@ -304,8 +297,6 @@ class Policy:
                         protect(parent / name)
                 if ".git" in dirs or ".git" in files:
                     git_pointer(parent / ".git")
-                    for name in names:
-                        protect(parent / name, reserve=True)
                 dirs[:] = [name for name in dirs if name not in DIRECTORIES]
             # A command launched in a subdirectory still needs the parent's Git
             # metadata and instructions, but not the rest of its working tree.

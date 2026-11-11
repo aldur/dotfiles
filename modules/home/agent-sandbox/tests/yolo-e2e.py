@@ -1,7 +1,6 @@
 """Run module-generated yolo launchers on a disposable, offline host.
 
 The wrappers mode substitutes a recording client to check launch semantics.
-The launchers mode skips native-client selection, avoiding client builds.
 The cli mode drives the flake-pinned clients over a PTY, including Ctrl-G.
 Neither mode reads the caller's home, credentials, configuration or PATH.
 """
@@ -442,8 +441,6 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
 
     docker.shutdown()
     docker.server_close()
-    if not config['native']:
-        return
 
     # The real Codex launcher must prefer either standalone layout to Nix.
     link(BIN / 'codex', config['native']['codex'])

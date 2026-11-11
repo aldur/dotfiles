@@ -135,7 +135,7 @@ let
             lib.filterAttrs (_: agent: agent.enabled case) agents
           );
         }) cases homes;
-        native = lib.optionalAttrs (mode != "launchers") {
+        native = {
           codex = lib.getExe (findPackage "codex" (builtins.elemAt homes 3));
           claude = lib.getExe (builtins.elemAt homes 3).programs.claude-code.package;
         };
@@ -168,7 +168,5 @@ assert lib.assertMsg (lib.all lib.id (
 )) "agent-sandbox package or -yolo script integration failed";
 runCommand "agent-sandbox-modules" {
   passthru.transportManifest = manifest "wrappers";
-  # Recording-client tests need neither native client nor its build toolchain.
-  passthru.tests.launchers = runCommand "agent-yolo-launchers" { } (runTests "launchers");
   passthru.tests.cli = runCommand "agent-yolo-cli" { } (runTests "cli");
 } (runTests "wrappers")
