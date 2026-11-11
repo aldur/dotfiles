@@ -9,7 +9,7 @@ const aiRoot = join(piRoot, "node_modules/@earendil-works/pi-ai/dist");
 const { getSupportedThinkingLevels } = await import(pathToFileURL(join(aiRoot, "models.js")));
 const { streamSimple } = await import(pathToFileURL(join(aiRoot, "api/openai-completions.js")));
 
-async function setup(t, rows, profile = "privatemode", status = 200) {
+async function setup(t, rows, profile = "privatemode-ai", status = 200) {
   const env = { ...process.env };
   t.after(() => { for (const key of ["PI_OPENAI_BASE_URL", "PI_OPENAI_API_KEY", "PI_OPENAI_PROFILE"]) {
     if (env[key] === undefined) delete process.env[key]; else process.env[key] = env[key];

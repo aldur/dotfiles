@@ -47,7 +47,7 @@ export default async function (pi: ExtensionAPI) {
 	const baseUrl = process.env.PI_OPENAI_BASE_URL?.replace(/\/+$/, "");
 	if (!baseUrl) return;
 	const apiKey = process.env.PI_OPENAI_API_KEY || "no-key";
-	const profile = process.env.PI_OPENAI_PROFILE === "privatemode" ? "privatemode-ai" : process.env.PI_OPENAI_PROFILE ?? "";
+	const profile = process.env.PI_OPENAI_PROFILE ?? "";
 	let knownModels: Record<string, Entry> = {};
 	try {
 		const catalog = JSON.parse(readFileSync(CATALOG_PATH, "utf8"));
