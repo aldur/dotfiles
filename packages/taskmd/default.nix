@@ -90,9 +90,26 @@ buildGoModule (finalAttrs: {
 
   # The `embed_web` build below needs the SPA where `//go:embed` expects it;
   # upstream's release workflow copies it to the same place.
+  #
+  # Upstream tests start the watcher in a goroutine, sleep 100 ms, and then
+  # change a file. On a loaded CI runner, the watches are not in place yet,
+  # and the event is lost. Here, `Start` closes `Ready` when its watches are
+  # in place, and the tests wait for it. TestWatcher_DetectsChanges also
+  # waits for the change, not for a fixed 200 ms.
   postPatch = leaveWorkspace + ''
     mkdir -p apps/cli/internal/web/static
     cp -r ${web} apps/cli/internal/web/static/dist
+
+    substituteInPlace apps/cli/internal/watcher/watcher.go \
+      --replace-fail 'done     chan struct{}' 'done chan struct{}; Ready chan struct{}' \
+      --replace-fail 'done:     make(chan struct{}),' 'done: make(chan struct{}), Ready: make(chan struct{}),' \
+      --replace-fail 'defer fsw.Close()' 'close(w.Ready); defer fsw.Close()'
+    substituteInPlace apps/cli/internal/watcher/watcher_test.go \
+      --replace-fail 'time.Sleep(100 * time.Millisecond)' '<-w.Ready' \
+      --replace-fail 'os.WriteFile(initial, []byte("# modified"), 0644)' \
+        'os.WriteFile(initial, []byte("# modified"), 0644); waitFor(t, &count, 1, "markdown change")'
+    substituteInPlace apps/cli/internal/web/worktree_test.go \
+      --replace-fail 'time.Sleep(100 * time.Millisecond) // let the watcher register its dirs' '<-w.Ready'
   '';
 
   # Vendoring needs the workspace gone too, but not the SPA: `postPatch` is
