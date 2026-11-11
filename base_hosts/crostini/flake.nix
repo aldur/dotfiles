@@ -28,10 +28,7 @@
       specialArgs = aldur-dotfiles.lib.mkSpecialArgs inputs;
 
       crostiniModule = nixos-crostini.nixosModules.crostini;
-      baguetteModules = [
-        aldur-dotfiles.nixosModules.baguette-guest
-        ./baguette.nix
-      ];
+      baguetteModules = [ ./baguette.nix ];
 
       generator =
         system: moreModules:

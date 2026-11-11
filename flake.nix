@@ -355,7 +355,6 @@
         apparmor = ./modules/nixos/apparmor.nix;
         default-editor = ./modules/nixos/default_editor.nix;
         qemu-guest = ./modules/nixos/qemu-guest.nix;
-        baguette-guest = ./base_hosts/crostini/baguette-guest.nix;
         cli = { pkgs, lib, ... }: {
           environment.systemPackages = (import ./modules/shared/environment.nix { inherit pkgs lib; }).cli;
         };

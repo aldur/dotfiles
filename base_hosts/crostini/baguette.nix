@@ -1,7 +1,17 @@
 # What only the Baguette image needs, on top of crostini.nix. The LXC
 # container does not import this file.
-{ lib, pkgs, ... }:
 {
+  config,
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
+{
+  imports = [ inputs.nixos-crostini.nixosModules.baguette ];
+
+  users.users.${config.mainUser}.crostini.enable = true;
+
   programs.git.package = pkgs.gitMinimal-runtime;
 
   virtualisation.buildMemorySize = 1024 * 8;
