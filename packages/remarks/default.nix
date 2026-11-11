@@ -18,11 +18,7 @@ let
     };
 
     pyproject = true;
-    build-system = [ python3Packages.setuptools ];
-
-    nativeBuildInputs = with python3Packages; [
-      poetry-core
-    ];
+    build-system = [ python3Packages.poetry-core ];
 
     propagatedBuildInputs = with python3Packages; [
       pymupdf
