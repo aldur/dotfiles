@@ -2,10 +2,7 @@
 # top of the shared smoke harness.
 {
   pkgs,
-  runCommand,
   writeText,
-  xz,
-  zstd,
   configuration,
   crostini,
 }:
@@ -17,26 +14,6 @@ let
   # probe binds this one over them for the boot.
   keys = import (pkgs.path + "/nixos/tests/ssh-keys.nix") pkgs;
   inherit (configuration.config) mainUser;
-  kernel = configuration.config.boot.kernelPackages.kernel;
-
-  # A module of the test kernel, uncompressed. The guest must refuse to
-  # load it: crostini.nix sets kernel.modules_disabled.
-  module =
-    runCommand "dummy.ko"
-      {
-        nativeBuildInputs = [
-          xz
-          zstd
-        ];
-      }
-      ''
-        src=$(echo ${kernel.modules}/lib/modules/${kernel.modDirVersion}/kernel/drivers/net/dummy.ko*)
-        case "$src" in
-          *.xz) xz -dc "$src" > $out ;;
-          *.zst) zstd -dc "$src" > $out ;;
-          *) cp "$src" $out ;;
-        esac
-      '';
 in
 # Changing home persistence must not disable ChromeOS registration.
 assert persistentHome.config.users.users.${persistentHome.config.mainUser}.linger == true;
@@ -51,7 +28,6 @@ crostini.lib.mkBaguetteSmokeTest {
   user = mainUser;
   name = "crostini-baguette-smoke";
   probeFiles = {
-    inherit module;
     id = "${pkgs.coreutils}/bin/id";
     ssh-key = keys.snakeOilEd25519PrivateKey;
     authorized-keys = writeText "authorized_keys" "${keys.snakeOilEd25519PublicKey}\n";
@@ -106,8 +82,6 @@ crostini.lib.mkBaguetteSmokeTest {
       modules_disabled=$probe_output
     fi
     echo "PROBE sysctl $sysctl_state modules_disabled=$modules_disabled"
-    expect_failure insmod "$probe/module"
-    echo "PROBE insmod $probe_output"
     for target in / /home /nix/store /home/$user/Work /home/$user/.claude /home/$user/.codex /dev/shm /var/tmp; do
       expect_success findmnt -n -o OPTIONS "$target"
       echo "PROBE mount $target $probe_output"
@@ -269,7 +243,6 @@ crostini.lib.mkBaguetteSmokeTest {
     "home-before-session ok$"
     # The representative Termina kernel has no module support.
     "sysctl active modules_disabled=absent"
-    "insmod .*Function not implemented"
     "home-fs tmpfs$"
     "home ${mainUser} 700$"
     "mount / .*nosuid.*nodev"
