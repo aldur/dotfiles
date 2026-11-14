@@ -308,6 +308,7 @@ in
         # JSONL logs older than `cleanupPeriodDays` (default 30) at startup, and
         # there is no infinite sentinel — so set a 100-year horizon.
         cleanupPeriodDays = 36500;
+        enabledPlugins."cc-plugin-you-should-know@builtin" = true;
         statusLine = {
           type = "command";
           command = "${claude-statusline}/bin/claude-statusline";
