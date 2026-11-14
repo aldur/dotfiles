@@ -1,6 +1,7 @@
 # Shared git workflow settings.
 # Consumed by home-manager (programs.git.settings) and NixOS (programs.git.config).
 {
+  init.defaultBranch = "main";
   push = {
     default = "current";
     autoSetupRemote = true;
