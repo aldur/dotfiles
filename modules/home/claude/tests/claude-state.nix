@@ -29,7 +29,8 @@ let
           "claudeSettings"
           "linkGeneration"
           "claudeSkillsDir"
-          "claudeSkillDuplicates"
+          "claudePlugins"
+          "claudeSkillsCheck"
         ]
       ) (inputs.home-manager.lib.hm.dag.topoSort home.config.home.activation).result
     )}
@@ -53,6 +54,11 @@ pkgs.runCommand "claude-state-test" { nativeBuildInputs = [ pkgs.gettext ]; } ''
     ${pkgs.jq}/bin/jq -e '.theme == "dark"' "$HOME/.claude/settings.json"
     output=$(${activation})
     [[ "$output" != *"more than once"* ]]
+    # The build has no network: activation must continue and report the plugin.
+    [[ "$output" == *"Could not do 'claude plugin install --scope user frontend-design@claude-plugins-official'"* ]]
+    # Claude Code ships the @builtin plugins.
+    [[ "$output" == *"not installed"*"  frontend-design@claude-plugins-official"* ]]
+    [[ "$output" != *"cc-plugin-you-should-know"* ]]
 
     # Report a skill that comes from Nix, the account sync, and a user plugin.
     synced=$HOME/.claude/skills/synced/account
@@ -66,6 +72,7 @@ pkgs.runCommand "claude-state-test" { nativeBuildInputs = [ pkgs.gettext ]; } ''
     cat "$TMPDIR/settings.json" > "$HOME/.claude/settings.json"
     output=$(${activation})
     [[ "$output" == *"fixture: ~/.claude/skills, claude.ai sync, plugin p@m"* ]]
+    [[ "$output" != *"  p@m"* ]]
 
     # Claude watches the skills directory only if it exists at startup.
     export HOME=$TMPDIR/no-skills-home

@@ -27,10 +27,22 @@ let
   skillSources = lib.genAttrs config.programs.aldur.claude-code.skills (
     name: dotfilesSkills.${name} or "${pkgs.claude-skills}/skills/${name}"
   );
-  duplicatePlugins =
-    lib.filter
-      (plugin: lib.elem (lib.head (lib.splitString "@" plugin)) config.programs.aldur.claude-code.skills)
-      (lib.attrNames (lib.filterAttrs (_: on: on == true) (cfg.writableSettings.enabledPlugins or { })));
+  enabledPlugins = lib.attrNames (
+    lib.filterAttrs (_: on: on == true) (cfg.writableSettings.enabledPlugins or { })
+  );
+  duplicatePlugins = lib.filter (
+    plugin: lib.elem (lib.head (lib.splitString "@" plugin)) config.programs.aldur.claude-code.skills
+  ) enabledPlugins;
+  # Claude Code ships the @builtin plugins.
+  pluginsToInstall = lib.filter (plugin: !lib.hasSuffix "@builtin" plugin) enabledPlugins;
+  # Upstream sets this session variable only for a non-default configDir.
+  # Activation does not load the session variables.
+  configDirEnv = lib.optionalString (
+    config.home.sessionVariables ? CLAUDE_CONFIG_DIR
+  ) "CLAUDE_CONFIG_DIR=${lib.escapeShellArg config.home.sessionVariables.CLAUDE_CONFIG_DIR}";
+  marketplaceRepos = lib.mapAttrsToList (_: marketplace: marketplace.source.repo) (
+    cfg.writableSettings.extraKnownMarketplaces or { }
+  );
 
   # jq filter: deep-merge objects, but for `.hooks.<event>` arrays strip any
   # existing entries whose hook command contains a Nix-managed marker, then
@@ -316,6 +328,11 @@ in
           "cc-plugin-you-should-know@builtin" = true;
           "frontend-design@claude-plugins-official" = true;
         };
+        # Same value that `claude plugin marketplace add` writes.
+        extraKnownMarketplaces.claude-plugins-official.source = {
+          source = "github";
+          repo = "anthropics/claude-plugins-official";
+        };
         statusLine = {
           type = "command";
           command = "${claude-statusline}/bin/claude-statusline";
@@ -366,16 +383,43 @@ in
         ''
       );
 
+      # Install the plugins that Nix enables. A new host has none of them.
+      # Both commands do nothing when their target is already on disk.
+      # Without network, activation continues and the next one tries again.
+      activation.claudePlugins = lib.mkIf enabled (
+        lib.hm.dag.entryAfter [ "claudeSettings" "claudeSymlink" ] ''
+          # Use the claude that the sessions use, on the state that they use.
+          claude=${lib.getExe cfg.package}
+          ${lib.optionalString needsPathPrefix ''
+            if [ -x "$HOME/.local/bin/claude" ]; then claude=$HOME/.local/bin/claude; fi
+          ''}
+          # Claude Code clones the marketplaces with git.
+          claudePlugin() {
+            run --silence env PATH="${pkgs.gitMinimal}/bin:$PATH" \
+              ${configDirEnv} CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 ${pkgs.coreutils}/bin/timeout 120 \
+              "$claude" plugin "$@" </dev/null \
+              || warnEcho "Could not do 'claude plugin $*'. Run it to see the error."
+          }
+          for repo in ${lib.escapeShellArgs marketplaceRepos}; do
+            claudePlugin marketplace add "$repo"
+          done
+          for plugin in ${lib.escapeShellArgs pluginsToInstall}; do
+            claudePlugin install --scope user "$plugin"
+          done
+        ''
+      );
+
       # Claude Code loads a skill once for each source that supplies it.
+      # On a new host, an enabled plugin can also be missing.
       # The account sync and `/plugin enable` change outside Nix, thus
       # examine the real files and only warn.
-      activation.claudeSkillDuplicates = lib.mkIf enabled (
-        lib.hm.dag.entryAfter [ "claudeSettings" "claudeSkillsDir" ] ''
-          if duplicates=$(${pkgs.python3}/bin/python3 -I ${./skill-duplicates.py} \
+      activation.claudeSkillsCheck = lib.mkIf enabled (
+        lib.hm.dag.entryAfter [ "claudeSettings" "claudeSkillsDir" "claudePlugins" ] ''
+          if findings=$(${pkgs.python3}/bin/python3 -I ${./check-skills-plugins.py} \
             "$HOME"/${lib.escapeShellArg configDirRelative}); then
-            [ -z "$duplicates" ] || warnEcho "Claude Code loads these skills more than once:"$'\n'"$duplicates"
+            [ -z "$findings" ] || warnEcho "$findings"
           else
-            warnEcho "Could not examine the Claude Code skills for duplicates"
+            warnEcho "Could not examine the Claude Code skills and plugins"
           fi
         ''
       );
