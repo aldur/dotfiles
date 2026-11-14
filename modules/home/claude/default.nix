@@ -27,6 +27,10 @@ let
   skillSources = lib.genAttrs config.programs.aldur.claude-code.skills (
     name: dotfilesSkills.${name} or "${pkgs.claude-skills}/skills/${name}"
   );
+  duplicatePlugins =
+    lib.filter
+      (plugin: lib.elem (lib.head (lib.splitString "@" plugin)) config.programs.aldur.claude-code.skills)
+      (lib.attrNames (lib.filterAttrs (_: on: on == true) (cfg.writableSettings.enabledPlugins or { })));
 
   # jq filter: deep-merge objects, but for `.hooks.<event>` arrays strip any
   # existing entries whose hook command contains a Nix-managed marker, then
@@ -308,7 +312,10 @@ in
         # JSONL logs older than `cleanupPeriodDays` (default 30) at startup, and
         # there is no infinite sentinel — so set a 100-year horizon.
         cleanupPeriodDays = 36500;
-        enabledPlugins."cc-plugin-you-should-know@builtin" = true;
+        enabledPlugins = {
+          "cc-plugin-you-should-know@builtin" = true;
+          "frontend-design@claude-plugins-official" = true;
+        };
         statusLine = {
           type = "command";
           command = "${claude-statusline}/bin/claude-statusline";
@@ -359,6 +366,20 @@ in
         ''
       );
 
+      # Claude Code loads a skill once for each source that supplies it.
+      # The account sync and `/plugin enable` change outside Nix, thus
+      # examine the real files and only warn.
+      activation.claudeSkillDuplicates = lib.mkIf enabled (
+        lib.hm.dag.entryAfter [ "claudeSettings" "claudeSkillsDir" ] ''
+          if duplicates=$(${pkgs.python3}/bin/python3 -I ${./skill-duplicates.py} \
+            "$HOME"/${lib.escapeShellArg configDirRelative}); then
+            [ -z "$duplicates" ] || warnEcho "Claude Code loads these skills more than once:"$'\n'"$duplicates"
+          else
+            warnEcho "Could not examine the Claude Code skills for duplicates"
+          fi
+        ''
+      );
+
       # Re-create ~/.local/bin/claude symlink after an impermanence wipe by
       # pointing it at the highest version under ~/.local/share/claude/versions/.
       # No-op on first boot (before claude-code has installed itself).
@@ -389,6 +410,15 @@ in
           Do not set `programs.claude-code.settings` directly — it creates a
           read-only symlink that conflicts with the activation-based writable
           settings.json. Use `programs.claude-code.writableSettings` instead.
+        '';
+      }
+      {
+        assertion = duplicatePlugins == [ ];
+        message = ''
+          These plugins have the name of a skill in
+          `programs.aldur.claude-code.skills`, thus Claude Code loads the
+          skill two times: ${lib.concatStringsSep ", " duplicatePlugins}.
+          Remove the skill from the list or disable the plugin.
         '';
       }
     ];

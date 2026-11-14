@@ -29,6 +29,7 @@ let
           "claudeSettings"
           "linkGeneration"
           "claudeSkillsDir"
+          "claudeSkillDuplicates"
         ]
       ) (inputs.home-manager.lib.hm.dag.topoSort home.config.home.activation).result
     )}
@@ -50,7 +51,21 @@ pkgs.runCommand "claude-state-test" { nativeBuildInputs = [ pkgs.gettext ]; } ''
     test "$(stat -c %a "$HOME/.claude/settings.json")" = 600
     test -L "$HOME/.claude/skills/fixture/SKILL.md"
     ${pkgs.jq}/bin/jq -e '.theme == "dark"' "$HOME/.claude/settings.json"
-    ${activation}
+    output=$(${activation})
+    [[ "$output" != *"more than once"* ]]
+
+    # Report a skill that comes from Nix, the account sync, and a user plugin.
+    synced=$HOME/.claude/skills/synced/account
+    mkdir -p "$synced" "$TMPDIR/plugin/skills/fixture" "$HOME/.claude/plugins"
+    echo '{"skills":[{"name":"fixture"}]}' > "$synced/manifest.json"
+    touch "$TMPDIR/plugin/skills/fixture/SKILL.md"
+    ${pkgs.jq}/bin/jq -n --arg path "$TMPDIR/plugin" \
+      '{plugins: {"p@m": [{scope: "user", installPath: $path}]}}' \
+      > "$HOME/.claude/plugins/installed_plugins.json"
+    ${pkgs.jq}/bin/jq '.enabledPlugins["p@m"] = true' "$HOME/.claude/settings.json" > "$TMPDIR/settings.json"
+    cat "$TMPDIR/settings.json" > "$HOME/.claude/settings.json"
+    output=$(${activation})
+    [[ "$output" == *"fixture: ~/.claude/skills, claude.ai sync, plugin p@m"* ]]
 
     # Claude watches the skills directory only if it exists at startup.
     export HOME=$TMPDIR/no-skills-home

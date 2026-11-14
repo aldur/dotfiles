@@ -75,7 +75,6 @@ in
         type = types.listOf types.str;
         default = [
           "docx"
-          "frontend-design"
           "maintaining-github-actions"
           "managing-taskmd-tasks"
           "pdf"
