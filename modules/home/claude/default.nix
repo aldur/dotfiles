@@ -110,6 +110,10 @@ let
   # `claude-yolo` runs claude with nonessential traffic off. The env below:
   # IS_SANDBOX lets `--dangerously-skip-permissions` run as root.
   # CLAUBBIT skips the trust, MCP, and CLAUDE.md dialogs.
+  # CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS skips the prompt for
+  # `rm` on critical paths and for commands that the parser cannot check,
+  # also in subagents. Only the sandbox gets it: there, `rm` can remove only
+  # the paths that the sandbox mounts writable.
   # CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC also turns off telemetry,
   # the feature flag fetch, and the auto-updater. Remote Control needs
   # the flag fetch, so it stays off. It also skips the bootstrap request
@@ -136,9 +140,10 @@ let
       if [ "''${#sandbox[@]}" -gt 0 ]; then
         sandbox=(
           "''${sandbox[@]:0:''${#sandbox[@]}-1}"
-          --env IS_SANDBOX --env CLAUBBIT
+          --env IS_SANDBOX --env CLAUBBIT --env CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS
           --env CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC --env DISABLE_AUTOUPDATER --
         )
+        export CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS=1
       fi
       refresh_stamp=""
       max_age=$((7 * 24 * 3600))

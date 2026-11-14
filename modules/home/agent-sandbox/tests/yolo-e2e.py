@@ -176,6 +176,7 @@ raise SystemExit(23 if 'exit-23' in sys.argv else 0)
                     assert actual.get('IS_SANDBOX') == '1', record
                     assert actual.get('CLAUBBIT') == '1', record
                     assert actual.get('CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC') == '1', record
+                    assert (actual.get('CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS') == '1') == sandboxed, record
                     trust = json.loads((HOME / '.claude.json').read_text())
                     assert trust['projects'][str(WORK)]['hasTrustDialogAccepted'] is True, trust
                 assert ('outside the sandbox' in result.stderr) == (bypass and case['sandbox']), result.stderr
