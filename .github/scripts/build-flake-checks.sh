@@ -86,4 +86,4 @@ if [ ${#targets[@]} -eq 0 ]; then
 fi
 
 echo "Building ${#targets[@]} checks for shard $shard on $system"
-nix build "${targets[@]}"
+nix build --quiet ${RUNNER_DEBUG:+-v} "${targets[@]}"

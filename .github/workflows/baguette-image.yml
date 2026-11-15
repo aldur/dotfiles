@@ -62,7 +62,7 @@ jobs:
           .github/scripts/sample-resources.sh &
           sampler=$!
           trap 'kill "$sampler"' EXIT
-          nix build "${build_options[@]}" --reference-lock-file /tmp/appliance.lock \
+          nix build --quiet ${RUNNER_DEBUG:+-v} "${build_options[@]}" --reference-lock-file /tmp/appliance.lock \
             --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             "$IMAGE_FLAKE#baguette-zimage"

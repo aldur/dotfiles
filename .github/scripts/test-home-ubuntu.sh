@@ -74,7 +74,7 @@ trap report EXIT
 
 # Resolve the native output through the same #home interface used by users.
 echo 'Building the default home generation...'
-generation=$(nix build "${nix_args[@]}" --no-link --print-out-paths "$repo#home")
+generation=$(nix build --quiet ${RUNNER_DEBUG:+-v} "${nix_args[@]}" --no-link --print-out-paths "$repo#home")
 activation=$(nix eval "${nix_args[@]}" --raw "$repo#apps.$system.home.program")
 [[ $activation == "$generation/activate" && -x $activation ]]
 home_config="$repo#legacyPackages.$system.homeConfiguration"
@@ -191,7 +191,7 @@ nix eval "${nix_args[@]}" --raw "$repo#lib.mkHome" \
   }" >"$work/custom.env"
 # shellcheck source=/dev/null
 source "$work/custom.env"
-custom=$(nix build --option pure-eval true --no-link --print-out-paths "$custom_drv^*")
+custom=$(nix build --quiet ${RUNNER_DEBUG:+-v} --option pure-eval true --no-link --print-out-paths "$custom_drv^*")
 # Keep coverage of Ubuntu's user-private-group umask even if runner defaults change.
 run_home /bin/bash -ec 'umask 0002; exec "$1"' home-test "$custom/activate" >"$logs/custom-activation.log" 2>&1
 [[ $(run_home readlink -f "$home_dir/.local/state/nix/profiles/home-manager") == "$custom" ]]

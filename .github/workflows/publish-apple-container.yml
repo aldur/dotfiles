@@ -76,7 +76,7 @@ jobs:
       - name: Build and check the image
         if: matrix.app == 'push'
         run: |
-          nix build --no-link --override-input aldur-dotfiles . \
+          nix build --quiet ${RUNNER_DEBUG:+-v} --no-link --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             "./base_hosts/apple-container#checks.$NIX_SYSTEM.container-size" \
             "./base_hosts/apple-container#checks.$NIX_SYSTEM.entrypoint-fails-closed"
@@ -194,7 +194,7 @@ jobs:
           if [[ $NIX_SYSTEM == x86_64-linux ]]; then
             checks+=("./base_hosts/pi-container#checks.$NIX_SYSTEM.${PI_VARIANT}-hardening")
           fi
-          nix build --no-link --override-input aldur-dotfiles . \
+          nix build --quiet ${RUNNER_DEBUG:+-v} --no-link --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             "${checks[@]}" --keep-going
         env:
@@ -202,7 +202,7 @@ jobs:
           PI_VARIANT: ${{ matrix.variant.name }}
       - if: inputs.publish
         run: |
-          nix build --out-link pi-image --override-input aldur-dotfiles . \
+          nix build --quiet ${RUNNER_DEBUG:+-v} --out-link pi-image --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             "./base_hosts/pi-container#container-image-$PI_VARIANT"
           nix shell --inputs-from . nixpkgs#skopeo --command \

@@ -26,6 +26,12 @@ env:
 # work across files. Because of this, the Nix setup is in
 # .github/actions/setup-nix, and all workflows use it. The attestation steps
 # are in .github/actions/attest for the same reason.
+#
+# All `nix build` commands of the workflows and .github/scripts use
+# `--quiet ${RUNNER_DEBUG:+-v}`. The log then has no line for each download
+# and build, but a failed build still shows its log. A re-run with debug
+# logging cancels `--quiet`, for example to find the build that was running
+# when a runner stopped.
 jobs:
   # Evaluate first. Limit build matrices to reduce cache requests. System
   # and image jobs wait for the Linux checks to make shared packages available.
@@ -271,7 +277,7 @@ jobs:
           .github/scripts/sample-resources.sh &
           sampler=$!
           trap 'kill "$sampler"' EXIT
-          nix build "${build_options[@]}" --override-input aldur-dotfiles . \
+          nix build --quiet ${RUNNER_DEBUG:+-v} "${build_options[@]}" --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             "$NIX_TARGET"
         env:
@@ -295,7 +301,7 @@ jobs:
 
       # Build the nix-darwin configuration as a test.
       - run: |
-          nix build --override-input aldur-dotfiles . \
+          nix build --quiet ${RUNNER_DEBUG:+-v} --override-input aldur-dotfiles . \
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             ./base_hosts/macos#darwinConfigurations.macOS.system
 
@@ -323,7 +329,7 @@ jobs:
       - *setup-nix
       - name: Build and test the on-demand llm package
         run: |
-          nix build ".#packages.$NIX_SYSTEM.llm" \
+          nix build --quiet ${RUNNER_DEBUG:+-v} ".#packages.$NIX_SYSTEM.llm" \
             ".#checks.$NIX_SYSTEM.llm-runtime"
         env:
           NIX_SYSTEM: ${{ matrix.system }}
