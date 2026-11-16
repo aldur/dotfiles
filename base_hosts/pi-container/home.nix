@@ -78,6 +78,10 @@ in
   xdg.mime.enable = false;
   systemd.user.enable = false;
   programs.pi.enable = true;
+  home.file.".pi/agent/skills/reading-pdfs" = {
+    source = ./reading-pdfs;
+    recursive = true;
+  };
   programs.git.signing.format = null;
   programs.fish.generateCompletions = false;
   programs.direnv.nix-direnv.enable = lib.mkForce false;
