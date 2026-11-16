@@ -42,9 +42,7 @@ in
   tcopy = prev.callPackage ../packages/tcopy { };
   lazyvim-popup = prev.callPackage ../packages/lazyvim-popup { };
   lazygit-popup = prev.callPackage ../packages/lazygit-popup { };
-  # Stable keeps pnpm_10 at insecure 10.34.0 for compatibility. Taskmd's
-  # lockfile works with the maintained 10.x release from unstable.
-  taskmd = prev.callPackage ../packages/taskmd { inherit (unstable) pnpm_10; };
+  taskmd = prev.callPackage ../packages/taskmd { };
   taskmd-ui = final.callPackage ../packages/taskmd-ui { };
 
   llmcat = prev.callPackage ../packages/llmcat/llmcat.nix { };

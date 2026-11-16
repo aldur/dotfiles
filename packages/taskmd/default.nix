@@ -2,12 +2,7 @@
   lib,
   buildGoModule,
   fetchFromGitHub,
-  fetchPnpmDeps,
   installShellFiles,
-  nodejs,
-  pnpm_10,
-  pnpmConfigHook,
-  stdenvNoCC,
   testers,
 }:
 
@@ -30,53 +25,24 @@ let
     go mod edit -replace github.com/driangle/taskmd/sdk/go=../../sdk/go apps/cli/go.mod
   '';
 
-  # The SPA `taskmd web` serves. Upstream builds it separately and copies the
-  # result into the CLI tree before the release build, so it is a derivation of
-  # its own here too.
-  web = stdenvNoCC.mkDerivation (finalAttrs: {
-    pname = "taskmd-web";
-    inherit version src;
-
-    # The lockfile lives at the workspace root; only the SPA is installed.
-    # pnpm 10 rather than the default: the lockfile is still version 9.
-    pnpmWorkspaces = [ "@taskmd/web" ];
-    pnpmDeps = fetchPnpmDeps {
-      inherit (finalAttrs)
-        pname
-        version
-        src
-        pnpmWorkspaces
-        ;
-      pnpm = pnpm_10;
-      fetcherVersion = 4;
-      hash = "sha256-GOu6raRkV3r1lOkFjAI+Yj/wYkuiP7XDAMfhDTE/MUQ=";
-
-      # Reachable as both `taskmd.pnpmDeps` and `taskmd.web.pnpmDeps`, and
-      # bumped through taskmd's own pin either way.
-      passthru.updatePin.exempt = "lock hash, refreshed when taskmd is bumped";
-    };
-
-    nativeBuildInputs = [
-      nodejs
-      pnpm_10
-      pnpmConfigHook
-    ];
-
-    buildPhase = ''
-      runHook preBuild
-      pnpm --filter @taskmd/web build
-      runHook postBuild
-    '';
-
-    installPhase = ''
-      runHook preInstall
-      cp -r apps/web/dist $out
-      runHook postInstall
-    '';
-
-    # Shares taskmd's `src`, so bumping taskmd bumps this with it.
-    passthru.updatePin.exempt = "same pin as taskmd, bumped through it";
-  });
+  # Remove the commands that pull in large dependencies: `mcp` (the MCP SDK),
+  # `sync` and `import` (the GitHub and Jira clients), and `web` and
+  # `web export` (the web server and the SPA). This makes the binary 11 MiB
+  # instead of 17 MiB. A command registers itself in a `func init()` of its
+  # file. web.go also has helpers for `next`, thus only its `init()` goes. The
+  # linker then removes the code that only these commands use.
+  removeCommands = ''
+    pushd apps/cli/internal/cli
+    rm mcp.go sync.go sync_test.go importcmd.go importcmd_test.go \
+      web_export.go web_export_test.go web_test.go
+    awk '/^func init\(\) \{$/ { skip = 1 } !skip { print } skip && /^\}$/ { skip = 0 }' web.go > web.go.tmp
+    mv web.go.tmp web.go
+    substituteInPlace suggest_for_test.go \
+      --replace-fail 'feedCmd, importCmd, reportCmd, syncCmd,' 'feedCmd, reportCmd,'
+    # importcmd_test.go defines chdirTo.
+    substituteInPlace templates_cmd_test.go --replace-fail 'chdirTo(t, ' 't.Chdir('
+    popd
+  '';
 in
 
 buildGoModule (finalAttrs: {
@@ -88,40 +54,33 @@ buildGoModule (finalAttrs: {
   # nothing to narrow with `subPackages` — which would also narrow the tests.
   modRoot = "apps/cli";
 
-  # The `embed_web` build below needs the SPA where `//go:embed` expects it;
-  # upstream's release workflow copies it to the same place.
-  #
   # Upstream tests start the watcher in a goroutine, sleep 100 ms, and then
   # change a file. On a loaded CI runner, the watches are not in place yet,
   # and the event is lost. Here, `Start` closes `Ready` when its watches are
   # in place, and the tests wait for it. TestWatcher_DetectsChanges also
   # waits for the change, not for a fixed 200 ms.
-  postPatch = leaveWorkspace + ''
-    mkdir -p apps/cli/internal/web/static
-    cp -r ${web} apps/cli/internal/web/static/dist
+  postPatch =
+    leaveWorkspace
+    + removeCommands
+    + ''
+      substituteInPlace apps/cli/internal/watcher/watcher.go \
+        --replace-fail 'done     chan struct{}' 'done chan struct{}; Ready chan struct{}' \
+        --replace-fail 'done:     make(chan struct{}),' 'done: make(chan struct{}), Ready: make(chan struct{}),' \
+        --replace-fail 'defer fsw.Close()' 'close(w.Ready); defer fsw.Close()'
+      substituteInPlace apps/cli/internal/watcher/watcher_test.go \
+        --replace-fail 'time.Sleep(100 * time.Millisecond)' '<-w.Ready' \
+        --replace-fail 'os.WriteFile(initial, []byte("# modified"), 0644)' \
+          'os.WriteFile(initial, []byte("# modified"), 0644); waitFor(t, &count, 1, "markdown change")'
+      substituteInPlace apps/cli/internal/web/worktree_test.go \
+        --replace-fail 'time.Sleep(100 * time.Millisecond) // let the watcher register its dirs' '<-w.Ready'
+    '';
 
-    substituteInPlace apps/cli/internal/watcher/watcher.go \
-      --replace-fail 'done     chan struct{}' 'done chan struct{}; Ready chan struct{}' \
-      --replace-fail 'done:     make(chan struct{}),' 'done: make(chan struct{}), Ready: make(chan struct{}),' \
-      --replace-fail 'defer fsw.Close()' 'close(w.Ready); defer fsw.Close()'
-    substituteInPlace apps/cli/internal/watcher/watcher_test.go \
-      --replace-fail 'time.Sleep(100 * time.Millisecond)' '<-w.Ready' \
-      --replace-fail 'os.WriteFile(initial, []byte("# modified"), 0644)' \
-        'os.WriteFile(initial, []byte("# modified"), 0644); waitFor(t, &count, 1, "markdown change")'
-    substituteInPlace apps/cli/internal/web/worktree_test.go \
-      --replace-fail 'time.Sleep(100 * time.Millisecond) // let the watcher register its dirs' '<-w.Ready'
-  '';
-
-  # Vendoring needs the workspace gone too, but not the SPA: `postPatch` is
-  # inherited by that derivation, and left alone it would block fetching Go
-  # modules on a whole pnpm build.
+  # Vendoring needs the workspace gone too, but nothing else from `postPatch`,
+  # which that derivation inherits: a change to the removed commands must not
+  # rebuild it.
   overrideModAttrs = _: { postPatch = leaveWorkspace; };
 
   vendorHash = "sha256-jcs2Ik+BY50NVn86c1nQkzsOqGQEUmt6RyNLcluQETw=";
-
-  # Without this the web UI is served from an empty filesystem: `taskmd web
-  # start` comes up, but every page is blank.
-  tags = [ "embed_web" ];
 
   # `taskmd --version` reads a constant baked into the source, so only the
   # release ldflags upstream also passes are needed here.
@@ -134,13 +93,11 @@ buildGoModule (finalAttrs: {
   # it builds itself, so there is nothing to run here.
   excludedPackages = [ "internal/e2e" ];
 
-  # TestExport_WithoutEmbeddedAssets asserts the failure mode of a build
-  # *without* embedded assets, which is exactly what `tags` above turns off.
   # TestWatcher_Debounces writes a file 5 times, 10 ms apart, and expects the
   # 100 ms debounce to merge the writes. On a loaded CI runner, the scheduler
   # can hold the test for more than 100 ms between two writes, and the timer
   # fires one more time. The test measures the wall clock, not the code.
-  checkFlags = [ "-skip=^TestExport_WithoutEmbeddedAssets$|^TestWatcher_Debounces$" ];
+  checkFlags = [ "-skip=^TestWatcher_Debounces$" ];
 
   nativeBuildInputs = [ installShellFiles ];
 
@@ -152,14 +109,6 @@ buildGoModule (finalAttrs: {
   '';
 
   passthru = {
-    inherit web;
-
-    # nix-update only refreshes the pnpm lock hash when it finds `pnpmDeps` on
-    # the attribute it is bumping; without this alias a version bump would
-    # leave the SPA's dependencies pinned to the old lockfile and fail to
-    # build.
-    inherit (web) pnpmDeps;
-
     # Catches the version constant drifting from the tag this pins.
     tests.version = testers.testVersion {
       package = finalAttrs.finalPackage;
