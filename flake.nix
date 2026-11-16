@@ -113,7 +113,6 @@
               update-pins # runs a flake's `updatePins` bump legs locally
               aldurs-dotfiles-version
               llmcat
-              taskmd
               taskmd-ui
               agent-log # one picker over claude, pi and codex conversations
               tavily-cli

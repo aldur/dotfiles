@@ -1,4 +1,4 @@
-"""Change a task through the UI with no taskmd on the caller's PATH."""
+"""Change a task through the UI, then validate it with `taskmd`."""
 
 import errno
 import os
@@ -47,7 +47,7 @@ with tempfile.TemporaryDirectory() as temporary:
         raise AssertionError(output.decode(errors="replace"))
 
     def status():
-        # taskmd truncates the file before it writes the new text.
+        # The write truncates the file before it writes the new text.
         # A read in that gap gets no complete frontmatter.
         parts = task.read_text().split("---", 2)
         return yaml.safe_load(parts[1])["status"] if len(parts) == 3 else None
@@ -65,3 +65,10 @@ with tempfile.TemporaryDirectory() as temporary:
             process.kill()
         process.wait()
         os.close(master)
+
+    validate = subprocess.run(
+        [str(Path(sys.argv[1]).with_name("taskmd")), "--no-color", "-d", str(tasks), "validate"],
+        cwd=root, env={"HOME": str(root), "PATH": ""}, capture_output=True, text=True,
+    )
+    assert validate.returncode == 0, validate.stdout + validate.stderr
+    assert "All 1 task(s) are valid" in validate.stdout, validate.stdout

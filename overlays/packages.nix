@@ -42,7 +42,6 @@ in
   tcopy = prev.callPackage ../packages/tcopy { };
   lazyvim-popup = prev.callPackage ../packages/lazyvim-popup { };
   lazygit-popup = prev.callPackage ../packages/lazygit-popup { };
-  taskmd = prev.callPackage ../packages/taskmd { };
   taskmd-ui = final.callPackage ../packages/taskmd-ui { };
 
   llmcat = prev.callPackage ../packages/llmcat/llmcat.nix { };

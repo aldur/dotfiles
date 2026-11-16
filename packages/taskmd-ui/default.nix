@@ -1,10 +1,7 @@
 {
-  lib,
   buildGoModule,
   fetchFromGitHub,
-  makeWrapper,
   callPackage,
-  taskmd,
 }:
 
 # A terminal browser for a taskmd project: filter and re-sort the task list a
@@ -15,7 +12,8 @@
 # with the CLI and the web dashboard, so this is a separate program rather than
 # a patch back into it. It reads the markdown files directly — `taskmd list
 # --format json` and `taskmd snapshot` both drop `phase` and `owner`, which are
-# filter axes there — and delegates every write back to the CLI.
+# filter axes there. The `taskmd` binary has the common taskmd commands, on the
+# taskmd Go SDK.
 buildGoModule (finalAttrs: {
   pname = "taskmd-ui";
   # Nothing is tagged upstream and development happens on the branch, so the
@@ -36,17 +34,6 @@ buildGoModule (finalAttrs: {
     "-s"
     "-w"
   ];
-
-  nativeBuildInputs = [ makeWrapper ];
-
-  # Status changes shell out to `taskmd set` rather than rewriting frontmatter
-  # there, so the binary is useless without it on PATH. Suffixed rather than
-  # prefixed: a project pinning its own taskmd in a dev shell should still get
-  # that one, and this is only the fallback that guarantees the keys work.
-  postInstall = ''
-    wrapProgram $out/bin/taskmd-ui \
-      --suffix PATH : ${lib.makeBinPath [ taskmd ]}
-  '';
 
   passthru = {
     tests.smoke = callPackage ./test.nix { taskmd-ui = finalAttrs.finalPackage; };

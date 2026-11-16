@@ -49,7 +49,6 @@ let
       nospace
       shrink-pdf
       split-pdf
-      taskmd
       tcopy
       totp-qr-decode
       trim
