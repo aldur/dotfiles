@@ -9,14 +9,14 @@ let
     builtins.toJSON {
       maxClosureMiB =
         if image.offline then
-          (if pkgs.stdenv.hostPlatform.isAarch64 then 760 else 710)
+          (if pkgs.stdenv.hostPlatform.isAarch64 then 830 else 780)
         else
-          (if pkgs.stdenv.hostPlatform.isAarch64 then 960 else 920);
+          (if pkgs.stdenv.hostPlatform.isAarch64 then 1030 else 990);
       maxArchiveMiB =
         if image.offline then
-          (if pkgs.stdenv.hostPlatform.isAarch64 then 220 else 200)
+          (if pkgs.stdenv.hostPlatform.isAarch64 then 240 else 220)
         else
-          (if pkgs.stdenv.hostPlatform.isAarch64 then 280 else 260);
+          (if pkgs.stdenv.hostPlatform.isAarch64 then 300 else 280);
       forbiddenPaths = [ ];
       forbiddenNames = [
         "^(pnpm|npm|nix|home-manager|glibc-locales|man-db|groff|gettext|gcc-wrapper|clang-wrapper)-[0-9]"

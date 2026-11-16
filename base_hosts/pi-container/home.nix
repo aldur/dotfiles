@@ -64,6 +64,8 @@ in
       ++ (with pkgs; [
         pi-yolo
         lazyvim-light
+        # pdftotext and pdftoppm for the reading-pdfs skill.
+        poppler-utils
         tcopy
       ]);
     # Use the C.UTF-8 locale from glibc. Do not include the other locales.
