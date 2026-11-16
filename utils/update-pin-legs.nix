@@ -107,8 +107,11 @@ let
     # nix-update's `--test` dies outright on a package with no
     # `passthru.tests`, so it is only requested when tests exist; a package
     # gaining tests still picks it up without touching the workflow.
+    #
+    # `--inputs-from .` takes nix-update from the locked nixpkgs. The runner's
+    # registry can resolve `nixpkgs` to a different revision.
     bump = lib.concatStringsSep " " (
-      [ "nix run nixpkgs#nix-update -- --flake" ]
+      [ "nix run --inputs-from . nixpkgs#nix-update -- --flake" ]
       ++ lib.optional ((e.drv.passthru.tests or { }) != { }) "--test"
       ++ lib.optional ((e.pin.args or "") != "") e.pin.args
       ++ [ e.path ]
