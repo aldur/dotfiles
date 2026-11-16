@@ -9,7 +9,7 @@
 # neovim-nightly-overlay input (which dragged neovim-src and flake-parts into
 # the lock and every `nix flake update`). If master outgrows one of stable's
 # dependencies this stops building — the CI pin bump notices before a human.
-neovim-unwrapped.overrideAttrs (old: {
+neovim-unwrapped.overrideAttrs (finalAttrs: old: {
   pname = "neovim-nightly";
   version = "0-unstable-2026-08-05";
 
@@ -40,6 +40,11 @@ neovim-unwrapped.overrideAttrs (old: {
       ln -s org.neovim.nvim.desktop $out/share/applications/nvim.desktop
     fi
   '';
+
+  # Upstream makes the changelog URL from src.tag. This src has only a rev.
+  meta = old.meta // {
+    changelog = "https://github.com/neovim/neovim/commits/${finalAttrs.src.rev}";
+  };
 
   passthru = old.passthru or { } // {
     updatePin = {
