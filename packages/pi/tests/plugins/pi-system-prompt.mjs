@@ -73,7 +73,7 @@ test("the preview matches the OpenAI request and the snapshot stays available wh
   const base = buildSystemPrompt(options);
   const { systemPrompt } = strip({ systemPrompt: base, systemPromptOptions: options });
   const model = {
-    id: "local-model", provider: "llama-cpp", api: "openai-completions",
+    id: "local-model", provider: "llama.cpp", api: "openai-completions",
     baseUrl: "http://localhost:8080/v1", reasoning: false, input: ["text"],
     contextWindow: 32768, maxTokens: 8192,
     cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },

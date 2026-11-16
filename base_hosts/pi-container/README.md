@@ -76,7 +76,7 @@ env -u SSH_AUTH_SOCK container run -it --rm \
   --cap-add CHOWN --cap-add SETUID --cap-add SETGID --cap-add SYS_CHROOT \
   --volume "$HOME/.local/state/sandboxed-ai/sockets/llama-server.sock:/var/host-services/llama.sock" \
   --volume "$PWD:/workspace" \
-  ghcr.io/aldur/aldur-pi-offline:latest --models 'llama-cpp/*'
+  ghcr.io/aldur/aldur-pi-offline:latest --models 'llama.cpp/*'
 ```
 
 The relay exposes inference at `127.0.0.1:8080` inside the container.

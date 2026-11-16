@@ -52,8 +52,8 @@ wrapper is in [standalone.nix](standalone.nix).
 | Variable | Purpose | Default |
 | --- | --- | --- |
 | `PI_CODING_AGENT_DIR` | Pi settings, skills, and session directory. | `~/.pi/agent` |
-| `LLAMA_BASE_URL` | llama.cpp API URL, including `/v1`. | Unset; discovery is disabled. |
-| `LLAMA_API_KEY` | llama.cpp API key. | `no-key` |
+| `LLAMA_BASE_URL` | llama.cpp server URL. Pi removes a final `/v1`. | Unset; use `/login llama.cpp`. |
+| `LLAMA_API_KEY` | llama.cpp API key. | `local` |
 | `PI_OPENAI_BASE_URL` | OpenAI-compatible API URL, including `/v1`. | Unset; discovery is disabled. |
 | `PI_OPENAI_API_KEY` | OpenAI-compatible API key. | `no-key` |
 | `PI_OPENAI_PROFILE` | models.dev provider ID for model metadata. | Unset; use endpoint metadata. |
@@ -117,12 +117,23 @@ locations and cleanup.
 
 ## Models
 
-The [pi-llama](plugins/pi-llama.nix) extension discovers models on a llama.cpp server. Set
-`LLAMA_BASE_URL` to enable it. Use the server's API URL, including `/v1`. The extension can
-load models and show loading progress on a llama.cpp router. Local patches add
-model capability discovery, reasoning settings, and startup fixes. Discovery,
-loading, and progress errors are logged as warnings. Model switches cancel
-pending requests without a warning.
+Pi's built-in [llama.cpp provider](https://docs.pi.dev/latest/llama-cpp)
+discovers models on a llama.cpp router. Set `LLAMA_BASE_URL` or run
+`/login llama.cpp` to enable it. Use `/llama` to load and unload models.
+`--no-extensions` also disables it; add `-e builtin:llama.cpp` to keep it.
+
+Only interactive and RPC sessions get the model list from the server. Print
+mode (`-p`) uses the list that the last of those sessions stored, so with a
+new agent directory it finds no llama.cpp models.
+
+The built-in provider offers only the `off` and `medium` thinking levels. When
+a loaded model's chat template accepts the Qwen `reasoning_effort` values
+`low`, `medium`, and `xhigh`, [pi-llama-effort](plugins/pi-llama-effort/index.ts)
+also offers `low` and `max`. Pi's `max` sends `xhigh`. The extension reads
+the template from `/props` when you select the model. If the request fails,
+Pi shows a warning and keeps the built-in levels. Pi sets the startup level
+before the extension reads the template, so `--thinking low` and `--thinking max` start
+at `medium`. Select the level again after startup.
 
 The [OpenAI-compatible extension](plugins/pi-openai-discovery/index.ts)
 discovers models from `/v1/models`. For example:
@@ -162,7 +173,7 @@ cover case differences and model aliases.
   Select a compatible model with `/model`. Red requires a Red-compatible model;
   GPT-6 Sol uses Blue, even for accounts with Red approval. See the
   [OpenAI Daybreak guide](https://developers.openai.com/api/docs/guides/daybreak).
-- [pi-llama](plugins/pi-llama.nix): llama.cpp discovery and router support.
+- [pi-llama-effort](plugins/pi-llama-effort): Qwen reasoning effort levels for llama.cpp models.
 - [pi-openai-discovery](plugins/pi-openai-discovery): OpenAI-compatible model discovery.
 - [pi-no-docs](plugins/pi-no-docs): removes the Pi documentation section from the default prompt.
 - [pi-startup-header](plugins/pi-startup-header): hides the default startup header.

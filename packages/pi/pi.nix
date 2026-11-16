@@ -26,13 +26,13 @@ let
   pluginFlags = lib.concatMapStringsSep " " (path: "-e ${lib.escapeShellArg path}") pluginPaths;
 
   helpSections =
-    lib.optionalString (plugins ? pi-llama) ''
+    ''
       llama.cpp provider:
-        LLAMA_BASE_URL  Server API URL, including /v1.
-                        Set this to enable the provider.
+        LLAMA_BASE_URL  Server URL. Set this, or use /login llama.cpp,
+                        to enable the provider.
 
         Example:
-          LLAMA_BASE_URL=http://my-server:8080/v1 pi
+          LLAMA_BASE_URL=http://my-server:8080 pi
 
     ''
     + lib.optionalString (plugins ? pi-openai-discovery) ''
@@ -124,14 +124,12 @@ let
       run_pi() {
         local pi_bin="$1"
         shift
-        ${lib.optionalString (helpSections != "") ''
-          # Add local server settings after Pi's own help.
-          if [[ $# -eq 1 && ( "$1" == --help || "$1" == -h ) ]]; then
-            "$pi_bin" "''${flags[@]}" "$@"
-            printf '%s\n' ${lib.escapeShellArg "\n${helpSections}"}
-            exit 0
-          fi
-        ''}
+        # Add local server settings after Pi's own help.
+        if [[ $# -eq 1 && ( "$1" == --help || "$1" == -h ) ]]; then
+          "$pi_bin" "''${flags[@]}" "$@"
+          printf '%s\n' ${lib.escapeShellArg "\n${helpSections}"}
+          exit 0
+        fi
         exec "$pi_bin" "''${flags[@]}" "$@"
       }
 
@@ -172,8 +170,7 @@ in
 # writeShellApplication is named after its binary).
 runCommand "pi-with-plugins-${pi-coding-agent.version}"
   {
-    # Plugins stay reachable (e.g. `pi.plugins.pi-llama`) so nix-update can
-    # bump their pins in CI without dedicated flake outputs.
+    # Plugins stay reachable so an override can extend `pi.plugins`.
     passthru = {
       inherit plugins configSync modelsCatalog browserEnabled;
       skills = import ./skills.nix { inherit lib tavily-cli; };

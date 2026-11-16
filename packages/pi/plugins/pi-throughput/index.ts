@@ -13,8 +13,7 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 const STATUS_KEY = "pi-throughput";
-// The bundled Hugging Face provider and Pi's built-in llama.cpp provider.
-const PROGRESS_PROVIDERS = new Set(["llama-cpp", "llama.cpp"]);
+const PROGRESS_PROVIDER = "llama.cpp";
 const DECODE_WINDOW_MS = 2000;
 const REFRESH_MS = 250;
 
@@ -132,7 +131,7 @@ export default function (pi: ExtensionAPI) {
 		};
 		// Only llama.cpp needs these nonstandard request fields. Other servers
 		// are observed without changing their requests.
-		if (model.api === "openai-completions" && PROGRESS_PROVIDERS.has(model.provider)) {
+		if (model.api === "openai-completions" && model.provider === PROGRESS_PROVIDER) {
 			return { ...payload, return_progress: true, timings_per_token: true };
 		}
 	});

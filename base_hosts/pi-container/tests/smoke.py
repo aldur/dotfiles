@@ -80,6 +80,15 @@ class Server(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
     daemon_threads = True
 
 
+# Print mode does not refresh the llama.cpp catalog. Store the fixture model.
+LLAMA_CATALOG = json.dumps({"llama.cpp": {"checkedAt": 0, "models": [{
+    "id": "local", "name": "local", "provider": "llama.cpp", "api": "openai-completions",
+    "baseUrl": "http://127.0.0.1:8080/v1", "reasoning": False, "input": ["text"],
+    "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
+    "contextWindow": 65536, "maxTokens": 65536,
+}]}})
+
+
 class Inference(http.server.BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
     completion = False
@@ -101,7 +110,7 @@ class Inference(http.server.BaseHTTPRequestHandler):
         if self.path == "/v1/large":
             self.reply(b"x" * (4 * 1024 * 1024), "text/plain")
             return
-        if self.path == "/v1/models":
+        if self.path in ("/models", "/v1/models"):
             data = {"data": [{"id": "local", "status": {"value": "loaded"}, "meta": {"n_ctx": 65536}}]}
         elif self.path.startswith("/props"):
             data = {"chat_template": "{{ messages }}", "default_generation_settings": {"n_ctx": 65536}}
@@ -461,6 +470,10 @@ PY
     else:
         run("/bin/bash", "-c", 'test -z "${LLAMA_BASE_URL-}"',
             socket_path="/var/host-services/missing.sock")
+    catalog = state / "models-store.json"
+    catalog.write_text(LLAMA_CATALOG)
+    if privileged:
+        os.chown(catalog, 501, 100)
     # A TCP model outside the container tests the launch network policy.
     # Use a local fixture so this check needs no public service.
     with http.server.ThreadingHTTPServer(("127.0.0.1", 0), Inference) as server:
@@ -471,7 +484,7 @@ PY
         try:
             tcp_model = f'''
 export LLAMA_BASE_URL=http://localhost:{server.server_port}/v1
-exec pi-yolo --models 'llama-cpp/*' -p --no-session --no-tools --no-skills --no-extensions 'say hello'
+exec pi-yolo --models 'llama.cpp/*' -p --no-session --no-tools --no-skills --no-extensions -e builtin:llama.cpp 'say hello'
 '''
             Inference.completion = False
             run("/bin/bash", "-c", tcp_model, success=False)
@@ -544,7 +557,7 @@ exec pi-yolo --models 'llama-cpp/*' -p --no-session --no-tools --no-skills --no-
             result = run("/bin/bash", "-c", 'curl --fail --silent --show-error "$LLAMA_BASE_URL/models"',
                          socket_path="")
             assert json.loads(result.stdout)["data"][0]["id"] == "local", result.stdout
-            scratch = run("--models", "llama-cpp/*", "-p", "--no-session", "--no-skills", "--no-extensions",
+            scratch = run("--models", "llama.cpp/*", "-p", "--no-session", "--no-skills", "--no-extensions", "-e", "builtin:llama.cpp",
                           "create a scratch workspace file", workspace=False)
             assert "inference works" in scratch.stdout, (scratch.stdout, scratch.stderr)
             assert (home / "workspace/agent.txt").read_text() == "sandboxed task complete\n"
@@ -568,9 +581,12 @@ if chmod u+w "$HOME/.pi-sessions"; then
   exit 1
 fi
 touch "$HOME/.config/fresh-home-writable"
+mkdir -p "$HOME/.pi/agent"
+printf '%s' "$LLAMA_CATALOG" > "$HOME/.pi/agent/models-store.json"
 exec pi-yolo --rw "$HOME/.pi-sessions" --session-dir "$HOME/.pi-sessions" \
-  --models 'llama-cpp/*' -p --no-tools --no-skills --no-extensions 'say hello'
-''', home_source=fresh_home, transcript_source=transcripts),
+  --models 'llama.cpp/*' -p --no-tools --no-skills --no-extensions -e builtin:llama.cpp 'say hello'
+''', home_source=fresh_home, transcript_source=transcripts,
+                           environment={"LLAMA_CATALOG": LLAMA_CATALOG}),
                     stdin=subprocess.DEVNULL, text=True, capture_output=True, timeout=180)
                 assert result.returncode == 0, (result.stdout, result.stderr)
                 assert "inference works" in result.stdout, (result.stdout, result.stderr)
@@ -583,9 +599,9 @@ exec pi-yolo --rw "$HOME/.pi-sessions" --session-dir "$HOME/.pi-sessions" \
             result = run("/bin/bash", "-c", r'''
 set -eu
 test "$LLAMA_BASE_URL" = http://127.0.0.1:8080/v1
-pi-yolo --models 'llama-cpp/*' -p --no-session --no-tools --no-skills --no-extensions 'say hello'
-pi-yolo --models 'llama-cpp/*' -p --no-skills --no-extensions 'create agent.txt'
-pi-yolo --ro /reference --rw /output --models 'llama-cpp/*' -p --no-session --no-skills --no-extensions 'check mounts'
+pi-yolo --models 'llama.cpp/*' -p --no-session --no-tools --no-skills --no-extensions -e builtin:llama.cpp 'say hello'
+pi-yolo --models 'llama.cpp/*' -p --no-skills --no-extensions -e builtin:llama.cpp 'create agent.txt'
+pi-yolo --ro /reference --rw /output --models 'llama.cpp/*' -p --no-session --no-skills --no-extensions -e builtin:llama.cpp 'check mounts'
 # Pi sessions and the explicit shell share the container relay.
 test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
 ''')
@@ -654,7 +670,7 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
                         os.write(master, b"tmux kill-session\r")
                         assert process.wait(timeout=30) == 0, bytes(output[-4000:])
                         return
-                    wait_for(b"inference works" if initial_prompt else b"local (loaded)")
+                    wait_for(b"inference works" if initial_prompt else b"[local 66k]")
                     response_start = len(output)
                     os.write(master, b"interactive smoke\r")
                     wait_for(b"inference works", after=response_start)
@@ -695,7 +711,7 @@ test "$(curl -sS "$LLAMA_BASE_URL/large" | wc -c)" = 4194304
 
             interactive_test()
             prompt = "quoted 'argument'; $(touch /workspace/argument-injection)\nsecond line"
-            interactive_test("--models", "llama-cpp/*", prompt, initial_prompt=True)
+            interactive_test("--models", "llama.cpp/*", prompt, initial_prompt=True)
             assert not (root / "workspace/argument-injection").exists()
             interactive_test("--tui-mode", "invalid", failure=b"Invalid TUI mode")
         finally:

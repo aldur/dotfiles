@@ -35,7 +35,7 @@ function setup(t) {
   const ctx = {
     mode: "tui",
     model: {
-      id: "local-model", provider: "llama-cpp", api: "openai-completions",
+      id: "local-model", provider: "llama.cpp", api: "openai-completions",
       baseUrl: "http://localhost:8080/v1", reasoning: true, input: ["text"],
       contextWindow: 32768, maxTokens: 8192,
       cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
@@ -85,9 +85,8 @@ const timings = {
 };
 
 test("only streaming, interactive llama.cpp requests get the extra fields", (t) => {
-  for (const provider of ["llama-cpp", "llama.cpp"]) {
+  {
     const h = setup(t);
-    h.ctx.model.provider = provider;
     const original = structuredClone(h.payload);
     assert.deepEqual(h.start(), { ...original, return_progress: true, timings_per_token: true });
     assert.deepEqual(h.payload, original, "preserve the original request and its other settings");

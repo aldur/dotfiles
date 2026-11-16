@@ -13,7 +13,7 @@ in
   piPlugins = {
     # final.callPackage: the build-time checks must see the same
     # pi-coding-agent (above) that the wrapper runs.
-    pi-llama = final.callPackage ./plugins/pi-llama.nix { };
+    pi-llama-effort = final.callPackage ./plugins/pi-llama-effort { };
     pi-no-docs = final.callPackage ./plugins/pi-no-docs { };
     pi-startup-header = prev.callPackage ./plugins/pi-startup-header { };
     pi-openai-discovery = final.callPackage ./plugins/pi-openai-discovery {
