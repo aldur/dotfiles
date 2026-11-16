@@ -9,7 +9,7 @@ let
     builtins.toJSON {
       maxClosureMiB =
         if image.offline then
-          (if pkgs.stdenv.hostPlatform.isAarch64 then 760 else 690)
+          (if pkgs.stdenv.hostPlatform.isAarch64 then 760 else 710)
         else
           (if pkgs.stdenv.hostPlatform.isAarch64 then 960 else 920);
       maxArchiveMiB =
