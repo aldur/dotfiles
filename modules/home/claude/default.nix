@@ -40,9 +40,10 @@ let
   configDirEnv = lib.optionalString (
     config.home.sessionVariables ? CLAUDE_CONFIG_DIR
   ) "CLAUDE_CONFIG_DIR=${lib.escapeShellArg config.home.sessionVariables.CLAUDE_CONFIG_DIR}";
-  marketplaceRepos = lib.mapAttrsToList (_: marketplace: marketplace.source.repo) (
-    cfg.writableSettings.extraKnownMarketplaces or { }
-  );
+  # `claude plugin marketplace add` takes a GitHub repo, a URL, or a path.
+  marketplaceSources = lib.mapAttrsToList (
+    _: { source, ... }: source.repo or source.url or source.path
+  ) (cfg.writableSettings.extraKnownMarketplaces or { });
 
   # jq filter: deep-merge objects, but for `.hooks.<event>` arrays strip any
   # existing entries whose hook command contains a Nix-managed marker, then
@@ -405,8 +406,8 @@ in
               "$claude" plugin "$@" </dev/null \
               || warnEcho "Could not do 'claude plugin $*'. Run it to see the error."
           }
-          for repo in ${lib.escapeShellArgs marketplaceRepos}; do
-            claudePlugin marketplace add "$repo"
+          for source in ${lib.escapeShellArgs marketplaceSources}; do
+            claudePlugin marketplace add "$source"
           done
           for plugin in ${lib.escapeShellArgs pluginsToInstall}; do
             claudePlugin install --scope user "$plugin"

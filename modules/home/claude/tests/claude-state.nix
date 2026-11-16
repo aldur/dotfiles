@@ -4,6 +4,13 @@
   inputs,
 }:
 let
+  localMarketplace = pkgs.writeTextDir ".claude-plugin/marketplace.json" (
+    builtins.toJSON {
+      name = "local";
+      owner.name = "test";
+      plugins = [ ];
+    }
+  );
   home = self.lib.mkHome {
     system = pkgs.stdenv.hostPlatform.system;
     profile = "headless";
@@ -12,6 +19,10 @@ let
         programs.aldur = {
           lazyvim.enable = false;
           claude-code.enable = true;
+        };
+        programs.claude-code.writableSettings.extraKnownMarketplaces.local.source = {
+          source = "directory";
+          path = "${localMarketplace}";
         };
       }
     ];
@@ -59,6 +70,8 @@ pkgs.runCommand "claude-state-test" { nativeBuildInputs = [ pkgs.gettext ]; } ''
     # Claude Code ships the @builtin plugins.
     [[ "$output" == *"not installed"*"  frontend-design@claude-plugins-official"* ]]
     [[ "$output" != *"cc-plugin-you-should-know"* ]]
+    ${pkgs.jq}/bin/jq -e --arg path "${localMarketplace}" '.local.source.path == $path' \
+      "$HOME/.claude/plugins/known_marketplaces.json"
 
     # Report a skill that comes from Nix, the account sync, and a user plugin.
     synced=$HOME/.claude/skills/synced/account
