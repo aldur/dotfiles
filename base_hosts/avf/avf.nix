@@ -27,6 +27,25 @@
   users.allowNoPasswordLogin = true;
   security.sudo-rs.wheelNeedsPassword = false;
 
+  # nixos-avf applies arm64-balloon.patch from this AOSP source, but its last
+  # patch does not apply on Linux 6.1.188 and later. Rebase it in the source.
+  # Remove this overlay when nixos-avf has a fix.
+  nixpkgs.overlays = [
+    (final: prev: {
+      fetchgit = prev.fetchgit // {
+        __functor =
+          _: args:
+          if args.url or null == "https://android.googlesource.com/platform/packages/modules/Virtualization/" then
+            final.applyPatches {
+              src = prev.fetchgit args;
+              patches = [ ./arm64-balloon-6.1.188.patch ];
+            }
+          else
+            prev.fetchgit args;
+      };
+    })
+  ];
+
   home-manager.users.${config.mainUser}.home.packages = [
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.lazyvim-light
   ];

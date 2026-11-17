@@ -1,0 +1,21 @@
+Rebase the last patch (6/6) of arm64-balloon.patch for Linux 6.1.188 and
+later. That version backports 281eb4732aae ("virtio_balloon: disable indirect
+descriptors"), which changes the context of the hunk.
+
+--- a/build/debian/kernel/patches/avf/arm64-balloon.patch
++++ b/build/debian/kernel/patches/avf/arm64-balloon.patch
+@@ -538,10 +538,10 @@
+ index 4c85349024c1..72fe24005bc0 100644
+ --- a/drivers/virtio/virtio_balloon.c
+ +++ b/drivers/virtio/virtio_balloon.c
+-@@ -1097,7 +1097,6 @@ static int virtballoon_validate(struct virtio_device *vdev)
+- 	else if (!virtio_has_feature(vdev, VIRTIO_BALLOON_F_PAGE_POISON))
+- 		__virtio_clear_bit(vdev, VIRTIO_BALLOON_F_REPORTING);
+-
++@@ -1105,7 +1105,6 @@ static int virtballoon_validate(struct virtio_device *vdev)
++ 	 * virtqueue_add during page reporting.
++ 	 */
++ 	__virtio_clear_bit(vdev, VIRTIO_RING_F_INDIRECT_DESC);
+ -	__virtio_clear_bit(vdev, VIRTIO_F_ACCESS_PLATFORM);
+  	return 0;
+  }
