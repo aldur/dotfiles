@@ -41,8 +41,10 @@ in
   tmux-palette = prev.callPackage ../packages/tmux-palette { };
   tcopy = prev.callPackage ../packages/tcopy { };
   lazyvim-popup = prev.callPackage ../packages/lazyvim-popup { };
-  lazygit-popup = prev.callPackage ../packages/lazygit-popup { };
+  tmux-popup-session = prev.callPackage ../packages/tmux-popup-session { };
+  lazygit-popup = final.callPackage ../packages/lazygit-popup { };
   taskmd-ui = final.callPackage ../packages/taskmd-ui { };
+  taskmd-ui-popup = final.callPackage ../packages/taskmd-ui-popup { };
 
   llmcat = prev.callPackage ../packages/llmcat/llmcat.nix { };
 

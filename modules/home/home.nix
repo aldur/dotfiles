@@ -34,6 +34,7 @@ let
       lazyvim-bin = if lazyvim-bin != null then lazyvim-bin else "lazyvim";
     })
     taskmd-ui
+    taskmd-ui-popup
     tmux-palette
   ];
 

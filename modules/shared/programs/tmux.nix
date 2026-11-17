@@ -88,8 +88,9 @@
     # `q` quits.
     bind-key G display-popup -E -w 95% -h 95% -d "#{pane_current_path}" lazygit
 
-    # Task browser for the current pane's project; shift-T keeps the clock.
-    bind-key t display-popup -E -w 95% -h 95% -d "#{pane_current_path}" taskmd-ui
+    # Task browser for the current pane's project, persistent the same way:
+    # `q` backgrounds it, C-c quits. Shift-T keeps the clock.
+    bind-key t display-popup -E -w 95% -h 95% taskmd-ui-popup
     bind-key T clock-mode
 
     # y to yank in copy mode, remaining in copy mode
