@@ -7,11 +7,6 @@ use crate::context;
 use crate::scan;
 use crate::style;
 
-/// Read metadata and only decode the selected record's content.
-pub fn header_and_turn(path: &Path, key: &str) -> String {
-    format!("{}{}", header(path), turn(path, key))
-}
-
 /// One turn. The key is the value that the adapter gives.
 pub fn turn(path: &Path, key: &str) -> String {
     selected_turn(path, key, None, false)
@@ -71,6 +66,12 @@ fn render_record(
         .into_iter()
         .map(|block| {
             let text = crate::model::sanitize(&block.text);
+            let tool = block.label.as_deref().unwrap_or(&role).starts_with("tool");
+            let text = if tool && expanded.is_none() && !style::enabled() {
+                fence(&text)
+            } else {
+                text
+            };
             match (expanded, block.label) {
                 (Some(expanded), Some(label)) => context::detail(&label, &text, expanded),
                 (Some(expanded), None) => context::render(&text, expanded),
@@ -95,7 +96,23 @@ pub fn header(path: &Path) -> String {
     header_from(&session)
 }
 
+/// Colour shows that a person reads the output now. No colour shows that the
+/// output goes to a file, a pager or glow, and all of them need markdown.
 fn header_from(session: &crate::model::Session) -> String {
+    let when = scan::format_when(session.last_activity);
+    if !style::enabled() {
+        let mut md = format!("# {}\n\n", session.title);
+        md.push_str(&format!("- session: {}\n", session.id));
+        if !session.model.is_empty() {
+            md.push_str(&format!("- model: {}\n", session.model));
+        }
+        md.push_str(&format!("- when: {when} ({})\n", session.agent));
+        if !session.cwd.is_empty() {
+            md.push_str(&format!("- cwd: {}\n", session.cwd));
+        }
+        md.push('\n');
+        return md;
+    }
     let label = |name: &str| style::dim(name);
     let mut out = format!("{} {}\n", label("session:"), session.id);
     if !session.title.is_empty() {
@@ -109,14 +126,26 @@ fn header_from(session: &crate::model::Session) -> String {
         out.push_str(&format!("{} {}\n", label("model:  "), session.model));
     }
     out.push_str(&format!(
-        "{} {}  {}\n",
+        "{} {when}  {}\n",
         label("when:   "),
-        scan::format_when(session.last_activity),
         style::dim(&format!("({})", session.agent))
     ));
     out.push_str(&style::rule());
     out.push_str("\n\n");
     out
+}
+
+/// Put tool input or output in a code block. Markdown would read `*` or `_`
+/// in it as emphasis, and glow would remove them and the indentation.
+fn fence(text: &str) -> String {
+    let mut longest = 0;
+    let mut run = 0;
+    for ch in text.chars() {
+        run = if ch == '`' { run + 1 } else { 0 };
+        longest = longest.max(run);
+    }
+    let marks = "`".repeat(longest.max(2) + 1);
+    format!("{marks}\n{}\n{marks}", text.trim_end_matches('\n'))
 }
 
 /// The full conversation, in sequence.
@@ -132,35 +161,7 @@ fn conversation(path: &Path, no_tools: bool, expanded: Option<bool>) -> String {
         return format!("agent-log: {}: unrecognised format\n", path.display());
     };
     let session = adapters::summarize(agent, &path.to_string_lossy(), &records, mtime);
-
-    // Colour shows that a person reads the output now. Thus use the same
-    // header as the turn view. No colour shows that the output goes to a file,
-    // a pager or glow. All of them need markdown.
-    let mut out = if style::enabled() {
-        header_from(&session)
-    } else {
-        let mut md = format!("# {}\n\n", session.title);
-        md.push_str(&format!(
-            "_{} · {} · {}_\n",
-            session.agent,
-            if session.model.is_empty() {
-                "?"
-            } else {
-                &session.model
-            },
-            scan::format_when(session.last_activity)
-        ));
-        if !session.cwd.is_empty() {
-            md.push_str(&format!("_cwd {}_\n", session.cwd));
-        }
-        md
-    };
-
-    // Put exactly one blank line between the header and the first turn.
-    while !out.ends_with("\n\n") {
-        out.push('\n');
-    }
-
+    let mut out = header_from(&session);
     for turn in adapters::turns(agent, &records, no_tools) {
         if let Some(record) = turn
             .key

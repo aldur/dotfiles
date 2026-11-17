@@ -54,6 +54,9 @@ pub fn tool(text: &str) -> String {
 pub fn result(text: &str) -> String {
     paint("32", text)
 }
+pub fn matched(text: &str) -> String {
+    paint("7", text)
+}
 
 /// The width of a rule. An ioctl call needs a libc dependency. Thus read the
 /// width from the environment. fzf gives the width of a preview, and a shell

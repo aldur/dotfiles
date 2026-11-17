@@ -3,9 +3,10 @@
 //!
 //! This program reads the files, summarizes them and shows the text. fzf makes
 //! the selection. The key commands of fzf start this program again with the
-//! hidden subcommands that have a name with the prefix `_`.
+//! hidden subcommands that have a name with the prefix `_`. The prompt of fzf
+//! holds the state of the picker. Thus no state files are necessary.
 
-use std::io::Write;
+use std::io::{IsTerminal, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
@@ -26,58 +27,63 @@ agent-log — browse Claude Code, pi and Codex conversations
 
 Usage: agent-log [options] [PATH]
 
-PATH may be a transcript (any of the supported formats, detected by content)
-or a directory, which scopes the picker to conversations recorded in it.
-With no PATH, picks among conversations whose cwd is the current directory.
+PATH is a transcript or a directory. A transcript (any supported format,
+detected by content) opens its turns. A directory limits the picker to the
+conversations recorded in it. Without PATH, the picker shows the
+conversations of the current directory.
 
 Options:
   --all             Every project, not just the current directory
   --agent <name>    Only claude, pi or codex
-  --newest          Skip the picker; take the most recent match
-  --full            Print the whole conversation and exit
-  --turn <n>        Print the nth turn and exit (negative counts from the end)
-  --list            Print picker rows to stdout instead of running fzf
+  --query <text>    Start with this search
+  --no-tools        Hide tool calls and results
   --show-model      Show the model in conversation rows
-  --query <text>    Filter sessions by full text (space-separated AND terms)
-  --no-tools        Drop tool calls and results (dialogue only)
-  --pretty          Render through glow/bat when stdout is a terminal
+  --newest          Take the most recent conversation and print it (no picker)
+  --full            Print the whole conversation
+  --turn <n>        Print turn n as numbered by --list (negative counts from the end)
+  --list            Print the picker rows instead of running fzf
+  --plain           Do not render markdown with glow or bat
   --color <when>    always, never or auto (default: auto; NO_COLOR is honoured)
   -h, --help        Show this help
 
-Typing in either picker searches the whole conversation — prompts, replies,
-thinking and tool traffic — by exact substring, case-insensitive; a space
-separates AND terms.
-Conversation search also matches the agent, project, model and date.
+Output: on a terminal, agent-log renders markdown with glow or bat, and
+--full uses a pager. In a pipe, the output is plain markdown.
 
-Results and marked turns are always newest first, including while searching.
---turn numbers still count from the beginning; --full reads chronologically.
+Search: exact by default. Each space-separated word must occur, in any case.
+A conversation matches on its title and all its text, including thinking and
+tool traffic. A turn matches on its own text. ctrl-s switches to the fuzzy
+search of fzf on the title or the turn text. The prompt shows the state.
+
+Rows are newest first. Printed turns and --full are in chronological order.
 No caches or indexes: every request reads the original transcripts.
 ";
 
-const COMMON_HELP: &str = "pgup/pgdn         scroll preview by a page
+const SESSION_HELP: &str = "enter             open conversation
+alt-s             this project / all projects
+alt-m             show/hide model";
+const TURN_HELP: &str = "enter             print selected turns (or the focused turn)
+tab / shift-tab   mark/unmark turns";
+const COMMON_HELP: &str = "ctrl-o            print whole conversation and exit
+alt-a             whole conversation in pager
+alt-v             whole conversation in nvim
+alt-i             print session id and exit
+ctrl-s            exact/fuzzy search
+ctrl-t            show/hide tools
+alt-e             expand/collapse context, thinking and tool details
+alt-p             show/hide preview
+alt-w             wrap/unwrap rows
+alt-g / alt-G     oldest / newest row
+pgup/pgdn         scroll preview by a page
 shift-up/down     scroll preview by a line (also alt-up/down)
 mouse wheel       scroll the pane under the pointer
-alt-p             show/hide preview
-alt-e             toggle context, thinking and tool details
-alt-w             wrap/unwrap list rows
-ctrl-/           show/hide help (also alt-h or f1)
+ctrl-/            show/hide help (also alt-h or f1)
 esc               close picker";
-const SESSION_HELP: &str = "enter             open conversation
-alt-m             show/hide model
-alt-i             print session id and exit
-alt-a             whole conversation in pager
-alt-v             open in nvim
-alt-s             search all projects";
-const TURN_HELP: &str = "enter             print selected turns
-tab / shift-tab   mark/unmark turns
-alt-enter         print focused turn via glow/bat
-alt-a / alt-v     whole conversation in pager / nvim
-ctrl-t            toggle tools and dialogue
-alt-g / alt-G     earliest / latest turn";
-const EXPANDED_LABEL: &str = "Details expanded";
 
 fn usage() -> String {
-    format!("{USAGE}\nSession picker:\n{SESSION_HELP}\n\nTurn picker:\n{TURN_HELP}\n\nBoth pickers:\n{COMMON_HELP}\n")
+    format!(
+        "{USAGE}\nConversation picker:\n{SESSION_HELP}\n\nTurn picker:\n{TURN_HELP}\n\n\
+         Both pickers:\n{COMMON_HELP}\n"
+    )
 }
 
 #[derive(Default)]
@@ -88,12 +94,63 @@ struct Options {
     full: bool,
     list: bool,
     show_model: bool,
-    pretty: bool,
+    plain: bool,
     no_tools: bool,
     turn: Option<i64>,
     color: Option<String>,
     query: String,
     target: Option<PathBuf>,
+}
+
+/// The state of a picker. The prompt shows it, for example
+/// `all projects · dialogue · fuzzy> `, and the key commands read it from
+/// `FZF_PROMPT`.
+#[derive(Clone, Copy, Default)]
+struct State {
+    turns: bool,
+    all: bool,
+    dialogue: bool,
+    fuzzy: bool,
+    details: bool,
+}
+
+impl State {
+    fn prompt(self) -> String {
+        let mut words = vec![match (self.turns, self.all) {
+            (true, _) => "turns",
+            (false, true) => "all projects",
+            (false, false) => "this project",
+        }];
+        for (on, word) in [
+            (self.dialogue, "dialogue"),
+            (self.fuzzy, "fuzzy"),
+            (self.details, "details"),
+        ] {
+            if on {
+                words.push(word);
+            }
+        }
+        format!("{}> ", words.join(" · "))
+    }
+
+    fn parse(prompt: &str) -> Self {
+        let prompt = prompt.trim_end().trim_end_matches('>');
+        let words: Vec<&str> = prompt.split(" · ").map(str::trim).collect();
+        let has = |word| words.contains(&word);
+        State {
+            turns: has("turns"),
+            all: has("all projects"),
+            dialogue: has("dialogue"),
+            fuzzy: has("fuzzy"),
+            details: has("details"),
+        }
+    }
+
+    fn current() -> Self {
+        std::env::var("FZF_PROMPT")
+            .map(|prompt| Self::parse(&prompt))
+            .unwrap_or_default()
+    }
 }
 
 /// Write text to the output.
@@ -142,7 +199,7 @@ fn parse_args(args: &[String]) -> Options {
             "--full" => opts.full = true,
             "--list" => opts.list = true,
             "--show-model" => opts.show_model = true,
-            "--pretty" => opts.pretty = true,
+            "--plain" => opts.plain = true,
             "--no-tools" => opts.no_tools = true,
             "--color" => opts.color = Some(next()),
             "--query" => opts.query = next(),
@@ -292,51 +349,107 @@ fn session_rows(
         .collect()
 }
 
-fn turn_rows(path: &Path, no_tools: bool) -> Vec<(String, String)> {
+/// The turns in chronological order: the position, the record key, and the
+/// kind, time and text fields. With search terms, keep only the turns that
+/// contain all of them, and start the text near the first match.
+fn turn_rows(path: &Path, no_tools: bool, terms: &[String]) -> Vec<(usize, String, String)> {
     scan::turns(path, no_tools)
         .unwrap_or_else(|| fail(&format!("cannot read transcript {}", path.display())))
         .into_iter()
-        .map(|t| {
-            // Keep all text searchable. The UI clips rows instead of hiding
-            // body fields with --with-nth (which would also hide matches).
+        .enumerate()
+        .filter(|(_, t)| search::contains_all(&t.text, terms))
+        .map(|(index, t)| {
+            // Without terms, keep all text: fzf searches the row in the fuzzy
+            // mode. The UI clips rows instead of hiding body fields with
+            // --with-nth (which would also hide matches).
+            let text = if terms.is_empty() {
+                t.text.clone()
+            } else {
+                excerpt(&t.text, terms)
+            };
             (
+                index + 1,
                 t.key.clone(),
                 format!(
-                    "{}\t{}\t{}\t{}",
-                    t.key,
+                    "{}\t{}\t{text}",
                     style::dim(&format!("{:<14}", model::truncate(&t.kind, 14))),
                     style::dim(&format!("{:>8}", t.time)),
-                    t.text
                 ),
             )
         })
         .collect()
 }
 
-/// Show markdown with glow, or with bat, or without changes. Use a program
-/// only if the output goes to a terminal. Such a program changes the line
-/// breaks, and this makes a file incorrect.
-fn pretty(text: &str, enabled: bool) {
-    use std::io::IsTerminal;
-    if !enabled || !std::io::stdout().is_terminal() {
+/// The text from shortly before the first match, with the matches marked.
+/// This program does the exact search, thus fzf marks no matches.
+fn excerpt(text: &str, terms: &[String]) -> String {
+    let ranges = search::ranges(text, terms);
+    let Some(&(first, _)) = ranges.first() else {
+        return text.to_string();
+    };
+    let start = text[..first]
+        .char_indices()
+        .rev()
+        .nth(30)
+        .map_or(0, |(index, _)| index);
+    let mut out = String::from(if start > 0 { "…" } else { "" });
+    let mut at = start;
+    for (from, to) in ranges {
+        out.push_str(&text[at..from]);
+        out.push_str(&style::matched(&text[from..to]));
+        at = to;
+    }
+    out.push_str(&text[at..]);
+    out
+}
+
+/// Write markdown. On a terminal, render it with glow or bat, in a pager if
+/// `paged`. These programs change the line breaks, and this makes a file
+/// incorrect. Thus a pipe gets the text without changes.
+fn show(text: &str, render: bool, paged: bool) {
+    if !std::io::stdout().is_terminal() {
         emit(text);
         return;
     }
-    for (program, args) in [
-        ("glow", vec!["-"]),
-        (
-            "bat",
-            vec!["--language=markdown", "--style=plain", "--paging=never"],
-        ),
-    ] {
-        if pipe_through(program, &args, text) {
-            return;
+    if render {
+        let renderers: [(&str, &[&str]); 2] = if paged {
+            [
+                ("glow", &["-p", "-"]),
+                (
+                    "bat",
+                    &["--language=markdown", "--style=plain", "--paging=always"],
+                ),
+            ]
+        } else {
+            [
+                ("glow", &["-"]),
+                (
+                    "bat",
+                    &["--language=markdown", "--style=plain", "--paging=never"],
+                ),
+            ]
+        };
+        for (program, args) in renderers {
+            if pipe_through(program, args, text) {
+                return;
+            }
         }
     }
-    emit(text);
+    if paged {
+        page(text);
+    } else {
+        emit(text);
+    }
 }
 
-/// Page the same rendered text as the preview, without reformatting it.
+/// Render markdown only on a terminal and without --plain. Colour applies to
+/// the text that is not rendered.
+fn output_style(plain: bool, colour: Option<&str>) -> bool {
+    let render = !plain && std::io::stdout().is_terminal();
+    style::set(!render && style::resolve(colour));
+    render
+}
+
 fn page(text: &str) {
     if let Ok(pager) = std::env::var("PAGER") {
         if !pager.trim().is_empty() && pipe_through("sh", &["-c", &pager], text) {
@@ -408,25 +521,55 @@ fn pipe_through(program: &str, args: &[&str], text: &str) -> bool {
     true
 }
 
+#[derive(Clone, Copy, PartialEq)]
 enum Picker {
     Sessions,
     Turns,
+}
+
+/// The commands that a picker gives to fzf. `rows` gets the query and reads
+/// the state from the prompt. `conversation` is the transcript, as a path or
+/// as a field of the focused row.
+struct Commands {
+    rows: String,
+    preview: String,
+    conversation: String,
+}
+
+/// The result of a picker: the query, the key that closed it, its state and
+/// the selected rows.
+struct Picked {
+    query: String,
+    action: String,
+    state: State,
+    rows: Vec<String>,
 }
 
 fn run_fzf(
     exe: &str,
     rows: &[String],
     picker: Picker,
-    preview: &str,
+    state: State,
+    query: &str,
+    commands: &Commands,
     args: &[String],
-) -> Option<String> {
-    let (help, footer, hidden) = match picker {
+) -> Option<Picked> {
+    let exe = shell_quote(exe);
+    // The tools change the preview of a conversation, and the rows of a
+    // turn picker.
+    let (help, footer, hidden, tools) = match picker {
         Picker::Sessions => (
             SESSION_HELP,
-            "ctrl-/ help · alt-m model · alt-p preview · alt-s all · enter open",
+            "enter open",
             ",hidden",
+            "refresh-preview".to_string(),
         ),
-        Picker::Turns => (TURN_HELP, "ctrl-/ help · alt-e details · enter print", ""),
+        Picker::Turns => (
+            TURN_HELP,
+            "enter print",
+            "",
+            format!("reload({})+first", commands.rows),
+        ),
     };
     let mut child = Command::new("fzf")
         .args([
@@ -435,8 +578,8 @@ fn run_fzf(
             "--ansi",
             "--delimiter=\t",
             "--no-sort",
-            "--exact",
             "-i",
+            "--nth=-1",
             "--no-wrap",
             "--no-hscroll",
             "--info=inline-right",
@@ -447,35 +590,60 @@ fn run_fzf(
             "--pointer=›",
             "--marker=●",
             "--color=fg+:-1,bg+:-1,prompt:-1,header:dim,footer:dim",
-            "--ghost=Search full text · newest first",
+            "--ghost=Search · newest first",
             "--header-first",
             "--footer-border=none",
+            "--print-query",
             "--bind=start:hide-header+first",
             "--bind=f1:toggle-header",
             "--bind=alt-h:toggle-header",
             "--bind=ctrl-/:toggle-header",
             "--bind=alt-w:toggle-wrap",
             "--bind=alt-p:toggle-preview",
+            "--bind=alt-g:last,alt-G:first",
             // Paging the list changes the focused row and restarts its
             // preview. These bindings scroll the existing preview instead.
             "--bind=pgup:preview-page-up,pgdn:preview-page-down",
             "--bind=shift-up:preview-up,shift-down:preview-down",
             "--bind=alt-up:preview-up,alt-down:preview-down",
             "--bind=preview-scroll-up:preview-up,preview-scroll-down:preview-down",
-            "--preview-label=",
             "--wrap-sign=↳ ",
             "--ellipsis=…",
         ])
+        .arg(format!("--prompt={}", state.prompt()))
+        .arg(format!("--query={query}"))
+        .args(state.fuzzy.then_some("--bind=start:+unbind(change)"))
+        .args((!state.fuzzy).then_some("--disabled"))
         .arg(format!("--header={help}\n{COMMON_HELP}"))
-        .arg(format!("--footer={footer}"))
-        .arg(format!("--preview={preview}"))
+        .arg(format!(
+            "--footer={footer} · ctrl-o print all · alt-a page · ctrl-s fuzzy · ctrl-/ help"
+        ))
+        .arg(format!("--preview={}", commands.preview))
         .arg(format!(
             "--preview-window=right,55%,wrap,border-left{hidden},<60(down,50%,border-top{hidden})"
         ))
+        .arg(format!("--bind=change:reload({})", commands.rows))
         .arg(format!(
-            "--bind=alt-e:transform({} _details)",
-            shell_quote(exe)
+            "--bind=ctrl-s:transform({exe} _toggle fuzzy)+reload({})",
+            commands.rows
         ))
+        .arg(format!(
+            "--bind=ctrl-t:transform({exe} _toggle dialogue)+{tools}"
+        ))
+        .arg(format!(
+            "--bind=alt-e:transform({exe} _toggle details)+refresh-preview+show-preview"
+        ))
+        .arg(format!(
+            "--bind=alt-a:execute({exe} _page {})",
+            commands.conversation
+        ))
+        .arg(format!(
+            "--bind=alt-v:execute({exe} _view {})",
+            commands.conversation
+        ))
+        .arg(format!("--bind=enter:transform({exe} _accept enter)"))
+        .arg(format!("--bind=ctrl-o:transform({exe} _accept all)"))
+        .arg(format!("--bind=alt-i:transform({exe} _accept id)"))
         .args(args)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -493,115 +661,38 @@ fn run_fzf(
     if !output.status.success() {
         return None;
     }
-    let picked = String::from_utf8_lossy(&output.stdout)
-        .trim_end()
-        .to_string();
-    (!picked.is_empty()).then_some(picked)
+    // `--print-query` writes the query first. `_accept` adds the key and the
+    // prompt. The selected rows follow.
+    let text = String::from_utf8_lossy(&output.stdout);
+    let mut lines = text.lines().map(str::to_string);
+    let query = lines.next()?;
+    let action = lines.next()?;
+    let state = State::parse(&lines.next()?);
+    let rows: Vec<String> = lines.filter(|line| !line.is_empty()).collect();
+    (!rows.is_empty()).then_some(Picked {
+        query,
+        action,
+        state,
+        rows,
+    })
 }
 
-fn dialogue_only() -> bool {
-    std::env::var("FZF_PROMPT").is_ok_and(|p| p == turn_prompt(true))
-}
-
-fn details_expanded() -> bool {
-    std::env::var("FZF_PREVIEW_LABEL").is_ok_and(|label| label == EXPANDED_LABEL)
-}
-
-fn turn_prompt(no_tools: bool) -> &'static str {
-    if no_tools {
-        "dialogue> "
-    } else {
-        "turns> "
-    }
-}
-
-fn main() {
-    let argv: Vec<String> = std::env::args().skip(1).collect();
-    let exe = std::env::current_exe()
-        .map(|p| p.to_string_lossy().to_string())
-        .unwrap_or_else(|_| "agent-log".to_string());
-
-    // The hidden subcommands for the preview and the key commands of fzf.
-    match argv.first().map(String::as_str) {
-        Some("_turns") => {
-            style::set(style::resolve(colour_choice(&argv).or(Some("always"))));
-            let path = PathBuf::from(argv.get(1).unwrap_or_else(|| fail("_turns needs a path")));
-            let no_tools = argv.iter().any(|a| a == "--no-tools");
-            let rows: Vec<String> = turn_rows(&path, no_tools)
-                .into_iter()
-                .rev()
-                .map(|(_, row)| row)
-                .collect();
-            emit_rows(&rows);
-            return;
-        }
-        Some("_show") => {
-            let key = argv.get(1).unwrap_or_else(|| fail("_show needs a key"));
-            let path = PathBuf::from(argv.get(2).unwrap_or_else(|| fail("_show needs a path")));
-            let want_pretty = argv.iter().any(|a| a == "--pretty");
-            // glow and bat add their own colours.
-            style::set(!want_pretty && style::resolve(colour_choice(&argv)));
-            pretty(&render::header_and_turn(&path, key), want_pretty);
-            return;
-        }
-        Some("_view") => {
-            let path = PathBuf::from(argv.get(1).unwrap_or_else(|| fail("_view needs a path")));
-            // The file holds markdown; nvim adds the colours.
-            style::set(false);
-            view_in_nvim(&render::full(&path, false));
-            return;
-        }
-        Some(command @ ("_preview" | "_page")) => {
-            let paged = command == "_page";
-            let path = PathBuf::from(
-                argv.get(1)
-                    .unwrap_or_else(|| fail(&format!("{command} needs a path"))),
-            );
-            let key = argv
-                .iter()
-                .position(|a| a == "--turn")
-                .and_then(|i| argv.get(i + 1));
-            style::set(style::resolve(colour_choice(&argv)));
-            let body = render::readable(
-                &path,
-                key.map(String::as_str),
-                paged || details_expanded() || argv.iter().any(|a| a == "--expanded"),
-                dialogue_only() || argv.iter().any(|a| a == "--no-tools"),
-            );
-            if paged {
-                page(&body);
-            } else {
-                emit(&body);
-            }
-            return;
-        }
-        Some("_details") => {
-            // fzf holds the UI state; no state files or transcript copies.
-            let label = if details_expanded() {
-                ""
-            } else {
-                EXPANDED_LABEL
-            };
-            emit(&format!(
-                "change-preview-label({label})+refresh-preview+show-preview"
-            ));
-            return;
-        }
-        Some("_tools") => {
-            let path = argv.get(1).unwrap_or_else(|| fail("_tools needs a path"));
-            let no_tools = !dialogue_only();
-            emit(&format!(
-                "reload({} _turns {}{})+change-prompt({})+first",
-                shell_quote(&exe),
-                shell_quote(path),
-                if no_tools { " --no-tools" } else { "" },
-                turn_prompt(no_tools)
-            ));
-            return;
-        }
-        Some("_sessions") => {
+/// The key commands of fzf. They read the state from `FZF_PROMPT`.
+fn hidden_command(argv: &[String]) {
+    let arg = |index: usize, name: &str| -> String {
+        argv.get(index)
+            .cloned()
+            .unwrap_or_else(|| fail(&format!("{} needs a {name}", argv[0])))
+    };
+    let state = State::current();
+    match argv[0].as_str() {
+        "_sessions" => {
             let mut opts = parse_args(&argv[1..]);
-            opts.all |= std::env::var("FZF_PROMPT").is_ok_and(|p| p.starts_with("all>"));
+            opts.all |= state.all;
+            if state.fuzzy {
+                // fzf filters the titles itself.
+                opts.query.clear();
+            }
             style::set(style::resolve(opts.color.as_deref().or(Some("always"))));
             let cwd = opts
                 .target
@@ -609,14 +700,110 @@ fn main() {
                 .unwrap_or_else(|| std::env::current_dir().unwrap_or_default());
             let (sessions, all) = find_sessions(&opts, &cwd);
             emit_rows(&session_rows(&sessions, all, SessionLayout::Picker));
-            return;
         }
-        _ => {}
+        "_turns" => {
+            let opts = parse_args(&argv[1..]);
+            let path = opts.target.unwrap_or_else(|| fail("_turns needs a path"));
+            style::set(style::resolve(opts.color.as_deref().or(Some("always"))));
+            let query = if state.fuzzy { "" } else { &opts.query };
+            let rows: Vec<String> = turn_rows(
+                &path,
+                opts.no_tools || state.dialogue,
+                &scan::search_terms(query),
+            )
+            .into_iter()
+            .rev()
+            .map(|(_, key, fields)| format!("{key}\t{fields}"))
+            .collect();
+            emit_rows(&rows);
+        }
+        "_preview" => {
+            let path = PathBuf::from(arg(1, "path"));
+            let key = argv
+                .iter()
+                .position(|a| a == "--turn")
+                .and_then(|i| argv.get(i + 1));
+            style::set(style::resolve(colour_choice(argv)));
+            emit(&render::readable(
+                &path,
+                key.map(String::as_str),
+                state.details || argv.iter().any(|a| a == "--expanded"),
+                state.dialogue || argv.iter().any(|a| a == "--no-tools"),
+            ));
+        }
+        "_page" => {
+            let path = PathBuf::from(arg(1, "path"));
+            let render = output_style(false, None);
+            let no_tools = state.dialogue || argv.iter().any(|a| a == "--no-tools");
+            show(&render::full(&path, no_tools), render, true);
+        }
+        "_view" => {
+            let path = PathBuf::from(arg(1, "path"));
+            // The file holds markdown; nvim adds the colours.
+            style::set(false);
+            view_in_nvim(&render::full(&path, state.dialogue));
+        }
+        "_toggle" => {
+            let mut next = state;
+            let extra = match arg(1, "state").as_str() {
+                "all" => {
+                    next.all = !next.all;
+                    ""
+                }
+                "dialogue" => {
+                    next.dialogue = !next.dialogue;
+                    ""
+                }
+                "details" => {
+                    next.details = !next.details;
+                    ""
+                }
+                "fuzzy" => {
+                    next.fuzzy = !next.fuzzy;
+                    // The exact search runs in this program at each change
+                    // of the query. The fuzzy search runs in fzf.
+                    if next.fuzzy {
+                        "+unbind(change)+enable-search"
+                    } else {
+                        "+rebind(change)+disable-search"
+                    }
+                }
+                other => fail(&format!("unknown state: {other}")),
+            };
+            emit(&format!("change-prompt({}){extra}", next.prompt()));
+        }
+        "_accept" => {
+            // fzf writes these lines after the query and before the rows.
+            let prompt = std::env::var("FZF_PROMPT").unwrap_or_default();
+            emit(&format!(
+                "print({})+print({})+accept",
+                arg(1, "key"),
+                prompt.trim_end()
+            ));
+        }
+        other => fail(&format!("unknown command: {other}")),
     }
+}
+
+/// Print the session id of a transcript.
+fn print_id(path: &Path) {
+    let id = scan::summarize_file(path).map(|s| s.id).unwrap_or_default();
+    emit(&format!("{id}\n"));
+}
+
+fn main() {
+    let argv: Vec<String> = std::env::args().skip(1).collect();
+    if argv.first().is_some_and(|a| a.starts_with('_')) {
+        hidden_command(&argv);
+        return;
+    }
+    let exe = std::env::current_exe()
+        .map(|p| p.to_string_lossy().to_string())
+        .unwrap_or_else(|_| "agent-log".to_string());
 
     let opts = parse_args(&argv);
-    style::set(!opts.pretty && style::resolve(opts.color.as_deref()));
     let cwd = std::env::current_dir().unwrap_or_default();
+    let terms = scan::search_terms(&opts.query);
 
     // A directory argument limits the picker. A file argument opens that
     // file.
@@ -626,9 +813,22 @@ fn main() {
         None => (None, cwd),
     };
 
+    // The turn picker continues the state and the query of the conversation
+    // picker.
+    let mut state = State {
+        all: opts.all,
+        dialogue: opts.no_tools,
+        ..State::default()
+    };
+    let mut query = opts.query.clone();
+
     let target = match target {
         Some(path) => path,
         None => {
+            style::set(style::resolve(opts.color.as_deref().or(
+                // Rows for fzf keep their colours; fzf reads them with --ansi.
+                (!opts.list).then_some("always"),
+            )));
             let (sessions, all) = find_sessions(&opts, &cwd);
             if opts.list {
                 emit_rows(&session_rows(
@@ -650,63 +850,73 @@ fn main() {
             if opts.newest {
                 PathBuf::from(&sessions[0].path)
             } else {
+                state.all = all;
                 let rows = session_rows(&sessions, all, SessionLayout::Picker);
+                // fzf applies --nth to the output of the template. The tab
+                // makes the title the last field, thus the fuzzy search
+                // ignores the date, the agent and the model.
                 let (fields, alternate_fields) = if opts.show_model {
-                    ("{1}{5}{3}", "{1}{3}")
+                    ("{1}{5}\t{3}", "{1}\t{3}")
                 } else {
-                    ("{1}{3}", "{1}{5}{3}")
+                    ("{1}\t{3}", "{1}{5}\t{3}")
                 };
-                let reload = format!(
-                    "{} _sessions {}{}{} --query {{q}}",
-                    shell_quote(&exe),
-                    shell_quote(&cwd.to_string_lossy()),
-                    if all { " --all" } else { "" },
-                    opts.agent
-                        .map(|a| format!(" --agent {}", a.name()))
-                        .unwrap_or_default()
-                );
-                let picked = run_fzf(
+                let commands = Commands {
+                    rows: format!(
+                        "{} _sessions {}{} --query {{q}}",
+                        shell_quote(&exe),
+                        shell_quote(&cwd.to_string_lossy()),
+                        opts.agent
+                            .map(|a| format!(" --agent {}", a.name()))
+                            .unwrap_or_default()
+                    ),
+                    preview: format!("{} _preview {{2}} --color=always", shell_quote(&exe)),
+                    conversation: "{2}".into(),
+                };
+                let Some(picked) = run_fzf(
                     &exe,
                     &rows,
                     Picker::Sessions,
-                    &format!("{} _preview {{2}} --color=always", shell_quote(&exe)),
+                    state,
+                    &opts.query,
+                    &commands,
                     &[
-                        if all {
-                            "--prompt=all> ".into()
-                        } else {
-                            "--prompt=conversation> ".into()
-                        },
                         format!("--with-nth={fields}"),
                         format!("--bind=alt-m:change-with-nth({alternate_fields}|{fields})"),
-                        format!("--query={}", opts.query),
-                        "--disabled".into(),
-                        format!("--bind=change:reload({reload})"),
-                        format!("--bind=alt-a:execute({} _page {{2}})", shell_quote(&exe)),
-                        format!("--bind=alt-v:execute({} _view {{2}})", shell_quote(&exe)),
-                        format!("--bind=alt-s:change-prompt(all> )+reload({reload} --all)"),
-                        // alt-i selects a row, and fzf writes the name of the
-                        // key on the first line. Thus this program can write
-                        // the id and stop.
-                        "--expect=alt-i".into(),
+                        format!(
+                            "--bind=alt-s:transform({} _toggle all)+reload({})",
+                            shell_quote(&exe),
+                            commands.rows
+                        ),
                     ],
-                );
-                match picked {
-                    Some(out) => {
-                        let mut lines = out.lines();
-                        let key = lines.next().unwrap_or("");
-                        let row = lines.next().unwrap_or("");
-                        let path = row.split('\t').nth(1).unwrap_or_default().to_string();
-                        if path.is_empty() {
-                            return;
-                        }
-                        if key == "alt-i" {
-                            emit(&format!("{}\n", row.split('\t').nth(3).unwrap_or_default()));
-                            return;
-                        }
-                        PathBuf::from(path)
-                    }
-                    None => return,
+                ) else {
+                    return;
+                };
+                let path = picked.rows[0]
+                    .split('\t')
+                    .nth(1)
+                    .unwrap_or_default()
+                    .to_string();
+                if path.is_empty() {
+                    return;
                 }
+                let path = PathBuf::from(path);
+                match picked.action.as_str() {
+                    "id" => return print_id(&path),
+                    "all" => {
+                        let render = output_style(opts.plain, opts.color.as_deref());
+                        show(&render::full(&path, picked.state.dialogue), render, false);
+                        return;
+                    }
+                    _ => {}
+                }
+                state = picked.state;
+                // A fuzzy query matched the title, not the turns.
+                query = if state.fuzzy {
+                    String::new()
+                } else {
+                    picked.query
+                };
+                path
             }
         }
     };
@@ -715,95 +925,103 @@ fn main() {
         fail(&format!("{} not found", target.display()));
     }
 
-    if opts.full {
-        pretty(&render::full(&target, opts.no_tools), opts.pretty);
-        return;
-    }
-
-    let rows = turn_rows(&target, opts.no_tools);
-    if rows.is_empty() {
-        eprintln!("agent-log: {} has no turns", target.display());
-        std::process::exit(1);
-    }
-
-    let mut keys: Vec<String> = if let Some(n) = opts.turn {
+    if let Some(n) = opts.turn {
+        let rows = turn_rows(&target, opts.no_tools, &[]);
         let total = rows.len() as i64;
         let index = if n < 0 { total + n } else { n - 1 };
         if index < 0 || index >= total {
             fail(&format!("--turn {n} out of range (have {total} turns)"));
         }
-        vec![rows[index as usize].0.clone()]
-    } else if opts.list {
-        emit_rows(
-            &rows
-                .iter()
-                .rev()
-                .map(|(_, row)| row.clone())
-                .collect::<Vec<_>>(),
+        let render = output_style(opts.plain, opts.color.as_deref());
+        let key = &rows[index as usize].1;
+        show(
+            &format!("{}{}", render::header(&target), render::turn(&target, key)),
+            render,
+            false,
         );
         return;
-    } else {
-        let display: Vec<String> = rows.iter().rev().map(|(_, row)| row.clone()).collect();
-        let path = target.to_string_lossy().to_string();
-        let picked = run_fzf(
-            &exe,
-            &display,
-            Picker::Turns,
-            &format!(
-                "{} _preview {} --turn {{1}} --color=always",
-                shell_quote(&exe),
-                shell_quote(&path)
-            ),
-            &[
-                format!("--prompt={}", turn_prompt(opts.no_tools)),
-                // Hide the internal record key, not the searchable body.
-                "--with-nth=2,3,4".into(),
-                "--multi".into(),
-                // Select a row above the cursor. This is the opposite of tab.
-                "--bind=shift-tab:toggle+up".into(),
-                format!(
-                    "--bind=alt-a:execute({} _page {})",
-                    shell_quote(&exe),
-                    shell_quote(&path)
-                ),
-                format!(
-                    "--bind=alt-v:execute({} _view {})",
-                    shell_quote(&exe),
-                    shell_quote(&path)
-                ),
-                format!(
-                    "--bind=ctrl-t:transform({} _tools {})",
-                    shell_quote(&exe),
-                    shell_quote(&path)
-                ),
-                format!(
-                    "--bind=alt-enter:become({} _show {{1}} {} --pretty)",
-                    shell_quote(&exe),
-                    shell_quote(&path)
-                ),
-                "--bind=alt-g:last,alt-G:first".into(),
-            ],
-        );
-        match picked {
-            Some(text) => text
-                .lines()
-                .filter_map(|line| line.split('\t').next().map(|k| k.trim().to_string()))
-                .collect(),
-            None => return,
-        }
+    }
+
+    if opts.full || opts.newest {
+        let render = output_style(opts.plain, opts.color.as_deref());
+        show(&render::full(&target, opts.no_tools), render, render);
+        return;
+    }
+
+    if opts.list {
+        style::set(style::resolve(opts.color.as_deref()));
+        let rows: Vec<String> = turn_rows(&target, opts.no_tools, &terms)
+            .into_iter()
+            .rev()
+            .map(|(position, _, fields)| format!("{position}\t{fields}"))
+            .collect();
+        emit_rows(&rows);
+        return;
+    }
+
+    style::set(style::resolve(opts.color.as_deref().or(Some("always"))));
+    state.turns = true;
+    let mut rows = turn_rows(&target, state.dialogue, &scan::search_terms(&query));
+    if rows.is_empty() && !query.is_empty() {
+        // The words of a conversation search can be in different turns.
+        query.clear();
+        rows = turn_rows(&target, state.dialogue, &[]);
+    }
+    if rows.is_empty() {
+        eprintln!("agent-log: {} has no turns", target.display());
+        std::process::exit(1);
+    }
+    let display: Vec<String> = rows
+        .iter()
+        .rev()
+        .map(|(_, key, fields)| format!("{key}\t{fields}"))
+        .collect();
+    let path = shell_quote(&target.to_string_lossy());
+    let commands = Commands {
+        rows: format!("{} _turns {path} --query {{q}}", shell_quote(&exe)),
+        preview: format!(
+            "{} _preview {path} --turn {{1}} --color=always",
+            shell_quote(&exe)
+        ),
+        conversation: path,
+    };
+    let Some(picked) = run_fzf(
+        &exe,
+        &display,
+        Picker::Turns,
+        state,
+        &query,
+        &commands,
+        &[
+            // Hide the internal record key, not the searchable body.
+            "--with-nth=2,3,4".into(),
+            "--multi".into(),
+            // Select a row above the cursor. This is the opposite of tab.
+            "--bind=shift-tab:toggle+up".into(),
+        ],
+    ) else {
+        return;
     };
 
-    // Selection order never overrides newest-first ordering.
-    keys.sort_by_key(|key| std::cmp::Reverse(key.parse::<usize>().unwrap_or(0)));
+    let render = output_style(opts.plain, opts.color.as_deref());
+    match picked.action.as_str() {
+        "id" => return print_id(&target),
+        "all" => return show(&render::full(&target, picked.state.dialogue), render, false),
+        _ => {}
+    }
+    let mut keys: Vec<usize> = picked
+        .rows
+        .iter()
+        .filter_map(|line| line.split('\t').next()?.trim().parse().ok())
+        .collect();
+    keys.sort_unstable();
     keys.dedup();
-    let mut body = String::new();
+    let mut body = render::header(&target);
     for (index, key) in keys.iter().enumerate() {
-        if index == 0 {
-            body.push_str(&render::header(&target));
-        } else {
+        if index > 0 {
             body.push_str(&format!("\n{}\n\n", style::rule()));
         }
-        body.push_str(&render::turn(&target, key));
+        body.push_str(&render::turn(&target, &key.to_string()));
     }
-    pretty(&body, opts.pretty);
+    show(&body, render, false);
 }

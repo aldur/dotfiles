@@ -38,9 +38,17 @@ class AgentLogTests(unittest.TestCase):
                         PI_CODING_AGENT_DIR=str(self.root / ".pi/agent"), NO_COLOR="1",
                         XDG_RUNTIME_DIR=str(self.runtime))
         self.env.pop("FZF_PROMPT", None)
-        self.env.pop("FZF_PREVIEW_LABEL", None)
         self.env.pop("FZF_DEFAULT_OPTS", None)
         self.env.pop("FZF_DEFAULT_OPTS_FILE", None)
+        renderers = self.root / "renderers"
+        renderers.mkdir()
+        glow = renderers / "glow"
+        glow.write_text(f"#!{sys.executable}\nimport os, sys\n"
+                        "log = os.environ.get('GLOW_LOG')\n"
+                        "log and open(log, 'a').write(' '.join(sys.argv[1:]) + '\\n')\n"
+                        "sys.stdout.write(sys.stdin.read())\n")
+        glow.chmod(0o700)
+        self.env["PATH"] = str(renderers) + os.pathsep + self.env["PATH"]
         self.files = []
         for name, hour in [("claude", 10), ("pi", 11), ("codex", 12)]:
             directory = {"claude": ".claude/projects/unusual", "pi": ".pi/agent/sessions/unusual",
@@ -81,9 +89,18 @@ class AgentLogTests(unittest.TestCase):
         self.assertEqual(self.ids("--agent", "pi", "--query", "first"), ["pi"])
         self.assertLess(len(self.run_log("--all", "--list")), 2000)
         rows = self.run_log("--list", self.files[2]).splitlines()
-        self.assertEqual([int(r.split("\t")[0]) for r in rows], [5, 4, 3, 2])
+        self.assertEqual([int(r.split("\t")[0]) for r in rows], [4, 3, 2, 1])
+        for row in rows:
+            self.assertIn(row.split("\t")[-1][:20], self.run_log("--turn", row.split("\t")[0], self.files[2]))
         self.assertIn("First codex", self.run_log("--turn", "1", self.files[2]))
         self.assertIn("FinalAnswer", self.run_log("--turn", "-1", self.files[2]))
+        # Turn search keeps the numbers and starts each row near the match.
+        rows = self.run_log("--list", "--query", "needle", self.files[2]).splitlines()
+        self.assertEqual([r.split("\t")[0] for r in rows], ["3"])
+        self.assertTrue(rows[0].split("\t")[-1].startswith("ToolOnly needle"))
+        # Metadata such as the agent, the cwd or the date does not match.
+        self.assertEqual(self.ids("--query", "spaces"), [])
+        self.assertEqual(self.ids("--query", "2026-08-10"), [])
 
     def test_codex_rendering_has_no_stale_warning(self):
         warning = ("The Codex reader is built from the published rollout format and has "
@@ -110,7 +127,7 @@ class AgentLogTests(unittest.TestCase):
                 "role": "system", "content": "", "sections": sections}}) + "\n")
         self.assertEqual(self.ids("--query", "Inspect code"), ["pi"])
         self.assertIn("Inspect code", self.run_log("--list", path))
-        for args in [("--full", path), ("--full", path, "--no-tools"), ("_show", "3", path),
+        for args in [("--full", path), ("--full", path, "--no-tools"), ("--turn", "2", path),
                      ("_preview", path, "--expanded")]:
             output = self.run_log(*args)
             for text in ["addendum:", "Inspect code before edits.",
@@ -132,7 +149,7 @@ class AgentLogTests(unittest.TestCase):
             out.write(appended[-5:] + "\n")
         self.assertEqual(self.ids(), ["claude", "codex", "pi"])
         self.assertEqual(self.ids("--query", "AppendedNeedle"), ["claude"])
-        self.assertIn("AppendedNeedle", self.run_log("_show", "2", path))
+        self.assertIn("AppendedNeedle", self.run_log("--turn", "2", path))
         self.assertIn("AppendedNeedle", self.run_log("--full", path))
         # Same length and restored mtime must still show the edited source.
         before = path.stat()
@@ -140,7 +157,7 @@ class AgentLogTests(unittest.TestCase):
         os.utime(path, ns=(before.st_atime_ns, before.st_mtime_ns))
         self.assertEqual(self.ids("--query", "AppendedNeedle"), [])
         self.assertEqual(self.ids("--query", "ReplacedNeedle"), ["claude"])
-        self.assertIn("ReplacedNeedle", self.run_log("_show", "2", path))
+        self.assertIn("ReplacedNeedle", self.run_log("--turn", "2", path))
         self.assertNotIn("AppendedNeedle", self.run_log("--full", path))
         path.write_text(original)
         self.assertEqual(self.ids("--query", "ReplacedNeedle"), [])
@@ -218,13 +235,13 @@ class AgentLogTests(unittest.TestCase):
         self.assertEqual(self.ids("--query", "toolonly"), ["codex"])
         self.run_log("--full", self.files[2])
         self.run_log("--list", self.files[2])
-        self.run_log("_show", "5", self.files[2])
+        self.run_log("--turn", "4", self.files[2])
         self.assertFalse((self.root / "cache").exists())
         unavailable = self.root / "not-a-directory"
         unavailable.touch()
         env = dict(self.env, XDG_CACHE_HOME=str(unavailable))
         self.assertEqual(self.ids(env=env), ["codex", "pi", "claude"])
-        self.assertIn("FinalAnswer", self.run_log("_show", "5", self.files[2], env=env))
+        self.assertIn("FinalAnswer", self.run_log("--turn", "4", self.files[2], env=env))
 
     def test_picker_reads_sources_directly_and_creates_no_runtime_files(self):
         bindir = self.root / "bin"
@@ -238,20 +255,20 @@ path = os.environ["TEST_TRANSCRIPT"]
 binary = os.environ["TEST_BINARY"]
 def run(*args):
     return subprocess.check_output([binary, *args], text=True)
-assert "FinalAnswer" in run("_show", "5", path)
+assert "FinalAnswer" in run("--turn", "4", path)
 assert "ToolOnly" in run("--full", path)
 assert "ToolOnly" not in run("--full", path, "--no-tools")
 source = Path(path)
 before = source.stat()
 source.write_text(source.read_text().replace("FinalAnswer", "FreshAnswer"))
 os.utime(source, ns=(before.st_atime_ns, before.st_mtime_ns))
-assert "FreshAnswer" in run("_show", "5", path)
+assert "FreshAnswer" in run("--turn", "4", path)
 assert "FinalAnswer" not in run("_preview", path)
 assert run("_sessions", "--all", "--query", "freshanswer")
 assert not run("_sessions", "--all", "--query", "finalanswer")
 assert not Path(os.environ["XDG_CACHE_HOME"]).exists()
 assert not list(Path(os.environ["XDG_RUNTIME_DIR"]).iterdir())
-print("alt-i\\n" + rows[0])
+print("\\nid\\nall projects>\\n" + rows[0])
 ''')
         fake.chmod(0o700)
         env = dict(self.env, PATH=str(bindir) + os.pathsep + self.env["PATH"],
@@ -275,7 +292,7 @@ print("alt-i\\n" + rows[0])
         rows = self.run_log("--all", "--list").splitlines()
         self.assertIn("Middle title Café", rows[0])
         self.assertIn("2026-08-15", rows[0])
-        header = self.run_log("_show", "1", path)
+        header = self.run_log("--turn", "1", path)
         self.assertIn("first-model", header)
         self.assertNotIn("later-model", header)
         self.assertNotIn("Superseded title", header)
@@ -288,7 +305,7 @@ print("alt-i\\n" + rows[0])
                         + ',"timestamp":"2026-08-20T12:00:00Z",'
                         + '"message":null,"message":{"content":"FallbackTitle"}}\n')
         self.assertIn("FallbackTitle", self.run_log("--all", "--list"))
-        self.assertIn("FallbackTitle", self.run_log("_show", "2", path))
+        self.assertIn("FallbackTitle", self.run_log("--turn", "1", path))
 
     def test_search_prefilter_never_drops_decoded_matches(self):
         path = self.files[2]
@@ -310,8 +327,8 @@ print("alt-i\\n" + rows[0])
         path = self.files[2]
         path.write_text("\nnot json\n" + path.read_text() + "{unfinished")
         self.run_log("--list", path)
-        self.assertIn("FinalAnswer", self.run_log("_show", "5", path))
-        self.assertIn("DeepThought Café", self.run_log("_show", "3", path))
+        self.assertIn("FinalAnswer", self.run_log("--turn", "4", path))
+        self.assertIn("DeepThought Café", self.run_log("--turn", "2", path))
         # Relative transcript paths must not leak into subsequent session listings.
         self.run_log("--turn", "1", self.files[0].name, cwd=self.files[0].parent)
         listed = self.run_log("--list")
@@ -327,9 +344,9 @@ from pathlib import Path
 rows = sys.stdin.read().splitlines()
 Path(os.environ["CAPTURE"]).write_text(json.dumps([sys.argv[1:], rows]))
 if os.environ["PICKER_MODE"] == "session":
-    print("alt-i\\n" + rows[0])
+    print("\\nid\\nthis project>\\n" + rows[0])
 else:
-    print("\\n".join(reversed(rows[:2])))
+    print("\\nenter\\nturns>\\n" + "\\n".join(reversed(rows[:2])))
 ''')
         fake.chmod(0o700)
         capture = self.root / "capture.json"
@@ -346,13 +363,13 @@ else:
         command = binding[len("--bind=change:reload("):-1]
         for query in ["toolonly", "$(touch pwned)", "it's absent", "no-match"]:
             result = subprocess.run(["sh", "-c", command.replace("{q}", shlex.quote(query))],
-                                    env=dict(self.env, FZF_PROMPT="conversation> "), cwd=self.root,
+                                    env=dict(self.env, FZF_PROMPT="this project> "), cwd=self.root,
                                     capture_output=True, text=True, check=True)
             self.assertEqual(bool(result.stdout.strip()), query == "toolonly")
         self.assertFalse((self.root / "pwned").exists())
         # Widening the scope must persist over subsequent query changes.
         self.assertEqual(len(self.run_log("_sessions", "--query", "first", self.root,
-                                         env=dict(self.env, FZF_PROMPT="all> ")).splitlines()), 3)
+                                         env=dict(self.env, FZF_PROMPT="all projects> ")).splitlines()), 3)
 
     def test_session_titles_use_the_available_width(self):
         path = self.files[2]
@@ -381,7 +398,7 @@ else:
         with path.open("a") as out:
             out.write(json.dumps({"type": "turn_context", "payload": {
                 "model": "gpt-daybreak-blue-latest"}}) + "\n")
-        self.assertEqual(self.ids("--query", "gpt-daybreak"), ["codex"])
+        self.assertEqual(self.ids("--query", "gpt-daybreak"), [])
         plain = self.run_log("--list").splitlines()[0].split("\t")
         shown = self.run_log("--list", "--show-model").splitlines()[0].split("\t")
         self.assertNotIn("gpt-daybreak", plain[0])
@@ -396,13 +413,14 @@ else:
         self.assertIn("[gpt-daybreak-blue-latest]", result.stdout.split("\t")[4])
         self.assertIn("[?]", self.run_log("--list", "--show-model", "--agent", "claude"))
 
-    def test_turn_picker_search_and_selection_stay_newest_first(self):
+    def test_turn_rows_are_newest_first_and_printed_turns_chronological(self):
         output, args, rows = self.capture_picker([self.files[2]], mode="turn")
-        self.assertLess(output.index("FinalAnswer"), output.index("ToolOnly"))
-        # Real fzf, without a terminal: matching must retain input order even
-        # when a shorter older match would normally score higher.
+        self.assertIn("FinalAnswer", rows[0])
+        self.assertLess(output.index("ToolOnly"), output.index("FinalAnswer"))
+        # Real fzf, without a terminal: fuzzy matching must retain input order
+        # even when a shorter older match would normally score higher.
         fzf = shutil.which("fzf")
-        query_args = [a for a in args if a in ("--no-sort", "--exact", "-i", "--ansi")]
+        query_args = [a for a in args if a in ("--no-sort", "-i", "--ansi")]
         result = subprocess.run([fzf, *query_args, "--filter=needle"],
                                 input="newest long needle text\nolder needle\n", text=True,
                                 capture_output=True, env=self.env, check=True)
@@ -413,7 +431,7 @@ else:
         body = self.run_log("_preview", self.files[2], "--turn", "5")
         self.assertIn("FinalAnswer", body)
         self.assertNotIn("session:", body)
-        self.assertIn("session:", self.run_log("_show", "5", self.files[2]))
+        self.assertIn("session:", self.run_log("--turn", "4", self.files[2]))
 
     def test_rich_rendering_and_folding_for_all_agents(self):
         for name, path in zip(["claude", "pi", "codex"], self.files):
@@ -450,7 +468,7 @@ else:
                 full = self.run_log("--full", path)
                 folded = self.run_log("_preview", path)
                 expanded = self.run_log("_preview", path, "--expanded")
-                self.assertEqual(expanded, self.run_log("_page", path, env=dict(self.env, PAGER="cat")))
+                self.assertEqual(full, self.run_log("_page", path))
                 for marker in expected:
                     self.assertIn(marker, full)
                     self.assertIn(marker, expanded)
@@ -465,11 +483,13 @@ else:
                 self.assertNotIn("RESULTMARK", dialogue)
                 self.assertNotIn("ToolOnly", dialogue)
                 header = self.run_log("--turn", "1", path)
-                self.assertIn(f"session: {name}", header)
-                self.assertIn("TESTMODEL", header)
-                self.assertIn("title:", header)
-                self.assertIn("when:", header)
-                self.assertEqual(full, self.run_log("--full", path, "--pretty"))
+                self.assertTrue(header.startswith(f"# First {name} prompt\n"), header)
+                self.assertIn(f"- session: {name}", header)
+                self.assertRegex(header, r"\n- model: (test/)?TESTMODEL\n")
+                self.assertIn("- when:", header)
+                # Markdown would read the `*` in a tool call as emphasis.
+                self.assertIn("```\n", full)
+                self.assertEqual(full, self.run_log("--full", path, "--plain"))
 
     def test_context_folding_preserves_search_and_export(self):
         path = self.files[2]
@@ -493,49 +513,56 @@ else:
         self.assertIn("Visible before", folded)
         self.assertIn("Visible after", folded)
         self.assertIn(source, self.run_log("--full", path))
-        self.assertEqual(self.run_log("_preview", path, "--expanded"),
-                         self.run_log("_page", path, env=dict(self.env, PAGER="cat")))
+        self.assertEqual(self.run_log("--full", path), self.run_log("_page", path))
         self.assertFalse((self.root / "cache").exists())
         self.assertEqual(list(self.runtime.iterdir()), [])
 
-    def test_tools_toggle_pager_and_jump_actions(self):
+    def test_toggles_keep_state_in_the_prompt_and_quote_paths(self):
         path = self.project / "literal$(touch pwned) ' transcript.jsonl"
         path.write_text(self.files[2].read_text())
-        for current, following, tools in [("turns> ", "dialogue> ", False), ("dialogue> ", "turns> ", True)]:
-            action = self.run_log("_tools", path, env=dict(self.env, FZF_PROMPT=current))
-            self.assertIn(f"change-prompt({following})", action)
-            command = action[len("reload("):action.index(")+change-prompt")]
-            rows = subprocess.check_output(["sh", "-c", command], env=self.env, cwd=self.project, text=True)
-            self.assertEqual("ToolOnly" in rows, tools)
-            self.assertEqual(rows.splitlines()[0].split("\t")[0], "5")
-            paged = self.run_log("_page", path, env=dict(self.env, PAGER="cat", FZF_PROMPT=following))
-            self.assertEqual("ToolOnly" in paged, tools)
-        self.assertFalse((self.project / "pwned").exists())
+        toggle = lambda word, prompt: self.run_log("_toggle", word, env=dict(self.env, FZF_PROMPT=prompt))
+        self.assertEqual(toggle("dialogue", "turns> "), "change-prompt(turns · dialogue> )")
+        self.assertEqual(toggle("dialogue", "turns · dialogue> "), "change-prompt(turns> )")
+        self.assertEqual(toggle("all", "this project · fuzzy> "), "change-prompt(all projects · fuzzy> )")
+        self.assertEqual(toggle("fuzzy", "turns> "),
+                         "change-prompt(turns · fuzzy> )+unbind(change)+enable-search")
+        self.assertEqual(toggle("fuzzy", "turns · fuzzy> "),
+                         "change-prompt(turns> )+rebind(change)+disable-search")
+        accept = self.run_log("_accept", "enter", env=dict(self.env, FZF_PROMPT="turns · details> "))
+        self.assertEqual(accept, "print(enter)+print(turns · details>)+accept")
         _, args, _ = self.capture_picker([path], mode="turn")
         self.assertIn("--bind=alt-g:last,alt-G:first", args)
+        binding = next(a for a in args if a.startswith("--bind=change:reload("))
+        command = binding[len("--bind=change:reload("):-1]
+        for prompt, query, tools in [("turns> ", "", True), ("turns · dialogue> ", "", False),
+                                     ("turns> ", "finalanswer", False),
+                                     ("turns · fuzzy> ", "finalanswer", True)]:
+            with self.subTest(prompt=prompt, query=query):
+                rows = subprocess.check_output(["sh", "-c", command.replace("{q}", shlex.quote(query))],
+                                               env=dict(self.env, FZF_PROMPT=prompt), cwd=self.project, text=True)
+                self.assertEqual("ToolOnly" in rows, tools)
+                self.assertEqual(rows.splitlines()[0].split("\t")[0], "5")
+        paged = self.run_log("_page", path, env=dict(self.env, FZF_PROMPT="turns · dialogue> "))
+        self.assertNotIn("ToolOnly", paged)
+        self.assertFalse((self.project / "pwned").exists())
 
-    def test_pager_preserves_preview_rendering_without_a_second_renderer(self):
-        bindir = self.root / "pager-bin"
-        bindir.mkdir()
-        # A fake less checks the default pager arguments and echoes the rendered
-        # bytes. A fake bat fails if it is used to re-render that text.
-        for name, code in [
-            ("less", "assert sys.argv[1:] == ['-R']; sys.stdout.write(sys.stdin.read())"),
-            ("bat", "sys.stdout.write('UNEXPECTED_SECOND_RENDERER')"),
-        ]:
-            program = bindir / name
-            program.write_text(f"#!{sys.executable}\nimport sys\n{code}\n")
-            program.chmod(0o700)
-        env = dict(self.env, PATH=str(bindir) + os.pathsep + self.env["PATH"])
-        env.pop("PAGER", None)
-        env.pop("NO_COLOR", None)
-        for path in self.files:
-            for colour in ["always", "never"]:
-                for no_tools in [False, True]:
-                    with self.subTest(path=path.name, colour=colour, no_tools=no_tools):
-                        flags = [f"--color={colour}", *(["--no-tools"] if no_tools else [])]
-                        expected = self.run_log("_preview", path, "--expanded", *flags, env=env)
-                        self.assertEqual(self.run_log("_page", path, *flags, env=env), expected)
+    def test_terminal_output_renders_markdown_and_pages_the_conversation(self):
+        log = self.root / "glow.log"
+        self.env["GLOW_LOG"] = str(log)
+        path = self.files[2]
+        for args, glow in [(["--full", path], "-p -"), (["_page", path], "-p -"),
+                           (["--turn", "1", path], "-"), (["--full", "--plain", path], None)]:
+            with self.subTest(args=args), self.terminal_picker(*args) as (fd, until):
+                until(rb"# First codex prompt[\s\S]*First codex prompt")
+                self.assertEqual(log.read_text().splitlines() if log.exists() else [],
+                                 [glow] if glow else [])
+                log.unlink(missing_ok=True)
+        with self.terminal_picker(path) as (fd, until):
+            until(rb"4/4")
+            os.write(fd, b"\x0f")  # Ctrl-O prints the whole conversation.
+            printed = until(rb"# First codex prompt[\s\S]*FinalAnswer")
+            self.assertIn(b"ToolOnly", printed)
+            self.assertEqual(log.read_text(), "-\n")
 
     def test_colour_sanitization_errors_and_broken_pipes(self):
         path = self.files[0]
@@ -545,7 +572,7 @@ else:
         path.write_text("\n".join(map(json.dumps, records)) + "\n")
         env = dict(self.env)
         env.pop("NO_COLOR", None)
-        for flags in [["--list"], ["--full"], ["--turn", "1"], ["_show", "1"]]:
+        for flags in [["--list"], ["--full"], ["--turn", "1"]]:
             output = self.run_log(*flags, path)
             self.assertNotIn("\x1b", output)
             self.assertIn("before BOLD after", output)
@@ -676,9 +703,9 @@ else:
                 until(rb"ScrollLine", screen_check=lambda screen: preview_position(screen) > previous)
                 # A match far beyond the clipped snippet must still be found.
                 os.write(fd, b"ScrollLine179")
-                until(rb"1/5")
+                until(rb"1/1")
                 os.write(fd, b"\x1f")  # Ctrl-/
-                until(rb"toggle tools and dialogue")
+                until(rb"show/hide tools")
                 os.write(fd, b"\x1bOP")  # F1 closes the same help.
                 os.write(fd, b"\r")
                 result = until(rb"ScrollLine179")
@@ -720,7 +747,7 @@ else:
                 self.assertNotIn(b"show/hide model", hidden)
                 os.write(fd, b"?")  # Punctuation remains part of the query.
                 until(rb"0/0")
-                os.write(fd, b"\x15gpt-daybreak")  # Ctrl-U clears the query.
+                os.write(fd, b"\x15first codex")  # Ctrl-U clears the query.
                 filtered = until(rb"1/1")
                 self.assertEqual(b"gpt-daybreak-blue-latest" in filtered, not flags)
                 os.write(fd, b"\x1bm")
@@ -748,12 +775,12 @@ else:
             until(rb"2/2")
             os.write(fd, b"\x01First codex ")  # Ctrl-A inserts at the start.
             edited = until(rb"1/1")
-            self.assertNotIn(b"all> ", edited)
+            self.assertNotIn(b"all projects> ", edited)
             os.write(fd, b"\x05\x15prompt")  # Ctrl-E, then Ctrl-U.
             until(rb"2/2")
             os.write(fd, b"\x1bs")  # Alt-S includes the other project.
             broadened = until(rb"3/3")
-            self.assertIn(b"all> ", broadened)
+            self.assertIn(b"all projects> ", broadened)
             os.write(fd, b"\x15claude")
             until(rb"1/1")
             os.write(fd, b"\x1bi")
@@ -777,7 +804,7 @@ else:
                     collapsed = until("▸ Skills".encode())
                     self.assertNotIn(b"ExpandableSecret", collapsed)
                 os.write(fd, b"ExpandableSecret")
-                until(rb"1/5")
+                until(rb"1/1")
                 os.write(fd, b"\r")
                 exported = until(rb"</skills_instructions>")
                 self.assertIn(b"ExpandableSecret", exported)
@@ -787,11 +814,19 @@ else:
         record = json.loads(path.read_text().splitlines()[0])
         record["message"]["content"] = "x" * 197 + "BoundaryNeedle" + "y" * 300
         path.write_text(json.dumps(record) + "\n")
+        # The exact search shows the text near the match.
+        row = self.run_log("_turns", path, "--query", "boundaryneedle", "--color=never")
+        self.assertEqual(row.split("\t")[0], "1")
+        self.assertLess(row.split("\t")[3].index("BoundaryNeedle"), 40)
+        # The fuzzy search of fzf gets all the text.
         _, args, rows = self.capture_picker([path], mode="turn")
-        options = [a for a in args if a.startswith("--with-nth=") or a in ("--delimiter=\t", "--ansi", "--exact", "-i", "--no-sort")]
+        options = [a for a in args if a.startswith(("--with-nth=", "--nth=")) or a in ("--delimiter=\t", "--ansi", "-i", "--no-sort")]
         result = subprocess.run(["fzf", *options, "--filter=BoundaryNeedle"], input="\n".join(rows),
                                 text=True, capture_output=True, env=self.env, check=True)
         self.assertEqual(result.stdout.split("\t")[0], "1")
+        result = subprocess.run(["fzf", *options, "--filter=user"], input="\n".join(rows),
+                                text=True, capture_output=True, env=self.env)
+        self.assertEqual(result.stdout, "")
 
 
 if __name__ == "__main__":

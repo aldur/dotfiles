@@ -99,15 +99,56 @@ impl<'a, 'q> Matches<'a, 'q> {
         self.text(&adapters::text(agent, &record));
     }
 
+    /// The title can come from metadata, such as an AI title. The other
+    /// metadata does not match: the agent, the cwd or the date agree with
+    /// most sessions of a project, and the rows then seem unrelated.
     pub fn finish(mut self, session: &Session) -> bool {
-        self.text(&format!(
-            "{} {} {} {} {}",
-            crate::scan::format_when(session.last_activity),
-            session.agent,
-            session.cwd,
-            session.model,
-            session.title
-        ));
+        self.text(&session.title);
         self.remaining == 0
     }
+}
+
+/// The byte ranges in `text` that match a term, sorted and merged. The
+/// match ignores case, like `Matches`.
+pub fn ranges(text: &str, terms: &[String]) -> Vec<(usize, usize)> {
+    // A lowercase character can have a different length. Thus map each byte
+    // of the lowercase text to the start of its original character.
+    let mut lower = String::with_capacity(text.len());
+    let mut origin = Vec::with_capacity(text.len() + 1);
+    for (index, ch) in text.char_indices() {
+        for lowered in ch.to_lowercase() {
+            lower.push(lowered);
+            origin.resize(lower.len(), index);
+        }
+    }
+    origin.push(text.len());
+    let end_of = |byte: usize| {
+        // The end of a match is the end of its last original character.
+        let start = origin[byte - 1];
+        start + text[start..].chars().next().map_or(0, char::len_utf8)
+    };
+    let mut found: Vec<(usize, usize)> = terms
+        .iter()
+        .filter(|term| !term.is_empty())
+        .flat_map(|term| {
+            lower
+                .match_indices(term.as_str())
+                .map(|(at, part)| (origin[at], end_of(at + part.len())))
+        })
+        .collect();
+    found.sort_unstable();
+    let mut merged: Vec<(usize, usize)> = Vec::new();
+    for (start, end) in found {
+        match merged.last_mut() {
+            Some(last) if start <= last.1 => last.1 = last.1.max(end),
+            _ => merged.push((start, end)),
+        }
+    }
+    merged
+}
+
+/// True if each term is in the text.
+pub fn contains_all(text: &str, terms: &[String]) -> bool {
+    let lower = text.to_lowercase();
+    terms.iter().all(|term| lower.contains(term.as_str()))
 }
