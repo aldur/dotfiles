@@ -84,6 +84,9 @@
     # Lazygit in a big popup, persistent the same way: `q` backgrounds it,
     # `Q` quits. The wrapper opens at the current pane's path.
     bind-key g display-popup -E -w 95% -h 95% lazygit-popup
+    # A plain lazygit at the current pane's path. It is not persistent, so
+    # `q` quits.
+    bind-key G display-popup -E -w 95% -h 95% -d "#{pane_current_path}" lazygit
 
     # Task browser for the current pane's project; shift-T keeps the clock.
     bind-key t display-popup -E -w 95% -h 95% -d "#{pane_current_path}" taskmd-ui
