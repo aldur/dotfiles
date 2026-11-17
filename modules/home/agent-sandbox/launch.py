@@ -214,6 +214,7 @@ class Policy:
         protected = set()
         git_dirs = set()
         hardlinks = {}
+        devices = set()
         state_aliases = set()
 
         def walk_error(error, root):
@@ -223,18 +224,12 @@ class Policy:
                 return
             raise error
 
-        def restriction_walk_error(error):
+        def restriction_walk_error(error, root):
             # The sandbox has the caller's credentials. It cannot reach
             # entries below a directory that the caller cannot search.
             if isinstance(error, PermissionError) and not os.access(error.filename, os.X_OK):
                 return
-            raise error
-
-        # Large workspaces have many files. Use strings, not Path objects, per file.
-        def remember_hardlink(path, direct_grant=False):
-            info = os.lstat(path)
-            if stat.S_ISREG(info.st_mode) and (info.st_nlink > 1 or direct_grant):
-                hardlinks.setdefault((info.st_dev, info.st_ino), set()).add(Path(path))
+            walk_error(error, root)
 
         def git_pointer(path):
             if not path.is_file():
@@ -291,7 +286,10 @@ class Policy:
                             continue
                         fail(f"agent state must use --profile, not a writable grant: {destination}")
             if not source.is_dir():
-                remember_hardlink(source, direct_grant=True)
+                info = source.lstat()
+                if stat.S_ISREG(info.st_mode):
+                    hardlinks.setdefault((info.st_dev, info.st_ino), set()).add(source)
+                    devices.add(info.st_dev)
                 if source.name in names:
                     protect(source)
                 continue
@@ -312,11 +310,7 @@ class Policy:
                     continue
                 if any(os.path.samestat(info, root) for root in direnv_stats):
                     fail(f"writable grant includes host direnv state: {destination}")
-                for name in files:
-                    try:
-                        remember_hardlink(os.path.join(directory_name, name))
-                    except FileNotFoundError as error:
-                        walk_error(error, source)
+                devices.add(info.st_dev)
                 for name in names:
                     if name in dirs or name in files:
                         protect(parent / name)
@@ -362,19 +356,47 @@ class Policy:
         # A pre-existing hard link in an ordinary writable directory names the
         # same inode as protected metadata. Protect each admitted spelling too.
         # New links across the resulting mount boundary are rejected by Linux.
-        if hardlinks:
-            for root in list(restrictions):
-                if root.is_dir():
-                    entries = (
-                        os.path.join(parent, name)
-                        for parent, _, files in os.walk(root, followlinks=False, onerror=restriction_walk_error)
-                        for name in files
+        # Only a protected file with more than one link on a device of a
+        # writable grant can have such a name. Large workspaces have many
+        # files: examine their files only if such a protected file exists.
+        linked = set()
+        for root in list(restrictions):
+            if root.is_dir():
+                entries = (
+                    os.path.join(parent, name)
+                    for parent, _, files in os.walk(
+                        root, followlinks=False, onerror=lambda error: restriction_walk_error(error, root)
                     )
-                else:
-                    entries = (root,)
-                for path in entries:
+                    for name in files
+                )
+            else:
+                entries = (root,)
+            for path in entries:
+                try:
                     info = os.lstat(path)
-                    restrictions.update(hardlinks.get((info.st_dev, info.st_ino), ()))
+                except FileNotFoundError as error:
+                    walk_error(error, root)
+                    continue
+                key = (info.st_dev, info.st_ino)
+                restrictions.update(hardlinks.get(key, ()))
+                if stat.S_ISREG(info.st_mode) and info.st_nlink > 1 and info.st_dev in devices:
+                    linked.add(key)
+        for source, _ in writable:
+            if not linked or not source.is_dir():
+                continue
+            for directory_name, dirs, files in os.walk(
+                source, followlinks=False, onerror=lambda error: walk_error(error, source)
+            ):
+                dirs[:] = [name for name in dirs if name not in DIRECTORIES]
+                for name in files:
+                    path = os.path.join(directory_name, name)
+                    try:
+                        info = os.lstat(path)
+                    except FileNotFoundError as error:
+                        walk_error(error, source)
+                        continue
+                    if (info.st_dev, info.st_ino) in linked:
+                        restrictions.add(Path(path))
         mounts = []
         if self.git_write:
             for source in sorted(git_dirs):

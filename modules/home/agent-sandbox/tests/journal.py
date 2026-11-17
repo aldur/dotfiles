@@ -37,7 +37,8 @@ with socket.socket(socket.AF_UNIX) as journal_socket:
             files.append(str(path))
 
         # Received journals of other machines can be unreadable to the caller.
-        # A writable file grant starts the hard link scan of read-only grants.
+        # The hard link scan examines read-only grants. A writable file grant
+        # makes it also compare their files with the grant.
         # The scan skips directories that the caller cannot search, but fails
         # closed on searchable directories that it cannot list.
         remote = root / "remote/ci1"
