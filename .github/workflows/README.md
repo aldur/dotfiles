@@ -18,6 +18,7 @@
 | `ci.yml` | `containers` | `packages: write`, `id-token: write`, `attestations: write` | Not on `workflow_dispatch` |
 | `publish-apple-container.yml` | push, manifest and attest jobs | `packages: write`; attest also `id-token: write`, `attestations: write` | Called by `ci.yml`, or manual |
 | `baguette-image.yml` | `attest` | `id-token: write`, `attestations: write` | Manual only |
+| `avf-image.yml` | `attest` | `id-token: write`, `attestations: write` | Manual only |
 | `update-pinned-packages.yml` | `pull-request` | `contents: write`, `pull-requests: write`, `actions: write` | Weekly, or manual |
 
 `ci.yml` publishes images only on a push to `master` or `staging`. In all
@@ -73,6 +74,6 @@ gh api repos/aldur/dotfiles/rules/branches/master
 - A pull request from a branch of this repository runs `containers` with
   `packages: write`. Only an account with write access can make such a
   branch.
-- A manual run of `publish-apple-container.yml` or `baguette-image.yml`
-  publishes or signs the code of the branch that you select. Examine the
+- A manual run of `publish-apple-container.yml`, `baguette-image.yml` or
+  `avf-image.yml` publishes or signs the code of the branch that you select. Examine the
   branch first.

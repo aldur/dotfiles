@@ -15,14 +15,29 @@ nix build ./base_hosts/avf#avf-image
 KVM is not necessary: without it, qemu emulates the VM that installs the boot
 loader.
 
+The workflow `avf-image.yml` of the dotfiles builds the image on demand
+(`workflow_dispatch`) and keeps it as the artifact `avf-arm64` for a few days.
+The workflow attests the image. Download and verify it:
+
+```bash
+gh run download --repo aldur/dotfiles --name avf-arm64
+gh attestation verify avf_image.tar.gz --repo aldur/dotfiles \
+  --signer-workflow aldur/dotfiles/.github/workflows/avf-image.yml
+```
+
+`--predicate-type https://spdx.dev/Document` selects the SBOM instead.
+`nix run ./base_hosts/avf#sbom-avf -- ./sbom` writes the same SBOM for a local
+build.
+
 ## Install
 
 1. Enable Settings > System > Developer options > Linux development
    environment. Open Terminal and let it install the default Debian guest.
-2. Extract the image and copy it to the Download folder of the phone:
+2. Extract the image (`result` for a local build) and copy it to the Download
+   folder of the phone:
 
    ```bash
-   mkdir image && tar xzf result -C image
+   mkdir image && tar xzf avf_image.tar.gz -C image
    adb push image /sdcard/Download/
    ```
 
