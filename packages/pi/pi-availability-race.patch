@@ -1,0 +1,40 @@
+--- a/packages/coding-agent/src/core/model-runtime.ts
++++ b/packages/coding-agent/src/core/model-runtime.ts
+@@ -195,6 +195,7 @@
+ 	private availabilityErrorSeq = 0;
+ 	private readonly providerAvailabilitySeq = new Map<string, number>();
+ 	private availabilityError: string | undefined;
++	private latestAvailabilityPass: Promise<void> | undefined;
+ 	private readonly credentialOperations = new Map<string, Promise<unknown>>();
+ 
+ 	private constructor(
+@@ -371,19 +372,27 @@
+ 		if (errorSeq === this.availabilityErrorSeq) this.availabilityError = undefined;
+ 	}
+ 
+-	private queueAvailabilityRefresh(signal?: AbortSignal): Promise<void> {
++	private async queueAvailabilityRefresh(signal?: AbortSignal): Promise<void> {
+ 		const seq = ++this.availabilityRefreshSeq;
+ 		for (const [providerId, providerSeq] of this.providerAvailabilitySeq) {
+ 			this.providerAvailabilitySeq.set(providerId, providerSeq + 1);
+ 		}
+ 		const errorSeq = ++this.availabilityErrorSeq;
+ 		const effectiveSignal = operationSignal(signal);
+-		return this.runAvailabilityRefresh(seq, errorSeq, effectiveSignal).catch((error) => {
++		let pass = this.runAvailabilityRefresh(seq, errorSeq, effectiveSignal).catch((error) => {
+ 			if (errorSeq === this.availabilityErrorSeq && !effectiveSignal.aborted) {
+ 				this.availabilityError = error instanceof Error ? error.message : String(error);
+ 			}
+ 			throw error;
+ 		});
++		this.latestAvailabilityPass = pass;
++		// A newer pass discards the result of this pass. Wait for the newest pass,
++		// so that callers such as initial model selection read a current snapshot.
++		while (true) {
++			await pass;
++			if (pass === this.latestAvailabilityPass) return;
++			pass = this.latestAvailabilityPass!;
++		}
+ 	}
+ 
+ 	private async refreshProviderAvailability(providerId: string, signal: AbortSignal): Promise<void> {

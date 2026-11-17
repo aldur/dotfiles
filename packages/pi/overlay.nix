@@ -8,7 +8,11 @@ in
   # re-points the stable node paths at the one runtime node of this repo,
   # and an unstable node would stay behind as a twin. Both channels ship
   # Node 24, which strips TS types by default.
-  pi-coding-agent = unstable.pi-coding-agent.override { inherit (prev) buildNpmPackage; };
+  pi-coding-agent =
+    (unstable.pi-coding-agent.override { inherit (prev) buildNpmPackage; }).overrideAttrs
+      (old: {
+        patches = (old.patches or [ ]) ++ [ ./pi-availability-race.patch ];
+      });
 
   piPlugins = {
     # final.callPackage: the build-time checks must see the same
