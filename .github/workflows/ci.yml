@@ -233,6 +233,10 @@ jobs:
           - runner: ubuntu-26.04
             target: ./base_hosts/crostini#checks.x86_64-linux.ssh-configurations
 
+          # Build the Android Terminal (AVF) image as a test (only aarch64).
+          - runner: ubuntu-26.04-arm
+            target: ./base_hosts/avf#avf-image
+
           - runner: ubuntu-26.04-arm
             target: ./base_hosts/browser#baguette-zimage
           - runner: ubuntu-26.04
