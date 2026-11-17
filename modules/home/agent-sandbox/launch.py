@@ -230,10 +230,11 @@ class Policy:
                 return
             raise error
 
+        # Large workspaces have many files. Use strings, not Path objects, per file.
         def remember_hardlink(path, direct_grant=False):
-            info = path.lstat()
+            info = os.lstat(path)
             if stat.S_ISREG(info.st_mode) and (info.st_nlink > 1 or direct_grant):
-                hardlinks.setdefault((info.st_dev, info.st_ino), set()).add(path)
+                hardlinks.setdefault((info.st_dev, info.st_ino), set()).add(Path(path))
 
         def git_pointer(path):
             if not path.is_file():
@@ -298,21 +299,22 @@ class Policy:
                 protect(source / name, reserve=True)
             # Discover existing nested repositories/instructions without following
             # symlinks or descending into the metadata we are about to protect.
+            direnv_stats = [root.stat() for root in self.direnv_roots if root.exists()]
             for directory_name, dirs, files in os.walk(
                 source, followlinks=False, onerror=lambda error: walk_error(error, source)
             ):
                 parent = Path(directory_name)
                 try:
-                    info = parent.stat()
+                    info = os.stat(directory_name)
                 except FileNotFoundError as error:
                     walk_error(error, source)
                     dirs[:] = []
                     continue
-                if any(root.exists() and os.path.samestat(info, root.stat()) for root in self.direnv_roots):
+                if any(os.path.samestat(info, root) for root in direnv_stats):
                     fail(f"writable grant includes host direnv state: {destination}")
                 for name in files:
                     try:
-                        remember_hardlink(parent / name)
+                        remember_hardlink(os.path.join(directory_name, name))
                     except FileNotFoundError as error:
                         walk_error(error, source)
                 for name in names:
@@ -364,14 +366,14 @@ class Policy:
             for root in list(restrictions):
                 if root.is_dir():
                     entries = (
-                        Path(parent) / name
+                        os.path.join(parent, name)
                         for parent, _, files in os.walk(root, followlinks=False, onerror=restriction_walk_error)
                         for name in files
                     )
                 else:
                     entries = (root,)
                 for path in entries:
-                    info = path.lstat()
+                    info = os.lstat(path)
                     restrictions.update(hardlinks.get((info.st_dev, info.st_ino), ()))
         mounts = []
         if self.git_write:
