@@ -107,3 +107,17 @@ ssh root@.host nixos-rebuild switch --flake github:aldur/dotfiles?dir=base_hosts
 
 If the phone has little free memory, run `nixos-rebuild dry-build` first.
 
+## Upgrade
+
+To use a new image without a build on the phone, put it in the Download
+folder (see [Build](#build)) and run:
+
+```bash
+ssh root@.host avf-upgrade
+```
+
+`avf-upgrade` extracts only the store paths that are missing and runs
+`nixos-rebuild switch --store-path`. `--action boot` activates the system at
+the next start. Images from before `avf-upgrade` do not have the system
+link (`/nixos-system`) that it needs.
+

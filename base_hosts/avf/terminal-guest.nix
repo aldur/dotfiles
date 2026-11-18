@@ -74,6 +74,21 @@ let
   };
   ttydSocket = "/run/ttyd/ttyd.sock";
 
+  upgrade = pkgs.writeArgcApplication {
+    name = "avf-upgrade";
+    file = ./upgrade.sh;
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.findutils
+      pkgs.gnutar
+      pkgs.gzip
+      pkgs.unzip
+      pkgs.util-linux
+      config.nix.package
+      config.system.build.nixos-rebuild
+    ];
+  };
+
 in
 {
   imports = [
@@ -116,6 +131,8 @@ in
       ${lib.getExe' config.nix.package.out "nix-env"} -p /nix/var/nix/profiles/system --set /run/current-system
     '';
   };
+
+  environment.systemPackages = [ upgrade ];
 
   # The kernel has no modules for the guest.
   system.activationScripts.modprobe = lib.mkForce "";
@@ -207,6 +224,10 @@ in
       {
         object = lib.getExe lustrateInit;
         symlink = "/nixos-lustrate-init";
+      }
+      {
+        object = systemConfig;
+        symlink = "/nixos-system";
       }
     ];
     compressCommand = "pigz -9";
