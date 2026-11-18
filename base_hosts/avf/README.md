@@ -52,6 +52,24 @@ the tarball from it.
 `nix run ./base_hosts/avf#sbom-avf -- ./sbom` writes the same SBOM for a local
 build.
 
+## Tests
+
+```bash
+nix build ./base_hosts/avf#checks.x86_64-linux.avf-boot --override-input aldur-dotfiles .
+```
+
+This boots the image two times as the Terminal app does: with the kernel,
+the initramfs and the kernel command line of the x86_64 Debian image of the
+app (`tests/ferrochrome.nix`), with the devices of the app, and from a disk
+as `install.sh` leaves it. On the cidata disk, `tests/probe.sh` stands in for
+the agent. It runs as the agent and checks the terminal, the display, the
+clipboard, sound, port forwarding, the storage balloon and the installation.
+The checks `avf-agent`, `avf-display` and `avf-smartcard` of the root flake
+test the modules.
+
+The checks do not cover the Android side: the binder RPC of the real agent,
+gfxstream, NFC and crosvm.
+
 ## Install
 
 1. Enable Settings > System > Developer options > Linux development

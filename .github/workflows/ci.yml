@@ -237,6 +237,11 @@ jobs:
           - runner: ubuntu-26.04-arm
             target: ./base_hosts/avf#avf-image
 
+          # Boot the x86_64 image as the Terminal app boots it and probe it.
+          # The check needs KVM, which only the x86_64 runners have.
+          - runner: ubuntu-26.04
+            target: ./base_hosts/avf#checks.x86_64-linux.avf-boot
+
           - runner: ubuntu-26.04-arm
             target: ./base_hosts/browser#baguette-zimage
           - runner: ubuntu-26.04

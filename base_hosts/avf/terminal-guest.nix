@@ -13,6 +13,26 @@
 let
   systemConfig = config.system.build.toplevel;
 
+  # The kernel starts /sbin/init. Stage 1 of NixOS makes the /dev/fd links
+  # that stage 2 needs, and this guest has no stage 1.
+  installInit = pkgs.writeShellApplication {
+    name = "install-sbin-init";
+    runtimeInputs = [ pkgs.coreutils ];
+    text = ''
+      mkdir -p /sbin
+      cat > /sbin/init.tmp <<EOF
+      #!${pkgs.runtimeShell}
+      ${pkgs.coreutils}/bin/ln -sfn /proc/self/fd /dev/fd
+      ${pkgs.coreutils}/bin/ln -sfn /proc/self/fd/0 /dev/stdin
+      ${pkgs.coreutils}/bin/ln -sfn /proc/self/fd/1 /dev/stdout
+      ${pkgs.coreutils}/bin/ln -sfn /proc/self/fd/2 /dev/stderr
+      exec $1/init
+      EOF
+      chmod 755 /sbin/init.tmp
+      mv /sbin/init.tmp /sbin/init
+    '';
+  };
+
   # install.sh makes this the init of the Debian guest. On the next boot,
   # the kernel starts it as PID 1. It moves the Debian files to /old-root,
   # as NIXOS_LUSTRATE does in stage 1, and starts stage 2.
@@ -44,13 +64,12 @@ let
       done
       mv /old-root.tmp /old-root
 
-      mkdir /etc /sbin
+      mkdir /etc
       touch /etc/NIXOS
-      # boot.loader.initScript replaces this link when it installs a generation.
-      ln -s ${systemConfig}/init /sbin/init
+      ${lib.getExe installInit} ${systemConfig}
       sync
 
-      exec ${systemConfig}/init
+      exec /sbin/init
     '';
   };
   ttydSocket = "/run/ttyd/ttyd.sock";
@@ -72,7 +91,10 @@ in
     initrd.enable = false;
     kernelModules = lib.mkForce [ ];
     loader.grub.enable = false;
-    loader.initScript.enable = true;
+    loader.external = {
+      enable = true;
+      installHook = lib.getExe installInit;
+    };
   };
 
   # From the LXC container module of nixpkgs. The app closes when ttyd is
@@ -97,8 +119,7 @@ in
 
   # The kernel has no modules for the guest.
   system.activationScripts.modprobe = lib.mkForce "";
-  # The init script builder compares the file system of /boot with /.
-  system.activationScripts.bootDir = "mkdir -p /boot";
+  system.activationScripts.rmmodBlacklisted = lib.mkForce "";
 
   fileSystems = {
     "/" = {
