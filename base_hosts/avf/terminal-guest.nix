@@ -54,8 +54,14 @@ let
     '';
   };
   ttydSocket = "/run/ttyd/ttyd.sock";
+
 in
 {
+  imports = [
+    ./agent.nix
+    ./terminal-display.nix
+  ];
+
   hardening.foreignKernel = true;
 
   boot = {
@@ -167,36 +173,10 @@ in
     };
   };
 
-  # The agent handles shutdown, storage balloon, and port forwarding.
-  # cidata.iso ships it as a musl build in root_files/usr, and cloud-init of
-  # the Debian guest copies that tree into /usr. Do the same at each boot,
-  # because the app replaces cidata.iso when it updates.
-  systemd.services.linux-vm-manager = {
-    description = "Android Terminal guest agent";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "network.target" ];
-    unitConfig.ConditionPathExists = "/dev/vdb";
-    path = [
-      pkgs.coreutils
-      pkgs.socat
-      pkgs.util-linux
-      config.systemd.package
-      "/run/wrappers"
-      "/usr"
-    ];
-    serviceConfig = {
-      Restart = "on-failure";
-      RestartSec = 1;
-      RuntimeDirectory = "linux-vm-manager";
-    };
-    preStart = ''
-      cidata="$RUNTIME_DIRECTORY/cidata"
-      mkdir -p "$cidata"
-      mount -t iso9660 -o ro /dev/vdb "$cidata"
-      cp -R --remove-destination "$cidata/root_files/usr/." /usr/
-      umount "$cidata"
-    '';
-    script = "exec /usr/bin/linux_vm_manager";
+  # As in the Debian guest.
+  zramSwap = {
+    enable = true;
+    memoryPercent = 25;
   };
 
   system.build.avfImage = pkgs.callPackage "${toString modulesPath}/../lib/make-system-tarball.nix" {

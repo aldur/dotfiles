@@ -137,6 +137,9 @@ in
   crostini-ssh = pkgs.callPackage ../base_hosts/crostini/tests/ssh.nix { };
   crostini-pcscd = pkgs.callPackage ../base_hosts/crostini/tests/pcscd.nix { };
   crostini-piv = pkgs.callPackage ../base_hosts/crostini/tests/piv.nix { };
+  avf-agent = pkgs.callPackage ../base_hosts/avf/tests/agent.nix { };
+  avf-display = pkgs.callPackage ../base_hosts/avf/tests/display.nix { };
+  avf-smartcard = pkgs.callPackage ../base_hosts/avf/tests/smartcard.nix { };
   network-hardening = pkgs.callPackage ../modules/nixos/tests/network-hardening.nix { };
 
   codex-settings = pkgs.callPackage ../modules/home/codex/tests/codex-settings.nix {
