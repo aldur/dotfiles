@@ -152,6 +152,9 @@ let
 in
 {
   hardware.graphics.enable = true;
+  # As in the Debian guest: wl-copy and wl-paste for the clipboard of the
+  # display.
+  environment.systemPackages = [ pkgs.wl-clipboard ];
 
   # Based on the cage-tty1 service of Nixpkgs: the PAM session gives weston
   # the seat of the display.

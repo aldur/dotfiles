@@ -58,17 +58,27 @@ build.
 nix build ./base_hosts/avf#checks.x86_64-linux.avf-boot --override-input aldur-dotfiles .
 ```
 
-This boots the image two times as the Terminal app does: with the kernel,
-the initramfs and the kernel command line of the x86_64 Debian image of the
-app (`tests/ferrochrome.nix`), with the devices of the app, and from a disk
-as `install.sh` leaves it. On the cidata disk, `tests/probe.sh` stands in for
-the agent. It runs as the agent and checks the terminal, the display, the
-clipboard, sound, port forwarding, the storage balloon and the installation.
-The checks `avf-agent`, `avf-display` and `avf-smartcard` of the root flake
-test the modules.
+This boots the image three times as the Terminal app does: with the
+kernel, the initramfs and the kernel command line of the x86_64 Debian image
+of the app (`tests/ferrochrome.nix`), with the devices of the app, and from a
+disk as `install.sh` leaves it.
 
-The checks do not cover the Android side: the binder RPC of the real agent,
-gfxstream, NFC and crosvm.
+1. On the cidata disk, `tests/probe.sh` stands in for the agent. It runs as
+   the agent and checks the installation, the terminal, the display, the
+   clipboard, sound, port forwarding and the storage balloon.
+2. The second boot starts the generation through `/sbin/init`, with the
+   same probe.
+3. The third boot has the cidata disk of the app, with the real agent
+   (`tests/terminal-cidata.nix`, from AOSP CI). `tests/terminal_app.py`
+   stands in for the Android side of the app, through vhost-device-vsock: it
+   speaks the binder RPC protocol of the agent and uses the terminal as the
+   user. It checks the registration of the agent, the terminal, the
+   clipboard in both directions, the port report, port forwarding, the
+   storage balloon and the shutdown.
+
+The checks `avf-agent`, `avf-display` and `avf-smartcard` of the root flake
+test the modules. The checks do not cover gfxstream, NFC, crosvm and the
+Android code of the app.
 
 ## Install
 
@@ -96,6 +106,22 @@ gfxstream, NFC and crosvm.
    NixOS works: `ssh root@.host rm -rf /old-root`.
 
 If NixOS does not boot, reset the guest to Debian in the Terminal settings.
+
+## Smart card
+
+pcscd starts vpcd at boot (`smartcard.nix`). vpcd listens on TCP port 25963
+in the guest. The Android app Smart Card Reader
+(`com.vsmartcard.remotesmartcardreader.app`, from F-Droid) reads the PIV key
+over NFC and connects to vpcd:
+
+1. In Terminal, let the guest start. The app shows a notification for the
+   new port 25963. Allow it, or turn it on in Terminal settings > Port
+   control.
+2. In the settings of Smart Card Reader, set the host to `127.0.0.1` and
+   the port to `25963`.
+3. Hold the key to the phone while a program uses it, for example
+   `ssh root@.host`. `opensc-tool --list-readers` shows the key in the
+   reader "Virtual PCD".
 
 ## Rebuild
 
