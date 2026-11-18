@@ -176,6 +176,23 @@ in
         ) dotfilesSkills
       );
 
+      # Remove the Nix store links of the standalone launcher. Home Manager
+      # does not replace a symlink that it does not own.
+      activation.piStandaloneLinks = lib.mkIf cfg.enable (
+        lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
+          for target in "$HOME"/.pi/agent/AGENTS.md ${
+            lib.concatMapStringsSep " " (
+              name: ''"$HOME"/${lib.escapeShellArg ".pi/agent/skills/${name}"}''
+            ) (lib.attrNames dotfilesSkills)
+          }; do
+            link=$(readlink "$target") || continue
+            if [[ $link == ${builtins.storeDir}/* && $link != *-home-manager-files/* ]]; then
+              run rm $VERBOSE_ARG "$target"
+            fi
+          done
+        ''
+      );
+
       # Both Home Manager and the container call this explicit helper.
       activation.piSettings = lib.mkIf cfg.enable (
         lib.hm.dag.entryAfter [ "linkGeneration" ] ''

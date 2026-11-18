@@ -65,6 +65,10 @@ in
     inherit pkgs;
     inherit (packages) pi;
   };
+  pi-home-skills = import ../packages/pi/tests/home-skills.nix {
+    inherit pkgs self inputs;
+    inherit (packages) pi;
+  };
   qemu-vm-preflight = self.legacyPackages.${system}.qemu-vm.tests.preflight;
 
   llm-runtime = pkgs.callPackage ./llm-runtime.nix { };
