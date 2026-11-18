@@ -352,6 +352,7 @@ in
           # `ssh -T git@github.com` probe that a fresh install makes.
           # https://github.com/anthropics/claude-code/issues/21108
           CLAUDE_CODE_PLUGIN_PREFER_HTTPS = "1";
+          CLAUDE_CODE_EXPERIMENTAL_CODE_MODE = "1";
         };
       };
     };
