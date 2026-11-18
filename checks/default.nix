@@ -65,10 +65,6 @@ in
     inherit pkgs;
     inherit (packages) pi;
   };
-  pi-home-skills = import ../packages/pi/tests/home-skills.nix {
-    inherit pkgs self inputs;
-    inherit (packages) pi;
-  };
   qemu-vm-preflight = self.legacyPackages.${system}.qemu-vm.tests.preflight;
 
   llm-runtime = pkgs.callPackage ./llm-runtime.nix { };
@@ -146,6 +142,10 @@ in
     inherit self inputs system;
   };
   agent-instructions = pkgs.callPackage ../modules/home/agents/tests { inherit self; };
+  pi-home-skills = import ../packages/pi/tests/home-skills.nix {
+    inherit pkgs self inputs;
+    inherit (packages) pi;
+  };
 
   agent-sandbox = pkgs.callPackage ../modules/home/agent-sandbox/tests { };
   agent-sandbox-network = pkgs.callPackage ../modules/home/agent-sandbox/tests/network.nix { };
