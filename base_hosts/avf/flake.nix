@@ -6,11 +6,6 @@
       # url = "git+file://../../..";
       url = "github:aldur/dotfiles";
     };
-
-    nixos-avf = {
-      url = "github:nix-community/nixos-avf";
-      inputs.nixpkgs.follows = "aldur-dotfiles/nixpkgs";
-    };
   };
   outputs =
     { aldur-dotfiles, ... }@inputs:
@@ -29,14 +24,7 @@
     in
     {
       packages.${system} = rec {
-        # The disk image step runs in a VM and asks for the `kvm` feature,
-        # but the arm64 GitHub runners have no KVM. Without the request,
-        # qemu emulates the VM. That step only installs the boot loader.
-        avf-image = avf-nixos.config.system.build.avfImage.override (old: {
-          raw_disk_image = nixpkgs.lib.overrideDerivation old.raw_disk_image (_: {
-            requiredSystemFeatures = [ ];
-          });
-        });
+        avf-image = avf-nixos.config.system.build.avfImage;
         default = avf-image;
       };
 

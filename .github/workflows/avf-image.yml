@@ -63,10 +63,10 @@ jobs:
             --override-input aldur-dotfiles/gh-signing-keys "file+file://$SIGNING_KEYS" \
             "$IMAGE_FLAKE#sbom-avf" -- /tmp/subject
 
-      # `result` is a link to the tarball. Copy it to get a file name for
-      # the artifact and for the subject in the checksums file.
+      # Copy the tarball to get a file name for the artifact and for the
+      # subject in the checksums file.
       - run: |
-          install -D -m 644 result /tmp/image/avf_image.tar.gz
+          install -D -m 644 result/tarball/nixos-terminal.tar.gz /tmp/image/avf_image.tar.gz
           (cd /tmp/image && sha256sum avf_image.tar.gz) > /tmp/subject/checksums.txt
           (cd /tmp/subject && sha256sum inputs.json) >> /tmp/subject/checksums.txt
 
