@@ -23,13 +23,18 @@
   users.allowNoPasswordLogin = true;
   users.users.root.openssh.authorizedKeys.keys = config.identity.authorizedKeys;
 
-  # The `doc` outputs of the system packages, the info manuals and the NixOS
-  # manual. The man pages stay.
-  documentation.doc.enable = false;
-  documentation.info.enable = false;
-  documentation.nixos.enable = false;
+  # No documentation. The index of man-db alone takes 40 s of CPU on the
+  # first boot and 4 s on each boot after it.
+  documentation = {
+    enable = false;
+    man.enable = false;
+  };
 
-  home-manager.users.${config.mainUser}.home.packages = [
-    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.lazyvim-light
-  ];
+  home-manager.users.${config.mainUser} = {
+    programs.man.enable = false;
+    manual.manpages.enable = false;
+    home.packages = [
+      inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.lazyvim-light
+    ];
+  };
 }
