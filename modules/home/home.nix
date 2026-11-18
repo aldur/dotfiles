@@ -48,6 +48,7 @@ let
       git-verify-ssh
       lstrip
       nospace
+      qr-encode
       shrink-pdf
       split-pdf
       tcopy

@@ -22,6 +22,7 @@ in
   watermark-pdf = prev.callPackage ../packages/watermark-pdf { };
   split-pdf = prev.callPackage ../packages/split-pdf { };
   totp-qr-decode = prev.callPackage ../packages/totp-qr-decode { };
+  qr-encode = prev.callPackage ../packages/qr-encode { };
   flake-lock-cooldown = prev.callPackage ../packages/flake-lock-cooldown { };
   git-verify-ssh = final.callPackage ../packages/git-verify-ssh {
     git = final.gitMinimal-runtime;

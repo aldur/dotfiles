@@ -108,6 +108,7 @@
               remarks
               flatten-pdf
               watermark-pdf
+              qr-encode
               flake-lock-cooldown
               git-verify-ssh
               update-pins # runs a flake's `updatePins` bump legs locally
