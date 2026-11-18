@@ -31,10 +31,10 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-nix
+      - uses: $/.github/actions/setup-nix
 
-      - uses: ./.github/actions/reclaim-disk
-      - uses: ./.github/actions/fetch-signing-keys
+      - uses: $/.github/actions/reclaim-disk
+      - uses: $/.github/actions/fetch-signing-keys
         with:
           token: ${{ github.token }}
           path: ${{ env.SIGNING_KEYS }}
@@ -104,7 +104,7 @@ jobs:
         with:
           name: avf-arm64-subject
           path: subject
-      - uses: ./.github/actions/attest
+      - uses: $/.github/actions/attest
         with:
           subject-checksums: subject/checksums.txt
           sbom-path: subject/sbom.spdx.json

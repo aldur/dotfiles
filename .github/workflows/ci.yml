@@ -44,14 +44,14 @@ jobs:
         with:
           persist-credentials: false
       - &setup-nix-no-cache
-        uses: ./.github/actions/setup-nix
+        uses: $/.github/actions/setup-nix
         with:
           cache: "false"
       - uses: DeterminateSystems/flake-checker-action@786422608c7bded2bbc9741ad9f91356842bf520  # v14
         with:
           send-statistics: false
       - &fetch-signing-keys
-        uses: ./.github/actions/fetch-signing-keys
+        uses: $/.github/actions/fetch-signing-keys
         with:
           token: ${{ github.token }}
           path: ${{ env.SIGNING_KEYS }}
@@ -105,7 +105,7 @@ jobs:
     steps:
       - *checkout
       - &setup-nix
-        uses: ./.github/actions/setup-nix
+        uses: $/.github/actions/setup-nix
       - name: Allow user namespaces for sandbox checks
         # Ubuntu restricts user namespaces for the Nix-store bwrap.
         # Allow nested sandbox checks on these temporary test runners.
@@ -113,7 +113,7 @@ jobs:
       # The checks put more than 17 GiB into the store. A cold build uses
       # more space for its work files. The image builds reclaim disk space
       # for the same reason.
-      - uses: ./.github/actions/reclaim-disk
+      - uses: $/.github/actions/reclaim-disk
       - *fetch-signing-keys
       # A runner with no free memory stops with no Nix error in the log,
       # and the steps after it do not run. The sampler writes the free
@@ -154,7 +154,7 @@ jobs:
     steps:
       - *checkout
       - *setup-nix
-      - uses: ./.github/actions/reclaim-disk
+      - uses: $/.github/actions/reclaim-disk
       - *fetch-signing-keys
       - name: Build and activate Home Manager on Ubuntu
         run: .github/scripts/test-home-ubuntu.sh "$NIX_SYSTEM"
@@ -180,7 +180,7 @@ jobs:
       # Host Nix is used only to verify the signing-key input. The guest starts
       # without Nix and installs it through the same bootstrap as users.
       - *setup-nix-no-cache
-      - uses: ./.github/actions/reclaim-disk
+      - uses: $/.github/actions/reclaim-disk
       - *fetch-signing-keys
       - name: Install VM tools
         run: |
@@ -264,7 +264,7 @@ jobs:
       - *checkout
       - *setup-nix
 
-      - uses: ./.github/actions/reclaim-disk
+      - uses: $/.github/actions/reclaim-disk
         with:
           minimum-free-gib: ${{ endsWith(matrix.target, '.baguette-verifier') && 4 || 64 }}
 
@@ -343,11 +343,11 @@ jobs:
     # update-pinned-packages.yml dispatches this workflow on branches that
     # nobody reviewed. Do not give those runs the registry token.
     if: github.event_name != 'workflow_dispatch'
-    uses: ./.github/workflows/publish-apple-container.yml
+    uses: $/.github/workflows/publish-apple-container.yml
     permissions:
       contents: read
-      packages: write
-      id-token: write
-      attestations: write
+      packages: write # necessary to push the images and attestations to ghcr.io
+      id-token: write # necessary to sign the attestations with Sigstore
+      attestations: write # necessary to store the attestations on GitHub
     with:
       publish: ${{ github.event_name == 'push' }}
