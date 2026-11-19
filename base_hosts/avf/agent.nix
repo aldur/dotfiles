@@ -84,7 +84,18 @@ let
           print 0, owner[2], comm, address, port, "0.0.0.0", 0, "CLOSE", "->", "LISTEN", 0
         }'
         exec cat
-      }
+      } | gawk '
+        # forwarder_host of the GrapheneOS Terminal app closes all its port
+        # listeners when two reports of the agent come before it reads the
+        # first (EFD_SEMAPHORE in android/forwarder_host/src/forwarder_host.rs).
+        # The agent sends a report for each LISTEN or CLOSE line without a
+        # remote port. Thus these lines come 1 second apart.
+        NR == 1 { for (i = 1; i <= NF; i++) column[$i] = i }
+        NR > 1 && $(column["RPORT"]) == 0 && $(column["NEWSTATE"]) ~ /^(LISTEN|CLOSE)$/ {
+          system("sleep 1")
+        }
+        { print; fflush() }
+      '
     '';
   };
 in
