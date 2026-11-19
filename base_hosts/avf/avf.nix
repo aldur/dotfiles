@@ -18,9 +18,11 @@
 
   # The user has no password: ttyd logs in with `login -f`. As in the qemu
   # guests, the VM boundary and the phone lock screen protect the account.
-  # Thus sudo does not work. Root logs in with `ssh root@.host`.
+  # Root logs in with `ssh root@.host`.
   users.users.${config.mainUser}.initialHashedPassword = lib.mkForce null;
   users.allowNoPasswordLogin = true;
+  # TODO: Temporary, for debugging. Remove.
+  security.sudo-rs.wheelNeedsPassword = false;
   users.users.root.openssh.authorizedKeys.keys = config.identity.authorizedKeys;
 
   # No documentation. The index of man-db alone takes 40 s of CPU on the
