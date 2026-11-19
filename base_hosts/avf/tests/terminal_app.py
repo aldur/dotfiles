@@ -309,6 +309,7 @@ class DebianService:
 
     def __init__(self):
         self.ports = queue.Queue()
+        self.report_times = []
         sock = vsock_connect(DEBIAN_SERVICE_PORT)
         sock.sendall(connection_header() + CONNECTION_INIT)
         version = struct.unpack("<I4x", Connection(sock, 0).recv(8))[0]
@@ -337,6 +338,7 @@ class DebianService:
                 port, comm = parcel.read_int32(), parcel.read_string16()
                 parcel.offset = start + size
                 ports[port] = comm
+            self.report_times.append(time.monotonic())
             self.ports.put(ports)
         return 0, None
 
@@ -546,6 +548,14 @@ def main():
             if 8123 in ports:
                 return f"comm {ports[8123]!r}"
 
+    def reports_apart():
+        # See the pace of the reports in ../agent.nix.
+        times = state["debian"].report_times
+        gap = min(b - a for a, b in zip(times, times[1:]))
+        if gap < 0.5:
+            raise ValueError(f"{gap:.3f} s between two of {len(times)} reports")
+        return f"{gap:.1f} s or more between {len(times)} reports"
+
     def port_forwarding():
         listener = vsock_listen(5123)
         listener.settimeout(30)
@@ -583,6 +593,7 @@ def main():
             check("clipboard-to-android", clipboard_to_android)
             check("service-port-reported", service_port_reported)
             if check("port-reported", port_reported):
+                check("reports-apart", reports_apart)
                 check("port-forwarding", port_forwarding)
             check("storage-balloon", storage_balloon)
         check("shutdown", shutdown)

@@ -74,6 +74,40 @@ let
   };
   ttydSocket = "/run/ttyd/ttyd.sock";
 
+  # ttyd serves only its page, so the page holds the font as data URIs.
+  # The font loads in <head>, before ttyd sets fontFamily on the terminal.
+  ttydFont = "FiraCode Nerd Font Mono";
+  ttydIndex =
+    pkgs.runCommand "ttyd-index.html"
+      {
+        nativeBuildInputs = [
+          pkgs.woff2
+          pkgs.xxd
+        ];
+      }
+      ''
+        fonts=${pkgs.nerd-fonts.fira-code}/share/fonts/truetype/NerdFonts/FiraCode
+        fontFace() {
+          cp "$fonts/FiraCodeNerdFontMono-$2.ttf" font.ttf
+          chmod u+w font.ttf
+          woff2_compress font.ttf >/dev/null
+          printf '@font-face{font-family:"${ttydFont}";font-weight:%s;src:url(data:font/woff2;base64,' "$1"
+          base64 -w0 font.woff2
+          printf ')}'
+        }
+
+        sed -n 's/0x//gp' ${pkgs.ttyd.src}/src/html.h | tr -d ' ,\n' | xxd -r -p | gunzip >index.html
+        html=$(<index.html)
+        {
+          printf '%s<style>' "''${html%%</head>*}"
+          fontFace 400 Regular
+          fontFace 700 Bold
+          printf '</style><script>'
+          printf 'document.fonts.load(%s);' "'13px \"${ttydFont}\"'" "'bold 13px \"${ttydFont}\"'"
+          printf '</script></head>%s' "''${html#*</head>}"
+        } >$out
+      '';
+
   upgrade = pkgs.writeArgcApplication {
     name = "avf-upgrade";
     file = ./upgrade.sh;
@@ -183,7 +217,12 @@ in
       "-f"
       config.mainUser
     ];
-    clientOptions.disableLeaveAlert = "true";
+    indexFile = ttydIndex;
+    clientOptions = {
+      disableLeaveAlert = "true";
+      # Without quotes: ttyd parses a value as JSON first.
+      fontFamily = "${ttydFont}, monospace";
+    };
   };
   systemd.services.ttyd.serviceConfig = {
     RuntimeDirectory = "ttyd";
