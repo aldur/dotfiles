@@ -52,6 +52,41 @@ let
     text = "exec socat -u UNIX-CONNECT:${tcpstatesSocket} STDOUT";
   };
   tcpstates = pkgs.callPackage ./tcpstates.nix { };
+
+  # For the ports that listen before it starts, the agent finds the process
+  # through the sockets in /proc/PID/fd. The agent cannot see the processes of
+  # other users, so it ignores their ports. Thus after the header of
+  # tcpstates, this writes a LISTEN line for each of these ports, as the agent
+  # does it (IPv4, loopback or all addresses).
+  tcpstatesWithListeners = pkgs.writeShellApplication {
+    name = "tcpstates-with-listeners";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.gawk
+      pkgs.iproute2
+    ];
+    text = ''
+      # Without -oL, the output goes to the socket in blocks.
+      stdbuf -oL ${lib.getExe tcpstates} | {
+        IFS= read -r header
+        echo "$header"
+        # The columns of tcpstates: SKADDR PID COMM LADDR LPORT RADDR RPORT
+        # OLDSTATE -> NEWSTATE MS.
+        ss -4 -ltnpH | gawk '{
+          address = $4
+          port = address
+          sub(/:[0-9]+$/, "", address)
+          sub(/^.*:/, "", port)
+          if (address !~ /^(127\.|0\.0\.0\.0$|\*$)/) next
+          if (!match($0, /users:\(\("([^"]*)",pid=([0-9]+)/, owner)) next
+          comm = owner[1]
+          gsub(/[[:space:]]/, "_", comm)
+          print 0, owner[2], comm, address, port, "0.0.0.0", 0, "CLOSE", "->", "LISTEN", 0
+        }'
+        exec cat
+      }
+    '';
+  };
 in
 {
   # The agent uses /run/user/1000.
@@ -135,36 +170,49 @@ in
   systemd.services."terminal-tcpstates@" = {
     description = "TCP state changes for the guest agent";
     serviceConfig = {
-      # Without -oL, the output goes to the socket in blocks.
-      ExecStart = "${lib.getExe' pkgs.coreutils "stdbuf"} -oL ${lib.getExe tcpstates}";
+      ExecStart = lib.getExe tcpstatesWithListeners;
       StandardInput = "socket";
       StandardOutput = "socket";
       StandardError = "journal";
       DynamicUser = true;
       # BPF tracing. libbpf reads the ID of the tracepoint in tracefs, which
-      # only root can read.
+      # only root can read. ss reads the sockets in /proc/PID/fd of all
+      # processes.
       AmbientCapabilities = [
         "CAP_BPF"
         "CAP_PERFMON"
         "CAP_DAC_READ_SEARCH"
+        "CAP_SYS_PTRACE"
       ];
       CapabilityBoundingSet = [
         "CAP_BPF"
         "CAP_PERFMON"
         "CAP_DAC_READ_SEARCH"
+        "CAP_SYS_PTRACE"
       ];
-      # Thus tcpstates sees only the store and the read-only /proc and /sys.
+      # CAP_SYS_PTRACE also gives access to the memory of other processes.
+      SystemCallFilter = [
+        "~ptrace"
+        "~process_vm_readv"
+        "~process_vm_writev"
+        "~pidfd_getfd"
+      ];
+      # Thus the service sees only the store and the read-only /proc and /sys.
       TemporaryFileSystem = "/:ro";
       BindReadOnlyPaths = [ builtins.storeDir ];
       MountAPIVFS = true;
-      ProtectProc = "invisible";
       ProtectKernelTunables = true;
       NoNewPrivileges = true;
       PrivateDevices = true;
-      PrivateNetwork = true;
+      # ss reads the sockets of the guest, so the service has no network
+      # namespace of its own. It sends no IP traffic.
+      IPAddressDeny = "any";
       ProtectKernelModules = true;
       ProtectControlGroups = true;
-      RestrictAddressFamilies = "AF_UNIX";
+      RestrictAddressFamilies = [
+        "AF_UNIX"
+        "AF_NETLINK"
+      ];
       RestrictNamespaces = true;
       LockPersonality = true;
       SystemCallArchitectures = "native";

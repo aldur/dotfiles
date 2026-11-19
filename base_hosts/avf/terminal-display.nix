@@ -192,6 +192,9 @@ in
     };
   };
   security.pam.services.weston.startSession = true;
+  # The app can write the clipboard as soon as the agent registers. weston
+  # notifies systemd when its socket is ready.
+  systemd.services.linux-vm-manager.after = [ "weston.service" ];
   systemd.defaultUnit = "graphical.target";
 
   # As in the Debian guest, programs started from the terminal show on the

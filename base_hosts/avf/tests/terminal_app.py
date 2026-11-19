@@ -530,6 +530,14 @@ def main():
                 raise ValueError(repr(text))
             time.sleep(0.5)
 
+    def service_port_reported():
+        # pcscd (smartcard.nix) listens before the app connects.
+        deadline = time.monotonic() + 30
+        while True:
+            ports = state["debian"].ports.get(timeout=max(0.1, deadline - time.monotonic()))
+            if 25963 in ports:
+                return f"comm {ports[25963]!r}"
+
     def port_reported():
         state["terminal"].run("python3 -m http.server 8123 --bind 127.0.0.1 &")
         deadline = time.monotonic() + 30
@@ -573,6 +581,7 @@ def main():
         if check("debian-service", debian_service) and "terminal" in state:
             check("clipboard-to-guest", clipboard_to_guest)
             check("clipboard-to-android", clipboard_to_android)
+            check("service-port-reported", service_port_reported)
             if check("port-reported", port_reported):
                 check("port-forwarding", port_forwarding)
             check("storage-balloon", storage_balloon)
