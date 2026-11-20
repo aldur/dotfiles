@@ -166,7 +166,7 @@ def browser_processes():
             fields = Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()
             if fields[19] == started and fields[0] != "Z":
                 alive.append(pid)
-        except FileNotFoundError:
+        except (FileNotFoundError, ProcessLookupError):
             pass
     return alive
 
@@ -199,7 +199,7 @@ with (root / "events.jsonl").open("w") as output, (root / "stderr.log").open("w"
                     if "--no-sandbox" in cmd:
                         failures.append("Chromium sandbox is disabled")
                         proc.terminate()
-            except FileNotFoundError:
+            except (FileNotFoundError, ProcessLookupError):
                 pass
         time.sleep(0.05)
     if proc.poll() is None:
