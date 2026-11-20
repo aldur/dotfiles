@@ -38,11 +38,11 @@ in
     ];
   };
 
-  # `ssh root@.host` signs with the PIV key through pcscd. ssh asks for the
-  # PIN in the terminal. The PKCS#11 module of Yubico uses only readers with
-  # "Yubikey" in the name.
+  # All SSH connections sign with the PIV key through pcscd. ssh asks for
+  # the PIN in the terminal. The PKCS#11 module of Yubico uses only readers
+  # with "Yubikey" in the name.
   programs.ssh.extraConfig = ''
-    Host .host
+    Host *
       PKCS11Provider ${pkgs.opensc}/lib/opensc-pkcs11.so
   '';
 

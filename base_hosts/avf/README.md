@@ -114,14 +114,13 @@ in the guest. The Android app Smart Card Reader
 (`com.vsmartcard.remotesmartcardreader.app`, from F-Droid) reads the PIV key
 over NFC and connects to vpcd:
 
-1. In Terminal, let the guest start. The app shows a notification for the
-   new port 25963. Allow it, or turn it on in Terminal settings > Port
-   control.
-2. In the settings of Smart Card Reader, set the host to `127.0.0.1` and
-   the port to `25963`.
-3. Hold the key to the phone while a program uses it, for example
-   `ssh root@.host`. `opensc-tool --list-readers` shows the key in the
-   reader "Virtual PCD".
+1. In Terminal, let the guest start. The app shows a notification for the new
+   port 25963. Allow it, or turn it on in Terminal settings > Port control.
+2. In the settings of Smart Card Reader, set the host to `127.0.0.1` and the
+   port to `25963`.
+3. Hold the key to the phone while a program uses it. All SSH connections use
+   it, for example `git push` and `ssh root@.host`. `opensc-tool
+   --list-readers` shows the key in the reader "Virtual PCD".
 
 ## Rebuild
 
@@ -146,4 +145,3 @@ ssh root@.host avf-upgrade
 `nixos-rebuild switch --store-path`. `--action boot` activates the system at
 the next start. Images from before `avf-upgrade` do not have the system
 link (`/nixos-system`) that it needs.
-

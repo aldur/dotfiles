@@ -77,6 +77,7 @@ pkgs.testers.runNixOSTest {
         assert uid.strip() == "0", uid
         machine.succeed("grep -q PIN /tmp/askpass.log")
         machine.fail(f"su - aldur -c '{ssh} aldur@.host true' < /dev/null")
+        machine.succeed("ssh -G github.com | grep -q '^pkcs11provider .*/opensc-pkcs11.so'")
 
     with subtest("sshd has no network listener"):
         machine.fail("ss -ltn | grep -q ':22 '")

@@ -569,6 +569,64 @@ def main():
         if not response.startswith(b"HTTP/1.0 200"):
             raise ValueError(response[:80])
 
+    def smartcard_forwarding():
+        # The Android app Smart Card Reader through port forwarding. vpcd
+        # sends first. The ATR is the one that the app makes for a card
+        # without historical bytes.
+        atr = bytes.fromhex("3b80800101")
+        listener = vsock_listen(5124)
+        listener.settimeout(30)
+        state["debian"].request_forwarding(25963, 5124)
+        sock, _ = listener.accept()
+        sock.settimeout(30)
+        requests = []
+
+        def receive(size):
+            data = b""
+            while len(data) < size:
+                chunk = sock.recv(size - len(data))
+                if not chunk:
+                    raise EOFError("vpcd closed the connection")
+                data += chunk
+            return data
+
+        def card():
+            try:
+                while True:
+                    request = receive(struct.unpack(">H", receive(2))[0])
+                    requests.append(request.hex())
+                    if request == b"\x04":
+                        reply = atr
+                    elif len(request) == 1:  # Power off, power on, reset.
+                        continue
+                    else:
+                        reply = bytes.fromhex("6a82")
+                    sock.sendall(struct.pack(">H", len(reply)) + reply)
+            except Exception as error:  # noqa: BLE001 - the check reports it.
+                requests.append(repr(error))
+
+        threading.Thread(target=card, daemon=True).start()
+        terminal = state["terminal"]
+        terminal.run(
+            "set o (string replace -r '/lib/.*' /bin"
+            " (ssh -G .host | string match -rg '^pkcs11provider (.*)'))"
+        )
+        # pcscd finds the card when it polls the reader.
+        deadline = time.monotonic() + 20
+        while True:
+            output = terminal.value(
+                "atr", "(timeout 20 $o/opensc-tool --atr 2>&1 | string join ' ')", timeout=40
+            )
+            if "3b:80:80:01:01" in output or time.monotonic() > deadline:
+                break
+            time.sleep(1)
+        if "3b:80:80:01:01" not in output:
+            sockets = terminal.value(
+                "sockets", "(ss -tna '( sport = :25963 or dport = :25963 )' | string join ' | ')"
+            )
+            raise ValueError(f"{output!r}, requests of vpcd: {requests[-6:]}, {sockets}")
+        return f"{len(requests)} requests of vpcd"
+
     def storage_balloon():
         before = int(state["terminal"].value("before", "(cat /sys/fs/ext4/vda1/reserved_clusters)"))
         state["debian"].request_storage_balloon(1 << 30)
@@ -595,6 +653,7 @@ def main():
             if check("port-reported", port_reported):
                 check("reports-apart", reports_apart)
                 check("port-forwarding", port_forwarding)
+            check("smartcard-forwarding", smartcard_forwarding)
             check("storage-balloon", storage_balloon)
         check("shutdown", shutdown)
     print(f"APP done failures={failures}", flush=True)
