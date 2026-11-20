@@ -708,8 +708,7 @@ else:
                 until(rb"show/hide tools")
                 os.write(fd, b"\x1bOP")  # F1 closes the same help.
                 os.write(fd, b"\r")
-                result = until(rb"ScrollLine179")
-                self.assertIn(b"session: codex", result)
+                until(rb"session: codex[\s\S]*ScrollLine179")
 
     def test_real_terminal_optional_session_preview(self):
         with self.terminal_picker("--all") as (fd, until):
