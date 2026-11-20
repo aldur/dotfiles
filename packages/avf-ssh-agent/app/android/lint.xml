@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <!-- build.gradle excludes Main.java from the app, but lint reads the full source directory. -->
+    <issue id="NewApi">
+        <ignore path="**/core/Main.java" />
+    </issue>
+</lint>

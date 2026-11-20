@@ -85,7 +85,7 @@ let
         }'
         exec cat
       } | gawk '
-        # forwarder_host of the GrapheneOS Terminal app closes all its port
+        # forwarder_host of the Terminal app closes all its port
         # listeners when two reports of the agent come before it reads the
         # first (EFD_SEMAPHORE in android/forwarder_host/src/forwarder_host.rs).
         # The agent sends a report for each LISTEN or CLOSE line without a

@@ -59,6 +59,7 @@ in
   };
 
   agent-log = final.callPackage ../packages/agent-log { };
+  avf-ssh-agent = final.callPackage ../packages/avf-ssh-agent { };
   tavily-cli = final.callPackage ../packages/tavily-cli { };
 
   llm-mlx = prev.callPackage ../packages/llm-mlx { };

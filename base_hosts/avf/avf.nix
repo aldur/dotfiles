@@ -8,7 +8,7 @@
 {
   imports = [
     ./terminal-guest.nix
-    ./smartcard.nix
+    ./ssh-agent.nix
     "${inputs.self}/modules/current_system_flake.nix"
     "${inputs.self}/modules/nixos/ssh-local-root.nix"
   ];

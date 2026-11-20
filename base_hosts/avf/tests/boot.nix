@@ -18,6 +18,7 @@
   callPackage,
   runCommand,
   e2fsprogs,
+  jdk_headless,
   gnutar,
   jq,
   libarchive,
@@ -143,7 +144,8 @@ runCommand "avf-boot"
     vhost-device-vsock --guest-cid 3 --socket vhost-vsock.sock --uds-path vsock.sock &
     vsock=$!
     while [ ! -S vhost-vsock.sock ]; do sleep 0.1; done
-    python3 -I ${./terminal_app.py} vsock.sock 3 > app.log 2>&1 &
+    python3 -I ${./terminal_app.py} vsock.sock 3 ${jdk_headless} \
+      ${configuration.pkgs.avf-ssh-agent.core}/share/java/avf-ssh-agent-core.jar > app.log 2>&1 &
     app=$!
     boot third ${terminalCidata} \
       -chardev socket,id=vsock,path=vhost-vsock.sock -device vhost-user-vsock-pci,chardev=vsock &

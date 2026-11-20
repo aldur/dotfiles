@@ -2,8 +2,7 @@
 
 This Flake builds a NixOS guest for the Android Terminal app with the modules
 of this repository. It replaces the Debian guest in place. The installation
-needs no root, no unlocked bootloader and no debuggable build. It works with
-the Terminal of GrapheneOS.
+needs no root, no unlocked bootloader and no debuggable build.
 
 The guest keeps the kernel of the app and the interface of the AOSP Debian
 guest (`build/debian` in `platform/packages/modules/Virtualization`):
@@ -24,8 +23,8 @@ guest (`build/debian` in `platform/packages/modules/Virtualization`):
 - PipeWire plays and records through the virtio-snd card of the app.
 - Android storage is at `/mnt/shared`.
 - sudo does not work. Root logs in with `ssh root@.host`, through a Unix
-  socket in the guest. The PIV key of a YubiKey signs through pcscd (see
-  `smartcard.nix`), and ssh asks for its PIN.
+  socket in the guest. The PIV key of a YubiKey signs all SSH operations
+  (see [SSH agent](#ssh-agent)).
 
 ## Build
 
@@ -73,12 +72,12 @@ disk as `install.sh` leaves it.
    stands in for the Android side of the app, through vhost-device-vsock: it
    speaks the binder RPC protocol of the agent and uses the terminal as the
    user. It checks the registration of the agent, the terminal, the
-   clipboard in both directions, the port report, port forwarding, the
-   storage balloon and the shutdown.
+   clipboard in both directions, the port report, port forwarding, the SSH
+   agent through port forwarding, the storage balloon and the shutdown.
 
-The checks `avf-agent`, `avf-display` and `avf-smartcard` of the root flake
-test the modules. The checks do not cover gfxstream, NFC, crosvm and the
-Android code of the app.
+The checks `avf-agent`, `avf-display` and `avf-ssh-agent` of the root flake
+test the modules. The checks do not cover gfxstream, crosvm, the Android
+code of the Terminal app and the Android part of the SSH agent app.
 
 ## Install
 
@@ -107,20 +106,49 @@ Android code of the app.
 
 If NixOS does not boot, reset the guest to Debian in the Terminal settings.
 
-## Smart card
+## SSH agent
 
-pcscd starts vpcd at boot (`smartcard.nix`). vpcd listens on TCP port 25963
-in the guest. The Android app Smart Card Reader
-(`com.vsmartcard.remotesmartcardreader.app`, from F-Droid) reads the PIV key
-over NFC and connects to vpcd:
+An Android app holds the YubiKey and is the SSH agent of the guest
+(`ssh-agent.nix`, `packages/avf-ssh-agent`). The app asks for the PIN and
+shows the destination of each signature. The guest sees only agent
+messages. The app accepts user authentication only from servers with the
+host-bound method of OpenSSH 8.9 (github.com has it, gitlab.com does not).
 
-1. In Terminal, let the guest start. The app shows a notification for the new
-   port 25963. Allow it, or turn it on in Terminal settings > Port control.
-2. In the settings of Smart Card Reader, set the host to `127.0.0.1` and the
-   port to `25963`.
-3. Hold the key to the phone while a program uses it. All SSH connections use
-   it, for example `git push` and `ssh root@.host`. `opensc-tool
-   --list-readers` shows the key in the reader "Virtual PCD".
+Build the app with the workflow `avf-ssh-agent-apk.yml` of the dotfiles
+(`workflow_dispatch`). It keeps the APK as the artifact `avf-ssh-agent-apk`
+for a few days and attests it:
+
+```bash
+gh run download --repo aldur/dotfiles --name avf-ssh-agent-apk
+gh attestation verify avf-ssh-agent.apk --repo aldur/dotfiles \
+  --signer-workflow aldur/dotfiles/.github/workflows/avf-ssh-agent-apk.yml
+```
+
+Each run signs the APK with a new key. Android installs an update only
+when the same key signed it. Thus, to install a newer APK, uninstall the
+app first and do the set-up again.
+
+Set up, one time:
+
+1. On the phone, open the run in the browser, download the artifact and
+   install `avf-ssh-agent.apk`. Open the app and allow its notifications.
+   In the Android settings of the app, allow the network and turn off the
+   battery optimization.
+2. Connect the YubiKey with USB and let the app always open it. In the app,
+   read the key. The key is slot 9a of the PIV applet, as
+   `yubikey-agent -setup` makes it. Copy the public key from the app to the
+   servers.
+3. In Terminal settings > Port control, turn on port 25970.
+4. In the terminal, run `avf-ssh-agent pair`. Copy the line and paste it in
+   the app. The line is good for 5 minutes and for one use.
+
+Then each SSH operation uses the key, for example `git push` and
+`ssh root@.host`. The app asks for the PIN one time after the key connects,
+and the key needs a touch for each signature. The first connection to a
+host shows the fingerprint of its host key and asks for a name.
+
+`avf-ssh-agent status` in the guest shows the pairing, the connection of the
+app and the last error. The app has a diagnostics screen.
 
 ## Rebuild
 

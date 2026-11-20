@@ -1,0 +1,62 @@
+plugins {
+    id 'com.android.application'
+}
+
+// The release signing key comes from the environment. Without it, the
+// release build uses the debug key. The Android Gradle plugin makes that
+// key when ~/.android/debug.keystore does not exist.
+def keystore = System.getenv('APK_KEYSTORE')
+
+android {
+    namespace = 'io.github.aldur.avfsshagent'
+    compileSdk = 37
+    // The version in ../gradle.nix.
+    buildToolsVersion = '37.0.0'
+
+    defaultConfig {
+        applicationId = 'io.github.aldur.avfsshagent'
+        minSdk = 34
+        targetSdk = 36
+        versionCode = 1
+        versionName = '0.1.0'
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    // The agent logic. Main is the desktop program of the Nix check.
+    sourceSets.main.java {
+        srcDir '../core/src/main/java'
+        exclude '**/core/Main.java'
+    }
+
+    signingConfigs {
+        release {
+            if (keystore) {
+                storeFile = file(keystore)
+                storePassword = System.getenv('APK_KEYSTORE_PASSWORD')
+                keyAlias = 'release'
+                keyPassword = System.getenv('APK_KEYSTORE_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled = false
+            signingConfig = keystore ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = true
+    }
+}
+
+dependencies {
+    implementation 'com.yubico.yubikit:android:3.3.0'
+    implementation 'com.yubico.yubikit:piv:3.3.0'
+}

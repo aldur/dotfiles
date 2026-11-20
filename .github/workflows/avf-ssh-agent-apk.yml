@@ -1,0 +1,78 @@
+# Builds the Android app of the SSH agent for the Android Terminal (AVF)
+# guest and keeps the APK as a workflow artifact. See
+# base_hosts/avf/README.md.
+name: Build AVF SSH agent APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      retention-days:
+        description: Days to keep the artifact
+        type: number
+        default: 7
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-26.04
+    steps:
+      - &checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup-nix
+
+      # No signing key is set. Thus each run signs the APK with a new debug
+      # key, and Android refuses to install the APK as an update.
+      - name: Build the APK
+        run: |
+          nix run .#avf-ssh-agent-gradle -- --no-daemon -p packages/avf-ssh-agent/app \
+            lintRelease assembleRelease
+
+      - run: |
+          install -D -m 644 packages/avf-ssh-agent/app/android/build/outputs/apk/release/android-release.apk \
+            /tmp/apk/avf-ssh-agent.apk
+          mkdir -p /tmp/subject
+          (cd /tmp/apk && sha256sum avf-ssh-agent.apk) > /tmp/subject/checksums.txt
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: avf-ssh-agent-apk
+          path: /tmp/apk/avf-ssh-agent.apk
+          if-no-files-found: error
+          # The artifact is always a zip, and an APK is a zip. Level 0 stores
+          # it as it is.
+          compression-level: 0
+          retention-days: ${{ inputs.retention-days }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: avf-ssh-agent-apk-subject
+          path: /tmp/subject/checksums.txt
+          if-no-files-found: error
+          retention-days: 1
+
+  # A separate job without Nix: see .github/actions/attest.
+  attest:
+    name: attest
+    needs: build
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      id-token: write # necessary to sign the attestations with Sigstore
+      attestations: write # necessary to store the attestations on GitHub
+    steps:
+      - *checkout
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: avf-ssh-agent-apk-subject
+          path: subject
+      - uses: $/.github/actions/attest
+        with:
+          subject-checksums: subject/checksums.txt

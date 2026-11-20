@@ -143,6 +143,11 @@
           legacyPackages = {
             inherit qemu-vm;
 
+            avf-ssh-agent-gradle = pkgs.callPackage ./packages/avf-ssh-agent/app/gradle.nix {
+              nixpkgs = pkgsBase;
+              inherit system;
+            };
+
             # Every package here that fetches a pinned source, with the
             # `passthru.updatePin` it carries. Merged across systems into the
             # top-level `updatePins` output that CI reads.
