@@ -64,7 +64,38 @@ final class KeysTest {
                 checkGoodAndBad(key, TestSupport.keyType(key.getPublic()));
             });
         }
-        run("host key signature Ed25519", () -> checkGoodAndBad(TestSupport.ed25519Key(), "ssh-ed25519"));
+        run("host key signature Ed25519", () -> {
+            // Many keys, to use both signs of x and both square root cases.
+            for (int i = 0; i < 64; i++) {
+                checkGoodAndBad(TestSupport.ed25519Key(), "ssh-ed25519");
+            }
+        });
+        run("Ed25519 signature with s + L is refused", () -> {
+            KeyPair key = TestSupport.ed25519Key();
+            SshReader in = new SshReader(sign(key, "ssh-ed25519", DATA));
+            in.readText();
+            byte[] signature = in.readString();
+            BigInteger order = BigInteger.valueOf(2).pow(252)
+                    .add(new BigInteger("27742317777372353535851937790883648493"));
+            byte[] s = new byte[32];
+            for (int i = 0; i < 32; i++) {
+                s[31 - i] = signature[32 + i];
+            }
+            byte[] moved = SshKeys.fixed(new BigInteger(1, s).add(order), 32);
+            for (int i = 0; i < 32; i++) {
+                signature[32 + i] = moved[31 - i];
+            }
+            checkRefused("bad host key signature", () -> SshKeys.verify(blob(key.getPublic()), DATA,
+                    new SshWriter().writeText("ssh-ed25519").writeString(signature).toByteArray()));
+        });
+        run("Ed25519 key that is not a point is refused", () -> {
+            // y = 2 has no x on the curve.
+            byte[] raw = new byte[32];
+            raw[0] = 2;
+            byte[] hostKey = new SshWriter().writeText("ssh-ed25519").writeString(raw).toByteArray();
+            byte[] signature = new SshWriter().writeText("ssh-ed25519").writeString(new byte[64]).toByteArray();
+            checkRefused("bad host key signature", () -> SshKeys.verify(hostKey, DATA, signature));
+        });
         KeyPair[] rsa = new KeyPair[1];
         run("host key signature rsa-sha2-256", () -> {
             rsa[0] = TestSupport.rsaKey(2048);

@@ -18,7 +18,6 @@ import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.ECPublicKeySpec;
 import java.security.spec.RSAPublicKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.LinkedHashMap;
@@ -28,9 +27,6 @@ import java.util.Map;
 public final class SshKeys {
     public static final String P256 = "ecdsa-sha2-nistp256";
 
-    private static final byte[] ED25519_SPKI_PREFIX = {
-        0x30, 0x2a, 0x30, 0x05, 0x06, 0x03, 0x2b, 0x65, 0x70, 0x03, 0x21, 0x00
-    };
     private static final int MIN_RSA_BITS = 1024;
 
     // RFC 8032, section 7.1, test 2.
@@ -219,10 +215,7 @@ public final class SshKeys {
         if (raw.length != 32 || sig.length != 64) {
             throw new Refusal("bad host key or signature");
         }
-        byte[] spki = Arrays.copyOf(ED25519_SPKI_PREFIX, ED25519_SPKI_PREFIX.length + 32);
-        System.arraycopy(raw, 0, spki, ED25519_SPKI_PREFIX.length, 32);
-        PublicKey publicKey = KeyFactory.getInstance("Ed25519").generatePublic(new X509EncodedKeySpec(spki));
-        return verify("Ed25519", publicKey, sig, data);
+        return Ed25519.verify(raw, data, sig);
     }
 
     private static boolean verifyEcdsa(SshReader key, String sshCurve, String jcaCurve, String jcaAlgorithm,

@@ -72,6 +72,13 @@ public final class MainActivity extends BoundActivity {
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        // The system dropped the notification of the service that came before the permission.
+        // A new start posts it again.
+        startForegroundService(new Intent(this, AgentService.class));
+    }
+
+    @Override
     void render() {
         state.setText(service.stateText());
         show(pairingMessage, service.pairingMessage());

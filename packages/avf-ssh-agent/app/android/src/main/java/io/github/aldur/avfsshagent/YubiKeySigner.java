@@ -290,7 +290,8 @@ final class YubiKeySigner {
                 if (!text.equals(shown)) {
                     shown = text;
                     service.log(text + " (" + purpose + ")");
-                    service.notice(text + ": " + purpose, true);
+                    // Only a sign request has a cancel. The other waits end at their timeout.
+                    service.notice(text + ": " + purpose, wantKey != null);
                 }
                 long left = deadline - SystemClock.elapsedRealtime();
                 if (left <= 0) {
