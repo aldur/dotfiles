@@ -42,12 +42,12 @@ let
 in
 python3.pkgs.buildPythonApplication rec {
   pname = "tavily-cli";
-  version = "0.2.1";
+  version = "0.2.2";
   pyproject = true;
   src = fetchPypi {
     pname = "tavily_cli";
     inherit version;
-    hash = "sha256-VKmPyrBaYKP+hnfTRe7glwDGOGREhx5/h+EYZZATl1c=";
+    hash = "sha256-/cyk0fkedVkgIAds6cntfgn9TQAtPbb5nfKAHIuSNZ0=";
   };
   build-system = [ python3.pkgs.hatchling ];
   dependencies = [
