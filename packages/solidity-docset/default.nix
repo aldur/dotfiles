@@ -127,13 +127,13 @@ let
 in
 pkgs.stdenv.mkDerivation (finalAttrs: {
   pname = "solidity-dash-docset";
-  version = "0.8.38";
+  version = "0.8.39";
 
   src = pkgs.fetchFromGitHub {
     owner = "argotorg";
     repo = "solidity";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Wu56qQXRIEzNzHpthzLDPpJRgW4dxsHObyDyv8RR7gE=";
+    hash = "sha256-KrmlI1FMimoJp4TlBHjfPnhg+cGZehrhG7gO2tTkj9k=";
   };
 
   # Upstream also tags pre-releases (v0.8.36-pre.1) that nix-update's stable
